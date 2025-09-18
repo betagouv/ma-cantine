@@ -43,6 +43,9 @@ class TestETLOpenData(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[cls.user_manager],
+            declaration_donnees_2022=True,
+            declaration_donnees_2023=False,
+            declaration_donnees_2024=True,
         )
         with freeze_time("2023-05-14"):  # during the 2022 campaign
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2022, diagnostic_type=None)
@@ -55,7 +58,7 @@ class TestETLOpenData(TestCase):
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2024, diagnostic_type=None)
             diagnostic.teledeclare(cls.user_manager)
 
-        cls.canteen_without_manager = CanteenFactory.create(siret="75665621899905")
+        cls.canteen_without_manager = CanteenFactory.create(siret="75665621899905", sectors=[])
         cls.canteen_without_manager.managers.clear()
 
     def test_td_range_years(self, mock):
@@ -158,101 +161,19 @@ class TestETLOpenData(TestCase):
         self.assertEqual(canteen["management_type"], "direct")
         self.assertEqual(canteen["production_type"], "site")
         self.assertEqual(canteen["economic_model"], "public")
+        self.assertEqual(canteen["sectors"], ["School"])
+        self.assertTrue(canteen["declaration_donnees_2022"])
+        self.assertFalse(canteen["declaration_donnees_2023"])
+        self.assertTrue(canteen["declaration_donnees_2024"])
+        self.assertTrue(canteen["active_on_ma_cantine"])
 
         canteen_without_manager = canteens[canteens.id == self.canteen_without_manager.id].iloc[0]
         self.assertEqual(canteen_without_manager["line_ministry"], None)
         self.assertEqual(canteen_without_manager["management_type"], None)
         self.assertEqual(canteen_without_manager["production_type"], None)
         self.assertEqual(canteen_without_manager["economic_model"], None)
-
-    def test_active_on_ma_cantine(self, mock):
-        mock.get(
-            "https://geo.api.gouv.fr/communes",
-            text=json.dumps(""),
-            status_code=200,
-        )
-        mock.get(
-            "https://geo.api.gouv.fr/epcis?fields=nom,code",
-            text=json.dumps(""),
-            status_code=200,
-        )
-
-        etl_canteen = ETL_OPEN_DATA_CANTEEN()
-        etl_canteen.extract_dataset()
-        etl_canteen.transform_dataset()
-        canteens = etl_canteen.get_dataset()
-
-        self.assertTrue(
-            canteens[canteens.id == self.canteen.id].iloc[0]["active_on_ma_cantine"],
-            "The canteen should be active because there is at least one manager",
-        )
-        self.assertFalse(
-            canteens[canteens.id == self.canteen_without_manager.id].iloc[0]["active_on_ma_cantine"],
-            "The canteen should not be active because there no manager",
-        )
-
-    @freeze_time("2023-05-14")  # during the 2022 campaign
-    def test_campaign_participation(self, mock):
-        mock.get(
-            "https://geo.api.gouv.fr/communes",
-            text=json.dumps(""),
-            status_code=200,
-        )
-        mock.get(
-            "https://geo.api.gouv.fr/epcis?fields=nom,code",
-            text=json.dumps(""),
-            status_code=200,
-        )
-        etl_canteen = ETL_OPEN_DATA_CANTEEN()
-
-        canteen_has_declared_within_campaign = CanteenFactory(declaration_donnees_2022=True)
-        canteen_has_not_declared = CanteenFactory(declaration_donnees_2022=False)
-        applicant = UserFactory.create()
-        diagnostic_2022 = DiagnosticFactory.create(
-            canteen=canteen_has_declared_within_campaign, year=2022, diagnostic_type=None
-        )
-        diagnostic_2022.teledeclare(applicant)
-        etl_canteen.extract_dataset()
-        etl_canteen.transform_dataset()
-        canteens = etl_canteen.get_dataset()
-        self.assertEqual(
-            canteens[canteens.id == canteen_has_declared_within_campaign.id].iloc[0]["declaration_donnees_2022"],
-            True,
-            "The canteen has participated in the campaign",
-        )
-        self.assertEqual(
-            canteens[canteens.id == canteen_has_not_declared.id].iloc[0]["declaration_donnees_2022"],
-            False,
-            "The canteen hasn't participated in the campaign",
-        )
-
-    def test_transformation_canteens_sectors(self, mock):
-        mock.get(
-            "https://geo.api.gouv.fr/communes",
-            text=json.dumps(""),
-            status_code=200,
-        )
-        mock.get(
-            "https://geo.api.gouv.fr/epcis?fields=nom,code",
-            text=json.dumps(""),
-            status_code=200,
-        )
-
-        etl_canteen = ETL_OPEN_DATA_CANTEEN()
-
-        canteen_without_sector = CanteenFactory(sectors=[])
-        CanteenFactory.create(sectors=[SectorFactory.create(id=22)])  # should be filtered out
-
-        etl_canteen.extract_dataset()
-        etl_canteen.transform_dataset()
-        canteens = etl_canteen.get_dataset()
-
-        self.assertEqual(
-            canteens[canteens.id == canteen_without_sector.id].iloc[0]["sectors"],
-            '"[]"',
-            "The sectors should be an empty list",
-        )
-        self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["sectors"], '"[""School""]"')
+        self.assertEqual(canteen_without_manager["sectors"], [])
+        self.assertFalse(canteen_without_manager["active_on_ma_cantine"])
 
     @freeze_time("2023-05-14")  # during the 2022 campaign
     def test_update_ressource(self, mock):
