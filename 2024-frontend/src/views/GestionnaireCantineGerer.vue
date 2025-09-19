@@ -3,6 +3,7 @@ import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import urlService from "@/services/urls.js"
 import canteenService from "@/services/canteens.js"
+import cantines from "@/data/cantines.json"
 
 const route = useRoute()
 
@@ -61,6 +62,23 @@ const filterNotEditableInfos = (canteenInfos) => {
   })
   return notEditableInfos
 }
+
+const getPrettyName = (name) => {
+  if (typeof cantines[name] === "string") return cantines[name]
+  if (typeof cantines[name] === "object") return cantines[`${name}Name`] // TODO : refactor json file to group name and options props
+}
+
+const getPrettyValue = (info) => {
+  const { name, value } = info
+  let prettyValue = null
+  if (typeof cantines[name] === "string") prettyValue = value
+  if (typeof cantines[name] === "object") {
+    const index = cantines[name].findIndex((option) => option.value === value)
+    if (index >= 0) prettyValue = cantines[name][index].label
+  }
+  const isValueFilled = prettyValue && prettyValue.length > 0
+  return isValueFilled ? prettyValue : "Non renseigné"
+}
 </script>
 
 <template>
@@ -75,7 +93,7 @@ const filterNotEditableInfos = (canteenInfos) => {
           <h2 class="fr-h6">Informations renseignées</h2>
           <ul>
             <li v-for="info in canteenInfos.editable" :key="info.name">
-              <p class="fr-mb-0">{{ info.name }} : {{ info.value }}</p>
+              <p class="fr-mb-0">{{ getPrettyName(info.name) }} : {{ getPrettyValue(info) }}</p>
             </li>
           </ul>
           <DsfrButton secondary label="Modifier" class="fr-mb-0 fr-mt-2w" />
@@ -90,7 +108,7 @@ const filterNotEditableInfos = (canteenInfos) => {
           </p>
           <ul>
             <li v-for="info in canteenInfos.notEditable" :key="info.name">
-              <p class="fr-mb-0">{{ info.name }} : {{ info.value }}</p>
+              <p class="fr-mb-0">{{ getPrettyName(info.name) }} : {{ getPrettyValue(info) }}</p>
             </li>
           </ul>
           <DsfrHighlight
