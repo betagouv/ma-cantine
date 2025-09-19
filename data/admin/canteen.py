@@ -216,7 +216,7 @@ class CanteenInline(admin.TabularInline):
         return True
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        return True
 
     @admin.display(description="Gestionnaire")
     def help(self, obj):
