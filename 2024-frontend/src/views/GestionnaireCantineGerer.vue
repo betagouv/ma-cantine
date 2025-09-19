@@ -121,7 +121,17 @@ const getMinistrieName = (canteenMinistrySlug) => {
               </p>
             </li>
           </ul>
-          <DsfrButton secondary label="Modifier" class="fr-mb-0 fr-mt-2w" />
+          <div class="fr-grid-row fr-grid-row--center fr-mt-2w">
+            <router-link
+              class="ma-cantine--unstyled-link"
+              :to="{
+                name: 'GestionnaireCantineModifier',
+                params: { canteenUrlComponent: route.params.canteenUrlComponent },
+              }"
+            >
+              <DsfrButton secondary label="Modifier" />
+            </router-link>
+          </div>
         </div>
       </div>
       <div class="fr-col-12 fr-col-md-6">
