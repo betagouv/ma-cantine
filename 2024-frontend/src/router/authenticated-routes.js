@@ -107,6 +107,7 @@ const routes = [
           breadcrumbs: [
             { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
           ],
         },
       },
