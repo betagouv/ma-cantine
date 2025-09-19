@@ -113,41 +113,48 @@ const routes = [
         },
       },
       {
-        path: "satellites/gerer",
-        name: "GestionnaireCantineSatellitesGerer",
-        component: GestionnaireCantineSatellitesGerer,
-        meta: {
-          title: "Gérer mes satellites",
-          breadcrumbs: [
-            { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
-          ],
-        },
-      },
-      {
-        path: "satellites/ajouter",
-        name: "GestionnaireCantineSatellitesAjouter",
-        component: GestionnaireCantineSatellitesAjouter,
-        meta: {
-          title: "Ajouter une cantine satellite",
-          breadcrumbs: [
-            { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
-            { to: { name: "SatelliteManagement" }, title: "Gérer mes satellites" },
-          ],
-        },
+        path: "satellites/",
+        children: [
+          {
+            path: "gerer",
+            name: "GestionnaireCantineSatellitesGerer",
+            component: GestionnaireCantineSatellitesGerer,
+            meta: {
+              title: "Gérer mes satellites",
+              breadcrumbs: [
+                { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+                { to: { name: "DashboardManager" }, useCanteenName: true },
+              ],
+            },
+          },
+          {
+            path: "ajouter",
+            name: "GestionnaireCantineSatellitesAjouter",
+            component: GestionnaireCantineSatellitesAjouter,
+            meta: {
+              title: "Ajouter une cantine satellite",
+              breadcrumbs: [
+                { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+                { to: { name: "DashboardManager" }, useCanteenName: true },
+                { to: { name: "SatelliteManagement" }, title: "Gérer mes satellites" },
+              ],
+            },
+          },
+        ],
       },
     ],
   },
 ]
 
-routes.forEach((route) => {
+const addAuthentificationRequired = (route) => {
   if (route.meta) route.meta.authenticationRequired = true
-  else if (route.children) {
+  if (route.children) {
     route.children.forEach((child) => {
-      child.meta.authenticationRequired = true
+      addAuthentificationRequired(child)
     })
   }
-})
+}
+
+routes.forEach((route) => addAuthentificationRequired(route))
 
 export default routes
