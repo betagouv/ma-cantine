@@ -91,9 +91,12 @@ const getPrettyValue = (info) => {
       <div class="fr-col-12 fr-col-md-6">
         <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Informations renseignées</h2>
-          <ul>
+          <ul class="ma-cantine--flex-grow">
             <li v-for="info in canteenInfos.editable" :key="info.name">
-              <p class="fr-mb-0">{{ getPrettyName(info.name) }} : {{ getPrettyValue(info) }}</p>
+              <p class="fr-mb-0">
+                <span class="fr-text--bold">{{ getPrettyName(info.name) }}</span>
+                : {{ getPrettyValue(info) }}
+              </p>
             </li>
           </ul>
           <DsfrButton secondary label="Modifier" class="fr-mb-0 fr-mt-2w" />
@@ -106,9 +109,12 @@ const getPrettyValue = (info) => {
             À partir des informations renseignées lors de la création de votre établissement, nous avons pu en générer
             de nouvelles en croisant les données avec des référentiels.
           </p>
-          <ul>
+          <ul class="ma-cantine--flex-grow">
             <li v-for="info in canteenInfos.notEditable" :key="info.name">
-              <p class="fr-mb-0">{{ getPrettyName(info.name) }} : {{ getPrettyValue(info) }}</p>
+              <p class="fr-mb-0">
+                <span class="fr-text--bold">{{ getPrettyName(info.name) }}</span>
+                : {{ getPrettyValue(info) }}
+              </p>
             </li>
           </ul>
           <DsfrHighlight

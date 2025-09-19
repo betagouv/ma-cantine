@@ -25,7 +25,6 @@ address {
     margin-bottom: 0 !important;
 }
 
-
 /* LINK */
 .ma-cantine--unstyled-link[target="_blank"] {
     background-image: initial;
@@ -129,4 +128,10 @@ address {
 .ma-cantine--sticky {
     position: sticky;
     top: 1rem;
+}
+
+
+/* FLEX */
+.ma-cantine--flex-grow {
+    flex-grow: 1 !important;
 }
