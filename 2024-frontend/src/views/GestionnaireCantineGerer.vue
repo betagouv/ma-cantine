@@ -71,17 +71,18 @@ const filterNotEditableInfos = (canteenInfos) => {
     </div>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-6">
-        <div class="fr-card fr-p-2w ">
+        <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Informations renseignées</h2>
           <ul>
             <li v-for="info in canteenInfos.editable" :key="info.name">
               <p class="fr-mb-0">{{ info.name }} : {{ info.value }}</p>
             </li>
           </ul>
+          <DsfrButton secondary label="Modifier" class="fr-mb-0 fr-mt-2w" />
         </div>
       </div>
       <div class="fr-col-12 fr-col-md-6">
-        <div class="fr-card fr-p-2w ">
+        <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Informations générées</h2>
           <p>
             À partir des informations renseignées lors de la création de votre établissement, nous avons pu en générer
@@ -92,9 +93,10 @@ const filterNotEditableInfos = (canteenInfos) => {
               <p class="fr-mb-0">{{ info.name }} : {{ info.value }}</p>
             </li>
           </ul>
-          <p>
-            Ces informations ne sont pas modifiables, si vous remarquez une erreur merci de nous contacter.
-          </p>
+          <DsfrHighlight
+            class="fr-ml-0 fr-mb-0 fr-mt-2w ma-cantine--no-mb-p"
+            text="Ces informations ne sont pas modifiables, si vous remarquez une erreur merci de nous contacter."
+          />
         </div>
       </div>
     </div>
