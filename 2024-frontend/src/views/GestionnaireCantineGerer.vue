@@ -112,12 +112,12 @@ const getMinistrieName = (canteenMinistrySlug) => {
   <section>
     <div class="fr-col-12 fr-col-md-8 fr-mb-3w">
       <h1>{{ route.meta.title }}</h1>
-      <p>Retrouver toutes les informations de votre établissement.</p>
     </div>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-6">
         <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Informations renseignées</h2>
+          <p>Informations renseignées lors de la création de votre établissement.</p>
           <ul class="ma-cantine--flex-grow">
             <li v-for="info in canteenInfos.editable" :key="info.name">
               <p class="fr-mb-0">
@@ -144,7 +144,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
           <h2 class="fr-h6">Informations générées</h2>
           <p>
             À partir des informations renseignées lors de la création de votre établissement, nous avons pu en générer
-            de nouvelles en croisant les données avec des référentiels.
+            de nouvelles en croisant vos données avec nos référentiels.
           </p>
           <ul class="ma-cantine--flex-grow">
             <li v-for="info in canteenInfos.notEditable" :key="info.name">
