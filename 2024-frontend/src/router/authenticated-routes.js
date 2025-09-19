@@ -1,6 +1,7 @@
 import { sectionId } from "@/constants/site-map.js"
 
 /* Components */
+import GestionnaireCantineGerer from "@/views/GestionnaireCantineGerer.vue"
 import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
 import GestionnaireCantineSatellitesAjouter from "@/views/GestionnaireCantineSatellitesAjouter.vue"
@@ -85,6 +86,18 @@ const routes = [
   {
     path: "/gestion/cantines/:canteenUrlComponent/",
     children: [
+      {
+        path: "gerer",
+        name: "GestionnaireCantineGerer",
+        component: GestionnaireCantineGerer,
+        meta: {
+          title: "Gérer mon établissement",
+          breadcrumbs: [
+            { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+            { to: { name: "DashboardManager" }, useCanteenName: true },
+          ],
+        },
+      },
       {
         path: "modifier",
         name: "GestionnaireCantineModifier",
