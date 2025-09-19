@@ -26,14 +26,14 @@ const canteenInfos = computedAsync(
 )
 
 const filterEditableInfos = (canteenInfos) => {
-  const editableInfos = []
-  const editableInfosName = [
+  const filteredInfos = []
+  const fieldsName = [
+    "name",
+    "siret",
+    "sirenUniteLegale",
     "managementType",
     "economicModel",
     "productionType",
-    "siret",
-    "sirenUniteLegale",
-    "name",
     "dailyMealCount",
     "yearlyMealCount",
     "sectors",
@@ -43,31 +43,19 @@ const filterEditableInfos = (canteenInfos) => {
     "centralProducerSiret",
     "satelliteCanteensCount",
   ]
-  const canteenInfosKeys = Object.keys(canteenInfos)
-  const filteredEditableKeys = canteenInfosKeys.filter((key) => editableInfosName.includes(key))
-  filteredEditableKeys.forEach((key) => {
-    editableInfos.push({ name: key, value: canteenInfos[key] })
+  fieldsName.forEach((name) => {
+    filteredInfos.push({ name: name, value: canteenInfos[name] })
   })
-  return editableInfos
+  return filteredInfos
 }
 
 const filterNotEditableInfos = (canteenInfos) => {
-  const notEditableInfos = []
-  const notEditableInfosName = [
-    "epciLib",
-    "patLibList",
-    "departmentLib",
-    "regionLib",
-    "city",
-    "postalCode",
-    "cityInseeCode",
-  ]
-  const canteenInfosKeys = Object.keys(canteenInfos)
-  const filteredNotditableKeys = canteenInfosKeys.filter((key) => notEditableInfosName.includes(key))
-  filteredNotditableKeys.forEach((key) => {
-    notEditableInfos.push({ name: key, value: canteenInfos[key] })
+  const filteredInfos = []
+  const fieldsName = ["regionLib", "departmentLib", "epciLib", "patLibList", "city", "cityInseeCode", "postalCode"]
+  fieldsName.forEach((name) => {
+    filteredInfos.push({ name: name, value: canteenInfos[name] })
   })
-  return notEditableInfos
+  return filteredInfos
 }
 
 const getPrettyName = (name) => {
