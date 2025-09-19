@@ -6,14 +6,10 @@ import canteenService from "@/services/canteens.js"
 import sectorService from "@/services/sectors.js"
 import cantines from "@/data/cantines.json"
 
+/* Router */
 const route = useRoute()
-const sectors = computedAsync(async () => {
-  return await sectorService.getSectors()
-}, [])
-const ministries = computedAsync(async () => {
-  return await sectorService.getMinistries()
-}, [])
 
+/* Canteen informations */
 const canteenInfos = computedAsync(
   async () => {
     const id = urlService.getCanteenId(route.params.canteenUrlComponent)
@@ -58,6 +54,7 @@ const filterNotEditableInfos = (canteenInfos) => {
   return filteredInfos
 }
 
+/* Prettify */
 const getPrettyName = (name) => {
   if (typeof cantines[name] === "string") return cantines[name]
   if (typeof cantines[name] === "object") return cantines[`${name}Name`] // TODO : refactor json file to group name and options props
@@ -90,6 +87,14 @@ const getPrettyValue = (info) => {
   }
   return prettyValue || "Non renseigné"
 }
+
+/* Sectors and ministry */
+const sectors = computedAsync(async () => {
+  return await sectorService.getSectors()
+}, [])
+const ministries = computedAsync(async () => {
+  return await sectorService.getMinistries()
+}, [])
 
 const getSectorsNames = (canteenSectorsIds) => {
   const filteredSectors = sectors.value.filter((sector) => canteenSectorsIds.includes(sector.id))
