@@ -19,42 +19,6 @@
             SIREN de l'unité légale :
             <span class="font-weight-medium">{{ canteen.sirenUniteLegale }}</span>
           </p>
-          <p class="mb-0">
-            Commune :
-            <span class="font-weight-medium">{{ canteenCommune }}</span>
-          </p>
-          <br />
-          <div v-if="!isSatellite">
-            <p class="mb-0">
-              <span class="font-weight-medium">{{ canteenProductionType }}</span>
-            </p>
-            <br />
-          </div>
-          <p class="mb-0">
-            Secteur d'activité :
-            <span class="font-weight-medium">{{ canteenSector }}</span>
-          </p>
-          <p class="mb-0">
-            Mode de gestion :
-            <span class="font-weight-medium">{{ canteenMgmt }}</span>
-          </p>
-          <br />
-          <p class="mb-0">
-            <span v-if="canteen.productionType === 'central'">Couverts livrés par jour :</span>
-            <span v-else-if="canteen.productionType === 'central_serving'">
-              Couverts par jour (y compris livrés) :
-            </span>
-            <span v-else>Couverts par jour :</span>
-            <span class="font-weight-medium">{{ canteen.dailyMealCount || "Non renseigné" }}</span>
-          </p>
-          <p class="mb-0">
-            <span v-if="canteen.productionType === 'central'">Couverts livrés par an :</span>
-            <span v-else-if="canteen.productionType === 'central_serving'">
-              Couverts par an (y compris livrés) :
-            </span>
-            <span v-else>Couverts par an :</span>
-            <span class="font-weight-medium ml-1">{{ canteen.yearlyMealCount || "Non renseigné" }}</span>
-          </p>
         </v-card-text>
         <v-spacer v-if="isSatellite"></v-spacer>
         <v-card v-if="isSatellite" class="mx-4 mb-4 mt-2 py-4 px-5" color="grey lighten-4">
@@ -67,13 +31,13 @@
         <v-card-actions class="mx-2 mb-2">
           <v-btn
             :to="{
-              name: 'CanteenForm',
+              name: 'GestionnaireCantineGerer',
               params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
             }"
             color="primary"
             outlined
           >
-            Modifier mon établissement
+            Gérer mon établissement
           </v-btn>
         </v-card-actions>
       </v-col>
