@@ -24,22 +24,20 @@ const canteenInfos = computedAsync(
 
 const filterEditableInfos = (canteenInfos) => {
   const filteredInfos = []
-  const fieldsName = [
-    "name",
-    "siret",
-    "sirenUniteLegale",
-    "managementType",
-    "economicModel",
-    "productionType",
-    "dailyMealCount",
-    "yearlyMealCount",
-    "sectors",
-    "lineMinistry",
-    "city",
-    "postalCode",
-    "centralProducerSiret",
-    "satelliteCanteensCount",
-  ]
+  // Required field for all canteen
+  const fieldsName = ["name"]
+  // SIRET is the default
+  if (canteenInfos.sirenUniteLegale) fieldsName.push("sirenUniteLegale", "postalCode", "city")
+  else fieldsName.push("siret")
+  // Next required field for all canteen
+  fieldsName.push("economicModel", "managementType", "productionType", "dailyMealCount", "yearlyMealCount")
+  // Required fields for canteen with site
+  if (canteenInfos.productionType !== "central") fieldsName.push("sectors")
+  if (canteenInfos.lineMinistry) fieldsName.push("lineMinistry")
+  // Required field for satellite
+  if (canteenInfos.isSatellite) fieldsName.push("centralProducerSiret")
+  // Required field for central
+  if (canteenInfos.isCentralCuisine) fieldsName.push("satelliteCanteensCount")
   fieldsName.forEach((name) => {
     filteredInfos.push({ name: name, value: canteenInfos[name] })
   })
@@ -48,7 +46,12 @@ const filterEditableInfos = (canteenInfos) => {
 
 const filterNotEditableInfos = (canteenInfos) => {
   const filteredInfos = []
-  const fieldsName = ["regionLib", "departmentLib", "epciLib", "patLibList", "city", "cityInseeCode", "postalCode"]
+  // Required field for all canteen
+  const fieldsName = ["regionLib", "departmentLib", "epciLib", "patLibList"]
+  // Required field for SIRET canteen
+  if (canteenInfos.siret) fieldsName.push("city", "postalCode")
+  // Next required field for all canteen
+  fieldsName.push("cityInseeCode")
   fieldsName.forEach((name) => {
     filteredInfos.push({ name: name, value: canteenInfos[name] })
   })
