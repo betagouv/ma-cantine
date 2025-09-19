@@ -3,9 +3,16 @@ import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import urlService from "@/services/urls.js"
 import canteenService from "@/services/canteens.js"
+import sectorService from "@/services/sectors.js"
 import cantines from "@/data/cantines.json"
 
 const route = useRoute()
+const sectors = computedAsync(async () => {
+  return await sectorService.getSectors()
+}, [])
+const ministries = computedAsync(async () => {
+  return await sectorService.getMinistries()
+}, [])
 
 const canteenInfos = computedAsync(
   async () => {
@@ -71,13 +78,40 @@ const getPrettyName = (name) => {
 const getPrettyValue = (info) => {
   const { name, value } = info
   let prettyValue = null
-  if (typeof cantines[name] === "string") prettyValue = value
-  if (typeof cantines[name] === "object") {
-    const index = cantines[name].findIndex((option) => option.value === value)
-    if (index >= 0) prettyValue = cantines[name][index].label
+  switch (true) {
+    case name === "lineMinistry": {
+      prettyValue = getMinistrieName(value)
+      break
+    }
+    case name === "sectors": {
+      prettyValue = getSectorsNames(value)
+      break
+    }
+    case typeof cantines[name] === "object": {
+      const index = cantines[name].findIndex((option) => option.value === value)
+      if (index >= 0) prettyValue = cantines[name][index].label
+      break
+    }
+    case value && value.length === 0: {
+      prettyValue = ""
+      break
+    }
+    default: {
+      prettyValue = value
+    }
   }
-  const isValueFilled = prettyValue && prettyValue.length > 0
-  return isValueFilled ? prettyValue : "Non renseigné"
+  return prettyValue || "Non renseigné"
+}
+
+const getSectorsNames = (canteenSectorsIds) => {
+  const filteredSectors = sectors.value.filter((sector) => canteenSectorsIds.includes(sector.id))
+  const sectorsName = filteredSectors.map((filter) => filter.name)
+  return sectorsName.join(" ; ")
+}
+
+const getMinistrieName = (canteenMinistrySlug) => {
+  const index = ministries.value.findIndex((ministry) => ministry.value === canteenMinistrySlug)
+  return index >= 0 ? ministries.value[index].name : "Erreur sur le champ, contacter le support"
 }
 </script>
 
@@ -94,8 +128,8 @@ const getPrettyValue = (info) => {
           <ul class="ma-cantine--flex-grow">
             <li v-for="info in canteenInfos.editable" :key="info.name">
               <p class="fr-mb-0">
-                <span class="fr-text--bold">{{ getPrettyName(info.name) }}</span>
-                : {{ getPrettyValue(info) }}
+                <span class="fr-text--bold">{{ getPrettyName(info.name) }} :</span>
+                {{ getPrettyValue(info) }}
               </p>
             </li>
           </ul>
@@ -112,8 +146,8 @@ const getPrettyValue = (info) => {
           <ul class="ma-cantine--flex-grow">
             <li v-for="info in canteenInfos.notEditable" :key="info.name">
               <p class="fr-mb-0">
-                <span class="fr-text--bold">{{ getPrettyName(info.name) }}</span>
-                : {{ getPrettyValue(info) }}
+                <span class="fr-text--bold">{{ getPrettyName(info.name) }} :</span>
+                {{ getPrettyValue(info) }}
               </p>
             </li>
           </ul>
