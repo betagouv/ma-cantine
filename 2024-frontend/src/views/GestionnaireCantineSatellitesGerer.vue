@@ -11,7 +11,7 @@ const canteen = computedAsync(async () => await canteenService.fetchCanteen(cant
 </script>
 <template>
   <section>
-    <div class="fr-col-1é fr-col-8">
+    <div class="fr-col-12 fr-col-8">
       <h1>{{ route.meta.title }}</h1>
       <p v-if="!canteen.isCentralCuisine">
         Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de cuisines satellites. Pour
