@@ -157,12 +157,13 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "import_source",
     )
     search_fields = (
+        "id",
         "name",
         "siret__istartswith",
         "siren_unite_legale__istartswith",
         "central_producer_siret__istartswith",
     )
-    search_help_text = "La recherche est faite sur les champs : nom de la cantine, siret, siren de l'unité légale, siret de la cuisine centrale."
+    search_help_text = "La recherche est faite sur les champs : ID, nom, siret, siren de l'unité légale, siret de la cuisine centrale."
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
