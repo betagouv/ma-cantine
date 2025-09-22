@@ -46,12 +46,11 @@ const filterEditableInfos = (canteenInfos) => {
 
 const filterNotEditableInfos = (canteenInfos) => {
   const filteredInfos = []
-  // Required field for all canteen
-  const fieldsName = ["regionLib", "departmentLib", "epciLib", "patLibList"]
-  // Required field for SIRET canteen
+  const fieldsName = []
+  // Fields auto for SIRET canteen only
   if (canteenInfos.siret) fieldsName.push("city", "postalCode")
-  // Next required field for all canteen
-  fieldsName.push("cityInseeCode")
+  // Fields auto for all canteen
+  fieldsName.push("cityInseeCode", "patLibList", "epciLib", "departmentLib", "regionLib")
   fieldsName.forEach((name) => {
     filteredInfos.push({ name: name, value: canteenInfos[name] })
   })
