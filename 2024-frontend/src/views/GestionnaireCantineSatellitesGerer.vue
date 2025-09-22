@@ -5,6 +5,7 @@ import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
 import urlService from "@/services/urls.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
 
 const route = useRoute()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
@@ -32,8 +33,8 @@ const tableHeaders = [
     label: "Couverts par jour",
   },
   {
-    key: "join",
-    label: "Rejoindre",
+    key: "edit",
+    label: "Modifier",
   },
   {
     key: "remove",
@@ -49,7 +50,11 @@ const tableRows = computed(() => {
           name: sat.name,
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
-          join: "a faire",
+          edit: {
+            userCan: sat.userCanView,
+            canteenComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
+            sat: sat,
+          },
           delete: "a faire",
         }
       })
@@ -85,6 +90,22 @@ const tableRows = computed(() => {
       :headers-row="tableHeaders"
       :rows="tableRows"
       :sortable-rows="['name', 'siretSiren', 'dailyMealCount']"
-    />
+    >
+      <template #cell="{ colKey, cell }">
+        <template v-if="colKey === 'edit'">
+          <router-link
+            v-if="cell.userCan"
+            :to="{ name: 'GestionnaireCantineModifier', params: { canteenUrlComponent: cell.canteenComponentUrl } }"
+            class="ma-cantine--unstyled-link"
+          >
+            <DsfrButton tertiary label="Modifier" />
+          </router-link>
+          <CanteenButtonJoin v-else :id="cell.sat.id" :name="cell.sat.name" />
+        </template>
+        <template v-else>
+          {{ cell }}
+        </template>
+      </template>
+    </DsfrDataTable>
   </section>
 </template>
