@@ -84,6 +84,10 @@ const getPrettyValue = (info) => {
       prettyValue = ""
       break
     }
+    case typeof value === "object": {
+      prettyValue = value.join(", ")
+      break
+    }
     default: {
       prettyValue = value
     }
