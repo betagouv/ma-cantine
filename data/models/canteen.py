@@ -8,6 +8,7 @@ from django.db.models import Case, Count, Exists, F, OuterRef, Q, Subquery, Valu
 from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
+from simple_history.utils import update_change_reason
 
 from common.utils import siret as utils_siret
 from data.department_choices import Department
@@ -717,6 +718,27 @@ class Canteen(SoftDeletionModel):
 
     def _get_region(self):
         return get_region(self.department)
+
+    def reset_geo_fields(self, with_city_insee_code=False):
+        """
+        Helper to reset geo fields
+        The geolocation bot will then fill them again (from the siret)
+        """
+        self.city = None
+        if with_city_insee_code:
+            self.city_insee_code = None
+        self.postal_code = None
+        self.epci = None
+        self.epci_lib = None
+        self.pat_list = []
+        self.pat_lib_list = []
+        self.department = None
+        self.department_lib = None
+        self.region = None
+        self.region_lib = None
+        self.geolocation_bot_attempts = 0
+        self.save()
+        update_change_reason(self, "Reset geo fields")
 
     @cached_property
     def appro_diagnostics(self):
