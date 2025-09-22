@@ -78,7 +78,12 @@ const tableRows = computed(() => {
         {{ satellitesCountSentence }}
       </p>
       <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--right">
-        <router-link :to="{ name: 'GestionnaireCantineSatellitesAjouter', params: route.canteenUrlComponent }">
+        <router-link
+          :to="{
+            name: 'GestionnaireCantineSatellitesAjouter',
+            params: { canteenUrlComponent: route.canteenUrlComponent },
+          }"
+        >
           <DsfrButton label="Ajouter une cantine satellite" />
         </router-link>
       </div>
