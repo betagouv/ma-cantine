@@ -27,7 +27,7 @@ class DiagnosticForm(forms.ModelForm):
 class DiagnosticInline(admin.TabularInline):
     model = Diagnostic
     show_change_link = True
-    fields = ("year", "creation_date")
+    fields = ("year", "diagnostic_type", "status", "creation_date", "modification_date")
     readonly_fields = fields
     extra = 0
     can_delete = False
