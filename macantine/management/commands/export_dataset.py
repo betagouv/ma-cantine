@@ -1,34 +1,49 @@
 from django.core.management.base import BaseCommand
 
 from macantine.tasks import (
-    datasets_export_analysis_canteens,
-    datasets_export_analysis_td,
-    datasets_export_opendata_canteens,
-    datasets_export_opendata_td,
+    export_dataset_canteen_analysis,
+    export_dataset_canteen_opendata,
+    export_dataset_td_analysis,
+    export_dataset_td_opendata,
 )
 
 
 class Command(BaseCommand):
-    help = "Export datasets"
+    """
+    Exemple: python manage.py export_dataset --model Canteen --destination analysis
+    """
+
+    help = "Command to export datasets. 4 choices: Cantines (analysis) ; Cantines (opendata) ; Toutes les TD (analysis) ; 4. TD par années (opendata)"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--dataset",
-            dest="export_type",
-            type=int,
+            "--model",
+            dest="model",
+            type=str,
+            choices=["Canteen", "Teledeclaration"],
             required=True,
-            help="Choose the type of dataset you want to extract \n 1. Cantines (opendata)\n 2. Cantines (Metabase)\n 3. Ensemble des TD (Metabase)\n 4. TD par années (opendata)",
+            help="Choose the model to export",
+        )
+        parser.add_argument(
+            "--destination",
+            dest="destination",
+            type=str,
+            choices=["analysis", "opendata"],
+            required=True,
+            help="Choose the destination of the export",
         )
 
     def handle(self, *args, **options):
-        export_type = options["export_type"]
-        if export_type == 1:
-            datasets_export_opendata_canteens()
-        elif export_type == 2:
-            datasets_export_analysis_canteens()
-        elif export_type == 3:
-            datasets_export_analysis_td()
-        elif export_type == 4:
-            datasets_export_opendata_td()
-        else:
-            print("Invalid argument. Choose 1,2 or 3")
+        model = options["model"]
+        destination = options["destination"]
+
+        if model == "Canteen":
+            if destination == "analysis":
+                export_dataset_canteen_analysis()
+            elif destination == "opendata":
+                export_dataset_canteen_opendata()
+        elif model == "Teledeclaration":
+            if destination == "analysis":
+                export_dataset_td_analysis()
+            elif destination == "opendata":
+                export_dataset_td_opendata()

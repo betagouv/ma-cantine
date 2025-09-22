@@ -31,6 +31,7 @@ nightly_5 = crontab(hour=5, minute=0, day_of_week="*")  # Every day at 5AM
 weekly = crontab(hour=4, minute=0, day_of_week=6)  # Saturday 4AM
 
 app.conf.beat_schedule = {
+    # Email reminders
     "no_canteen_first_reminder": {
         "task": "macantine.tasks.no_canteen_first_reminder",
         "schedule": daily_week,
@@ -43,6 +44,7 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.no_diagnostic_first_reminder",
         "schedule": daily_week,
     },
+    # Geobot
     "fill_missing_geolocation_data_using_insee_code": {
         "task": "macantine.tasks.fill_missing_geolocation_data_using_insee_code",
         "schedule": nightly_4,
@@ -51,14 +53,21 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.fill_missing_insee_code_using_siret",
         "schedule": hourly,
     },
+    # History cleanup
     "delete_old_historical_records": {
         "task": "macantine.tasks.delete_old_historical_records",
         "schedule": nightly_5,
     },
-    "export_datasets": {
-        "task": "macantine.tasks.continous_datasets_export",
+    # Dataset exports
+    "export_dataset_canteen_analysis": {
+        "task": "macantine.tasks.export_dataset_canteen_analysis",
         "schedule": nightly_5,
     },
+    "export_dataset_canteen_opendata": {
+        "task": "macantine.tasks.export_dataset_canteen_opendata",
+        "schedule": nightly_5,
+    },
+    # Brevo
     "update_brevo_contacts": {
         "task": "macantine.tasks.update_brevo_contacts",
         "schedule": nightly_0,

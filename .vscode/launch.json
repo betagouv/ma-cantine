@@ -56,13 +56,13 @@
       "django": true
     },
     {
-      "name": "Export Dataset",
+      "name": "Export Dataset Canteen for analysis",
       "type": "debugpy",
       "request": "launch",
       "stopOnEntry": false,
       "python": "${workspaceFolder}/venv/bin/python",
       "program": "${workspaceFolder}/manage.py",
-      "args": ["export_dataset", "--dataset", "2"],
+      "args": ["export_dataset", "--model", "Canteen", "--destination", "analysis"],
       "justMyCode": false,
       "django": true
     }
