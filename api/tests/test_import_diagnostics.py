@@ -64,7 +64,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 2)
         self.assertEqual(body["canteens"][0]["siret"], "21340172201787")
-        self.assertEqual(body["canteens"][0]["diagnostics"][0]["year"], 2020)
+        self.assertEqual(body["canteens"][0]["diagnostics"][0]["year"], 2021)
         self.assertEqual(len(body["errors"]), 0)
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Canteen.objects.first().managers.first().id, authenticate.user.id)
@@ -78,7 +78,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.central_producer_siret, "42126486200010")
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
         diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
-        self.assertEqual(diagnostic.year, 2020)
+        self.assertEqual(diagnostic.year, 2021)
         self.assertEqual(diagnostic.value_total_ht, 1000)
         self.assertEqual(diagnostic.value_bio_ht, 500)
         self.assertEqual(diagnostic.value_sustainable_ht, Decimal("100.1"))
@@ -1158,7 +1158,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         with data in import file
         """
         canteen = CanteenFactory.create(siret="21340172201787", name="Old name", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=0.2)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=1, value_bio_ht=0.2)
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
@@ -1177,37 +1177,40 @@ class TestImportDiagnosticsAPI(APITestCase):
         If a diagnostic with a valid TD already exists for the canteen, throw an error
         If the TD is cancelled, allow update
         """
+        date_in_2022_teledeclaration_campaign = "2022-08-30"
         canteen = CanteenFactory.create(siret="21340172201787", name="Old name", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020, value_total_ht=1, value_bio_ht=0.2)
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=1, value_bio_ht=0.2)
 
-        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        with freeze_time(date_in_2022_teledeclaration_campaign):
+            diagnostic.teledeclare(applicant=authenticate.user)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(len(body["errors"]), 1)
-        self.assertEqual(
-            body["errors"][0]["message"],
-            "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration.",
-        )
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.name, "Old name")
-        diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.value_total_ht, 1)
+            with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+                response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
 
-        # now test cancelled TD
-        teledeclaration.cancel()
-        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(len(body["errors"]), 1)
+            self.assertEqual(
+                body["errors"][0]["message"],
+                "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration.",
+            )
+            canteen.refresh_from_db()
+            self.assertEqual(canteen.name, "Old name")
+            diagnostic.refresh_from_db()
+            self.assertEqual(diagnostic.value_total_ht, 1)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(len(body["errors"]), 0)
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.name, "A canteen")
-        diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.value_total_ht, 1000)
+            # now test cancelled TD
+            diagnostic.cancel()
+            with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+                response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(len(body["errors"]), 0)
+            canteen.refresh_from_db()
+            self.assertEqual(canteen.name, "A canteen")
+            diagnostic.refresh_from_db()
+            self.assertEqual(diagnostic.value_total_ht, 1000)
 
     @authenticate
     def test_encoding_autodetect_utf_8(self, mock):
