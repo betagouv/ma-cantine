@@ -75,10 +75,7 @@ const fetchSatellites = (canteenId) => {
     },
   })
     .then(verifyResponse)
-    .then((response) => {
-      console.log("response", response)
-      return response
-    })
+    .then((response) => response)
     .catch((e) => e)
 }
 
