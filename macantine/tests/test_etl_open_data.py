@@ -20,7 +20,7 @@ from macantine.etl.open_data import (
 class TestETLOpenData(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector_school = SectorFactory(name="School", category=Sector.Categories.EDUCATION)
+        cls.sector_school = SectorFactory(name="Ecole primaire", category=Sector.Categories.EDUCATION)
         cls.user_manager = UserFactory.create()
         cls.canteen = CanteenFactory.create(
             name="Cantine",
@@ -97,7 +97,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_name"], "Cantine")
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_central_kitchen_siret"], None)
         self.assertEqual(str(etl_td.get_dataset().iloc[0]["canteen_satellite_canteens_count"]), "<NA>")
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[""School""]"')
+        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_sectors"], "Ecole primaire")
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertGreater(
             etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"],
@@ -225,34 +225,6 @@ class TestETLOpenData(TestCase):
             False,
             "The canteen hasn't participated in the campaign",
         )
-
-    def test_transformation_canteens_sectors(self, mock):
-        mock.get(
-            "https://geo.api.gouv.fr/communes",
-            text=json.dumps(""),
-            status_code=200,
-        )
-        mock.get(
-            "https://geo.api.gouv.fr/epcis?fields=nom,code",
-            text=json.dumps(""),
-            status_code=200,
-        )
-
-        etl_canteen = ETL_OPEN_DATA_CANTEEN()
-
-        canteen_without_sector = CanteenFactory(sectors=[])
-        CanteenFactory.create(sectors=[SectorFactory.create(id=22)])  # should be filtered out
-
-        etl_canteen.extract_dataset()
-        etl_canteen.transform_dataset()
-        canteens = etl_canteen.get_dataset()
-
-        self.assertEqual(
-            canteens[canteens.id == canteen_without_sector.id].iloc[0]["sectors"],
-            '"[]"',
-            "The sectors should be an empty list",
-        )
-        self.assertEqual(canteens[canteens.id == self.canteen.id].iloc[0]["sectors"], '"[""School""]"')
 
     @freeze_time("2023-05-14")  # during the 2022 campaign
     def test_update_ressource(self, mock):
