@@ -259,6 +259,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "siret",
+            "siren_unite_legale",
             "daily_meal_count",
             "sectors",
             "user_can_view",

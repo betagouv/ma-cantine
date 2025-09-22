@@ -17,10 +17,46 @@ const satellitesCountSentence = computed(() => {
     satellites.value.count > 1 ? "cantines satellites renseignées" : "cantine satellite renseignée"
   return `${satellites.value.count} / ${canteen.value.satelliteCanteensCount} ${canteenSentence}`
 })
+
+const tableHeaders = [
+  {
+    key: "name",
+    label: "Nom",
+  },
+  {
+    key: "siretSiren",
+    label: "SIRET ou SIREN",
+  },
+  {
+    key: "dailyMealCount",
+    label: "Couverts par jour",
+  },
+  {
+    key: "join",
+    label: "Rejoindre",
+  },
+  {
+    key: "remove",
+    label: "Enlever",
+  },
+]
+
+const tableRows = computed(() => {
+  return !satellites.value.results
+    ? []
+    : satellites.value.results.map((sat) => {
+        return {
+          name: sat.name,
+          siretSiren: sat.siret || sat.sirenUniteLegale,
+          dailyMealCount: sat.dailyMealCount,
+          join: "a faire",
+          delete: "a faire",
+        }
+      })
+})
 </script>
 <template>
   <section>
-    <pre>{{ satellites }}</pre>
     <div class="fr-col-12 fr-col-md-8">
       <h1>{{ route.meta.title }}</h1>
       <p v-if="!canteen.isCentralCuisine">
@@ -32,7 +68,7 @@ const satellitesCountSentence = computed(() => {
         />
       </p>
     </div>
-    <div class="fr-grid-row fr-grid-row--middle" v-if="canteen.isCentralCuisine">
+    <div class="fr-grid-row fr-grid-row--middle fr-mb-4w" v-if="canteen.isCentralCuisine">
       <p class="fr-col-12 fr-col-md-6 fr-mb-0">
         {{ satellitesCountSentence }}
       </p>
@@ -42,5 +78,13 @@ const satellitesCountSentence = computed(() => {
         </router-link>
       </div>
     </div>
+    <DsfrDataTable
+      v-if="tableRows"
+      title="Vos cantines satellites"
+      no-caption
+      :headers-row="tableHeaders"
+      :rows="tableRows"
+      :sortable-rows="['name', 'siretSiren', 'dailyMealCount']"
+    />
   </section>
 </template>

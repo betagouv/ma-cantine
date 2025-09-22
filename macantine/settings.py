@@ -512,6 +512,7 @@ CSP_CONNECT_SRC = (
     "entreprise.data.gouv.fr",
     "plateforme.adresse.data.gouv.fr",
     "raw.githubusercontent.com/betagouv/ma-cantine/",  # data/schemas/imports/
+    "api.iconify.design",  # dsfr icon
 )
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
