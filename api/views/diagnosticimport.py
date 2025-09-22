@@ -201,14 +201,10 @@ class ImportDiagnosticsView(ABC, APIView):
             if diagnostic_exists
             else Diagnostic(canteen_id=canteen.id, year=diagnostic_year, creation_source=CreationSource.IMPORT)
         )
-        if diagnostic_exists:
-            has_active_td = Teledeclaration.objects.filter(
-                diagnostic=diagnostic, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
-            ).exists()
-            if has_active_td:
-                raise ValidationError(
-                    "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration."
-                )
+        if diagnostic.is_teledeclared:
+            raise ValidationError(
+                "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration."
+            )
         diagnostic.diagnostic_type = diagnostic_type
         for key, value in values_dict.items():
             setattr(diagnostic, key, value)
@@ -219,6 +215,7 @@ class ImportDiagnosticsView(ABC, APIView):
         return diagnostic
 
     def _teledeclare_diagnostic(self, diagnostic):
+        # TODO: replace with Diagnostic.teledeclare() (or delete completely ???)
         Teledeclaration.validate_diagnostic(diagnostic)
         try:
             Teledeclaration.create_from_diagnostic(diagnostic, self.request.user)
