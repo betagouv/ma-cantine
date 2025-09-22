@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
@@ -9,6 +10,13 @@ const route = useRoute()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteen = computedAsync(async () => await canteenService.fetchCanteen(canteenId), {})
 const satellites = computedAsync(async () => await canteenService.fetchSatellites(canteenId), {})
+
+const satellitesCountSentence = computed(() => {
+  if (!satellites.value.count) return ""
+  const canteenSentence =
+    satellites.value.count > 1 ? "cantines satellites renseignées" : "cantine satellite renseignée"
+  return `${satellites.value.count} / ${canteen.value.satelliteCanteensCount} ${canteenSentence}`
+})
 </script>
 <template>
   <section>
@@ -26,8 +34,7 @@ const satellites = computedAsync(async () => await canteenService.fetchSatellite
     </div>
     <div class="fr-grid-row fr-grid-row--middle" v-if="canteen.isCentralCuisine">
       <p class="fr-col-12 fr-col-md-6 fr-mb-0">
-        {{ satellites.count }} / {{ canteen.satelliteCanteensCount }}
-        {{ satellites.count > 1 ? "cantines satellites renseignées" : "cantine satellite renseignée" }}
+        {{ satellitesCountSentence }}
       </p>
       <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--right">
         <router-link :to="{ name: 'GestionnaireCantineSatellitesAjouter', params: route.canteenUrlComponent }">
