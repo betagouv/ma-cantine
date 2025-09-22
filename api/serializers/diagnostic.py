@@ -129,6 +129,7 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
                 self.fields.pop(field)
 
     def validate(self, data):
+        # TODO: move these rules to the model
         total = self.return_value(self, data, "value_total_ht")
         if total is not None and isinstance(total, Decimal):
             bio = self.return_value(self, data, "value_bio_ht")

@@ -21,8 +21,10 @@ class TestDiagnosticsApi(APITestCase):
         When calling this API unathenticated we expect a 403
         """
         canteen = CanteenFactory.create()
+
         payload = {"year": 2020}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -32,6 +34,7 @@ class TestDiagnosticsApi(APITestCase):
         """
         payload = {"year": 2020}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": 999}), payload)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
@@ -44,6 +47,7 @@ class TestDiagnosticsApi(APITestCase):
 
         payload = {"year": 2020}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -56,6 +60,7 @@ class TestDiagnosticsApi(APITestCase):
 
         payload = {}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -69,6 +74,7 @@ class TestDiagnosticsApi(APITestCase):
 
         payload = {"year": 2020}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @authenticate
@@ -79,22 +85,23 @@ class TestDiagnosticsApi(APITestCase):
         # from the APP
         payload = {"year": 2020, "creation_source": "APP"}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
         self.assertEqual(diagnostic.creation_source, CreationSource.APP)
 
         # defaults to API
         payload = {"year": 2021}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id, year=2021)
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
 
         # returns a 404 if the creation_source is not valid
         payload = {"year": 2022, "creation_source": "UNKNOWN"}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -324,6 +331,7 @@ class TestDiagnosticsApi(APITestCase):
                 )
         except BadRequest:
             pass
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
         self.assertEqual(diagnostic.value_bio_ht, 10)
@@ -343,6 +351,7 @@ class TestDiagnosticsApi(APITestCase):
             "value_total_ht": 2000,
         }
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -361,9 +370,9 @@ class TestDiagnosticsApi(APITestCase):
             ),
             payload,
         )
-        diagnostic.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.year, 2019)
 
     @authenticate
@@ -382,9 +391,9 @@ class TestDiagnosticsApi(APITestCase):
             ),
             payload,
         )
-        diagnostic.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.year, 2020)
 
     def test_edit_diagnostic_via_oauth2(self):
@@ -416,13 +425,13 @@ class TestDiagnosticsApi(APITestCase):
             creation_mtm_medium=None,
         )
         diagnostic.canteen.managers.add(authenticate.user)
+
         payload = {
             "year": 2020,
             "creation_mtm_source": "mtm_source_value",
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
         }
-
         response = self.client.patch(
             reverse(
                 "diagnostic_edition",
@@ -430,9 +439,9 @@ class TestDiagnosticsApi(APITestCase):
             ),
             payload,
         )
-        diagnostic.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.year, 2020)
         self.assertIsNone(diagnostic.creation_mtm_source)
         self.assertIsNone(diagnostic.creation_mtm_campaign)
@@ -445,8 +454,8 @@ class TestDiagnosticsApi(APITestCase):
         """
         diagnostic = DiagnosticFactory.create(year=2019, value_total_ht=10, value_bio_ht=5, value_sustainable_ht=2)
         diagnostic.canteen.managers.add(authenticate.user)
-        payload = {"value_sustainable_ht": 999}
 
+        payload = {"value_sustainable_ht": 999}
         response = self.client.patch(
             reverse(
                 "diagnostic_edition",
@@ -454,23 +463,23 @@ class TestDiagnosticsApi(APITestCase):
             ),
             payload,
         )
-        diagnostic.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.value_sustainable_ht, 2)
 
     @authenticate
     def test_edit_submitted_diagnostic(self):
         """
-        A diagnostic cannot be edited if a submitted teledeclaration
-        object linked to it exists
+        A diagnostic cannot be edited if it has been teledeclared
         """
-        diagnostic = DiagnosticFactory.create(year=2019)
+        date_in_2022_teledeclaration_campaign = "2022-08-30"
+        diagnostic = DiagnosticFactory.create(year=2021)
         diagnostic.canteen.managers.add(authenticate.user)
-        Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+        with freeze_time(date_in_2022_teledeclaration_campaign):
+            diagnostic.teledeclare(applicant=authenticate.user)
 
         payload = {"year": 2020}
-
         response = self.client.patch(
             reverse(
                 "diagnostic_edition",
@@ -479,27 +488,23 @@ class TestDiagnosticsApi(APITestCase):
             payload,
         )
 
-        diagnostic.refresh_from_db()
-
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(diagnostic.year, 2019)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.year, 2021)
 
     @authenticate
     def test_edit_cancelled_diagnostic(self):
         """
-        A diagnostic can be edited if a cancelled teledeclaration
-        object linked to it exists
+        A diagnostic can be edited if its teledeclaration has been cancelled
         """
-        diagnostic = DiagnosticFactory.create(year=2019)
+        date_in_2022_teledeclaration_campaign = "2022-08-30"
+        diagnostic = DiagnosticFactory.create(year=2021)
         diagnostic.canteen.managers.add(authenticate.user)
-        teledeclaration = Teledeclaration.create_from_diagnostic(
-            diagnostic,
-            authenticate.user,
-        )
-        teledeclaration.cancel()
+        with freeze_time(date_in_2022_teledeclaration_campaign):
+            diagnostic.teledeclare(applicant=authenticate.user)
+            diagnostic.cancel()
 
         payload = {"year": 2020}
-
         response = self.client.patch(
             reverse(
                 "diagnostic_edition",
@@ -507,9 +512,9 @@ class TestDiagnosticsApi(APITestCase):
             ),
             payload,
         )
-        diagnostic.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.year, 2020)
 
     @freeze_time("2022-08-30")  # during the 2021 campaign  # but this endpoint doesn't seem to check
@@ -696,10 +701,9 @@ class TestDiagnosticsApi(APITestCase):
         response = self.client.post(
             reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload, format="json"
         )
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
-
         self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
     @authenticate
@@ -721,10 +725,9 @@ class TestDiagnosticsApi(APITestCase):
             payload,
             format="json",
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         diagnostic.refresh_from_db()
-
         self.assertEqual(diagnostic.total_leftovers, Decimal("6.66666"))
 
     @authenticate
@@ -746,10 +749,9 @@ class TestDiagnosticsApi(APITestCase):
             payload,
             format="json",
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         diagnostic.refresh_from_db()
-
         self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
         self.assertEqual(diagnostic.bread_leftovers, Decimal("100"))
 
@@ -772,12 +774,12 @@ class TestDiagnosticsApi(APITestCase):
             payload,
             format="json",
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         errors = response.json()
         self.assertEqual(
             errors["totalLeftovers"][0], "Assurez-vous qu'il n'y a pas plus de 2 chiffres après la virgule."
         )
-
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
@@ -792,10 +794,10 @@ class TestDiagnosticsApi(APITestCase):
             payload,
             format="json",
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         errors = response.json()
         self.assertEqual(errors["totalLeftovers"][0], "Assurez-vous que cette valeur est un chiffre décimal.")
-
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
@@ -811,5 +813,4 @@ class TestDiagnosticsApi(APITestCase):
 
         self.assertEqual(len(body.get("diagnostics")), 1)
         serialized_diag = body.get("diagnostics")[0]
-
         self.assertEqual(serialized_diag["totalLeftovers"], 1234.56)

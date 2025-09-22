@@ -3,7 +3,7 @@ from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from oauth2_provider.contrib.rest_framework.permissions import TokenHasResourceScope
 from rest_framework import permissions
 
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.models import Canteen
 
 
 class IsAuthenticated(permissions.IsAuthenticated):
@@ -73,23 +73,6 @@ class IsCanteenManagerUrlParam(permissions.BasePermission):
             return canteen.managers.filter(id=request.user.id).exists()
         except Canteen.DoesNotExist:
             return False
-
-
-class CanEditDiagnostic(permissions.BasePermission):
-    """
-    This is for actions only permitted by managers of
-    the diagnostic's canteen
-    """
-
-    def has_object_permission(self, request, view, obj):
-        if not isinstance(obj, Diagnostic):
-            return False
-        is_manager = obj.canteen.managers.filter(id=request.user.id).exists()
-        has_submitted_teledeclaration = (
-            obj.teledeclaration_set.filter(status=Teledeclaration.TeledeclarationStatus.SUBMITTED).count() > 0
-        )
-
-        return is_manager and not has_submitted_teledeclaration
 
 
 class IsLinkedCanteenManager(permissions.BasePermission):
