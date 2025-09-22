@@ -4,11 +4,10 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate
 from data.factories import CanteenFactory, UserFactory
 from data.factories.managerinvitation import ManagerInvitationFactory
 from data.models import ManagerInvitation
-
-from .utils import authenticate
 
 
 class TestManagerInvitationApi(APITestCase):

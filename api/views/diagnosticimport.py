@@ -18,6 +18,8 @@ from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
+from api.views import AddManagerView
+from api.views.utils import camelize
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils.siret import normalise_siret
@@ -25,9 +27,6 @@ from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
 from data.utils import CreationSource
-
-from .canteen import AddManagerView
-from .utils import camelize
 
 logger = logging.getLogger(__name__)
 

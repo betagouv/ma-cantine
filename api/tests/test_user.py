@@ -4,9 +4,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import UserFactory
-
-from .utils import authenticate, get_oauth2_token
 
 
 class TestLoggedUserApi(APITestCase):

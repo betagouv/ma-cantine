@@ -9,6 +9,7 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import (
     CanteenFactory,
     DiagnosticFactory,
@@ -18,8 +19,6 @@ from data.factories import (
 )
 from data.models import Canteen, Diagnostic, Teledeclaration
 from data.utils import CreationSource
-
-from .utils import authenticate, get_oauth2_token
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 

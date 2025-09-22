@@ -23,6 +23,7 @@ from api.serializers import (
     FullDiagnosticSerializer,
     TeledeclarationAnalysisSerializer,
 )
+from api.views.utils import camelize
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import (
     CAMPAIGN_DATES,
@@ -30,8 +31,6 @@ from macantine.utils import (
     is_in_teledeclaration,
     is_in_teledeclaration_or_correction,
 )
-
-from .utils import camelize
 
 logger = logging.getLogger(__name__)
 

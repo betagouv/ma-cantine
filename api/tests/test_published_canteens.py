@@ -5,6 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate
 from data.factories import (
     CanteenFactory,
     DiagnosticFactory,
@@ -12,8 +13,6 @@ from data.factories import (
     UserFactory,
 )
 from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration
-
-from .utils import authenticate
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 

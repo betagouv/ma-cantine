@@ -28,11 +28,11 @@ class ResourceActionFullSerializer(ResourceActionSerializer):
         )
 
     def get_resource(self, obj):
-        from .wasteaction import WasteActionSerializer
+        from api.serializers import WasteActionSerializer
 
         return WasteActionSerializer(obj.resource).data
 
     def get_canteen(self, obj):
-        from .canteen import MinimalCanteenSerializer
+        from api.serializers import MinimalCanteenSerializer
 
         return MinimalCanteenSerializer(obj.canteen).data
