@@ -4,10 +4,9 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate
 from data.factories.canteen import CanteenFactory
 from data.factories.user import UserFactory
-
-from .utils import authenticate
 
 
 class TestInquiry(APITestCase):

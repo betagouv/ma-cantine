@@ -15,13 +15,12 @@ from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
+from api.views.utils import camelize
 from common.api import validata
 from common.utils import file_import
 from common.utils.siret import normalise_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
 from data.utils import CreationSource
-
-from .utils import camelize
 
 logger = logging.getLogger(__name__)
 

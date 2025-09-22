@@ -13,6 +13,7 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate
 from common.api.adresse import ADRESSE_CSV_API_URL
 from data.department_choices import Department
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
@@ -26,8 +27,6 @@ from data.models import (
 from data.models.teledeclaration import Teledeclaration
 from data.region_choices import Region
 from data.utils import CreationSource
-
-from .utils import authenticate
 
 NEXT_YEAR = datetime.date.today().year + 1
 

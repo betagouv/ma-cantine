@@ -3,10 +3,9 @@ from decimal import Decimal, InvalidOperation
 
 from rest_framework import serializers
 
+from api.serializers import ShortTeledeclarationSerializer
+from api.serializers.utils import appro_to_percentages
 from data.models import Diagnostic
-
-from .teledeclaration import ShortTeledeclarationSerializer
-from .utils import appro_to_percentages
 
 logger = logging.getLogger(__name__)
 

@@ -1,9 +1,8 @@
 from drf_base64.fields import Base64FileField
 from rest_framework import serializers
 
+from api.serializers.utils import appro_to_percentages
 from data.models import Purchase
-
-from .utils import appro_to_percentages
 
 
 class PurchaseSerializer(serializers.ModelSerializer):

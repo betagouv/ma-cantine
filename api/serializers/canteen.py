@@ -3,20 +3,19 @@ import logging
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from data.models import Canteen, CanteenImage, Diagnostic, Sector
-
-from .diagnostic import (
+from api.serializers import (
     ApproDiagnosticSerializer,
+    CanteenManagerSerializer,
     CentralKitchenDiagnosticSerializer,
     FullDiagnosticSerializer,
+    ManagerInvitationSerializer,
     PublicApproDiagnosticSerializer,
     PublicDiagnosticSerializer,
     PublicServiceDiagnosticSerializer,
+    ResourceActionFullSerializer,
+    SectorSerializer,
 )
-from .managerinvitation import ManagerInvitationSerializer
-from .resourceaction import ResourceActionFullSerializer
-from .sector import SectorSerializer
-from .user import CanteenManagerSerializer
+from data.models import Canteen, CanteenImage, Diagnostic, Sector
 
 logger = logging.getLogger(__name__)
 

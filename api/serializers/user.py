@@ -68,7 +68,7 @@ class CanteenManagerSerializer(serializers.ModelSerializer):
         )
 
 
-class BlogPostAuthor(serializers.ModelSerializer):
+class BlogPostAuthorSerializer(serializers.ModelSerializer):
     avatar = Base64ImageField(required=False, allow_null=True)
 
     class Meta:

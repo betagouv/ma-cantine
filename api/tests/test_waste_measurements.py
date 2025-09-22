@@ -6,10 +6,9 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate
 from data.factories import CanteenFactory, WasteMeasurementFactory
 from data.models import Canteen, WasteMeasurement
-
-from .utils import authenticate
 
 
 class TestWasteMeasurementsApi(APITestCase):
