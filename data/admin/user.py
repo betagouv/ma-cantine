@@ -33,11 +33,13 @@ class MaCanteenUserAdmin(UserAdmin):
         "date_joined",
     )
     search_fields = (
+        "id",
         "first_name",
         "last_name",
         "email",
         "username",
     )
+    search_help_text = "La recherche est faite sur les champs : ID, prénom, nom, email, nom d'utilisateur."
     readonly_fields = (
         "last_login",
         "date_joined",
