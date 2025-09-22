@@ -228,6 +228,7 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
 
 
 class DiagnosticAnalysisSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
     creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)
     canteen_id = serializers.IntegerField(source="canteen_snapshot.id", read_only=True)
     name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
@@ -298,7 +299,7 @@ class DiagnosticAnalysisSerializer(serializers.ModelSerializer):
         model = Diagnostic
         fields = (
             # diagnostic fields
-            "id",
+            "id",  # teledeclaration_id  # TODO: replace with diagnostic_id
             "diagnostic_type",
             "teledeclaration_mode",
             "creation_date",  # teledeclaration_date
@@ -373,6 +374,9 @@ class DiagnosticAnalysisSerializer(serializers.ModelSerializer):
             "genere_par_cuisine_centrale",
         )
         read_only_fields = fields
+
+    def get_id(self, obj):
+        return obj.latest_submitted_teledeclaration.id if obj.latest_submitted_teledeclaration else None
 
     def get_cout_denrees(self, obj):
         return obj.meal_price if obj.meal_price else -1
