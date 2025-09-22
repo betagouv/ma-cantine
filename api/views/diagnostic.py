@@ -18,10 +18,10 @@ from rest_framework.views import APIView
 
 from api.exceptions import DuplicateException
 from api.permissions import (
-    CanEditDiagnostic,
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManager,
+    IsLinkedCanteenManager,
 )
 from api.serializers import DiagnosticAndCanteenSerializer, ManagerDiagnosticSerializer
 from api.views.utils import update_change_reason_with_auth
@@ -81,7 +81,7 @@ class DiagnosticCreateView(CreateAPIView):
 class DiagnosticUpdateView(UpdateAPIView):
     permission_classes = [
         IsAuthenticatedOrTokenHasResourceScope,
-        CanEditDiagnostic,
+        IsLinkedCanteenManager,
     ]
     required_scopes = ["canteen"]
     model = Diagnostic
@@ -92,6 +92,8 @@ class DiagnosticUpdateView(UpdateAPIView):
         return JsonResponse({"error": "Only PATCH request supported in this resource"}, status=405)
 
     def perform_update(self, serializer):
+        if self.get_object().is_teledeclared:
+            raise PermissionDenied("Ce n'est pas possible de modifier un diagnostic télédéclaré.")
         serializer.is_valid(raise_exception=True)
         diagnostic = serializer.save()
         update_change_reason_with_auth(self, diagnostic)
