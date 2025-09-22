@@ -22,13 +22,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", include=["macantine.tasks"])
 app.config_from_object(dict(worker_hijack_root_logger=False, result_extended=True))
 
-hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
-midnights = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
-daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
-nightly = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
-nightly_week = crontab(hour=3, minute=0, day_of_week="1-5")  # Monday to Friday 3AM
-weekly = crontab(hour=4, minute=0, day_of_week=6)  # Saturday 4AM
 every_minute = crontab(minute="*/1")  # For testing purposes
+hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
+daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
+nightly_0 = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
+nightly_4 = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
+nightly_5 = crontab(hour=5, minute=0, day_of_week="*")  # Every day at 5AM
+weekly = crontab(hour=4, minute=0, day_of_week=6)  # Saturday 4AM
 
 app.conf.beat_schedule = {
     "no_canteen_first_reminder": {
@@ -45,7 +45,7 @@ app.conf.beat_schedule = {
     },
     "fill_missing_geolocation_data_using_insee_code": {
         "task": "macantine.tasks.fill_missing_geolocation_data_using_insee_code",
-        "schedule": nightly,
+        "schedule": nightly_4,
     },
     "fill_missing_insee_code_using_siret": {
         "task": "macantine.tasks.fill_missing_insee_code_using_siret",
@@ -53,15 +53,15 @@ app.conf.beat_schedule = {
     },
     "delete_old_historical_records": {
         "task": "macantine.tasks.delete_old_historical_records",
-        "schedule": nightly,
+        "schedule": nightly_5,
     },
     "export_datasets": {
         "task": "macantine.tasks.continous_datasets_export",
-        "schedule": nightly_week,
+        "schedule": nightly_5,
     },
     "update_brevo_contacts": {
         "task": "macantine.tasks.update_brevo_contacts",
-        "schedule": midnights,
+        "schedule": nightly_0,
     },
 }
 
