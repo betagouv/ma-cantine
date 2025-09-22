@@ -215,7 +215,7 @@ class ImportDiagnosticsView(ABC, APIView):
         return diagnostic
 
     def _teledeclare_diagnostic(self, diagnostic):
-        # TODO: replace with Diagnostic.teledeclare()
+        # TODO: replace with Diagnostic.teledeclare() (or delete completely ???)
         Teledeclaration.validate_diagnostic(diagnostic)
         try:
             Teledeclaration.create_from_diagnostic(diagnostic, self.request.user)
