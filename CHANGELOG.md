@@ -6,6 +6,30 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.32.1](https://github.com/betagouv/ma-cantine/compare/v2025.32.0...v2025.32.1) (2025-09-23)
+
+
+### Améliorations
+
+* **Diagnostic:** nouveau champ pour stocker la valeur annuelle totale des achats egalim hors bio (aggrégées si TD détaillée) [1TD1Site] ([#5677](https://github.com/betagouv/ma-cantine/issues/5677)) ([79acdb9](https://github.com/betagouv/ma-cantine/commit/79acdb96609c81b373b1d94c6e7054d2843a8b80))
+* **Diagnostics:** API : une fois le diagnostic télédéclaré, le mettre en lecture-seule [1TD1Site] ([#5707](https://github.com/betagouv/ma-cantine/issues/5707)) ([f91efde](https://github.com/betagouv/ma-cantine/commit/f91efde26d3d5af885aac803437edfa999bd256c))
+* **Diagnostics:** Imports : une fois le diagnostic télédéclaré, le mettre en lecture-seule [1TD1Site] ([#5706](https://github.com/betagouv/ma-cantine/issues/5706)) ([98e29d6](https://github.com/betagouv/ma-cantine/commit/98e29d61c32f3dcdaa16cd1f247e369d2caefc6a))
+
+
+### Corrections (bugs, typos...)
+
+* **Admin:** permet de supprimer en rapidemment les cantines d'un gestionnaire ([#5701](https://github.com/betagouv/ma-cantine/issues/5701)) ([c2f8900](https://github.com/betagouv/ma-cantine/commit/c2f89008ea449d7a01b63f3c225531535fdaef3c))
+* **Cantines:** Commande pour remplir le champ declaration_donnees_YEAR: prendre en compte les cantines supprimées ([#5674](https://github.com/betagouv/ma-cantine/issues/5674)) ([a8d4bc9](https://github.com/betagouv/ma-cantine/commit/a8d4bc900353a95fb643ad407a85006bd3f159fd))
+
+
+### Technique
+
+* **Admin:** permettre de chercher par ID les cantines, diagnostics & users ([#5704](https://github.com/betagouv/ma-cantine/issues/5704)) ([5e1f1e2](https://github.com/betagouv/ma-cantine/commit/5e1f1e204136e0a851097298e70f939f862b3ad3))
+* **Cantines:** helper method pour réinitialiser les données geo (et permettre de relancer le geo bot) ([#5695](https://github.com/betagouv/ma-cantine/issues/5695)) ([11d1cb6](https://github.com/betagouv/ma-cantine/commit/11d1cb65e1f1453e86d4b307245a48402f6d070d))
+* **Open Data:** Cantines : bouger la requête dans une ViewSet dédié pour homogénéiser avec les autres exports ([#5697](https://github.com/betagouv/ma-cantine/issues/5697)) ([ae65f1e](https://github.com/betagouv/ma-cantine/commit/ae65f1efcdd8d3e8007146638fd4f3fd1c3d7467))
+* **Open Data:** clarifier la commande export_dataset ([#5699](https://github.com/betagouv/ma-cantine/issues/5699)) ([ca7a127](https://github.com/betagouv/ma-cantine/commit/ca7a127348434a63b4d180bcd306ed7c18a6da58))
+* **Open Data:** lancer l'export le weekend et après le geo bot ([#5703](https://github.com/betagouv/ma-cantine/issues/5703)) ([7661074](https://github.com/betagouv/ma-cantine/commit/7661074cdf7287437c7875cb50ad79c74dc5310a))
+
 ## [2025.32.0](https://github.com/betagouv/ma-cantine/compare/v2025.31.0...v2025.32.0) (2025-09-12)
 
 
