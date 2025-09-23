@@ -199,7 +199,7 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
 
 @requests_mock.Mocker()
 class TestGeolocationBotUsingSiret(TestCase):
-    api_url = "https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&q="
+    api_url = "https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&mtm_campaign=ma-cantine&q="
 
     def test_candidate_canteens(self, _):
         """
