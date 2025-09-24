@@ -1,3 +1,5 @@
+from collections import Counter
+
 from django.core.management.base import BaseCommand
 from simple_history.utils import update_change_reason
 
@@ -41,12 +43,15 @@ class Command(BaseCommand):
             self.set_canteen_id_before_v4(apply)
 
     def set_canteen_id_before_v4(self, apply):
-        diagnostic_updated = 0
+        diagnostic_updated_count = 0
         # teledeclaration_qs = Teledeclaration.objects.exclude(declared_data__version__gte=4)  # stored as string, harder...
         diagnostic_qs = (
             Diagnostic.objects.select_related("canteen").teledeclared().exclude(teledeclaration_version__gte=4)
-        )  # 304
+        )
         print("Diagnostics teledeclared with version < 4:", diagnostic_qs.count())
+        print("List of versions found:", Counter(diagnostic_qs.values_list("teledeclaration_version", flat=True)))
+        print("List of years found:", Counter(diagnostic_qs.values_list("year", flat=True)))
+
         for diagnostic in diagnostic_qs:
             if diagnostic.canteen:
                 canteen_snapshot_temp = diagnostic.canteen_snapshot
@@ -58,7 +63,7 @@ class Command(BaseCommand):
                             diagnostic.save(update_fields=["canteen_snapshot"])
                             update_change_reason(diagnostic, "Script: set missing canteen_id in canteen_snapshot")
                             # TODO?? also update the Teledeclaration object
-                        diagnostic_updated += 1
+                        diagnostic_updated_count += 1
                     else:
                         print(
                             f"Diagnostic {diagnostic.id} already has a canteen_id {canteen_snapshot_temp['id']}, skipping"
@@ -67,4 +72,4 @@ class Command(BaseCommand):
                     print(f"Diagnostic {diagnostic.id} has no canteen_snapshot, skipping")
             else:
                 print(f"Diagnostic {diagnostic.id} has no canteen, skipping")
-        print("Diagnostics updated:", diagnostic_updated)
+        print("Done! Diagnostics updated:", diagnostic_updated_count)
