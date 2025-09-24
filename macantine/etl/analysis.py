@@ -89,23 +89,8 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             logger.warning("Dataset is empty. Skipping transformation")
             return
 
-        print(self.df.shape[0])
         self.flatten_central_kitchen_td()
-        print(self.df.shape[0])
         self.delete_duplicates_cc_csat()
-        print(self.df.shape[0])
-        # print(self.df["value_total_ht"].sum())
-        # print(self.df["value_bio_ht"].sum())
-        # print(self.df["value_somme_egalim_avec_bio_ht"].sum())
-        # print(self.df["value_somme_egalim_hors_bio_ht"].sum())
-        # df_2024 = self.df[self.df["year"] == 2024].copy()
-        # print(df_2024.shape[0])
-        # print(df_2024["value_total_ht"].sum())
-        # print(df_2024["value_bio_ht"].sum())
-        # print(df_2024["value_somme_egalim_avec_bio_ht"].sum())
-        # print(df_2024["value_somme_egalim_hors_bio_ht"].sum())
-        # df_2021 = self.df[self.df["year"] == 2021].copy()
-        # print(list(df_2021["id"].unique()))
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def load_dataset(self, versionning=True):
@@ -118,7 +103,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                 f"Loading {len(self.df)} objects in db. Version {self.extracted_table_name + '_' + datetime.today().strftime('%Y_%m_%d')}"
             )
             self.warehouse.insert_dataframe(
-                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d") + "_2"
+                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d")
             )
         else:
             super().load_dataset()
