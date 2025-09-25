@@ -19,10 +19,9 @@ canteenService.fetchSatellites(canteenId).then((response) => {
 })
 
 const satellitesCountSentence = computed(() => {
-  if (!satellites.value.count) return "Aucune cantine satellite renseignée"
-  const canteenSentence =
-    satellites.value.count > 1 ? "cantines satellites renseignées" : "cantine satellite renseignée"
-  return `${satellites.value.count} / ${canteen.value.satelliteCanteensCount} ${canteenSentence}`
+  if (satellites.value.length === 0) return "Aucune cantine satellite renseignée"
+  else if (satellites.value.length === 1) return "1 cantine satellite renseignée"
+  else return `${satellites.value.length} cantines satellites renseignées`
 })
 
 /* Table */
