@@ -14,12 +14,9 @@ const canteen = computedAsync(async () => await canteenService.fetchCanteen(cant
 
 /* Satellites  */
 const satellites = ref([])
-const updateSatellites = () => {
-  canteenService.fetchSatellites(canteenId).then((response) => {
-    satellites.value = response
-  })
-}
-updateSatellites()
+canteenService.fetchSatellites(canteenId).then((response) => {
+  satellites.value = response
+})
 
 const satellitesCountSentence = computed(() => {
   if (!satellites.value.count) return "Aucune cantine satellite renseignée"
@@ -72,6 +69,11 @@ const tableRows = computed(() => {
         }
       })
 })
+
+/* Rows */
+const removeRow = (id) => {
+  satellites.value = satellites.value.filter((sat) => sat.id !== id)
+}
 </script>
 <template>
   <section class="gestionnaire-cantine-satellites-gerer">
@@ -128,7 +130,7 @@ const tableRows = computed(() => {
           <CanteenButtonUnlink
             :canteen="cell.canteen"
             :satellite="cell.satellite"
-            @satelliteRemoved="updateSatellites()"
+            @satelliteRemoved="removeRow(cell.satellite.id)"
           />
         </template>
         <template v-else>
