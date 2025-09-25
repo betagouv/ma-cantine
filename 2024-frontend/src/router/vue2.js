@@ -151,13 +151,6 @@ const vue2routes = [
       authenticationRequired: true,
     },
   },
-  {
-    path: "/modifier-ma-cantine/:canteenUrlComponent/satellites",
-    name: "SatelliteManagement",
-    meta: {
-      title: "Gérer mes satellites",
-    },
-  },
 ]
 
 export default vue2routes

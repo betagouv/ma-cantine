@@ -31,7 +31,6 @@ import NotFound from "@/views/NotFound"
 import ManagementPage from "@/views/ManagementPage"
 import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
-import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
@@ -290,15 +289,6 @@ const routes = [
     component: CanteenEditor,
     redirect: { name: "CanteenForm" },
     children: [
-      {
-        path: "satellites",
-        name: "SatelliteManagement",
-        component: SatelliteManagement,
-        meta: {
-          authenticationRequired: true,
-          title: "Gérer mes satellites",
-        },
-      },
       {
         path: "gestionnaires",
         name: "CanteenManagers",
