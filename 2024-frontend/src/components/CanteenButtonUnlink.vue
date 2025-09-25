@@ -1,23 +1,75 @@
 <script setup>
 import { ref } from "vue"
+
 const props = defineProps(["canteen", "satellite"])
 const loading = ref(false)
+const opened = ref(false)
 console.log(props.canteen, props.satellite)
+
+const toggleModal = () => {
+  opened.value = !opened.value
+}
 </script>
 
 <template>
   <DsfrButton
     secondary
     label="Retirer de mes satellites"
+    @click="toggleModal()"
     :disabled="loading"
     icon="fr-icon-close-line"
     class="canteen-button-unlink"
   />
+  <DsfrModal
+    v-if="opened"
+    :opened="opened"
+    class="canteen-button-unlink__modal fr-modal--opened"
+    :title="`Souhaitez-vous vraiment retirer la cantine «&nbsp;${satellite.name}&nbsp;» de vos satellites ?`"
+    @close="toggleModal()"
+    :actions="[
+      {
+        label: 'Je confirme le retrait de la cantine',
+        onClick() {
+          console.log('Suppression à faire')
+        },
+      },
+      {
+        label: 'Annuler',
+        secondary: true,
+        onClick() {
+          toggleModal()
+        },
+      },
+    ]"
+  >
+    <template #default>
+      <p class="fr-mb-2w">
+        En confirmant cette demande la cantine « {{ satellite.name }} » ne fera plus parti de celles fournies par votre
+        établissement « {{ canteen.name }} » et donc :
+      </p>
+      <ul>
+        <li>
+          <p>
+            vous ne pourrez plus télédéclarer ses données
+          </p>
+        </li>
+        <li>
+          <p>
+            si vous avez déjà effecté une télédéclaration ses donnnées seront conservées
+          </p>
+        </li>
+      </ul>
+    </template>
+  </DsfrModal>
 </template>
 
 <style lang="scss">
 .canteen-button-unlink {
   color: var(--text-action-high-red-marianne) !important;
   box-shadow: inset 0 0 0 1px var(--text-action-high-red-marianne) !important;
+
+  &__modal {
+    white-space: initial !important;
+  }
 }
 </style>
