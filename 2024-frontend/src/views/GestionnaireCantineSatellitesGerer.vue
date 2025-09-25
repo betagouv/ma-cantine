@@ -74,7 +74,7 @@ const tableRows = computed(() => {
 })
 </script>
 <template>
-  <section>
+  <section class="gestionnaire-cantine-satellites-gerer">
     <div class="fr-col-12 fr-col-md-8">
       <h1>{{ route.meta.title }}</h1>
       <p v-if="!canteen.isCentralCuisine">
@@ -108,6 +108,7 @@ const tableRows = computed(() => {
       :headers-row="tableHeaders"
       :rows="tableRows"
       :sortable-rows="['name', 'siretSiren', 'dailyMealCount']"
+      class="gestionnaire-cantine-satellites-gerer__table"
     >
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'edit'">
@@ -134,3 +135,13 @@ const tableRows = computed(() => {
     </DsfrDataTable>
   </section>
 </template>
+
+<style lang="scss">
+.gestionnaire-cantine-satellites-gerer {
+  &__table {
+    td {
+      width: 20% !important;
+    }
+  }
+}
+</style>
