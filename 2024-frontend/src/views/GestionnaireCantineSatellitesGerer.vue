@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
@@ -11,7 +11,15 @@ import CanteenButtonUnlink from "@/components/CanteenButtonUnlink.vue"
 const route = useRoute()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteen = computedAsync(async () => await canteenService.fetchCanteen(canteenId), {})
-const satellites = computedAsync(async () => await canteenService.fetchSatellites(canteenId), {})
+
+/* Satellites  */
+const satellites = ref([])
+const updateSatellites = () => {
+  canteenService.fetchSatellites(canteenId).then((response) => {
+    satellites.value = response
+  })
+}
+updateSatellites()
 
 const satellitesCountSentence = computed(() => {
   if (!satellites.value.count) return "Aucune cantine satellite renseignée"
@@ -20,6 +28,7 @@ const satellitesCountSentence = computed(() => {
   return `${satellites.value.count} / ${canteen.value.satelliteCanteensCount} ${canteenSentence}`
 })
 
+/* Table */
 const tableHeaders = [
   {
     key: "name",
@@ -112,7 +121,11 @@ const tableRows = computed(() => {
           <CanteenButtonJoin v-else :id="cell.sat.id" :name="cell.sat.name" />
         </template>
         <template v-else-if="colKey === 'remove'">
-          <CanteenButtonUnlink :canteen="cell.canteen" :satellite="cell.satellite" />
+          <CanteenButtonUnlink
+            :canteen="cell.canteen"
+            :satellite="cell.satellite"
+            @satelliteRemoved="updateSatellites()"
+          />
         </template>
         <template v-else>
           {{ cell }}

@@ -5,6 +5,7 @@ import canteensService from "@/services/canteens"
 
 const store = useRootStore()
 const props = defineProps(["canteen", "satellite"])
+const emit = defineEmits(["satelliteRemoved"])
 const loading = ref(false)
 const opened = ref(false)
 
@@ -23,7 +24,7 @@ const unlinkSatellite = () => {
       })
       loading.value = false
       toggleModal()
-      // Todo met à jour le tableau
+      emit("satelliteRemoved")
     })
     .catch((e) => {
       loading.value = false
