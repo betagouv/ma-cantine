@@ -62,8 +62,8 @@ const tableRows = computed(() => {
           dailyMealCount: sat.dailyMealCount,
           edit: {
             userCan: sat.userCanView,
-            canteenComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
-            sat: sat,
+            satelliteComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
+            satellite: sat,
           },
           remove: {
             satellite: sat,
@@ -117,12 +117,12 @@ const tableRows = computed(() => {
         <template v-if="colKey === 'edit'">
           <router-link
             v-if="cell.userCan"
-            :to="{ name: 'GestionnaireCantineModifier', params: { canteenUrlComponent: cell.canteenComponentUrl } }"
+            :to="{ name: 'GestionnaireCantineModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
             class="ma-cantine--unstyled-link"
           >
             <DsfrButton tertiary label="Modifier" />
           </router-link>
-          <CanteenButtonJoin v-else :id="cell.sat.id" :name="cell.sat.name" />
+          <CanteenButtonJoin v-else :id="cell.satellite.id" :name="cell.satellite.name" />
         </template>
         <template v-else-if="colKey === 'remove'">
           <CanteenButtonUnlink
