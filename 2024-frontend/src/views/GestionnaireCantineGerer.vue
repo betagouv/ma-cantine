@@ -151,7 +151,10 @@ const getMinistrieName = (canteenMinistrySlug) => {
           <h2 class="fr-h6">Informations générées</h2>
           <p>
             À partir des informations renseignées lors de la création de votre établissement, nous avons pu en générer
-            de nouvelles en croisant vos données avec nos référentiels.
+            de nouvelles en croisant vos données avec d'autres référentiels :
+            <a href="https://france-pat.fr" target="_blank">France PAT</a>
+            et
+            <a href="https://annuaire-entreprises.data.gouv.fr" target="_blank">l'annuaire des entreprises</a>
           </p>
           <ul class="ma-cantine--flex-grow">
             <li v-for="info in canteenInfos.notEditable" :key="info.name">
