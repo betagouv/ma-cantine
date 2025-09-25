@@ -48,7 +48,7 @@ class TestRelationCentralSatellite(APITestCase):
 
         response = self.client.get(reverse("list_create_update_satellite", kwargs={"canteen_pk": central.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()["results"]
+        body = response.json()
 
         self.assertEqual(len(body), 2)
         satellite_1_result = next(canteen for canteen in body if canteen["id"] == satellite_1.id)
