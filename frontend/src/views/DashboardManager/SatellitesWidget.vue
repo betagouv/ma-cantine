@@ -89,7 +89,7 @@ export default {
         .then((response) => response.json())
         .then((response) => {
           this.satelliteCount = response.length
-          this.satellites = response
+          this.satellites = response.split(0, 3)
         })
     },
     isSatellitePublished(canteen) {
