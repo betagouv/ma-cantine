@@ -1,13 +1,34 @@
 <script setup>
 import { ref } from "vue"
+import { useRootStore } from "@/stores/root"
+import canteensService from "@/services/canteens"
 
+const store = useRootStore()
 const props = defineProps(["canteen", "satellite"])
 const loading = ref(false)
 const opened = ref(false)
-console.log(props.canteen, props.satellite)
 
 const toggleModal = () => {
   opened.value = !opened.value
+}
+
+const unlinkSatellite = () => {
+  loading.value = true
+  canteensService
+    .unlinkSatellite(props.canteen.id, props.satellite.id)
+    .then(() => {
+      store.notify({
+        title: "Retrait de la cantine effectué",
+        message: `La cantine ${props.satellite.name} ne fait plus partie de vos satellites.`,
+      })
+      loading.value = false
+      toggleModal()
+      // Todo met à jour le tableau
+    })
+    .catch((e) => {
+      loading.value = false
+      store.notifyServerError(e)
+    })
 }
 </script>
 
@@ -30,7 +51,7 @@ const toggleModal = () => {
       {
         label: 'Je confirme le retrait de la cantine',
         onClick() {
-          console.log('Suppression à faire')
+          unlinkSatellite()
         },
       },
       {

@@ -79,6 +79,19 @@ const fetchSatellites = (canteenId) => {
     .catch((e) => e)
 }
 
+const unlinkSatellite = (centralId, satelliteId) => {
+  return fetch(`/api/v1/canteens/${centralId}/satellites/${satelliteId}/unlink/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 const claimCanteen = (id) => {
   return fetch(`/api/v1/canteens/${id}/claim/`, {
     method: "POST",
@@ -114,4 +127,5 @@ export default {
   teamJoinRequest,
   addSatellite,
   fetchSatellites,
+  unlinkSatellite,
 }
