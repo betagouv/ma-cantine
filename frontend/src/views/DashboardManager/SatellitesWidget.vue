@@ -88,8 +88,8 @@ export default {
       fetch(url)
         .then((response) => response.json())
         .then((response) => {
-          this.satelliteCount = response.count
-          this.satellites = response.results
+          this.satelliteCount = response.length
+          this.satellites = response
         })
     },
     isSatellitePublished(canteen) {
