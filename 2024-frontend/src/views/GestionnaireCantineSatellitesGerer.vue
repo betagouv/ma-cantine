@@ -53,9 +53,9 @@ const tableHeaders = [
 ]
 
 const tableRows = computed(() => {
-  return !satellites.value.results
+  return !satellites.value
     ? []
-    : satellites.value.results.map((sat) => {
+    : satellites.value.map((sat) => {
         return {
           name: sat.name,
           siretSiren: sat.siret || sat.sirenUniteLegale,
@@ -108,6 +108,9 @@ const tableRows = computed(() => {
       :headers-row="tableHeaders"
       :rows="tableRows"
       :sortable-rows="['name', 'siretSiren', 'dailyMealCount']"
+      :pagination="true"
+      :pagination-options="[10, 50, 100]"
+      pagination-wrapper-class="fr-mt-3w"
       class="gestionnaire-cantine-satellites-gerer__table"
     >
       <template #cell="{ colKey, cell }">
