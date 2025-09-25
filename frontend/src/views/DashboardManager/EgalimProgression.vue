@@ -84,7 +84,14 @@
         Veuillez ajouter vos satellites avant télédéclarer.
       </p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-        <v-btn :to="{ name: 'SatelliteManagement' }" color="primary" class="fr-text font-weight-medium">
+        <v-btn
+          :to="{
+            name: 'GestionnaireCantineSatellitesGerer',
+            params: { canteenUrlComponent: canteenUrlComponent },
+          }"
+          color="primary"
+          class="fr-text font-weight-medium"
+        >
           Gérer mes satellites
         </v-btn>
       </v-card-actions>

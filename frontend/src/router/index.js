@@ -493,6 +493,10 @@ const vue3Routes = [
     name: "GestionnaireCantineGerer",
   },
   {
+    path: "/gestion/cantines/:canteenUrlComponent/satellites/gerer",
+    name: "GestionnaireCantineSatellitesGerer",
+  },
+  {
     path: "/gestion/cantines/:canteenUrlComponent/satellites/ajouter",
     name: "GestionnaireCantineSatellitesAjouter",
   },

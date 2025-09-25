@@ -114,7 +114,13 @@
       </v-col>
       <v-col cols="12">
         <p>
-          <v-btn :to="{ name: 'SatelliteManagement' }" outlined small color="primary" class="fr-btn--tertiary px-2">
+          <v-btn
+            :to="{ name: 'GestionnaireCantineSatellitesGerer' }"
+            outlined
+            small
+            color="primary"
+            class="fr-btn--tertiary px-2"
+          >
             Gérer mes satellites
           </v-btn>
         </p>
