@@ -6,6 +6,7 @@ import canteenService from "@/services/canteens.js"
 import urlService from "@/services/urls.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
+import CanteenButtonUnlink from "@/components/CanteenButtonUnlink.vue"
 
 const route = useRoute()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
@@ -38,7 +39,7 @@ const tableHeaders = [
   },
   {
     key: "remove",
-    label: "Enlever",
+    label: "Retirer",
   },
 ]
 
@@ -55,7 +56,10 @@ const tableRows = computed(() => {
             canteenComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
             sat: sat,
           },
-          delete: "a faire",
+          remove: {
+            satellite: sat,
+            canteen: canteen.value,
+          },
         }
       })
 })
@@ -106,6 +110,9 @@ const tableRows = computed(() => {
             <DsfrButton tertiary label="Modifier" />
           </router-link>
           <CanteenButtonJoin v-else :id="cell.sat.id" :name="cell.sat.name" />
+        </template>
+        <template v-else-if="colKey === 'remove'">
+          <CanteenButtonUnlink :canteen="cell.canteen" :satellite="cell.satellite" />
         </template>
         <template v-else>
           {{ cell }}
