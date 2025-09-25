@@ -84,7 +84,7 @@ const getPrettyValue = (info) => {
       prettyValue = ""
       break
     }
-    case typeof value === "object": {
+    case typeof value === "object" && value !== null: {
       prettyValue = value.join(", ")
       break
     }
