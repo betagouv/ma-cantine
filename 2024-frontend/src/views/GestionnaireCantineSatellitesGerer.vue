@@ -13,7 +13,7 @@ const canteen = computedAsync(async () => await canteenService.fetchCanteen(cant
 const satellites = computedAsync(async () => await canteenService.fetchSatellites(canteenId), {})
 
 const satellitesCountSentence = computed(() => {
-  if (!satellites.value.count) return ""
+  if (!satellites.value.count) return "Aucune cantine satellite renseignée"
   const canteenSentence =
     satellites.value.count > 1 ? "cantines satellites renseignées" : "cantine satellite renseignée"
   return `${satellites.value.count} / ${canteen.value.satelliteCanteensCount} ${canteenSentence}`
@@ -89,7 +89,7 @@ const tableRows = computed(() => {
       </div>
     </div>
     <DsfrDataTable
-      v-if="tableRows"
+      v-if="tableRows.length > 0"
       title="Vos cantines satellites"
       no-caption
       :headers-row="tableHeaders"
