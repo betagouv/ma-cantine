@@ -146,6 +146,11 @@ const removeRow = (id) => {
   &__table {
     td {
       width: 20% !important;
+      white-space: initial !important;
+    }
+
+    .fr-select {
+      width: 10rem !important;
     }
   }
 }
