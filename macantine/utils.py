@@ -12,11 +12,6 @@ logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
-# increment this when the teledeclaration format changes
-# and update docs/teledeclaration_versions.md
-TELEDECLARATION_CURRENT_VERSION = 15
-
-
 def convert_date_string_to_datetime(date_string, time_start_or_end="start"):
     """
     Input: 2025-01-07, "start"
