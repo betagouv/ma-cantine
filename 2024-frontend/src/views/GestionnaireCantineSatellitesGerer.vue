@@ -110,7 +110,8 @@ const removeRow = (id) => {
       :rows="tableRows"
       :sortable-rows="['name', 'siretSiren', 'dailyMealCount']"
       :pagination="true"
-      :pagination-options="[10, 50, 100]"
+      :pagination-options="[50, 100, 200]"
+      :rows-per-page="50"
       pagination-wrapper-class="fr-mt-3w"
       class="gestionnaire-cantine-satellites-gerer__table"
     >
