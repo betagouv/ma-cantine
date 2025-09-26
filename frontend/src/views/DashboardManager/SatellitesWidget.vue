@@ -39,9 +39,9 @@
             params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
           }"
           color="primary"
-          :outlined="!!satellites.length"
+          outlined
         >
-          {{ satellites.length ? "Modifier" : "Ajouter mes satellites" }}
+          Gérer mes satellites
         </v-btn>
       </p>
     </v-card-actions>
