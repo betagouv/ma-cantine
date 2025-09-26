@@ -1556,9 +1556,7 @@ class TestCanteenStatusApi(APITestCase):
         city = "Paris 15e Arrondissement"
         postcode = "75015"
         insee_code = "75115"
-        sirene_api_url = (
-            f"https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&q={siret}"
-        )
+        sirene_api_url = f"https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&mtm_campaign=ma-cantine&q={siret}"
         sirene_mocked_response = {
             "results": [
                 {

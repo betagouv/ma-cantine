@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 RECHERCHE_ENTREPRISES_API_URL = "https://recherche-entreprises.api.gouv.fr/search"
-DEFAULT_PARAMS = "etat_administratif=A&page=1&per_page=1"
+DEFAULT_PARAMS = "etat_administratif=A&page=1&per_page=1&mtm_campaign=ma-cantine"
 
 
 def get_enseigne_name(etablissement):
