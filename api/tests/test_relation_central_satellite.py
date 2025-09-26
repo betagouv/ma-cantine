@@ -35,6 +35,14 @@ class TestRelationCentralSatellite(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
         )
+        # satellite with sirent
+        satellite_3 = CanteenFactory.create(
+            central_producer_siret=central_siret,
+            siren_unite_legale="227306566",
+            siret="",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            managers=[authenticate.user],
+        )
         # the following canteen should not be returned
         CanteenFactory.create()
         # neither should this canteen which isn't the satellite production type
@@ -47,11 +55,16 @@ class TestRelationCentralSatellite(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        self.assertEqual(len(body), 2)
+        self.assertEqual(len(body), 3)
+
         satellite_1_result = next(canteen for canteen in body if canteen["id"] == satellite_1.id)
         self.assertEqual(satellite_1_result["siret"], satellite_1.siret)
         self.assertEqual(satellite_1_result["name"], satellite_1.name)
         self.assertEqual(satellite_1_result["dailyMealCount"], satellite_1.daily_meal_count)
+
+        satellite_3_result = next(canteen for canteen in body if canteen["id"] == satellite_3.id)
+        print(satellite_3_result)
+        self.assertEqual(satellite_3_result["sirenUniteLegale"], satellite_3.siren_unite_legale)
 
         # just checking if satellite 2 is in there too
         satellite_2_result = next(canteen for canteen in body if canteen["id"] == satellite_2.id)
