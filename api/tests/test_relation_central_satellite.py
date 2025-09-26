@@ -35,7 +35,7 @@ class TestRelationCentralSatellite(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
         )
-        # satellite with sirent
+        # satellite with siren
         satellite_3 = CanteenFactory.create(
             central_producer_siret=central_siret,
             siren_unite_legale="227306566",
