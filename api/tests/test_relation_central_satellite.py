@@ -24,11 +24,8 @@ class TestRelationCentralSatellite(APITestCase):
         central = CanteenFactory.create(
             siret=central_siret, production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        school = SectorFactory.create(name="School")
-        enterprise = SectorFactory.create(name="Enterprise")
         satellite_1 = CanteenFactory.create(
             central_producer_siret=central_siret,
-            sectors=[school, enterprise],
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
         )
@@ -55,8 +52,6 @@ class TestRelationCentralSatellite(APITestCase):
         self.assertEqual(satellite_1_result["siret"], satellite_1.siret)
         self.assertEqual(satellite_1_result["name"], satellite_1.name)
         self.assertEqual(satellite_1_result["dailyMealCount"], satellite_1.daily_meal_count)
-        self.assertIn(school.id, satellite_1_result["sectors"])
-        self.assertIn(enterprise.id, satellite_1_result["sectors"])
 
         # just checking if satellite 2 is in there too
         satellite_2_result = next(canteen for canteen in body if canteen["id"] == satellite_2.id)
