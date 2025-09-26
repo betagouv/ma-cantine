@@ -750,15 +750,6 @@ class SatelliteListCreateView(ListCreateAPIView):
     required_scopes = ["canteen"]
     model = Canteen
     serializer_class = SatelliteCanteenSerializer
-    filter_backends = [
-        MaCantineOrderingFilter,
-    ]
-
-    ordering_fields = [
-        "name",
-        "siret",
-        "daily_meal_count",
-    ]
 
     def get_queryset(self):
         canteen_pk = self.kwargs["canteen_pk"]
