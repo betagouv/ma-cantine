@@ -4,7 +4,7 @@ We updated/fixed the data of some canteens after they teledeclared.
 To reflect the changes in the Teledeclaration objects, we need to cancel and re-submit these teledeclarations.
 
 How to run?
-python manage.py canteen_teledeclaration_resubmit --year 2024 --canteen-siret-list 12345678901234,23456789012345
+python manage.py teledeclaration_resubmit --year 2024 --canteen-siret-list 12345678901234,23456789012345
 
 Ran on 2025-04-18 (Campaign for 2024)
 """
