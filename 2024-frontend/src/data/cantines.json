@@ -1,4 +1,9 @@
 {
+  "centralProducerSiret": "SIRET du livreur de repas",
+  "city": "Commune",
+  "cityInseeCode": "Code Insee",
+  "dailyMealCount": "Couverts par jour",
+  "departmentLib": "Département",
   "economicModel": [
     {
       "apiName": "public",
@@ -13,6 +18,9 @@
       "value": "private"
     }
   ],
+  "economicModelName": "Type d’établissement",
+  "epciLib": "Établissement Public de Coopération Intercommunale (EPCI)",
+  "lineMinistry": "Ministère de tutelle",
   "managementType": [
     {
       "apiName": "direct",
@@ -25,6 +33,10 @@
       "value": "conceded"
     }
   ],
+  "managementTypeName": "Mode de gestion",
+  "name": "Nom",
+  "patLibList": "Projets Alimentaires Territoriaux (PAT)",
+  "postalCode": "Code postal",
   "productionType": [
     {
       "apiName": "site",
@@ -51,6 +63,9 @@
       "value": "central_serving"
     }
   ],
+  "productionTypeName": "Mode de production",
+  "regionLib": "Région",
+  "satelliteCanteensCount": "Nombre de cantines satellites",
   "sectorCategorie": {
     "administration": "Administration",
     "autres": "Autres",
@@ -59,5 +74,9 @@
     "health": "Santé",
     "leisure": "Loisirs",
     "social": "Social / Médico-social"
-  }
+  },
+  "sectors": "Secteurs d'activité",
+  "sirenUniteLegale": "Numéro SIREN de l'unité légale",
+  "siret": "Numéro SIRET",
+  "yearlyMealCount": "Couverts par an"
 }

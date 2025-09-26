@@ -44,7 +44,7 @@ const saveCanteen = (props) => {
 const goToCanteenPage = (canteen) => {
   const canteenUrl = urlService.getCanteenUrl(canteen)
   router.replace({
-    name: "DashboardManager",
+    name: "GestionnaireCantineGerer",
     params: { canteenUrlComponent: canteenUrl },
   })
 }
@@ -65,17 +65,5 @@ const goToCanteenPage = (canteen) => {
       Une erreur est survenue,
       <AppLinkRouter :to="{ name: 'DashboardManager' }" title="revenir à la page précédente" />
     </p>
-  </section>
-  <section class="fr-container fr-background-alt--red-marianne fr-p-3w fr-mt-2w fr-grid-row fr-grid-row--center">
-    <div class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
-      <h2 class="fr-h5 fr-text-default--error">
-        <span class="mdi mdi-delete"></span>
-        Supprimer cet établissement
-      </h2>
-      <p class="fr-mb-0">
-        Vous ne souhaitez plus faire apparaître cet établissement sur la plateforme ma-cantine, vous pouvez le supprimer
-        <AppLinkRouter :to="{ name: 'CanteenDeletion' }" title="en cliquant ici" />
-      </p>
-    </div>
   </section>
 </template>
