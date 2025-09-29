@@ -59,13 +59,14 @@ export default Object.freeze({
       value: "site_cooked_elsewhere",
     },
     {
-      title: "livre des repas mais n'a pas de lieu de service en propre",
-      body: "Mon établissement livre des repas mais n'a pas de lieu de service en propre",
+      title: "produit des repas qu'il livre à des lieux de restauration",
+      body: "Mon établissement produit des repas qu'il livre à des lieux de restauration",
       value: "central",
     },
     {
-      title: "livre des repas et accueille aussi des convives sur place",
-      body: "Mon établissement livre des repas et accueille aussi des convives sur place",
+      title: "produit des repas qu'il livre à des lieux de restauration et accueille aussi des convives sur place",
+      body:
+        "Mon établissement produit des repas qu'il livre à des lieux de restauration et accueille aussi des convives sur place",
       value: "central_serving",
     },
   ],

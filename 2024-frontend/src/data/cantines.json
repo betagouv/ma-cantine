@@ -52,13 +52,13 @@
     },
     {
       "apiName": "central",
-      "hint": "Livre des repas mais n'a pas de lieu de service en propre",
+      "hint": "L'établissement produit des repas qu'il livre à des lieux de restauration",
       "label": "Centrale",
       "value": "central"
     },
     {
       "apiName": "centralServing",
-      "hint": "Livre des repas et accueille aussi des convives sur place",
+      "hint": "L'établissement produit des repas qu'il livre à des lieux de restauration et accueille aussi des convives sur place",
       "label": "Centrale et site",
       "value": "central_serving"
     }

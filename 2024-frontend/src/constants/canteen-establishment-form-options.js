@@ -41,12 +41,12 @@ const productionType = [
     value: "site_cooked_elsewhere",
   },
   {
-    label: "Livre des repas mais n'a pas de lieu de service en propre",
+    label: "L'établissement produit des repas qu'il livre à des lieux de restauration",
     value: "central",
     hint: "Vous devrez ajouter vos restaurants satellites depuis votre tableau de bord",
   },
   {
-    label: "Livre des repas et accueille aussi des convives sur place",
+    label: "L'établissement produit des repas qu'il livre à des lieux de restauration et accueille aussi des convives sur place",
     value: "central_serving",
     hint: "Vous devrez ajouter vos restaurants satellites depuis votre tableau de bord",
   },
