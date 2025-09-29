@@ -39,7 +39,7 @@ export default Object.freeze({
   ],
   ProductionTypes: [
     {
-      text: "Livreurs des repas",
+      text: "Cuisines centrales",
       value: "central,central_serving",
     },
     {
