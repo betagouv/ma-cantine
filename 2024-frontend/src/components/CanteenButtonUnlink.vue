@@ -46,7 +46,7 @@ const unlinkSatellite = () => {
     v-if="opened"
     :opened="opened"
     class="canteen-button-unlink__modal fr-modal--opened"
-    :title="`Souhaitez-vous vraiment retirer la cantine «&nbsp;${satellite.name}&nbsp;» de vos satellites ?`"
+    :title="`Souhaitez-vous vraiment retirer le restaurant «&nbsp;${satellite.name}&nbsp;» de vos satellites ?`"
     @close="toggleModal()"
     :actions="[
       {
@@ -66,7 +66,7 @@ const unlinkSatellite = () => {
   >
     <template #default>
       <p class="fr-mb-2w">
-        En confirmant cette demande la cantine « {{ satellite.name }} » ne fera plus parti de celles fournies par votre
+        En confirmant cette demande « {{ satellite.name }} » ne fera plus parti des restaurants fournis par votre
         établissement « {{ canteen.name }} » et donc :
       </p>
       <ul>

@@ -51,8 +51,9 @@ const groups = [
       },
       {
         content:
-          "Oui. Les gestionnaires de cuisines satellites peuvent se créer un compte et ajouter leur cantine, sauf si la cuisine centrale qui les dessert l’a déjà fait. Dans ce cas, je peux être gestionnaire additionnel de cet établissement, en demandant un accès à la cuisine centrale. A moyen terme, les cuisines satellites devront indiquer leurs propres données en matière d’approvisionnement.",
-        title: "Je suis gestionnaire d'une cuisine satellite, suis-je concerné par l'inscription sur « ma cantine » ?",
+          "Oui. Les gestionnaires de restaurants satellites peuvent se créer un compte et ajouter leur cantine, sauf si la cuisine centrale qui les dessert l’a déjà fait. Dans ce cas, je peux être gestionnaire additionnel de cet établissement, en demandant un accès à la cuisine centrale. A moyen terme, les restaurants satellites devront indiquer leurs propres données en matière d’approvisionnement.",
+        title:
+          "Je suis gestionnaire d'un restaurant satellite, suis-je concerné par l'inscription sur « ma cantine » ?",
       },
       {
         content:
@@ -62,7 +63,7 @@ const groups = [
       },
       {
         content:
-          "Les gestionnaires de cuisines centrales doivent se créer un compte, créer leur cantine en déclarant chaque restaurant satellite qu’elles livrent. Jusqu'à la campagne 2024 de remontées des données de l'année civile 2023, les informations sur la mise en place des mesures EGalim peuvent être centralisées au niveau de la cuisine centrale. A moyen terme, les informations devront etre attribuées à chaque cuisines satellites.",
+          "Les gestionnaires de cuisines centrales doivent se créer un compte, créer leur cantine en déclarant chaque restaurant satellite qu’elles livrent. Jusqu'à la campagne 2024 de remontées des données de l'année civile 2023, les informations sur la mise en place des mesures EGalim peuvent être centralisées au niveau de la cuisine centrale. A moyen terme, les informations devront etre attribuées à chaque restaurants satellites.",
         title: "Je suis gestionnaire d'une cuisine centrale, suis-je concerné par l'inscription sur « ma cantine » ?",
       },
     ],
