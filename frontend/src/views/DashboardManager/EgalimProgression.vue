@@ -81,7 +81,7 @@
       <p>
         {{ satelliteInconsistencyMessage }}
         <br />
-        Veuillez ajouter vos satellites avant télédéclarer.
+        Veuillez ajouter vos restaurants satellites avant télédéclarer.
       </p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
         <v-btn
@@ -92,7 +92,7 @@
           color="primary"
           class="fr-text font-weight-medium"
         >
-          Gérer mes satellites
+          Gérer mes restaurants satellites
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -262,8 +262,8 @@ export default {
     },
     satelliteInconsistencyMessage() {
       const satelliteCount = this.canteen.satelliteCanteensCount
-      const declared = satelliteCount === 1 ? `une cantine` : `${satelliteCount} cantines`
-      return `Vous avez déclaré que votre établissement livrait des repas à ${declared} mais aucune n'a été enregistrée.`
+      const declared = satelliteCount === 1 ? `un restaurant` : `${satelliteCount} restaurants`
+      return `Vous avez déclaré que votre établissement livrait des repas à ${declared} mais aucun n'a été enregistré.`
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store.state.sectors)
