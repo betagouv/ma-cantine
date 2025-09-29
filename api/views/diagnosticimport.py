@@ -327,7 +327,7 @@ class ImportDiagnosticsView(ABC, APIView):
             if central_producer_siret == siret:
                 raise ValidationError(
                     {
-                        "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui de la cantine"
+                        "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui du restaurant satellite"
                     }
                 )
 
