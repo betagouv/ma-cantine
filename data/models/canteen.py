@@ -351,8 +351,8 @@ class Canteen(SoftDeletionModel):
         CONCEDED = "conceded", "Concédée"
 
     class ProductionType(models.TextChoices):
-        CENTRAL = "central", "Livreur des repas sans lieu de consommation"
-        CENTRAL_SERVING = "central_serving", "Livreur des repas qui accueille aussi des convives sur place"
+        CENTRAL = "central", "Cuisine centrale sans lieu de consommation"
+        CENTRAL_SERVING = "central_serving", "Cuisine centrale qui accueille aussi des convives sur place"
         ON_SITE = "site", "Cantine qui produit les repas sur place"
         ON_SITE_CENTRAL = (
             "site_cooked_elsewhere",
