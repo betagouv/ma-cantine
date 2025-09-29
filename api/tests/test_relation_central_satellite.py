@@ -24,17 +24,22 @@ class TestRelationCentralSatellite(APITestCase):
         central = CanteenFactory.create(
             siret=central_siret, production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        school = SectorFactory.create(name="School")
-        enterprise = SectorFactory.create(name="Enterprise")
         satellite_1 = CanteenFactory.create(
             central_producer_siret=central_siret,
-            sectors=[school, enterprise],
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
         )
         # although user does not have mgmt rights on this, can get same data
         satellite_2 = CanteenFactory.create(
             central_producer_siret=central_siret,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            managers=[authenticate.user],
+        )
+        # satellite with siren
+        satellite_3 = CanteenFactory.create(
+            central_producer_siret=central_siret,
+            siren_unite_legale="227306566",
+            siret="",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
         )
@@ -48,15 +53,18 @@ class TestRelationCentralSatellite(APITestCase):
 
         response = self.client.get(reverse("list_create_update_satellite", kwargs={"canteen_pk": central.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()["results"]
+        body = response.json()
 
-        self.assertEqual(len(body), 2)
+        self.assertEqual(len(body), 3)
+
         satellite_1_result = next(canteen for canteen in body if canteen["id"] == satellite_1.id)
         self.assertEqual(satellite_1_result["siret"], satellite_1.siret)
         self.assertEqual(satellite_1_result["name"], satellite_1.name)
         self.assertEqual(satellite_1_result["dailyMealCount"], satellite_1.daily_meal_count)
-        self.assertIn(school.id, satellite_1_result["sectors"])
-        self.assertIn(enterprise.id, satellite_1_result["sectors"])
+
+        satellite_3_result = next(canteen for canteen in body if canteen["id"] == satellite_3.id)
+        print(satellite_3_result)
+        self.assertEqual(satellite_3_result["sirenUniteLegale"], satellite_3.siren_unite_legale)
 
         # just checking if satellite 2 is in there too
         satellite_2_result = next(canteen for canteen in body if canteen["id"] == satellite_2.id)

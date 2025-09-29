@@ -245,7 +245,6 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
 
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
     user_can_view = serializers.SerializerMethodField(read_only=True)
     publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
 
@@ -259,8 +258,8 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "siret",
+            "siren_unite_legale",
             "daily_meal_count",
-            "sectors",
             "user_can_view",
             "publication_status",
         )

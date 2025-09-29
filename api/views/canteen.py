@@ -735,23 +735,6 @@ class UndoClaimCanteenView(APIView):
         return JsonResponse({}, status=status.HTTP_200_OK)
 
 
-class SatellitesPagination(LimitOffsetPagination):
-    default_limit = 10
-    max_limit = 40
-
-    def get_paginated_response(self, data):
-        return Response(
-            OrderedDict(
-                [
-                    ("count", self.count),
-                    ("next", self.get_next_link()),
-                    ("previous", self.get_previous_link()),
-                    ("results", data),
-                ]
-            )
-        )
-
-
 @extend_schema_view(
     get=extend_schema(
         summary="Lister les cantines satellites pour une cuisine centrale.",
@@ -767,16 +750,6 @@ class SatelliteListCreateView(ListCreateAPIView):
     required_scopes = ["canteen"]
     model = Canteen
     serializer_class = SatelliteCanteenSerializer
-    pagination_class = SatellitesPagination
-    filter_backends = [
-        MaCantineOrderingFilter,
-    ]
-
-    ordering_fields = [
-        "name",
-        "siret",
-        "daily_meal_count",
-    ]
 
     def get_queryset(self):
         canteen_pk = self.kwargs["canteen_pk"]
