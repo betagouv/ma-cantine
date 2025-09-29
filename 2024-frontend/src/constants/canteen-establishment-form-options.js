@@ -36,7 +36,7 @@ const managementType = [
 const productionType = [
   { label: "Produit sur place les repas qu'il sert à ses convives", value: "site" },
   {
-    label: "Sert des repas préparés par un autre établissement",
+    label: "L'établissement sert des repas préparés par une cuisine centrale (une petite partie peut être réalisée sur place entrée / dessert)",
     value: "site_cooked_elsewhere",
   },
   {
