@@ -164,7 +164,7 @@
       "description": "Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine ayant produit les repas",
       "example": "34784885147362",
       "name": "siret_cuisine_centrale",
-      "title": "SIRET de la cantine centrale",
+      "title": "SIRET de la cuisine centrale",
       "type": "string"
     },
     {

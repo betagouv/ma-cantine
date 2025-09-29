@@ -1,4 +1,3 @@
-
 ### Modèle de données
 
 |Nom|Type|Description|Exemple|Propriétés|
