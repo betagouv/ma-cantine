@@ -31,7 +31,6 @@ import NotFound from "@/views/NotFound"
 import ManagementPage from "@/views/ManagementPage"
 import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
-import SatelliteManagement from "@/views/CanteenEditor/SatelliteManagement"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
@@ -291,15 +290,6 @@ const routes = [
     redirect: { name: "CanteenForm" },
     children: [
       {
-        path: "satellites",
-        name: "SatelliteManagement",
-        component: SatelliteManagement,
-        meta: {
-          authenticationRequired: true,
-          title: "Gérer mes satellites",
-        },
-      },
-      {
         path: "gestionnaires",
         name: "CanteenManagers",
         component: CanteenManagers,
@@ -501,6 +491,10 @@ const vue3Routes = [
   {
     path: "/gestion/cantines/:canteenUrlComponent/gerer",
     name: "GestionnaireCantineGerer",
+  },
+  {
+    path: "/gestion/cantines/:canteenUrlComponent/satellites/gerer",
+    name: "GestionnaireCantineSatellitesGerer",
   },
   {
     path: "/gestion/cantines/:canteenUrlComponent/satellites/ajouter",

@@ -47,7 +47,7 @@ const goToNewCanteenPage = (canteen) => {
 const goToSatellitesPage = (canteen) => {
   const canteenUrl = urlService.getCanteenUrl(canteen)
   router.replace({
-    name: "SatelliteManagement",
+    name: "GestionnaireCantineSatellitesGerer",
     params: { canteenUrlComponent: canteenUrl },
   })
 }

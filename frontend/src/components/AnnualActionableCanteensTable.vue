@@ -376,7 +376,7 @@ export default {
     actionLink(canteen) {
       if (canteen.action === "10_add_satellites") {
         return {
-          name: "SatelliteManagement",
+          name: "GestionnaireCantineSatellitesGerer",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
         }
       } else if (canteen.action === "20_create_diagnostic" || canteen.action === "18_prefill_diagnostic") {
