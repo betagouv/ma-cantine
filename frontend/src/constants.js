@@ -43,7 +43,7 @@ export default Object.freeze({
       value: "central,central_serving",
     },
     {
-      text: "Cantines satellites et autogérées",
+      text: "Restaurants satellites et autogérés",
       value: "site,site_cooked_elsewhere",
     },
   ],
@@ -432,10 +432,10 @@ export default Object.freeze({
       urlSlug: "cuisine-centrale-diagnostics-simples",
       title: "Importer des bilans simples centralisés",
       description:
-        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement simplifiées au niveau du livreur des repas et de lister vos cantines satellites seulement avec leurs données d'établissement. Les données d'approvisionnement sont donc rentrées une fois au niveau du livreur.",
+        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement simplifiées au niveau du livreur des repas et de lister vos restaurants satellites seulement avec leurs données d'établissement. Les données d'approvisionnement sont donc rentrées une fois au niveau du livreur.",
       label: "Livreur avec bilan simple",
       help:
-        "Vous voulez renseigner vos satellites et vous connaissez les valeurs totaux, bio, et de qualité et durable",
+        "Vous voulez renseigner vos restaurants satellites et vous connaissez les valeurs totaux, bio, et de qualité et durable",
       icon: "$bar-chart-box-fill",
     },
     {
@@ -443,10 +443,10 @@ export default Object.freeze({
       urlSlug: "cuisine-centrale-diagnostics-complets",
       title: "Importer des bilans complets centralisés",
       description:
-        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement détaillées au niveau du livreur des repas et de lister vos cantines satellites seulement avec leurs données d'établissement. Les données d'approvisionnement sont donc rentrées une fois au niveau du livreur.",
+        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement détaillées au niveau du livreur des repas et de lister vos restaurants satellites seulement avec leurs données d'établissement. Les données d'approvisionnement sont donc rentrées une fois au niveau du livreur.",
       label: "Livreur avec bilan complet",
       help:
-        "Vous voulez renseigner vos satellites et vous connaissez les labels et les familles de produits de vos achats",
+        "Vous voulez renseigner vos restaurants satellites et vous connaissez les labels et les familles de produits de vos achats",
       icon: "$checkbox-circle-fill",
     },
   ],
@@ -483,12 +483,12 @@ export default Object.freeze({
   CentralKitchenDiagnosticModes: [
     {
       key: "ALL",
-      label: "Je rentre les données concernant toutes les mesures EGalim pour mes cantines satellites",
+      label: "Je rentre les données concernant toutes les mesures EGalim pour mes restaurants satellites",
       shortLabel: "Les données sur l’ensemble des mesures EGalim",
     },
     {
       key: "APPRO",
-      label: "Je rentre seulement les données d'approvisionnement pour mes cantines satellites",
+      label: "Je rentre seulement les données d'approvisionnement pour mes restaurants satellites",
       shortLabel: "Les données d’approvisionnement seulement",
     },
   ],
