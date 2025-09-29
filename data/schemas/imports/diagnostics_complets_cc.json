@@ -57,7 +57,7 @@
       "example": "29969025300230",
       "format": "default",
       "name": "siret_livreur_repas",
-      "title": "SIRET du livreur de repas",
+      "title": "SIRET de la cuisine centrale",
       "type": "string"
     },
     {

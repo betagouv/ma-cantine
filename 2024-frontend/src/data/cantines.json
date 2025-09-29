@@ -1,5 +1,5 @@
 {
-  "centralProducerSiret": "SIRET du livreur de repas",
+  "centralProducerSiret": "SIRET de la cuisine centrale",
   "city": "Commune",
   "cityInseeCode": "Code Insee",
   "dailyMealCount": "Couverts par jour",
