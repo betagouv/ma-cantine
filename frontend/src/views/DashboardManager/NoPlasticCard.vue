@@ -67,7 +67,7 @@ export default {
       if (this.delegatedToSatellite) {
         return "Les données associées à cette mesure EGalim sont renseignées au niveau de chaque lieu de service que vous livrez."
       } else if (this.delegatedToCentralKitchen) {
-        return "Votre livreur a renseigné les données de cette mesure à votre place."
+        return "Votre cuisine centrale a renseigné les données de cette mesure à votre place."
       }
       return "Limiter les matières plastiques dans votre cuisine et dans votre cantine pour réduire vos déchets et protéger l'environnement."
     },

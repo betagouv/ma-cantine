@@ -218,7 +218,8 @@ export default {
     },
     siretSatelliteValidator() {
       if (!this.canteen?.centralProducerSiret) return true
-      const message = "Le numéro SIRET du livreur ne peut pas être le même que celui du restaurant satellite."
+      const message =
+        "Le numéro SIRET de la cuisine centrale ne peut pas être le même que celui du restaurant satellite."
       return validators.isDifferent(this.canteen?.centralProducerSiret, message)
     },
   },

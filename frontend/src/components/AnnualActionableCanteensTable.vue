@@ -194,7 +194,7 @@ export default {
         site: "Cuisine sur site",
         site_cooked_elsewhere: "Restaurant satellite",
         central: "Cuisine centrale",
-        central_serving: "Livreur, avec service sur place",
+        central_serving: "Cuisine centrale, avec service sur place",
       },
       canteenForTD: null,
       showTeledeclarationPreview: false,

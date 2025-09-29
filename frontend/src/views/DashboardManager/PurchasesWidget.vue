@@ -28,7 +28,8 @@
                 <strong>{{ centralKitchenName }}</strong>
               </p>
               <p class="mb-0">
-                Les achats sont renseignés par le livreur pour calculer les taux EGalim de tous les lieux de service.
+                Les achats sont renseignés par la cuisine centrale pour calculer les taux EGalim de tous les lieux de
+                service.
               </p>
             </v-card-text>
           </v-card>

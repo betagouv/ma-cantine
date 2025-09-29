@@ -28,7 +28,7 @@ const BADGE_LIST = [
     ],
   },
   {
-    body: "En attente de la télédéclaration de votre livreur",
+    body: "En attente de la télédéclaration de votre cuisine centrale",
     mode: "WARNING",
     actions: ["90_nothing_satellite"],
   },

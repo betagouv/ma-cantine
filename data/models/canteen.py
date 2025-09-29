@@ -375,10 +375,10 @@ class Canteen(SoftDeletionModel):
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
         TELEDECLARE = "40_teledeclare", "Télédéclarer"
         DID_NOT_TELEDECLARE = "45_did_not_teledeclare", "Non télédéclaré"
-        NOTHING_SATELLITE = "90_nothing_satellite", "En attente de la télédéclaration de votre livreur"
+        NOTHING_SATELLITE = "90_nothing_satellite", "En attente de la télédéclaration de votre cuisine centrale"
         NOTHING_SATELLITE_TELEDECLARED = (
             "91_nothing_satellite_teledeclared",
-            "Rien à faire (télédéclaré par votre livreur)",
+            "Rien à faire (télédéclaré par votre cuisine centrale)",
         )
         NOTHING = "95_nothing", "Rien à faire !"
 

@@ -140,7 +140,8 @@ export default {
         { value: managementTypeDetail ? managementTypeDetail.text : "", label: "Mode de gestion" },
         { value: productionTypeDetail ? productionTypeDetail.body : "", label: "Type d'établissement" },
       ]
-      if (this.usesCentralProducer) items.push({ value: this.canteen.centralProducerSiret, label: "SIRET du livreur" })
+      if (this.usesCentralProducer)
+        items.push({ value: this.canteen.centralProducerSiret, label: "SIRET de la cuisine centrale" })
       if (this.showSatelliteCanteensCount)
         items.push({
           value: this.canteen.satelliteCanteensCount,
