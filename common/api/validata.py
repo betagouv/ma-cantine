@@ -27,9 +27,9 @@ def validate_file_against_schema(file, schema_url):
             files={
                 "file": ("file.csv", file.read(), file.content_type),
             },
-            data={"schema": schema_url, "header_case": True},
+            data={"schema": schema_url, "header_case": True, "include_resource_data": True},
         )
-        return response.json()["report"]
+        return response.json()
     except Exception:
         raise Exception("Erreur lors de la validation du fichier (Validata). Merci de réessayer plus tard.")
 
