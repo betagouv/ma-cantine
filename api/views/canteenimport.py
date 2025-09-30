@@ -84,8 +84,8 @@ class ImportCanteensView(APIView):
                 )
 
             # Step 2: Schema validation (Validata)
-            report = validata.validate_file_against_schema(self.file, self.schema_url)
-            self.errors = validata.process_errors(report)
+            validata_response = validata.validate_file_against_schema(self.file, self.schema_url)
+            self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
                 return self._get_success_response()
