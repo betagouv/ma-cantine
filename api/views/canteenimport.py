@@ -92,7 +92,7 @@ class ImportCanteensView(APIView):
 
             # Step 3: ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
-                self._process_file(self.file)
+                self._process_file(validata_response["resource_data"])
 
                 if self.errors:
                     raise IntegrityError()
@@ -124,16 +124,10 @@ class ImportCanteensView(APIView):
             import_type=ImportType.CANTEEN_ONLY,
         )
 
-    def _process_file(self, file):
+    def _process_file(self, data):
         locations_csv_str = "siret,citycode,postcode\n"
         has_locations_to_find = False
-
-        filestring = self._decode_file(file)
-        filelines = filestring.splitlines()
-        dialect = csv.Sniffer().sniff(filelines[0])
-
-        csvreader = csv.reader(filelines, dialect=dialect)
-        for row_number, row in enumerate(csvreader, start=1):
+        for row_number, row in enumerate(data, start=1):
             try:
                 if row_number == 1:  # skip header
                     continue
