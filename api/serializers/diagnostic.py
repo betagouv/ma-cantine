@@ -228,7 +228,7 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
 
 
 class DiagnosticAnalysisSerializer(serializers.ModelSerializer):
-    id = serializers.DateTimeField(source="teledeclaration_id", read_only=True)
+    id = serializers.IntegerField(source="teledeclaration_id", read_only=True)
     creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)
     canteen_id = serializers.IntegerField(source="canteen_snapshot.id", read_only=True)
     name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
