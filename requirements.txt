@@ -332,7 +332,7 @@ jsbeautifier==1.15.1
     #   cssbeautifier
     #   djlint
     #   ma-cantine
-json5==0.9.25
+json5==0.12.1
     # via
     #   djlint
     #   ma-cantine

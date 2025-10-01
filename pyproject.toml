@@ -89,7 +89,7 @@ dependencies = [
     "isort==5.13.2",
     "jmespath==1.0.1",
     "jsbeautifier==1.15.1",
-    "json5==0.9.25",
+    "json5==0.12.1",
     "jsonschema==4.23.0",
     "jsonschema-specifications==2024.10.1",
     "jwcrypto==1.5.6",
