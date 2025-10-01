@@ -6,7 +6,6 @@ from django.utils.html import format_html
 from data.models import Canteen
 from data.utils import CreationSource
 
-from .diagnostic import DiagnosticInline
 from .softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
 
 last_year = timezone.now().date().year - 1
@@ -54,7 +53,7 @@ class PublicationStatusFilter(admin.SimpleListFilter):
 @admin.register(Canteen)
 class CanteenAdmin(SoftDeletionHistoryAdmin):
     form = CanteenForm
-    inlines = (DiagnosticInline,)
+    # inlines = (UserInline, DiagnosticInline,)
     fields = (
         "name",
         "siret",
@@ -82,7 +81,6 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "sectors",
         "line_ministry",
         "publication_status_display",
-        "managers",
         "claimed_by",
         "has_been_claimed",
         "management_type",
@@ -175,6 +173,12 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         if "delete_selected" in actions:
             del actions["delete_selected"]
         return actions
+
+    def get_inlines(self, request, obj):
+        from data.admin.diagnostic import DiagnosticInline
+        from data.admin.user import UserInline
+
+        return (UserInline, DiagnosticInline)
 
     def save_model(self, request, obj, form, change):
         if not change:
