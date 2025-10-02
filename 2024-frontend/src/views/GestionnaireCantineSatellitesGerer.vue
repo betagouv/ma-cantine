@@ -89,12 +89,11 @@ const removeRow = (id) => {
           :to="{ name: 'GestionnaireCantineModifier', params: route.canteenUrlComponent }"
         />
       </p>
-      <p v-else>{{ satellitesCountSentence }}</p>
     </div>
-    <AppLoader v-if="loading" />
-    <template v-else-if="!loading && canteen.isCentralCuisine">
+    <div v-if="canteen.isCentralCuisine" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+      <p class="fr-col-12 fr-col-md-4">{{ satellitesCountSentence }}</p>
       <div
-        class="fr-grid-row fr-mb-4w"
+        class="fr-col-12 fr-col-md-8 fr-grid-row"
         :class="{
           'fr-grid-row--center': satellites.length === 0,
           'fr-grid-row--right': satellites.length > 0,
@@ -119,6 +118,9 @@ const removeRow = (id) => {
           <DsfrButton label="Ajouter une cantine satellite" icon="fr-icon-add-line" />
         </router-link>
       </div>
+    </div>
+    <AppLoader v-if="loading" />
+    <template v-else-if="!loading && canteen.isCentralCuisine">
       <DsfrDataTable
         v-if="tableRows.length > 0"
         title="Vos cantines satellites"
