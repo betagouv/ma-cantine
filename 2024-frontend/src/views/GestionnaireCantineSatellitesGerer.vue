@@ -92,9 +92,8 @@ const removeRow = (id) => {
       <p v-else>{{ satellitesCountSentence }}</p>
     </div>
     <AppLoader v-if="loading" />
-    <template v-else>
+    <template v-else-if="!loading && canteen.isCentralCuisine">
       <div
-        v-if="canteen.isCentralCuisine"
         class="fr-grid-row fr-mb-4w"
         :class="{
           'fr-grid-row--center': satellites.length === 0,
