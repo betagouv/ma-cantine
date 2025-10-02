@@ -13,10 +13,7 @@
       "format": "default",
       "name": "siret",
       "title": "SIRET de l'établissement",
-      "type": [
-        "string",
-        "integer"
-      ]
+      "type": "any"
     },
     {
       "constraints": {
@@ -39,10 +36,7 @@
       "format": "default",
       "name": "code_insee_commune",
       "title": "Code INSEE de la commune",
-      "type": [
-        "string",
-        "integer"
-      ]
+      "type": "any"
     },
     {
       "constraints": {
@@ -54,10 +48,7 @@
       "format": "default",
       "name": "code_postal_commune",
       "title": "Code postal de la commune",
-      "type": [
-        "string",
-        "integer"
-      ]
+      "type": "any"
     },
     {
       "constraints": {
@@ -69,10 +60,7 @@
       "format": "default",
       "name": "siret_livreur_repas",
       "title": "SIRET du livreur de repas",
-      "type": [
-        "string",
-        "integer"
-      ]
+      "type": "any"
     },
     {
       "constraints": {
