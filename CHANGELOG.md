@@ -6,6 +6,39 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.33.0](https://github.com/betagouv/ma-cantine/compare/v2025.32.1...v2025.33.0) (2025-10-02)
+
+
+### Nouveautés
+
+* **Gérer mes satellites:** migration de la page en vue3 ([#5713](https://github.com/betagouv/ma-cantine/issues/5713)) ([b1dca8c](https://github.com/betagouv/ma-cantine/commit/b1dca8cda08022929e30a9bb12c59b33433a2916))
+* **Gérer mes satellites:** remplace l'url de la page pour la nouvelle ([#5714](https://github.com/betagouv/ma-cantine/issues/5714)) ([e5b2d76](https://github.com/betagouv/ma-cantine/commit/e5b2d76291be90bd2f54380d36fec3ffc23912be))
+* **Gestion cantine:** création d'une page pour voir les informations enregistrées de mon établissement ([#5702](https://github.com/betagouv/ma-cantine/issues/5702)) ([e57ea95](https://github.com/betagouv/ma-cantine/commit/e57ea950c59afd4b42e7e3ae1bc56b7bc3142d6a))
+
+
+### Améliorations
+
+* **Gérer mes satellites:** ajout du lien vers la page d'import des cantines ([#5741](https://github.com/betagouv/ma-cantine/issues/5741)) ([49d2558](https://github.com/betagouv/ma-cantine/commit/49d2558a07c506b219768873c34305016ebd4ffa))
+
+
+### Corrections (bugs, typos...)
+
+* **Diagnostics:** script pour ajouter le canteen_id manquant dans les premières versions de TD (avant v4, 2020-2021) ([#5711](https://github.com/betagouv/ma-cantine/issues/5711)) ([c64731d](https://github.com/betagouv/ma-cantine/commit/c64731d64d35fd101e3759558a5a86e5ecdfa1ff))
+* **Progression:** corrige l'affichage des cantines satellites dans la prévisualisation ([#5718](https://github.com/betagouv/ma-cantine/issues/5718)) ([f8aec50](https://github.com/betagouv/ma-cantine/commit/f8aec50837c3996292e8c3719eed308b486e321d))
+
+
+### Documentation
+
+* **Teledeclaration:** Fichier dédié pour expliquer les différentes versions au cours des années ([#5673](https://github.com/betagouv/ma-cantine/issues/5673)) ([ba6809a](https://github.com/betagouv/ma-cantine/commit/ba6809ace67a0b38054584873c0ed90fc4eef49b))
+
+
+### Technique
+
+* **Admin:** Cantines: accélérer le chargement de la page (section dédiée aux gestionnaires) ([#5739](https://github.com/betagouv/ma-cantine/issues/5739)) ([8b8661e](https://github.com/betagouv/ma-cantine/commit/8b8661e7df9495e3ffe86e1d4c0f77f5693a7cdc))
+* **Admin:** Utilisateurs: répare et améliore la section dédiée aux cantines gérées ([#5738](https://github.com/betagouv/ma-cantine/issues/5738)) ([556adc5](https://github.com/betagouv/ma-cantine/commit/556adc55991b2448d173bc623fe92f887e0fcc8f))
+* **API Recherche Entreprise:** ajout d'un paramètre Matomo pour leur suivi ([#5710](https://github.com/betagouv/ma-cantine/issues/5710)) ([9ed3a20](https://github.com/betagouv/ma-cantine/commit/9ed3a20f74cb65377b5d93ee1036b48035cc3759))
+* **Open Data:** indiquer explicitement les identifiants des jeux de données ([#5709](https://github.com/betagouv/ma-cantine/issues/5709)) ([cb31a52](https://github.com/betagouv/ma-cantine/commit/cb31a524ec47b7dcffa73cb8d97671527cd42a40))
+
 ## [2025.32.1](https://github.com/betagouv/ma-cantine/compare/v2025.32.0...v2025.32.1) (2025-09-23)
 
 
