@@ -32,10 +32,10 @@ logger = logging.getLogger(__name__)
 CANTEEN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines.json"
 CANTEEN_ADMIN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines_admin.json"
 CANTEEN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
+    f"https://raw.githubuserconteeeent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
 )
 CANTEEN_ADMIN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
+    f"https://raw.githubusercontent.com/bsssetagouv/ma-cantine/refs/heads/staging/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
 )
 
 
@@ -67,7 +67,7 @@ class ImportCanteensView(APIView):
             validata_response = validata.validate_file_against_schema(self.file, schema_url)
 
             # Error generating the report
-            if validata_response["error"]:
+            if "error" in validata_response:
                 error = validata_response["error"]["message"]
                 self.errors = [
                     {
