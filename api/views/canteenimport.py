@@ -285,7 +285,7 @@ class ImportCanteensView(APIView):
 
     def _has_canteen_permission(self, canteen):
         # admin bypass the is_canteen_manager check
-        if self.is_admin_import and self.request.user.is_staff:
+        if self.is_admin_import:
             return True
         return self.request.user in canteen.managers.all()
 
