@@ -6,7 +6,6 @@ from django.utils.html import format_html
 from data.models import Canteen
 from data.utils import CreationSource
 
-from .diagnostic import DiagnosticInline
 from .softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
 
 last_year = timezone.now().date().year - 1
@@ -54,7 +53,7 @@ class PublicationStatusFilter(admin.SimpleListFilter):
 @admin.register(Canteen)
 class CanteenAdmin(SoftDeletionHistoryAdmin):
     form = CanteenForm
-    inlines = (DiagnosticInline,)
+    # inlines = (UserInline, DiagnosticInline,)
     fields = (
         "name",
         "siret",
@@ -82,7 +81,6 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "sectors",
         "line_ministry",
         "publication_status_display",
-        "managers",
         "claimed_by",
         "has_been_claimed",
         "management_type",
@@ -176,6 +174,13 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             del actions["delete_selected"]
         return actions
 
+    def get_inlines(self, request, obj):
+        # to avoid circular import error
+        from data.admin.diagnostic import DiagnosticInline
+        from data.admin.user import UserInline
+
+        return (UserInline, DiagnosticInline)
+
     def save_model(self, request, obj, form, change):
         if not change:
             obj.creation_source = CreationSource.ADMIN
@@ -210,7 +215,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 class CanteenInline(admin.TabularInline):
     model = Canteen.managers.through
     autocomplete_fields = ("canteen",)
-    readonly_fields = ("active", "help")
+    readonly_fields = ("help",)
     extra = 0
     verbose_name_plural = "Cantines gérées"
 
@@ -222,10 +227,6 @@ class CanteenInline(admin.TabularInline):
 
     def has_delete_permission(self, request, obj=None):
         return True
-
-    @admin.display(description="Est active")
-    def active(self, obj):
-        return "🗑️ Supprimée par l'utilisateur" if obj.canteen.deletion_date else "✔️"
 
     @admin.display(description="Gestionnaire")
     def help(self, obj):

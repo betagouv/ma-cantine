@@ -132,3 +132,28 @@ class MaCanteenUserAdmin(UserAdmin):
         "is_dev",
         "is_staff",
     )
+
+
+class UserInline(admin.TabularInline):
+    model = User.canteens.through
+    autocomplete_fields = ("user",)
+    readonly_fields = ("help", "active")
+    extra = 0
+    verbose_name_plural = "Gestionnaires"
+
+    def has_add_permission(self, request, obj):
+        return True
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return True
+
+    @admin.display(description="Gestionnaire")
+    def help(self, obj):
+        return "Pour retirer le gestionnaire de la cantine cochez la case, puis sauvegardez la modification."
+
+    @admin.display(description="Est active")
+    def active(self, obj):
+        return "🗑️ Supprimée par l'utilisateur" if obj.canteen.deletion_date else "✔️"
