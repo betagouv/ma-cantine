@@ -46,8 +46,7 @@ def process_errors(report):
 
 def process_errors_for_header(report):
     for error in report["errors"]:
-        error_in_row = "rowNumber" in error
-        if not error_in_row:
+        if "rowNumber" not in error:
             return True
 
 
