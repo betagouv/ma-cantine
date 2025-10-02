@@ -44,10 +44,12 @@ def process_errors(report):
     return errors
 
 
-def process_errors_for_header(report):
-    for error in report["errors"]:
-        if "rowNumber" not in error:
-            return True
+def check_if_has_errors_header(report, is_staff):
+    if any("rowNumber" not in error for error in report["errors"]):
+        return True
+    if is_staff and any("Colonne" in warning for warning in report["warnings"]):
+        return True
+    return False
 
 
 def get_common_error_informations(error):

@@ -60,19 +60,28 @@ class ImportCanteensView(APIView):
         logger.info("Canteen bulk import started")
         try:
             self.file = request.data["file"]
+            is_staff = self.request.user.is_staff
 
             # Step 1: Get schema
-            self.is_admin_import = self.request.user.is_staff
+            self.is_admin_import = is_staff
             schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
 
             # Step 2: Schema validation (Validata)
             validata_response = validata.validate_file_against_schema(self.file, schema_url)
-            header_incorrect = validata.process_errors_for_header(validata_response["report"])
-            if header_incorrect:
-                raise ValidationError(
-                    "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus."
-                )
 
+            # Header
+            header_has_errors = validata.check_if_has_errors_header(validata_response["report"], is_staff)
+            if header_has_errors:
+                self.errors = [
+                    {
+                        "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+                        "status": 400,
+                    }
+                ]
+                self._log_error("Echec lors de la validation du header (schema cantines.json - Validata)")
+                return self._get_success_response()
+
+            # Cells
             self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
