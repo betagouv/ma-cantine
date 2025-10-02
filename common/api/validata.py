@@ -44,6 +44,13 @@ def process_errors(report):
     return errors
 
 
+def process_errors_for_header(report):
+    for error in report["errors"]:
+        error_in_row = "rowNumber" in error
+        if not error_in_row:
+            return True
+
+
 def get_common_error_informations(error):
     return {
         "row": error["rowNumber"],

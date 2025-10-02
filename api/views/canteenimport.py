@@ -67,6 +67,12 @@ class ImportCanteensView(APIView):
 
             # Step 2: Schema validation (Validata)
             validata_response = validata.validate_file_against_schema(self.file, schema_url)
+            header_incorrect = validata.process_errors_for_header(validata_response["report"])
+            if header_incorrect:
+                raise ValidationError(
+                    "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus."
+                )
+
             self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
