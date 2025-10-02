@@ -93,20 +93,32 @@ const removeRow = (id) => {
     </div>
     <AppLoader v-if="loading" />
     <template v-else>
-      <div class="fr-grid-row fr-grid-row--middle fr-mb-4w" v-if="canteen.isCentralCuisine">
-        <p class="fr-col-12 fr-col-md-6 fr-mb-0">
-          {{ satellitesCountSentence }}
-        </p>
-        <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--right">
-          <router-link
-            :to="{
-              name: 'GestionnaireCantineSatellitesAjouter',
-              params: { canteenUrlComponent: route.canteenUrlComponent },
-            }"
-          >
-            <DsfrButton label="Ajouter une cantine satellite" />
-          </router-link>
-        </div>
+      <div
+        v-if="canteen.isCentralCuisine"
+        class="fr-grid-row fr-mb-4w"
+        :class="{
+          'fr-grid-row--center': satellites.length === 0,
+          'fr-grid-row--right': satellites.length > 0,
+        }"
+      >
+        <router-link
+          :to="{
+            name: 'GestionnaireImportCantines',
+            params: { canteenUrlComponent: route.canteenUrlComponent },
+          }"
+          class="ma-cantine--unstyled-link fr-m-1v"
+        >
+          <DsfrButton secondary label="Importer des cantines satellites" icon="fr-icon-file-add-line" />
+        </router-link>
+        <router-link
+          :to="{
+            name: 'GestionnaireCantineSatellitesAjouter',
+            params: { canteenUrlComponent: route.canteenUrlComponent },
+          }"
+          class="ma-cantine--unstyled-link fr-m-1v"
+        >
+          <DsfrButton label="Ajouter une cantine satellite" icon="fr-icon-add-line" />
+        </router-link>
       </div>
       <DsfrDataTable
         v-if="tableRows.length > 0"
