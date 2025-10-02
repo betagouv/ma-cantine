@@ -90,60 +90,66 @@ const removeRow = (id) => {
         />
       </p>
     </div>
-    <AppLoader v-if="loading" />
-    <template v-else>
-      <div class="fr-grid-row fr-grid-row--middle fr-mb-4w" v-if="canteen.isCentralCuisine">
-        <p class="fr-col-12 fr-col-md-6 fr-mb-0">
-          {{ satellitesCountSentence }}
-        </p>
-        <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--right">
-          <router-link
-            :to="{
-              name: 'GestionnaireCantineSatellitesAjouter',
-              params: { canteenUrlComponent: route.canteenUrlComponent },
-            }"
-          >
-            <DsfrButton label="Ajouter une cantine satellite" />
-          </router-link>
-        </div>
+    <div v-if="canteen.isCentralCuisine" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+      <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
+      <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
+        <router-link
+          :to="{
+            name: 'GestionnaireImportCantines',
+            params: { canteenUrlComponent: route.canteenUrlComponent },
+          }"
+          class="ma-cantine--unstyled-link fr-m-1v"
+        >
+          <DsfrButton secondary label="Importer des cantines satellites" icon="fr-icon-file-add-line" />
+        </router-link>
+        <router-link
+          :to="{
+            name: 'GestionnaireCantineSatellitesAjouter',
+            params: { canteenUrlComponent: route.canteenUrlComponent },
+          }"
+          class="ma-cantine--unstyled-link fr-m-1v"
+        >
+          <DsfrButton label="Ajouter une cantine satellite" icon="fr-icon-add-line" />
+        </router-link>
       </div>
-      <DsfrDataTable
-        v-if="tableRows.length > 0"
-        title="Vos cantines satellites"
-        no-caption
-        :headers-row="tableHeaders"
-        :rows="tableRows"
-        :sortable-rows="['name', 'siretSiren', 'dailyMealCount']"
-        :pagination="true"
-        :pagination-options="[50, 100, 200]"
-        :rows-per-page="50"
-        pagination-wrapper-class="fr-mt-3w"
-        class="gestionnaire-cantine-satellites-gerer__table"
-      >
-        <template #cell="{ colKey, cell }">
-          <template v-if="colKey === 'edit'">
-            <router-link
-              v-if="cell.userCan"
-              :to="{ name: 'GestionnaireCantineModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
-              class="ma-cantine--unstyled-link"
-            >
-              <DsfrButton tertiary label="Modifier" />
-            </router-link>
-            <CanteenButtonJoin v-else :id="cell.satellite.id" :name="cell.satellite.name" />
-          </template>
-          <template v-else-if="colKey === 'remove'">
-            <CanteenButtonUnlink
-              :canteen="cell.canteen"
-              :satellite="cell.satellite"
-              @satelliteRemoved="removeRow(cell.satellite.id)"
-            />
-          </template>
-          <template v-else>
-            {{ cell }}
-          </template>
+    </div>
+    <AppLoader v-if="loading" />
+    <DsfrDataTable
+      v-if="tableRows.length > 0"
+      title="Vos cantines satellites"
+      no-caption
+      :headers-row="tableHeaders"
+      :rows="tableRows"
+      :sortable-rows="['name', 'siretSiren', 'dailyMealCount']"
+      :pagination="true"
+      :pagination-options="[50, 100, 200]"
+      :rows-per-page="50"
+      pagination-wrapper-class="fr-mt-3w"
+      class="gestionnaire-cantine-satellites-gerer__table"
+    >
+      <template #cell="{ colKey, cell }">
+        <template v-if="colKey === 'edit'">
+          <router-link
+            v-if="cell.userCan"
+            :to="{ name: 'GestionnaireCantineModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
+            class="ma-cantine--unstyled-link"
+          >
+            <DsfrButton tertiary label="Modifier" />
+          </router-link>
+          <CanteenButtonJoin v-else :id="cell.satellite.id" :name="cell.satellite.name" />
         </template>
-      </DsfrDataTable>
-    </template>
+        <template v-else-if="colKey === 'remove'">
+          <CanteenButtonUnlink
+            :canteen="cell.canteen"
+            :satellite="cell.satellite"
+            @satelliteRemoved="removeRow(cell.satellite.id)"
+          />
+        </template>
+        <template v-else>
+          {{ cell }}
+        </template>
+      </template>
+    </DsfrDataTable>
   </section>
 </template>
 
