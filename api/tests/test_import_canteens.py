@@ -378,11 +378,10 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(body["errors"]), 1)
-        self.assertEqual(body["errors"][0]["status"], 401)
-        self.assertTrue(
-            body["errors"][0]["message"].startswith(
-                "Vous n'êtes pas autorisé à importer des cantines avec des champs administratifs"
-            ),
+        self.assertEqual(body["errors"][0]["status"], 400)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
     @authenticate
