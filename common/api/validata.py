@@ -25,7 +25,7 @@ def validate_file_against_schema(file, schema_url):
         response = requests.post(
             VALIDATA_PROD_API_URL,
             files={
-                "file": ("file.csv", file.read(), file.content_type),
+                "file": (file.name, file.read(), file.content_type),
             },
             data={"schema": schema_url, "header_case": True, "include_resource_data": True},
         )
