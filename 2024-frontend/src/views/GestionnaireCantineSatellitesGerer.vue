@@ -91,7 +91,7 @@ const removeRow = (id) => {
       </p>
     </div>
     <div v-if="canteen.isCentralCuisine" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
-      <p class="fr-col-12 fr-col-md-4">{{ satellitesCountSentence }}</p>
+      <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
       <div
         class="fr-col-12 fr-col-md-8 fr-grid-row"
         :class="{
