@@ -52,12 +52,7 @@ class ImportCanteensView(APIView):
         self.start_time = None
         self.encoding_detected = None
         self.file = None
-        self.header = None
         self.is_admin_import = False
-        self.schema_url = None  # set in post(), depending if admin import or not
-        self.expected_header_list = file_import.get_expected_header_list_from_schema_list(
-            [CANTEEN_SCHEMA_FILE_PATH, CANTEEN_ADMIN_SCHEMA_FILE_PATH]
-        )
         super().__init__(**kwargs)
 
     def post(self, request):  # noqa: C901
@@ -66,25 +61,12 @@ class ImportCanteensView(APIView):
         try:
             self.file = request.data["file"]
 
-            # Step 1: Format validation
-            file_import.validate_file_size(self.file)
-            file_import.validate_file_format(self.file)
-
-            self.dialect = file_import.get_csv_file_dialect(self.file)
-            self.header = file_import.verify_first_line_is_header_list(
-                self.file, self.dialect, self.expected_header_list
-            )
-
-            # Step 1b: Admin import?
-            self.is_admin_import = any("admin_" in column for column in self.header)
-            self.schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
-            if self.is_admin_import and not self.request.user.is_staff:
-                raise PermissionDenied(
-                    detail="Vous n'êtes pas autorisé à importer des cantines avec des champs administratifs. Veuillez supprimer les colonnes commençant par 'admin_'"
-                )
+            # Step 1: Get schema
+            self.is_admin_import = self.request.user.is_staff
+            schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
 
             # Step 2: Schema validation (Validata)
-            validata_response = validata.validate_file_against_schema(self.file, self.schema_url)
+            validata_response = validata.validate_file_against_schema(self.file, schema_url)
             self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
