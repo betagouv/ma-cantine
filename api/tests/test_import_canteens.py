@@ -364,6 +364,31 @@ class TestCanteenImport(APITestCase):
         self.assertIn("Staff canteen", email.body)
 
     @authenticate
+    def test_staff_import_non_admin_header(self):
+        """
+        Staff users must import file with additionnals columns
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+
+        file_path = "./api/tests/files/canteens/canteens_good.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(body["errors"][0]["status"], 400)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+        )
+
+    @authenticate
     def test_staff_import_non_staff(self):
         """
         Non-staff users shouldn't have staff import capabilities
