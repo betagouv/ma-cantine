@@ -60,17 +60,16 @@ class ImportCanteensView(APIView):
         logger.info("Canteen bulk import started")
         try:
             self.file = request.data["file"]
-            is_staff = self.request.user.is_staff
 
             # Step 1: Get schema
-            self.is_admin_import = is_staff
+            self.is_admin_import = self.request.user.is_staff
             schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
 
             # Step 2: Schema validation (Validata)
             validata_response = validata.validate_file_against_schema(self.file, schema_url)
 
             # Header
-            header_has_errors = validata.check_if_has_errors_header(validata_response["report"], is_staff)
+            header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
             if header_has_errors:
                 self.errors = [
                     {

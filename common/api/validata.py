@@ -44,10 +44,10 @@ def process_errors(report):
     return errors
 
 
-def check_if_has_errors_header(report, is_staff):
+def check_if_has_errors_header(report):
     if any("rowNumber" not in error for error in report["errors"]):
         return True
-    if is_staff and any("Colonne" in warning for warning in report["warnings"]):
+    if any("Colonne" in warning for warning in report["warnings"]):
         return True
     return False
 
