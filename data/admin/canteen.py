@@ -175,6 +175,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         return actions
 
     def get_inlines(self, request, obj):
+        # to avoid circular import error
         from data.admin.diagnostic import DiagnosticInline
         from data.admin.user import UserInline
 
