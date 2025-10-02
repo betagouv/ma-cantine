@@ -60,12 +60,10 @@ class ImportCanteensView(APIView):
         logger.info("Canteen bulk import started")
         try:
             self.file = request.data["file"]
-
-            # Step 1: Get schema
             self.is_admin_import = self.request.user.is_staff
             schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
 
-            # Step 2: Schema validation (Validata)
+            # Schema validation (Validata)
             validata_response = validata.validate_file_against_schema(self.file, schema_url)
 
             # Error generating the report
@@ -80,6 +78,7 @@ class ImportCanteensView(APIView):
                 self._log_error("Echec lors de la demande de validation du fichier (schema cantines.json - Validata)")
                 return self._get_success_response()
 
+            # Header validation
             header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
             if header_has_errors:
                 self.errors = [
@@ -91,13 +90,13 @@ class ImportCanteensView(APIView):
                 self._log_error("Echec lors de la validation du header (schema cantines.json - Validata)")
                 return self._get_success_response()
 
-            # Cells
+            # Rows validation
             self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
                 return self._get_success_response()
 
-            # Step 3: ma-cantine validation (permissions, last checks...) + import
+            # ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
                 self._process_file(validata_response["resource_data"])
 
