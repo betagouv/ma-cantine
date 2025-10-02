@@ -89,6 +89,7 @@ const removeRow = (id) => {
           :to="{ name: 'GestionnaireCantineModifier', params: route.canteenUrlComponent }"
         />
       </p>
+      <p v-else>{{ satellitesCountSentence }}</p>
     </div>
     <AppLoader v-if="loading" />
     <template v-else>
