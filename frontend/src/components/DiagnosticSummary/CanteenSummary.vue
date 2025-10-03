@@ -96,7 +96,7 @@
     </v-row>
     <v-row v-if="canteen.isCentralCuisine">
       <v-col cols="12" class="pb-0">
-        <h3 class="fr-h6">Mes restaurants satellites</h3>
+        <h3 class="fr-h6">Mes cuisines satellites</h3>
         <p class="fr-text-sm mb-1 d-flex align-center" :class="{ 'dark-orange': hasSatelliteInconsistency }">
           <v-icon v-if="hasSatelliteInconsistency" small class="mr-1 dark-orange">$alert-line</v-icon>
           {{ satelliteCountEmpty }}
@@ -121,7 +121,7 @@
             color="primary"
             class="fr-btn--tertiary px-2"
           >
-            Gérer mes restaurants satellites
+            Gérer mes cuisines satellites
           </v-btn>
         </p>
       </v-col>
@@ -185,7 +185,7 @@ export default {
       return hasSatelliteInconsistency(this.canteen)
     },
     satelliteCountEmpty() {
-      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "restaurants satellites" : "restaurant satellite"
+      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "cuisines satellites" : "restaurant satellite"
       const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
       return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
     },

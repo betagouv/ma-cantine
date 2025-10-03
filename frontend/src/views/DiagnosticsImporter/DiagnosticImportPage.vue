@@ -263,8 +263,8 @@ export default {
       return {
         SIMPLE: "l'import simple",
         COMPLETE: "l'import complet",
-        CC_SIMPLE: "la mise à jour des restaurants satellites et l'import simple",
-        CC_COMPLETE: "la mise à jour des restaurants satellites et l'import complet",
+        CC_SIMPLE: "la mise à jour des cuisines satellites et l'import simple",
+        CC_COMPLETE: "la mise à jour des cuisines satellites et l'import complet",
       }[this.importLevel]
     },
     staffImportAvailable() {

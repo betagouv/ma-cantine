@@ -737,8 +737,8 @@ class UndoClaimCanteenView(APIView):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Lister les restaurants satellites pour une cuisine centrale.",
-        description="Si la cantine en question est une cuisine centrale, cet endpoint permet de lister toutes les restaurants satellites attachés à elle.",
+        summary="Lister les cuisines satellites pour une cuisine centrale.",
+        description="Si la cantine en question est une cuisine centrale, cet endpoint permet de lister toutes les cuisines satellites attachés à elle.",
     ),
     post=extend_schema(
         summary="Ajouter un restaurant satellite à la cuisine centrale.",

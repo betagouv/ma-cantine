@@ -120,7 +120,7 @@ const routes = [
             name: "GestionnaireCantineSatellitesGerer",
             component: GestionnaireCantineSatellitesGerer,
             meta: {
-              title: "Gérer mes restaurants satellites",
+              title: "Gérer mes cuisines satellites",
               breadcrumbs: [
                 { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
                 { to: { name: "DashboardManager" }, useCanteenName: true },
@@ -136,7 +136,7 @@ const routes = [
               breadcrumbs: [
                 { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
                 { to: { name: "DashboardManager" }, useCanteenName: true },
-                { to: { name: "GestionnaireCantineSatellitesGerer" }, title: "Gérer mes restaurants satellites" },
+                { to: { name: "GestionnaireCantineSatellitesGerer" }, title: "Gérer mes cuisines satellites" },
               ],
             },
           },

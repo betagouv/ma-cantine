@@ -365,7 +365,7 @@ class Canteen(SoftDeletionModel):
         PUBLISHED = "published", "✅ Publié"
 
     class Actions(models.TextChoices):
-        ADD_SATELLITES = "10_add_satellites", "Ajouter des restaurants satellites"
+        ADD_SATELLITES = "10_add_satellites", "Ajouter des cuisines satellites"
         PREFILL_DIAGNOSTIC = "18_prefill_diagnostic", "Créer et pré-remplir le diagnostic"
         CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
         FILL_DIAGNOSTIC = "30_fill_diagnostic", "Compléter le diagnostic"
@@ -451,7 +451,7 @@ class Canteen(SoftDeletionModel):
     satellite_canteens_count = models.PositiveIntegerField(
         null=True,
         blank=True,
-        verbose_name="nombre de restaurants satellites dépendants (si cuisine centrale)",
+        verbose_name="nombre de cuisines satellites dépendants (si cuisine centrale)",
     )
 
     siret = models.TextField(null=True, blank=True, validators=[utils_siret.validate_siret])

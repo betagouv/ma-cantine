@@ -120,7 +120,7 @@
                   params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
                 }"
               >
-                Mettre à jour vos restaurants satellites
+                Mettre à jour vos cuisines satellites
               </router-link>
             </li>
             <li v-if="missingCanteenData" class="mb-1">
@@ -134,7 +134,7 @@
               </router-link>
             </li>
             <li v-if="missingDeclarationMode">
-              Choisir comment les données sont saisies pour vos restaurants satellites
+              Choisir comment les données sont saisies pour vos cuisines satellites
             </li>
           </ul>
           <v-btn
@@ -173,7 +173,7 @@
           >
             <template v-slot:label>
               <span class="fr-text font-weight-bold grey--text text--darken-4">
-                Pour mes restaurants satellites, je saisis :
+                Pour mes cuisines satellites, je saisis :
               </span>
             </template>
             <v-row class="my-0">

@@ -12,7 +12,7 @@
         Correction des volets EGalim
       </li>
       <li>
-        Pour les cuisines centrales, ajout des restaurants satellites manquants
+        Pour les cuisines centrales, ajout des cuisines satellites manquants
       </li>
       <li>
         Correction des caractéristiques de la cantine (SIRET, type d’établissement, nombre de couverts..)

@@ -24,7 +24,7 @@ canteenService.fetchSatellites(canteenId).then((response) => {
 const satellitesCountSentence = computed(() => {
   if (satellites.value.length === 0) return "Aucun restaurant satellite renseigné"
   else if (satellites.value.length === 1) return "1 restaurant satellite renseigné"
-  else return `${satellites.value.length} restaurants satellites renseignés`
+  else return `${satellites.value.length} cuisines satellites renseignés`
 })
 
 /* Table */
@@ -82,7 +82,7 @@ const removeRow = (id) => {
     <div class="fr-col-12 fr-col-md-8">
       <h1>{{ route.meta.title }}</h1>
       <p v-if="!canteen.isCentralCuisine">
-        Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de restaurants satellites. Pour
+        Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de cuisines satellites. Pour
         modifier votre type d'établissement
         <AppLinkRouter
           title="cliquez-ici"
@@ -100,7 +100,7 @@ const removeRow = (id) => {
           }"
           class="ma-cantine--unstyled-link fr-m-1v"
         >
-          <DsfrButton secondary label="Importer des restaurants satellites" icon="fr-icon-file-add-line" />
+          <DsfrButton secondary label="Importer des cuisines satellites" icon="fr-icon-file-add-line" />
         </router-link>
         <router-link
           :to="{
@@ -116,7 +116,7 @@ const removeRow = (id) => {
     <AppLoader v-if="loading" />
     <DsfrDataTable
       v-if="tableRows.length > 0"
-      title="Vos restaurants satellites"
+      title="Vos cuisines satellites"
       no-caption
       :headers-row="tableHeaders"
       :rows="tableRows"
