@@ -24,7 +24,7 @@ canteenService.fetchSatellites(canteenId).then((response) => {
 const satellitesCountSentence = computed(() => {
   if (satellites.value.length === 0) return "Aucun restaurant satellite renseigné"
   else if (satellites.value.length === 1) return "1 restaurant satellite renseigné"
-  else return `${satellites.value.length} cuisines satellites renseignés`
+  else return `${satellites.value.length} cuisines satellites renseignées`
 })
 
 /* Table */

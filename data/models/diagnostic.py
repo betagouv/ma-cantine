@@ -197,7 +197,7 @@ class Diagnostic(models.Model):
     class CentralKitchenDiagnosticMode(models.TextChoices):
         APPRO = (
             "APPRO",
-            "Ce diagnostic concerne les données d'approvisionnement de tous les cuisines satellites",
+            "Ce diagnostic concerne les données d'approvisionnement de toutes les cuisines satellites",
         )
         ALL = "ALL", "Ce diagnostic concerne toutes les données des cuisines satellites"
 

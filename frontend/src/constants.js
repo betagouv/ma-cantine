@@ -43,7 +43,7 @@ export default Object.freeze({
       value: "central,central_serving",
     },
     {
-      text: "Cuisines satellites et autogérés",
+      text: "Cuisines satellites et autogérées",
       value: "site,site_cooked_elsewhere",
     },
   ],

@@ -451,7 +451,7 @@ class Canteen(SoftDeletionModel):
     satellite_canteens_count = models.PositiveIntegerField(
         null=True,
         blank=True,
-        verbose_name="nombre de cuisines satellites dépendants (si cuisine centrale)",
+        verbose_name="nombre de cuisines satellites dépendantes (si cuisine centrale)",
     )
 
     siret = models.TextField(null=True, blank=True, validators=[utils_siret.validate_siret])
