@@ -46,7 +46,7 @@
     },
     {
       "apiName": "siteCookedElsewhere",
-      "hint": "L'établissement sert des repas préparés par une cuisine centrale (une petite partie peut être réalisée sur place entrée / dessert)",
+      "hint": "Sert des repas préparés par une cuisine centrale (une petite partie peut être réalisée sur place entrée / dessert)",
       "label": "Satellite",
       "value": "site_cooked_elsewhere"
     },

@@ -354,7 +354,10 @@ class Canteen(SoftDeletionModel):
         CENTRAL = "central", "Livreur des repas sans lieu de consommation"
         CENTRAL_SERVING = "central_serving", "Livreur des repas qui accueille aussi des convives sur place"
         ON_SITE = "site", "Cantine qui produit les repas sur place"
-        ON_SITE_CENTRAL = "site_cooked_elsewhere", "Etablissement desservi par une cuisine centrale"
+        ON_SITE_CENTRAL = (
+            "site_cooked_elsewhere",
+            "Sert des repas préparés par une cuisine centrale (une petite partie peut être réalisée sur place entrée / dessert)",
+        )
 
     class EconomicModel(models.TextChoices):
         PUBLIC = "public", "Public"
