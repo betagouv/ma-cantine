@@ -186,7 +186,7 @@ export default {
     },
     satelliteCountEmpty() {
       const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "cuisines satellites" : "cuisine satellite"
-      const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
+      const fillPluralize = this.canteen.satellites.length > 1 ? "renseignées" : "renseignée"
       return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
     },
   },
