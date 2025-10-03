@@ -10,7 +10,7 @@ from api.serializers.utils import (
     extract_sector_from_dict_sectors,
 )
 from api.views.canteen import CanteenAnalysisListView
-from api.views.teledeclaration import TeledeclarationAnalysisListView
+from api.views.diagnostic import DiagnosticTeledeclaredAnalysisListView
 from data.models import Canteen
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
@@ -82,7 +82,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/export_analysis/schema_teledeclarations.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]
-        self.view = TeledeclarationAnalysisListView
+        self.view = DiagnosticTeledeclaredAnalysisListView
 
     def transform_dataset(self):
         if self.df.empty:

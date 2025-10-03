@@ -9,7 +9,7 @@ from django.core.files.storage import default_storage
 
 import macantine.etl.utils
 from api.views.canteen import CanteenOpenDataListView
-from api.views.teledeclaration import TeledeclarationOpenDataListView
+from api.views.diagnostic import DiagnosticTeledeclaredOpenDataListView
 from common.api.datagouv import update_dataset_resources
 from common.api.decoupage_administratif import (
     fetch_commune_detail,
@@ -181,7 +181,7 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self.datagouv_dataset_id = "resultats-de-campagnes-de-teledeclaration-des-cantines"
         self.schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
         self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_teledeclarations.json"
-        self.view = TeledeclarationOpenDataListView
+        self.view = DiagnosticTeledeclaredOpenDataListView
         self.df = None
 
     def transform_sectors(self) -> pd.Series:
