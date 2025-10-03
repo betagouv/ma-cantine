@@ -22,8 +22,8 @@ canteenService.fetchSatellites(canteenId).then((response) => {
 })
 
 const satellitesCountSentence = computed(() => {
-  if (satellites.value.length === 0) return "Aucun restaurant satellite renseigné"
-  else if (satellites.value.length === 1) return "1 restaurant satellite renseigné"
+  if (satellites.value.length === 0) return "Aucun cuisine satellite renseigné"
+  else if (satellites.value.length === 1) return "1 cuisine satellite renseigné"
   else return `${satellites.value.length} cuisines satellites renseignées`
 })
 
@@ -109,7 +109,7 @@ const removeRow = (id) => {
           }"
           class="ma-cantine--unstyled-link fr-m-1v"
         >
-          <DsfrButton label="Ajouter un restaurant satellite" icon="fr-icon-add-line" />
+          <DsfrButton label="Ajouter un cuisine satellite" icon="fr-icon-add-line" />
         </router-link>
       </div>
     </div>

@@ -17,7 +17,7 @@
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="satelliteCount">
       <v-icon :small="!dense" :x-small="dense" class="mr-1">$restaurant-line</v-icon>
-      {{ satelliteCount }} {{ satelliteCount === 1 ? "restaurant satellite" : "cuisines satellites" }}
+      {{ satelliteCount }} {{ satelliteCount === 1 ? "cuisine satellite" : "cuisines satellites" }}
     </p>
     <p :class="{ 'my-0 d-flex align-center': true, 'inline mr-3': singleLine }" v-if="businessSegments">
       <v-icon :small="!dense" :x-small="dense" class="mr-1">$building-line</v-icon>

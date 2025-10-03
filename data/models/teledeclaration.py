@@ -166,7 +166,7 @@ class Teledeclaration(models.Model):
     class TeledeclarationMode(models.TextChoices):
         SATELLITE_WITHOUT_APPRO = (
             "SATELLITE_WITHOUT_APPRO",
-            "Restaurant satellite dont les données d'appro sont déclarées par la cuisine centrale",
+            "Cuisine satellite dont les données d'appro sont déclarées par la cuisine centrale",
         )
         CENTRAL_APPRO = (
             "CENTRAL_APPRO",

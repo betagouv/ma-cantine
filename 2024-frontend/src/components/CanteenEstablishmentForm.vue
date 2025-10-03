@@ -528,7 +528,7 @@ if (props.establishmentData) {
           :disabled="isSaving"
           :label="
             addSatellite
-              ? 'Enregistrer et créer un nouveau restaurant satellite'
+              ? 'Enregistrer et créer un nouveau cuisine satellite'
               : 'Enregistrer et créer un nouvel établissement'
           "
           secondary

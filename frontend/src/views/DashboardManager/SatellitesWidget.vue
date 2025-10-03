@@ -76,7 +76,7 @@ export default {
       return hasSatelliteInconsistency(this.canteen)
     },
     satelliteCountEmpty() {
-      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "cuisines satellites" : "restaurant satellite"
+      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "cuisines satellites" : "cuisine satellite"
       const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
       return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
     },

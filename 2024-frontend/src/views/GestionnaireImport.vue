@@ -47,7 +47,7 @@ const quizSteps = [
   {
     key: "hasSatelliteData",
     title: "Cuisines satellites",
-    question: "Est-ce que vous connaissez les totaux d'approvisionnement par restaurant satellite ?",
+    question: "Est-ce que vous connaissez les totaux d'approvisionnement par cuisine satellite ?",
   },
   {
     key: "hasDetailedDiagnosticData",

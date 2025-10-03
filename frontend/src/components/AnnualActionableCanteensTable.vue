@@ -192,7 +192,7 @@ export default {
       ],
       typeDisplay: {
         site: "Cuisine sur site",
-        site_cooked_elsewhere: "Restaurant satellite",
+        site_cooked_elsewhere: "Cuisine satellite",
         central: "Livreur des repas",
         central_serving: "Livreur, avec service sur place",
       },

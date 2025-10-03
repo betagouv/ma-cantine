@@ -277,7 +277,7 @@ class ImportCanteensView(APIView):
             if central_producer_siret == siret:
                 raise ValidationError(
                     {
-                        "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui du restaurant satellite"
+                        "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui du cuisine satellite"
                     }
                 )
         if row[8] != Canteen.ProductionType.CENTRAL:
