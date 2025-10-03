@@ -885,7 +885,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(
             body["errors"][0]["message"],
-            "Champ 'siret de la cuisine centrale' : Le SIRET de la cuisine centrale doit être différent de celui du cuisine satellite",
+            "Champ 'siret de la cuisine centrale' : Le SIRET de la cuisine centrale doit être différent de celui de la cuisine satellite",
         )
 
     @authenticate
