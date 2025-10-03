@@ -196,20 +196,9 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self._clean_dataset()
         logger.info("TD campagne : Format the decimals...")
         self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
-        logger.info("TD campagne : Filter errors...")
-        self._filter_outsiders()
         logger.info("TD campagne : Transform ChoiceFields...")
         self.transform_canteen_choicefields(prefix="canteen_")
         logger.info("TD campagne : Transform sectors...")
         self.df["canteen_sectors"] = self.transform_sectors()
         logger.info("TD Campagne : Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
-
-    def _filter_outsiders(self):
-        """
-        For the campaign 2023, after analyses, we decided to exclude two TD because their value were impossible
-        # TODO: bring this to the queryset? (exclude_aberrant_values)
-        """
-        if self.year == 2022:
-            td_with_errors = [9656, 8037]
-            self.df = self.df[~self.df["id"].isin(td_with_errors)]

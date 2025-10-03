@@ -86,13 +86,16 @@ class DiagnosticQuerySet(models.QuerySet):
     def exclude_aberrant_values(self):
         """
         Ici nous supprimons les TD dont les déclarations paraissent erronées et sont impactantes.
-        Sont supprimées, les TD dont :
-        - Coût denrées existe et > 20 euros ET
-        - Valeur d'achat alimentaires > 1 million d'euros
+        1) Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
         Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
         nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
+        2) Durant la campagne 2023, nous avons aussi identifié deux TD dont les valeurs étaient aberrantes.
         """
-        return self.with_meal_price().exclude(meal_price__isnull=False, meal_price__gt=20, value_total_ht__gt=1000000)
+        return (
+            self.with_meal_price()
+            .exclude(meal_price__isnull=False, meal_price__gt=20, value_total_ht__gt=1000000)
+            .exclude(year=2022, teledeclaration_id__in=[9656, 8037])
+        )
 
     def canteen_not_deleted_during_campaign(self, year):
         year = int(year)
