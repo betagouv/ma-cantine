@@ -262,8 +262,8 @@ export default {
     },
     satelliteInconsistencyMessage() {
       const satelliteCount = this.canteen.satelliteCanteensCount
-      const declared = satelliteCount === 1 ? `un restaurant` : `${satelliteCount} restaurants`
-      return `Vous avez déclaré que votre établissement livrait des repas à ${declared} mais aucun n'a été enregistré.`
+      const declared = satelliteCount === 1 ? `une cuisine` : `${satelliteCount} cuisines`
+      return `Vous avez déclaré que votre établissement livrait des repas à ${declared} mais aucune n'a été enregistrée.`
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store.state.sectors)

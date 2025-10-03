@@ -109,7 +109,7 @@ const removeRow = (id) => {
           }"
           class="ma-cantine--unstyled-link fr-m-1v"
         >
-          <DsfrButton label="Ajouter un cuisine satellite" icon="fr-icon-add-line" />
+          <DsfrButton label="Ajouter une cuisine satellite" icon="fr-icon-add-line" />
         </router-link>
       </div>
     </div>
