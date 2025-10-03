@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
 
-from api.serializers import DiagnosticAnalysisSerializer
+from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Canteen, Diagnostic
 from macantine.etl.analysis import (
@@ -161,7 +161,7 @@ class TestETLAnalysisTD(TestCase):
                     "value_egalim_others_ht": tc["data"]["value_egalim_others_ht_agg"],
                 }
 
-                self.serializer = DiagnosticAnalysisSerializer(
+                self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
                     instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
                 )
                 data = self.serializer.data
@@ -309,7 +309,7 @@ class TestETLAnalysisTD(TestCase):
                     "value_total_ht": tc["data"]["value_total_ht"],
                 }
 
-                self.serializer = DiagnosticAnalysisSerializer(
+                self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
                     instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
                 )
                 data = self.serializer.data
@@ -329,7 +329,7 @@ class TestETLAnalysisTD(TestCase):
             diagnostic = DiagnosticFactory.create(canteen=canteen_with_geo_data, year=2022)
             diagnostic.teledeclare(applicant=UserFactory.create())
 
-        self.serializer = DiagnosticAnalysisSerializer(
+        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
         )
         data = self.serializer.data
@@ -351,7 +351,7 @@ class TestETLAnalysisTD(TestCase):
             diagnostic_half_geo = DiagnosticFactory.create(canteen=canteen_half_geo_data, year=2022)
             diagnostic_half_geo.teledeclare(applicant=UserFactory.create())
 
-        self.serializer_half_geo = DiagnosticAnalysisSerializer(
+        self.serializer_half_geo = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_half_geo.id)
         )
         data = self.serializer_half_geo.data
@@ -373,7 +373,7 @@ class TestETLAnalysisTD(TestCase):
             diagnostic_without_geo = DiagnosticFactory.create(canteen=canteen_without_geo_data, year=2022)
             diagnostic_without_geo.teledeclare(applicant=UserFactory.create())
 
-        self.serializer_without_geo = DiagnosticAnalysisSerializer(
+        self.serializer_without_geo = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_without_geo.id)
         )
         data_no_geo = self.serializer_without_geo.data
@@ -389,7 +389,7 @@ class TestETLAnalysisTD(TestCase):
             diagnostic = DiagnosticFactory.create(canteen=canteen_with_line_ministry, year=2022)
             diagnostic.teledeclare(applicant=UserFactory.create())
 
-        self.serializer = DiagnosticAnalysisSerializer(
+        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
         )
         data = self.serializer.data
@@ -404,7 +404,7 @@ class TestETLAnalysisTD(TestCase):
             )
             diagnostic_without_line_ministry.teledeclare(applicant=UserFactory.create())
 
-        self.serializer_without_line_ministry = DiagnosticAnalysisSerializer(
+        self.serializer_without_line_ministry = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_without_line_ministry.id)
         )
         data_without_line_ministry = self.serializer_without_line_ministry.data

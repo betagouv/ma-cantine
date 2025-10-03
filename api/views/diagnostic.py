@@ -25,9 +25,9 @@ from api.permissions import (
     IsLinkedCanteenManager,
 )
 from api.serializers import (
-    DiagnosticAnalysisSerializer,
     DiagnosticAndCanteenSerializer,
-    DiagnosticOpenDataSerializer,
+    DiagnosticTeledeclaredAnalysisSerializer,
+    DiagnosticTeledeclaredOpenDataSerializer,
     ManagerDiagnosticSerializer,
 )
 from api.views.utils import update_change_reason_with_auth
@@ -188,7 +188,7 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
 
 
 class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
-    serializer_class = DiagnosticAnalysisSerializer
+    serializer_class = DiagnosticTeledeclaredAnalysisSerializer
     filter_backends = [django_filters.DjangoFilterBackend]
     ordering_fields = ["creation_date"]
 
@@ -197,7 +197,7 @@ class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
 
 
 class DiagnosticTeledeclaredOpenDataListView(ListAPIView):
-    serializer_class = DiagnosticOpenDataSerializer
+    serializer_class = DiagnosticTeledeclaredOpenDataSerializer
     filter_backends = [django_filters.DjangoFilterBackend]
     ordering_fields = ["creation_date"]
 
