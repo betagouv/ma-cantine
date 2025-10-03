@@ -477,3 +477,21 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(errors), 0)
         self.assertEqual(Canteen.objects.count(), 3)
+
+    @authenticate
+    def test_import_excel_file(self):
+        """
+        User can import excel file
+        """
+        file_path = "./api/tests/files/canteens/canteens_good.xlsx"
+        with open(file_path, "rb") as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(len(body["canteens"]), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+        self.assertEqual(Canteen.objects.count(), 1)
+        canteen = Canteen.objects.first()
+        self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
