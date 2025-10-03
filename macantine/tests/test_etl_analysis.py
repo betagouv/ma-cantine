@@ -1,9 +1,11 @@
 import json
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
 import pytest
 from django.test import TestCase
+from django.utils import timezone
 from freezegun import freeze_time
 
 from api.serializers import DiagnosticAnalysisSerializer
@@ -84,27 +86,27 @@ class TestETLAnalysisTD(TestCase):
     def test_extraction_teledeclaration(self):
         applicant = UserFactory.create()
         canteen = CanteenFactory.create(siret="98648424243607")
+        canteen_deleted = CanteenFactory.create(
+            siret="12345678901234", deletion_date=timezone.make_aware(datetime.strptime("2023-03-31", "%Y-%m-%d"))
+        )
         canteen_no_siret = CanteenFactory.create()
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2022, diagnostic_type=None, teledeclaration_id=1)
             diagnostic.teledeclare(applicant=applicant)
-
-            diagnostic_no_siret = DiagnosticFactory(
-                canteen=canteen_no_siret, year=2022, diagnostic_type=None, teledeclaration_id=2
+            diagnostic_canteen_deleted = DiagnosticFactory(
+                canteen=canteen_deleted, year=2022, diagnostic_type=None, teledeclaration_id=2
             )
-            diagnostic_no_siret.teledeclare(applicant=applicant)
+            diagnostic_canteen_deleted.teledeclare(applicant=applicant)
+            diagnostic_canteen_no_siret = DiagnosticFactory(
+                canteen=canteen_no_siret, year=2022, diagnostic_type=None, teledeclaration_id=3
+            )
+            diagnostic_canteen_no_siret.teledeclare(applicant=applicant)
 
         etl_stats = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_stats.extract_dataset()
 
         self.assertEqual(etl_stats.len_dataset(), 1)
-
-        canteen.delete()
-        etl_stats = ETL_ANALYSIS_TELEDECLARATIONS()
-        etl_stats.extract_dataset()
-
-        self.assertEqual(etl_stats.len_dataset(), 0)
 
     def test_get_egalim_sans_bio(self):
         test_cases = [
