@@ -100,7 +100,7 @@ const removeRow = (id) => {
           }"
           class="ma-cantine--unstyled-link fr-m-1v"
         >
-          <DsfrButton secondary label="Importer des cantines satellites" icon="fr-icon-file-add-line" />
+          <DsfrButton secondary label="Importer des restaurants satellites" icon="fr-icon-file-add-line" />
         </router-link>
         <router-link
           :to="{
