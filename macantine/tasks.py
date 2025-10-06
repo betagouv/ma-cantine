@@ -404,6 +404,7 @@ def export_datasets(datasets: dict):
         etl.load_dataset()
 
 
+@app.task()
 def export_dataset_td_analysis():
     """
     Export the Teledeclaration datasets for analysis (Metabase)
@@ -415,6 +416,7 @@ def export_dataset_td_analysis():
     export_datasets(datasets)
 
 
+@app.task()
 def export_dataset_td_opendata():
     """
     Export the Teledeclaration datasets for opendata (data.gouv.fr) (1 per year)
@@ -430,6 +432,7 @@ def export_dataset_td_opendata():
     export_datasets(datasets)
 
 
+@app.task()
 def export_dataset_canteen_analysis():
     """
     Export the Canteen datasets for analysis (Metabase)
@@ -441,6 +444,7 @@ def export_dataset_canteen_analysis():
     export_datasets(datasets)
 
 
+@app.task()
 def export_dataset_canteen_opendata():
     """
     Export the Canteen datasets for opendata (data.gouv.fr)
