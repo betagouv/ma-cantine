@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.33.1](https://github.com/betagouv/ma-cantine/compare/v2025.33.0...v2025.33.1) (2025-10-06)
+
+
+### Corrections (bugs, typos...)
+
+* **Celery:** ajouter les paramètres manquant pour les exports ([#5746](https://github.com/betagouv/ma-cantine/issues/5746)) ([b1e16e0](https://github.com/betagouv/ma-cantine/commit/b1e16e0c7b26f2ddbfb45a0e7f9cef1ac18c25c8))
+
+
+### Technique
+
+* **Diagnostic:** migrer les views Open Data & Metabase [1TD1Site] ([#5743](https://github.com/betagouv/ma-cantine/issues/5743)) ([f589b86](https://github.com/betagouv/ma-cantine/commit/f589b8627077a4587321cb75f2715d6a30f38154))
+* **Metabase:** extraire les données à partir de la table Diagnostic au lieu de Teledeclaration [1TD1Site] ([#5676](https://github.com/betagouv/ma-cantine/issues/5676)) ([97b3156](https://github.com/betagouv/ma-cantine/commit/97b315606e9e3d2f920985dd27174b4b091aa0dd))
+
 ## [2025.33.0](https://github.com/betagouv/ma-cantine/compare/v2025.32.1...v2025.33.0) (2025-10-02)
 
 
