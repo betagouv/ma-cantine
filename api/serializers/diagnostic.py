@@ -3,7 +3,14 @@ from decimal import Decimal, InvalidOperation
 
 from rest_framework import serializers
 
+from api.serializers.utils import (
+    extract_category_from_dict_sectors,
+    extract_sector_from_dict_sectors,
+)
+from data.department_choices import Department
 from data.models import Diagnostic
+from data.region_choices import Region
+from macantine.etl import utils
 
 from .teledeclaration import ShortTeledeclarationSerializer
 from .utils import appro_to_percentages
@@ -218,6 +225,278 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         from .canteen import FullCanteenSerializer
 
         return FullCanteenSerializer(obj.canteen).data
+
+
+class DiagnosticAnalysisSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="teledeclaration_id", read_only=True)
+    creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)
+    canteen_id = serializers.IntegerField(source="canteen_snapshot.id", read_only=True)
+    name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
+    siret = serializers.CharField(source="canteen_snapshot.siret", read_only=True)
+    siren_unite_legale = serializers.CharField(source="canteen_snapshot.siren_unite_legale", read_only=True)
+    daily_meal_count = serializers.IntegerField(source="canteen_snapshot.daily_meal_count", read_only=True)
+    yearly_meal_count = serializers.IntegerField(source="canteen_snapshot.yearly_meal_count", read_only=True)
+    cout_denrees = serializers.SerializerMethodField()
+    cuisine_centrale = serializers.SerializerMethodField()
+    central_producer_siret = serializers.CharField(source="canteen_snapshot.central_producer_siret", read_only=True)
+    code_insee_commune = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
+    # epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
+    # epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
+    departement = serializers.CharField(source="canteen_snapshot.department", read_only=True)
+    lib_departement = (
+        serializers.SerializerMethodField()
+    )  # serializers.CharField(source="canteen_snapshot.department_lib", read_only=True)
+    region = serializers.CharField(source="canteen_snapshot.region", read_only=True)
+    lib_region = (
+        serializers.SerializerMethodField()
+    )  # serializers.CharField(source="canteen_snapshot.region_lib", read_only=True)
+    nbre_cantines_region = serializers.SerializerMethodField()
+    objectif_zone_geo = serializers.SerializerMethodField()
+    secteur = serializers.SerializerMethodField()
+    categorie = serializers.SerializerMethodField()
+    line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
+    spe = serializers.SerializerMethodField()
+    satellite_canteens_count = serializers.IntegerField(
+        source="canteen_snapshot.satellite_canteens_count", read_only=True
+    )
+    modele_economique = serializers.SerializerMethodField()
+    management_type = serializers.SerializerMethodField()
+    production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
+    declaration_donnees_2021 = serializers.SerializerMethodField()
+    declaration_donnees_2022 = serializers.SerializerMethodField()
+    declaration_donnees_2023 = serializers.SerializerMethodField()
+    declaration_donnees_2024 = serializers.SerializerMethodField()
+
+    value_bio_ht = serializers.FloatField(source="value_bio_ht_agg", read_only=True)
+    value_sustainable_ht = serializers.FloatField(source="value_sustainable_ht_agg", read_only=True)
+    value_externality_performance_ht = serializers.FloatField(
+        source="value_externality_performance_ht_agg", read_only=True
+    )
+    value_egalim_others_ht = serializers.FloatField(source="value_egalim_others_ht_agg", read_only=True)
+    value_somme_egalim_avec_bio_ht = serializers.FloatField(source="value_egalim_ht_agg", read_only=True)
+    value_somme_egalim_hors_bio_ht = serializers.SerializerMethodField()
+    value_meat_and_fish_ht = serializers.SerializerMethodField()
+    value_meat_and_fish_egalim_ht = serializers.SerializerMethodField()
+    ratio_egalim_fish = serializers.SerializerMethodField()
+    ratio_egalim_meat_poultry = serializers.SerializerMethodField()
+    ratio_bio = serializers.SerializerMethodField()
+    ratio_egalim_avec_bio = serializers.SerializerMethodField()
+    ratio_egalim_sans_bio = serializers.SerializerMethodField()
+    diag_gaspi = serializers.BooleanField(source="has_waste_diagnostic", read_only=True)
+    plan_action_gaspi = serializers.BooleanField(source="has_waste_plan", read_only=True)
+    action_gaspi_inscription = serializers.SerializerMethodField()
+    action_gaspi_sensibilisation = serializers.SerializerMethodField()
+    action_gaspi_formation = serializers.SerializerMethodField()
+    action_gaspi_distribution = serializers.SerializerMethodField()
+    action_gaspi_portions = serializers.SerializerMethodField()
+    action_gaspi_reutilisation = serializers.SerializerMethodField()
+
+    email = serializers.EmailField(source="applicant_snapshot.email", read_only=True)
+    tmp_satellites = serializers.ListField(source="satellites_snapshot", read_only=True)
+    genere_par_cuisine_centrale = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Diagnostic
+        fields = (
+            # diagnostic fields
+            "id",  # teledeclaration_id  # TODO: replace with diagnostic_id
+            "diagnostic_type",
+            "teledeclaration_mode",
+            "creation_date",  # teledeclaration_date
+            "year",
+            "creation_source",
+            # canteen fields
+            "canteen_id",
+            "name",
+            "siret",
+            "siren_unite_legale",
+            "daily_meal_count",
+            "yearly_meal_count",
+            "cout_denrees",
+            "cuisine_centrale",
+            "central_producer_siret",
+            "code_insee_commune",
+            # "epci",
+            # "epci_lib",
+            "departement",
+            "lib_departement",
+            "region",
+            "lib_region",
+            "nbre_cantines_region",
+            "objectif_zone_geo",
+            "secteur",
+            "categorie",
+            "line_ministry",
+            "spe",
+            "satellite_canteens_count",
+            "modele_economique",
+            "management_type",
+            "production_type",
+            "declaration_donnees_2021",
+            "declaration_donnees_2022",
+            "declaration_donnees_2023",
+            "declaration_donnees_2024",
+            # value fields
+            "value_total_ht",
+            "value_bio_ht",
+            "value_sustainable_ht",
+            "value_externality_performance_ht",
+            "value_egalim_others_ht",
+            "value_meat_poultry_ht",
+            "value_meat_poultry_france_ht",
+            "value_meat_poultry_egalim_ht",
+            "value_fish_ht",
+            "value_fish_egalim_ht",
+            "value_somme_egalim_avec_bio_ht",
+            "value_somme_egalim_hors_bio_ht",
+            "value_meat_and_fish_ht",
+            "value_meat_and_fish_egalim_ht",
+            "service_type",
+            "vegetarian_weekly_recurrence",
+            "vegetarian_menu_type",
+            "diag_gaspi",
+            "plan_action_gaspi",
+            "action_gaspi_inscription",
+            "action_gaspi_sensibilisation",
+            "action_gaspi_formation",
+            "action_gaspi_distribution",
+            "action_gaspi_portions",
+            "action_gaspi_reutilisation",
+            "ratio_egalim_fish",
+            "ratio_egalim_meat_poultry",
+            "ratio_bio",
+            "ratio_egalim_avec_bio",
+            "ratio_egalim_sans_bio",
+            # applicant fields
+            "email",
+            # extra
+            "tmp_satellites",
+            "genere_par_cuisine_centrale",
+        )
+        read_only_fields = fields
+
+    def get_cout_denrees(self, obj):
+        return obj.meal_price if obj.meal_price else -1
+
+    def get_cuisine_centrale(self, obj):
+        production_type = obj.canteen_snapshot.get("production_type", None)
+        if production_type in ["site", "site_cooked_elsewhere"]:
+            return "B) non"
+        elif production_type in ["central", "central_serving"]:
+            return "A) oui"
+        else:
+            return "C) non renseigné"
+
+    def get_management_type(self, obj):
+        management_type = obj.canteen_snapshot.get("management_type", None)
+        if management_type:
+            if management_type == "direct":
+                return "A) directe"
+            elif management_type == "conceded":
+                return "B) concédée"
+            else:
+                return "C) non renseigné"
+
+    def get_modele_economique(self, obj):
+        economic_model = obj.canteen_snapshot.get("economic_model", None)
+        if economic_model:
+            if economic_model == "private":
+                return "A) privé"
+            elif economic_model == "public":
+                return "B) public"
+            else:
+                return "C) non renseigné"
+
+    def get_secteur(self, obj):
+        sectors = obj.canteen_snapshot.get("sectors", None)
+        if sectors:
+            return extract_sector_from_dict_sectors(sectors)
+
+    def get_categorie(self, obj):
+        categories = obj.canteen_snapshot.get("sectors", None)
+        if categories:
+            return extract_category_from_dict_sectors(categories)
+
+    def get_lib_departement(self, obj):
+        department = obj.canteen_snapshot.get("department", None)
+        return Department(department).label.split(" - ")[1].lstrip() if department else None
+
+    def get_lib_region(self, obj):
+        region = obj.canteen_snapshot.get("region", None)
+        return Region(region).label.split(" - ")[1].lstrip() if region else None
+
+    def get_nbre_cantines_region(self, obj):
+        return utils.get_nbre_cantines_region(obj.canteen_snapshot.get("region", None))
+
+    def get_objectif_zone_geo(self, obj):
+        return utils.get_objectif_zone_geo(obj.canteen_snapshot.get("department", None))
+
+    def get_spe(self, obj):
+        line_ministry = obj.canteen_snapshot.get("line_ministry", None)
+        return "Oui" if line_ministry else "Non"
+
+    def get_declaration_donnees_2021(self, obj):
+        return obj.canteen.declaration_donnees_2021
+
+    def get_declaration_donnees_2022(self, obj):
+        return obj.canteen.declaration_donnees_2022
+
+    def get_declaration_donnees_2023(self, obj):
+        return obj.canteen.declaration_donnees_2023
+
+    def get_declaration_donnees_2024(self, obj):
+        return obj.canteen.declaration_donnees_2024
+
+    def get_value_somme_egalim_hors_bio_ht(self, obj):
+        return utils.sum_int_and_none(
+            [
+                obj.value_sustainable_ht_agg,
+                obj.value_externality_performance_ht_agg,
+                obj.value_egalim_others_ht_agg,
+            ]
+        )
+
+    def get_value_meat_and_fish_ht(self, obj):
+        return utils.sum_int_and_none([obj.value_meat_poultry_ht, obj.value_fish_ht])
+
+    def get_value_meat_and_fish_egalim_ht(self, obj):
+        return utils.sum_int_and_none([obj.value_meat_poultry_egalim_ht, obj.value_fish_egalim_ht])
+
+    def get_action_gaspi_inscription(self, obj):
+        return obj.waste_actions and (Diagnostic.WasteActions.INSCRIPTION in obj.waste_actions)
+
+    def get_action_gaspi_sensibilisation(self, obj):
+        return obj.waste_actions and (Diagnostic.WasteActions.AWARENESS in obj.waste_actions)
+
+    def get_action_gaspi_formation(self, obj):
+        return obj.waste_actions and (Diagnostic.WasteActions.TRAINING in obj.waste_actions)
+
+    def get_action_gaspi_distribution(self, obj):
+        return obj.waste_actions and (Diagnostic.WasteActions.DISTRIBUTION in obj.waste_actions)
+
+    def get_action_gaspi_portions(self, obj):
+        return obj.waste_actions and (Diagnostic.WasteActions.PORTIONS in obj.waste_actions)
+
+    def get_action_gaspi_reutilisation(self, obj):
+        return obj.waste_actions and (Diagnostic.WasteActions.REUSE in obj.waste_actions)
+
+    def get_ratio_egalim_fish(self, obj):
+        return utils.compute_ratio(obj.value_fish_egalim_ht, obj.value_fish_ht)
+
+    def get_ratio_egalim_meat_poultry(self, obj):
+        return utils.compute_ratio(obj.value_meat_poultry_egalim_ht, obj.value_meat_poultry_ht)
+
+    def get_ratio_bio(self, obj):
+        return utils.compute_ratio(obj.value_bio_ht_agg, obj.value_total_ht)
+
+    def get_ratio_egalim_avec_bio(self, obj):
+        return utils.compute_ratio(obj.value_egalim_ht_agg, obj.value_total_ht)
+
+    def get_ratio_egalim_sans_bio(self, obj):
+        return utils.compute_ratio(self.get_value_somme_egalim_hors_bio_ht(obj), obj.value_total_ht)
+
+    def get_genere_par_cuisine_centrale(self, obj):
+        return obj.is_teledeclared_by_cc
 
 
 class DiagnosticOpenDataSerializer(serializers.ModelSerializer):

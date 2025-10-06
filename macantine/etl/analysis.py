@@ -88,6 +88,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         if self.df.empty:
             logger.warning("Dataset is empty. Skipping transformation")
             return
+
         self.flatten_central_kitchen_td()
         self.delete_duplicates_cc_csat()
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
@@ -119,7 +120,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             self.df = self.df.drop_duplicates(subset=["canteen_id", "year"], keep="first")
         else:
             logger.warning(
-                "Required columns 'canteen_id' or 'production_type' not found in dataframe. Skipping duplicate removal."
+                "Required columns 'canteen_id' or 'genere_par_cuisine_centrale' not found in dataframe. Skipping duplicate removal."
             )
 
     def flatten_central_kitchen_td(self):
@@ -134,10 +135,10 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                 Canteen.ProductionType.CENTRAL,
                 Canteen.ProductionType.CENTRAL_SERVING,
             }:
-                nbre_satellites = len(row["tmp_satellites"]) + (
+                nbre_satellites = len(row["tmp_satellites"] or []) + (
                     1 if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING else 0
                 )
-                for satellite in row["tmp_satellites"]:
+                for satellite in row["tmp_satellites"] or []:
                     satellite_row = row.copy()
                     satellite_row["canteen_id"] = satellite["id"]
                     satellite_row["name"] = satellite["name"]
@@ -168,7 +169,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         """
         appro_columns = [col_appro for col_appro in self.columns if "value" in col_appro]
         for col in appro_columns + ["yearly_meal_count"]:
-            if col in row and nbre_satellites:
+            if col in row and row[col] not in (None, "nan") and nbre_satellites:
                 row[col] = row[col] / nbre_satellites
             else:
                 row[col] = None
