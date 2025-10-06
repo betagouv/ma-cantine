@@ -907,7 +907,7 @@ class CanteenAnalysisListView(ListAPIView):
     serializer_class = CanteenAnalysisSerializer
 
     def get_queryset(self):
-        return Canteen.objects.prefetch_related("sectors", "managers")
+        return Canteen.objects.prefetch_related("sectors", "managers").order_by("creation_date")
 
 
 class CanteenOpenDataListView(ListAPIView):
