@@ -8,21 +8,15 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import get_template
 from django.utils.text import slugify
-from django_filters import rest_framework as django_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, status
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
 from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
-from api.serializers import (
-    DiagnosticAnalysisSerializer,
-    DiagnosticOpenDataSerializer,
-    FullDiagnosticSerializer,
-)
+from api.serializers import FullDiagnosticSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import (
     CAMPAIGN_DATES,
@@ -467,21 +461,3 @@ class TeledeclarationCampaignDatesRetrieveView(APIView):
             "in_correction": is_in_correction(),
         }
         return Response(campaign_dates_for_year)
-
-
-class TeledeclarationAnalysisListView(ListAPIView):
-    serializer_class = DiagnosticAnalysisSerializer
-    filter_backends = [django_filters.DjangoFilterBackend]
-    ordering_fields = ["creation_date"]
-
-    def get_queryset(self):
-        return Diagnostic.objects.with_meal_price().historical_valid_td(CAMPAIGN_DATES.keys())
-
-
-class TeledeclarationOpenDataListView(ListAPIView):
-    serializer_class = DiagnosticOpenDataSerializer
-    filter_backends = [django_filters.DjangoFilterBackend]
-    ordering_fields = ["creation_date"]
-
-    def get_queryset(self, year):
-        return Diagnostic.objects.publicly_visible().valid_td_by_year(year).order_by("teledeclaration_date")

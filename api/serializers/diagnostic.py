@@ -227,7 +227,7 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         return FullCanteenSerializer(obj.canteen).data
 
 
-class DiagnosticAnalysisSerializer(serializers.ModelSerializer):
+class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source="teledeclaration_id", read_only=True)
     creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)
     canteen_id = serializers.IntegerField(source="canteen_snapshot.id", read_only=True)
@@ -499,7 +499,7 @@ class DiagnosticAnalysisSerializer(serializers.ModelSerializer):
         return obj.is_teledeclared_by_cc
 
 
-class DiagnosticOpenDataSerializer(serializers.ModelSerializer):
+class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
     diagnostic_type = serializers.CharField(source="teledeclaration_type", read_only=True)  # TODO: avoid renaming?
     creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)  # TODO: avoid renaming?
     version = serializers.CharField(source="teledeclaration_version", read_only=True)  # TODO: avoid renaming?
