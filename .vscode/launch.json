@@ -51,7 +51,7 @@
       "stopOnEntry": false,
       "python": "${workspaceFolder}/venv/bin/python",
       "program": "${workspaceFolder}/manage.py",
-      "args": ["fill_missing_insee_code_using_siret"],
+      "args": ["canteen_fill_missing_insee_code_using_siret"],
       "justMyCode": false,
       "django": true
     },
