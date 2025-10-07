@@ -5,7 +5,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Teledeclaration
 
 
-class FillMissingTDCanteenGeolocationDataCommandTest(TestCase):
+class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_with_geo_data = CanteenFactory.create(
@@ -45,7 +45,7 @@ class FillMissingTDCanteenGeolocationDataCommandTest(TestCase):
             epci_lib=None,
         )
 
-    def test_fill_missing_canteen_geolocation_data_command(self):
+    def test_teledeclaration_fill_missing_canteen_geolocation_data_command(self):
         for canteen in [
             self.canteen_with_geo_data,
             self.canteen_half_geo_data,
@@ -69,7 +69,7 @@ class FillMissingTDCanteenGeolocationDataCommandTest(TestCase):
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="region").count(), 3)
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__region=None).count(), 1)
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="epci").count(), 0)
-        call_command("fill_missing_td_canteen_geolocation_data")
+        call_command("teledeclaration_fill_missing_canteen_geolocation_data")
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="department").count(), 4)
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__department=None).count(), 0)
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="region").count(), 4)
