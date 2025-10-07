@@ -38,9 +38,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # init
-        print("Starting teledeclaration fix task")
         command = options["command"]
         apply = options["apply"]
+
+        print(f"Starting task: fix teledeclarations: {command}")
 
         if not apply:
             print("Dry run mode, no changes will be applied.")
@@ -50,7 +51,7 @@ class Command(BaseCommand):
         elif command == "recreate_canteen_hard_deleted":
             self.recreate_canteen_hard_deleted(apply)
 
-    def set_canteen_id_before_v4(self, apply):
+    def set_canteen_id_before_v4(self, apply=False):
         diagnostic_updated_count = 0
         # teledeclaration_qs = Teledeclaration.objects.exclude(declared_data__version__gte=4)  # stored as string, harder...
         diagnostic_qs = (
