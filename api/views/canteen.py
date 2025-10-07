@@ -905,8 +905,6 @@ class CanteenMinistriesView(APIView):
 
 class CanteenAnalysisListView(ListAPIView):
     serializer_class = CanteenAnalysisSerializer
-    filter_backends = [django_filters.DjangoFilterBackend]
-    ordering_fields = ["creation_date"]
 
     def get_queryset(self):
         return Canteen.objects.prefetch_related("sectors", "managers")
@@ -916,4 +914,4 @@ class CanteenOpenDataListView(ListAPIView):
     serializer_class = CanteenOpenDataSerializer
 
     def get_queryset(self):
-        return Canteen.objects.prefetch_related("sectors", "managers").publicly_visible()
+        return Canteen.objects.prefetch_related("sectors", "managers").publicly_visible().order_by("creation_date")

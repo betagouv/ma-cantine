@@ -47,9 +47,18 @@ class TestETLOpenData(TestCase):
             declaration_donnees_2023=False,
             declaration_donnees_2024=True,
         )
+        cls.canteen_2 = CanteenFactory.create(
+            name="Cantine 2",
+            siret="19382111300035",
+            sectors=[],
+            managers=[cls.user_manager],
+            declaration_donnees_2022=True,
+        )
         with freeze_time("2023-05-14"):  # during the 2022 campaign
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2022, diagnostic_type=None)
             diagnostic.teledeclare(cls.user_manager)
+            diagnostic_2 = DiagnosticFactory.create(canteen=cls.canteen_2, year=2022, diagnostic_type=None)
+            diagnostic_2.teledeclare(cls.user_manager)
         with freeze_time("2024-04-01"):  # during the 2023 campaign
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2023, diagnostic_type=None)
             diagnostic.teledeclare(cls.user_manager)
@@ -61,20 +70,27 @@ class TestETLOpenData(TestCase):
         cls.canteen_without_manager = CanteenFactory.create(siret="75665621899905", sectors=[])
         cls.canteen_without_manager.managers.clear()
 
-    def test_td_range_years(self, mock):
-        """
-        Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
-        """
-        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
-        etl_td.extract_dataset()
-        self.assertEqual(etl_td.len_dataset(), 1, "Only 1 TD in the 2022 campaign")
+    def test_teledeclaration_extract(self, mock):
+        # Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
+        etl_td_2022 = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
+        etl_td_2022.extract_dataset()
+        self.assertEqual(etl_td_2022.len_dataset(), 2, "2 TDs in the 2022 campaign")
+        self.assertEqual(
+            etl_td_2022.get_dataset().iloc[0]["canteen_id"],
+            self.canteen.id,
+            "Order by teledeclaration date ascending",
+        )
 
-    def test_ignore_cancelled_tds(self, mock):
-        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2023)
-        etl_td.extract_dataset()
-        self.assertEqual(etl_td.len_dataset(), 0, "The only TD in the 2023 campaign has the CANCELLED status")
+        # Only non-cancelled teledeclarations should be extracted
+        etl_td_2023 = ETL_OPEN_DATA_TELEDECLARATIONS(2023)
+        etl_td_2023.extract_dataset()
+        self.assertEqual(etl_td_2023.len_dataset(), 0, "The only TD in the 2023 campaign has the CANCELLED status")
 
-    def test_transform_teledeclaration(self, mock):
+        etl_td_2024 = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
+        etl_td_2024.extract_dataset()
+        self.assertEqual(etl_td_2024.len_dataset(), 1, "Only 1 TD in the 2024 campaign")
+
+    def test_teledeclaration_transform(self, mock):
         mock.get(
             "https://geo.api.gouv.fr/communes",
             text=json.dumps(""),
@@ -89,12 +105,12 @@ class TestETLOpenData(TestCase):
         schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
-        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
+        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
         etl_td.extract_dataset()
         etl_td.transform_dataset()
 
         self.assertEqual(len(etl_td.get_dataset().columns), len(schema_cols), "The columns should match the schema")
-        self.assertEqual(etl_td.len_dataset(), 1, "Only 1 TD in the 2022 campaign")
+        self.assertEqual(etl_td.len_dataset(), 1, "Only 1 TD in the 2024 campaign")
         self.assertEqual(etl_td.get_dataset().iloc[0]["applicant_id"], self.user_manager.id)
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_siret"], "19382111300027")
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_name"], "Cantine")
@@ -108,24 +124,25 @@ class TestETLOpenData(TestCase):
             "The bio value is aggregated from bio fields and should be greater than 0",
         )
 
-    def test_extraction_canteen(self, mock):
+    def test_canteen_extract(self, mock):
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
-        self.assertEqual(etl_canteen.len_dataset(), 0, "There shoud be an empty dataframe")
+        self.assertEqual(etl_canteen.len_dataset(), 0, "There shoud be an empty dataframe before extraction")
 
         etl_canteen.extract_dataset()
-        self.assertEqual(len(etl_canteen.df.id.unique()), 2, "There should be two different canteens")
+        self.assertEqual(len(etl_canteen.df.id.unique()), 3, "There should be three different canteens")
+        self.assertEqual(etl_canteen.get_dataset().iloc[0]["id"], self.canteen.id, "Order by created date ascending")
 
-        # Checking the deletion
+        # Only non-deleted canteens should be extracted
         self.canteen.delete()
         etl_canteen.extract_dataset()
-        self.assertEqual(len(etl_canteen.df.id.unique()), 1, "There should be one canteen less after soft deletion")
+        self.assertEqual(len(etl_canteen.df.id.unique()), 2, "There should be one canteen less after soft deletion")
 
         self.canteen_without_manager.hard_delete()
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
         etl_canteen.extract_dataset()
-        self.assertEqual(etl_canteen.len_dataset(), 0, "There should be one canteen less after hard deletion")
+        self.assertEqual(etl_canteen.len_dataset(), 1, "There should be one canteen less after hard deletion")
 
-    def test_transformation_canteens(self, mock):
+    def test_canteen_transform(self, mock):
         schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
@@ -239,7 +256,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(number_of_updated_resources, 1, "Only the csv resource should be updated")
 
     @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
-    def test_load_dataset_canteen(self, mock):
+    def test_canteen_load_dataset(self, mock):
         # Making sure the code will not enter online dataset validation by forcing local filesystem management
         test_cases = [
             {

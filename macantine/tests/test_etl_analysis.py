@@ -41,7 +41,13 @@ class TestETLAnalysisCanteen(TestCase):
         )
         cls.canteen_2 = CanteenFactory(sectors=[cls.sector])
 
-    def test_transformed_dataset_match_schema(self):
+    def test_canteen_extract(self):
+        etl = ETL_ANALYSIS_CANTEEN()
+        etl.extract_dataset()
+        self.assertEqual(len(etl.df.id.unique()), 2, "There should be two different canteens")
+        self.assertEqual(etl.get_dataset().iloc[0]["id"], self.canteen_2.id, "Order by created date descending")
+
+    def test_canteen_transform_dataset_match_schema(self):
         etl = ETL_ANALYSIS_CANTEEN()
         schema = json.load(open("data/schemas/export_analysis/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
