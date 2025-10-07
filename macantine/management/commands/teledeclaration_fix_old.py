@@ -10,10 +10,10 @@ from data.models import Canteen, Diagnostic
 class Command(BaseCommand):
     """
     Usage:
-    - python manage.py teledeclaration_fix_old --command=set_canteen_id_before_v4
-    - python manage.py teledeclaration_fix_old --command=set_canteen_id_before_v4 --apply
-    - python manage.py teledeclaration_fix_old --command=recreate_canteen_hard_deleted
-    - python manage.py teledeclaration_fix_old --command=recreate_canteen_hard_deleted --apply
+    - python manage.py teledeclaration_fix_old --command set_canteen_id_before_v4
+    - python manage.py teledeclaration_fix_old --command set_canteen_id_before_v4 --apply
+    - python manage.py teledeclaration_fix_old --command recreate_canteen_hard_deleted
+    - python manage.py teledeclaration_fix_old --command recreate_canteen_hard_deleted --apply
     """
 
     help = "One-time commands to fix old teledeclarations"
@@ -88,6 +88,7 @@ class Command(BaseCommand):
                 )
             )
             .filter(satellites_count__gt=0)
+            .order_by("-teledeclaration_date")  # most recent first
         )
         print("Diagnostics teledeclared with satellites_snapshot:", diagnostic_qs.count())
 
@@ -102,7 +103,7 @@ class Command(BaseCommand):
                         continue
                     else:
                         print(
-                            f"Canteen {canteen_id} from Diagnostic {diagnostic.id} (teledeclaration_id {diagnostic.teledeclaration_id}) does not exist."
+                            f"Canteen {canteen_id} from Diagnostic {diagnostic.id} (year {diagnostic.year} / teledeclaration_id {diagnostic.teledeclaration_id}) does not exist."
                         )
                         canteen_exists_by_siret = Canteen.all_objects.filter(siret=canteen_siret).exists()
                         if canteen_exists_by_siret:
@@ -114,14 +115,27 @@ class Command(BaseCommand):
                                 f"Canteen {canteen_id} from Diagnostic {diagnostic.id} with SIRET {canteen_siret} still does not exist, let's recreate it!"
                             )
                             if apply:
-                                # remove id to create a new one
-                                canteen_data = canteen_satellite.copy()
-                                canteen_data.pop("id", None)
-                                new_canteen = Canteen.objects.create(**canteen_data)
+                                new_canteen = Canteen()
+                                # 2021 info
+                                # nothing, we didn't snapshot satellites at that time
+                                # 2022-2023-2024 info
+                                new_canteen.pk = canteen_satellite.get("id")
+                                new_canteen.siret = canteen_satellite.get("siret")
+                                new_canteen.name = canteen_satellite.get("name")
+                                new_canteen.daily_meal_count = canteen_satellite.get("daily_meal_count")
+                                new_canteen.yearly_meal_count = canteen_satellite.get("yearly_meal_count")
+                                # additional info
+                                new_canteen.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
+                                new_canteen.central_producer_siret = diagnostic.canteen_snapshot.get("siret")
+                                # soft-delete the canteen (set to the last day of the teledeclaration year)
+                                new_canteen.deletion_date = diagnostic.teledeclaration_date.replace(month=12, day=31)
+                                new_canteen.save()
                                 update_change_reason(
                                     new_canteen,
-                                    f"Script: recreate hard-deleted canteens from teledeclared Diagnostic {diagnostic.id}",
+                                    f"Script: recreate_canteen_hard_deleted (diagnostic_id {diagnostic.id})",
                                 )
+                                for sector in canteen_satellite.get("sectors", []):
+                                    new_canteen.sectors.add(sector["id"])
                             canteens_created_count += 1
                 else:
                     print(f"Canteen satellite in Diagnostic {diagnostic.id} has no id, skipping")
