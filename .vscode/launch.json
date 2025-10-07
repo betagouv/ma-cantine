@@ -45,17 +45,6 @@
       "justMyCode": true
     },
     {
-      "name": "Geo Bot SIRET",
-      "type": "debugpy",
-      "request": "launch",
-      "stopOnEntry": false,
-      "python": "${workspaceFolder}/venv/bin/python",
-      "program": "${workspaceFolder}/manage.py",
-      "args": ["canteen_fill_missing_insee_code_using_siret"],
-      "justMyCode": false,
-      "django": true
-    },
-    {
       "name": "Export Dataset Canteen for analysis",
       "type": "debugpy",
       "request": "launch",
