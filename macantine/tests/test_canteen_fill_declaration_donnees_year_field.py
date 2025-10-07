@@ -6,7 +6,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
 
 
-class FillCanteenDeclarationDonneesYearFieldCommandTest(TestCase):
+class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_with_diagnostic_cancelled = CanteenFactory()
@@ -35,11 +35,11 @@ class FillCanteenDeclarationDonneesYearFieldCommandTest(TestCase):
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
 
-    def test_fill_canteen_declaration_donnees_year_field(self):
+    def test_canteen_fill_declaration_donnees_year_field(self):
         self.assertFalse(self.canteen_with_diagnostic_cancelled.declaration_donnees_2024)
         self.assertFalse(self.canteen_with_diagnostic_submitted.declaration_donnees_2024)
         self.assertFalse(self.canteen_satellite_with_central_diagnostic_submitted.declaration_donnees_2024)
-        call_command("fill_canteen_declaration_donnees_year_field", year=2024)
+        call_command("canteen_fill_declaration_donnees_year_field", year=2024)
         self.canteen_with_diagnostic_cancelled.refresh_from_db()
         self.canteen_with_diagnostic_submitted.refresh_from_db()
         self.canteen_satellite_with_central_diagnostic_submitted.refresh_from_db()
@@ -47,8 +47,8 @@ class FillCanteenDeclarationDonneesYearFieldCommandTest(TestCase):
         self.assertTrue(self.canteen_with_diagnostic_submitted.declaration_donnees_2024)
         self.assertTrue(self.canteen_satellite_with_central_diagnostic_submitted.declaration_donnees_2024)
 
-    def test_test_fill_canteen_declaration_donnees_year_field_for_canteen_with_deletion_date(self):
+    def test_test_canteen_fill_declaration_donnees_year_field_for_canteen_with_deletion_date(self):
         self.canteen_with_diagnostic_submitted.delete()
-        call_command("fill_canteen_declaration_donnees_year_field", year=2024)
+        call_command("canteen_fill_declaration_donnees_year_field", year=2024)
         self.canteen_with_diagnostic_submitted.refresh_from_db()
         self.assertTrue(self.canteen_with_diagnostic_submitted.declaration_donnees_2024)
