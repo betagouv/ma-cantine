@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0208_diagnostic_teledeclaration_mode_populate"),
+        ("data", "0214_diagnostic_value_egalim_hors_bio_ht_agg_and_more"),
     ]
 
     operations = [
