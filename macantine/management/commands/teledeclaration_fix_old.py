@@ -1,16 +1,19 @@
 from collections import Counter
 
 from django.core.management.base import BaseCommand
+from django.db.models import Func, IntegerField
 from simple_history.utils import update_change_reason
 
-from data.models import Diagnostic
+from data.models import Canteen, Diagnostic
 
 
 class Command(BaseCommand):
     """
-    Examples:
+    Usage:
     - python manage.py teledeclaration_fix_old --command=set_canteen_id_before_v4
     - python manage.py teledeclaration_fix_old --command=set_canteen_id_before_v4 --apply
+    - python manage.py teledeclaration_fix_old --command=recreate_canteen_hard_deleted
+    - python manage.py teledeclaration_fix_old --command=recreate_canteen_hard_deleted --apply
     """
 
     help = "One-time commands to fix old teledeclarations"
@@ -20,8 +23,8 @@ class Command(BaseCommand):
             "--command",
             type=str,
             required=True,
-            choices=["set_canteen_id_before_v4"],
-            help="Command to run. Options are: 'list_diagnostics_without_td', 'create",
+            choices=["set_canteen_id_before_v4", "recreate_canteen_hard_deleted"],
+            help="Command to run. Options are: 'set_canteen_id_before_v4', 'recreate_canteen_hard_deleted'",
         )
         parser.add_argument(
             "--apply",
@@ -41,6 +44,8 @@ class Command(BaseCommand):
 
         if command == "set_canteen_id_before_v4":
             self.set_canteen_id_before_v4(apply)
+        elif command == "recreate_canteen_hard_deleted":
+            self.recreate_canteen_hard_deleted(apply)
 
     def set_canteen_id_before_v4(self, apply):
         diagnostic_updated_count = 0
@@ -73,3 +78,52 @@ class Command(BaseCommand):
             else:
                 print(f"Diagnostic {diagnostic.id} has no canteen, skipping")
         print("Done! Diagnostics updated:", diagnostic_updated_count)
+
+    def recreate_canteen_hard_deleted(self, apply):
+        diagnostic_qs = (
+            Diagnostic.objects.teledeclared()
+            .annotate(
+                satellites_count=Func(
+                    "satellites_snapshot", function="jsonb_array_length", output_field=IntegerField()
+                )
+            )
+            .filter(satellites_count__gt=0)
+        )
+        print("Diagnostics teledeclared with satellites_snapshot:", diagnostic_qs.count())
+
+        canteens_created_count = 0
+        for diagnostic in diagnostic_qs:
+            for canteen_satellite in diagnostic.satellites_snapshot:
+                canteen_id = canteen_satellite.get("id")
+                canteen_siret = canteen_satellite.get("siret")
+                if canteen_id:
+                    canteen_exists = Canteen.all_objects.filter(id=canteen_id).exists()
+                    if canteen_exists:
+                        continue
+                    else:
+                        print(
+                            f"Canteen {canteen_id} from Diagnostic {diagnostic.id} (teledeclaration_id {diagnostic.teledeclaration_id}) does not exist."
+                        )
+                        canteen_exists_by_siret = Canteen.all_objects.filter(siret=canteen_siret).exists()
+                        if canteen_exists_by_siret:
+                            print(
+                                f"But a canteen with the same SIRET {canteen_siret} exists, skipping to avoid duplicates."
+                            )
+                        else:
+                            print(
+                                f"Canteen {canteen_id} from Diagnostic {diagnostic.id} with SIRET {canteen_siret} still does not exist, let's recreate it!"
+                            )
+                            if apply:
+                                # remove id to create a new one
+                                canteen_data = canteen_satellite.copy()
+                                canteen_data.pop("id", None)
+                                new_canteen = Canteen.objects.create(**canteen_data)
+                                update_change_reason(
+                                    new_canteen,
+                                    f"Script: recreate hard-deleted canteens from teledeclared Diagnostic {diagnostic.id}",
+                                )
+                            canteens_created_count += 1
+                else:
+                    print(f"Canteen satellite in Diagnostic {diagnostic.id} has no id, skipping")
+
+        print("Done! Canteens recreated:", canteens_created_count)
