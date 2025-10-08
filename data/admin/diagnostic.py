@@ -70,6 +70,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "canteen_snapshot_pretty",
         "satellites_snapshot_pretty",
         "applicant_snapshot_pretty",
+        "tags",
         "creation_source",
         "creation_date",
         "modification_date",
@@ -319,6 +320,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             "Metadonnées",
             {
                 "fields": (
+                    "tags",
                     "creation_source",
                     "creation_date",
                     "modification_date",
