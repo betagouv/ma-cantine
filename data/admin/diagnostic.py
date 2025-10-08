@@ -145,7 +145,12 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         ),
         (
             "Metadonnées",
-            {"fields": Diagnostic.CREATION_META_FIELDS},
+            {
+                "fields": (
+                    "tags",
+                    *Diagnostic.CREATION_META_FIELDS,
+                )
+            },
         ),
     )
     readonly_fields = (
@@ -157,6 +162,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "canteen_snapshot_pretty",
         "satellites_snapshot_pretty",
         "applicant_snapshot_pretty",
+        "tags",
         *Diagnostic.CREATION_META_FIELDS,
     )
 
