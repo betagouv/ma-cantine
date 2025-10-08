@@ -89,8 +89,8 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             logger.warning("Dataset is empty. Skipping transformation")
             return
 
-        self.flatten_central_kitchen_td()
-        self.delete_duplicates_cc_csat()
+        # self.flatten_central_kitchen_td()
+        # self.delete_duplicates_cc_csat()
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def load_dataset(self, versionning=True):
@@ -102,26 +102,26 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                 f"Loading {len(self.df)} objects in db. Version {self.extracted_table_name + '_' + datetime.today().strftime('%Y_%m_%d')}"
             )
             self.warehouse.insert_dataframe(
-                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d")
+                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d") + "_site"
             )
         else:
             super().load_dataset()
 
-    def delete_duplicates_cc_csat(self):
-        """
-        Remove duplicate rows for central kitchens and their satellites based on unique identifiers.
-        Keep the row where production type is central kitchen if duplicates exist.
-        """
-        if "canteen_id" in self.df.columns and "genere_par_cuisine_centrale" in self.df.columns:
-            self.df = self.df.sort_values(
-                by=["genere_par_cuisine_centrale"],
-                ascending=False,
-            )
-            self.df = self.df.drop_duplicates(subset=["canteen_id", "year"], keep="first")
-        else:
-            logger.warning(
-                "Required columns 'canteen_id' or 'genere_par_cuisine_centrale' not found in dataframe. Skipping duplicate removal."
-            )
+    # def delete_duplicates_cc_csat(self):
+    #     """
+    #     Remove duplicate rows for central kitchens and their satellites based on unique identifiers.
+    #     Keep the row where production type is central kitchen if duplicates exist.
+    #     """
+    #     if "canteen_id" in self.df.columns and "genere_par_cuisine_centrale" in self.df.columns:
+    #         self.df = self.df.sort_values(
+    #             by=["genere_par_cuisine_centrale"],
+    #             ascending=False,
+    #         )
+    #         self.df = self.df.drop_duplicates(subset=["canteen_id", "year"], keep="first")
+    #     else:
+    #         logger.warning(
+    #             "Required columns 'canteen_id' or 'genere_par_cuisine_centrale' not found in dataframe. Skipping duplicate removal."
+    #         )
 
     def flatten_central_kitchen_td(self):
         """

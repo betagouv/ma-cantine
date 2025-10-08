@@ -168,6 +168,12 @@ class DiagnosticQuerySet(models.QuerySet):
             results = results | self.valid_td_by_year(year)
         return results.select_related("canteen")
 
+    def historical_valid_td_site(self, years: list):
+        results = self.none()
+        for year in years:
+            results = results | self.valid_td_site_by_year(year)
+        return results.select_related("canteen")
+
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
 
