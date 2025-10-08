@@ -193,7 +193,7 @@ class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
     ordering_fields = ["creation_date"]
 
     def get_queryset(self):
-        return Diagnostic.objects.with_meal_price().historical_valid_td(CAMPAIGN_DATES.keys())
+        return Diagnostic.objects.with_meal_price().historical_valid_td_site(CAMPAIGN_DATES.keys())
 
 
 class DiagnosticTeledeclaredOpenDataListView(ListAPIView):
