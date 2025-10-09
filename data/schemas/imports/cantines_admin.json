@@ -8,7 +8,7 @@
         "unique": true
       },
       "customCheck": "siret",
-      "description": "Ce SIRET doit être unique car il correspond à un lieu physique.",
+      "description": "Le SIRET doit être unique car il correspond à un lieu physique.",
       "example": "49463556926130",
       "format": "default",
       "name": "siret",
@@ -52,15 +52,15 @@
     },
     {
       "constraints": {
-        "pattern": "^[0-9]{14}$",
         "required": false
       },
+      "customCheck": "siret",
       "description": "Ce SIRET peut être vide ou utilisé pour plusieurs lignes, dans le cas où c'est le gestionnaire du livreur des repas qui remplit les lignes pour chaque cantine satellite.",
       "example": "29969025300230",
       "format": "default",
       "name": "siret_livreur_repas",
       "title": "SIRET du livreur de repas",
-      "type": "string"
+      "type": "any"
     },
     {
       "constraints": {
