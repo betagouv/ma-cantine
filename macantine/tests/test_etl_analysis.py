@@ -45,7 +45,7 @@ class TestETLAnalysisCanteen(TestCase):
         etl = ETL_ANALYSIS_CANTEEN()
         etl.extract_dataset()
         self.assertEqual(len(etl.df.id.unique()), 2, "There should be two different canteens")
-        self.assertEqual(etl.get_dataset().iloc[0]["id"], self.canteen_2.id, "Order by created date descending")
+        self.assertEqual(etl.get_dataset().iloc[0]["id"], self.canteen_1.id, "Order by created date ascending")
 
     def test_canteen_transform_dataset_match_schema(self):
         etl = ETL_ANALYSIS_CANTEEN()
