@@ -45,8 +45,10 @@ def process_errors(report):
 
 
 def check_if_has_errors_header(report):
+    # Example "blank-label"
     if any("rowNumber" not in error for error in report["errors"]):
         return True
+    # Examples "Colonne manquante", "Colonne surnuméraire"
     if any("Colonne" in warning for warning in report["warnings"]):
         return True
     return False
