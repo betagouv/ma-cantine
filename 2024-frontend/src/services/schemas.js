@@ -8,7 +8,7 @@ const getFields = async (schemaFile) => {
 const getFieldType = (field) => {
   const types = {
     date: "Date (au format AAAA-MM-JJ)",
-    integer: "Chiffre",
+    integer: "Nombre entier",
     number: "Chiffre",
     siret: "14 chiffres (avec ou sans espaces)",
     siret_livreur_repas: "14 chiffres (avec ou sans espaces)",
