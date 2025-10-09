@@ -30,7 +30,7 @@
       "constraints": {
         "required": false
       },
-      "customCheck": "code-insee-commune",
+      "customCheck": "code-commune-insee",
       "description": "",
       "example": "75105",
       "format": "default",
