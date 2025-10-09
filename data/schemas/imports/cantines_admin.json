@@ -4,16 +4,16 @@
   "fields": [
     {
       "constraints": {
-        "pattern": "^[0-9]{14}$",
         "required": true,
         "unique": true
       },
+      "customCheck": "siret",
       "description": "Ce SIRET doit être unique car il correspond à un lieu physique.",
       "example": "49463556926130",
       "format": "default",
       "name": "siret",
       "title": "SIRET de l'établissement",
-      "type": "string"
+      "type": "any"
     },
     {
       "constraints": {
