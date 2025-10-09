@@ -39,15 +39,15 @@
     },
     {
       "constraints": {
-        "pattern": "^[0-9]{5}$",
         "required": false
       },
+      "customCheck": "code-postal",
       "description": "En cas d'absence de code INSEE, ce champ devient obligatoire.",
       "example": "75100",
       "format": "default",
       "name": "code_postal_commune",
       "title": "Code postal de la commune",
-      "type": "string"
+      "type": "any"
     },
     {
       "constraints": {
