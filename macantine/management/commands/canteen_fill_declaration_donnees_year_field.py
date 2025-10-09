@@ -8,6 +8,11 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
+    """
+    Usage:
+    - python manage.py canteen_fill_declaration_donnees_year_field --year 2024
+    """
+
     help = "Fill canteen declaration_donnees_YEAR field"
 
     def add_arguments(self, parser):
@@ -21,13 +26,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         year = options["year"]
-        logger.info(f"Start task: fill_canteen_declaration_donnees_year_field for year {year}")
+        logger.info(f"Start task: canteen_fill_declaration_donnees_year_field for year {year}")
         field_name = f"declaration_donnees_{year}"
 
-        # Step 1: reset the field for all the canteens
+        logger.info("Step 1: reset the field for all the canteens")
         Canteen.all_objects.all().update(**{field_name: False})
 
-        # Step 2: find the canteens that have a teledeclaration for the specified year
+        logger.info("Step 2: find the canteens that have a teledeclaration for the specified year")
         teledeclarations = Teledeclaration.objects.submitted_for_year(year)
         logger.info(f"Found {len(teledeclarations)} teledeclarations for year {year}")
         # v1: filter only on the canteen_id of Teledeclarations
@@ -40,7 +45,7 @@ class Command(BaseCommand):
                 for satellite in td["declared_data"]["satellites"]:
                     canteens_with_teledeclarations.append(satellite["id"])
 
-        # Step 3: update the field
+        logger.info("Step 3: update the field")
         Canteen.all_objects.filter(id__in=canteens_with_teledeclarations).update(**{field_name: True})
 
         # Done!

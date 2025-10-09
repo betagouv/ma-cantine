@@ -487,7 +487,7 @@ class Canteen(SoftDeletionModel):
         verbose_name="Secteur économique",
     )
 
-    # TDs (rempli grâce à fill_canteen_declaration_donnees_year_field)
+    # TDs (rempli grâce à canteen_fill_declaration_donnees_year_field)
     declaration_donnees_2021 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2021")
     declaration_donnees_2022 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2022")
     declaration_donnees_2023 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2023")

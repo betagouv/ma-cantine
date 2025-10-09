@@ -14,10 +14,13 @@ class Command(BaseCommand):
     """
     TDs from 2021 & 2022 contain only a small subset of canteen data (when serialized in declared_data).
     This one-time command aims to fill the missing canteen geolocation data (department and region) for these TDs.
+
+    Usage:
+    - python manage.py teledeclaration_fill_missing_canteen_geolocation_data
     """
 
     def handle(self, *args, **options):
-        logger.info("Start task: fill_missing_td_canteen_geolocation_data")
+        logger.info("Start task: teledeclaration_fill_missing_canteen_geolocation_data")
 
         logger.info("Step 1: Fetch geo data from API Découpage Administratif")
         communes_details = map_communes_infos()
