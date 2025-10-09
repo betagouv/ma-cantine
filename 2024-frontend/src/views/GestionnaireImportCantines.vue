@@ -17,10 +17,6 @@ const exampleFile = {
   name: "importer_des_cantines_exemple_ma_cantine.csv",
   size: "496 octets",
 }
-const fileOptions = {
-  hint: "Extensions de fichier autorisées : Excel (.xlsx), CSV (.csv), TSV (.tsv)",
-  accept: ".csv,.tsv,.xlsx",
-}
 
 /* Success */
 const showModal = ref(false)
@@ -44,12 +40,7 @@ const success = (count) => {
   <ImportExplanation :exampleFile />
   <ImportSchemaTable :schemaFile />
   <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
-  <ImportFileUpload
-    @success="success"
-    apiUrl="importCanteens"
-    eventMatomo="import-canteen-success"
-    :fileOptions="fileOptions"
-  />
+  <ImportFileUpload @success="success" apiUrl="importCanteens" eventMatomo="import-canteen-success" />
   <ImportSuccessModal
     :opened="showModal"
     :message="

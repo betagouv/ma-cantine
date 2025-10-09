@@ -335,9 +335,9 @@ class ImportCanteensView(APIView):
 
         # TODO: remove hardcoded indexes
         canteen.name = row[1].strip()
-        canteen.city_insee_code = row[2].strip() if row[2] else None
-        canteen.postal_code = row[3].strip() if row[3] else None
-        canteen.central_producer_siret = normalise_siret(row[4]) if row[4] else None
+        canteen.city_insee_code = row[2].strip()
+        canteen.postal_code = row[3].strip()
+        canteen.central_producer_siret = normalise_siret(row[4])
         canteen.daily_meal_count = row[5].strip()
         canteen.yearly_meal_count = row[6].strip()
         # sectors: see below
