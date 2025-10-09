@@ -28,9 +28,10 @@ from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
-
-CANTEEN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines.json"
-CANTEEN_ADMIN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines_admin.json"
+CANTEEN_SCHEMA_FILE_NAME = "cantines.json"
+CANTEEN_ADMIN_SCHEMA_FILE_NAME = "cantines_admin.json"
+CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
+CANTEEN_ADMIN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_ADMIN_SCHEMA_FILE_NAME}"
 CANTEEN_SCHEMA_URL = (
     f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
 )
@@ -61,6 +62,7 @@ class ImportCanteensView(APIView):
         try:
             self.file = request.data["file"]
             self.is_admin_import = self.request.user.is_staff
+            schema_name = CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME
             schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
 
             # Schema validation (Validata)
@@ -75,7 +77,7 @@ class ImportCanteensView(APIView):
                         "status": 400,
                     }
                 ]
-                self._log_error("Echec lors de la demande de validation du fichier (schema cantines.json - Validata)")
+                self._log_error(f"Echec lors de la demande de validation du fichier (schema {schema_name} - Validata)")
                 return self._get_success_response()
 
             # Header validation
@@ -87,13 +89,13 @@ class ImportCanteensView(APIView):
                         "status": 400,
                     }
                 ]
-                self._log_error("Echec lors de la validation du header (schema cantines.json - Validata)")
+                self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
                 return self._get_success_response()
 
             # Rows validation
             self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
-                self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
+                self._log_error(f"Echec lors de la validation du fichier (schema {schema_name} - Validata)")
                 return self._get_success_response()
 
             # ma-cantine validation (permissions, last checks...) + import
