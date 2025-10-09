@@ -176,3 +176,17 @@ def get_year_campaign_end_date_or_today_date(year):
         return timezone.now()
     else:
         return None
+
+
+def distribute_appro_values_between_satellites(diag, fields, nbre_satellites) -> dict:
+    """
+    Generate a dict with appro values distributed to satellites from a central kitchen diagnostic
+    The method used is to divide the central kitchen appro values by the number of satellites.
+    """
+    updated_appro_fields = {}
+    for field in fields:
+        try:
+            updated_appro_fields[field] = getattr(diag, field) / nbre_satellites
+        except TypeError:
+            updated_appro_fields[field] = None
+    return updated_appro_fields
