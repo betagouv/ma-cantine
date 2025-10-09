@@ -14,10 +14,6 @@ defineProps(["exampleFile"])
       <p>Le fichier, les colonnes et les valeurs des cellules doivent impérativement respecter ce format :</p>
       <ul>
         <li>
-          Le fichier doit être
-          <strong>au format CSV</strong>
-        </li>
-        <li>
           Il doit
           <strong>commencer par une ligne en-tête</strong>
         </li>
