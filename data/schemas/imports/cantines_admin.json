@@ -1,5 +1,13 @@
 {
   "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "custom_checks": [
+    {
+      "name": "code-commune-insee",
+      "params": {
+        "column": "code_insee_commune"
+      }
+    }
+  ],
   "encoding": "utf-8",
   "fields": [
     {
@@ -30,7 +38,6 @@
       "constraints": {
         "required": false
       },
-      "customCheck": "code-commune-insee",
       "description": "",
       "example": "75105",
       "format": "default",
