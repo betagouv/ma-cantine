@@ -10,10 +10,8 @@
       "customCheck": "siret",
       "description": "Le SIRET doit être valide et unique car il correspond à un lieu physique.",
       "example": "12007901700238",
-      "format": "default",
       "name": "siret",
-      "title": "SIRET de l'établissement",
-      "type": "any"
+      "title": "SIRET de l'établissement"
     },
     {
       "constraints": {
