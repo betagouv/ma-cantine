@@ -32,12 +32,8 @@ CANTEEN_SCHEMA_FILE_NAME = "cantines.json"
 CANTEEN_ADMIN_SCHEMA_FILE_NAME = "cantines_admin.json"
 CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
 CANTEEN_ADMIN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_ADMIN_SCHEMA_FILE_NAME}"
-CANTEEN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
-)
-CANTEEN_ADMIN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
-)
+CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/charline-l/import-excel--simplify-verifiations/{CANTEEN_SCHEMA_FILE_PATH}"
+CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/charline-l/import-excel--simplify-verifiations/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
 
 
 class ImportCanteensView(APIView):
@@ -387,11 +383,6 @@ class ImportCanteensView(APIView):
                         "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[self.silent_manager_idx]}) n'est pas valide."
                     }
                 )
-
-            try:
-                import_source = row[self.silent_manager_idx + 1].strip()
-            except Exception:
-                raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
 
         return (import_source, silently_added_manager_emails)
 
