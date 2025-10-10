@@ -737,12 +737,12 @@ class UndoClaimCanteenView(APIView):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Lister les cuisines satellites pour une cuisine centrale.",
-        description="Si la cantine en question est une cuisine centrale, cet endpoint permet de lister toutes les cuisines satellites attachées à elle.",
+        summary="Lister les restaurants satellites pour une cuisine centrale.",
+        description="Si la cantine en question est une cuisine centrale, cet endpoint permet de lister toutes les restaurants satellites attachés à elle.",
     ),
     post=extend_schema(
-        summary="Ajouter une cuisine satellite à la cuisine centrale.",
-        description="Si la cantine en question est une cuisine centrale, cet endpoint permet d'ajouter une cuisine satellite.",
+        summary="Ajouter un restaurant satellite à la cuisine centrale.",
+        description="Si la cantine en question est une cuisine centrale, cet endpoint permet d'ajouter un restaurant satellite.",
     ),
 )
 class SatelliteListCreateView(ListCreateAPIView):
@@ -803,8 +803,8 @@ class SatelliteListCreateView(ListCreateAPIView):
 
 @extend_schema_view(
     post=extend_schema(
-        summary="Enlever une cuisine satellite à la cuisine centrale.",
-        description="Cet endpoint permet d'enlever une cuisine satellite d'une cuisine centrale",
+        summary="Enlever un restaurant satellite à la cuisine centrale.",
+        description="Cet endpoint permet d'enlever un restaurant satellite d'une cuisine centrale",
     ),
 )
 class UnlinkSatelliteView(APIView):

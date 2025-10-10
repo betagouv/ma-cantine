@@ -201,7 +201,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     def publication_status_display(self, obj):
         return dict(Canteen.PublicationStatus.choices).get(obj.publication_status_display_to_public)
 
-    @admin.display(description="Cuisines satellites")
+    @admin.display(description="Restaurants satellites")
     def satellites_display(self, obj):
         satellites_list = ""
         for satellite in obj.satellites:

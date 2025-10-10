@@ -81,7 +81,7 @@
       <p>
         {{ satelliteInconsistencyMessage }}
         <br />
-        Veuillez ajouter vos cuisines satellites avant télédéclarer.
+        Veuillez ajouter vos restaurants satellites avant télédéclarer.
       </p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
         <v-btn
@@ -92,7 +92,7 @@
           color="primary"
           class="fr-text font-weight-medium"
         >
-          Gérer mes cuisines satellites
+          Gérer mes restaurants satellites
         </v-btn>
       </v-card-actions>
     </v-card>

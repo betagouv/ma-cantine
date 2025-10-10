@@ -46,11 +46,11 @@ const unlinkSatellite = () => {
     v-if="opened"
     :opened="opened"
     class="canteen-button-unlink__modal fr-modal--opened"
-    :title="`Souhaitez-vous vraiment retirer «&nbsp;${satellite.name}&nbsp;» de vos cuisines satellites ?`"
+    :title="`Souhaitez-vous vraiment retirer «&nbsp;${satellite.name}&nbsp;» de vos restaurants satellites ?`"
     @close="toggleModal()"
     :actions="[
       {
-        label: 'Je confirme le retrait de la cantine',
+        label: 'Je confirme le retrait du restaurant',
         onClick() {
           unlinkSatellite()
         },

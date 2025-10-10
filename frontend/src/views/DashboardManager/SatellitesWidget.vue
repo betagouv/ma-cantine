@@ -1,6 +1,6 @@
 <template>
   <v-card outlined class="fill-height d-flex flex-column dsfr no-hover pa-sm-6">
-    <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes cuisines satellites</h3></v-card-title>
+    <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes restaurants satellites</h3></v-card-title>
     <v-card-text v-if="!satellites.length" class="fr-text-xs grey--text text--darken-2 mt-3 pb-0">
       <p class="mb-0">Ajoutez et publiez les cantines que vous livrez</p>
     </v-card-text>
@@ -41,7 +41,7 @@
           color="primary"
           outlined
         >
-          Gérer mes cuisines satellites
+          Gérer mes restaurants satellites
         </v-btn>
       </p>
     </v-card-actions>
@@ -76,8 +76,8 @@ export default {
       return hasSatelliteInconsistency(this.canteen)
     },
     satelliteCountEmpty() {
-      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "cuisines satellites" : "cuisine satellite"
-      const fillPluralize = this.canteen.satellites.length > 1 ? "renseignées" : "renseignée"
+      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "restaurants satellites" : "restaurant satellite"
+      const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
       return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
     },
   },

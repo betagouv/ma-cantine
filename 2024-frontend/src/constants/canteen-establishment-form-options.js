@@ -43,12 +43,12 @@ const productionType = [
   {
     label: "Livre des repas mais n'a pas de lieu de service en propre",
     value: "central",
-    hint: "Vous devrez ajouter vos cuisines satellites depuis votre tableau de bord",
+    hint: "Vous devrez ajouter vos restaurants satellites depuis votre tableau de bord",
   },
   {
     label: "Livre des repas et accueille aussi des convives sur place",
     value: "central_serving",
-    hint: "Vous devrez ajouter vos cuisines satellites depuis votre tableau de bord",
+    hint: "Vous devrez ajouter vos restaurants satellites depuis votre tableau de bord",
   },
 ]
 
