@@ -30,12 +30,16 @@
       "constraints": {
         "required": false
       },
-      "customCheck": "code-commune-insee",
+      "customCheck": {
+        "cog": "latest",
+        "name": "code-commune-insee"
+      },
       "description": "",
       "example": "75105",
       "format": "default",
       "name": "code_insee_commune",
-      "title": "Code INSEE de la commune"
+      "title": "Code INSEE de la commune",
+      "type": "any"
     },
     {
       "constraints": {

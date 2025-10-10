@@ -28,15 +28,18 @@
     },
     {
       "constraints": {
-        "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
         "required": false
+      },
+      "customCheck": {
+        "cog": "latest",
+        "name": "code-commune-insee"
       },
       "description": "",
       "example": "75105",
       "format": "default",
       "name": "code_insee_commune",
       "title": "Code INSEE de la commune",
-      "type": "string"
+      "type": "any"
     },
     {
       "constraints": {
