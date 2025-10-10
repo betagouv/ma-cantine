@@ -314,7 +314,7 @@ class TestCanteenImport(APITestCase):
         - new canteen: the importer isn't added to the canteen unless specified.
         - updated canteen: admin doesn't have to be a manager.
         """
-        Canteen.objects.create(siret="82399356058716", name="Canteen initial")
+        Canteen.objects.create(siret="13002526500013", name="Canteen initial")
         user = authenticate.user
         user.is_staff = True
         user.email = "authenticate@example.com"
@@ -333,14 +333,14 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(ManagerInvitation.objects.count(), 2 + 2 + 2)
         self.assertEqual(len(mail.outbox), 1)
 
-        canteen1 = Canteen.objects.get(siret="21340172201787")
+        canteen1 = Canteen.objects.get(siret="11007001800012")
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user1@example.com"))
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user2@example.com"))
         self.assertEqual(canteen1.managers.count(), 0)
         self.assertEqual(canteen1.line_ministry, Canteen.Ministries.SANTE)
         self.assertEqual(canteen1.import_source, "Automated test")
 
-        canteen2 = Canteen.objects.get(siret="73282932000074")
+        canteen2 = Canteen.objects.get(siret="12007901700238")
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user1@example.com"))
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user2@example.com"))
         self.assertEqual(canteen2.managers.count(), 1)
@@ -348,7 +348,7 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(canteen2.line_ministry, None)
         self.assertEqual(canteen2.import_source, "Automated test")
 
-        canteen3 = Canteen.objects.get(siret="82399356058716")
+        canteen3 = Canteen.objects.get(siret="13002526500013")
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user1@example.com"))
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user2@example.com"))
         self.assertEqual(canteen3.managers.count(), 0)
