@@ -47,7 +47,7 @@
     {
       "apiName": "siteCookedElsewhere",
       "hint": "Sert des repas préparés par une cuisine centrale (une petite partie peut être réalisée sur place entrée / dessert)",
-      "label": "Satellite",
+      "label": "Restaurant satellite",
       "value": "site_cooked_elsewhere"
     },
     {
