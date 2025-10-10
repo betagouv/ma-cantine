@@ -24,7 +24,7 @@ if (query.productionType)
 <template>
   <FilterByBase label="Caractéristiques">
     <DsfrCheckboxSet
-      legend="Types d’établissement :"
+      legend="Modèles économiques :"
       :modelValue="economicModel"
       @update:modelValue="storeFilters.set('economicModel', $event)"
       :options="options.economicModel"

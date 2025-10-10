@@ -327,7 +327,7 @@ if (props.establishmentData) {
       <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">1. Caractéristiques</legend>
         <DsfrRadioButtonSet
-          legend="Type d’établissement *"
+          legend="Modèle économique *"
           v-model="form.economicModel"
           :options="options.economicModel"
           :error-message="formatError(v$.economicModel)"

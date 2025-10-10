@@ -18,7 +18,7 @@
       "value": "private"
     }
   ],
-  "economicModelName": "Type d’établissement",
+  "economicModelName": "Modèle économique",
   "epciLib": "Établissement Public de Coopération Intercommunale (EPCI)",
   "lineMinistry": "Ministère de tutelle",
   "managementType": [

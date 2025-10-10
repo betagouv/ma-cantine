@@ -126,7 +126,7 @@
                   <DsfrNativeSelect
                     v-model="filters.production_type.value"
                     :items="productionTypes"
-                    label="Type d'établissement"
+                    label="Mode de production"
                     :labelClasses="{
                       'mb-1 fr-text text-left': true,
                       'active-filter-label': !!filters.production_type.value,
