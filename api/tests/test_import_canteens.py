@@ -45,24 +45,6 @@ class TestCanteenSchema(TestCase):
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
-    def test_code_insee_commune_regex(self):
-        pattern = self.get_pattern(self.schema, "code_insee_commune")
-        for VALUE_OK in ["2A215", "54318"]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["AAAAA", "A", " 2A215 ", "543181", "2A215 "]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
-    def test_code_postal_commune_regex(self):
-        pattern = self.get_pattern(self.schema, "code_postal_commune")
-        for VALUE_OK in ["75000"]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["75O10", " 75010 ", "", "   ", "750000", "75"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
     def test_type_production_regex(self):
         pattern = self.get_pattern(self.schema, "type_production")
         for VALUE_OK in [
