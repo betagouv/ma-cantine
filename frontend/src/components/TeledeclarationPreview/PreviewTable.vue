@@ -131,14 +131,16 @@ export default {
         (x) => x.value === this.canteen.productionType
       )
       const managementTypeDetail = Constants.ManagementTypes.find((x) => x.value === this.canteen.managementType)
+      const economicModelDetail = Constants.EconomicModels.find((x) => x.value === this.canteen.economicModel)
       const ministryDetail = this.$store.state.lineMinistries.find((x) => x.value === this.canteen.lineMinistry)
       let items = [
         { value: this.canteen.name, label: "Nom de la cantine" },
         { value: this.canteen.siret || "inconnu", label: "Numéro SIRET" },
         { value: this.canteen.sirenUniteLegale, label: "Numéro SIREN de l'unité légale" },
         { value: this.canteen.city, label: "Ville" },
+        { value: economicModelDetail ? economicModelDetail.text : "", label: "Modèle économique" },
         { value: managementTypeDetail ? managementTypeDetail.text : "", label: "Mode de gestion" },
-        { value: productionTypeDetail ? productionTypeDetail.body : "", label: "Type d'établissement" },
+        { value: productionTypeDetail ? productionTypeDetail.body : "", label: "Type de production" },
       ]
       if (this.usesCentralProducer)
         items.push({ value: this.canteen.centralProducerSiret, label: "SIRET de la cuisine centrale" })
