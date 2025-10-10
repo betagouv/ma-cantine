@@ -12,8 +12,7 @@
       "example": "12007901700238",
       "format": "default",
       "name": "siret",
-      "title": "SIRET de l'établissement",
-      "type": "any"
+      "title": "SIRET de l'établissement"
     },
     {
       "constraints": {
@@ -38,8 +37,7 @@
       "example": "75105",
       "format": "default",
       "name": "code_insee_commune",
-      "title": "Code INSEE de la commune",
-      "type": "any"
+      "title": "Code INSEE de la commune"
     },
     {
       "constraints": {
@@ -50,8 +48,7 @@
       "example": "75100",
       "format": "default",
       "name": "code_postal_commune",
-      "title": "Code postal de la commune",
-      "type": "any"
+      "title": "Code postal de la commune"
     },
     {
       "constraints": {
@@ -62,8 +59,7 @@
       "example": "11007001800012",
       "format": "default",
       "name": "siret_livreur_repas",
-      "title": "SIRET du livreur de repas",
-      "type": "any"
+      "title": "SIRET du livreur de repas"
     },
     {
       "constraints": {
