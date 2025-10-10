@@ -372,6 +372,7 @@ class ImportCanteensView(APIView):
         silently_added_manager_emails = []
         import_source = "Import massif"
         if len(row) > self.silent_manager_idx:  # already checked earlier that it's a staff user
+            import_source = row[self.silent_manager_idx + 1]
             try:
                 if row[self.silent_manager_idx]:
                     silently_added_manager_emails = ImportCanteensView._get_manager_emails(
