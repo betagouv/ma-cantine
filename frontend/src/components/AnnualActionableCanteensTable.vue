@@ -191,7 +191,7 @@ export default {
         { text: "Action", value: "action" },
       ],
       typeDisplay: {
-        site: "Cuisine sur site",
+        site: "Restaurant avec cuisine sur place",
         site_cooked_elsewhere: "Restaurant satellite",
         central: "Cuisine centrale",
         central_serving: "Cuisine centrale, avec service sur place",
