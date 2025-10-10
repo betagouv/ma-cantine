@@ -237,7 +237,7 @@
     },
     {
       "constraints": {
-        "required": false
+        "required": true
       },
       "description": "",
       "example": "resytal",
