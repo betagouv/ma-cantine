@@ -83,7 +83,7 @@ const removeRow = (id) => {
       <h1>{{ route.meta.title }}</h1>
       <p v-if="!canteen.isCentralCuisine">
         Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de cuisines satellites. Pour
-        modifier votre mode production
+        modifier votre type d'établissement
         <AppLinkRouter
           title="cliquez-ici"
           :to="{ name: 'GestionnaireCantineModifier', params: route.canteenUrlComponent }"
