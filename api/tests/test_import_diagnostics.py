@@ -402,7 +402,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Secteur économique' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
+            "Champ 'Modèle économique' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
