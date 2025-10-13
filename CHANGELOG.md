@@ -6,6 +6,34 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.33.2](https://github.com/betagouv/ma-cantine/compare/v2025.33.1...v2025.33.2) (2025-10-13)
+
+
+### Améliorations
+
+* **Homogénéisation terminologie:** homogénéisation du terme "Cuisine centrale" ([#5722](https://github.com/betagouv/ma-cantine/issues/5722)) ([b93c43d](https://github.com/betagouv/ma-cantine/commit/b93c43d45704de1f217ae54c37916ad0aa520791))
+* **Homogénéisation terminologie:** homogénéisation du terme "Restaurant avec cuisine sur place" ([#5762](https://github.com/betagouv/ma-cantine/issues/5762)) ([2039878](https://github.com/betagouv/ma-cantine/commit/2039878885d75aee9e84dd9440292ba6b2ff3301))
+* **Homogénéisation terminologie:** homogénéisation du terme "Restaurant satellite" ([#5719](https://github.com/betagouv/ma-cantine/issues/5719)) ([b60ae55](https://github.com/betagouv/ma-cantine/commit/b60ae5517c6bf65534997321dd16163f27979dbe))
+* **Imports:** utilise Validata pour vérifier le fichier et son format ([#5742](https://github.com/betagouv/ma-cantine/issues/5742)) ([60df3c0](https://github.com/betagouv/ma-cantine/commit/60df3c086152f2acb79c915d75a637ce8a5ae705))
+* **Modèle économique:** homogénéisation de la terminologie affichée à l'utilisateur ([#5759](https://github.com/betagouv/ma-cantine/issues/5759)) ([7405025](https://github.com/betagouv/ma-cantine/commit/740502520a11f161c7e50abfd3d6ae303a2bf566))
+* **Modèle économique:** mise à jour de la terminologie dans le backend ([#5764](https://github.com/betagouv/ma-cantine/issues/5764)) ([6737cae](https://github.com/betagouv/ma-cantine/commit/6737caee7c9acb046b747859d670861b17edefcf))
+
+
+### Corrections (bugs, typos...)
+
+* **Terminologies:** divers correctifs d'homogénéisation ([#5760](https://github.com/betagouv/ma-cantine/issues/5760)) ([9c1c490](https://github.com/betagouv/ma-cantine/commit/9c1c490e2b50bcf9ed359e5da94aa2253100f466))
+* **Url:** encode les urls pour ne plus avoir de "page non trouvée" pour les cantines avec des caractères spéciaux ([#5765](https://github.com/betagouv/ma-cantine/issues/5765)) ([ce499d6](https://github.com/betagouv/ma-cantine/commit/ce499d67133c614a28a88e16a786fa8182676c29))
+
+
+### Technique
+
+* **Cantines:** Script pour créer les quelques cantines satellites hard-supprimées qui apparraissent dans les TD [1TD1Site] ([#5751](https://github.com/betagouv/ma-cantine/issues/5751)) ([9e77e8a](https://github.com/betagouv/ma-cantine/commit/9e77e8ab20997494e34238809c03fc309e98cee0))
+* **Diagnostics:** 2 TD de 2022 étaient filtrées dans l'export open data. Les filtrer partout (chaîne de traitement) ([#5744](https://github.com/betagouv/ma-cantine/issues/5744)) ([11a33e0](https://github.com/betagouv/ma-cantine/commit/11a33e08ffc3a1f32481dda6975d6b1037d3daae))
+* **Management Commands:** renommer pour clarifier (prefix avec le nom du modèle concerné) ([#5750](https://github.com/betagouv/ma-cantine/issues/5750)) ([630fdac](https://github.com/betagouv/ma-cantine/commit/630fdac51233a6a3d106ca380d166b9e3feb4a52))
+* **Metabase:** Cantines: ordonner par date de création ([#5748](https://github.com/betagouv/ma-cantine/issues/5748)) ([88721ae](https://github.com/betagouv/ma-cantine/commit/88721ae0705d41db8b91f6eacf8ac8ba58827154))
+* **Open Data:** Cantines: ordonner l'export par date de création ([#5745](https://github.com/betagouv/ma-cantine/issues/5745)) ([069d0aa](https://github.com/betagouv/ma-cantine/commit/069d0aa6135c88e5096bfe2f443cf84a5ac55450))
+* **Teledeclaration:** indiquer la version dans un fichier de config dédié ([#5717](https://github.com/betagouv/ma-cantine/issues/5717)) ([d73d926](https://github.com/betagouv/ma-cantine/commit/d73d926d1c37bac96fc30b501b8ea2494355883a))
+
 ## [2025.33.1](https://github.com/betagouv/ma-cantine/compare/v2025.33.0...v2025.33.1) (2025-10-06)
 
 
