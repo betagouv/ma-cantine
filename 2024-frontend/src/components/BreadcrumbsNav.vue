@@ -2,6 +2,8 @@
 import { computed } from "vue"
 import { routes } from "@/router"
 import { useRoute } from "vue-router"
+import urlService from "@/services/urls"
+
 const route = useRoute()
 
 const breadcrumbRoutes = JSON.parse(JSON.stringify(routes))
@@ -20,7 +22,7 @@ const breadcrumbLinks = computed(() => {
   if (route.meta?.breadcrumbs) {
     route.meta.breadcrumbs.forEach((link) => {
       if (link.useCanteenName && canteenUrlComponent.value) {
-        const title = canteenUrlComponent.value.split("--")[1] || "Mon établissement"
+        const title = urlService.getCanteenName(canteenUrlComponent.value) || "Mon établissement"
         link.title = title.replace(/-/g, " ")
       } else if (link.useCanteenName) {
         console.error(

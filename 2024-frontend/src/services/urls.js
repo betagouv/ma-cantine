@@ -3,11 +3,12 @@ const getCanteenId = (url) => {
 }
 
 const getCanteenName = (url) => {
-  return url.split("--")[1]
+  const nameEncoded = url.split("--")[1]
+  return decodeURIComponent(nameEncoded)
 }
 
 const getCanteenUrl = (canteen) => {
-  return `${canteen.id}--${canteen.name}`
+  return encodeURIComponent(`${canteen.id}--${canteen.name}`)
 }
 
 export default { getCanteenId, getCanteenName, getCanteenUrl }
