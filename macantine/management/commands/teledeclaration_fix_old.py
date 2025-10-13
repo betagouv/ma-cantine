@@ -9,6 +9,9 @@ from data.models import Canteen, Diagnostic
 
 class Command(BaseCommand):
     """
+    set_canteen_id_before_v4 : Dans les premières versions de la télédéclaration (avant v4), le canteen_id n'était pas stocké dans le canteen_snapshot du diagnostic. On peut le récupérer via la FK vers Canteen.
+    recreate_canteen_hard_deleted : Certains diagnostics télédéclarés font référence à des cantines supprimées (dans le satellite_snapshot). On recréé celles dont le SIRET n'existe pas déjà dans la base.
+
     Usage:
     - python manage.py teledeclaration_fix_old --command set_canteen_id_before_v4
     - python manage.py teledeclaration_fix_old --command set_canteen_id_before_v4 --apply
@@ -129,11 +132,13 @@ class Command(BaseCommand):
                                 new_canteen.central_producer_siret = diagnostic.canteen_snapshot.get("siret")
                                 # soft-delete the canteen (set to the last day of the teledeclaration year)
                                 new_canteen.deletion_date = diagnostic.teledeclaration_date.replace(month=12, day=31)
+                                # save with change_reason
                                 new_canteen.save()
                                 update_change_reason(
                                     new_canteen,
                                     f"Script: recreate_canteen_hard_deleted (diagnostic_id {diagnostic.id})",
                                 )
+                                # M2M: sectors
                                 for sector in canteen_satellite.get("sectors", []):
                                     new_canteen.sectors.add(sector["id"])
                             canteens_created_count += 1
