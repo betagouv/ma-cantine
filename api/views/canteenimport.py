@@ -28,9 +28,10 @@ from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
-
-CANTEEN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines.json"
-CANTEEN_ADMIN_SCHEMA_FILE_PATH = "data/schemas/imports/cantines_admin.json"
+CANTEEN_SCHEMA_FILE_NAME = "cantines.json"
+CANTEEN_ADMIN_SCHEMA_FILE_NAME = "cantines_admin.json"
+CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
+CANTEEN_ADMIN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_ADMIN_SCHEMA_FILE_NAME}"
 CANTEEN_SCHEMA_URL = (
     f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
 )
@@ -52,12 +53,7 @@ class ImportCanteensView(APIView):
         self.start_time = None
         self.encoding_detected = None
         self.file = None
-        self.header = None
         self.is_admin_import = False
-        self.schema_url = None  # set in post(), depending if admin import or not
-        self.expected_header_list = file_import.get_expected_header_list_from_schema_list(
-            [CANTEEN_SCHEMA_FILE_PATH, CANTEEN_ADMIN_SCHEMA_FILE_PATH]
-        )
         super().__init__(**kwargs)
 
     def post(self, request):  # noqa: C901
@@ -65,34 +61,46 @@ class ImportCanteensView(APIView):
         logger.info("Canteen bulk import started")
         try:
             self.file = request.data["file"]
+            self.is_admin_import = self.request.user.is_staff
+            schema_name = CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME
+            schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
 
-            # Step 1: Format validation
-            file_import.validate_file_size(self.file)
-            file_import.validate_file_format(self.file)
+            # Schema validation (Validata)
+            validata_response = validata.validate_file_against_schema(self.file, schema_url)
 
-            self.dialect = file_import.get_csv_file_dialect(self.file)
-            self.header = file_import.verify_first_line_is_header_list(
-                self.file, self.dialect, self.expected_header_list
-            )
-
-            # Step 1b: Admin import?
-            self.is_admin_import = any("admin_" in column for column in self.header)
-            self.schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
-            if self.is_admin_import and not self.request.user.is_staff:
-                raise PermissionDenied(
-                    detail="Vous n'êtes pas autorisé à importer des cantines avec des champs administratifs. Veuillez supprimer les colonnes commençant par 'admin_'"
-                )
-
-            # Step 2: Schema validation (Validata)
-            report = validata.validate_file_against_schema(self.file, self.schema_url)
-            self.errors = validata.process_errors(report)
-            if len(self.errors):
-                self._log_error("Echec lors de la validation du fichier (schema cantines.json - Validata)")
+            # Error generating the report
+            if "error" in validata_response:
+                error = validata_response["error"]["message"]
+                self.errors = [
+                    {
+                        "message": f"Une erreur inconnue s'est produite en lisant votre fichier : « {error} ». Renouveler votre essai, et si l'erreur persiste contactez le support.",
+                        "status": 400,
+                    }
+                ]
+                self._log_error(f"Echec lors de la demande de validation du fichier (schema {schema_name} - Validata)")
                 return self._get_success_response()
 
-            # Step 3: ma-cantine validation (permissions, last checks...) + import
+            # Header validation
+            header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
+            if header_has_errors:
+                self.errors = [
+                    {
+                        "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+                        "status": 400,
+                    }
+                ]
+                self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
+                return self._get_success_response()
+
+            # Rows validation
+            self.errors = validata.process_errors(validata_response["report"])
+            if len(self.errors):
+                self._log_error(f"Echec lors de la validation du fichier (schema {schema_name} - Validata)")
+                return self._get_success_response()
+
+            # ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
-                self._process_file(self.file)
+                self._process_file(validata_response["resource_data"])
 
                 if self.errors:
                     raise IntegrityError()
@@ -124,16 +132,10 @@ class ImportCanteensView(APIView):
             import_type=ImportType.CANTEEN_ONLY,
         )
 
-    def _process_file(self, file):
+    def _process_file(self, data):
         locations_csv_str = "siret,citycode,postcode\n"
         has_locations_to_find = False
-
-        filestring = self._decode_file(file)
-        filelines = filestring.splitlines()
-        dialect = csv.Sniffer().sniff(filelines[0])
-
-        csvreader = csv.reader(filelines, dialect=dialect)
-        for row_number, row in enumerate(csvreader, start=1):
+        for row_number, row in enumerate(data, start=1):
             try:
                 if row_number == 1:  # skip header
                     continue
@@ -303,7 +305,7 @@ class ImportCanteensView(APIView):
 
     def _has_canteen_permission(self, canteen):
         # admin bypass the is_canteen_manager check
-        if self.is_admin_import and self.request.user.is_staff:
+        if self.is_admin_import:
             return True
         return self.request.user in canteen.managers.all()
 

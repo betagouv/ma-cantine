@@ -27,9 +27,9 @@ def validate_file_against_schema(file, schema_url):
             files={
                 "file": ("file.csv", file.read(), file.content_type),
             },
-            data={"schema": schema_url, "header_case": True},
+            data={"schema": schema_url, "header_case": True, "include_resource_data": True},
         )
-        return response.json()["report"]
+        return response.json()
     except Exception:
         raise Exception("Erreur lors de la validation du fichier (Validata). Merci de réessayer plus tard.")
 
@@ -42,6 +42,16 @@ def process_errors(report):
         error_informations = common_informations | specific_informations
         errors.append(error_informations)
     return errors
+
+
+def check_if_has_errors_header(report):
+    # Example "blank-label"
+    if any("rowNumber" not in error for error in report["errors"]):
+        return True
+    # Examples "Colonne manquante", "Colonne surnuméraire"
+    if any("Colonne" in warning for warning in report["warnings"]):
+        return True
+    return False
 
 
 def get_common_error_informations(error):

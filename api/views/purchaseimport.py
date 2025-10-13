@@ -69,7 +69,8 @@ class ImportPurchasesView(APIView):
             self.header = file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
 
             # Step 2: Schema validation (Validata)
-            report = validata.validate_file_against_schema(self.file, self.schema_url)
+            validata_response = validata.validate_file_against_schema(self.file, self.schema_url)
+            report = validata_response["report"]
             self.errors = validata.process_errors(report)
             if len(self.errors):
                 self._log_error("Echec lors de la validation du fichier (schema achats.json - Validata)")
