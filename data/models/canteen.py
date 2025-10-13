@@ -487,7 +487,7 @@ class Canteen(SoftDeletionModel):
         choices=EconomicModel.choices,
         null=True,
         blank=True,
-        verbose_name="Secteur économique",
+        verbose_name="Modèle économique",
     )
 
     # TDs (rempli grâce à canteen_fill_declaration_donnees_year_field)
