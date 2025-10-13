@@ -55,6 +55,12 @@ class DiagnosticQuerySet(models.QuerySet):
     def teledeclared(self):
         return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
 
+    def has_tags(self):
+        return self.exclude(tags__isnull=True).exclude(tags__len=0)
+
+    def has_tag(self, tag):
+        return self.filter(tags__contains=[tag])
+
     def in_year(self, year):
         return self.filter(year=int(year))
 
