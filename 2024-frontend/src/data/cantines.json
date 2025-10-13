@@ -40,8 +40,8 @@
   "productionType": [
     {
       "apiName": "site",
-      "hint": "Produit sur place les repas qu'il sert à ses convives",
-      "label": "Site",
+      "hint": "Produit sur place les repas qu'il sert aux convives",
+      "label": "Restaurant avec cuisine sur place",
       "value": "site"
     },
     {

@@ -353,7 +353,7 @@ class Canteen(SoftDeletionModel):
     class ProductionType(models.TextChoices):
         CENTRAL = "central", "Livre des repas mais n'a pas de lieu de service en propre"
         CENTRAL_SERVING = "central_serving", "Livre des repas et accueille aussi des convives sur place"
-        ON_SITE = "site", "Cantine qui produit les repas sur place"
+        ON_SITE = "site", "Produit sur place les repas qu'il sert aux convives"
         ON_SITE_CENTRAL = (
             "site_cooked_elsewhere",
             "Sert des repas préparés par une cuisine centrale (une petite partie peut être réalisée sur place entrée / dessert)",
