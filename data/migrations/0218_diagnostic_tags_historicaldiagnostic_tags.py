@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0214_diagnostic_value_egalim_hors_bio_ht_agg_and_more"),
+        ("data", "0217_alter_canteen_production_type_and_more"),
     ]
 
     operations = [
@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
             field=data.fields.ChoiceArrayField(
                 base_field=models.CharField(
                     choices=[
-                        ("VALUE_TOTAL_HT_VIDE", "value_total_ht vide"),
-                        ("VALUE_BIO_HT_VIDE", "value_bio_ht vide"),
+                        ("VALUE_TOTAL_HT_VIDE", "Valeur totale des achats vide"),
+                        ("VALUE_BIO_HT_VIDE", "Valeur totale des achats bio vide"),
                         (
                             "CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE",
                             "Cantine supprimée pendant la campagne",
@@ -43,8 +43,8 @@ class Migration(migrations.Migration):
             field=data.fields.ChoiceArrayField(
                 base_field=models.CharField(
                     choices=[
-                        ("VALUE_TOTAL_HT_VIDE", "value_total_ht vide"),
-                        ("VALUE_BIO_HT_VIDE", "value_bio_ht vide"),
+                        ("VALUE_TOTAL_HT_VIDE", "Valeur totale des achats vide"),
+                        ("VALUE_BIO_HT_VIDE", "Valeur totale des achats bio vide"),
                         (
                             "CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE",
                             "Cantine supprimée pendant la campagne",
