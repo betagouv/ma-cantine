@@ -73,7 +73,7 @@ class ImportCanteensView(APIView):
                 error = validata_response["error"]["message"]
                 self.errors = [
                     {
-                        "message": f"Une erreur inconnue s'est produite en lisant votre fichier ( {error} ). Renouveler votre essai, et si l'erreur persiste contactez le support.",
+                        "message": f"Une erreur inconnue s'est produite en lisant votre fichier : « {error} ». Renouveler votre essai, et si l'erreur persiste contactez le support.",
                         "status": 400,
                     }
                 ]
