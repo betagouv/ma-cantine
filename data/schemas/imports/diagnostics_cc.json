@@ -124,7 +124,12 @@
     },
     {
       "constraints": {
-        "enum": ["central", "central_serving", "site", "site_cooked_elsewhere"],
+        "enum": [
+          "central",
+          "central_serving",
+          "site",
+          "site_cooked_elsewhere"
+        ],
         "required": true
       },
       "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également restaurant satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de restaurants satellites.",
@@ -136,7 +141,10 @@
     },
     {
       "constraints": {
-        "enum": ["conceded", "direct"],
+        "enum": [
+          "conceded",
+          "direct"
+        ],
         "required": true
       },
       "description": "La cantine peut être gérée directement ('direct') ou de manière concédée ('conceded'). Si de manière concédée, la délégation peut être totale ou partielle.",
@@ -148,14 +156,17 @@
     },
     {
       "constraints": {
-        "enum": ["public", "private"],
+        "enum": [
+          "public",
+          "private"
+        ],
         "required": false
       },
       "description": "Il existe 2 types différents : cantine publique ('public'), et cantine privée ('private').",
       "example": "public",
       "format": "default",
       "name": "modèle_économique",
-      "title": "Secteur économique",
+      "title": "Modèle économique",
       "type": "string"
     },
     {
