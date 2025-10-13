@@ -140,7 +140,7 @@ export default {
         { value: this.canteen.city, label: "Ville" },
         { value: economicModelDetail ? economicModelDetail.text : "", label: "Modèle économique" },
         { value: managementTypeDetail ? managementTypeDetail.text : "", label: "Mode de gestion" },
-        { value: productionTypeDetail ? productionTypeDetail.body : "", label: "Type de production" },
+        { value: productionTypeDetail ? productionTypeDetail.body : "", label: "Mode de production" },
       ]
       if (this.usesCentralProducer)
         items.push({ value: this.canteen.centralProducerSiret, label: "SIRET de la cuisine centrale" })
