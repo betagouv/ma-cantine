@@ -865,7 +865,7 @@ export default new Vuex.Store({
       return Object.values(JSON.parse(savedDiagnostics))
     },
     getCanteenUrlComponent: () => (canteen) => {
-      return `${canteen.id}--${canteen.name}`
+      return encodeURIComponent(`${canteen.id}--${canteen.name}`)
     },
     getPartnerUrlComponent: () => (partner) => {
       return `${partner.id}--${partner.name}`
