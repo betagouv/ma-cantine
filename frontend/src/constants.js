@@ -39,7 +39,7 @@ export default Object.freeze({
   ],
   ProductionTypes: [
     {
-      text: "Livreurs des repas",
+      text: "Cuisines centrales",
       value: "central,central_serving",
     },
     {
@@ -59,13 +59,14 @@ export default Object.freeze({
       value: "site_cooked_elsewhere",
     },
     {
-      title: "livre des repas mais n'a pas de lieu de service en propre",
-      body: "Mon établissement livre des repas mais n'a pas de lieu de service en propre",
+      title: "produit des repas qu'il livre à des lieux de restauration",
+      body: "Mon établissement produit des repas qu'il livre à des lieux de restauration",
       value: "central",
     },
     {
-      title: "livre des repas et accueille aussi des convives sur place",
-      body: "Mon établissement livre des repas et accueille aussi des convives sur place",
+      title: "produit des repas qu'il livre à des lieux de restauration et accueille aussi des convives sur place",
+      body:
+        "Mon établissement produit des repas qu'il livre à des lieux de restauration et accueille aussi des convives sur place",
       value: "central_serving",
     },
   ],
@@ -432,8 +433,8 @@ export default Object.freeze({
       urlSlug: "cuisine-centrale-diagnostics-simples",
       title: "Importer des bilans simples centralisés",
       description:
-        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement simplifiées au niveau du livreur des repas et de lister vos restaurants satellites seulement avec leurs données d'établissement. Les données d'approvisionnement sont donc rentrées une fois au niveau du livreur.",
-      label: "Livreur avec bilan simple",
+        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement simplifiées au niveau de la cuisine centrale et de lister vos restaurants satellites seulement avec leurs données d'établissement. Les données d'approvisionnement sont donc rentrées une fois au niveau de la cuisine centrale.",
+      label: "Cuisine centrale avec bilan simple",
       help:
         "Vous voulez renseigner vos restaurants satellites et vous connaissez les valeurs totaux, bio, et de qualité et durable",
       icon: "$bar-chart-box-fill",
@@ -443,8 +444,8 @@ export default Object.freeze({
       urlSlug: "cuisine-centrale-diagnostics-complets",
       title: "Importer des bilans complets centralisés",
       description:
-        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement détaillées au niveau du livreur des repas et de lister vos restaurants satellites seulement avec leurs données d'établissement. Les données d'approvisionnement sont donc rentrées une fois au niveau du livreur.",
-      label: "Livreur avec bilan complet",
+        "Ce type de fichier vous permet de renseigner vos données d'approvisionnement détaillées au niveau de la cuisine centrale et de lister vos restaurants satellites seulement avec leurs données d'établissement. Les données d'approvisionnement sont donc rentrées une fois au niveau de la cuisine centrale.",
+      label: "Cuisine centrale avec bilan complet",
       help:
         "Vous voulez renseigner vos restaurants satellites et vous connaissez les labels et les familles de produits de vos achats",
       icon: "$checkbox-circle-fill",

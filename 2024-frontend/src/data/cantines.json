@@ -1,5 +1,5 @@
 {
-  "centralProducerSiret": "SIRET du livreur de repas",
+  "centralProducerSiret": "SIRET de la cuisine centrale",
   "city": "Commune",
   "cityInseeCode": "Code Insee",
   "dailyMealCount": "Couverts par jour",
@@ -53,13 +53,13 @@
     {
       "apiName": "central",
       "hint": "Livre des repas mais n'a pas de lieu de service en propre",
-      "label": "Centrale",
+      "label": "Cuisine centrale",
       "value": "central"
     },
     {
       "apiName": "centralServing",
       "hint": "Livre des repas et accueille aussi des convives sur place",
-      "label": "Centrale et site",
+      "label": "Cuisine centrale et site",
       "value": "central_serving"
     }
   ],

@@ -41,7 +41,7 @@ const quizSteps = [
   },
   {
     key: "isCentralKitchen",
-    title: "Livreur de repas",
+    title: "Cuisine centrale",
     question: "Est-ce que un ou plusieurs de ces établissements livrent des repas aux cantines ?",
   },
   {

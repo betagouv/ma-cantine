@@ -157,7 +157,7 @@
   </div>
   <div class="fr-text" v-else-if="usesCentralDiagnostic">
     <p>
-      Une synthèse de données sera disponible dès que votre livreur remplit leur diagnostic.
+      Une synthèse de données sera disponible dès que votre cuisine centrale remplit leur diagnostic.
     </p>
   </div>
   <div class="fr-text py-8" v-else>

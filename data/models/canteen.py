@@ -351,8 +351,8 @@ class Canteen(SoftDeletionModel):
         CONCEDED = "conceded", "Concédée"
 
     class ProductionType(models.TextChoices):
-        CENTRAL = "central", "Livreur des repas sans lieu de consommation"
-        CENTRAL_SERVING = "central_serving", "Livreur des repas qui accueille aussi des convives sur place"
+        CENTRAL = "central", "Livre des repas mais n'a pas de lieu de service en propre"
+        CENTRAL_SERVING = "central_serving", "Livre des repas et accueille aussi des convives sur place"
         ON_SITE = "site", "Cantine qui produit les repas sur place"
         ON_SITE_CENTRAL = (
             "site_cooked_elsewhere",
@@ -375,10 +375,10 @@ class Canteen(SoftDeletionModel):
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
         TELEDECLARE = "40_teledeclare", "Télédéclarer"
         DID_NOT_TELEDECLARE = "45_did_not_teledeclare", "Non télédéclaré"
-        NOTHING_SATELLITE = "90_nothing_satellite", "En attente de la télédéclaration de votre livreur"
+        NOTHING_SATELLITE = "90_nothing_satellite", "En attente de la télédéclaration de votre cuisine centrale"
         NOTHING_SATELLITE_TELEDECLARED = (
             "91_nothing_satellite_teledeclared",
-            "Rien à faire (télédéclaré par votre livreur)",
+            "Rien à faire (télédéclaré par votre cuisine centrale)",
         )
         NOTHING = "95_nothing", "Rien à faire !"
 

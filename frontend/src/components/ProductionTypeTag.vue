@@ -4,7 +4,7 @@
     v-if="isCentralKitchen || isSatellite"
     :class="`${position}`"
     :icon="isCentralKitchen ? '$community-fill' : '$restaurant-fill'"
-    :text="isCentralKitchen ? 'Livreur des repas' : 'Restaurant satellite'"
+    :text="isCentralKitchen ? 'Cuisine centrale' : 'Restaurant satellite'"
   />
 </template>
 

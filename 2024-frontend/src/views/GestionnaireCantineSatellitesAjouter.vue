@@ -54,7 +54,7 @@ const resetForm = (name) => {
     <h1 class="fr-col-12 fr-col-md-8">
       {{ route.meta.title }}
       <br />
-      à la cantine centrale {{ canteenName }}
+      à la cuisine centrale {{ canteenName }}
     </h1>
   </section>
   <CanteenEstablishmentForm

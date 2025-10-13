@@ -57,11 +57,11 @@ const searchByNumber = () => {
           break
         case !response.id:
           canteen.found = false
-          errorNotFound.value = `Le livreur de repas avec le numéro SIRET « ${cleanNumber} » n’est pas encore inscrit sur la plateforme, veuillez vous rapprocher de cet établissement pour aller plus loin`
+          errorNotFound.value = `La cuisine centrale avec le numéro SIRET « ${cleanNumber} » n’est pas encore inscrite sur la plateforme, veuillez vous rapprocher de cet établissement pour aller plus loin`
           break
         case response.id && !centralProductionTypes.includes(response.productionType):
           canteen.found = false
-          errorNotFound.value = `L'établissement avec le numéro SIRET « ${cleanNumber} » n’est pas enregistré comme livreur de repas sur la plateforme, veuillez vous rapprocher de cet établissement pour aller plus loin`
+          errorNotFound.value = `L'établissement avec le numéro SIRET « ${cleanNumber} » n’est pas enregistré comme cuisine centrale sur la plateforme, veuillez vous rapprocher de cet établissement pour aller plus loin`
           break
         case response.id && centralProductionTypes.includes(response.productionType):
           canteen.found = true
@@ -97,9 +97,9 @@ const unselectCanteen = () => {
 
 <template>
   <div class="canteen-establishment-search">
-    <p class="fr-mb-0">Livreur de repas *</p>
+    <p class="fr-mb-0">Cuisine centrale *</p>
     <p class="fr-hint-text">
-      Nous utilisons le numéro SIRET pour vérfier votre livreur de repas. Vous ne le connaissez pas ? Trouvez-le avec
+      Nous utilisons le numéro SIRET pour vérfier votre cuisine centrale. Vous ne le connaissez pas ? Trouvez-le avec
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>
     </p>
     <DsfrInputGroup :error-message="errorMessage">
@@ -108,8 +108,8 @@ const unselectCanteen = () => {
           v-if="!hasSelected"
           v-model="search"
           button-text="Rechercher"
-          placeholder="Tapez le n° SIRET du livreur de repas"
-          label="Rechercher un livreur de repas par son numéro SIRET"
+          placeholder="Tapez le n° SIRET de la cuisine centrale"
+          label="Rechercher une cuisine centrale par son numéro SIRET"
           :large="true"
           @search="searchByNumber()"
         />

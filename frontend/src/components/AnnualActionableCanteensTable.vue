@@ -193,8 +193,8 @@ export default {
       typeDisplay: {
         site: "Cuisine sur site",
         site_cooked_elsewhere: "Restaurant satellite",
-        central: "Livreur des repas",
-        central_serving: "Livreur, avec service sur place",
+        central: "Cuisine centrale",
+        central_serving: "Cuisine centrale, avec service sur place",
       },
       canteenForTD: null,
       showTeledeclarationPreview: false,
@@ -251,7 +251,7 @@ export default {
           display: "empty",
         },
         "91_nothing_satellite_teledeclared": {
-          text: "Votre livreur des repas a déclaré le bilan pour votre établissement",
+          text: "Votre cuisine centrale a déclaré le bilan pour votre établissement",
           display: "text",
         },
         "95_nothing": {

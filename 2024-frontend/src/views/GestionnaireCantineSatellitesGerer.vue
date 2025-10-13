@@ -82,7 +82,7 @@ const removeRow = (id) => {
     <div class="fr-col-12 fr-col-md-8">
       <h1>{{ route.meta.title }}</h1>
       <p v-if="!canteen.isCentralCuisine">
-        Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de restaurants satellites. Pour
+        Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de cuisines satellites. Pour
         modifier votre type d'établissement
         <AppLinkRouter
           title="cliquez-ici"

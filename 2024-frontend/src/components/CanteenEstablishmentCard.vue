@@ -36,7 +36,7 @@ const linkedCanteensLabel = computed(() => {
     </div>
     <div v-if="status === 'can-be-central'" class="fr-grid-row fr-grid-row--center fr-mt-1w">
       <DsfrButton
-        label="Sélectionner ce livreur de repas"
+        label="Sélectionner cette cuisine centrale"
         icon="fr-icon-add-circle-fill"
         secondary
         @click="$emit('select')"
