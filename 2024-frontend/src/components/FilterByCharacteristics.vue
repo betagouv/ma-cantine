@@ -24,7 +24,7 @@ if (query.productionType)
 <template>
   <FilterByBase label="Caractéristiques">
     <DsfrCheckboxSet
-      legend="Modèle économique :"
+      legend="Modèle économique"
       :modelValue="economicModel"
       @update:modelValue="storeFilters.set('economicModel', $event)"
       :options="options.economicModel"
@@ -32,7 +32,7 @@ if (query.productionType)
       inline
     />
     <DsfrCheckboxSet
-      legend="Mode de gestion :"
+      legend="Mode de gestion"
       :modelValue="managementType"
       @update:modelValue="storeFilters.set('managementType', $event)"
       :options="options.managementType"
@@ -40,7 +40,7 @@ if (query.productionType)
       inline
     />
     <DsfrCheckboxSet
-      legend="Mode de production :"
+      legend="Mode de production"
       :modelValue="productionType"
       @update:modelValue="storeFilters.set('productionType', $event)"
       :options="options.productionType"
