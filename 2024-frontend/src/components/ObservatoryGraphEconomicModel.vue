@@ -8,7 +8,7 @@ import cantines from "@/data/cantines.json"
 
 const props = defineProps(["economicModels", "canteensCount"])
 const storeFilters = useStoreFilters()
-const title = "Type d'établissement"
+const title = "Modèle économique"
 
 /* Calculate graph props */
 const graph = computed(() => {

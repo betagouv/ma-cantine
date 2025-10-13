@@ -32,7 +32,7 @@
           <v-icon color="primary" x-large>$team-line</v-icon>
         </div>
         <div class="mt-n1">
-          <p class="my-0 fr-text-sm grey--text text--darken-1">Type d'établissement</p>
+          <p class="my-0 fr-text-sm grey--text text--darken-1">Modèle économique</p>
           <p class="my-0">{{ economicModel || "—" }}</p>
           <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Mode de gestion</p>
           <p class="my-0">{{ managementType || "—" }}</p>

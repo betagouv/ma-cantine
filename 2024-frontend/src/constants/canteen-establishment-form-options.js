@@ -24,7 +24,7 @@ const economicModel = [
     label: "Privé",
     value: "private",
     hint:
-      "Restaurant sous la responsabilité d’une structure privée : entreprise, association (hors associations de gestion d’un restaurant de structure publique), établissement scolaire privé, etc.",
+      "Tout restaurant sous la responsabilité d'une personne morale de droit privé : entreprise, association (hors associations de gestion d’un restaurant de structure publique), établissement scolaire privé, etc.",
   },
 ]
 

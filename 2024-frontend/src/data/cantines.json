@@ -13,12 +13,12 @@
     },
     {
       "apiName": "private",
-      "hint": "Restaurant sous la responsabilité d’une structure privée : entreprise, association (hors associations de gestion d’un restaurant de structure publique), établissement scolaire privé, etc.",
+      "hint": "Tout restaurant sous la responsabilité d'une personne morale de droit privé : entreprise, association (hors associations de gestion d’un restaurant de structure publique), établissement scolaire privé, etc.",
       "label": "Privé",
       "value": "private"
     }
   ],
-  "economicModelName": "Type d’établissement",
+  "economicModelName": "Modèle économique",
   "epciLib": "Établissement Public de Coopération Intercommunale (EPCI)",
   "lineMinistry": "Ministère de tutelle",
   "managementType": [
