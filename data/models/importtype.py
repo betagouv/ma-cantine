@@ -9,6 +9,6 @@ class ImportType(models.TextChoices):
     )  # plus utilisé
     DIAGNOSTIC_SIMPLE = "DIAGNOSTIC_SIMPLE", "Diagnostic simple"
     DIAGNOSTIC_COMPLETE = "DIAGNOSTIC_COMPLETE", "Cantines avec diagnostic complet"
-    CC_SIMPLE = "CC_SIMPLE", "Livreurs avec un diagnostic simple et leurs satellites"
-    CC_COMPLETE = "CC_COMPLETE", "Livreurs avec un diagnostic complet et leurs satellites"
+    CC_SIMPLE = "CC_SIMPLE", "Livreurs avec un diagnostic simple et leurs restaurants satellites"
+    CC_COMPLETE = "CC_COMPLETE", "Livreurs avec un diagnostic complet et leurs restaurants satellites"
     PURCHASE = "PURCHASE", "Achats"

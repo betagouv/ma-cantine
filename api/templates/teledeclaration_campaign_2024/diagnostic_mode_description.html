@@ -6,13 +6,13 @@
         .
     </p>
 {% elif teledeclaration_mode == "CENTRAL_ALL" %}
-    <p>Vous avez choisi de déclarer ces données au nom de toutes vos cantines satellites.</p>
+    <p>Vous avez choisi de déclarer ces données au nom de tous vos restaurants satellites.</p>
 {% elif teledeclaration_mode == "CENTRAL_APPRO" %}
-    <p>Vous avez choisi de déclarer les données d'approvisionnement au nom de toutes vos cantines satellites.</p>
+    <p>Vous avez choisi de déclarer les données d'approvisionnement au nom de tous vos restaurants satellites.</p>
 {% endif %}
 {% if teledeclaration_mode == "CENTRAL_ALL" or teledeclaration_mode == "CENTRAL_APPRO" %}
     {% if satellites %}
-        Cette télédéclaration concerne les cantines satellites :
+        Cette télédéclaration concerne les restaurants satellites :
         <ul>
             {% for satellite in satellites %}<li>{{ satellite.name }} (SIRET : {{ satellite.siret }})</li>{% endfor %}
         </ul>

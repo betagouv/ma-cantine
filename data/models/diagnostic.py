@@ -201,9 +201,9 @@ class Diagnostic(models.Model):
     class CentralKitchenDiagnosticMode(models.TextChoices):
         APPRO = (
             "APPRO",
-            "Ce diagnostic concerne les données d'approvisionnement de toutes les cantines satellites",
+            "Ce diagnostic concerne les données d'approvisionnement de tous les restaurants satellites",
         )
-        ALL = "ALL", "Ce diagnostic concerne toutes les données des cantines satellites"
+        ALL = "ALL", "Ce diagnostic concerne toutes les données des restaurants satellites"
 
     class ServiceType(models.TextChoices):
         UNIQUE = "UNIQUE", "Menu unique"
@@ -283,12 +283,15 @@ class Diagnostic(models.Model):
     class TeledeclarationMode(models.TextChoices):
         SATELLITE_WITHOUT_APPRO = (
             "SATELLITE_WITHOUT_APPRO",
-            "Cantine satellite dont les données d'appro sont déclarées par la cuisine centrale",
+            "Restaurant satellite dont les données d'appro sont déclarées par la cuisine centrale",
         )
-        CENTRAL_APPRO = "CENTRAL_APPRO", "Cuisine centrale déclarant les données d'appro pour ses cuisines satellites"
+        CENTRAL_APPRO = (
+            "CENTRAL_APPRO",
+            "Cuisine centrale déclarant les données d'appro pour ses restaurants satellites",
+        )
         CENTRAL_ALL = (
             "CENTRAL_ALL",
-            "Cuisine centrale déclarant toutes les données EGalim pour ses cuisines satellites",
+            "Cuisine centrale déclarant toutes les données EGalim pour ses restaurants satellites",
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
 

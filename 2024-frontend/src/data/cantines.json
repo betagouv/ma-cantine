@@ -46,8 +46,8 @@
     },
     {
       "apiName": "siteCookedElsewhere",
-      "hint": "Sert des repas préparés par un autre établissement",
-      "label": "Satellite",
+      "hint": "Sert des repas préparés par une cuisine centrale (une petite partie peut être réalisée sur place entrée / dessert)",
+      "label": "Restaurant satellite",
       "value": "site_cooked_elsewhere"
     },
     {
@@ -65,7 +65,7 @@
   ],
   "productionTypeName": "Mode de production",
   "regionLib": "Région",
-  "satelliteCanteensCount": "Nombre de cantines satellites",
+  "satelliteCanteensCount": "Nombre de restaurants satellites",
   "sectorCategorie": {
     "administration": "Administration",
     "autres": "Autres",

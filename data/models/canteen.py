@@ -354,7 +354,10 @@ class Canteen(SoftDeletionModel):
         CENTRAL = "central", "Livreur des repas sans lieu de consommation"
         CENTRAL_SERVING = "central_serving", "Livreur des repas qui accueille aussi des convives sur place"
         ON_SITE = "site", "Cantine qui produit les repas sur place"
-        ON_SITE_CENTRAL = "site_cooked_elsewhere", "Cantine qui sert des repas preparés par une cuisine centrale"
+        ON_SITE_CENTRAL = (
+            "site_cooked_elsewhere",
+            "Sert des repas préparés par une cuisine centrale (une petite partie peut être réalisée sur place entrée / dessert)",
+        )
 
     class EconomicModel(models.TextChoices):
         PUBLIC = "public", "Public"
@@ -365,7 +368,7 @@ class Canteen(SoftDeletionModel):
         PUBLISHED = "published", "✅ Publié"
 
     class Actions(models.TextChoices):
-        ADD_SATELLITES = "10_add_satellites", "Ajouter des satellites"
+        ADD_SATELLITES = "10_add_satellites", "Ajouter des restaurants satellites"
         PREFILL_DIAGNOSTIC = "18_prefill_diagnostic", "Créer et pré-remplir le diagnostic"
         CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
         FILL_DIAGNOSTIC = "30_fill_diagnostic", "Compléter le diagnostic"
@@ -451,7 +454,7 @@ class Canteen(SoftDeletionModel):
     satellite_canteens_count = models.PositiveIntegerField(
         null=True,
         blank=True,
-        verbose_name="nombre de cantines satellites dépendantes (si cuisine centrale)",
+        verbose_name="nombre de restaurants satellites dépendants (si cuisine centrale)",
     )
 
     siret = models.TextField(null=True, blank=True, validators=[utils_siret.validate_siret])

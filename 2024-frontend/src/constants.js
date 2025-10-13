@@ -21,14 +21,14 @@ export default Object.freeze({
       urlSlug: "cuisine-centrale-diagnostics-simples",
       title: "Importer des bilans simples pour des livreurs de repas",
       help:
-        "Vous ne connaissez pas les données par cantine satellite, que par livreur de repas. Vous connaissez que les valeurs totales de vos achats bio et de qualité",
+        "Vous ne connaissez pas les données par restaurant satellite, que par livreur de repas. Vous connaissez que les valeurs totales de vos achats bio et de qualité",
     },
     {
       key: "CC_COMPLETE",
       urlSlug: "cuisine-centrale-diagnostics-complets",
       title: "Importer des bilans détaillés pour des livreurs de repas",
       help:
-        "Vous ne connaissez pas les données par cantine satellite, que par livreur de repas. Vous connaissez les labels et les familles de produits de vos achats",
+        "Vous ne connaissez pas les données par restaurant satellite, que par livreur de repas. Vous connaissez les labels et les familles de produits de vos achats",
     },
   ],
   WasteMeasurement: {

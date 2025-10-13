@@ -356,7 +356,7 @@ if (props.establishmentData) {
           v-if="showSatelliteCanteensCount"
           v-model="form.satelliteCanteensCount"
           type="number"
-          label="Nombre de cuisine satellite *"
+          label="Nombre de restaurant satellite *"
           hint="Nombre de cantines/lieux de service à qui je fournis des repas"
           :label-visible="true"
           :error-message="formatError(v$.satelliteCanteensCount)"
@@ -528,7 +528,7 @@ if (props.establishmentData) {
           :disabled="isSaving"
           :label="
             addSatellite
-              ? 'Enregistrer et créer une nouvelle cantine satellite'
+              ? 'Enregistrer et créer un nouveau restaurant satellite'
               : 'Enregistrer et créer un nouvel établissement'
           "
           secondary
