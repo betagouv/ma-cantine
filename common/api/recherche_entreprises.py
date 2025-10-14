@@ -3,6 +3,7 @@ import logging
 import requests
 
 from common.utils import siret as utils_siret
+from common.utils import utils as utils_utils
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,7 @@ def fetch_geo_data_from_siren(siren, response):
     * page=1&per_page=1 : Un seul élément est demandé en réponse car la recherche par SIREN doit renvoyer un seul établissement.
     """
     # TODO: replace with utils_siret.validate_siret
+    siren = utils_utils.normalize_string(siren)
     if not utils_siret.is_valid_length_siren(siren):
         logger.error(f"Api Recherche Entreprises: Le SIREN fourni est invalide : {siren}")
         return
@@ -101,6 +103,7 @@ def fetch_geo_data_from_siret(siret):
     * page=1&per_page=1 : Un seul élément est demandé en réponse car la recherche par SIRET doit renvoyer un seul établissement.
     """
     # TODO: replace with utils_siret.validate_siret
+    siret = utils_utils.normalize_string(siret)
     if not utils_siret.is_valid_length_siret(siret):
         logger.error(f"Api Recherche Entreprises: Le SIRET fourni est invalide : {siret}")
         return
