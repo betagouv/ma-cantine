@@ -458,7 +458,7 @@ class TestPurchaseImport(APITestCase):
         This is a smoke test - purchase import reuses diagnostics import
         More tests are with the diagnostic import tests
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="96463820453707", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_good_encoding_iso-8859-1.csv"
