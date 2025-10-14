@@ -646,26 +646,26 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
 
 
 class CanteenAnalysisSerializer(serializers.ModelSerializer):
-    nom = serializers.SerializerMethodField()
-    code_insee_commune = serializers.SerializerMethodField()
-    libelle_commune = serializers.SerializerMethodField()
+    nom = serializers.CharField(source="name")
+    code_insee_commune = serializers.CharField(source="city_insee_code")
+    libelle_commune = serializers.CharField(source="city")
     pat_liste = serializers.SerializerMethodField()
     pat_lib_liste = serializers.SerializerMethodField()
-    departement = serializers.SerializerMethodField()
-    departement_lib = serializers.SerializerMethodField()
-    nbre_repas_jour = serializers.SerializerMethodField()
-    nbre_repas_an = serializers.SerializerMethodField()
+    departement = serializers.CharField(source="department")
+    departement_lib = serializers.CharField(source="department_lib")
+    nbre_repas_jour = serializers.IntegerField(source="daily_meal_count")
+    nbre_repas_an = serializers.IntegerField(source="yearly_meal_count")
     modele_economique = serializers.SerializerMethodField()
     type_gestion = serializers.SerializerMethodField()
     type_production = serializers.SerializerMethodField()
-    nombre_satellites = serializers.SerializerMethodField()
-    siret_cuisine_centrale = serializers.SerializerMethodField()
+    nombre_satellites = serializers.IntegerField(source="satellite_canteens_count")
+    siret_cuisine_centrale = serializers.CharField(source="central_producer_siret")
     ministere_tutelle = serializers.SerializerMethodField()
     spe = serializers.SerializerMethodField()
     secteur = serializers.SerializerMethodField()
     categorie = serializers.SerializerMethodField()
-    date_creation = serializers.SerializerMethodField()
-    date_modification = serializers.SerializerMethodField()
+    date_creation = serializers.DateTimeField(source="creation_date")
+    date_modification = serializers.DateTimeField(source="modification_date")
     adresses_gestionnaires = serializers.SerializerMethodField()
 
     class Meta:
@@ -706,44 +706,11 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-    def get_nom(self, obj):
-        return obj.name
-
-    def get_code_insee_commune(self, obj):
-        return obj.city_insee_code
-
-    def get_libelle_commune(self, obj):
-        return obj.city
-
     def get_pat_liste(self, obj):
         return ",".join(obj.pat_list)
 
     def get_pat_lib_liste(self, obj):
         return ",".join(obj.pat_lib_list)
-
-    def get_departement(self, obj):
-        return obj.department
-
-    def get_departement_lib(self, obj):
-        return obj.department_lib
-
-    def get_date_creation(self, obj):
-        return obj.creation_date.strftime('"%Y-%m-%d"')
-
-    def get_date_modification(self, obj):
-        return obj.modification_date.strftime('"%Y-%m-%d"')
-
-    def get_nbre_repas_jour(self, obj):
-        return obj.daily_meal_count
-
-    def get_nbre_repas_an(self, obj):
-        return obj.yearly_meal_count
-
-    def get_nombre_satellites(self, obj):
-        return obj.satellite_canteens_count
-
-    def get_siret_cuisine_centrale(self, obj):
-        return obj.central_producer_siret
 
     def get_modele_economique(self, obj):
         if obj.economic_model:
