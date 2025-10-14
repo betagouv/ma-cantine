@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.test import TestCase
 from freezegun import freeze_time
 
@@ -25,9 +24,6 @@ class CanteenModelSaveTest(TestCase):
         for VALUE_OK in ["", None, "756 656 218 99905", "75665621899905"]:
             with self.subTest(siret=VALUE_OK):
                 CanteenFactory(siret=VALUE_OK)
-        for VALUE_NOT_OK in ["123", "123456789012345", "1234567890123A"]:
-            with self.subTest(siret=VALUE_NOT_OK):
-                self.assertRaises(ValidationError, CanteenFactory, siret=VALUE_NOT_OK)
 
     def test_canteen_siren_unite_legale_validation(self):
         for VALUE_OK in ["", None, "756 656 218", "756656218"]:

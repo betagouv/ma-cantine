@@ -598,7 +598,6 @@ class Canteen(SoftDeletionModel):
         self.normalize_siren_unite_legale()
         self.optimize_logo()
         self.set_region_from_department()
-        self.full_clean()
         super().save(**kwargs)
 
     @property
