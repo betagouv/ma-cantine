@@ -20,7 +20,7 @@ from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
-from common.utils.siret import normalise_siret
+from common.utils.siret import normalize_siret
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.diagnostic import Diagnostic
 from data.models.teledeclaration import Teledeclaration
@@ -307,7 +307,7 @@ class ImportDiagnosticsView(ABC, APIView):
 
     @staticmethod
     def _validate_canteen(row):
-        if not normalise_siret(row[0]).isdigit():
+        if not normalize_siret(row[0]).isdigit():
             raise ValidationError({"siret": "Le SIRET doit être composé des chiffres"})
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
@@ -322,8 +322,8 @@ class ImportDiagnosticsView(ABC, APIView):
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
         if row[4]:
-            central_producer_siret = normalise_siret(row[4])
-            siret = normalise_siret(row[0])
+            central_producer_siret = normalize_siret(row[4])
+            siret = normalize_siret(row[0])
             if central_producer_siret == siret:
                 raise ValidationError(
                     {
@@ -353,7 +353,7 @@ class ImportDiagnosticsView(ABC, APIView):
         silently_added_manager_emails,
         satellite_canteens_count=None,
     ):
-        siret = normalise_siret(row[0])
+        siret = normalize_siret(row[0])
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
@@ -374,7 +374,7 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.name = row[1].strip()
         canteen.city_insee_code = row[2].strip()
         canteen.postal_code = row[3].strip()
-        canteen.central_producer_siret = normalise_siret(row[4])
+        canteen.central_producer_siret = normalize_siret(row[4])
         canteen.daily_meal_count = row[5].strip()
         canteen.yearly_meal_count = row[6].strip()
         canteen.production_type = row[8].strip().lower()

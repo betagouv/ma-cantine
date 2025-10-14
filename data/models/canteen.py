@@ -572,17 +572,33 @@ class Canteen(SoftDeletionModel):
         verbose_name="Source de création de la cantine",
     )
 
-    def save(self, **kwargs):
-        # cleanup some fields
+    def normalize_siret(self):
         if self.siret:
-            self.siret = utils_siret.normalise_siret(self.siret)
+            self.siret = utils_siret.normalize_siret(self.siret)
+
+    def normalize_siren_unite_legale(self):
         if self.siren_unite_legale:
-            self.siren_unite_legale = utils_siret.normalise_siret(self.siren_unite_legale)
+            self.siren_unite_legale = utils_siret.normalize_siret(self.siren_unite_legale)
+
+    def optimize_logo(self):
         max_image_size = 1024
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
+
+    def set_region_from_department(self):
         if self.department:
             self.region = self._get_region()
+
+    def save(self, **kwargs):
+        """
+        - cleanup some fields (siret, siren_unite_legale, logo)
+        - set region from department
+        """
+        self.normalize_siret()
+        self.normalize_siren_unite_legale()
+        self.optimize_logo()
+        self.set_region_from_department()
+        self.full_clean()
         super().save(**kwargs)
 
     @property

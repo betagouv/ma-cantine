@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from freezegun import freeze_time
 
@@ -11,20 +12,27 @@ from data.factories import (
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
 
-class CanteenModelTest(TestCase):
-    def test_create_canteen(self):
-        # siret: normalize on save
+class CanteenModelSaveTest(TestCase):
+    def test_canteen_siret_normalization(self):
         canteen = CanteenFactory(siret="756 656 218 99905")
-        self.assertEqual(canteen.siret, "75665621899905")  # normalized
-        # siren_unite_legale: normalize on save
-        canteen = CanteenFactory(siren_unite_legale="756 656 218")
-        self.assertEqual(canteen.siren_unite_legale, "756656218")  # normalized
+        self.assertEqual(canteen.siret, "75665621899905")
 
-    def test_create_canteen_siret_validation(self):
-        # both siret and siren_unite_legale can be empty or set
-        for siret in ["", None, "756 656 218 99905"]:
-            for siren_unite_legale in ["", None, "756 656 218"]:
-                CanteenFactory(siret=siret, siren_unite_legale=siren_unite_legale)
+    def test_canteen_siren_unite_legale_normalization(self):
+        canteen = CanteenFactory(siren_unite_legale="756 656 218")
+        self.assertEqual(canteen.siren_unite_legale, "756656218")
+
+    def test_canteen_siret_validation(self):
+        for VALUE_OK in ["", None, "756 656 218 99905", "75665621899905"]:
+            with self.subTest(siret=VALUE_OK):
+                CanteenFactory(siret=VALUE_OK)
+        for VALUE_NOT_OK in ["123", "123456789012345", "1234567890123A"]:
+            with self.subTest(siret=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, siret=VALUE_NOT_OK)
+
+    def test_canteen_siren_unite_legale_validation(self):
+        for VALUE_OK in ["", None, "756 656 218", "756656218"]:
+            with self.subTest(siren_unite_legale=VALUE_OK):
+                CanteenFactory(siren_unite_legale=VALUE_OK)
 
 
 class CanteenQuerySetTest(TestCase):
