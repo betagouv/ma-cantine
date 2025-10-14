@@ -575,9 +575,9 @@ class Canteen(SoftDeletionModel):
     def save(self, **kwargs):
         # cleanup some fields
         if self.siret:
-            self.siret = utils_siret.normalise_siret(self.siret)
+            self.siret = utils_siret.normalize_siret(self.siret)
         if self.siren_unite_legale:
-            self.siren_unite_legale = utils_siret.normalise_siret(self.siren_unite_legale)
+            self.siren_unite_legale = utils_siret.normalize_siret(self.siren_unite_legale)
         max_image_size = 1024
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)

@@ -17,7 +17,7 @@ from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
 from common.api import validata
 from common.utils import file_import
-from common.utils.siret import normalise_siret
+from common.utils.siret import normalize_siret
 from data.models import Canteen, ImportFailure, ImportType, Purchase
 from data.utils import CreationSource
 
@@ -173,7 +173,7 @@ class ImportPurchasesView(APIView):
                 siret = row.pop(0)
                 if siret == "":
                     raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
-                siret = normalise_siret(siret)
+                siret = normalize_siret(siret)
                 self._create_purchase_for_canteen(siret, row)
 
             except Exception as e:
