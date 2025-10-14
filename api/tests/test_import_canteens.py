@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from data.factories import SectorFactory, UserFactory
+from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation
 from data.utils import CreationSource
 
@@ -274,7 +274,7 @@ class TestCanteenImport(APITestCase):
         )
 
         # not the canteen manager error
-        Canteen.objects.create(siret="82399356058716")
+        CanteenFactory(siret="21010034300016")
         file_path = "./api/tests/files/canteens/canteens_bad_nearly_good_2.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
@@ -316,7 +316,7 @@ class TestCanteenImport(APITestCase):
         - new canteen: the importer isn't added to the canteen unless specified.
         - updated canteen: admin doesn't have to be a manager.
         """
-        Canteen.objects.create(siret="82399356058716", name="Canteen initial")
+        CanteenFactory(name="Canteen initial", siret="21010034300016")
         user = authenticate.user
         user.is_staff = True
         user.email = "authenticate@example.com"
@@ -342,7 +342,7 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(canteen1.line_ministry, Canteen.Ministries.SANTE)
         self.assertEqual(canteen1.import_source, "Automated test")
 
-        canteen2 = Canteen.objects.get(siret="73282932000074")
+        canteen2 = Canteen.objects.get(siret="21380185500015")
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user1@example.com"))
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user2@example.com"))
         self.assertEqual(canteen2.managers.count(), 1)
@@ -350,10 +350,10 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(canteen2.line_ministry, None)
         self.assertEqual(canteen2.import_source, "Automated test")
 
-        canteen3 = Canteen.objects.get(siret="82399356058716")
+        canteen3 = Canteen.objects.get(siret="21010034300016")
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user1@example.com"))
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user2@example.com"))
-        self.assertEqual(canteen3.managers.count(), 0)
+        self.assertEqual(canteen3.managers.count(), 1)
         self.assertEqual(canteen3.name, "Canteen update")  # updated
         self.assertEqual(canteen3.line_ministry, Canteen.Ministries.AGRICULTURE)
         self.assertEqual(canteen3.import_source, "Automated test")

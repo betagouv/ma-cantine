@@ -16,22 +16,22 @@ date_in_last_teledeclaration_campaign = "2024-02-01"
 class TeledeclarationQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.valid_canteen_1 = CanteenFactory(siret="12345678901234", deletion_date=None, yearly_meal_count=100)
+        cls.valid_canteen_1 = CanteenFactory(siret="92341284500011", deletion_date=None, yearly_meal_count=100)
         cls.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", deletion_date=None)
         cls.valid_canteen_3 = CanteenFactory(
-            siret="12345678901235", siren_unite_legale="123456789", deletion_date=None
+            siret="83014132100034", siren_unite_legale="123456789", deletion_date=None
         )
-        cls.valid_canteen_4 = CanteenFactory(siret="12345678901230", deletion_date=None, yearly_meal_count=0)
+        cls.valid_canteen_4 = CanteenFactory(siret="40419443300078", deletion_date=None, yearly_meal_count=0)
         cls.valid_canteen_sat = CanteenFactory(
-            siret="12345678901232", deletion_date=None, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+            siret="21380185500015", deletion_date=None, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
         cls.valid_canteen_5_armee = CanteenFactory(
-            siret="12345678901233",
+            siret="21640122400011",
             line_ministry=Canteen.Ministries.ARMEE,
         )
         cls.invalid_canteen = CanteenFactory(siret="", deletion_date=None)  # siret missing
         cls.deleted_canteen = CanteenFactory(
-            siret="56789012345678",
+            siret="21730065600014",
             deletion_date=now().replace(month=3, day=1),
         )
 
@@ -153,9 +153,9 @@ class TeledeclarationQuerySetTest(TestCase):
         self.assertEqual(teledeclarations.count(), 5 + 4)
 
     def test_meal_price(self):
-        canteen_with_meal_price = Canteen.objects.get(siret="12345678901234")
-        canteen_without_meal_price = Canteen.objects.get(siret="12345678901230")
-        canteen_non_appro = Canteen.objects.get(siret="12345678901232")
+        canteen_with_meal_price = Canteen.objects.get(siret="92341284500011")
+        canteen_without_meal_price = Canteen.objects.get(siret="40419443300078")
+        canteen_non_appro = Canteen.objects.get(siret="21380185500015")
 
         td_with_meal_price = Teledeclaration.objects.get(
             canteen=canteen_with_meal_price.id, status=Teledeclaration.TeledeclarationStatus.SUBMITTED, year=year_data

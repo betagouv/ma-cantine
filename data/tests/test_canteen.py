@@ -1,6 +1,8 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from freezegun import freeze_time
 
+from data.department_choices import Department
 from data.factories import (
     CanteenFactory,
     DiagnosticFactory,
@@ -9,26 +11,106 @@ from data.factories import (
     UserFactory,
 )
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
+from data.region_choices import Region
+from data.utils import CreationSource
 
 
 class CanteenModelSaveTest(TestCase):
+    def test_canteen_name_validation(self):
+        for VALUE_OK in ["  ", "Canteen", "Cantéen", "Canteen 123", "Canteen - A !@#$%^&*()"]:
+            with self.subTest(name=VALUE_OK):
+                CanteenFactory(name=VALUE_OK)
+        for VALUE_NOT_OK in ["", None]:
+            with self.subTest(name=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, Canteen.objects.create, name=VALUE_NOT_OK)
+
     def test_canteen_siret_normalization(self):
-        canteen = CanteenFactory(siret="756 656 218 99905")
-        self.assertEqual(canteen.siret, "75665621899905")
+        canteen = CanteenFactory(siret="215 903 501 00017")
+        self.assertEqual(canteen.siret, "21590350100017")
 
     def test_canteen_siren_unite_legale_normalization(self):
         canteen = CanteenFactory(siren_unite_legale="756 656 218")
         self.assertEqual(canteen.siren_unite_legale, "756656218")
 
     def test_canteen_siret_validation(self):
-        for VALUE_OK in ["", None, "756 656 218 99905", "75665621899905"]:
+        for VALUE_OK in ["", None, "756 656 218 99905", "21590350100017"]:
             with self.subTest(siret=VALUE_OK):
                 CanteenFactory(siret=VALUE_OK)
+        for VALUE_NOT_OK in ["123", "923412845000115", "1234567890123A"]:
+            with self.subTest(siret=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, siret=VALUE_NOT_OK)
 
     def test_canteen_siren_unite_legale_validation(self):
         for VALUE_OK in ["", None, "756 656 218", "756656218"]:
             with self.subTest(siren_unite_legale=VALUE_OK):
                 CanteenFactory(siren_unite_legale=VALUE_OK)
+        for VALUE_NOT_OK in ["123", "9234128450", "92341284A"]:
+            with self.subTest(siren_unite_legale=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, siren_unite_legale=VALUE_NOT_OK)
+
+    def test_canteen_epci_validation(self):
+        for VALUE_OK in ["", None, "756 656 218", "756656218"]:
+            with self.subTest(epci=VALUE_OK):
+                CanteenFactory(epci=VALUE_OK)
+        for VALUE_NOT_OK in ["123", "9234128450", "92341284A"]:
+            with self.subTest(epci=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, epci=VALUE_NOT_OK)
+
+    def test_canteen_management_type_validation(self):
+        for VALUE_OK in ["", None] + Canteen.ManagementType.values:
+            with self.subTest(management_type=VALUE_OK):
+                CanteenFactory(management_type=VALUE_OK)
+        for VALUE_NOT_OK in [123, "invalid"]:
+            with self.subTest(management_type=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, management_type=VALUE_NOT_OK)
+
+    def test_canteen_production_type_validation(self):
+        for VALUE_OK in ["", None] + Canteen.ProductionType.values:
+            with self.subTest(production_type=VALUE_OK):
+                CanteenFactory(production_type=VALUE_OK)
+        for VALUE_NOT_OK in [123, "invalid"]:
+            with self.subTest(production_type=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, production_type=VALUE_NOT_OK)
+
+    def test_canteen_economic_model_validation(self):
+        for VALUE_OK in ["", None] + Canteen.EconomicModel.values:
+            with self.subTest(economic_model=VALUE_OK):
+                CanteenFactory(economic_model=VALUE_OK)
+        for VALUE_NOT_OK in [123, "invalid"]:
+            with self.subTest(economic_model=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, economic_model=VALUE_NOT_OK)
+
+    def test_canteen_line_ministry_validation(self):
+        for VALUE_OK in ["", None] + Canteen.Ministries.values:
+            with self.subTest(line_ministry=VALUE_OK):
+                CanteenFactory(line_ministry=VALUE_OK)
+        for VALUE_NOT_OK in [123, "invalid"]:
+            with self.subTest(line_ministry=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK)
+
+    def test_canteen_department_validation(self):
+        for VALUE_OK in ["", None, 38] + Department.values:
+            with self.subTest(department=VALUE_OK):
+                CanteenFactory(department=VALUE_OK)
+        for VALUE_NOT_OK in ["123", "999", "2a", "2C"]:
+            with self.subTest(department=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, department=VALUE_NOT_OK)
+
+    def test_canteen_region_validation(self):
+        for VALUE_OK in ["", None, 84] + Region.values:
+            with self.subTest(region=VALUE_OK):
+                CanteenFactory(region=VALUE_OK)
+        for VALUE_NOT_OK in ["123", "999"]:
+            with self.subTest(region=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, region=VALUE_NOT_OK)
+
+    def test_canteen_creation_source_validation(self):
+        for VALUE_OK in ["", None] + CreationSource.values:
+            with self.subTest(creation_source=VALUE_OK):
+                CanteenFactory(creation_source=VALUE_OK)
+        for VALUE_NOT_OK in [123, "invalid"]:
+            with self.subTest(creation_source=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, creation_source=VALUE_NOT_OK)
 
 
 class CanteenQuerySetTest(TestCase):
@@ -93,10 +175,10 @@ class CanteenCentralAndSatelliteQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_central_1 = CanteenFactory(
-            siret="75665621899905", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
+            siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
         )  # 1 missing
         cls.canteen_central_2 = CanteenFactory(
-            siret="75665621899906", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
+            siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
         )
         cls.canteen_on_site_central_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=cls.canteen_central_1.siret
@@ -276,9 +358,9 @@ class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
 class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_siret_siren = CanteenFactory(siret="75665621899905", siren_unite_legale="756656218")  # OK
-        cls.canteen_siret_1 = CanteenFactory(siret="75665621899905", siren_unite_legale="")  # OK
-        cls.canteen_siret_2 = CanteenFactory(siret="75665621899905", siren_unite_legale=None)  # OK
+        cls.canteen_siret_siren = CanteenFactory(siret="21590350100017", siren_unite_legale="756656218")  # OK
+        cls.canteen_siret_1 = CanteenFactory(siret="21590350100017", siren_unite_legale="")  # OK
+        cls.canteen_siret_2 = CanteenFactory(siret="21590350100017", siren_unite_legale=None)  # OK
         cls.canteen_siren_1 = CanteenFactory(siret="", siren_unite_legale="756656218")  # OK
         cls.canteen_none_1 = CanteenFactory(siret="", siren_unite_legale="")
         cls.canteen_none_2 = CanteenFactory(siret="", siren_unite_legale=None)
@@ -292,7 +374,7 @@ class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
 
     def test_siret_or_siren_unite_legale_property(self):
         for canteen in [self.canteen_siret_siren, self.canteen_siret_1, self.canteen_siret_2]:
-            self.assertEqual(canteen.siret_or_siren_unite_legale, "75665621899905")
+            self.assertEqual(canteen.siret_or_siren_unite_legale, "21590350100017")
         for canteen in [self.canteen_siren_1, self.canteen_siren_2]:
             self.assertEqual(canteen.siret_or_siren_unite_legale, "756656218")
         for canteen in [self.canteen_none_1, self.canteen_none_2, self.canteen_none_3, self.canteen_none_4]:
@@ -315,19 +397,19 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         }
         cls.canteen_central = CanteenFactory(
             **COMMON,
-            siret="75665621899905",
+            siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=1,
         )
         cls.canteen_central_incomplete = CanteenFactory(
             **COMMON,
-            siret="75665621899905",
+            siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=0,  # incomplete
         )
         cls.canteen_central_serving = CanteenFactory(
             **COMMON,
-            siret="75665621899905",
+            siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             daily_meal_count=12,
             satellite_canteens_count=1,
@@ -418,7 +500,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
         )
         cls.canteen_central = CanteenFactory(
-            siret="75665621899905",
+            siret="21590350100017",
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
@@ -426,7 +508,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             sectors=[sector],
         )
         cls.canteen_central_serving = CanteenFactory(
-            siret="75665621899905",
+            siret="21590350100017",
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             economic_model=Canteen.EconomicModel.PUBLIC,
@@ -493,7 +575,7 @@ class CanteenModelPropertiesTest(TestCase):
     def test_canteen_get_declaration_donnees_year_display(self):
         canteen_with_diagnostic_cancelled = CanteenFactory(declaration_donnees_2024=False)
         canteen_with_diagnostic_submitted = CanteenFactory(
-            siret="75665621899905",
+            siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=1,
             declaration_donnees_2024=True,

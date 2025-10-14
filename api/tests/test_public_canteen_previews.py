@@ -377,12 +377,12 @@ class TestPublicCanteenSearchApi(APITestCase):
         good_canteen_siret_none = CanteenFactory.create(name="Cantine avec bilan mais siret null", siret=None)
         CanteenFactory.create(
             name="Cantine sans bilan avec siret cuisine centrale vide",
-            siret="12345678937462",
+            siret="21730065600014",
             central_producer_siret="",
         )
         CanteenFactory.create(
             name="Cantine sans bilan avec siret cuisine centrale null",
-            siret="12345678937463",
+            siret="21380185500015",
             central_producer_siret=None,
         )
 

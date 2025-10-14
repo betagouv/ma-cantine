@@ -93,7 +93,7 @@ class TestETLAnalysisTD(TestCase):
         applicant = UserFactory.create()
         canteen = CanteenFactory.create(siret="98648424243607")
         canteen_deleted = CanteenFactory.create(
-            siret="12345678901234", deletion_date=timezone.make_aware(datetime.strptime("2023-03-31", "%Y-%m-%d"))
+            siret="92341284500011", deletion_date=timezone.make_aware(datetime.strptime("2023-03-31", "%Y-%m-%d"))
         )
         canteen_no_siret = CanteenFactory.create()
 

@@ -47,7 +47,7 @@ class ApproFieldsTestCase(TestMigrations):
         # Create a canteen
         canteen = Canteen.objects.create(
             name="Test Canteen",
-            siret="12345678912345",
+            siret="21670482500019",
             city="Test City",
             postal_code="75001",
             yearly_meal_count=1000,

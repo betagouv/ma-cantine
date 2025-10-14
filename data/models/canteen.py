@@ -590,10 +590,12 @@ class Canteen(SoftDeletionModel):
         """
         - cleanup some fields (siret, siren_unite_legale, epci, central_producer_siret, logo)
         - set region from department
+        - full_clean: run validations
         """
         self.normalize_fields()
         self.optimize_logo()
         self.set_region_from_department()
+        self.full_clean()
         super().save(**kwargs)
 
     @property

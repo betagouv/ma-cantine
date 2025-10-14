@@ -67,7 +67,7 @@ class TestETLOpenData(TestCase):
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2024, diagnostic_type=None)
             diagnostic.teledeclare(cls.user_manager)
 
-        cls.canteen_without_manager = CanteenFactory.create(siret="75665621899905", sectors=[])
+        cls.canteen_without_manager = CanteenFactory.create(siret="21590350100017", sectors=[])
         cls.canteen_without_manager.managers.clear()
 
     def test_teledeclaration_extract(self, mock):
