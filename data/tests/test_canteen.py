@@ -11,96 +11,29 @@ from data.factories import (
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
 
-class TestCanteenModel(TestCase):
+class CanteenModelTest(TestCase):
     def test_create_canteen(self):
         # siret: normalize on save
-        canteen = CanteenFactory.create(siret="756 656 218 99905")
+        canteen = CanteenFactory(siret="756 656 218 99905")
         self.assertEqual(canteen.siret, "75665621899905")  # normalized
         # siren_unite_legale: normalize on save
-        canteen = CanteenFactory.create(siren_unite_legale="756 656 218")
+        canteen = CanteenFactory(siren_unite_legale="756 656 218")
         self.assertEqual(canteen.siren_unite_legale, "756656218")  # normalized
 
     def test_create_canteen_siret_validation(self):
         # both siret and siren_unite_legale can be empty or set
         for siret in ["", None, "756 656 218 99905"]:
             for siren_unite_legale in ["", None, "756 656 218"]:
-                CanteenFactory.create(siret=siret, siren_unite_legale=siren_unite_legale)
+                CanteenFactory(siret=siret, siren_unite_legale=siren_unite_legale)
 
-    def test_canteen_properties(self):
-        canteen_1 = CanteenFactory(
-            sectors=[SectorFactory.create(name="Sector 1")], line_ministry=Canteen.Ministries.CULTURE
-        )
-        canteen_2 = CanteenFactory()
 
-        # is_spe
-        self.assertTrue(canteen_1.is_spe)
-        self.assertFalse(canteen_2.is_spe)
-
-    def test_canteen_get_declaration_donnees_year_display(self):
-        canteen_with_diagnostic_cancelled = CanteenFactory(declaration_donnees_2024=False)
-        canteen_with_diagnostic_submitted = CanteenFactory(
-            siret="75665621899905",
-            production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=1,
-            declaration_donnees_2024=True,
-        )
-        canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=canteen_with_diagnostic_submitted.siret,
-            declaration_donnees_2024=True,
-        )
-        diagnostic_filled = DiagnosticFactory(
-            canteen=canteen_with_diagnostic_cancelled,
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            year=2024,
-            value_total_ht=1000,
-        )  # filled
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
-            td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
-            td_to_cancel.cancel()
-        diagnostic_filled_and_submitted = DiagnosticFactory(
-            canteen=canteen_with_diagnostic_submitted,
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            year=2024,
-            value_total_ht=1000,
-        )  # filled & submitted
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
-            Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
-
-        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2023), "")
-        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2024), "")
-        self.assertEqual(canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2023), "")
-        self.assertEqual(
-            canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2024), "📩 Télédéclarée"
-        )
-        self.assertEqual(
-            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2023), ""
-        )
-        self.assertEqual(
-            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2024),
-            "📩 Télédéclarée (par CC)",
-        )
-
-    @freeze_time("2024-01-20")
-    def test_appro_and_service_diagnostics_in_past_ordered_year_desc(self):
-        canteen = CanteenFactory.create()
-        DiagnosticFactory(canteen=canteen, year=2024)
-        DiagnosticFactory(canteen=canteen, year=2022)
-        DiagnosticFactory(canteen=canteen, year=2023)
-        canteen.refresh_from_db()
-
-        self.assertEqual(canteen.appro_diagnostics.count(), 2)
-        self.assertEqual(canteen.appro_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.service_diagnostics.count(), 2)
-        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
-
+class CanteenQuerySetTest(TestCase):
     def test_soft_delete_canteen(self):
         """
         The delete method should "soft delete" a canteen and have it hidden by default
         from querysets, unless specifically asked for
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         canteen.delete()
         qs = Canteen.objects.all()
         self.assertEqual(qs.count(), 0, "Soft deleted canteen is not visible in default queryset")
@@ -108,7 +41,7 @@ class TestCanteenModel(TestCase):
         self.assertEqual(qs.count(), 1, "Soft deleted canteens can be accessed in custom queryset")
 
 
-class TestCanteenVisibleQuerySetAndProperty(TestCase):
+class CanteenVisibleQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory(line_ministry=None)
@@ -132,7 +65,7 @@ class TestCanteenVisibleQuerySetAndProperty(TestCase):
         self.assertEqual(self.canteen_armee.publication_status_display_to_public, "draft")
 
 
-class TestCanteenCreatedBeforeQuerySet(TestCase):
+class CanteenCreatedBeforeQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         with freeze_time("2025-01-01"):  # before the 2024 campaign
@@ -152,7 +85,7 @@ class TestCanteenCreatedBeforeQuerySet(TestCase):
         self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2025).count(), 4)
 
 
-class TestCanteenCentralAndSatelliteQuerySet(TestCase):
+class CanteenCentralAndSatelliteQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_central_1 = CanteenFactory(
@@ -237,7 +170,7 @@ class TestCanteenCentralAndSatelliteQuerySet(TestCase):
         )
 
 
-class TestCanteenPurchaseQuerySet(TestCase):
+class CanteenPurchaseQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         canteen_with_purchases = CanteenFactory()
@@ -258,7 +191,7 @@ class TestCanteenPurchaseQuerySet(TestCase):
         )
 
 
-class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
+class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         CanteenFactory()
@@ -336,7 +269,7 @@ class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
         self.assertEqual(Canteen.objects.annotate_with_td_for_year(2022).filter(has_td_submitted=True).count(), 0)
 
 
-class TestCanteenSiretOrSirenUniteLegaleQuerySetAndProperty(TestCase):
+class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_siret_siren = CanteenFactory(siret="75665621899905", siren_unite_legale="756656218")  # OK
@@ -362,10 +295,10 @@ class TestCanteenSiretOrSirenUniteLegaleQuerySetAndProperty(TestCase):
             self.assertEqual(canteen.siret_or_siren_unite_legale, "")
 
 
-class TestCanteenCompleteQuerySetAndProperty(TestCase):
+class CanteenCompleteQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorFactory.create(name="Sector", category=Sector.Categories.ADMINISTRATION)
+        sector = SectorFactory(name="Sector", category=Sector.Categories.ADMINISTRATION)
         sector_line_ministry = SectorFactory(
             name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
         )
@@ -473,10 +406,10 @@ class TestCanteenCompleteQuerySetAndProperty(TestCase):
         self.assertEqual(Canteen.objects.has_missing_data().count(), 6)
 
 
-class TestCanteenAggregateQuerySet(TestCase):
+class CanteenAggregateQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorFactory.create(name="Sector", category=Sector.Categories.ADMINISTRATION)
+        sector = SectorFactory(name="Sector", category=Sector.Categories.ADMINISTRATION)
         sector_line_ministry = SectorFactory(
             name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
         )
@@ -544,3 +477,70 @@ class TestCanteenAggregateQuerySet(TestCase):
         self.assertEqual(result[0]["count"], 3)
         self.assertEqual(result[1]["sectors__category"], Sector.Categories.AUTRES)
         self.assertEqual(result[1]["count"], 1)
+
+
+class CanteenModelPropertiesTest(TestCase):
+    def test_canteen_is_spe(self):
+        canteen_1 = CanteenFactory(sectors=[SectorFactory(name="Sector 1")], line_ministry=Canteen.Ministries.CULTURE)
+        canteen_2 = CanteenFactory()
+        self.assertTrue(canteen_1.is_spe)
+        self.assertFalse(canteen_2.is_spe)
+
+    def test_canteen_get_declaration_donnees_year_display(self):
+        canteen_with_diagnostic_cancelled = CanteenFactory(declaration_donnees_2024=False)
+        canteen_with_diagnostic_submitted = CanteenFactory(
+            siret="75665621899905",
+            production_type=Canteen.ProductionType.CENTRAL,
+            satellite_canteens_count=1,
+            declaration_donnees_2024=True,
+        )
+        canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=canteen_with_diagnostic_submitted.siret,
+            declaration_donnees_2024=True,
+        )
+        diagnostic_filled = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_cancelled,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            value_total_ht=1000,
+        )  # filled
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
+            td_to_cancel.cancel()
+        diagnostic_filled_and_submitted = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_submitted,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            value_total_ht=1000,
+        )  # filled & submitted
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
+
+        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2023), "")
+        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2024), "")
+        self.assertEqual(canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2023), "")
+        self.assertEqual(
+            canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2024), "📩 Télédéclarée"
+        )
+        self.assertEqual(
+            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2023), ""
+        )
+        self.assertEqual(
+            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2024),
+            "📩 Télédéclarée (par CC)",
+        )
+
+    @freeze_time("2024-01-20")
+    def test_appro_and_service_diagnostics_in_past_ordered_year_desc(self):
+        canteen = CanteenFactory()
+        DiagnosticFactory(canteen=canteen, year=2024)
+        DiagnosticFactory(canteen=canteen, year=2022)
+        DiagnosticFactory(canteen=canteen, year=2023)
+        canteen.refresh_from_db()
+
+        self.assertEqual(canteen.appro_diagnostics.count(), 2)
+        self.assertEqual(canteen.appro_diagnostics.first().year, 2023)
+        self.assertEqual(canteen.service_diagnostics.count(), 2)
+        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
+        self.assertEqual(canteen.latest_published_year, 2023)
