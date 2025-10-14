@@ -4,7 +4,6 @@
   "fields": [
     {
       "constraints": {
-        "pattern": "^[0-9]{14}$",
         "required": true,
         "unique": true
       },
@@ -13,7 +12,7 @@
       "format": "default",
       "name": "siret",
       "title": "SIRET de l'établissement",
-      "type": "string"
+      "type": "any"
     },
     {
       "constraints": {
