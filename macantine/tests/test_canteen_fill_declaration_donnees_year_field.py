@@ -11,7 +11,7 @@ class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
     def setUpTestData(cls):
         cls.canteen_with_diagnostic_cancelled = CanteenFactory()
         cls.canteen_with_diagnostic_submitted = CanteenFactory(
-            siret="75665621899905", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=1
+            siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=1
         )
         cls.canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,

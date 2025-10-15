@@ -100,7 +100,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         address_api_text = "siret,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
         address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
-        address_api_text += '73282932000074,00000,,00000,11111,Ma ville,"01,Something,Other"\n'
+        address_api_text += '21380185500015,00000,,00000,11111,Ma ville,"01,Something,Other"\n'
         address_api_text += '32441387130915,00000,11111,00000,22222,Ma ville,"01,Something,Other"\n'
         mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
 
@@ -113,7 +113,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.city, "Ma ville")
         self.assertEqual(canteen.department, Department.ain)
         self.assertEqual(canteen.region, Region.auvergne_rhone_alpes)
-        canteen = Canteen.objects.get(siret="73282932000074")
+        canteen = Canteen.objects.get(siret="21380185500015")
         self.assertEqual(canteen.postal_code, "11111")
         # Given both a city code and postcode, use citycode only to find location
         canteen = Canteen.objects.get(siret="32441387130915")
@@ -188,7 +188,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         address_api_text = "siret,citycode,postcode,result_citycode,result_postcode,result_city,result_context\n"
         address_api_text += '21340172201787,,11111,00000,11111,Ma ville,"01,Something,Other"\n'
-        address_api_text += '73282932000074,00000,,00000,11111,Ma ville,"01,Something,Other"\n'
+        address_api_text += '21380185500015,00000,,00000,11111,Ma ville,"01,Something,Other"\n'
         address_api_text += '32441387130915,07293,11111,00000,22222,Saint-Romain-de-Lerps,"01,Something,Other"\n'
         mock.post(ADRESSE_CSV_API_URL, text=address_api_text)
 
@@ -209,7 +209,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         No canteens will be created since any error cancels out the entire file
         """
         CanteenFactory.create(siret="21340172201787")
-        CanteenFactory.create(siret="73282932000074", managers=[authenticate.user])
+        CanteenFactory.create(siret="21380185500015", managers=[authenticate.user])
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
@@ -277,7 +277,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["errors"]), 0)
         diagnostic = Diagnostic.objects.first()
-        self.assertEqual(diagnostic.canteen.siret, "73282932000074")
+        self.assertEqual(diagnostic.canteen.siret, "21380185500015")
         self.assertEqual(Diagnostic.objects.filter(canteen=Canteen.objects.get(siret="21340172201787")).count(), 0)
 
     @authenticate
@@ -313,7 +313,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen1.managers.count(), 0)
         self.assertEqual(canteen1.import_source, "Automated test")
 
-        canteen2 = Canteen.objects.get(siret="73282932000074")
+        canteen2 = Canteen.objects.get(siret="21380185500015")
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user1@example.com"))
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user2@example.com"))
         self.assertIsNotNone(Diagnostic.objects.get(canteen=canteen2))
@@ -1299,7 +1299,7 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         self.assertEqual(canteen.city, "Liverdun")
         self.assertEqual(canteen.department, Department.meurthe_et_moselle)
 
-        canteen = Canteen.objects.get(siret="73282932000074")
+        canteen = Canteen.objects.get(siret="21380185500015")
         self.assertEqual(canteen.postal_code, "07130")
         self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
         self.assertEqual(canteen.department, Department.ardeche)

@@ -95,7 +95,7 @@ class TestPurchaseImport(APITestCase):
         """
         Tests that can import a well formatted purchases file
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
 
         file_path = "./api/tests/files/achats/purchases_good.csv"
         with open(file_path) as purchase_file:
@@ -104,7 +104,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 2)
         self.assertFalse(ImportFailure.objects.exists())
         purchase = Purchase.objects.filter(description="Pommes, rouges").first()
-        self.assertEqual(purchase.canteen.siret, "82399356058716")
+        self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.description, "Pommes, rouges")
         self.assertEqual(purchase.provider, "Le bon traiteur")
         self.assertEqual(purchase.price_ht, Decimal("90.11"))
@@ -124,7 +124,7 @@ class TestPurchaseImport(APITestCase):
         """
         Tests that can import a file with comma-separated numbers
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
 
         file_path = "./api/tests/files/achats/purchases_good_separator_comma.csv"
         with open(file_path) as purchase_file:
@@ -140,7 +140,7 @@ class TestPurchaseImport(APITestCase):
         """
         Tests that can import a file without local definition
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
 
         file_path = "./api/tests/files/achats/purchases_good_no_local_def.csv"
         with open(file_path) as purchase_file:
@@ -149,7 +149,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 2)
         self.assertFalse(ImportFailure.objects.exists())
         purchase = Purchase.objects.filter(description="Pommes, rouges").first()
-        self.assertEqual(purchase.canteen.siret, "82399356058716")
+        self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.description, "Pommes, rouges")
         self.assertEqual(purchase.provider, "Le bon traiteur")
         self.assertEqual(purchase.price_ht, Decimal("90.11"))
@@ -163,7 +163,7 @@ class TestPurchaseImport(APITestCase):
         """
         Tests that can import a well formatted purchases file
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
 
         # tab
         file_path = "./api/tests/files/achats/purchases_good_separator_tab.tsv"
@@ -188,7 +188,7 @@ class TestPurchaseImport(APITestCase):
         """
         Tests that actually split the file into chunks. The header is considered as a line.
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
 
         file_path = "./api/tests/files/achats/purchases_good.csv"
         with open(file_path) as purchase_file:
@@ -201,7 +201,7 @@ class TestPurchaseImport(APITestCase):
         """
         Test that the file is not treated if there are too many lines
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
 
         file_path = "./api/tests/files/achats/purchases_bad.csv"
@@ -222,7 +222,7 @@ class TestPurchaseImport(APITestCase):
         """
         A file should not be valid if doesn't contain a header
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_bad_no_header.csv"
@@ -244,7 +244,7 @@ class TestPurchaseImport(APITestCase):
         """
         A file should not be valid if doesn't contain a valid header
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
         # wrong header
@@ -282,7 +282,7 @@ class TestPurchaseImport(APITestCase):
         """
         Test that the right errors are thrown
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
 
         file_path = "./api/tests/files/achats/purchases_bad.csv"
@@ -326,7 +326,7 @@ class TestPurchaseImport(APITestCase):
         """
         A reasonable error should be thrown
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
 
         file_path = "./api/tests/files/achats/purchases_bad_corrupt.csv"
         with open(file_path) as purchase_file:
@@ -345,7 +345,7 @@ class TestPurchaseImport(APITestCase):
         """
         Tests that the system will warn of duplicate file upload
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
 
         file_path = "./api/tests/files/achats/purchases_good.csv"
         with open(file_path) as purchase_file:
@@ -374,7 +374,7 @@ class TestPurchaseImport(APITestCase):
         Tests that no purchases are created if there are any errors in the file
         even if certain lines are valid
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
 
         # date format error
         file_path = "./api/tests/files/achats/purchases_bad_nearly_good.csv"
@@ -402,11 +402,11 @@ class TestPurchaseImport(APITestCase):
         errors = body["errors"]
         self.assertEqual(len(errors), 1)
         self.assertEqual(
-            errors.pop(0)["message"], "Une cantine avec le siret « 82399356058717 » n'existe pas sur la plateforme."
+            errors.pop(0)["message"], "Une cantine avec le siret « 21730065600014 » n'existe pas sur la plateforme."
         )
 
         # not the canteen manager error
-        CanteenFactory.create(siret="82399356058717")
+        CanteenFactory.create(siret="21730065600014")
         file_path = "./api/tests/files/achats/purchases_bad_nearly_good_2.csv"
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
@@ -423,7 +423,7 @@ class TestPurchaseImport(APITestCase):
         """
         Cents should be rounded to the nearest two digits after the point
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
 
         file_path = "./api/tests/files/achats/purchases_good_floating_number.csv"
         with open(file_path) as purchase_file:
@@ -438,7 +438,7 @@ class TestPurchaseImport(APITestCase):
         """
         Test that all the errors are returned
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="21010034300016", managers=[authenticate.user])
         CanteenFactory.create(siret="36462492895701")
 
         file_path = "./api/tests/files/achats/purchases_bad_many_errors.csv"
@@ -458,7 +458,7 @@ class TestPurchaseImport(APITestCase):
         This is a smoke test - purchase import reuses diagnostics import
         More tests are with the diagnostic import tests
         """
-        CanteenFactory.create(siret="82399356058716", managers=[authenticate.user])
+        CanteenFactory.create(siret="96463820453707", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_good_encoding_iso-8859-1.csv"

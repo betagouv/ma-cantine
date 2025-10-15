@@ -318,11 +318,12 @@ class ImportCanteensView(APIView):
         satellite_canteens_count=None,
     ):
         siret = utils_utils.normalize_string(row[0])
+        name = row[1].strip()
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
             if canteen_exists
-            else Canteen.objects.create(siret=siret, creation_source=CreationSource.IMPORT)
+            else Canteen.objects.create(name=name, siret=siret, creation_source=CreationSource.IMPORT)
         )
 
         if not canteen_exists:

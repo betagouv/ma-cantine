@@ -17,25 +17,25 @@ date_in_last_teledeclaration_campaign = "2024-02-01"
 class DiagnosticQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_valid_1 = CanteenFactory(siret="12345678901234", yearly_meal_count=100)
+        cls.canteen_valid_1 = CanteenFactory(siret="92341284500011", yearly_meal_count=100)
         cls.canteen_valid_2 = CanteenFactory(siren_unite_legale="123456789", yearly_meal_count=100)
         cls.canteen_valid_3 = CanteenFactory(
-            siret="12345678901235", siren_unite_legale="123456789", yearly_meal_count=100
+            siret="83014132100034", siren_unite_legale="123456789", yearly_meal_count=100
         )
-        cls.canteen_valid_4 = CanteenFactory(siret="12345678901236", yearly_meal_count=0)  # not aberrant
-        cls.canteen_valid_5 = CanteenFactory(siret="12345678901237", yearly_meal_count=None)  # not aberrant
+        cls.canteen_valid_4 = CanteenFactory(siret="40419443300078", yearly_meal_count=0)  # not aberrant
+        cls.canteen_valid_5 = CanteenFactory(siret="21340172201787", yearly_meal_count=None)  # not aberrant
         cls.canteen_valid_sat = CanteenFactory(
-            siret="12345678901232", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+            siret="21380185500015", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
         cls.canteen_valid_6_armee = CanteenFactory(
-            siret="12345678901233", line_ministry=Canteen.Ministries.ARMEE, yearly_meal_count=100
+            siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE, yearly_meal_count=100
         )
         cls.canteen_missing_siret = CanteenFactory(siret="", yearly_meal_count=100)  # siret missing
-        cls.canteen_meal_price_aberrant = CanteenFactory(siret="12345678901238", yearly_meal_count=100)
-        cls.canteen_value_total_ht_aberrant = CanteenFactory(siret="12345678901239", yearly_meal_count=100000)
-        cls.canteen_aberrant = CanteenFactory(siret="12345678901240", yearly_meal_count=100)
+        cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=100)
+        cls.canteen_value_total_ht_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
+        cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=100)
         cls.canteen_deleted = CanteenFactory(
-            siret="56789012345678",
+            siret="21730065600014",
             yearly_meal_count=100,
             deletion_date=timezone.make_aware(
                 datetime.strptime(date_in_teledeclaration_campaign, "%Y-%m-%d")
@@ -243,7 +243,7 @@ class DiagnosticModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen_central = CanteenFactory(siret="12345678901234", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_central = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
         cls.canteen_sat = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central.siret,
@@ -282,7 +282,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen_central = CanteenFactory(siret="12345678901234", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_central = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
         cls.canteen_sat = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central.siret,
@@ -353,7 +353,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
 class DiagnosticModelCancelMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_central = CanteenFactory(siret="12345678901234", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_central = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
         cls.canteen_sat = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central.siret,
