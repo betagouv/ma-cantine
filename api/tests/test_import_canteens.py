@@ -316,7 +316,8 @@ class TestCanteenImport(APITestCase):
         - new canteen: the importer isn't added to the canteen unless specified.
         - updated canteen: admin doesn't have to be a manager.
         """
-        CanteenFactory(name="Canteen initial", siret="21010034300016")
+        canteen = CanteenFactory(name="Canteen initial", siret="21010034300016")
+        canteen.managers.clear()
         user = authenticate.user
         user.is_staff = True
         user.email = "authenticate@example.com"
@@ -353,7 +354,7 @@ class TestCanteenImport(APITestCase):
         canteen3 = Canteen.objects.get(siret="21010034300016")
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user1@example.com"))
         self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user2@example.com"))
-        self.assertEqual(canteen3.managers.count(), 1)
+        self.assertEqual(canteen3.managers.count(), 0)
         self.assertEqual(canteen3.name, "Canteen update")  # updated
         self.assertEqual(canteen3.line_ministry, Canteen.Ministries.AGRICULTURE)
         self.assertEqual(canteen3.import_source, "Automated test")
