@@ -109,6 +109,8 @@ class TestRelationCentralSatellite(APITestCase):
             "name": "Wanderer",
             "siret": satellite_siret,
             "dailyMealCount": 30,
+            "managementType": Canteen.ManagementType.DIRECT,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
             "sectors": [school.id, enterprise.id],
         }
         response = self.client.post(

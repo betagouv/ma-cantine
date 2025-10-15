@@ -17,7 +17,7 @@ class CanteenFactory(factory.django.DjangoModelFactory):
     city_insee_code = factory.Faker("postcode")
     daily_meal_count = factory.Faker("pyint")
     management_type = factory.Iterator([key for key, _ in Canteen.ManagementType.choices])
-    production_type = factory.Iterator([key for key, _ in Canteen.ProductionType.choices])
+    production_type = Canteen.ProductionType.ON_SITE
     economic_model = factory.Iterator([key for key, _ in Canteen.EconomicModel.choices])
 
     @factory.post_generation

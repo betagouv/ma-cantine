@@ -355,11 +355,21 @@ class ImportDiagnosticsView(ABC, APIView):
     ):
         siret = utils_utils.normalize_string(row[0])
         name = row[1].strip()
+        management_type = row[9].strip().lower()
+        production_type = row[8].strip().lower()
+        economic_model = row[10].strip().lower() if row[10] else None
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
             if canteen_exists
-            else Canteen.objects.create(name=name, siret=siret, creation_source=CreationSource.IMPORT)
+            else Canteen.objects.create(
+                name=name,
+                siret=siret,
+                management_type=management_type,
+                production_type=production_type,
+                economic_model=economic_model,
+                creation_source=CreationSource.IMPORT,
+            )
         )
 
         if not canteen_exists:
@@ -385,9 +395,6 @@ class ImportDiagnosticsView(ABC, APIView):
         if satellite_canteens_count:
             canteen.satellite_canteens_count = satellite_canteens_count
 
-        # full_clean must be before the relation-model updates bc they don't require a save().
-        # If an exception is launched by full_clean, it must be here.
-        canteen.full_clean()
         if row[7]:
             canteen.sectors.set(
                 [

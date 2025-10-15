@@ -130,9 +130,9 @@ class TestCanteenStatsApi(APITestCase):
                 city_insee_code="00002",
                 epci=None,
                 sectors=None,
-                management_type=None,
-                production_type=None,
-                economic_model=None,
+                management_type=Canteen.ManagementType.CONCEDED,
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                economic_model=Canteen.EconomicModel.PUBLIC,
                 line_ministry=Canteen.Ministries.ARMEE,
             )
             DiagnosticFactory(

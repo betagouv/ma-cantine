@@ -24,7 +24,7 @@ from .utils import authenticate, get_oauth2_token
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-class TestCanteenApi(APITestCase):
+class CanteenApiTest(APITestCase):
     def test_get_canteens_unauthenticated(self):
         """
         If the user is not authenticated, they will not be able to
@@ -197,10 +197,10 @@ class TestCanteenApi(APITestCase):
         payload = {
             "city": "Lyon",
             "siret": "21340172201787",
-            "managementType": "direct",
+            "managementType": Canteen.ManagementType.DIRECT,
             "reservationExpeParticipant": True,
             "satelliteCanteensCount": 130,
-            "productionType": "central",
+            "productionType": Canteen.ProductionType.CENTRAL,
         }
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
 
@@ -282,6 +282,9 @@ class TestCanteenApi(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
         }
 
         response = self.client.post(reverse("user_canteens"), payload)
@@ -296,6 +299,9 @@ class TestCanteenApi(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
         }
 
         # from the APP
@@ -323,6 +329,10 @@ class TestCanteenApi(APITestCase):
         payload = {
             "name": "My canteen",
             "city": "Lyon",
+            # "siret": "21340172201787",
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
         }
 
         response = self.client.post(reverse("user_canteens"), payload)
@@ -333,21 +343,43 @@ class TestCanteenApi(APITestCase):
 
     @authenticate
     def test_create_canteen_bad_siret(self):
-        payload = {"name": "My canteen", "siret": "0123"}
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "siret": "0123",
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
+        }
 
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["14 caractères numériques sont attendus"])
 
-        payload = {"name": "My canteen", "siret": "01234567891011"}
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "siret": "01234567891011",
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
+        }
 
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["Le numéro SIRET n'est pas valide."])
 
-        payload = {"name": "My canteen", "centralProducerSiret": "01234567891011"}
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "siret": "01234567891011",
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
+            "centralProducerSiret": "01234567891011",
+        }
 
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -363,7 +395,14 @@ class TestCanteenApi(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
 
-        payload = {"name": "New canteen", "siret": siret}
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "siret": siret,
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
+        }
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -381,7 +420,14 @@ class TestCanteenApi(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret)
 
-        payload = {"name": "New canteen", "siret": siret}
+        payload = {
+            "name": "My canteen",
+            "city": "Lyon",
+            "siret": siret,
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
+        }
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -557,9 +603,9 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(canteen.images.count(), 0)
 
     @authenticate
-    def test_create_cantine_with_images(self):
+    def test_create_canteen_with_images(self):
         """
-        The app should create the necessary image models upon the creation of a cantine
+        The app should create the necessary image models upon the creation of a canteen
         """
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
         image_base_64 = None
@@ -570,7 +616,9 @@ class TestCanteenApi(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
-            "managementType": "direct",
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
             "images": [
                 {
                     "image": "data:image/jpeg;base64," + image_base_64,
@@ -584,7 +632,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(created_canteen.images.count(), 1)
 
     @authenticate
-    def test_create_cantine_with_tracking_info(self):
+    def test_create_canteen_with_tracking_info(self):
         """
         The app should store the mtm paramteres on creation
         """
@@ -592,7 +640,9 @@ class TestCanteenApi(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
-            "managementType": "direct",
+            "managementType": Canteen.ManagementType.DIRECT,
+            "productionType": Canteen.ProductionType.ON_SITE,
+            "economicModel": Canteen.EconomicModel.PUBLIC,
             "creation_mtm_source": "mtm_source_value",
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
@@ -606,7 +656,7 @@ class TestCanteenApi(APITestCase):
         self.assertEqual(created_canteen.creation_mtm_medium, "mtm_medium_value")
 
     @authenticate
-    def test_update_cantines_tracking_info(self):
+    def test_update_canteen_tracking_info(self):
         """
         The app should not allow the tracking info to be updated
         """
@@ -619,7 +669,7 @@ class TestCanteenApi(APITestCase):
         payload = {
             "name": "My canteen",
             "city": "Lyon",
-            "managementType": "direct",
+            "managementType": Canteen.ManagementType.DIRECT,
             "creation_mtm_source": "mtm_source_value",
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
@@ -862,7 +912,7 @@ class TestCanteenActionApi(APITestCase):
             yearly_meal_count=365,
             siret="37856520465586",
             managers=[authenticate.user],
-            sectors=None,
+            sectors=[],
         )
         needs_daily_meal_count = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -969,23 +1019,24 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(len(returned_canteens), 12)
 
         expected_actions = [
-            (needs_additional_satellites, "10_add_satellites"),
-            (needs_last_year_diag, "20_create_diagnostic"),
-            (needs_to_fill_diag, "30_fill_diagnostic"),
-            (needs_diagnostic_mode, "30_fill_diagnostic"),
-            (needs_sectors, "35_fill_canteen_data"),
-            (needs_daily_meal_count, "35_fill_canteen_data"),
-            (too_many_sectors, "35_fill_canteen_data"),
-            (needs_td, "40_teledeclare"),
-            (complete, "95_nothing"),
-            (complete_central_no_sectors, "95_nothing"),
-            (complete_central_with_diff_sat_count, "95_nothing"),
-            (complete_site_one_sector, "95_nothing"),
+            (needs_additional_satellites, Canteen.Actions.ADD_SATELLITES),
+            (needs_last_year_diag, Canteen.Actions.CREATE_DIAGNOSTIC),
+            (needs_to_fill_diag, Canteen.Actions.FILL_DIAGNOSTIC),
+            (needs_diagnostic_mode, Canteen.Actions.FILL_DIAGNOSTIC),
+            (needs_sectors, Canteen.Actions.FILL_CANTEEN_DATA),
+            (needs_daily_meal_count, Canteen.Actions.FILL_CANTEEN_DATA),
+            (too_many_sectors, Canteen.Actions.FILL_CANTEEN_DATA),
+            (needs_td, Canteen.Actions.TELEDECLARE),
+            (complete, Canteen.Actions.NOTHING),
+            (complete_central_no_sectors, Canteen.Actions.NOTHING),
+            (complete_central_with_diff_sat_count, Canteen.Actions.NOTHING),
+            (complete_site_one_sector, Canteen.Actions.NOTHING),
         ]
         for index, (canteen, action) in zip(range(len(expected_actions)), expected_actions):
-            self.assertEqual(returned_canteens[index]["id"], canteen.id)
-            self.assertEqual(returned_canteens[index]["action"], action)
-            self.assertIn("sectors", returned_canteens[index])
+            with self.subTest(canteen=canteen, action=action):
+                self.assertEqual(returned_canteens[index]["id"], canteen.id)
+                self.assertEqual(returned_canteens[index]["action"], action)
+                self.assertIn("sectors", returned_canteens[index])
         self.assertTrue(body["hasPendingActions"])
 
     @authenticate
@@ -1003,14 +1054,14 @@ class TestCanteenActionApi(APITestCase):
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": 2021}) + "?ordering=action")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["results"][0]["action"], "10_add_satellites")
+        self.assertEqual(body["results"][0]["action"], Canteen.Actions.ADD_SATELLITES)
 
     @authenticate
     @freeze_time("2022-08-30")  # during the 2021 campaign
     def test_get_actions_missing_data(self):
         """
         Even if the diagnostic is complete, the mandatory information on the canteen level should
-        return a "35_fill_canteen_data"
+        return a Canteen.Actions.FILL_CANTEEN_DATA
         """
         # First a case in which the canteen is complete
         canteen = CanteenFactory.create(
@@ -1028,7 +1079,7 @@ class TestCanteenActionApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
 
         # If mandatory data on the canteen is missing, we need a 35_fill_canteen_data
         canteen.yearly_meal_count = None
@@ -1036,7 +1087,7 @@ class TestCanteenActionApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.FILL_CANTEEN_DATA)
 
         # Central cuisines should have the number of satellites filled in
         canteen.yearly_meal_count = 1000
@@ -1057,7 +1108,7 @@ class TestCanteenActionApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.FILL_CANTEEN_DATA)
 
         # reset diag from above change.
         diagnostic.central_kitchen_diagnostic_mode = None
@@ -1070,7 +1121,7 @@ class TestCanteenActionApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "10_add_satellites")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.ADD_SATELLITES)
 
         # Satellites should have the SIRET of the central cuisine
         canteen.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
@@ -1079,14 +1130,14 @@ class TestCanteenActionApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.FILL_CANTEEN_DATA)
 
         canteen.central_producer_siret = "21590350100017"
         canteen.save()
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
 
     @authenticate
     @freeze_time("2022-08-30")  # during the 2021 campaign
@@ -1134,14 +1185,14 @@ class TestCanteenActionApi(APITestCase):
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         satellite_action = next(x for x in returned_canteens if x["id"] == satellite.id)["action"]
-        self.assertEqual(satellite_action, "90_nothing_satellite")
+        self.assertEqual(satellite_action, Canteen.Actions.NOTHING_SATELLITE)
 
         # cc diagnostic teledeclared
         Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         satellite_action = next(x for x in returned_canteens if x["id"] == satellite.id)["action"]
-        self.assertEqual(satellite_action, "91_nothing_satellite_teledeclared")
+        self.assertEqual(satellite_action, Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED)
 
     @authenticate
     def test_get_canteens_with_purchases_no_diagnostics_for_year(self):
@@ -1213,8 +1264,8 @@ class TestCanteenActionApi(APITestCase):
         body = response.json()
 
         returned_canteens = body["results"]
-        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
-        self.assertEqual(returned_canteens[1]["action"], "35_fill_canteen_data")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.FILL_CANTEEN_DATA)
+        self.assertEqual(returned_canteens[1]["action"], Canteen.Actions.FILL_CANTEEN_DATA)
 
     def test_list_canteen_actions_unauthenticated(self):
         """
@@ -1240,7 +1291,7 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 3)
-        self.assertEqual(body["action"], "20_create_diagnostic")
+        self.assertEqual(body["action"], Canteen.Actions.CREATE_DIAGNOSTIC)
 
     @authenticate
     @freeze_time("2025-01-01")  # before the 2024 campaign
@@ -1264,7 +1315,7 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 2)
-        self.assertEqual(body["action"], "45_did_not_teledeclare")
+        self.assertEqual(body["action"], Canteen.Actions.DID_NOT_TELEDECLARE)
 
         # last_year -1
         DiagnosticFactory.create(canteen=complete, year=last_year - 1, value_total_ht=10000)
@@ -1272,7 +1323,7 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 2)
-        self.assertEqual(body["action"], "45_did_not_teledeclare")
+        self.assertEqual(body["action"], Canteen.Actions.DID_NOT_TELEDECLARE)
 
     @authenticate
     @freeze_time("2025-04-20")  # during the 2024 correction campaign
@@ -1296,7 +1347,7 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 2)
-        self.assertEqual(body["action"], "45_did_not_teledeclare")  # not allowed to teledeclare
+        self.assertEqual(body["action"], Canteen.Actions.DID_NOT_TELEDECLARE)  # not allowed to teledeclare
 
         # submit a teledeclaration during the campaign
         with freeze_time("2025-03-30"):  # during the 2024 campaign
@@ -1306,7 +1357,7 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 2)
-        self.assertEqual(body["action"], "95_nothing")
+        self.assertEqual(body["action"], Canteen.Actions.NOTHING)
 
         # cancel the teledeclaration
         teledeclaration.cancel()
@@ -1315,7 +1366,7 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 2)
-        self.assertEqual(body["action"], "40_teledeclare")  # allowed to teledeclare
+        self.assertEqual(body["action"], Canteen.Actions.TELEDECLARE)  # allowed to teledeclare
 
     @authenticate
     @freeze_time("2025-12-30")  # after the 2024 campaign
@@ -1359,14 +1410,14 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 2)
-        self.assertEqual(body["action"], "95_nothing")
+        self.assertEqual(body["action"], Canteen.Actions.NOTHING)
 
         # canteen_did_not_td (last_year)
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": last_year}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 3)
-        self.assertEqual(body["action"], "45_did_not_teledeclare")
+        self.assertEqual(body["action"], Canteen.Actions.DID_NOT_TELEDECLARE)
 
         # canteen_did_not_td (last_year + 1)
         DiagnosticFactory.create(canteen=canteen, year=last_year + 1, value_total_ht=10000)
@@ -1374,7 +1425,7 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 3)
-        self.assertEqual(body["action"], "45_did_not_teledeclare")
+        self.assertEqual(body["action"], Canteen.Actions.DID_NOT_TELEDECLARE)
 
     def test_get_retrieve_actionable_canteen_unauthenticated(self):
         """
@@ -1400,7 +1451,7 @@ class TestCanteenActionApi(APITestCase):
     def test_get_actions_missing_line_ministry(self):
         """
         Even if the diagnostic is complete, the mandatory information on the canteen level should
-        return a "35_fill_canteen_data" if line ministry is not there
+        return a Canteen.Actions.FILL_CANTEEN_DATA if line ministry is not there
         """
         with_lm = SectorFactory.create(has_line_ministry=True)
         without_lm = SectorFactory.create(has_line_ministry=False)
@@ -1420,7 +1471,7 @@ class TestCanteenActionApi(APITestCase):
         DiagnosticFactory.create(year=last_year, canteen=canteen, value_total_ht=1000)
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.FILL_CANTEEN_DATA)
 
         # a canteen that has a line ministry should be complete
         canteen.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
@@ -1428,7 +1479,7 @@ class TestCanteenActionApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
 
         # a canteen without a line ministry and without a sector that demands one is also complete
         canteen.line_ministry = None
@@ -1438,7 +1489,7 @@ class TestCanteenActionApi(APITestCase):
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], "40_teledeclare")
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
 
 
 class TestCanteenTerritoryApi(APITestCase):

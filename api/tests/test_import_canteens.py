@@ -225,7 +225,7 @@ class TestCanteenImport(APITestCase):
         canteen = Canteen.objects.first()
         self.assertEqual(canteen.production_type, Canteen.ProductionType.ON_SITE)
         self.assertEqual(canteen.management_type, Canteen.ManagementType.CONCEDED)
-        self.assertEqual(canteen.economic_model, "")
+        self.assertEqual(canteen.economic_model, Canteen.EconomicModel.PUBLIC)
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
 
     @authenticate
@@ -250,8 +250,8 @@ class TestCanteenImport(APITestCase):
     @authenticate
     def test_canteens_empty_when_error(self):
         """
-        If a cantine succeeds and another one doesn't, no canteen should be saved
-        and the array of cantine should return zero
+        If a canteen succeeds and another one doesn't, no canteen should be saved
+        and the array of canteens should return zero
         """
         # 3 format errors
         file_path = "./api/tests/files/canteens/canteens_bad_nearly_good.csv"

@@ -82,9 +82,6 @@ class TestETLAnalysisCanteen(TestCase):
 
         canteen_2 = canteens[canteens.id == self.canteen_2.id].iloc[0]
         self.assertEqual(canteen_2["ministere_tutelle"], None)
-        self.assertEqual(canteen_2["type_gestion"], None)
-        self.assertEqual(canteen_2["type_production"], None)
-        self.assertEqual(canteen_2["modele_economique"], None)
         self.assertEqual(canteen_2["spe"], "Non")
 
 
