@@ -17,98 +17,113 @@ from data.utils import CreationSource
 
 class CanteenModelSaveTest(TestCase):
     def test_canteen_name_validation(self):
-        for VALUE_OK in ["  ", "Canteen", "Cantéen", "Canteen 123", "Canteen - A !@#$%^&*()"]:
-            with self.subTest(name=VALUE_OK):
-                CanteenFactory(name=VALUE_OK)
-        for VALUE_NOT_OK in ["", None]:
+        for TUPLE_OK in [
+            ("  ", "  "),
+            (" canteen ", " canteen "),
+            ("Cantéen", "Cantéen"),
+            ("Canteen 123", "Canteen 123"),
+            ("Canteen - A !@#$%^&*()", "Canteen - A !@#$%^&*()"),
+        ]:
+            with self.subTest(name=TUPLE_OK):
+                canteen = CanteenFactory(name=TUPLE_OK[0])
+                self.assertEqual(canteen.name, TUPLE_OK[1])
+        for VALUE_NOT_OK in [None, ""]:
             with self.subTest(name=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, Canteen.objects.create, name=VALUE_NOT_OK)
 
-    def test_canteen_siret_normalization(self):
-        canteen = CanteenFactory(siret="215 903 501 00017")
-        self.assertEqual(canteen.siret, "21590350100017")
-
-    def test_canteen_siren_unite_legale_normalization(self):
-        canteen = CanteenFactory(siren_unite_legale="756 656 218")
-        self.assertEqual(canteen.siren_unite_legale, "756656218")
-
     def test_canteen_siret_validation(self):
-        for VALUE_OK in ["", None, "756 656 218 99905", "21590350100017"]:
-            with self.subTest(siret=VALUE_OK):
-                CanteenFactory(siret=VALUE_OK)
+        for TUPLE_OK in [
+            (None, None),
+            ("", ""),
+            ("  ", ""),
+            ("756 656 218 99905", "75665621899905"),
+            ("21590350100017", "21590350100017"),
+        ]:
+            with self.subTest(siret=TUPLE_OK):
+                canteen = CanteenFactory(siret=TUPLE_OK[0])
+                self.assertEqual(canteen.siret, TUPLE_OK[1])
         for VALUE_NOT_OK in ["123", "923412845000115", "1234567890123A"]:
             with self.subTest(siret=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, siret=VALUE_NOT_OK)
 
     def test_canteen_siren_unite_legale_validation(self):
-        for VALUE_OK in ["", None, "756 656 218", "756656218"]:
-            with self.subTest(siren_unite_legale=VALUE_OK):
-                CanteenFactory(siren_unite_legale=VALUE_OK)
+        for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
+            with self.subTest(siren_unite_legale=TUPLE_OK):
+                canteen = CanteenFactory(siren_unite_legale=TUPLE_OK[0])
+                self.assertEqual(canteen.siren_unite_legale, TUPLE_OK[1])
         for VALUE_NOT_OK in ["123", "9234128450", "92341284A"]:
             with self.subTest(siren_unite_legale=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, siren_unite_legale=VALUE_NOT_OK)
 
     def test_canteen_epci_validation(self):
-        for VALUE_OK in ["", None, "756 656 218", "756656218"]:
-            with self.subTest(epci=VALUE_OK):
-                CanteenFactory(epci=VALUE_OK)
+        for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
+            with self.subTest(epci=TUPLE_OK):
+                canteen = CanteenFactory(epci=TUPLE_OK[0])
+                self.assertEqual(canteen.epci, TUPLE_OK[1])
         for VALUE_NOT_OK in ["123", "9234128450", "92341284A"]:
             with self.subTest(epci=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, epci=VALUE_NOT_OK)
 
     def test_canteen_management_type_validation(self):
-        for VALUE_OK in ["", None] + Canteen.ManagementType.values:
-            with self.subTest(management_type=VALUE_OK):
-                CanteenFactory(management_type=VALUE_OK)
-        for VALUE_NOT_OK in [123, "invalid"]:
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.ManagementType.values)]:
+            with self.subTest(management_type=TUPLE_OK):
+                canteen = CanteenFactory(management_type=TUPLE_OK[0])
+                self.assertEqual(canteen.management_type, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
             with self.subTest(management_type=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, management_type=VALUE_NOT_OK)
 
     def test_canteen_production_type_validation(self):
-        for VALUE_OK in ["", None] + Canteen.ProductionType.values:
-            with self.subTest(production_type=VALUE_OK):
-                CanteenFactory(production_type=VALUE_OK)
-        for VALUE_NOT_OK in [123, "invalid"]:
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.ProductionType.values)]:
+            with self.subTest(production_type=TUPLE_OK):
+                canteen = CanteenFactory(production_type=TUPLE_OK[0])
+                self.assertEqual(canteen.production_type, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
             with self.subTest(production_type=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, production_type=VALUE_NOT_OK)
 
     def test_canteen_economic_model_validation(self):
-        for VALUE_OK in ["", None] + Canteen.EconomicModel.values:
-            with self.subTest(economic_model=VALUE_OK):
-                CanteenFactory(economic_model=VALUE_OK)
-        for VALUE_NOT_OK in [123, "invalid"]:
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.EconomicModel.values)]:
+            with self.subTest(economic_model=TUPLE_OK):
+                canteen = CanteenFactory(economic_model=TUPLE_OK[0])
+                self.assertEqual(canteen.economic_model, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
             with self.subTest(economic_model=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, economic_model=VALUE_NOT_OK)
 
     def test_canteen_line_ministry_validation(self):
-        for VALUE_OK in ["", None] + Canteen.Ministries.values:
-            with self.subTest(line_ministry=VALUE_OK):
-                CanteenFactory(line_ministry=VALUE_OK)
-        for VALUE_NOT_OK in [123, "invalid"]:
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.Ministries.values)]:
+            with self.subTest(line_ministry=TUPLE_OK):
+                canteen = CanteenFactory(line_ministry=TUPLE_OK[0])
+                self.assertEqual(canteen.line_ministry, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
             with self.subTest(line_ministry=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK)
 
     def test_canteen_department_validation(self):
-        for VALUE_OK in ["", None, 38] + Department.values:
-            with self.subTest(department=VALUE_OK):
-                CanteenFactory(department=VALUE_OK)
-        for VALUE_NOT_OK in ["123", "999", "2a", "2C"]:
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Department.values)]:
+            with self.subTest(department=TUPLE_OK):
+                canteen = CanteenFactory(department=TUPLE_OK[0])
+                self.assertEqual(canteen.department, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid", "123", "999", "2a", "2C"]:
             with self.subTest(department=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, department=VALUE_NOT_OK)
 
     def test_canteen_region_validation(self):
-        for VALUE_OK in ["", None, 84] + Region.values:
-            with self.subTest(region=VALUE_OK):
-                CanteenFactory(region=VALUE_OK)
-        for VALUE_NOT_OK in ["123", "999"]:
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Region.values)]:
+            with self.subTest(region=TUPLE_OK):
+                canteen = CanteenFactory(region=TUPLE_OK[0])
+                self.assertEqual(canteen.region, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid", "123", "999"]:
             with self.subTest(region=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, region=VALUE_NOT_OK)
 
     def test_canteen_creation_source_validation(self):
-        for VALUE_OK in ["", None] + CreationSource.values:
-            with self.subTest(creation_source=VALUE_OK):
-                CanteenFactory(creation_source=VALUE_OK)
-        for VALUE_NOT_OK in [123, "invalid"]:
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in CreationSource.values)]:
+            with self.subTest(creation_source=TUPLE_OK):
+                canteen = CanteenFactory(creation_source=TUPLE_OK[0])
+                self.assertEqual(canteen.creation_source, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
             with self.subTest(creation_source=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, creation_source=VALUE_NOT_OK)
 
