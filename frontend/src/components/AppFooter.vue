@@ -85,7 +85,12 @@
       <v-divider aria-hidden="true" role="presentation" v-if="!showSmallFooter" class="mt-6 mb-2"></v-divider>
       <ul class="d-flex flex-wrap link-group pl-0">
         <li v-for="(link, index) in bottomLinks" :key="link.text" class="d-flex my-1">
-          <router-link class="caption px-0 grey--text text--darken-2" :to="link.to">{{ link.text }}</router-link>
+          <router-link v-if="link.to" class="caption px-0 grey--text text--darken-2" :to="link.to">
+            {{ link.text }}
+          </router-link>
+          <a v-else-if="link.href" class="caption px-0 grey--text text--darken-2" :href="link.href">
+            {{ link.text }}
+          </a>
           <div class="footer-divider mx-4" v-if="index < bottomLinks.length - 1"></div>
         </li>
       </ul>
@@ -135,6 +140,10 @@ export default {
         {
           text: "Plan du site",
           to: { name: "PlanDuSite" },
+        },
+        {
+          text: "Statistiques",
+          href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/0589649a-fabc-4001-82d6-f5f4fc15710d",
         },
       ],
       govLinks: ["legifrance.gouv.fr", "gouvernement.fr", "service-public.fr", "data.gouv.fr"],
