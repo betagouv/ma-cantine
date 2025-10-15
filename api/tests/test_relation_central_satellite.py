@@ -108,7 +108,8 @@ class TestRelationCentralSatellite(APITestCase):
         request = {
             "name": "Wanderer",
             "siret": satellite_siret,
-            "dailyMealCount": 30,
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "economicModel": Canteen.EconomicModel.PUBLIC,
             "sectors": [school.id, enterprise.id],

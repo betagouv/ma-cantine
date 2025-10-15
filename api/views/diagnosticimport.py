@@ -355,6 +355,8 @@ class ImportDiagnosticsView(ABC, APIView):
     ):
         siret = utils_utils.normalize_string(row[0])
         name = row[1].strip()
+        daily_meal_count = row[5].strip()
+        yearly_meal_count = row[6].strip()
         management_type = row[9].strip().lower()
         production_type = row[8].strip().lower()
         economic_model = row[10].strip().lower()
@@ -365,6 +367,8 @@ class ImportDiagnosticsView(ABC, APIView):
             else Canteen.objects.create(
                 name=name,
                 siret=siret,
+                daily_meal_count=daily_meal_count,
+                yearly_meal_count=yearly_meal_count,
                 management_type=management_type,
                 production_type=production_type,
                 economic_model=economic_model,

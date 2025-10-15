@@ -10,7 +10,7 @@ def validate_canteen_choice_fields(instance):
     errors = {}
     for field_name in ["management_type", "production_type", "economic_model"]:
         value = getattr(instance, field_name)
-        if not value:
+        if value in [None, ""]:
             utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
     return errors
 
@@ -29,7 +29,7 @@ def validate_canteen_meal_count_fields(instance):
     errors = {}
     for field_name in ["daily_meal_count", "yearly_meal_count"]:
         value = getattr(instance, field_name)
-        if not value:
+        if value in [None, ""]:
             utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
         elif not (isinstance(value, int) or (isinstance(value, str) and value.isdigit())):
             utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")

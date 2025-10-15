@@ -302,16 +302,16 @@ class TestPublicCanteenSearchApi(APITestCase):
         """
         In meal count, "null" values should be placed first
         """
-        CanteenFactory.create(
-            daily_meal_count=None,
+        canteen_daily_meal_count_none = CanteenFactory.create(
             name="Shiso",
             creation_date=(timezone.now() - datetime.timedelta(days=10)),
         )
-        CanteenFactory.create(
-            daily_meal_count=0,
+        Canteen.objects.filter(id=canteen_daily_meal_count_none.id).update(daily_meal_count=None)
+        canteen_daily_meal_count_0 = CanteenFactory.create(
             name="Wasabi",
             creation_date=(timezone.now() - datetime.timedelta(days=8)),
         )
+        Canteen.objects.filter(id=canteen_daily_meal_count_0.id).update(daily_meal_count=0)
         CanteenFactory.create(
             daily_meal_count=1,
             name="Mochi",

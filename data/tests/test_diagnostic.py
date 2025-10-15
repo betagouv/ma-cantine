@@ -22,8 +22,12 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_valid_3 = CanteenFactory(
             siret="83014132100034", siren_unite_legale="123456789", yearly_meal_count=100
         )
-        cls.canteen_valid_4 = CanteenFactory(siret="40419443300078", yearly_meal_count=0)  # not aberrant
-        cls.canteen_valid_5 = CanteenFactory(siret="21340172201787", yearly_meal_count=None)  # not aberrant
+        cls.canteen_valid_4 = CanteenFactory(siret="40419443300078")
+        Canteen.objects.filter(id=cls.canteen_valid_4.id).update(yearly_meal_count=0)  # not aberrant
+        cls.canteen_valid_4.refresh_from_db()
+        cls.canteen_valid_5 = CanteenFactory(siret="21340172201787")
+        Canteen.objects.filter(id=cls.canteen_valid_5.id).update(yearly_meal_count=None)  # not aberrant
+        cls.canteen_valid_5.refresh_from_db()
         cls.canteen_valid_sat = CanteenFactory(
             siret="21380185500015", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )

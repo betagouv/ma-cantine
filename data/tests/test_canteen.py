@@ -466,8 +466,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             **COMMON,
             siret="96766910375238",
             production_type=Canteen.ProductionType.ON_SITE,
-            daily_meal_count=0,  # incomplete
+            daily_meal_count=12,
         )
+        Canteen.objects.filter(id=cls.canteen_on_site_incomplete_1.id).update(daily_meal_count=0)  # incomplete
         cls.canteen_on_site_incomplete_2 = CanteenFactory(
             **COMMON,
             siret="96766910375238",
@@ -509,7 +510,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             self.canteen_on_site,
             self.canteen_on_site_central,
         ]:
-            self.assertTrue(canteen.is_filled)
+            with self.subTest(canteen=canteen):
+                canteen.refresh_from_db()
+                self.assertTrue(canteen.is_filled)
         for canteen in [
             self.canteen_central_incomplete,
             self.canteen_central_serving_incomplete,
@@ -518,7 +521,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             self.canteen_on_site_incomplete_3,
             self.canteen_on_site_central_incomplete,
         ]:
-            self.assertFalse(canteen.is_filled)
+            with self.subTest(canteen=canteen):
+                canteen.refresh_from_db()
+                self.assertFalse(canteen.is_filled)
 
     def test_has_missing_data_queryset(self):
         self.assertEqual(Canteen.objects.count(), 10)
