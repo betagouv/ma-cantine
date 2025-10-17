@@ -10,10 +10,12 @@ import { importFile } from "@/services/imports.js"
 const store = useRootStore()
 const router = useRouter()
 const emit = defineEmits(["success"])
-const props = defineProps(["apiUrl", "eventMatomo"])
+const props = defineProps(["apiUrl", "eventMatomo", "fileOptions"])
 
 /* Data */
 const pictoDocument = "/static/images/picto-dsfr/document-add.svg"
+const hint = props.fileOptions ? props.fileOptions.hint : "Extension de fichier autorisée : CSV"
+const accept = props.fileOptions ? props.fileOptions.accept : ".csv"
 
 /* Upload */
 const isProcessingFile = ref(false)
@@ -117,9 +119,9 @@ const showErrors = (count) => {
     </div>
     <div class="import-file-upload fr-col-12 fr-col-xl-9 fr-py-3w fr-px-4w fr-card">
       <DsfrFileUpload
-        label="Avant d’importer votre fichier en CSV, assurez-vous que vos données respectent le format ci-dessus"
-        hint="Extension du fichier autorisé : CSV"
-        accept=".csv,.tsv"
+        label="Avant d’importer votre fichier, assurez-vous que vos données respectent le format ci-dessus"
+        :hint="hint"
+        :accept="accept"
         @change="upload"
         :disabled="isProcessingFile"
       />
