@@ -10,7 +10,7 @@ const groups = [
     accordions: [
       {
         content:
-          "« ma cantine » est un service numérique opéré par le Ministère en charge de l’agriculture (MASA) avec l’appui de la Direction Interministérielle du Numérique (DINUM). Son objectif est d'accompagner la transition alimentaire des services de restauration collective, les cantines vers une alimentation et une consommation plus durable. Cette plateforme est à la fois un outil d’accompagnement pour les gestionnaires, un outil d’information pour les convives citoyens et un outil de transmission d’information vers l’administration pour le suivi de cette transition.",
+          "« ma cantine » est un service numérique opéré par le ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire (MAASA) avec l’appui de la Direction Interministérielle du Numérique (DINUM). Son objectif est d'accompagner la transition alimentaire des services de restauration collective, les cantines vers une alimentation et une consommation plus durable. Cette plateforme est à la fois un outil d’accompagnement pour les gestionnaires, un outil d’information pour les convives citoyens et un outil de transmission d’information vers l’administration pour le suivi de cette transition.",
         title: "Qu'est-ce que « ma cantine » ?",
       },
     ],
@@ -52,7 +52,8 @@ const groups = [
       {
         content:
           "Oui. Les gestionnaires de restaurants satellites peuvent se créer un compte et ajouter leur cantine, sauf si la cuisine centrale qui les dessert l’a déjà fait. Dans ce cas, je peux être gestionnaire additionnel de cet établissement, en demandant un accès à la cuisine centrale. A moyen terme, les restaurants satellites devront indiquer leurs propres données en matière d’approvisionnement.",
-        title: "Je suis gestionnaire d'un restaurant satellite, suis-je concerné par l'inscription sur « ma cantine » ?",
+        title:
+          "Je suis gestionnaire d'un restaurant satellite, suis-je concerné par l'inscription sur « ma cantine » ?",
       },
       {
         content:
@@ -131,7 +132,7 @@ const groups = [
       },
       {
         content:
-          "Les données d'achat saisies dans « ma cantine » (dans le diagnostic) sont à télédéclarer tous les ans. Elles sont transmises à la DGAL (Direction générale de l’Alimentation) - ministère de l’Agriculture et de la Souveraineté Alimentaire (MASA) en vue d'etablir le bilan annuel à remettre au Parlement qui sera un document public.",
+          "Les données d'achat saisies dans « ma cantine » (dans le diagnostic) sont à télédéclarer tous les ans. Elles sont transmises à la DGAL (Direction générale de l’Alimentation) - ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire (MAASA) en vue d'etablir le bilan annuel à remettre au Parlement qui sera un document public.",
         title:
           "A qui les données relatives aux achats de denrées alimentaires déclarées dans « ma cantine » sont-elles fournies ? Pour quoi faire ?",
       },

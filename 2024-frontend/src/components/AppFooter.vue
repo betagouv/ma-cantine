@@ -1,5 +1,5 @@
 <script setup>
-const logoText = ["Ministère", "de l'Agriculture", "et de la Souveraineté", "alimentaire"]
+const logoText = ["République", "française"]
 
 const descText =
   "« ma cantine » est un outil pour accompagner les acteurs de la restauration collective à proposer une alimentation de qualité, saine et durable."

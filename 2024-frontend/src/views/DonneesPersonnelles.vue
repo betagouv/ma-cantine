@@ -20,8 +20,8 @@ onMounted(() => {
       </h2>
       <p>
         Le responsable de l’utilisation des données est la Direction générale de l’alimentation du ministère de
-        l’agriculture et de la souveraineté alimentaire, représentée par Madame Maud FAIPOUX, Directrice générale de
-        l’Alimention.
+        l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire, représentée par Madame Maud FAIPOUX,
+        Directrice générale de l’Alimention.
       </p>
     </section>
     <section>
@@ -155,7 +155,7 @@ onMounted(() => {
         <li>
           par voie postale à :
           <address>
-            MINISTÈRE DE L’AGRICULTURE
+            Ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire
             <br />
             Direction Générale de l’Alimentation
             <br />
@@ -192,7 +192,7 @@ onMounted(() => {
           {
             rowData: [
               'Données relatives à la création d’un compte et données de contact',
-              'Agents publics habilités du ministère de l’agriculture et de la souveraineté alimentaire',
+              'Agents publics habilités du ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire',
             ],
           },
         ]"

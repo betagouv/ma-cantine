@@ -18,8 +18,8 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       </h2>
       <p>
         « ma cantine » (ci-après dénommé « le Service ») est un téléservice mis en œuvre par le ministère de
-        l’Agriculture et de la Souveraineté Alimentaire (Direction générale à l’alimentation) en lien avec la Direction
-        interministérielle du numérique.
+        l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire (Direction générale à l’alimentation) en
+        lien avec la Direction interministérielle du numérique.
       </p>
       <p>
         Le Service est destiné à accompagner au mieux les acteurs de la restauration collective (ci-après abrégé « RC »)
@@ -41,9 +41,9 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
           composition des repas servis.
         </li>
         <li>
-          de télédéclarer au ministère de l’Agriculture et de la Souveraineté Alimentaire les données annuelles d’achat
-          dans les conditions prévues par le code rural et de la pêche maritime (articles L. 230-5 à L. 230-5-2 et R.
-          230-30-4).
+          de télédéclarer au ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire les
+          données annuelles d’achat dans les conditions prévues par le code rural et de la pêche maritime (articles L.
+          230-5 à L. 230-5-2 et R. 230-30-4).
         </li>
       </ul>
     </section>
@@ -54,7 +54,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <p>« Gestionnaire » est toute personne qui ouvre un compte sur le Service.</p>
       <p>
         « L’Editeur » de la plateforme »ma cantine » est la Direction générale de l’alimentation du ministère de
-        l’Agriculture et de la Souveraineté Alimentaire.
+        l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire.
       </p>
       <p>
         Le « Service » correspond aux fonctionnalités offertes par la plateforme « ma cantine » pour répondre à ses
