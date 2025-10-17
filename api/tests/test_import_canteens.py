@@ -223,7 +223,9 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(len(body["canteens"]), 1)
         self.assertEqual(len(body["errors"]), 0)
         canteen = Canteen.objects.first()
-        self.assertEqual(canteen.economic_model, None)
+        self.assertEqual(canteen.production_type, Canteen.ProductionType.ON_SITE)
+        self.assertEqual(canteen.management_type, Canteen.ManagementType.CONCEDED)
+        self.assertEqual(canteen.economic_model, "")
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
 
     @authenticate
