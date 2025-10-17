@@ -21,7 +21,9 @@ class TeledeclarationQuerySetTest(TestCase):
         cls.valid_canteen_3 = CanteenFactory(
             siret="83014132100034", siren_unite_legale="123456789", deletion_date=None
         )
-        cls.valid_canteen_4 = CanteenFactory(siret="40419443300078", deletion_date=None, yearly_meal_count=0)
+        cls.valid_canteen_4 = CanteenFactory(siret="40419443300078", deletion_date=None)
+        Canteen.objects.filter(id=cls.valid_canteen_4.id).update(yearly_meal_count=0)  # not aberrant
+        cls.valid_canteen_4.refresh_from_db()
         cls.valid_canteen_sat = CanteenFactory(
             siret="21380185500015", deletion_date=None, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )

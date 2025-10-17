@@ -276,48 +276,40 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(df.iloc[1]["categorie"], "Catégories multiples")
 
     def test_cout_denrees(self):
-        test_cases = [
-            {
-                "name": "Valid cout denrees",
-                "date_mocked": "2023-03-30",  # during the 2022 campai
-                "year": 2022,
-                "data": {
-                    "value_total_ht": 1,
-                    "yearly_meal_count": 1,
-                },
-                "expected_outcome": 1,
-            },
-            {
-                "name": "Invalid cout denrees",
-                "date_mocked": "2023-03-30",  # during the 2022 campai
-                "year": 2022,
-                "data": {
-                    "value_total_ht": 1,
-                    "yearly_meal_count": 0,
-                },
-                "expected_outcome": -1,
-            },
-        ]
+        with freeze_time("2023-03-30"):  # during the 2022 campaign
+            canteen = CanteenFactory(yearly_meal_count=1)
+            diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, value_total_ht=1)
+            diagnostic.teledeclare(applicant=UserFactory.create())
 
-        for tc in test_cases:
-            with freeze_time(tc["date_mocked"]):  # Faking time to mock creation_date
-                canteen = CanteenFactory(yearly_meal_count=tc["data"]["yearly_meal_count"])
-                diagnostic = DiagnosticFactory.create(
-                    canteen=canteen, year=tc["year"], value_total_ht=tc["data"]["value_total_ht"]
-                )
-                diagnostic.teledeclare(applicant=UserFactory.create())
+            self.serializer_data = {
+                "yearly_meal_count": canteen.yearly_meal_count,
+                "value_total_ht": diagnostic.value_total_ht,
+            }
+            self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
+                instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
+            )
+            data = self.serializer.data
 
-                self.serializer_data = {
-                    "yearly_meal_count": tc["data"]["yearly_meal_count"],
-                    "value_total_ht": tc["data"]["value_total_ht"],
-                }
+            self.assertEqual(data["cout_denrees"], 1)
 
-                self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-                    instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
-                )
-                data = self.serializer.data
+        with freeze_time("2022-08-30"):  # during the 2021 campaign
+            # canteen with an invalid yearly_meal_count
+            canteen = CanteenFactory(yearly_meal_count=1)
+            Canteen.objects.filter(id=canteen.id).update(yearly_meal_count=0)
+            canteen.refresh_from_db()
+            diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=1)
+            diagnostic.teledeclare(applicant=UserFactory.create())
 
-                self.assertEqual(data["cout_denrees"], tc["expected_outcome"])
+            self.serializer_data = {
+                "yearly_meal_count": canteen.yearly_meal_count,
+                "value_total_ht": diagnostic.value_total_ht,
+            }
+            self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
+                instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
+            )
+            data = self.serializer.data
+
+            self.assertEqual(data["cout_denrees"], -1)
 
     def test_geo_columns(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign

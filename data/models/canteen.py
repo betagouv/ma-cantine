@@ -591,6 +591,7 @@ class Canteen(SoftDeletionModel):
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
             canteen_validators.validate_canteen_choice_fields(self),
+            canteen_validators.validate_canteen_meal_count_fields(self),
         )
         if validation_errors:
             raise ValidationError(validation_errors)
@@ -599,7 +600,7 @@ class Canteen(SoftDeletionModel):
         """
         - cleanup some fields (siret, siren_unite_legale, epci, central_producer_siret, logo)
         - set region from department
-        - full_clean: run validations
+        - full_clean(): run validations (with extra validations in clean())
         """
         self.normalize_fields()
         self.optimize_logo()

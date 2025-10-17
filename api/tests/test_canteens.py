@@ -282,6 +282,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -299,6 +301,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -330,6 +334,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             # "siret": "21340172201787",
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -347,6 +353,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "0123",
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -361,6 +369,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "01234567891011",
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -375,6 +385,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "01234567891011",
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -399,6 +411,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": siret,
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -424,6 +438,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": siret,
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -616,6 +632,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -640,6 +658,8 @@ class CanteenApiTest(APITestCase):
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
+            "dailyMealCount": 12,
+            "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
@@ -917,11 +937,13 @@ class TestCanteenActionApi(APITestCase):
         needs_daily_meal_count = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            daily_meal_count=None,
+            daily_meal_count=12,
             yearly_meal_count=365,
             siret="40419443300078",
             managers=[authenticate.user],
         )
+        Canteen.objects.filter(id=needs_daily_meal_count.id).update(daily_meal_count=None)
+        needs_daily_meal_count.refresh_from_db()
         too_many_sectors = CanteenFactory.create(
             siret="83014132100034",
             managers=[authenticate.user],
@@ -1082,8 +1104,7 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
 
         # If mandatory data on the canteen is missing, we need a 35_fill_canteen_data
-        canteen.yearly_meal_count = None
-        canteen.save()
+        Canteen.objects.filter(id=canteen.id).update(yearly_meal_count=None)
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]

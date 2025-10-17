@@ -64,6 +64,42 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(epci=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, epci=VALUE_NOT_OK)
 
+    def test_canteen_department_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Department.values)]:
+            with self.subTest(department=TUPLE_OK):
+                canteen = CanteenFactory(department=TUPLE_OK[0])
+                self.assertEqual(canteen.department, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid", "123", "999", "2a", "2C"]:
+            with self.subTest(department=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, department=VALUE_NOT_OK)
+
+    def test_canteen_region_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Region.values)]:
+            with self.subTest(region=TUPLE_OK):
+                canteen = CanteenFactory(region=TUPLE_OK[0])
+                self.assertEqual(canteen.region, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid", "123", "999"]:
+            with self.subTest(region=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, region=VALUE_NOT_OK)
+
+    def test_canteen_daily_meal_count_validation(self):
+        for TUPLE_OK in [(1, 1), (1000, 1000), ("123", 123), (10.5, 10)]:
+            with self.subTest(daily_meal_count=TUPLE_OK):
+                canteen = CanteenFactory(daily_meal_count=TUPLE_OK[0])
+                self.assertEqual(canteen.daily_meal_count, TUPLE_OK[1])
+        for VALUE_NOT_OK in [None, 0, -1, -100, "10.5", "10,5", "invalid"]:
+            with self.subTest(daily_meal_count=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, daily_meal_count=VALUE_NOT_OK)
+
+    def test_canteen_yearly_meal_count_validation(self):
+        for TUPLE_OK in [(1, 1), (1000, 1000), ("123", 123), (10.5, 10)]:
+            with self.subTest(yearly_meal_count=TUPLE_OK):
+                canteen = CanteenFactory(yearly_meal_count=TUPLE_OK[0])
+                self.assertEqual(canteen.yearly_meal_count, TUPLE_OK[1])
+        for VALUE_NOT_OK in [None, 0, -1, -100, "10.5", "10,5", "invalid"]:
+            with self.subTest(yearly_meal_count=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, yearly_meal_count=VALUE_NOT_OK)
+
     def test_canteen_management_type_validation(self):
         for TUPLE_OK in [(key, key) for key in Canteen.ManagementType.values]:
             with self.subTest(management_type=TUPLE_OK):
@@ -99,24 +135,6 @@ class CanteenModelSaveTest(TransactionTestCase):
         for VALUE_NOT_OK in ["  ", 123, "invalid"]:
             with self.subTest(line_ministry=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK)
-
-    def test_canteen_department_validation(self):
-        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Department.values)]:
-            with self.subTest(department=TUPLE_OK):
-                canteen = CanteenFactory(department=TUPLE_OK[0])
-                self.assertEqual(canteen.department, TUPLE_OK[1])
-        for VALUE_NOT_OK in ["  ", 123, "invalid", "123", "999", "2a", "2C"]:
-            with self.subTest(department=VALUE_NOT_OK):
-                self.assertRaises(ValidationError, CanteenFactory, department=VALUE_NOT_OK)
-
-    def test_canteen_region_validation(self):
-        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Region.values)]:
-            with self.subTest(region=TUPLE_OK):
-                canteen = CanteenFactory(region=TUPLE_OK[0])
-                self.assertEqual(canteen.region, TUPLE_OK[1])
-        for VALUE_NOT_OK in ["  ", 123, "invalid", "123", "999"]:
-            with self.subTest(region=VALUE_NOT_OK):
-                self.assertRaises(ValidationError, CanteenFactory, region=VALUE_NOT_OK)
 
     def test_canteen_creation_source_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in CreationSource.values)]:
@@ -448,8 +466,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             **COMMON,
             siret="96766910375238",
             production_type=Canteen.ProductionType.ON_SITE,
-            daily_meal_count=0,  # incomplete
+            daily_meal_count=12,
         )
+        Canteen.objects.filter(id=cls.canteen_on_site_incomplete_1.id).update(daily_meal_count=0)  # incomplete
         cls.canteen_on_site_incomplete_2 = CanteenFactory(
             **COMMON,
             siret="96766910375238",
@@ -491,7 +510,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             self.canteen_on_site,
             self.canteen_on_site_central,
         ]:
-            self.assertTrue(canteen.is_filled)
+            with self.subTest(canteen=canteen):
+                canteen.refresh_from_db()
+                self.assertTrue(canteen.is_filled)
         for canteen in [
             self.canteen_central_incomplete,
             self.canteen_central_serving_incomplete,
@@ -500,7 +521,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             self.canteen_on_site_incomplete_3,
             self.canteen_on_site_central_incomplete,
         ]:
-            self.assertFalse(canteen.is_filled)
+            with self.subTest(canteen=canteen):
+                canteen.refresh_from_db()
+                self.assertFalse(canteen.is_filled)
 
     def test_has_missing_data_queryset(self):
         self.assertEqual(Canteen.objects.count(), 10)
