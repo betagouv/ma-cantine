@@ -65,29 +65,29 @@ class CanteenModelSaveTest(TestCase):
                 self.assertRaises(ValidationError, CanteenFactory, epci=VALUE_NOT_OK)
 
     def test_canteen_management_type_validation(self):
-        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.ManagementType.values)]:
+        for TUPLE_OK in [(key, key) for key in Canteen.ManagementType.values]:
             with self.subTest(management_type=TUPLE_OK):
                 canteen = CanteenFactory(management_type=TUPLE_OK[0])
                 self.assertEqual(canteen.management_type, TUPLE_OK[1])
-        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
+        for VALUE_NOT_OK in [None, "", "  ", 123, "invalid"]:
             with self.subTest(management_type=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, management_type=VALUE_NOT_OK)
 
     def test_canteen_production_type_validation(self):
-        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.ProductionType.values)]:
+        for TUPLE_OK in [(key, key) for key in Canteen.ProductionType.values]:
             with self.subTest(production_type=TUPLE_OK):
                 canteen = CanteenFactory(production_type=TUPLE_OK[0])
                 self.assertEqual(canteen.production_type, TUPLE_OK[1])
-        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
+        for VALUE_NOT_OK in [None, "", "  ", 123, "invalid"]:
             with self.subTest(production_type=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, production_type=VALUE_NOT_OK)
 
     def test_canteen_economic_model_validation(self):
-        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.EconomicModel.values)]:
+        for TUPLE_OK in [(key, key) for key in Canteen.EconomicModel.values]:
             with self.subTest(economic_model=TUPLE_OK):
                 canteen = CanteenFactory(economic_model=TUPLE_OK[0])
                 self.assertEqual(canteen.economic_model, TUPLE_OK[1])
-        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
+        for VALUE_NOT_OK in [None, "", "  ", 123, "invalid"]:
             with self.subTest(economic_model=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, economic_model=VALUE_NOT_OK)
 

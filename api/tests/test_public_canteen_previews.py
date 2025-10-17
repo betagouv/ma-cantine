@@ -642,7 +642,7 @@ class TestPublicCanteenSearchApi(APITestCase):
 
     def test_pagination_management_types(self):
         CanteenFactory(management_type="conceded", name="Shiso")
-        CanteenFactory(management_type=None, name="Wasabi")
+        CanteenFactory(management_type="conceded", name="Wasabi")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)

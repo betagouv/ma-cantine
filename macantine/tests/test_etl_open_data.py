@@ -186,9 +186,6 @@ class TestETLOpenData(TestCase):
 
         canteen_without_manager = canteens[canteens.id == self.canteen_without_manager.id].iloc[0]
         self.assertEqual(canteen_without_manager["line_ministry"], None)
-        self.assertEqual(canteen_without_manager["management_type"], None)
-        self.assertEqual(canteen_without_manager["production_type"], None)
-        self.assertEqual(canteen_without_manager["economic_model"], None)
         self.assertEqual(canteen_without_manager["sectors"], [])
         self.assertFalse(canteen_without_manager["active_on_ma_cantine"])
 

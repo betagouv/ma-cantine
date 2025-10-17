@@ -3,6 +3,7 @@ from urllib.parse import quote
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
+from django.core.validators import ValidationError
 from django.db import models
 from django.db.models import Case, Count, Exists, F, OuterRef, Q, Subquery, Value, When
 from django.utils import timezone
@@ -24,6 +25,7 @@ from data.utils import (
     has_charfield_missing_query,
     optimize_image,
 )
+from data.validators import canteen as canteen_validators
 from macantine.utils import (
     get_year_campaign_end_date_or_today_date,
     is_in_correction,
@@ -585,6 +587,13 @@ class Canteen(SoftDeletionModel):
     def set_region_from_department(self):
         if self.department:
             self.region = self._get_region()
+
+    def clean(self, *args, **kwargs):
+        validation_errors = utils_utils.merge_validation_errors(
+            canteen_validators.validate_canteen_choice_fields(self),
+        )
+        if validation_errors:
+            raise ValidationError(validation_errors)
 
     def save(self, **kwargs):
         """
