@@ -85,12 +85,6 @@ const navItems = [
         text: "Observatoire EGalim",
         to: { name: "Observatoire" },
       },
-      {
-        text: "Indicateurs clés",
-        to: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/3dab8a21-c4b9-46e1-84fa-7ba485ddfbbb",
-        target: "_blank",
-        rel: "noopener external",
-      },
     ],
   },
   {
