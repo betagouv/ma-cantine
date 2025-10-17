@@ -1,3 +1,6 @@
+from unittest import skipIf
+
+from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -45,6 +48,7 @@ class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
             epci_lib=None,
         )
 
+    @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
     def test_teledeclaration_fill_missing_canteen_geolocation_data_command(self):
         for canteen in [
             self.canteen_with_geo_data,

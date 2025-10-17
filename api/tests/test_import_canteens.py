@@ -1,7 +1,9 @@
 import filecmp
 import json
 import re
+from unittest import skipIf
 
+from django.conf import settings
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
@@ -130,6 +132,7 @@ class TestCanteenSchema(TestCase):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class TestCanteenImport(APITestCase):
     def _assertImportFailureCreated(self, user, type, file_path):
         self.assertTrue(ImportFailure.objects.count() >= 1)
