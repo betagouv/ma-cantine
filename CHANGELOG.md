@@ -6,6 +6,39 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.34.0](https://github.com/betagouv/ma-cantine/compare/v2025.33.2...v2025.34.0) (2025-10-17)
+
+
+### Nouveautés
+
+* **Imports cantines:** autorise l'import de fichiers au format Excel (.xlsx) ([#5755](https://github.com/betagouv/ma-cantine/issues/5755)) ([29ea842](https://github.com/betagouv/ma-cantine/commit/29ea8426576e375f62d548bd486d2d5b5d183acb))
+
+
+### Améliorations
+
+* **Bilans:** Imports: rend obligatoires la colonne 'modèle économique' ([#5778](https://github.com/betagouv/ma-cantine/issues/5778)) ([fd6415a](https://github.com/betagouv/ma-cantine/commit/fd6415aea343f48d8cd518727de216a18034442d))
+* **Cantines:** Imports: rend obligatoires les colonnes 'modèle économique' (tout le monde) et 'source des données' (admin) ([#5776](https://github.com/betagouv/ma-cantine/issues/5776)) ([5e76244](https://github.com/betagouv/ma-cantine/commit/5e76244ff96c4fbe2fa17a4853fe7602b567d62a))
+* **Cantines:** Règles métiers: au moment du save, vérifier les règles déjà présentes sur le modèle au moment (nom, siret, siren, choices...) ([#5770](https://github.com/betagouv/ma-cantine/issues/5770)) ([79657e4](https://github.com/betagouv/ma-cantine/commit/79657e42d9b3c58b9e57320a7e182eeb82877726))
+* **Cantines:** Règles métiers: rendre les champs daily_meal_count & yearly_meal_count obligatoires ([#5773](https://github.com/betagouv/ma-cantine/issues/5773)) ([4bd8f19](https://github.com/betagouv/ma-cantine/commit/4bd8f19a6cc3069b3345621586a69a4af5191ea4))
+* **Cantines:** Règles métiers: rendre les champs management_type, production_type & economic_model obligatoires ([#5772](https://github.com/betagouv/ma-cantine/issues/5772)) ([c3564a4](https://github.com/betagouv/ma-cantine/commit/c3564a4741a122c64088b0e74d74c7ba6776ca7c))
+* **Statistiques:** Ajout du lien vers le dashboard Metabase 'stats publique' dans le footer ([#5771](https://github.com/betagouv/ma-cantine/issues/5771)) ([6f1c9e6](https://github.com/betagouv/ma-cantine/commit/6f1c9e6d12ad2b67a5f1dd62476634a808da8689))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** Règles métiers: répare les tests (atomicité) ([#5779](https://github.com/betagouv/ma-cantine/issues/5779)) ([7edfe74](https://github.com/betagouv/ma-cantine/commit/7edfe74e145656d1adc1c1135086bca55446c566))
+* **Ministère:** changement du nom du ministère et de la marianne ([#5775](https://github.com/betagouv/ma-cantine/issues/5775)) ([a023706](https://github.com/betagouv/ma-cantine/commit/a0237065f9abaa6aa097b9592892da271c78b4a7))
+* **Restaurants satelllites:** mise à jour des terminologie oubliées ([#5777](https://github.com/betagouv/ma-cantine/issues/5777)) ([8a01ef9](https://github.com/betagouv/ma-cantine/commit/8a01ef93f1155abae7b3396bc2ca8be595845263))
+
+
+### Technique
+
+* **Cantines:** Metabase: utiliser source au lieu de SerializerMethodField ([#5766](https://github.com/betagouv/ma-cantine/issues/5766)) ([be9148b](https://github.com/betagouv/ma-cantine/commit/be9148b9b4c91573c3aa23a035d9c7167de8df98))
+* **Cantines:** Règles métiers: cleaner les tests avant les modifs ([#5768](https://github.com/betagouv/ma-cantine/issues/5768)) ([baa6f15](https://github.com/betagouv/ma-cantine/commit/baa6f15284f08c1c574da04bac7f8be35a8dce24))
+* **deps:** bump django from 5.1.10 to 5.1.13 ([#5740](https://github.com/betagouv/ma-cantine/issues/5740)) ([7c513f4](https://github.com/betagouv/ma-cantine/commit/7c513f434bbaef0375733c9f261fdfa48e479517))
+* **Statistiques:** enlever le lien vers 'Indicateurs clés' dans le header ([#5774](https://github.com/betagouv/ma-cantine/issues/5774)) ([e77bc66](https://github.com/betagouv/ma-cantine/commit/e77bc66c6fa340d68a1fa42ba6f6e2e57bc29960))
+* **Tests:** paramètre pour pouvoir ignorer les tests nécessitant internet ([#5780](https://github.com/betagouv/ma-cantine/issues/5780)) ([fc443dd](https://github.com/betagouv/ma-cantine/commit/fc443ddf3df9be3b85b2a79187798b113ab9599e))
+
 ## [2025.33.2](https://github.com/betagouv/ma-cantine/compare/v2025.33.1...v2025.33.2) (2025-10-13)
 
 
