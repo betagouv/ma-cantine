@@ -1,5 +1,12 @@
 <script setup>
-defineProps(["exampleFile"])
+import { computed } from "vue"
+const props = defineProps(["exampleFile", "hasExcel"])
+
+const allowedFormats = computed(() => {
+  let format = "au format CSV (.csv)"
+  if (props.hasExcel) format += "  ou Excel (.xlsx)"
+  return format
+})
 </script>
 
 <template>
@@ -13,6 +20,10 @@ defineProps(["exampleFile"])
       </p>
       <p>Le fichier, les colonnes et les valeurs des cellules doivent impérativement respecter ce format :</p>
       <ul>
+        <li>
+          Le fichier doit être
+          <strong>{{ allowedFormats }}</strong>
+        </li>
         <li>
           Il doit
           <strong>commencer par une ligne en-tête</strong>

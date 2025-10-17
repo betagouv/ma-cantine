@@ -41,7 +41,7 @@ const success = (count) => {
     <router-link :to="{ name: 'GestionnaireCantineAjouter' }">notre formulaire</router-link>
     .
   </p>
-  <ImportExplanation :exampleFile />
+  <ImportExplanation :exampleFile :hasExcel="true" />
   <ImportSchemaTable :schemaFile />
   <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
   <ImportFileUpload
