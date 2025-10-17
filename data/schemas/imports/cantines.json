@@ -163,7 +163,7 @@
     {
       "constraints": {
         "pattern": "^ *(public|private) *$",
-        "required": false
+        "required": true
       },
       "description": "Il existe 2 types différents : cantine publique ('public'), et cantine privée ('private').",
       "doc_enum": [
