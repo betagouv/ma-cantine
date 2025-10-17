@@ -321,7 +321,7 @@ class ImportCanteensView(APIView):
         name = row[1].strip()
         management_type = row[9].strip().lower()
         production_type = row[8].strip().lower()
-        economic_model = row[10].strip().lower() if row[10] else None
+        economic_model = row[10].strip().lower()
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
