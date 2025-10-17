@@ -66,7 +66,7 @@ const resetForm = (name) => {
       <p>
         La mission de la plateforme
         <em>ma cantine</em>
-        est de référencer toutes les cantines de France afin d’aider le ministère de l’agriculture à déployer sa
+        est de référencer toutes les cantines de France afin d’aider le ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire à déployer sa
         transition alimentaire.
       </p>
       <p class="fr-mb-0">Remplissez le formulaire ci-dessous pour créer votre établissement.</p>

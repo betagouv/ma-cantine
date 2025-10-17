@@ -39,7 +39,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
     <section>
       <h2>Engagements d'accessibilité numérique</h2>
       <p>
-        Le Ministère de l'Agriculture et de la Souveraineté alimentaire s'engage à rendre accessibles ses sites web
+        Le ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire s'engage à rendre accessibles ses sites web
         (internet, intranet et extranet), ses applications mobiles, ses progiciels et son mobilier urbain numérique
         conformément à l'article 47 de la loi n°2005-102 du 11 février 2005.
       </p>
