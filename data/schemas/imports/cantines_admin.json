@@ -232,7 +232,7 @@
       "example": "gestionnaire1@example.com, gestionnaire2@example.com",
       "format": "default",
       "name": "admin_gestionnaires_additionnels",
-      "title": "Admin : Adresses mél de gestionnaires additionnels qui seront ajoutés sans être notifiés par email",
+      "title": "Adresses mél de gestionnaires additionnels qui seront ajoutés sans être notifiés par email",
       "type": "string"
     },
     {
@@ -243,7 +243,7 @@
       "example": "resytal",
       "format": "default",
       "name": "admin_source_donnees",
-      "title": "Admin : Identifiant décrivant la source de données",
+      "title": "Identifiant décrivant la source de données",
       "type": "string"
     }
   ],
