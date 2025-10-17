@@ -19,7 +19,7 @@ from api.serializers import FullCanteenSerializer
 from common.api import validata
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
-from common.utils.siret import normalise_siret
+from common.utils import utils as utils_utils
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.utils import CreationSource
 
@@ -259,7 +259,7 @@ class ImportCanteensView(APIView):
 
     @staticmethod
     def _validate_canteen(row):  # noqa C901
-        if not normalise_siret(row[0]).isdigit():
+        if not utils_utils.normalize_string(row[0]).isdigit():
             raise ValidationError({"siret": "Le SIRET doit être composé des chiffres"})
         if not row[5]:
             raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
@@ -274,8 +274,8 @@ class ImportCanteensView(APIView):
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
         if row[4]:
-            central_producer_siret = normalise_siret(row[4])
-            siret = normalise_siret(row[0])
+            central_producer_siret = utils_utils.normalize_string(row[4])
+            siret = utils_utils.normalize_string(row[0])
             if central_producer_siret == siret:
                 raise ValidationError(
                     {
@@ -317,12 +317,13 @@ class ImportCanteensView(APIView):
         silently_added_manager_emails,
         satellite_canteens_count=None,
     ):
-        siret = normalise_siret(row[0])
+        siret = utils_utils.normalize_string(row[0])
+        name = row[1].strip()
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
             if canteen_exists
-            else Canteen.objects.create(siret=siret, creation_source=CreationSource.IMPORT)
+            else Canteen.objects.create(name=name, siret=siret, creation_source=CreationSource.IMPORT)
         )
 
         if not canteen_exists:
@@ -339,7 +340,7 @@ class ImportCanteensView(APIView):
         canteen.name = row[1].strip()
         canteen.city_insee_code = row[2].strip() if row[2] else None
         canteen.postal_code = row[3].strip() if row[3] else None
-        canteen.central_producer_siret = normalise_siret(row[4]) if row[4] else None
+        canteen.central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
         canteen.daily_meal_count = row[5].strip()
         canteen.yearly_meal_count = row[6].strip()
         # sectors: see below

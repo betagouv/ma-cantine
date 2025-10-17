@@ -253,7 +253,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         We can only have one submitted teledeclaration per canteen per year
         """
-        canteen = CanteenFactory.create(siret="12345678912345", managers=[authenticate.user])
+        canteen = CanteenFactory.create(siret="21670482500019", managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )

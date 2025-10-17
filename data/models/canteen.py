@@ -11,6 +11,7 @@ from simple_history.models import HistoricalRecords
 from simple_history.utils import update_change_reason
 
 from common.utils import siret as utils_siret
+from common.utils import utils as utils_utils
 from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.models.sector import Sector
@@ -572,17 +573,29 @@ class Canteen(SoftDeletionModel):
         verbose_name="Source de création de la cantine",
     )
 
-    def save(self, **kwargs):
-        # cleanup some fields
-        if self.siret:
-            self.siret = utils_siret.normalise_siret(self.siret)
-        if self.siren_unite_legale:
-            self.siren_unite_legale = utils_siret.normalise_siret(self.siren_unite_legale)
+    def normalize_fields(self):
+        for field_name in ["siret", "siren_unite_legale", "epci", "central_producer_siret"]:
+            setattr(self, field_name, utils_utils.normalize_string(getattr(self, field_name)))
+
+    def optimize_logo(self):
         max_image_size = 1024
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
+
+    def set_region_from_department(self):
         if self.department:
             self.region = self._get_region()
+
+    def save(self, **kwargs):
+        """
+        - cleanup some fields (siret, siren_unite_legale, epci, central_producer_siret, logo)
+        - set region from department
+        - full_clean: run validations
+        """
+        self.normalize_fields()
+        self.optimize_logo()
+        self.set_region_from_department()
+        self.full_clean()
         super().save(**kwargs)
 
     @property

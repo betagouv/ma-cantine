@@ -1,4 +1,4 @@
 siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels,année_bilan,valeur_totale,valeur_bio,valeur_siqo,valeur_environnemental,valeur_autres_egalim,valeur_viandes,valeur_viandes_egalim,valeur_viandes_france,valeur_poissons,valeur_poissons_egalim
 21340172201787,Postcode only,,54460,,700,14000,,site,conceded,public,,2020,1000,500,100.1,0,0,0,0,0,0,0
-73282932000074,Citycode only,7293,,,700,14000,,site,conceded,public,,2020,1000,500,100.1,0,0,0,0,0,0,0
+21380185500015,Citycode only,7293,,,700,14000,,site,conceded,public,,2020,1000,500,100.1,0,0,0,0,0,0,0
 32441387130915,Both city and post code,7293,54460,,700,14000,,site,conceded,public,,2020,1000,500,100.1,0,0,0,0,0,0,0

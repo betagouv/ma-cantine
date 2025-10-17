@@ -1,6 +1,8 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from freezegun import freeze_time
 
+from data.department_choices import Department
 from data.factories import (
     CanteenFactory,
     DiagnosticFactory,
@@ -9,98 +11,130 @@ from data.factories import (
     UserFactory,
 )
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
+from data.region_choices import Region
+from data.utils import CreationSource
 
 
-class TestCanteenModel(TestCase):
-    def test_create_canteen(self):
-        # siret: normalize on save
-        canteen = CanteenFactory.create(siret="756 656 218 99905")
-        self.assertEqual(canteen.siret, "75665621899905")  # normalized
-        # siren_unite_legale: normalize on save
-        canteen = CanteenFactory.create(siren_unite_legale="756 656 218")
-        self.assertEqual(canteen.siren_unite_legale, "756656218")  # normalized
+class CanteenModelSaveTest(TestCase):
+    def test_canteen_name_validation(self):
+        for TUPLE_OK in [
+            ("  ", "  "),
+            (" canteen ", " canteen "),
+            ("Cantéen", "Cantéen"),
+            ("Canteen 123", "Canteen 123"),
+            ("Canteen - A !@#$%^&*()", "Canteen - A !@#$%^&*()"),
+        ]:
+            with self.subTest(name=TUPLE_OK):
+                canteen = CanteenFactory(name=TUPLE_OK[0])
+                self.assertEqual(canteen.name, TUPLE_OK[1])
+        for VALUE_NOT_OK in [None, ""]:
+            with self.subTest(name=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, Canteen.objects.create, name=VALUE_NOT_OK)
 
-    def test_create_canteen_siret_validation(self):
-        # both siret and siren_unite_legale can be empty or set
-        for siret in ["", None, "756 656 218 99905"]:
-            for siren_unite_legale in ["", None, "756 656 218"]:
-                CanteenFactory.create(siret=siret, siren_unite_legale=siren_unite_legale)
+    def test_canteen_siret_validation(self):
+        for TUPLE_OK in [
+            (None, None),
+            ("", ""),
+            ("  ", ""),
+            ("756 656 218 99905", "75665621899905"),
+            ("21590350100017", "21590350100017"),
+        ]:
+            with self.subTest(siret=TUPLE_OK):
+                canteen = CanteenFactory(siret=TUPLE_OK[0])
+                self.assertEqual(canteen.siret, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["123", "923412845000115", "1234567890123A"]:
+            with self.subTest(siret=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, siret=VALUE_NOT_OK)
 
-    def test_canteen_properties(self):
-        canteen_1 = CanteenFactory(
-            sectors=[SectorFactory.create(name="Sector 1")], line_ministry=Canteen.Ministries.CULTURE
-        )
-        canteen_2 = CanteenFactory()
+    def test_canteen_siren_unite_legale_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
+            with self.subTest(siren_unite_legale=TUPLE_OK):
+                canteen = CanteenFactory(siren_unite_legale=TUPLE_OK[0])
+                self.assertEqual(canteen.siren_unite_legale, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["123", "9234128450", "92341284A"]:
+            with self.subTest(siren_unite_legale=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, siren_unite_legale=VALUE_NOT_OK)
 
-        # is_spe
-        self.assertTrue(canteen_1.is_spe)
-        self.assertFalse(canteen_2.is_spe)
+    def test_canteen_epci_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
+            with self.subTest(epci=TUPLE_OK):
+                canteen = CanteenFactory(epci=TUPLE_OK[0])
+                self.assertEqual(canteen.epci, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["123", "9234128450", "92341284A"]:
+            with self.subTest(epci=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, epci=VALUE_NOT_OK)
 
-    def test_canteen_get_declaration_donnees_year_display(self):
-        canteen_with_diagnostic_cancelled = CanteenFactory(declaration_donnees_2024=False)
-        canteen_with_diagnostic_submitted = CanteenFactory(
-            siret="75665621899905",
-            production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=1,
-            declaration_donnees_2024=True,
-        )
-        canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=canteen_with_diagnostic_submitted.siret,
-            declaration_donnees_2024=True,
-        )
-        diagnostic_filled = DiagnosticFactory(
-            canteen=canteen_with_diagnostic_cancelled,
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            year=2024,
-            value_total_ht=1000,
-        )  # filled
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
-            td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
-            td_to_cancel.cancel()
-        diagnostic_filled_and_submitted = DiagnosticFactory(
-            canteen=canteen_with_diagnostic_submitted,
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            year=2024,
-            value_total_ht=1000,
-        )  # filled & submitted
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
-            Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
+    def test_canteen_management_type_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.ManagementType.values)]:
+            with self.subTest(management_type=TUPLE_OK):
+                canteen = CanteenFactory(management_type=TUPLE_OK[0])
+                self.assertEqual(canteen.management_type, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
+            with self.subTest(management_type=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, management_type=VALUE_NOT_OK)
 
-        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2023), "")
-        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2024), "")
-        self.assertEqual(canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2023), "")
-        self.assertEqual(
-            canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2024), "📩 Télédéclarée"
-        )
-        self.assertEqual(
-            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2023), ""
-        )
-        self.assertEqual(
-            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2024),
-            "📩 Télédéclarée (par CC)",
-        )
+    def test_canteen_production_type_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.ProductionType.values)]:
+            with self.subTest(production_type=TUPLE_OK):
+                canteen = CanteenFactory(production_type=TUPLE_OK[0])
+                self.assertEqual(canteen.production_type, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
+            with self.subTest(production_type=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, production_type=VALUE_NOT_OK)
 
-    @freeze_time("2024-01-20")
-    def test_appro_and_service_diagnostics_in_past_ordered_year_desc(self):
-        canteen = CanteenFactory.create()
-        DiagnosticFactory(canteen=canteen, year=2024)
-        DiagnosticFactory(canteen=canteen, year=2022)
-        DiagnosticFactory(canteen=canteen, year=2023)
-        canteen.refresh_from_db()
+    def test_canteen_economic_model_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.EconomicModel.values)]:
+            with self.subTest(economic_model=TUPLE_OK):
+                canteen = CanteenFactory(economic_model=TUPLE_OK[0])
+                self.assertEqual(canteen.economic_model, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
+            with self.subTest(economic_model=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, economic_model=VALUE_NOT_OK)
 
-        self.assertEqual(canteen.appro_diagnostics.count(), 2)
-        self.assertEqual(canteen.appro_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.service_diagnostics.count(), 2)
-        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
+    def test_canteen_line_ministry_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.Ministries.values)]:
+            with self.subTest(line_ministry=TUPLE_OK):
+                canteen = CanteenFactory(line_ministry=TUPLE_OK[0])
+                self.assertEqual(canteen.line_ministry, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
+            with self.subTest(line_ministry=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK)
 
+    def test_canteen_department_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Department.values)]:
+            with self.subTest(department=TUPLE_OK):
+                canteen = CanteenFactory(department=TUPLE_OK[0])
+                self.assertEqual(canteen.department, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid", "123", "999", "2a", "2C"]:
+            with self.subTest(department=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, department=VALUE_NOT_OK)
+
+    def test_canteen_region_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Region.values)]:
+            with self.subTest(region=TUPLE_OK):
+                canteen = CanteenFactory(region=TUPLE_OK[0])
+                self.assertEqual(canteen.region, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid", "123", "999"]:
+            with self.subTest(region=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, region=VALUE_NOT_OK)
+
+    def test_canteen_creation_source_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in CreationSource.values)]:
+            with self.subTest(creation_source=TUPLE_OK):
+                canteen = CanteenFactory(creation_source=TUPLE_OK[0])
+                self.assertEqual(canteen.creation_source, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid"]:
+            with self.subTest(creation_source=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, creation_source=VALUE_NOT_OK)
+
+
+class CanteenQuerySetTest(TestCase):
     def test_soft_delete_canteen(self):
         """
         The delete method should "soft delete" a canteen and have it hidden by default
         from querysets, unless specifically asked for
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         canteen.delete()
         qs = Canteen.objects.all()
         self.assertEqual(qs.count(), 0, "Soft deleted canteen is not visible in default queryset")
@@ -108,7 +142,7 @@ class TestCanteenModel(TestCase):
         self.assertEqual(qs.count(), 1, "Soft deleted canteens can be accessed in custom queryset")
 
 
-class TestCanteenVisibleQuerySetAndProperty(TestCase):
+class CanteenVisibleQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory(line_ministry=None)
@@ -132,7 +166,7 @@ class TestCanteenVisibleQuerySetAndProperty(TestCase):
         self.assertEqual(self.canteen_armee.publication_status_display_to_public, "draft")
 
 
-class TestCanteenCreatedBeforeQuerySet(TestCase):
+class CanteenCreatedBeforeQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         with freeze_time("2025-01-01"):  # before the 2024 campaign
@@ -152,14 +186,14 @@ class TestCanteenCreatedBeforeQuerySet(TestCase):
         self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2025).count(), 4)
 
 
-class TestCanteenCentralAndSatelliteQuerySet(TestCase):
+class CanteenCentralAndSatelliteQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_central_1 = CanteenFactory(
-            siret="75665621899905", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
+            siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
         )  # 1 missing
         cls.canteen_central_2 = CanteenFactory(
-            siret="75665621899906", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
+            siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
         )
         cls.canteen_on_site_central_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=cls.canteen_central_1.siret
@@ -237,7 +271,7 @@ class TestCanteenCentralAndSatelliteQuerySet(TestCase):
         )
 
 
-class TestCanteenPurchaseQuerySet(TestCase):
+class CanteenPurchaseQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         canteen_with_purchases = CanteenFactory()
@@ -258,7 +292,7 @@ class TestCanteenPurchaseQuerySet(TestCase):
         )
 
 
-class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
+class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         CanteenFactory()
@@ -336,12 +370,12 @@ class TestCanteenDiagnosticTeledeclarationQuerySet(TestCase):
         self.assertEqual(Canteen.objects.annotate_with_td_for_year(2022).filter(has_td_submitted=True).count(), 0)
 
 
-class TestCanteenSiretOrSirenUniteLegaleQuerySetAndProperty(TestCase):
+class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_siret_siren = CanteenFactory(siret="75665621899905", siren_unite_legale="756656218")  # OK
-        cls.canteen_siret_1 = CanteenFactory(siret="75665621899905", siren_unite_legale="")  # OK
-        cls.canteen_siret_2 = CanteenFactory(siret="75665621899905", siren_unite_legale=None)  # OK
+        cls.canteen_siret_siren = CanteenFactory(siret="21590350100017", siren_unite_legale="756656218")  # OK
+        cls.canteen_siret_1 = CanteenFactory(siret="21590350100017", siren_unite_legale="")  # OK
+        cls.canteen_siret_2 = CanteenFactory(siret="21590350100017", siren_unite_legale=None)  # OK
         cls.canteen_siren_1 = CanteenFactory(siret="", siren_unite_legale="756656218")  # OK
         cls.canteen_none_1 = CanteenFactory(siret="", siren_unite_legale="")
         cls.canteen_none_2 = CanteenFactory(siret="", siren_unite_legale=None)
@@ -355,17 +389,17 @@ class TestCanteenSiretOrSirenUniteLegaleQuerySetAndProperty(TestCase):
 
     def test_siret_or_siren_unite_legale_property(self):
         for canteen in [self.canteen_siret_siren, self.canteen_siret_1, self.canteen_siret_2]:
-            self.assertEqual(canteen.siret_or_siren_unite_legale, "75665621899905")
+            self.assertEqual(canteen.siret_or_siren_unite_legale, "21590350100017")
         for canteen in [self.canteen_siren_1, self.canteen_siren_2]:
             self.assertEqual(canteen.siret_or_siren_unite_legale, "756656218")
         for canteen in [self.canteen_none_1, self.canteen_none_2, self.canteen_none_3, self.canteen_none_4]:
             self.assertEqual(canteen.siret_or_siren_unite_legale, "")
 
 
-class TestCanteenCompleteQuerySetAndProperty(TestCase):
+class CanteenCompleteQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorFactory.create(name="Sector", category=Sector.Categories.ADMINISTRATION)
+        sector = SectorFactory(name="Sector", category=Sector.Categories.ADMINISTRATION)
         sector_line_ministry = SectorFactory(
             name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
         )
@@ -378,19 +412,19 @@ class TestCanteenCompleteQuerySetAndProperty(TestCase):
         }
         cls.canteen_central = CanteenFactory(
             **COMMON,
-            siret="75665621899905",
+            siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=1,
         )
         cls.canteen_central_incomplete = CanteenFactory(
             **COMMON,
-            siret="75665621899905",
+            siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=0,  # incomplete
         )
         cls.canteen_central_serving = CanteenFactory(
             **COMMON,
-            siret="75665621899905",
+            siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             daily_meal_count=12,
             satellite_canteens_count=1,
@@ -473,15 +507,15 @@ class TestCanteenCompleteQuerySetAndProperty(TestCase):
         self.assertEqual(Canteen.objects.has_missing_data().count(), 6)
 
 
-class TestCanteenAggregateQuerySet(TestCase):
+class CanteenAggregateQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorFactory.create(name="Sector", category=Sector.Categories.ADMINISTRATION)
+        sector = SectorFactory(name="Sector", category=Sector.Categories.ADMINISTRATION)
         sector_line_ministry = SectorFactory(
             name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
         )
         cls.canteen_central = CanteenFactory(
-            siret="75665621899905",
+            siret="21590350100017",
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
@@ -489,7 +523,7 @@ class TestCanteenAggregateQuerySet(TestCase):
             sectors=[sector],
         )
         cls.canteen_central_serving = CanteenFactory(
-            siret="75665621899905",
+            siret="21590350100017",
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             economic_model=Canteen.EconomicModel.PUBLIC,
@@ -544,3 +578,70 @@ class TestCanteenAggregateQuerySet(TestCase):
         self.assertEqual(result[0]["count"], 3)
         self.assertEqual(result[1]["sectors__category"], Sector.Categories.AUTRES)
         self.assertEqual(result[1]["count"], 1)
+
+
+class CanteenModelPropertiesTest(TestCase):
+    def test_canteen_is_spe(self):
+        canteen_1 = CanteenFactory(sectors=[SectorFactory(name="Sector 1")], line_ministry=Canteen.Ministries.CULTURE)
+        canteen_2 = CanteenFactory()
+        self.assertTrue(canteen_1.is_spe)
+        self.assertFalse(canteen_2.is_spe)
+
+    def test_canteen_get_declaration_donnees_year_display(self):
+        canteen_with_diagnostic_cancelled = CanteenFactory(declaration_donnees_2024=False)
+        canteen_with_diagnostic_submitted = CanteenFactory(
+            siret="21590350100017",
+            production_type=Canteen.ProductionType.CENTRAL,
+            satellite_canteens_count=1,
+            declaration_donnees_2024=True,
+        )
+        canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=canteen_with_diagnostic_submitted.siret,
+            declaration_donnees_2024=True,
+        )
+        diagnostic_filled = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_cancelled,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            value_total_ht=1000,
+        )  # filled
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
+            td_to_cancel.cancel()
+        diagnostic_filled_and_submitted = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_submitted,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            value_total_ht=1000,
+        )  # filled & submitted
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
+
+        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2023), "")
+        self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2024), "")
+        self.assertEqual(canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2023), "")
+        self.assertEqual(
+            canteen_with_diagnostic_submitted.get_declaration_donnees_year_display(2024), "📩 Télédéclarée"
+        )
+        self.assertEqual(
+            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2023), ""
+        )
+        self.assertEqual(
+            canteen_satellite_with_central_diagnostic_submitted.get_declaration_donnees_year_display(2024),
+            "📩 Télédéclarée (par CC)",
+        )
+
+    @freeze_time("2024-01-20")
+    def test_appro_and_service_diagnostics_in_past_ordered_year_desc(self):
+        canteen = CanteenFactory()
+        DiagnosticFactory(canteen=canteen, year=2024)
+        DiagnosticFactory(canteen=canteen, year=2022)
+        DiagnosticFactory(canteen=canteen, year=2023)
+        canteen.refresh_from_db()
+
+        self.assertEqual(canteen.appro_diagnostics.count(), 2)
+        self.assertEqual(canteen.appro_diagnostics.first().year, 2023)
+        self.assertEqual(canteen.service_diagnostics.count(), 2)
+        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
+        self.assertEqual(canteen.latest_published_year, 2023)

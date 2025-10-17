@@ -1,12 +1,8 @@
 from django.core.exceptions import ValidationError
 
 
-def normalise_siret(siret):
-    return siret.replace(" ", "").replace("\xa0", "")
-
-
-def is_valid_length_siren(siret: str) -> bool:
-    if len(siret) == 9:
+def is_valid_length_siren(siren: str) -> bool:
+    if len(siren) == 9:
         return True
 
 
@@ -27,8 +23,7 @@ def is_valid_luhn_siret(siret: str) -> bool:
 def validate_siren(siren):
     if siren is None or siren == "":
         return
-    siren = normalise_siret(siren)
-    if not is_valid_length_siren(siren):
+    if not siren.isdigit() or not is_valid_length_siren(siren):
         raise ValidationError("9 caractères numériques sont attendus")
 
 
@@ -39,8 +34,7 @@ def validate_siret(siret):
     """
     if siret is None or siret == "":
         return
-    siret = normalise_siret(siret)
-    if not is_valid_length_siret(siret):
+    if not siret.isdigit() or not is_valid_length_siret(siret):
         raise ValidationError("14 caractères numériques sont attendus")
     if not is_valid_luhn_siret(siret):
         raise ValidationError("Le numéro SIRET n'est pas valide.")

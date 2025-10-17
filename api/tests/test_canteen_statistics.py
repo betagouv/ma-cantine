@@ -27,7 +27,7 @@ class TestCanteenStatsApi(APITestCase):
             canteen_1 = CanteenFactory(
                 siret="21010034300016",
                 city_insee_code="01034",
-                epci="1",
+                epci="243400017",
                 pat_list=["1"],
                 department="01",
                 region="84",
@@ -53,9 +53,9 @@ class TestCanteenStatsApi(APITestCase):
             )
             canteen_diagnostic_1.teledeclare(applicant=UserFactory())
             canteen_2 = CanteenFactory(
-                siret="75665621899905",
+                siret="40419443300078",
                 city_insee_code="69123",
-                epci="1",
+                epci="243400017",
                 pat_list=["1", "2"],
                 department="69",
                 region="84",
@@ -85,9 +85,9 @@ class TestCanteenStatsApi(APITestCase):
             )
             canteen_diagnostic_2.teledeclare(applicant=UserFactory())
             canteen_3 = CanteenFactory(
-                siret="11007001800012",
+                siret="21380185500015",
                 city_insee_code="38185",
-                epci="2",
+                epci="200040715",
                 pat_list=["2"],
                 department="38",
                 region="84",
@@ -115,7 +115,7 @@ class TestCanteenStatsApi(APITestCase):
             CanteenFactory(
                 siret="21590350100017",
                 city_insee_code="59350",
-                epci="3",
+                epci="200093201",
                 pat_list=["3"],
                 department="59",
                 region="32",
@@ -126,7 +126,7 @@ class TestCanteenStatsApi(APITestCase):
             )
         with freeze_time("1990-01-01"):
             canteen_5 = CanteenFactory(
-                siret="12345678937462",
+                siret="21730065600014",
                 city_insee_code="00002",
                 epci=None,
                 sectors=None,
@@ -177,7 +177,7 @@ class TestCanteenStatsApi(APITestCase):
         date_in_2022_teledeclaration_campaign = "2022-08-30"
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
-            canteen = CanteenFactory(siret="75665621899905")
+            canteen = CanteenFactory(siret="21590350100017")
             # Diagnostic that should display 20% Bio and 45% other EGalim
             canteen_diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -219,7 +219,7 @@ class TestCanteenStatsApi(APITestCase):
         date_in_2022_teledeclaration_campaign = "2022-08-30"
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
-            canteen = CanteenFactory(siret="75665621899905")
+            canteen = CanteenFactory(siret="21590350100017")
             # Diagnostic that should display 20% Bio and 45% other EGalim
             canteen_diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
@@ -317,12 +317,14 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["canteenCount"], 1 + 1)
 
     def test_filter_by_epci(self):
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["1"]})
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["243400017"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["1", "2"]})
+        response = self.client.get(
+            reverse("canteen_statistics"), {"year": year_data, "epci": ["243400017", "200040715"]}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2 + 1)
@@ -460,11 +462,10 @@ class TestCanteenLocationsApi(APITestCase):
         CanteenFactory(department=Department.aisne, department_lib=Department.aisne.label)
         CanteenFactory(department=Department.ain, department_lib=Department.ain.label)
         # set region directly
-        CanteenFactory(region=Region.guadeloupe, region_lib=Region.guadeloupe.label, department=None)
+        CanteenFactory(department=None, region=Region.guadeloupe, region_lib=Region.guadeloupe.label)
         # create extra to check that list returned doesn't contain duplicates
         CanteenFactory(department=Department.aisne, department_lib=Department.aisne.label)
-        CanteenFactory(department="999")  # not a department, checking None on region
-        CanteenFactory(region="", department="")  # checking exlusion of blank strings
+        CanteenFactory(department="", region="")  # checking exlusion of blank strings
 
         response = self.client.get(reverse("canteen_locations"))
 
@@ -474,7 +475,6 @@ class TestCanteenLocationsApi(APITestCase):
         self.assertEqual(Region.guadeloupe, body["regions"][0])
         self.assertEqual(Region.hauts_de_france, body["regions"][1])
         self.assertEqual(Region.auvergne_rhone_alpes, body["regions"][2])
-        self.assertEqual(len(body["departments"]), 3)
+        self.assertEqual(len(body["departments"]), 2)
         self.assertIn(Department.ain, body["departments"][0])
         self.assertIn(Department.aisne, body["departments"][1])
-        self.assertIn("999", body["departments"])

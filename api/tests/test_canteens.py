@@ -783,7 +783,7 @@ class TestCanteenActionApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
-            siret="75665621899905",
+            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
@@ -794,12 +794,12 @@ class TestCanteenActionApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
-            siret="75665621899905",
+            siret="21340172201787",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        central_no_sectors_siret = "98032330938461"
+        central_no_sectors_siret = "21380185500015"
         complete_central_no_sectors = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL,
             management_type=Canteen.ManagementType.DIRECT,
@@ -811,7 +811,7 @@ class TestCanteenActionApi(APITestCase):
             satellite_canteens_count=1,
             sectors=None,
         )
-        central_with_one_sat_siret = "98032330938462"
+        central_with_one_sat_siret = "21670482500019"
         complete_central_with_diff_sat_count = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL,
             management_type=Canteen.ManagementType.DIRECT,
@@ -830,7 +830,7 @@ class TestCanteenActionApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
-            siret="75665621899909",
+            siret="21640122400011",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
@@ -842,12 +842,12 @@ class TestCanteenActionApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
-            siret="75665621899905",
+            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        central_siret = "75665621899908"
+        central_siret = "92341284500011"
         needs_diagnostic_mode = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL, siret=central_siret, managers=[authenticate.user]
         )
@@ -869,11 +869,11 @@ class TestCanteenActionApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             daily_meal_count=None,
             yearly_meal_count=365,
-            siret="37856520465587",
+            siret="40419443300078",
             managers=[authenticate.user],
         )
         too_many_sectors = CanteenFactory.create(
-            siret="37856520465589",
+            siret="83014132100034",
             managers=[authenticate.user],
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
@@ -894,7 +894,7 @@ class TestCanteenActionApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
-            siret="75665621899905",
+            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
@@ -1081,7 +1081,7 @@ class TestCanteenActionApi(APITestCase):
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], "35_fill_canteen_data")
 
-        canteen.central_producer_siret = "75665621899905"
+        canteen.central_producer_siret = "21590350100017"
         canteen.save()
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
@@ -1251,7 +1251,7 @@ class TestCanteenActionApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
-            siret="75665621899905",
+            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             sectors=[SectorFactory.create()],
@@ -1283,7 +1283,7 @@ class TestCanteenActionApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
-            siret="75665621899905",
+            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             sectors=[SectorFactory.create()],
@@ -1329,7 +1329,7 @@ class TestCanteenActionApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             yearly_meal_count=1000,
             daily_meal_count=12,
-            siret="75665621899905",
+            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             sectors=[SectorFactory.create()],
@@ -1340,7 +1340,7 @@ class TestCanteenActionApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             yearly_meal_count="123",
             daily_meal_count="12",
-            siret="75665621899905",
+            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             management_type=Canteen.ManagementType.DIRECT,

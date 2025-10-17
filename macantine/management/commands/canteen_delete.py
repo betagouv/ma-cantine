@@ -3,7 +3,7 @@ Why this script?
 Some canteens were previous imported but need to be removed.
 
 How to run?
-python manage.py canteen_delete --canteen-siret-list 12345678901234,23456789012345
+python manage.py canteen_delete --canteen-siret-list 92341284500011,23456789012345
 
 Ran on 2025-04-24
 """
