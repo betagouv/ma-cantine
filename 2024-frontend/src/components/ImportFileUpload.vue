@@ -19,14 +19,15 @@ const accept = props.fileOptions ? props.fileOptions.accept : ".csv"
 
 /* Upload */
 const isProcessingFile = ref(false)
+
 const upload = (file) => {
   if (isProcessingFile.value) return
   isProcessingFile.value = true
-  const fileExtension = file[0].name.split(".").pop()
+  const fileType = file[0].type
   initErrors()
   importFile({ file: file, apiUrl: props.apiUrl })
     .then((json) => {
-      if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count, type: fileExtension })
+      if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count, type: fileType })
       else if (json.duplicateFile) duplicatedUpload(json.duplicatePurchases)
       else if (json.errorCount > 0) errorUpload({ count: json.errorCount, errors: json.errors })
       else if (json.errors.length > 0) errorUpload({ count: json.errors.length, errors: json.errors })
