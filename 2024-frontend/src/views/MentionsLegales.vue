@@ -9,13 +9,15 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <p>
         La Plateforme
         <router-link :to="{ name: 'Vue2Home' }">https://ma-cantine.agriculture.gouv.fr/</router-link>
-        est éditée par la Direction générale de l’alimentation du ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire.
+        est éditée par la Direction générale de l’alimentation du ministère de l’Agriculture, de l’Agro-alimentaire et
+        de la Souveraineté alimentaire.
       </p>
     </section>
     <section>
       <h2>Directeur ou directrice de la publication</h2>
       <p>
-        Maud FAIPOUX, directrice générale de l’alimentation du ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire.
+        Maud FAIPOUX, directrice générale de l’alimentation du ministère de l’Agriculture, de l’Agro-alimentaire et de
+        la Souveraineté alimentaire.
       </p>
     </section>
     <section>

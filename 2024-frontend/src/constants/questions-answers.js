@@ -52,7 +52,8 @@ const groups = [
       {
         content:
           "Oui. Les gestionnaires de restaurants satellites peuvent se créer un compte et ajouter leur cantine, sauf si la cuisine centrale qui les dessert l’a déjà fait. Dans ce cas, je peux être gestionnaire additionnel de cet établissement, en demandant un accès à la cuisine centrale. A moyen terme, les restaurants satellites devront indiquer leurs propres données en matière d’approvisionnement.",
-        title: "Je suis gestionnaire d'un restaurant satellite, suis-je concerné par l'inscription sur « ma cantine » ?",
+        title:
+          "Je suis gestionnaire d'un restaurant satellite, suis-je concerné par l'inscription sur « ma cantine » ?",
       },
       {
         content:

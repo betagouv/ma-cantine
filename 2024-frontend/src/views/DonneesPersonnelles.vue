@@ -19,8 +19,9 @@ onMounted(() => {
         1 - Qui est responsable de traitement ?
       </h2>
       <p>
-        Le responsable de l’utilisation des données est la Direction générale de l’alimentation du ministère de l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire, représentée par Madame Maud FAIPOUX, Directrice générale de
-        l’Alimention.
+        Le responsable de l’utilisation des données est la Direction générale de l’alimentation du ministère de
+        l’Agriculture, de l’Agro-alimentaire et de la Souveraineté alimentaire, représentée par Madame Maud FAIPOUX,
+        Directrice générale de l’Alimention.
       </p>
     </section>
     <section>
