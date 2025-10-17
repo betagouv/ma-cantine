@@ -346,7 +346,7 @@ class ImportCanteensView(APIView):
         # sectors: see below
         canteen.production_type = row[8].strip().lower()
         canteen.management_type = row[9].strip().lower()
-        canteen.economic_model = row[10].strip().lower() if row[10] else None
+        canteen.economic_model = row[10].strip().lower()
         if self.is_admin_import:
             canteen.line_ministry = (
                 next((key for key, value in Canteen.Ministries.choices if value == row[12].strip()), None)
