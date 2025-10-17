@@ -396,11 +396,7 @@ class ImportCanteensView(APIView):
                         "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[self.silent_manager_idx]}) n'est pas valide."
                     }
                 )
-
-            try:
-                import_source = row[self.silent_manager_idx + 1].strip()
-            except Exception:
-                raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
+            import_source = row[self.silent_manager_idx + 1].strip()
 
         return (import_source, silently_added_manager_emails)
 
