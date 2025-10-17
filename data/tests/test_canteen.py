@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from freezegun import freeze_time
 
 from data.department_choices import Department
@@ -15,7 +15,7 @@ from data.region_choices import Region
 from data.utils import CreationSource
 
 
-class CanteenModelSaveTest(TestCase):
+class CanteenModelSaveTest(TransactionTestCase):
     def test_canteen_name_validation(self):
         for TUPLE_OK in [
             ("  ", "  "),
