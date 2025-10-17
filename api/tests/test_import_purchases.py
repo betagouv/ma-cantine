@@ -5,8 +5,10 @@ import re
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
+from unittest import skipIf
 from unittest.mock import patch
 
+from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -76,6 +78,7 @@ class TestPurchaseSchema(TestCase):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class TestPurchaseImport(APITestCase):
     def _assertImportFailureCreated(self, user, type, file_path):
         self.assertTrue(ImportFailure.objects.count() >= 1)

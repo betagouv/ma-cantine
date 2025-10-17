@@ -561,6 +561,7 @@ SHOW_JE_DONNE_MON_AVIS = os.getenv("SHOW_JE_DONNE_MON_AVIS") == "True"
 # Custom testing
 TEST_RUNNER = "macantine.testrunner.MaCantineTestRunner"
 OVERRIDE_TEST_SEED = os.getenv("OVERRIDE_TEST_SEED", None)
+SKIP_TESTS_THAT_REQUIRE_INTERNET = os.getenv("SKIP_TESTS_THAT_REQUIRE_INTERNET", False)
 
 # Automatic emails
 TEMPLATE_ID_NO_CANTEEN_FIRST = (
