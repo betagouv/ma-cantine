@@ -509,9 +509,9 @@ class TestCanteenImport(APITestCase):
         self.assertEqual(Canteen.objects.count(), 3)
 
     @authenticate
-    def test_import_excel_file(self):
+    def test_import_excel_file_xlsx(self):
         """
-        User can import excel file
+        User can import Excel file (.xlsx)
         """
         file_path = "./api/tests/files/canteens/canteens_good.xlsx"
         with open(file_path, "rb") as canteen_file:
