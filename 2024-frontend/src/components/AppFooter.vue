@@ -16,7 +16,11 @@ const descText =
     :afterMandatoryLinks="[
       { text: 'Conditions générales d\'utilisation', to: { name: 'ConditionsGeneralesUtilisation' } },
       { text: 'Plan du site', to: { name: 'PlanDuSite' } },
-      { text: 'Statistiques', href: 'https://ma-cantine-metabase.cleverapps.io/public/dashboard/0589649a-fabc-4001-82d6-f5f4fc15710d' },
+      {
+        text: 'Statistiques',
+        href: 'https://ma-cantine-metabase.cleverapps.io/public/dashboard/0589649a-fabc-4001-82d6-f5f4fc15710d',
+        target: '_blank',
+      },
     ]"
     :desc-text
     licenceTo="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE"

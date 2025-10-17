@@ -88,8 +88,9 @@
           <router-link v-if="link.to" class="caption px-0 grey--text text--darken-2" :to="link.to">
             {{ link.text }}
           </router-link>
-          <a v-else-if="link.href" class="caption px-0 grey--text text--darken-2" :href="link.href">
+          <a v-else-if="link.href" class="caption px-0 grey--text text--darken-2" :href="link.href" target="_blank">
             {{ link.text }}
+            <v-icon small color="grey-darken-2" class="ml-1">mdi-open-in-new</v-icon>
           </a>
           <div class="footer-divider mx-4" v-if="index < bottomLinks.length - 1"></div>
         </li>
