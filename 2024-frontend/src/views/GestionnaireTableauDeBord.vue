@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from "vue"
 import { useRootStore } from "@/stores/root"
+import GestionnairesGuides from "@/components/GestionnairesGuides.vue"
+
 const store = useRootStore()
 
 const canteenSentence = computed(() => {
@@ -14,9 +16,8 @@ const canteenSentence = computed(() => {
 <template>
   <div>
     <h1>Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
-    <p class="fr-text--lead fr-mb-0">
-      {{ canteenSentence }}
-    </p>
+    <p class="fr-text--lead">{{ canteenSentence }}</p>
   </div>
+  <GestionnairesGuides />
   <pre>{{ store }}</pre>
 </template>
