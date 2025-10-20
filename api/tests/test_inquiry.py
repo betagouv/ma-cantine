@@ -29,7 +29,7 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         title = "Demande de support de test@example.com - fonctionnalité"
-        body = "Nom/Prénom\n---\nTester\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
+        body = "Nom/Prénom\n---\nTester\nSIRET ou SIREN\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         # email is sent to admins
         email = mail.outbox[0]
@@ -55,7 +55,7 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         title = "(DEMO) Demande de support de test@example.com - fonctionnalité"
-        body = "Nom/Prénom\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
+        body = "Nom/Prénom\n---\nNon renseigné\nSIRET ou SIREN\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         # email is sent to admins
         email = mail.outbox[0]
@@ -95,6 +95,7 @@ class TestInquiry(APITestCase):
             "from": "test@example.com",
             "inquiryType": "cantine SIRET",
             "message": "I need help with the functionality of the app\nHow do I do something?",
+            "siretOrSiren": "12345678901234",
             "meta": {
                 "userId": "123456789",
                 "userAgent": "Mozilla",
@@ -103,7 +104,7 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         title = "Demande de support de test@example.com - cantine SIRET"
-        body = "Nom/Prénom\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
+        body = "Nom/Prénom\n---\nNon renseigné\nSIRET ou SIREN\n---\n12345678901234\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         # email is sent to admins
         email = mail.outbox[0]
