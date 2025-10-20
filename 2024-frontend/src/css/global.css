@@ -139,3 +139,19 @@ address {
 .ma-cantine--flex-grow {
     flex-grow: 1 !important;
 }
+
+/* BACKGROUND */
+.ma-cantine--bg-blue {
+    position: relative;
+}
+
+.ma-cantine--bg-blue::before {
+    z-index: -1;
+    content: "";
+    background-color: var(--background-alt-blue-france);
+    position: absolute;
+    top: 0;
+    left: calc((100vw - 100%) / 2 * -1);
+    width: 100vw;
+    height: 100%;
+}
