@@ -12,7 +12,10 @@
       "format": "default",
       "name": "siret",
       "title": "SIRET de l'établissement",
-      "type": "any"
+      "type": [
+        "number",
+        "string"
+      ]
     },
     {
       "constraints": {
@@ -58,7 +61,7 @@
       "format": "default",
       "name": "siret_livreur_repas",
       "title": "SIRET de la cuisine centrale",
-      "type": "any"
+      "type": null
     },
     {
       "constraints": {
