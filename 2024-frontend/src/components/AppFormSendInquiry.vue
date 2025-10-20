@@ -98,20 +98,6 @@ const sendInquiry = () => {
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-lg-8">
         <form class="fr-mb-4w" @submit.prevent="validateForm">
-          <DsfrInputGroup
-            v-model="form.fromEmail"
-            label="Votre adresse électronique *"
-            :label-visible="true"
-            hint="Format attendu : nom@domaine.fr"
-            :error-message="formatError(v$.fromEmail)"
-          />
-          <DsfrInputGroup v-model="form.name" label="Prénom et nom" :label-visible="true" />
-          <DsfrInputGroup
-            v-model="form.username"
-            label="Nom d'utilisateur"
-            hint="Laissez le champ vide si vous n'êtes pas inscrit sur la plateforme."
-            :label-visible="true"
-          />
           <DsfrSelect
             v-model="form.inquiryType"
             label="Type de demande *"
@@ -119,17 +105,41 @@ const sendInquiry = () => {
             :options="inquiries"
             :error-message="formatError(v$.inquiryType)"
           />
-          <DsfrInputGroup
-            v-model="form.siretOrSiren"
-            label="SIRET ou SIREN de l'unité légale de rattachement"
-            hint="Laissez le champ vide si la demande ne concerne pas une cantine."
-            :label-visible="true"
-          />
+          <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
+            <div class="fr-col-12 fr-col-md-6">
+              <DsfrInputGroup
+                v-model="form.fromEmail"
+                label="Votre adresse électronique *"
+                :label-visible="true"
+                :error-message="formatError(v$.fromEmail)"
+              />
+            </div>
+            <div class="fr-col-12 fr-col-md-6">
+              <DsfrInputGroup v-model="form.name" label="Prénom et Nom" :label-visible="true" />
+            </div>
+            <div class="fr-col-12 fr-col-md-6">
+              <DsfrInputGroup
+                v-model="form.username"
+                label="Nom d'utilisateur"
+                hint="Laissez le champ vide si vous n'êtes pas inscrit sur la plateforme"
+                :label-visible="true"
+              />
+            </div>
+            <div class="fr-col-12 fr-col-md-6">
+              <DsfrInputGroup
+                v-model="form.siretOrSiren"
+                label="SIRET ou SIREN de l'unité légale de rattachement"
+                hint="Laissez le champ vide si la demande ne concerne pas une cantine"
+                :label-visible="true"
+              />
+            </div>
+          </div>
+
           <DsfrInputGroup
             v-model="form.message"
             class="app-form-send-inquiry__textarea"
             label="Message *"
-            hint="Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc)."
+            hint="Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc)"
             :label-visible="true"
             is-textarea
             rows="8"
