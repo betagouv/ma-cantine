@@ -122,7 +122,7 @@ const sendInquiry = () => {
           <DsfrInputGroup
             v-model="form.siretOrSiren"
             label="SIRET ou SIREN de l'unité légale de rattachement"
-            hint="Laissez vide si la demande ne concerne pas une cantine."
+            hint="Laissez le champ vide si la demande ne concerne pas une cantine."
             :label-visible="true"
           />
           <DsfrInputGroup
