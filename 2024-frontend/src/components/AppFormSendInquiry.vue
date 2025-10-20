@@ -35,6 +35,7 @@ const initFields = () => {
   form.name = defaultName
   form.inquiryType = ""
   form.message = ""
+  form.siretOrSiren = ""
 }
 initFields()
 
@@ -60,12 +61,13 @@ const getInquiryTypeDisplay = (type) => {
 
 /* Send Form */
 const sendInquiry = () => {
-  const { fromEmail, name, message, inquiryType } = form
+  const { fromEmail, name, message, inquiryType, siretOrSiren } = form
   const inquiryTypeDisplay = getInquiryTypeDisplay(inquiryType)
   const payload = {
     from: fromEmail,
     name: name,
     message: message,
+    siretOrSiren: siretOrSiren,
     inquiryType: inquiryTypeDisplay,
     meta,
   }
@@ -106,6 +108,12 @@ const sendInquiry = () => {
             :label-visible="true"
             :options="inquiries"
             :error-message="formatError(v$.inquiryType)"
+          />
+          <DsfrInputGroup
+            v-model="form.siretOrSiren"
+            label="SIRET ou SIREN de l'unité légale de rattachement"
+            hint="Laissez vide si la demande ne concerne pas une cantine."
+            :label-visible="true"
           />
           <DsfrInputGroup
             v-model="form.message"
