@@ -16,6 +16,7 @@ class InquiryView(APIView):
         try:
             email = request.data.get("from", "").strip()
             name = request.data.get("name")
+            username = request.data.get("username")
             message = request.data.get("message")
             siret_or_siren = request.data.get("siret_or_siren")
             inquiry_type = request.data.get("inquiry_type", "autre")
@@ -26,6 +27,7 @@ class InquiryView(APIView):
             title = f"Demande de support de {email} - {inquiry_type}"
 
             body = f"Nom/Prénom\n---\n{name or 'Non renseigné'}"
+            body = f"Nom d'utilisateur\n---\n{username or 'Non renseigné'}"
             body += f"\nSIRET ou SIREN\n---\n{siret_or_siren or 'Non renseigné'}"
             body += f"\nMessage\n---\n{message}"
             body += "\nDétails\n---"
