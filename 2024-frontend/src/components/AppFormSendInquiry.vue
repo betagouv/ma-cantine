@@ -6,7 +6,6 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import { trackEvent } from "@/services/matomo.js"
 import { inquiries } from "@/constants/form-send-inquiry.js"
-import AppLinkMailto from "@/components/AppLinkMailto.vue"
 
 /* Store */
 const store = useRootStore()
@@ -79,9 +78,9 @@ const sendInquiry = () => {
         message: "Votre message a bien été envoyé. Nous reviendrons vers vous dans les plus brefs délais.",
       })
 
-      trackEvent({category: "inquiry", action: "send", value: inquiryType})
+      trackEvent({ category: "inquiry", action: "send", value: inquiryType })
       initFields()
-      window.scrollTo(0,0)
+      window.scrollTo(0, 0)
       v$.value.$reset()
     })
     .catch((e) => store.notifyServerError(e))
@@ -120,13 +119,6 @@ const sendInquiry = () => {
           />
           <DsfrButton type="submit" icon="fr-icon-send-plane-fill" label="Envoyer" />
         </form>
-        <DsfrCallout>
-          <p>
-            Si vous n'arrivez pas à utiliser le formulaire ci-dessus, vous pouvez nous contacter directement par email à
-            l'adresse suivante:
-            <AppLinkMailto />
-          </p>
-        </DsfrCallout>
       </div>
       <div class="fr-col-4 fr-hidden fr-unhidden-lg">
         <img :src="sittingDoodle" class="app-form-send-inquiry__illustration" />
