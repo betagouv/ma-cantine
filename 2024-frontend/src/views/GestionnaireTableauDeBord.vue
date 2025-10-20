@@ -19,5 +19,4 @@ const canteenSentence = computed(() => {
     <p class="fr-text--lead">{{ canteenSentence }}</p>
   </div>
   <GestionnairesGuides />
-  <pre>{{ store }}</pre>
 </template>
