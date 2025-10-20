@@ -109,7 +109,7 @@ const sendInquiry = () => {
             <div class="fr-col-12 fr-col-lg-6">
               <DsfrInputGroup
                 v-model="form.fromEmail"
-                label="Votre adresse électronique *"
+                label="Adresse électronique *"
                 :label-visible="true"
                 :error-message="formatError(v$.fromEmail)"
               />
@@ -128,7 +128,7 @@ const sendInquiry = () => {
             <div class="fr-col-12 fr-col-lg-6">
               <DsfrInputGroup
                 v-model="form.siretOrSiren"
-                label="SIRET ou SIREN de l'unité légale de rattachement"
+                label="SIRET de la cantine ou SIREN de rattachement"
                 hint="Laissez le champ vide si la demande ne concerne pas une cantine"
                 :label-visible="true"
               />
