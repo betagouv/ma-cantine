@@ -11,11 +11,7 @@
       "example": "49463556926130",
       "format": "default",
       "name": "siret",
-      "title": "SIRET de l'établissement",
-      "type": [
-        "number",
-        "string"
-      ]
+      "title": "SIRET de l'établissement"
     },
     {
       "constraints": {
@@ -60,8 +56,7 @@
       "example": "29969025300230",
       "format": "default",
       "name": "siret_livreur_repas",
-      "title": "SIRET de la cuisine centrale",
-      "type": null
+      "title": "SIRET de la cuisine centrale"
     },
     {
       "constraints": {
