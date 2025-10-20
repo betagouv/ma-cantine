@@ -14,9 +14,11 @@ const canteenSentence = computed(() => {
 </script>
 
 <template>
-  <div>
+  <section>
     <h1>Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
     <p class="fr-text--lead">{{ canteenSentence }}</p>
-  </div>
-  <GestionnairesGuides />
+  </section>
+  <section>
+    <GestionnairesGuides />
+  </section>
 </template>
