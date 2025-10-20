@@ -27,7 +27,7 @@ class InquiryView(APIView):
             title = f"Demande de support de {email} - {inquiry_type}"
 
             body = f"Nom/Prénom\n---\n{name or 'Non renseigné'}"
-            body = f"Nom d'utilisateur\n---\n{username or 'Non renseigné'}"
+            body += f"\nNom d'utilisateur\n---\n{username or 'Non renseigné'}"
             body += f"\nSIRET ou SIREN\n---\n{siret_or_siren or 'Non renseigné'}"
             body += f"\nMessage\n---\n{message}"
             body += "\nDétails\n---"
