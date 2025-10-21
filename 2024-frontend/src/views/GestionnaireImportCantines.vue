@@ -18,8 +18,8 @@ const exampleFile = {
   size: "496 octets",
 }
 const fileOptions = {
-  hint: "Extensions de fichier autorisées : Excel (.xlsx), CSV (.csv), TSV (.tsv)",
-  accept: ".csv,.tsv,.xlsx",
+  hint: "Extensions de fichier autorisées : Excel (.xlsx, .xls), CSV (.csv), TSV (.tsv)",
+  accept: ".csv,.tsv,.xlsx,.xls",
 }
 
 /* Success */

@@ -4,7 +4,7 @@ const props = defineProps(["exampleFile", "hasExcel"])
 
 const allowedFormats = computed(() => {
   let format = "au format CSV (.csv)"
-  if (props.hasExcel) format += "  ou Excel (.xlsx)"
+  if (props.hasExcel) format += "  ou Excel (.xlsx, .xls)"
   return format
 })
 </script>
