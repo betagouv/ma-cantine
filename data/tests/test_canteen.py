@@ -216,6 +216,55 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(line_ministry=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK)
 
+    def test_canteen_central_producer_siret_required_if_satellite_validation(self):
+        for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL]:
+            for TUPLE_OK in [
+                ("756 656 218 99905", "75665621899905"),
+                ("21590350100017", "21590350100017"),
+                (75665621899905, "75665621899905"),
+            ]:
+                with self.subTest(
+                    production_type=production_type,
+                    central_producer_siret=TUPLE_OK[0],
+                ):
+                    canteen = CanteenFactory(production_type=production_type, central_producer_siret=TUPLE_OK[0])
+                    self.assertEqual(canteen.central_producer_siret, TUPLE_OK[1])
+
+            for VALUE_NOT_OK in [None, ""]:
+                with self.subTest(
+                    production_type=production_type,
+                    central_producer_siret=VALUE_NOT_OK,
+                ):
+                    self.assertRaises(
+                        ValidationError,
+                        CanteenFactory,
+                        production_type=production_type,
+                        central_producer_siret=VALUE_NOT_OK,
+                    )
+        for production_type in [
+            Canteen.ProductionType.CENTRAL,
+            Canteen.ProductionType.CENTRAL_SERVING,
+            Canteen.ProductionType.ON_SITE,
+        ]:
+            for TUPLE_OK in [(None, None), ("", "")]:
+                with self.subTest(
+                    production_type=production_type,
+                    central_producer_siret=TUPLE_OK[0],
+                ):
+                    canteen = CanteenFactory(production_type=production_type, central_producer_siret=TUPLE_OK[0])
+                    self.assertEqual(canteen.central_producer_siret, TUPLE_OK[1])
+            for VALUE_NOT_OK in ["756 656 218 99905", "21590350100017", 75665621899905]:
+                with self.subTest(
+                    production_type=production_type,
+                    siret=VALUE_NOT_OK,
+                ):
+                    self.assertRaises(
+                        ValidationError,
+                        CanteenFactory,
+                        production_type=production_type,
+                        central_producer_siret=VALUE_NOT_OK,
+                    )
+
     def test_canteen_creation_source_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in CreationSource.values)]:
             with self.subTest(creation_source=TUPLE_OK[0]):

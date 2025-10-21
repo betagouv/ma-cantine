@@ -109,3 +109,31 @@ def validate_canteen_meal_count_fields(instance):
                 "Le nombre de repas servis annuellement doit être supérieur au nombre de repas servis quotidiennement.",
             )
     return errors
+
+
+def validate_canteen_central_producer_siret_field(instance):
+    """
+    - clean_fields() (called by full_clean()) already checks that
+    the central_producer_siret field is the correct length and format
+    - extra validation:
+        - satellite: central_producer_siret must be filled
+        - not satellite: central_producer_siret must be empty
+    """
+    errors = {}
+    field_name = "central_producer_siret"
+    value = getattr(instance, field_name)
+    if instance.is_satellite:
+        if not value:
+            utils_utils.add_validation_error(
+                errors,
+                "central_producer_siret",
+                "Cantine satellite : le champ ne peut pas être vide.",
+            )
+    else:
+        if value:
+            utils_utils.add_validation_error(
+                errors,
+                "central_producer_siret",
+                "Le champ ne peut être rempli que pour les cantines satellites.",
+            )
+    return errors
