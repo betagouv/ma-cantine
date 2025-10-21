@@ -271,7 +271,9 @@ class TestTeledeclarationCreateApi(APITestCase):
         A few canteens don't have SIRETs - make sure teledeclarations for
         different canteens with no SIRET aren't flagged as duplicates
         """
-        canteen = CanteenFactory.create(siret="", managers=[authenticate.user])
+        canteen = CanteenFactory.create(managers=[authenticate.user])
+        Canteen.objects.filter(id=canteen.id).update(siret="")
+        canteen.refresh_from_db()
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
@@ -281,7 +283,9 @@ class TestTeledeclarationCreateApi(APITestCase):
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        canteen2 = CanteenFactory.create(siret="", managers=[authenticate.user])
+        canteen2 = CanteenFactory.create(managers=[authenticate.user])
+        Canteen.objects.filter(id=canteen2.id).update(siret="")
+        canteen2.refresh_from_db()
         diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=2021)
 
         payload = {"diagnosticId": diagnostic2.id}

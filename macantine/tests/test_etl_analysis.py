@@ -92,7 +92,9 @@ class TestETLAnalysisTD(TestCase):
         canteen_deleted = CanteenFactory.create(
             siret="92341284500011", deletion_date=timezone.make_aware(datetime.strptime("2023-03-31", "%Y-%m-%d"))
         )
-        canteen_no_siret = CanteenFactory.create()
+        canteen_without_siret = CanteenFactory.create()
+        Canteen.objects.filter(id=canteen_without_siret.id).update(siret=None)  # override validations
+        canteen_without_siret.refresh_from_db()
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2022, diagnostic_type=None, teledeclaration_id=1)
@@ -101,10 +103,10 @@ class TestETLAnalysisTD(TestCase):
                 canteen=canteen_deleted, year=2022, diagnostic_type=None, teledeclaration_id=2
             )
             diagnostic_canteen_deleted.teledeclare(applicant=applicant)
-            diagnostic_canteen_no_siret = DiagnosticFactory(
-                canteen=canteen_no_siret, year=2022, diagnostic_type=None, teledeclaration_id=3
+            diagnostic_canteen_without_siret = DiagnosticFactory(
+                canteen=canteen_without_siret, year=2022, diagnostic_type=None, teledeclaration_id=3
             )
-            diagnostic_canteen_no_siret.teledeclare(applicant=applicant)
+            diagnostic_canteen_without_siret.teledeclare(applicant=applicant)
 
         etl_stats = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_stats.extract_dataset()

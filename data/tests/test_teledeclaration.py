@@ -17,10 +17,8 @@ class TeledeclarationQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.valid_canteen_1 = CanteenFactory(siret="92341284500011", deletion_date=None, yearly_meal_count=100)
-        cls.valid_canteen_2 = CanteenFactory(siren_unite_legale="123456789", deletion_date=None)
-        cls.valid_canteen_3 = CanteenFactory(
-            siret="83014132100034", siren_unite_legale="123456789", deletion_date=None
-        )
+        cls.valid_canteen_2 = CanteenFactory(siret=None, siren_unite_legale="123456789", deletion_date=None)
+        cls.valid_canteen_3 = CanteenFactory(siret=None, siren_unite_legale="123456789", deletion_date=None)
         cls.valid_canteen_4 = CanteenFactory(siret="40419443300078", deletion_date=None)
         Canteen.objects.filter(id=cls.valid_canteen_4.id).update(yearly_meal_count=0)  # not aberrant
         cls.valid_canteen_4.refresh_from_db()
@@ -31,7 +29,9 @@ class TeledeclarationQuerySetTest(TestCase):
             siret="21640122400011",
             line_ministry=Canteen.Ministries.ARMEE,
         )
-        cls.invalid_canteen = CanteenFactory(siret="", deletion_date=None)  # siret missing
+        cls.invalid_canteen = CanteenFactory(deletion_date=None)
+        Canteen.objects.filter(id=cls.invalid_canteen.id).update(siret="")  # siret missing
+        cls.invalid_canteen.refresh_from_db()
         cls.deleted_canteen = CanteenFactory(
             siret="21730065600014",
             deletion_date=now().replace(month=3, day=1),

@@ -559,6 +559,7 @@ class TestDiagnosticsApi(APITestCase):
             canteen=canteen_with_complete_diag, year=last_year, value_total_ht=10000
         )
 
+        # siret needs to be filled for the diag to be teledeclarable
         canteen_with_incomplete_data = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
@@ -566,9 +567,10 @@ class TestDiagnosticsApi(APITestCase):
             daily_meal_count=12,
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
-            siret=None,  # this needs to be filled for the diag to be teledeclarable
             managers=[authenticate.user],
         )
+        Canteen.objects.filter(id=canteen_with_incomplete_data.id).update(siret=None)
+        canteen_with_incomplete_data.refresh_from_db()
         DiagnosticFactory.create(canteen=canteen_with_incomplete_data, year=last_year, value_total_ht=10000)
 
         canteen_without_line_ministry = CanteenFactory.create(
