@@ -172,7 +172,8 @@ ENABLE_TELEDECLARATION= Optionnel - `True` pour permettre les utilisateurs de t�
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
 ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation gaspillage alimentaire disponible
-SHOW_INFORMATION_BANNER= `Texte` - `False` pour afficher une bannière d'information sous le menu
+NOTICE_BANNER_SHOW= `True` - `False` pour afficher un bandeau d'information sous le menu
+NOTICE_BANNER_TITLE= `Texte` titre du bandeau d'information
 ```
 
 ### Mise à jour des métadonnées sur data.gouv.fr
