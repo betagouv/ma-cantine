@@ -53,6 +53,16 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(siren_unite_legale=TUPLE_OK):
                 canteen = CanteenFactory(siret=None, siren_unite_legale=TUPLE_OK[0])
                 self.assertEqual(canteen.siren_unite_legale, TUPLE_OK[1])
+                # becomes NOT OK if central cuisine
+                for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
+                    with self.subTest(siren_unite_legale=TUPLE_OK[0], production_type=production_type):
+                        self.assertRaises(
+                            ValidationError,
+                            CanteenFactory,
+                            siret=None,
+                            siren_unite_legale=TUPLE_OK[0],
+                            production_type=production_type,
+                        )
         for VALUE_NOT_OK in [None, "", "  ", "123", "9234128450", "92341284A"]:
             with self.subTest(siren_unite_legale=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, siret=None, siren_unite_legale=VALUE_NOT_OK)
