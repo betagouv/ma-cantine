@@ -1,9 +1,9 @@
 <template>
-  <div v-if="showInformationBanner" class="fr-notice fr-notice--info">
+  <div v-if="show" class="fr-notice fr-notice--info">
     <div class="fr-container">
       <div class="fr-notice__body">
         <p class="mb-0">
-          <span class="fr-notice__title">{{ informationBannerTitle }}</span>
+          <span class="fr-notice__title">{{ title }}</span>
         </p>
       </div>
     </div>
@@ -15,8 +15,8 @@ export default {
   name: "InformationBanner",
   data() {
     return {
-      showInformationBanner: window.SHOW_INFORMATION_BANNER !== "False",
-      informationBannerTitle: window.SHOW_INFORMATION_BANNER,
+      show: window.NOTICE_BANNER_SHOW,
+      title: window.NOTICE_BANNER_TITLE,
     }
   },
 }

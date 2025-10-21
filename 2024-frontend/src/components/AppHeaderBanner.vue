@@ -1,8 +1,8 @@
 <script setup>
-const show = window.SHOW_INFORMATION_BANNER !== "False"
-const title = window.SHOW_INFORMATION_BANNER
+const show = window.NOTICE_BANNER_SHOW
+const title = window.NOTICE_BANNER_TITLE
 </script>
 
 <template>
-  <DsfrNotice v-if="show" :title="title"/>
+  <DsfrNotice v-if="show" :title="title" />
 </template>
