@@ -37,12 +37,14 @@ class CanteenModelSaveTest(TransactionTestCase):
             ("21590350100017", "21590350100017"),
             (75665621899905, "75665621899905"),
         ]:
-            with self.subTest(siret=TUPLE_OK[0]):
-                canteen = CanteenFactory(siret=TUPLE_OK[0])
+            with self.subTest(
+                siret=TUPLE_OK[0],
+            ):
+                canteen = CanteenFactory(siret=TUPLE_OK[0], siren_unite_legale=None)
                 self.assertEqual(canteen.siret, TUPLE_OK[1])
         for VALUE_NOT_OK in [None, "", "  ", "123", "923412845000115", "1234567890123A"]:
             with self.subTest(siret=VALUE_NOT_OK):
-                self.assertRaises(ValidationError, CanteenFactory, siret=VALUE_NOT_OK)
+                self.assertRaises(ValidationError, CanteenFactory, siret=VALUE_NOT_OK, siren_unite_legale=None)
 
     def test_canteen_siren_unite_legale_validation(self):
         for TUPLE_OK in [
@@ -58,6 +60,17 @@ class CanteenModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, CanteenFactory, siret=None, siren_unite_legale=VALUE_NOT_OK)
 
     def test_canteen_siret_or_siren_unite_legale_validation(self):
+        for TUPLE_OK in [
+            ("75665621899905", None),
+            ("75665621899905", ""),
+            (None, "756656218"),
+            ("", "756656218"),
+        ]:
+            with self.subTest(siret=TUPLE_OK[0], siren_unite_legale=TUPLE_OK[1]):
+                canteen = CanteenFactory(siret=TUPLE_OK[0], siren_unite_legale=TUPLE_OK[1])
+                self.assertEqual(canteen.siret, TUPLE_OK[0])
+                self.assertEqual(canteen.siren_unite_legale, TUPLE_OK[1])
+
         for TUPLE_NOT_OK in [
             ("75665621899905", "756656218"),
             ("21590350100017", "756656218"),
@@ -74,6 +87,25 @@ class CanteenModelSaveTest(TransactionTestCase):
                     siret=TUPLE_NOT_OK[0],
                     siren_unite_legale=TUPLE_NOT_OK[1],
                 )
+
+    def test_canteen_siret_required_if_central_validation(self):
+        for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
+            for TUPLE_NOT_OK in [
+                ("", "756656218"),
+                (None, "756656218"),
+            ]:
+                with self.subTest(
+                    production_type=production_type,
+                    siret=TUPLE_NOT_OK[0],
+                    siren_unite_legale=TUPLE_NOT_OK[1],
+                ):
+                    self.assertRaises(
+                        ValidationError,
+                        CanteenFactory,
+                        production_type=production_type,
+                        siret=TUPLE_NOT_OK[0],
+                        siren_unite_legale=TUPLE_NOT_OK[1],
+                    )
 
     def test_canteen_epci_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
@@ -107,7 +139,7 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(daily_meal_count=TUPLE_OK[0]):
                 canteen = CanteenFactory(daily_meal_count=TUPLE_OK[0])
                 self.assertEqual(canteen.daily_meal_count, TUPLE_OK[1])
-        for VALUE_NOT_OK in [None, 0, -1, -100, "10.5", "10,5", "invalid"]:
+        for VALUE_NOT_OK in [None, "", 0, -1, -100, "10.5", "10,5", "invalid"]:
             with self.subTest(daily_meal_count=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, daily_meal_count=VALUE_NOT_OK)
 
@@ -116,7 +148,7 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(yearly_meal_count=TUPLE_OK[0]):
                 canteen = CanteenFactory(yearly_meal_count=TUPLE_OK[0])
                 self.assertEqual(canteen.yearly_meal_count, TUPLE_OK[1])
-        for VALUE_NOT_OK in [None, 0, -1, -100, "10.5", "10,5", "invalid"]:
+        for VALUE_NOT_OK in [None, "", 0, -1, -100, "10.5", "10,5", "invalid"]:
             with self.subTest(yearly_meal_count=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, yearly_meal_count=VALUE_NOT_OK)
 

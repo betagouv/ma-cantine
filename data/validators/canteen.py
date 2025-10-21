@@ -6,8 +6,9 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
     - clean_fields() (called by full_clean()) already checks that
     the siret and siren_unite_legale fields are the correct length and format
     - extra validation:
-        - if siret is filled, siren_unite_legale must not be filled
-        - if siren_unite_legale is filled, siret must not be filled
+        - siret or siren_unite_legale must be filled
+        - both cannot be filled at the same time
+        - central: only the siret field should be filled
     """
     errors = {}
     siret = instance.siret
@@ -23,17 +24,30 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
             "siren_unite_legale",
             "Le champ SIRET et le champ SIREN unité légale ne peuvent pas être remplis en même temps.",
         )
-    if not siret and not siren_unite_legale:
+    elif not siret and not siren_unite_legale:
         utils_utils.add_validation_error(
             errors,
             "siret",
-            "Le champ SIRET ou le champ SIREN unité légale doit être rempli.",
+            "Le champ SIRET ou le champ SIREN unité légale ne peuvent pas être vides en même temps.",
         )
         utils_utils.add_validation_error(
             errors,
             "siren_unite_legale",
-            "Le champ SIRET ou le champ SIREN unité légale doit être rempli.",
+            "Le champ SIRET ou le champ SIREN unité légale ne peuvent pas être vides en même temps.",
         )
+    if instance.is_central_cuisine:
+        if not siret:
+            utils_utils.add_validation_error(
+                errors,
+                "siret",
+                "Cuisine centrale : le champ ne peut pas être vide.",
+            )
+        if siren_unite_legale:
+            utils_utils.add_validation_error(
+                errors,
+                "siren_unite_legale",
+                "Cuisine centrale : le champ ne peut pas être rempli.",
+            )
     return errors
 
 
