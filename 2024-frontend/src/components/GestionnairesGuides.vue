@@ -7,14 +7,15 @@ const tiles = [
     download: true,
     horizontal: true,
     details: "PDF - 4,5 Mo",
-    to: "static/documents/Guide_prise_en_main_ma_cantine_janv2025.pdf",
+    to: "/static/documents/Guide_prise_en_main_ma_cantine_janv2025.pdf",
     imgSrc: pictoDocuments,
   },
   {
     title: "Comment saisir mes achats",
-    to: "https://ma-cantine.crisp.help/fr/",
+    to: "/static/documents/Antiseche_donnees_dachat_ma_cantine_2025.pdf",
     horizontal: true,
-    details: "Aller à la page support",
+    download: true,
+    details: "PDF - 1,9 Mo",
     imgSrc: pictoDocuments,
   },
   {
@@ -36,6 +37,7 @@ const tiles = [
         :details="tile.details"
         :icon="true"
         :imgSrc="tile.imgSrc"
+        :download="tile.download"
       />
     </li>
   </ul>
