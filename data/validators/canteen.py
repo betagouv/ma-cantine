@@ -28,25 +28,25 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
         utils_utils.add_validation_error(
             errors,
             "siret",
-            "Le champ SIRET ou le champ SIREN unité légale ne peut pas être vide.",
+            "Le champ SIRET ou le champ SIREN unité légale ne peuvent pas être vides en même temps.",
         )
         utils_utils.add_validation_error(
             errors,
             "siren_unite_legale",
-            "Le champ SIRET ou le champ SIREN unité légale ne peut pas être vide.",
+            "Le champ SIRET ou le champ SIREN unité légale ne peuvent pas être vides en même temps.",
         )
     if instance.is_central_cuisine:
         if not siret:
             utils_utils.add_validation_error(
                 errors,
                 "siret",
-                "Cuisine centrale : le champ SIRET ne peut pas être vide.",
+                "Cuisine centrale : le champ ne peut pas être vide.",
             )
         if siren_unite_legale:
             utils_utils.add_validation_error(
                 errors,
                 "siren_unite_legale",
-                "Cuisine centrale : le champ SIREN unité légale doit être vide.",
+                "Cuisine centrale : le champ ne peut pas être rempli.",
             )
     return errors
 

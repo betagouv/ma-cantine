@@ -53,7 +53,7 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(siren_unite_legale=TUPLE_OK):
                 canteen = CanteenFactory(siret=None, siren_unite_legale=TUPLE_OK[0])
                 self.assertEqual(canteen.siren_unite_legale, TUPLE_OK[1])
-                # becomes NOT OK if central cuisine
+                # central kitchen: must be empty
                 for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
                     with self.subTest(siren_unite_legale=TUPLE_OK[0], production_type=production_type):
                         self.assertRaises(
@@ -117,7 +117,7 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(daily_meal_count=TUPLE_OK[0]):
                 canteen = CanteenFactory(daily_meal_count=TUPLE_OK[0])
                 self.assertEqual(canteen.daily_meal_count, TUPLE_OK[1])
-        for VALUE_NOT_OK in [None, 0, -1, -100, "10.5", "10,5", "invalid"]:
+        for VALUE_NOT_OK in [None, "", 0, -1, -100, "10.5", "10,5", "invalid"]:
             with self.subTest(daily_meal_count=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, daily_meal_count=VALUE_NOT_OK)
 
@@ -126,7 +126,7 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(yearly_meal_count=TUPLE_OK[0]):
                 canteen = CanteenFactory(yearly_meal_count=TUPLE_OK[0])
                 self.assertEqual(canteen.yearly_meal_count, TUPLE_OK[1])
-        for VALUE_NOT_OK in [None, 0, -1, -100, "10.5", "10,5", "invalid"]:
+        for VALUE_NOT_OK in [None, "", 0, -1, -100, "10.5", "10,5", "invalid"]:
             with self.subTest(yearly_meal_count=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, yearly_meal_count=VALUE_NOT_OK)
 
