@@ -26,11 +26,11 @@ const pictoDocumentAdd = "/static/images/picto-dsfr/document-add.svg"
       <li class="fr-col-12 fr-col-md-6">
         <DsfrCard
           class="gestionnaire-tableau-de-bord__card"
-          title="Ajouter une cantine"
+          title="Ajouter une cantine via le formulaire"
           :imgSrc="pictoDocuments"
           :link="{ name: 'GestionnaireCantineAjouter' }"
           endDetail="Ajouter votre cantine"
-          description="Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet."
+          description="Pour ajouter votre lieu de restauration collective munissez-vous de votre numéro SIRET ou du numéro SIREN de votre unité légale. "
         />
       </li>
       <li class="fr-col-12 fr-col-md-6">
