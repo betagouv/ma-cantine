@@ -11,6 +11,7 @@ import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspi
 import GestionnaireImport from "@/views/GestionnaireImport.vue"
 import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
 import GestionnaireImportCantines from "@/views/GestionnaireImportCantines.vue"
+import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 
 /* Sitemap section id */
 const { diag, action } = sectionId
@@ -39,6 +40,14 @@ const routes = [
         { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
         { to: { name: "DashboardManager" }, useCanteenName: true },
       ],
+    },
+  },
+  {
+    path: "/gestion/",
+    name: "GestionnaireTableauDeBord",
+    component: GestionnaireTableauDeBord,
+    meta: {
+      title: "Tableau de bord",
     },
   },
   {

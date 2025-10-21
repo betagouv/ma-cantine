@@ -50,7 +50,7 @@ const router = useRouter()
 const hasMount = ref(false)
 const updateRouter = () => {
   const queryParam = storeFilters.getQueryParams()
-  router.replace({ query: queryParam, params: { keepScrollPosition: true }})
+  router.replace({ query: queryParam, params: { keepScrollPosition: true } })
 }
 onMounted(() => {
   hasMount.value = true
@@ -72,9 +72,9 @@ watchEffect(async () => {
 <template>
   <ObservatoryHero />
   <ObservatoryFilters ref="observatory-filters" />
-  <section class="observatoire__results ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
+  <section class="ma-cantine--bg-blue ma-cantine--sticky__container fr-mt-4w fr-pt-2w fr-pb-4w">
     <ObservatoryFiltersSelected @scrollToFilters="scrollToFilters()" class="ma-cantine--sticky__top" />
-    <AppLoader v-if="isLoading"/>
+    <AppLoader v-if="isLoading" />
     <template v-else>
       <ObservatoryError v-if="statsError" :error="statsError" />
       <template v-if="stats">
@@ -99,20 +99,3 @@ watchEffect(async () => {
     title="Qu'avez-vous pensé de la page Observatoire ?"
   />
 </template>
-
-<style lang="scss">
-.observatoire {
-  &__results {
-    &::before {
-      z-index: -1;
-      content: "";
-      background-color: var(--background-alt-blue-france);
-      position: absolute;
-      top: 0;
-      left: calc((100vw - 100%) / 2 * -1);
-      width: 100vw;
-      height: 100%;
-    }
-  }
-}
-</style>
