@@ -176,7 +176,7 @@ export default {
           style: "background-color: #E8EDFF; border: none;", // light / background / contrast-info
         },
       ],
-      showInformationBanner: window.SHOW_MANAGEMENT_INFORMATION_BANNER,
+      showInformationBanner: window.SHOW_INFORMATION_BANNER,
       viewStyles: [
         {
           text: "Vue cartes",
