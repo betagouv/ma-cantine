@@ -30,7 +30,7 @@ const pictoDocumentAdd = "/static/images/picto-dsfr/document-add.svg"
           :imgSrc="pictoDocuments"
           :link="{ name: 'GestionnaireCantineAjouter' }"
           endDetail="Ajouter votre cantine"
-          description="Pour ajouter votre lieu de restauration collective munissez-vous de votre numéro SIRET ou du numéro SIREN de votre unité légale. "
+          description="Pour ajouter votre lieu de restauration collective munissez-vous de votre numéro SIRET ou du numéro SIREN de votre unité légale."
         />
       </li>
       <li class="fr-col-12 fr-col-md-6">
