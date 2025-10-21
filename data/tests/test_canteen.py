@@ -523,8 +523,10 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             **COMMON,
             siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=0,  # incomplete
+            # satellite_canteens_count=0,  # incomplete
         )
+        Canteen.objects.filter(id=cls.canteen_central_incomplete.id).update(satellite_canteens_count=0)  # incomplete
+        cls.canteen_central_incomplete.refresh_from_db()
         cls.canteen_central_serving = CanteenFactory(
             **COMMON,
             siret="21590350100017",

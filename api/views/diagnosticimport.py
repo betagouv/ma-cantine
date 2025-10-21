@@ -360,6 +360,7 @@ class ImportDiagnosticsView(ABC, APIView):
         management_type = row[9].strip().lower()
         production_type = row[8].strip().lower()
         economic_model = row[10].strip().lower()
+        satellite_canteens_count = satellite_canteens_count or None
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
@@ -395,10 +396,8 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.production_type = row[8].strip().lower()
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None
+        canteen.satellite_canteens_count = satellite_canteens_count
         canteen.import_source = import_source
-        if satellite_canteens_count:
-            canteen.satellite_canteens_count = satellite_canteens_count
-
         if row[7]:
             canteen.sectors.set(
                 [
