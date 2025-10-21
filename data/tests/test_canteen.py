@@ -135,22 +135,37 @@ class CanteenModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, CanteenFactory, region=VALUE_NOT_OK)
 
     def test_canteen_daily_meal_count_validation(self):
-        for TUPLE_OK in [(1, 1), (1000, 1000), ("123", 123), (10.5, 10)]:
+        for TUPLE_OK in [(1, 1), (50, 50), ("123", 123), (10.5, 10)]:
             with self.subTest(daily_meal_count=TUPLE_OK[0]):
-                canteen = CanteenFactory(daily_meal_count=TUPLE_OK[0])
+                canteen = CanteenFactory(daily_meal_count=TUPLE_OK[0], yearly_meal_count=1000)
                 self.assertEqual(canteen.daily_meal_count, TUPLE_OK[1])
         for VALUE_NOT_OK in [None, "", 0, -1, -100, "10.5", "10,5", "invalid"]:
             with self.subTest(daily_meal_count=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, daily_meal_count=VALUE_NOT_OK)
 
     def test_canteen_yearly_meal_count_validation(self):
-        for TUPLE_OK in [(1, 1), (1000, 1000), ("123", 123), (10.5, 10)]:
+        for TUPLE_OK in [(2, 2), (50, 50), ("123", 123), (10.5, 10)]:
             with self.subTest(yearly_meal_count=TUPLE_OK[0]):
-                canteen = CanteenFactory(yearly_meal_count=TUPLE_OK[0])
+                canteen = CanteenFactory(daily_meal_count=1, yearly_meal_count=TUPLE_OK[0])
                 self.assertEqual(canteen.yearly_meal_count, TUPLE_OK[1])
         for VALUE_NOT_OK in [None, "", 0, -1, -100, "10.5", "10,5", "invalid"]:
             with self.subTest(yearly_meal_count=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, yearly_meal_count=VALUE_NOT_OK)
+
+    def test_canteen_daily_less_than_yearly_meal_count_validation(self):
+        for TUPLE_OK in [(10, 100), (1, 2), (123, 1234)]:
+            with self.subTest(daily_meal_count=TUPLE_OK[0], yearly_meal_count=TUPLE_OK[1]):
+                canteen = CanteenFactory(daily_meal_count=TUPLE_OK[0], yearly_meal_count=TUPLE_OK[1])
+                self.assertEqual(canteen.daily_meal_count, TUPLE_OK[0])
+                self.assertEqual(canteen.yearly_meal_count, TUPLE_OK[1])
+        for TUPLE_NOT_OK in [(100, 10), (2, 1), (1234, 123), (100, 100)]:
+            with self.subTest(daily_meal_count=TUPLE_NOT_OK[0], yearly_meal_count=TUPLE_NOT_OK[1]):
+                self.assertRaises(
+                    ValidationError,
+                    CanteenFactory,
+                    daily_meal_count=TUPLE_NOT_OK[0],
+                    yearly_meal_count=TUPLE_NOT_OK[1],
+                )
 
     def test_canteen_management_type_validation(self):
         for TUPLE_OK in [(key, key) for key in Canteen.ManagementType.values]:
