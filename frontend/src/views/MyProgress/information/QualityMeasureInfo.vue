@@ -40,7 +40,7 @@
       </p>
       <p class="mb-0">
         <a
-          href="/static/documents/Antisèche_données_d'achat_ma_cantine.pdf"
+          href="/static/documents/Antiseche_donnees_dachat_ma_cantine_2025.pdf"
           download
           title="Antisèche : Préparer la saisie de mes données d'achat"
         >
