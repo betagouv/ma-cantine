@@ -18,10 +18,8 @@ class DiagnosticQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_valid_1 = CanteenFactory(siret="92341284500011", yearly_meal_count=100)
-        cls.canteen_valid_2 = CanteenFactory(siren_unite_legale="123456789", yearly_meal_count=100)
-        cls.canteen_valid_3 = CanteenFactory(
-            siret="83014132100034", siren_unite_legale="123456789", yearly_meal_count=100
-        )
+        cls.canteen_valid_2 = CanteenFactory(siret=None, siren_unite_legale="123456789", yearly_meal_count=100)
+        cls.canteen_valid_3 = CanteenFactory(siret=None, siren_unite_legale="123456789", yearly_meal_count=100)
         cls.canteen_valid_4 = CanteenFactory(siret="40419443300078")
         Canteen.objects.filter(id=cls.canteen_valid_4.id).update(yearly_meal_count=0)  # not aberrant
         cls.canteen_valid_4.refresh_from_db()
@@ -34,7 +32,9 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_valid_6_armee = CanteenFactory(
             siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE, yearly_meal_count=100
         )
-        cls.canteen_missing_siret = CanteenFactory(siret="", yearly_meal_count=100)  # siret missing
+        cls.canteen_missing_siret = CanteenFactory(yearly_meal_count=100)
+        Canteen.objects.filter(id=cls.canteen_missing_siret.id).update(siret="")  # siret missing
+        cls.canteen_missing_siret.refresh_from_db()
         cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=100)
         cls.canteen_value_total_ht_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
         cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=100)

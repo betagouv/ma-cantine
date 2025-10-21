@@ -8,6 +8,7 @@ from common.api.decoupage_administratif import DECOUPAGE_ADMINISTRATIF_API_URL
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.department_choices import Department
 from data.factories import CanteenFactory, SectorFactory, UserFactory
+from data.models import Canteen
 from macantine import tasks
 
 
@@ -206,10 +207,10 @@ class TestGeolocationBotUsingSiret(TestCase):
         Only canteens with no city_insee_code and with a SIRET
         """
         candidate_canteen = CanteenFactory.create(city_insee_code=None, siret="89394682276911")
-        _ = [
-            CanteenFactory.create(city_insee_code=29890),
-            CanteenFactory.create(city_insee_code=None, siret=None),
-        ]
+        CanteenFactory.create(city_insee_code=29890)  # canteen with city_insee_code
+        canteen_without_siret = CanteenFactory.create(city_insee_code=None)
+        Canteen.objects.filter(id=canteen_without_siret.id).update(siret=None)  # override validations
+
         result = list(tasks._get_candidate_canteens_for_siret_to_insee_code_bot())
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].id, candidate_canteen.id)

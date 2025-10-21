@@ -249,8 +249,10 @@ class CanteenApiTest(APITestCase):
         A central cuisine without a SIRET can add one without modifying everybody else
         """
         central_kitchen = CanteenFactory.create(
-            siret=None, production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
+            production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
+        Canteen.objects.filter(id=central_kitchen.id).update(siret=None)
+        central_kitchen.refresh_from_db()
 
         other_canteens = [
             CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None),
@@ -1247,37 +1249,38 @@ class TestCanteenActionApi(APITestCase):
         # canteen not ok with diag
         canteen_with_no_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
-            siret=None,
             management_type=Canteen.ManagementType.DIRECT,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             yearly_meal_count=1000,
             daily_meal_count=12,
             city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
+        Canteen.objects.filter(id=canteen_with_no_siret.id).update(siret=None)
+        canteen_with_no_siret.refresh_from_db()
         DiagnosticFactory.create(canteen=canteen_with_no_siret, year=last_year, value_total_ht=10000)
         # canteen not ok with diag
         canteen_with_bad_central_siret = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             siret="59282615314394",
             central_producer_siret="59282615314394",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             management_type=Canteen.ManagementType.DIRECT,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             yearly_meal_count=1000,
             daily_meal_count=12,
             city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
         DiagnosticFactory.create(canteen=canteen_with_bad_central_siret, year=last_year, value_total_ht=10000)
         # canteen ok without diag
         CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
             siret="55314169703815",
+            production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             yearly_meal_count=1000,
             daily_meal_count=12,
             city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
 
