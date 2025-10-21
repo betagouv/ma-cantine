@@ -60,6 +60,17 @@ class CanteenModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, CanteenFactory, siret=None, siren_unite_legale=VALUE_NOT_OK)
 
     def test_canteen_siret_or_siren_unite_legale_validation(self):
+        for TUPLE_OK in [
+            ("75665621899905", None),
+            ("75665621899905", ""),
+            (None, "756656218"),
+            ("", "756656218"),
+        ]:
+            with self.subTest(siret=TUPLE_OK[0], siren_unite_legale=TUPLE_OK[1]):
+                canteen = CanteenFactory(siret=TUPLE_OK[0], siren_unite_legale=TUPLE_OK[1])
+                self.assertEqual(canteen.siret, TUPLE_OK[0])
+                self.assertEqual(canteen.siren_unite_legale, TUPLE_OK[1])
+
         for TUPLE_NOT_OK in [
             ("75665621899905", "756656218"),
             ("21590350100017", "756656218"),
