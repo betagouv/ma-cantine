@@ -22,7 +22,7 @@ const tiles = [
     title: "Inscrivez-vous à nos webinaires",
     to: { name: "CommunityPage" },
     horizontal: true,
-    details: "Aller à la page ...",
+    details: "Loi EGalim, Utilisation de la plateforme...",
     imgSrc: pictoDocuments,
   },
 ]
