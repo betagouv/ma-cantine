@@ -1,5 +1,7 @@
 <script setup>
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
+const pictoSearch = "/static/images/picto-dsfr/search.svg"
+const pictoSelfTraining = "/static/images/picto-dsfr/self-training.svg"
 
 const tiles = [
   {
@@ -16,14 +18,14 @@ const tiles = [
     horizontal: true,
     download: true,
     details: "PDF - 1,9 Mo",
-    imgSrc: pictoDocuments,
+    imgSrc: pictoSearch,
   },
   {
     title: "Inscrivez-vous à nos webinaires",
     to: { name: "CommunityPage" },
     horizontal: true,
     details: "Loi EGalim, Utilisation de la plateforme...",
-    imgSrc: pictoDocuments,
+    imgSrc: pictoSelfTraining,
   },
 ]
 </script>
