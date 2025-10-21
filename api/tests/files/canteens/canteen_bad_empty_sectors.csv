@@ -1,5 +1,5 @@
 siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels,nombre_satellites
-16463707389922,A canteen,,54460,,700,14000,,central,conceded,public,,
+16463707389922,A canteen,,54460,,700,14000,,central,conceded,public,,1
 59501921996028,B canteen,,54460,,700,14000,,site,conceded,public,,
 68995896814290,C canteen,,54460,,700,14000,,central_serving,conceded,public,,
-68231355846247,D canteen,,54460,,700,14000,,site_cooked_elsewhere,conceded,public,,
+68231355846247,D canteen,,54460,16463707389922,700,14000,,site_cooked_elsewhere,conceded,public,,
