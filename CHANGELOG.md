@@ -6,6 +6,25 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.34.1](https://github.com/betagouv/ma-cantine/compare/v2025.34.0...v2025.34.1) (2025-10-21)
+
+
+### Améliorations
+
+* **Cantines:** Imports: autorise le type "nombre" et "texte" pour les valeurs de siret ([#5783](https://github.com/betagouv/ma-cantine/issues/5783)) ([c329cdb](https://github.com/betagouv/ma-cantine/commit/c329cdbc7439ecca8db915aee49ad9a66d52d33e))
+* **Cantines:** Règles métiers: rendre le champ siret (ou siren) obligatoire ([#5789](https://github.com/betagouv/ma-cantine/issues/5789)) ([fa6bc7d](https://github.com/betagouv/ma-cantine/commit/fa6bc7da0fdb18f127f48ba1e53b652c585918b2))
+* **Cantines:** Règles métiers: rendre le champ siret obligatoire si cuisine centrale ([#5792](https://github.com/betagouv/ma-cantine/issues/5792)) ([45b94c9](https://github.com/betagouv/ma-cantine/commit/45b94c98c9c3cb85c42e44b1761df25b85f30d84))
+* **Contact:** ajout de champs au formulaire de contact et suppression bandeau email ([#5786](https://github.com/betagouv/ma-cantine/issues/5786)) ([5897dad](https://github.com/betagouv/ma-cantine/commit/5897dad61c1e4d8ff2e908e9c986e3b5b8420312))
+* **Imports:** améliore le tracking pour différencier les fichiers csv des excels ([#5782](https://github.com/betagouv/ma-cantine/issues/5782)) ([8c0ea8e](https://github.com/betagouv/ma-cantine/commit/8c0ea8ef1f52062689f708eb7c49e6449a46765a))
+
+
+### Technique
+
+* **Cantines:** Règles métiers: autoriser les nombres pour les champs siret & siren ([#5790](https://github.com/betagouv/ma-cantine/issues/5790)) ([ceb8d06](https://github.com/betagouv/ma-cantine/commit/ceb8d060f7bbba083fddb3c2d49aad88cfccd25d))
+* **deps-dev:** bump @rushstack/eslint-patch in /2024-frontend ([2e7e3f4](https://github.com/betagouv/ma-cantine/commit/2e7e3f481bb552f0a4652365a8e5cc86bc9fa19d))
+* **deps:** bump vue from 3.5.20 to 3.5.22 in /2024-frontend ([21a8ebe](https://github.com/betagouv/ma-cantine/commit/21a8ebe6b06296b7dba2a7f40476e5dff90ffeb4))
+* **deps:** bump vue-i18n from 11.1.10 to 11.1.12 in /2024-frontend ([2cc5c25](https://github.com/betagouv/ma-cantine/commit/2cc5c256844325d38de307ae12f8661e1d8cd6cc))
+
 ## [2025.34.0](https://github.com/betagouv/ma-cantine/compare/v2025.33.2...v2025.34.0) (2025-10-17)
 
 
