@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue"
 import { useRootStore } from "@/stores/root"
-import GestionnairesGuides from "@/components/GestionnairesGuides.vue"
+import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 
 const store = useRootStore()
 
@@ -19,6 +19,6 @@ const canteenSentence = computed(() => {
     <p class="fr-text--lead">{{ canteenSentence }}</p>
   </section>
   <section>
-    <GestionnairesGuides />
+    <GestionnaireGuides />
   </section>
 </template>
