@@ -188,6 +188,35 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(line_ministry=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK)
 
+    def test_canteen_satellite_canteens_count_validation(self):
+        # central kitchen: must be filled
+        for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
+            for TUPLE_OK in [(1, 1), (1000, 1000), ("123", 123), (10.5, 10)]:
+                with self.subTest(production_type=production_type, satellite_canteens_count=TUPLE_OK[0]):
+                    canteen = CanteenFactory(production_type=production_type, satellite_canteens_count=TUPLE_OK[0])
+                    self.assertEqual(canteen.satellite_canteens_count, TUPLE_OK[1])
+            for VALUE_NOT_OK in [None, "", 0, -1, -100, "10.5", "10,5", "invalid"]:
+                with self.subTest(production_type=production_type, satellite_canteens_count=VALUE_NOT_OK):
+                    self.assertRaises(
+                        ValidationError,
+                        CanteenFactory,
+                        production_type=production_type,
+                        satellite_canteens_count=VALUE_NOT_OK,
+                    )
+        for production_type in [Canteen.ProductionType.ON_SITE, Canteen.ProductionType.ON_SITE_CENTRAL]:
+            for TUPLE_OK in [(None, None)]:
+                with self.subTest(production_type=production_type, satellite_canteens_count=TUPLE_OK[0]):
+                    canteen = CanteenFactory(production_type=production_type, satellite_canteens_count=TUPLE_OK[0])
+                    self.assertEqual(canteen.satellite_canteens_count, TUPLE_OK[1])
+            for VALUE_NOT_OK in [0, -1, -100, "10.5", "10,5", "invalid", 5, "5"]:
+                with self.subTest(production_type=production_type, satellite_canteens_count=VALUE_NOT_OK):
+                    self.assertRaises(
+                        ValidationError,
+                        CanteenFactory,
+                        production_type=production_type,
+                        satellite_canteens_count=VALUE_NOT_OK,
+                    )
+
     def test_canteen_creation_source_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in CreationSource.values)]:
             with self.subTest(creation_source=TUPLE_OK[0]):
