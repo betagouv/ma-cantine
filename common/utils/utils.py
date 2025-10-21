@@ -1,6 +1,6 @@
-def normalize_string(text: str) -> str:
+def normalize_string(text) -> str:
     if text:
-        return text.replace(" ", "").replace("\xa0", "")
+        return str(text).replace(" ", "").replace("\xa0", "")
     return text
 
 

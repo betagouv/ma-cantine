@@ -38,6 +38,7 @@ class CanteenModelSaveTest(TransactionTestCase):
             ("  ", ""),
             ("756 656 218 99905", "75665621899905"),
             ("21590350100017", "21590350100017"),
+            (75665621899905, "75665621899905"),
         ]:
             with self.subTest(siret=TUPLE_OK):
                 canteen = CanteenFactory(siret=TUPLE_OK[0])
@@ -47,7 +48,14 @@ class CanteenModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, CanteenFactory, siret=VALUE_NOT_OK)
 
     def test_canteen_siren_unite_legale_validation(self):
-        for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
+        for TUPLE_OK in [
+            (None, None),
+            ("", ""),
+            ("  ", ""),
+            ("756 656 218", "756656218"),
+            ("756656218", "756656218"),
+            (756656218, "756656218"),
+        ]:
             with self.subTest(siren_unite_legale=TUPLE_OK):
                 canteen = CanteenFactory(siren_unite_legale=TUPLE_OK[0])
                 self.assertEqual(canteen.siren_unite_legale, TUPLE_OK[1])
