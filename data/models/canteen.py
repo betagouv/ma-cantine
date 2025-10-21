@@ -590,6 +590,7 @@ class Canteen(SoftDeletionModel):
 
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
+            canteen_validators.validate_canteen_siret_or_siren_unite_legale(self),
             canteen_validators.validate_canteen_choice_fields(self),
             canteen_validators.validate_canteen_meal_count_fields(self),
         )
