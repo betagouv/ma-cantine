@@ -243,6 +243,14 @@ class CanteenFactory(factory.django.DjangoModelFactory):
     production_type = Canteen.ProductionType.ON_SITE  # the production_type with the least constraints
     economic_model = factory.Iterator([key for key, _ in Canteen.EconomicModel.choices])
 
+    satellite_canteens_count = factory.LazyAttribute(
+        lambda x: (
+            2
+            if x.production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
+            else None
+        )
+    )
+
     @factory.post_generation
     def sectors(self, create, extracted, **kwargs):
         if not create or extracted == []:

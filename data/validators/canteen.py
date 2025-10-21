@@ -112,6 +112,34 @@ def validate_canteen_meal_count_fields(instance):
     return errors
 
 
+def validate_canteen_satellite_count(instance):
+    """
+    - extra validation:
+        - if central: satellite_canteens_count must be filled
+        - if central: satellite_canteens_count must be an integer
+        - if central: satellite_canteens_count must be > 0
+        - if not central: satellite_canteens_count must be empty
+    """
+    errors = {}
+    field_name = "satellite_canteens_count"
+    value = getattr(instance, field_name)
+    if instance.is_central_cuisine:
+        if value in [None, ""]:
+            utils_utils.add_validation_error(errors, field_name, "Cuisine centrale : le champ ne peut pas être vide.")
+        elif not (isinstance(value, int) or (isinstance(value, str) and value.isdigit())):
+            utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")
+        elif int(value) <= 0:
+            utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier supérieur à 0.")
+    else:
+        if value not in [None, ""]:
+            utils_utils.add_validation_error(
+                errors,
+                field_name,
+                "Le champ doit être vide.",
+            )
+    return errors
+
+
 def validate_canteen_central_producer_siret_field(instance):
     """
     - clean_fields() (called by full_clean()) already checks that
