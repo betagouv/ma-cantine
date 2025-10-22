@@ -15,7 +15,7 @@ export default {
   name: "InformationBanner",
   data() {
     return {
-      show: window.NOTICE_BANNER_SHOW,
+      show: window.SHOW_INFORMATION_BANNER,
     }
   },
 }
