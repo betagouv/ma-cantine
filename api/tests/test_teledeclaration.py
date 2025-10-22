@@ -497,7 +497,6 @@ class TestTeledeclarationCreateApi(APITestCase):
             siret="79300704800044",
             satellite_canteens_count=3,
             central_producer_siret="18704793618411",
-            daily_meal_count=10,
             managers=[authenticate.user],
         )
         diagnostic = DiagnosticFactory.create(
@@ -513,7 +512,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertIsNone(canteen_json["satellite_canteens_count"])
         self.assertIsNone(canteen_json["central_producer_siret"])
         self.assertIsNone(teledeclaration.declared_data["central_kitchen_siret"])
-        self.assertEqual(canteen_json["daily_meal_count"], 10)
+        self.assertEqual(canteen_json["daily_meal_count"], 12)
         self.assertEqual(teledeclaration.teledeclaration_mode, "SITE")
 
         # If we change its type to cuisine centrale we should get the satellite count and mode
@@ -546,7 +545,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertIsNone(canteen_json["satellite_canteens_count"])
         self.assertEqual(canteen_json["central_producer_siret"], "18704793618411")
         self.assertEqual(teledeclaration.declared_data["central_kitchen_siret"], "18704793618411")
-        self.assertEqual(canteen_json["daily_meal_count"], 10)
+        self.assertEqual(canteen_json["daily_meal_count"], 12)
         self.assertEqual(teledeclaration.teledeclaration_mode, "SITE")
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
@@ -867,9 +866,7 @@ class TestTeledeclarationPdfApi(APITestCase):
         """
         A central kitchen should be able to generate a PDF
         """
-        canteen = CanteenFactory.create(
-            production_type=Canteen.ProductionType.CENTRAL, daily_meal_count=345, managers=[authenticate.user]
-        )
+        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
