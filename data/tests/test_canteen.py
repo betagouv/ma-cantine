@@ -107,6 +107,17 @@ class CanteenModelSaveTest(TransactionTestCase):
                         siren_unite_legale=TUPLE_NOT_OK[1],
                     )
 
+    def test_canteen_siret_unique_validation(self):
+        CanteenFactory(siret="75665621899905", siren_unite_legale=None)
+        for VALUE_NOT_OK in ["75665621899905", "756 656 218 99905", 75665621899905]:
+            with self.subTest(siret=VALUE_NOT_OK):
+                self.assertRaises(
+                    ValidationError,
+                    CanteenFactory,
+                    siret=VALUE_NOT_OK,
+                    siren_unite_legale=None,
+                )
+
     def test_canteen_epci_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
             with self.subTest(epci=TUPLE_OK[0]):
