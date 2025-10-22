@@ -595,6 +595,7 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             **COMMON,
             siret="21380185500015",
             production_type=Canteen.ProductionType.ON_SITE,
+            # daily_meal_count=12,
         )
         Canteen.objects.filter(id=cls.canteen_on_site_incomplete_1.id).update(daily_meal_count=0)  # incomplete
         cls.canteen_on_site_incomplete_1.refresh_from_db()
@@ -629,8 +630,12 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             siret="21730065600014",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             daily_meal_count=12,
-            central_producer_siret=None,  # incomplete
+            # central_producer_siret=None,  # incomplete
         )
+        Canteen.objects.filter(id=cls.canteen_on_site_central_incomplete.id).update(
+            central_producer_siret=None
+        )  # incomplete
+        cls.canteen_on_site_central_incomplete.refresh_from_db()
         cls.canteen_filled_list = [
             cls.canteen_central,
             cls.canteen_central_serving,
