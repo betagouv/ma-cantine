@@ -5,11 +5,11 @@ import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 
 const store = useRootStore()
 
-const canteenCount = computed(() => store.canteenPreviews.length)
 const canteenSentence = computed(() => {
-  if (canteenCount.value === 0) return "vous n'avez pas encore de cantine"
-  else if (canteenCount.value === 1) return "1 cantine"
-  return `${canteenCount.value} cantines`
+  const count = store.canteenPreviews.length
+  if (count === 0) return "vous n'avez pas encore de cantine"
+  else if (count === 1) return "1 cantine"
+  return `${count} cantines`
 })
 
 const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
@@ -22,7 +22,10 @@ const pictoDocumentAdd = "/static/images/picto-dsfr/document-add.svg"
     <p class="fr-text--lead">{{ canteenSentence }}</p>
   </section>
   <section>
-    <ul v-if="canteenCount === 0" class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters fr-my-4w">
+    <ul
+      v-if="store.canteenPreviews.length === 0"
+      class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters fr-my-4w"
+    >
       <li class="fr-col-12 fr-col-md-6">
         <DsfrCard
           class="gestionnaire-tableau-de-bord__card"
