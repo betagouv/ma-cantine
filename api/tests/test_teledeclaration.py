@@ -555,7 +555,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         The teledeclaration mode is automatically calculated based on production type and
         diagnostic mode
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING, siret="18704793618411")
+        central = CanteenFactory(siret="18704793618411", production_type=Canteen.ProductionType.CENTRAL_SERVING)
         DiagnosticFactory.create(
             canteen=central,
             year=2021,
@@ -566,7 +566,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             {
                 "canteen": CanteenFactory(
                     production_type=Canteen.ProductionType.ON_SITE,
-                    siret="79300704800044",
+                    siret="21340172201787",
                     managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
@@ -575,7 +575,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             {
                 "canteen": CanteenFactory(
                     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-                    siret="79300704800044",
+                    siret="21380185500015",
                     managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
@@ -584,8 +584,8 @@ class TestTeledeclarationCreateApi(APITestCase):
             {
                 "canteen": CanteenFactory(
                     production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-                    siret="79300704800044",
-                    central_producer_siret="18704793618411",
+                    siret="21670482500019",
+                    central_producer_siret=central.siret,
                     managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(year=2021),
@@ -594,7 +594,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             {
                 "canteen": CanteenFactory(
                     production_type=Canteen.ProductionType.CENTRAL,
-                    siret="79300704800044",
+                    siret="21640122400011",
                     managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(
@@ -607,7 +607,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             {
                 "canteen": CanteenFactory(
                     production_type=Canteen.ProductionType.CENTRAL_SERVING,
-                    siret="79300704800044",
+                    siret="21630113500010",
                     managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(

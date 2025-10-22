@@ -851,18 +851,18 @@ class TestCanteenActionApi(APITestCase):
         # these canteens aren't in a very logical order, because want to test sorting by action
         # create diag (has one for 2020)
         needs_last_year_diag = CanteenFactory.create(
+            siret="21590350100017",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
         # nothing to do
         complete = CanteenFactory.create(
+            siret="21340172201787",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="21340172201787",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
@@ -892,9 +892,9 @@ class TestCanteenActionApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_with_one_sat_siret
         )
         complete_site_one_sector = CanteenFactory.create(
+            siret="21640122400011",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="21640122400011",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
@@ -902,9 +902,9 @@ class TestCanteenActionApi(APITestCase):
         )
         # complete diag
         needs_to_fill_diag = CanteenFactory.create(
+            siret="21010034300016",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
@@ -918,17 +918,17 @@ class TestCanteenActionApi(APITestCase):
         )
         # complete establishement
         needs_sectors = CanteenFactory.create(
+            siret="37856520465586",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="37856520465586",
             managers=[authenticate.user],
             sectors=[],
         )
         needs_daily_meal_count = CanteenFactory.create(
+            siret="40419443300078",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
             # daily_meal_count=12,
-            siret="40419443300078",
             managers=[authenticate.user],
         )
         Canteen.objects.filter(id=needs_daily_meal_count.id).update(daily_meal_count=None)
@@ -949,9 +949,9 @@ class TestCanteenActionApi(APITestCase):
         )
         # TD
         needs_td = CanteenFactory.create(
+            siret="21630113500010",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
