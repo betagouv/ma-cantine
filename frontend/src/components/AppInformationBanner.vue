@@ -3,7 +3,7 @@
     <div class="fr-container">
       <div class="fr-notice__body">
         <p class="mb-0">
-          <span class="fr-notice__title">{{ title }}</span>
+          <span class="fr-notice__title"></span>
         </p>
       </div>
     </div>
@@ -16,7 +16,6 @@ export default {
   data() {
     return {
       show: window.NOTICE_BANNER_SHOW,
-      title: window.NOTICE_BANNER_TITLE,
     }
   },
 }
