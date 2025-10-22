@@ -1,5 +1,5 @@
 <script setup>
-const show = window.NOTICE_BANNER_SHOW
+const show = window.SHOW_INFORMATION_BANNER
 </script>
 
 <template>

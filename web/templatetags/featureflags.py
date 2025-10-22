@@ -30,8 +30,8 @@ def enable_waste_measurements():
 
 
 @register.simple_tag
-def notice_banner_show():
-    return getattr(settings, "NOTICE_BANNER_SHOW", "")
+def show_information_banner():
+    return getattr(settings, "SHOW_INFORMATION_BANNER", "")
 
 
 @register.simple_tag
