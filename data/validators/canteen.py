@@ -72,6 +72,7 @@ def validate_canteen_meal_count_fields(instance):
         - daily_meal_count & yearly_meal_count must be filled
         - daily_meal_count & yearly_meal_count must be integers
         - daily_meal_count & yearly_meal_count must be > 0
+        - daily_meal_count < yearly_meal_count
     - notes:
         - django will convert strings to integers
         - django will convert floats to integers by truncating the decimal part (e.g. 10.5 -> 10)
@@ -85,4 +86,16 @@ def validate_canteen_meal_count_fields(instance):
             utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")
         elif int(value) <= 0:
             utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier supérieur à 0.")
+    if not errors:
+        if int(instance.daily_meal_count) >= int(instance.yearly_meal_count):
+            utils_utils.add_validation_error(
+                errors,
+                "daily_meal_count",
+                "Le nombre de repas servis quotidiennement doit être inférieur au nombre de repas servis annuellement.",
+            )
+            utils_utils.add_validation_error(
+                errors,
+                "yearly_meal_count",
+                "Le nombre de repas servis annuellement doit être supérieur au nombre de repas servis quotidiennement.",
+            )
     return errors
