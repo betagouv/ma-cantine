@@ -44,12 +44,15 @@ class TestRelationCentralSatellite(APITestCase):
             managers=[authenticate.user],
         )
         # the following canteen should not be returned
-        CanteenFactory.create()
+        CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
         # neither should this canteen which isn't the satellite production type
-        CanteenFactory.create(
-            central_producer_siret=central_siret,
+        canteen_on_site_with_central_producer_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
         )
+        Canteen.objects.filter(id=canteen_on_site_with_central_producer_siret.id).update(
+            central_producer_siret=central_siret
+        )
+        canteen_on_site_with_central_producer_siret.refresh_from_db()
 
         response = self.client.get(reverse("list_create_update_satellite", kwargs={"canteen_pk": central.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -141,6 +144,7 @@ class TestRelationCentralSatellite(APITestCase):
         existing_canteen = CanteenFactory.create(
             siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
+        Canteen.objects.filter(id=existing_canteen.id).update(central_producer_siret=None)
         central_siret = "08376514425566"
         canteen = CanteenFactory.create(
             siret=central_siret, production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
@@ -247,7 +251,7 @@ class TestRelationCentralSatellite(APITestCase):
         satellite_siret = "89834106501485"
         linked_canteen = CanteenFactory.create(
             siret=satellite_siret,
-            production_type=Canteen.ProductionType.ON_SITE,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=existing_central_cuisine_siret,
         )
         central_siret = "08376514425566"

@@ -248,20 +248,26 @@ class CanteenApiTest(APITestCase):
         """
         A central cuisine without a SIRET can add one without modifying everybody else
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen_without_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        Canteen.objects.filter(id=central_kitchen.id).update(siret=None)
-        central_kitchen.refresh_from_db()
+        Canteen.objects.filter(id=central_kitchen_without_siret.id).update(siret=None)
+        central_kitchen_without_siret.refresh_from_db()
 
-        other_canteens = [
-            CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None),
-            CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL_SERVING, central_producer_siret=None),
-            CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE, central_producer_siret=None),
-        ]
+        canteen_satellite = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        Canteen.objects.filter(id=canteen_satellite.id).update(central_producer_siret=None)
+        canteen_central_serving = CanteenFactory.create(
+            production_type=Canteen.ProductionType.CENTRAL_SERVING, central_producer_siret=None
+        )
+        canteen_on_site = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE, central_producer_siret=None
+        )
+        other_canteens = [canteen_satellite, canteen_central_serving, canteen_on_site]
 
         payload = {"siret": "35662897196149"}
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": central_kitchen.id}), payload)
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": central_kitchen_without_siret.id}), payload
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for canteen in other_canteens:
@@ -1124,21 +1130,22 @@ class TestCanteenActionApi(APITestCase):
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.ADD_SATELLITES)
 
-        # Satellites should have the SIRET of the central cuisine
+        # Satellites should have the SIRET of the central cuisine (1/2)
         canteen.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
-        canteen.central_producer_siret = None
-        canteen.save()
-
-        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
-        returned_canteens = response.json()["results"]
-        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.FILL_CANTEEN_DATA)
-
         canteen.central_producer_siret = "21590350100017"
         canteen.save()
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
+
+        # Satellites should have the SIRET of the central cuisine (2/2)
+        Canteen.objects.filter(id=canteen.id).update(central_producer_siret=None)
+        canteen.refresh_from_db()
+
+        response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
+        returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.FILL_CANTEEN_DATA)
 
     @authenticate
     @freeze_time("2022-08-30")  # during the 2021 campaign

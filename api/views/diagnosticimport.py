@@ -360,6 +360,7 @@ class ImportDiagnosticsView(ABC, APIView):
         management_type = row[9].strip().lower()
         production_type = row[8].strip().lower()
         economic_model = row[10].strip().lower()
+        central_producer_siret = utils_utils.normalize_string(row[4])
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
@@ -372,6 +373,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 management_type=management_type,
                 production_type=production_type,
                 economic_model=economic_model,
+                central_producer_siret=central_producer_siret,
                 creation_source=CreationSource.IMPORT,
             )
         )
@@ -389,12 +391,12 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.name = row[1].strip()
         canteen.city_insee_code = row[2].strip()
         canteen.postal_code = row[3].strip()
-        canteen.central_producer_siret = utils_utils.normalize_string(row[4])
         canteen.daily_meal_count = row[5].strip()
         canteen.yearly_meal_count = row[6].strip()
         canteen.production_type = row[8].strip().lower()
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None
+        canteen.central_producer_siret = utils_utils.normalize_string(row[4])
         canteen.import_source = import_source
         if satellite_canteens_count:
             canteen.satellite_canteens_count = satellite_canteens_count

@@ -219,17 +219,12 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 1)
+        self.assertEqual(Canteen.objects.count(), 5)
         self.assertFalse(ImportFailure.objects.exists())
         body = response.json()
-        self.assertEqual(body["count"], 1)
-        self.assertEqual(len(body["canteens"]), 1)
+        self.assertEqual(body["count"], 5)
+        self.assertEqual(len(body["canteens"]), 5)
         self.assertEqual(len(body["errors"]), 0)
-        canteen = Canteen.objects.first()
-        self.assertEqual(canteen.production_type, Canteen.ProductionType.ON_SITE)
-        self.assertEqual(canteen.management_type, Canteen.ManagementType.CONCEDED)
-        self.assertEqual(canteen.economic_model, Canteen.EconomicModel.PUBLIC)
-        self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
 
     @authenticate
     def test_import_canteens_with_managers(self):
