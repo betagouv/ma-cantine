@@ -324,6 +324,7 @@ class ImportCanteensView(APIView):
         management_type = row[9].strip().lower()
         production_type = row[8].strip().lower()
         economic_model = row[10].strip().lower()
+        central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
@@ -336,6 +337,7 @@ class ImportCanteensView(APIView):
                 management_type=management_type,
                 production_type=production_type,
                 economic_model=economic_model,
+                central_producer_siret=central_producer_siret,
                 creation_source=CreationSource.IMPORT,
             )
         )
@@ -354,13 +356,13 @@ class ImportCanteensView(APIView):
         canteen.name = row[1].strip()
         canteen.city_insee_code = row[2].strip() if row[2] else None
         canteen.postal_code = row[3].strip() if row[3] else None
-        canteen.central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
         canteen.daily_meal_count = row[5].strip()
         canteen.yearly_meal_count = row[6].strip()
         # sectors: see below
         canteen.production_type = row[8].strip().lower()
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower()
+        canteen.central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
         if self.is_admin_import:
             canteen.line_ministry = (
                 next((key for key, value in Canteen.Ministries.choices if value == row[12].strip()), None)
