@@ -49,15 +49,16 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
                 "siren_unite_legale",
                 "Cuisine centrale : le champ ne peut pas être rempli.",
             )
-    if siret and not instance.pk:
-        from data.models import Canteen
+    if siret:
+        if not instance.pk:  # only for new canteens (TODO: generalize to existing canteens)
+            from data.models import Canteen
 
-        if Canteen.objects.filter(siret=siret).exists():
-            utils_utils.add_validation_error(
-                errors,
-                "siret",
-                "Le SIRET est déjà utilisé par une autre cantine.",
-            )
+            if Canteen.objects.filter(siret=siret).exists():
+                utils_utils.add_validation_error(
+                    errors,
+                    "siret",
+                    "Le SIRET est déjà utilisé par une autre cantine.",
+                )
     return errors
 
 
@@ -116,19 +117,20 @@ def validate_canteen_central_producer_siret_field(instance):
     - clean_fields() (called by full_clean()) already checks that
     the central_producer_siret field is the correct length and format
     - extra validation:
-        - satellite: central_producer_siret must be filled
-        - not satellite: central_producer_siret must be empty
+        - if satellite & new canteen: central_producer_siret must be filled
+        - if not satellite: central_producer_siret must be empty
     """
     errors = {}
     field_name = "central_producer_siret"
     value = getattr(instance, field_name)
     if instance.is_satellite:
         if not value:
-            utils_utils.add_validation_error(
-                errors,
-                "central_producer_siret",
-                "Cantine satellite : le champ ne peut pas être vide.",
-            )
+            if not instance.pk:  # only for new canteens (TODO: generalize to existing canteens)
+                utils_utils.add_validation_error(
+                    errors,
+                    "central_producer_siret",
+                    "Cantine satellite : le champ ne peut pas être vide.",
+                )
     else:
         if value:
             utils_utils.add_validation_error(
