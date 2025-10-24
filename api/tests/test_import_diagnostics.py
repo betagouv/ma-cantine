@@ -351,7 +351,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         # creating 2 canteens with same siret here to error when this situation exists IRL
         CanteenFactory.create(siret="42111303053388")
-        CanteenFactory.create(siret="42111303053388")
+        canteen_with_same_siret = CanteenFactory.create()
+        Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="42111303053388")
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
         with open(file_path) as diag_file:

@@ -42,6 +42,7 @@ class CanteenModelSaveTest(TransactionTestCase):
             ):
                 canteen = CanteenFactory(siret=TUPLE_OK[0], siren_unite_legale=None)
                 self.assertEqual(canteen.siret, TUPLE_OK[1])
+                canteen.delete()  # to avoid unique siret constraint
         for VALUE_NOT_OK in [None, "", "  ", "123", "923412845000115", "1234567890123A"]:
             with self.subTest(siret=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, siret=VALUE_NOT_OK, siren_unite_legale=None)
@@ -68,6 +69,7 @@ class CanteenModelSaveTest(TransactionTestCase):
         ]:
             with self.subTest(siret=TUPLE_OK[0], siren_unite_legale=TUPLE_OK[1]):
                 canteen = CanteenFactory(siret=TUPLE_OK[0], siren_unite_legale=TUPLE_OK[1])
+                canteen.delete()  # to avoid unique siret constraint
                 self.assertEqual(canteen.siret, TUPLE_OK[0])
                 self.assertEqual(canteen.siren_unite_legale, TUPLE_OK[1])
 
@@ -106,6 +108,17 @@ class CanteenModelSaveTest(TransactionTestCase):
                         siret=TUPLE_NOT_OK[0],
                         siren_unite_legale=TUPLE_NOT_OK[1],
                     )
+
+    def test_canteen_siret_unique_validation(self):
+        CanteenFactory(siret="75665621899905", siren_unite_legale=None)
+        for VALUE_NOT_OK in ["75665621899905", "756 656 218 99905", 75665621899905]:
+            with self.subTest(siret=VALUE_NOT_OK):
+                self.assertRaises(
+                    ValidationError,
+                    CanteenFactory,
+                    siret=VALUE_NOT_OK,
+                    siren_unite_legale=None,
+                )
 
     def test_canteen_epci_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
@@ -462,7 +475,7 @@ class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_siret_1 = CanteenFactory(siret="21590350100017", siren_unite_legale="")  # OK
-        cls.canteen_siret_2 = CanteenFactory(siret="21590350100017", siren_unite_legale=None)  # OK
+        cls.canteen_siret_2 = CanteenFactory(siret="21010034300016", siren_unite_legale=None)  # OK
         cls.canteen_siren_1 = CanteenFactory(siret="", siren_unite_legale="756656218")  # OK
         cls.canteen_siren_2 = CanteenFactory(siret=None, siren_unite_legale="756656218")  # OK
         cls.canteen_none_1 = CanteenFactory()
@@ -477,8 +490,8 @@ class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
         self.assertEqual(Canteen.objects.has_siret_or_siren_unite_legale().count(), 4)
 
     def test_siret_or_siren_unite_legale_property(self):
-        for canteen in [self.canteen_siret_1, self.canteen_siret_2]:
-            self.assertEqual(canteen.siret_or_siren_unite_legale, "21590350100017")
+        self.assertEqual(self.canteen_siret_1.siret_or_siren_unite_legale, "21590350100017")
+        self.assertEqual(self.canteen_siret_2.siret_or_siren_unite_legale, "21010034300016")
         for canteen in [self.canteen_siren_1, self.canteen_siren_2]:
             self.assertEqual(canteen.siret_or_siren_unite_legale, "756656218")
         for canteen in [self.canteen_none_1, self.canteen_none_2]:
@@ -493,10 +506,7 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
         )
         COMMON = {
-            # CanteenFactory generates: name, city_insee_code, sectors
-            "yearly_meal_count": 1000,
-            "management_type": Canteen.ManagementType.DIRECT,
-            "economic_model": Canteen.EconomicModel.PUBLIC,
+            # CanteenFactory generates: name, city_insee_code, sectors...
             "sectors": [sector],
         }
         cls.canteen_central = CanteenFactory(
@@ -507,15 +517,14 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         )
         cls.canteen_central_incomplete = CanteenFactory(
             **COMMON,
-            siret="21590350100017",
+            siret="21010034300016",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=0,  # incomplete
         )
         cls.canteen_central_serving = CanteenFactory(
             **COMMON,
-            siret="21590350100017",
+            siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
-            daily_meal_count=12,
             satellite_canteens_count=1,
         )
         cls.canteen_central_serving_incomplete = CanteenFactory(
@@ -523,7 +532,6 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             # siret=None,  # incomplete
             siren_unite_legale=None,
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
-            daily_meal_count=12,
             satellite_canteens_count=1,
         )
         Canteen.objects.filter(id=cls.canteen_central_serving_incomplete.id).update(siret=None)  # incomplete
@@ -533,74 +541,78 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             siret=None,
             siren_unite_legale="967669103",  # complete
             production_type=Canteen.ProductionType.ON_SITE,
-            daily_meal_count=12,
         )
         cls.canteen_on_site_incomplete_1 = CanteenFactory(
             **COMMON,
-            siret="96766910375238",
+            siret="21380185500015",
             production_type=Canteen.ProductionType.ON_SITE,
-            daily_meal_count=12,
         )
         Canteen.objects.filter(id=cls.canteen_on_site_incomplete_1.id).update(daily_meal_count=0)  # incomplete
+        cls.canteen_on_site_incomplete_1.refresh_from_db()
         cls.canteen_on_site_incomplete_2 = CanteenFactory(
             **COMMON,
-            siret="96766910375238",
+            siret="21670482500019",
             production_type=Canteen.ProductionType.ON_SITE,
-            daily_meal_count=12,
         )
         cls.canteen_on_site_incomplete_2.sectors.clear()  # incomplete
         cls.canteen_on_site_incomplete_3 = CanteenFactory(
             **COMMON,
-            siret="96766910375238",
+            siret="21640122400011",
             production_type=Canteen.ProductionType.ON_SITE,
-            daily_meal_count=12,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             line_ministry=None,  # incomplete
         )
         cls.canteen_on_site_incomplete_3.sectors.set([sector_line_ministry])
-        cls.canteen_on_site_central = CanteenFactory(
+        cls.canteen_on_site_central_1 = CanteenFactory(
             **COMMON,
-            siret="96766910375238",
+            siret="21630113500010",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            daily_meal_count=12,
             central_producer_siret=cls.canteen_central.siret,
+        )
+        cls.canteen_on_site_central_2 = CanteenFactory(
+            **COMMON,
+            siret="21130055300016",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=cls.canteen_central_serving.siret,
         )
         cls.canteen_on_site_central_incomplete = CanteenFactory(
             **COMMON,
-            siret="96766910375238",
+            siret="21730065600014",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             daily_meal_count=12,
             central_producer_siret=None,  # incomplete
         )
+        cls.canteen_filled_list = [
+            cls.canteen_central,
+            cls.canteen_central_serving,
+            cls.canteen_on_site,
+            cls.canteen_on_site_central_1,
+            cls.canteen_on_site_central_2,
+        ]
+        cls.canteen_missing_data_list = [
+            cls.canteen_central_incomplete,
+            cls.canteen_central_serving_incomplete,
+            cls.canteen_on_site_incomplete_1,
+            cls.canteen_on_site_incomplete_2,
+            cls.canteen_on_site_incomplete_3,
+            cls.canteen_on_site_central_incomplete,
+        ]
 
     def test_filled_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 10)
-        self.assertEqual(Canteen.objects.filled().count(), 4)
+        self.assertEqual(Canteen.objects.count(), 11)
+        self.assertEqual(Canteen.objects.filled().count(), len(self.canteen_filled_list))
 
     def test_is_filled_property(self):
-        for canteen in [
-            self.canteen_central,
-            self.canteen_central_serving,
-            self.canteen_on_site,
-            self.canteen_on_site_central,
-        ]:
-            with self.subTest(canteen=canteen):
-                canteen.refresh_from_db()
+        for index, canteen in enumerate(self.canteen_filled_list):
+            with self.subTest(index=index, canteen=canteen):
                 self.assertTrue(canteen.is_filled)
-        for canteen in [
-            self.canteen_central_incomplete,
-            self.canteen_central_serving_incomplete,
-            self.canteen_on_site_incomplete_1,
-            self.canteen_on_site_incomplete_2,
-            self.canteen_on_site_incomplete_3,
-            self.canteen_on_site_central_incomplete,
-        ]:
-            with self.subTest(canteen=canteen):
-                canteen.refresh_from_db()
+        for index, canteen in enumerate(self.canteen_missing_data_list):
+            with self.subTest(index=index, canteen=canteen):
                 self.assertFalse(canteen.is_filled)
 
     def test_has_missing_data_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 10)
-        self.assertEqual(Canteen.objects.has_missing_data().count(), 6)
+        self.assertEqual(Canteen.objects.count(), 11)
+        self.assertEqual(Canteen.objects.has_missing_data().count(), len(self.canteen_missing_data_list))
 
 
 class CanteenAggregateQuerySetTest(TestCase):
@@ -619,7 +631,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             sectors=[sector],
         )
         cls.canteen_central_serving = CanteenFactory(
-            siret="21590350100017",
+            siret="21010034300016",
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             economic_model=Canteen.EconomicModel.PUBLIC,

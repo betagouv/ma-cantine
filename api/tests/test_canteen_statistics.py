@@ -177,7 +177,7 @@ class TestCanteenStatsApi(APITestCase):
         date_in_2022_teledeclaration_campaign = "2022-08-30"
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
-            canteen = CanteenFactory(siret="21590350100017")
+            canteen = CanteenFactory(siret="11007001800012")
             # Diagnostic that should display 20% Bio and 45% other EGalim
             canteen_diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -219,7 +219,7 @@ class TestCanteenStatsApi(APITestCase):
         date_in_2022_teledeclaration_campaign = "2022-08-30"
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
-            canteen = CanteenFactory(siret="21590350100017")
+            canteen = CanteenFactory(siret="11007001800012")
             # Diagnostic that should display 20% Bio and 45% other EGalim
             canteen_diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,

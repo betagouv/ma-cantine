@@ -525,26 +525,26 @@ class TestDiagnosticsApi(APITestCase):
         """
         last_year = 2021
         CanteenFactory.create(  # without diag
+            siret="21590350100017",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
         canteen_with_incomplete_diag = CanteenFactory.create(
+            siret="96766910375238",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="96766910375238",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
         DiagnosticFactory.create(canteen=canteen_with_incomplete_diag, year=last_year, value_total_ht=None)
         canteen_with_complete_diag = CanteenFactory.create(
+            siret="21010034300016",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
@@ -555,6 +555,7 @@ class TestDiagnosticsApi(APITestCase):
 
         # siret needs to be filled for the diag to be teledeclarable
         canteen_with_incomplete_data = CanteenFactory.create(
+            # siret=None,
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
             city_insee_code="69123",
@@ -566,11 +567,11 @@ class TestDiagnosticsApi(APITestCase):
         DiagnosticFactory.create(canteen=canteen_with_incomplete_data, year=last_year, value_total_ht=10000)
 
         canteen_without_line_ministry = CanteenFactory.create(
+            siret="31285246765507",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
-            siret="31285246765507",
             line_ministry=None,
             managers=[authenticate.user],
         )
@@ -582,9 +583,9 @@ class TestDiagnosticsApi(APITestCase):
         # to verify we are returning the correct diag for the canteen, create another diag for a different year
         DiagnosticFactory.create(canteen=canteen_with_complete_diag, year=last_year - 1, value_total_ht=10000)
         canteen_with_td = CanteenFactory.create(
+            siret="55476895458384",
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
-            siret="55476895458384",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
