@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
-import GestionnaireCreateCanteensCard from "@/components/GestionnaireCreateCanteensCard.vue"
+import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
 
 const store = useRootStore()
 
@@ -20,7 +20,7 @@ const canteenSentence = computed(() => {
     <p class="fr-text--lead">{{ canteenSentence }}</p>
   </section>
   <section class="ma-cantine--stick-to-footer">
-    <GestionnaireCreateCanteensCard v-if="store.canteenPreviews.length === 0" />
+    <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
     <GestionnaireGuides />
   </section>
 </template>
