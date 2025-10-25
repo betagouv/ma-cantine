@@ -19,10 +19,8 @@ const canteenSentence = computed(() => {
     <h1>Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
     <p class="fr-text--lead">{{ canteenSentence }}</p>
   </section>
-  <section>
-    <GestionnaireCreateCanteensCard v-if="store.canteenPreviews.length === 0" />
-  </section>
   <section class="ma-cantine--stick-to-footer">
+    <GestionnaireCreateCanteensCard v-if="store.canteenPreviews.length === 0" />
     <GestionnaireGuides />
   </section>
 </template>
