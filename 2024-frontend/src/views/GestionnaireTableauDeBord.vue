@@ -24,18 +24,3 @@ const canteenSentence = computed(() => {
     <GestionnaireGuides />
   </section>
 </template>
-
-<style lang="scss">
-.gestionnaire-tableau-de-bord {
-  &__card {
-    .fr-card__header {
-      padding-top: 1rem !important;
-    }
-
-    .fr-card__img img {
-      max-height: 7rem !important;
-      object-fit: contain !important;
-    }
-  }
-}
-</style>
