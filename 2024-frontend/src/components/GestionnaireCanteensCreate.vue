@@ -4,10 +4,10 @@ const pictoDocumentAdd = "/static/images/picto-dsfr/document-add.svg"
 </script>
 
 <template>
-  <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters fr-my-4w">
+  <ul class="gestionnaire-canteens-create ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters fr-my-4w">
     <li class="fr-col-12 fr-col-md-6">
       <DsfrCard
-        class="gestionnaire-tableau-de-bord__card"
+        class="gestionnaire-canteens-create__card"
         title="Ajouter une cantine via le formulaire"
         :imgSrc="pictoDocuments"
         :link="{ name: 'GestionnaireCantineAjouter' }"
@@ -17,7 +17,7 @@ const pictoDocumentAdd = "/static/images/picto-dsfr/document-add.svg"
     </li>
     <li class="fr-col-12 fr-col-md-6">
       <DsfrCard
-        class="gestionnaire-tableau-de-bord__card"
+        class="gestionnaire-canteens-create__card"
         title="Créer plus de 5 cantines via import de fichier"
         :imgSrc="pictoDocumentAdd"
         :link="{ name: 'GestionnaireImportCantines' }"
@@ -27,3 +27,18 @@ const pictoDocumentAdd = "/static/images/picto-dsfr/document-add.svg"
     </li>
   </ul>
 </template>
+
+<style lang="scss">
+.gestionnaire-canteens-create {
+  &__card {
+    .fr-card__header {
+      padding-top: 1rem !important;
+    }
+
+    .fr-card__img img {
+      max-height: 7rem !important;
+      object-fit: contain !important;
+    }
+  }
+}
+</style>
