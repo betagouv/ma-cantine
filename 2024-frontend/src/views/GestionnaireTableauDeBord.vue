@@ -48,7 +48,7 @@ const pictoDocumentAdd = "/static/images/picto-dsfr/document-add.svg"
       </li>
     </ul>
   </section>
-  <section>
+  <section class="ma-cantine--stick-to-footer">
     <GestionnaireGuides />
   </section>
 </template>
