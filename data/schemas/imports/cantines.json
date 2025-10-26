@@ -186,6 +186,17 @@
       "name": "gestionnaires_additionnels",
       "title": "Adresses mél de gestionnaires additionnels",
       "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Nombre de restaurants satellites pour une cantine qui produit les repas sur place",
+      "example": "12",
+      "format": "default",
+      "name": "nombre_satellites",
+      "title": "Nombre de restaurants satellites",
+      "type": "integer"
     }
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
