@@ -27,7 +27,9 @@ class DiagnosticQuerySetTest(TestCase):
         Canteen.objects.filter(id=cls.canteen_valid_5.id).update(yearly_meal_count=None)  # not aberrant
         cls.canteen_valid_5.refresh_from_db()
         cls.canteen_valid_sat = CanteenFactory(
-            siret="21380185500015", production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+            siret="21380185500015",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret="92341284500011",
         )
         cls.canteen_valid_6_armee = CanteenFactory(
             siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE, yearly_meal_count=100

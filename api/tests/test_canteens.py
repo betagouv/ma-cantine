@@ -251,11 +251,14 @@ class CanteenApiTest(APITestCase):
         central_kitchen_without_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
+        canteen_satellite = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central_kitchen_without_siret.siret,
+        )
         Canteen.objects.filter(id=central_kitchen_without_siret.id).update(siret=None)
         central_kitchen_without_siret.refresh_from_db()
-
-        canteen_satellite = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
         Canteen.objects.filter(id=canteen_satellite.id).update(central_producer_siret=None)
+        canteen_satellite.refresh_from_db()
         canteen_central_serving = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL_SERVING, central_producer_siret=None
         )

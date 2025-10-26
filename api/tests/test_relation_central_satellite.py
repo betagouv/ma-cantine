@@ -142,7 +142,9 @@ class TestRelationCentralSatellite(APITestCase):
         """
         satellite_siret = "89834106501485"
         existing_canteen = CanteenFactory.create(
-            siret=satellite_siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+            siret=satellite_siret,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret="75665621899905",
         )
         Canteen.objects.filter(id=existing_canteen.id).update(central_producer_siret=None)
         central_siret = "08376514425566"

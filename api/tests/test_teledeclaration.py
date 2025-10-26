@@ -567,8 +567,8 @@ class TestTeledeclarationCreateApi(APITestCase):
         cases = [
             {
                 "canteen": CanteenFactory(
-                    production_type=Canteen.ProductionType.ON_SITE,
                     siret="21340172201787",
+                    production_type=Canteen.ProductionType.ON_SITE,
                     managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
@@ -576,8 +576,9 @@ class TestTeledeclarationCreateApi(APITestCase):
             },
             {
                 "canteen": CanteenFactory(
-                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                     siret="21380185500015",
+                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                    central_producer_siret="75665621899905",
                     managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
@@ -585,8 +586,8 @@ class TestTeledeclarationCreateApi(APITestCase):
             },
             {
                 "canteen": CanteenFactory(
-                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                     siret="21670482500019",
+                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                     central_producer_siret=central.siret,
                     managers=[authenticate.user],
                 ),
@@ -595,8 +596,8 @@ class TestTeledeclarationCreateApi(APITestCase):
             },
             {
                 "canteen": CanteenFactory(
-                    production_type=Canteen.ProductionType.CENTRAL,
                     siret="21640122400011",
+                    production_type=Canteen.ProductionType.CENTRAL,
                     managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(
@@ -608,8 +609,8 @@ class TestTeledeclarationCreateApi(APITestCase):
             },
             {
                 "canteen": CanteenFactory(
-                    production_type=Canteen.ProductionType.CENTRAL_SERVING,
                     siret="21630113500010",
+                    production_type=Canteen.ProductionType.CENTRAL_SERVING,
                     managers=[authenticate.user],
                 ),
                 "diagnostic": DiagnosticFactory.create(
