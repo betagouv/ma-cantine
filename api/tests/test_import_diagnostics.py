@@ -378,7 +378,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'repas par jour' : La valeur « not a number » doit être un nombre entier.",
+            "Champ 'repas par jour' : La valeur «\xa0not a number\xa0» doit être un nombre entier.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'repas par jour' : Le champ doit être un nombre entier.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -406,11 +410,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'repas par an (y compris livrés)' : Ce champ ne peut pas être vide.",
+            "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'repas par jour' : Ce champ ne peut pas être vide.",
+            "Champ 'repas par jour' : Le champ ne peut pas être vide.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -443,7 +447,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'siret' : Le SIRET doit être composé des chiffres",
+            "Champ 'siret' : 14 caractères numériques sont attendus",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -885,7 +889,7 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         self.assertEqual(
             body["errors"][0]["message"],
-            "Champ 'siret de la cuisine centrale' : Le SIRET de la cuisine centrale doit être différent de celui du restaurant satellite",
+            "Champ 'siret de la cuisine centrale' : Cantine satellite : le champ doit être différent de celui de la cantine.",
         )
 
     @authenticate

@@ -162,6 +162,8 @@ class ImportDiagnosticsView(ABC, APIView):
 
     @transaction.atomic
     def _save_data_from_row(self, row):
+        if row[0] == "":
+            raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
         # validate data for format etc, starting with basic non-data-specific row checks
         self._validate_row(row)
         ImportDiagnosticsView._validate_canteen(row)
