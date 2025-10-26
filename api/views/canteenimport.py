@@ -163,8 +163,6 @@ class ImportCanteensView(APIView):
 
     @transaction.atomic
     def _save_data_from_row(self, row):
-        if row[0] == "":
-            raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
         # validate data for format etc, starting with basic non-data-specific row checks
         ImportCanteensView._validate_canteen(row)
         manager_emails = self._get_manager_emails_to_notify(row)
@@ -258,30 +256,11 @@ class ImportCanteensView(APIView):
         errors.append({"message": message, "code": code})
 
     @staticmethod
-    def _validate_canteen(row):  # noqa C901
-        if not utils_utils.normalize_string(row[0]).isdigit():
-            raise ValidationError({"siret": "Le SIRET doit être composé des chiffres"})
-        if not row[5]:
-            raise ValidationError({"daily_meal_count": "Ce champ ne peut pas être vide."})
-        if not row[5].strip().isdigit():
-            raise ValidationError({"daily_meal_count": f"La valeur « {row[5]} » doit être un nombre entier."})
-        if not row[6]:
-            raise ValidationError({"yearly_meal_count": "Ce champ ne peut pas être vide."})
-        if not row[6].strip().isdigit():
-            raise ValidationError({"yearly_meal_count": f"La valeur « {row[6]} » doit être un nombre entier."})
+    def _validate_canteen(row):
         if not row[2] and not row[3]:
             raise ValidationError(
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
-        if row[4]:
-            central_producer_siret = utils_utils.normalize_string(row[4])
-            siret = utils_utils.normalize_string(row[0])
-            if central_producer_siret == siret:
-                raise ValidationError(
-                    {
-                        "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui du restaurant satellite"
-                    }
-                )
         if row[8] != Canteen.ProductionType.CENTRAL:
             if not row[7]:
                 raise ValidationError(
