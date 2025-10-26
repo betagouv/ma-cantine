@@ -123,6 +123,7 @@ class TestCanteenStatsApi(APITestCase):
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PRIVATE,
+                central_producer_siret=canteen_1.siret,
             )
         with freeze_time("1990-01-01"):
             canteen_5 = CanteenFactory(
@@ -134,6 +135,7 @@ class TestCanteenStatsApi(APITestCase):
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
                 line_ministry=Canteen.Ministries.ARMEE,
+                central_producer_siret=canteen_1.siret,
             )
             DiagnosticFactory(
                 canteen=canteen_5,

@@ -593,6 +593,7 @@ class Canteen(SoftDeletionModel):
             canteen_validators.validate_canteen_siret_or_siren_unite_legale(self),
             canteen_validators.validate_canteen_choice_fields(self),
             canteen_validators.validate_canteen_meal_count_fields(self),
+            canteen_validators.validate_canteen_central_producer_siret_field(self),
         )
         if validation_errors:
             raise ValidationError(validation_errors)
