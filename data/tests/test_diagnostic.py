@@ -17,7 +17,9 @@ date_in_last_teledeclaration_campaign = "2024-02-01"
 class DiagnosticQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_valid_1 = CanteenFactory(siret="92341284500011", yearly_meal_count=100)
+        cls.canteen_valid_1 = CanteenFactory(
+            siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=100
+        )
         cls.canteen_valid_2 = CanteenFactory(siret=None, siren_unite_legale="123456789", yearly_meal_count=100)
         cls.canteen_valid_3 = CanteenFactory(siret=None, siren_unite_legale="123456789", yearly_meal_count=100)
         cls.canteen_valid_4 = CanteenFactory(siret="40419443300078")
@@ -29,7 +31,7 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_valid_sat = CanteenFactory(
             siret="21380185500015",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret="92341284500011",
+            central_producer_siret=cls.canteen_valid_1.siret,
         )
         cls.canteen_valid_6_armee = CanteenFactory(
             siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE, yearly_meal_count=100
