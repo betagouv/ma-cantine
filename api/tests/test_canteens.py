@@ -1244,13 +1244,17 @@ class TestCanteenActionApi(APITestCase):
         # canteen not ok with diag
         canteen_with_bad_central_siret = CanteenFactory.create(
             siret="59282615314394",
-            central_producer_siret="59282615314394",
+            central_producer_siret="75665621899905",  # changed to 59282615314394 below
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             management_type=Canteen.ManagementType.DIRECT,
             economic_model=Canteen.EconomicModel.PUBLIC,
             city_insee_code="69123",
             managers=[authenticate.user],
         )
+        Canteen.objects.filter(id=canteen_with_bad_central_siret.id).update(
+            central_producer_siret=canteen_with_bad_central_siret.siret
+        )
+        canteen_with_bad_central_siret.refresh_from_db()
         DiagnosticFactory.create(canteen=canteen_with_bad_central_siret, year=last_year, value_total_ht=10000)
         # canteen ok without diag
         CanteenFactory.create(
