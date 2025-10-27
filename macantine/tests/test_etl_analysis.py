@@ -476,7 +476,6 @@ class TestETLAnalysisTD(TestCase):
         )  # Zeros are processed as zeros and not nulls
 
     def test_delete_duplicates_cc_csat_with_duplicates(self):
-
         etl_instance = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_instance.df = pd.DataFrame(
             {

@@ -68,7 +68,7 @@ def update_dataset_resources(dataset_id):
                 today = date.today()
                 updated_url = resource["url"].split("?v=")[0] + "?v=" + today.strftime("%Y%m%d")
                 response = requests.put(
-                    f'{DATAGOUV_API_URL}/datasets/{dataset_id}/resources/{resource["id"]}',
+                    f"{DATAGOUV_API_URL}/datasets/{dataset_id}/resources/{resource['id']}",
                     headers=DATAGOUV_API_HEADER,
                     json={"url": updated_url},
                 )

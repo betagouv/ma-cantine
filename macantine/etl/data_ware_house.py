@@ -6,7 +6,6 @@ from sqlalchemy import URL, create_engine
 
 
 class DataWareHouse:
-
     def __init__(self):
         load_dotenv()
         url_object = URL.create(

@@ -44,7 +44,7 @@ for f in fields:
     print("    decimal_places=2,")
     print("    blank=True,")
     print("    null=True,")
-    print(f"    verbose_name=\"{f['description']}\",")
+    print(f'    verbose_name="{f["description"]}",')
     print(")")
 
 print("\n# properties")
@@ -61,12 +61,12 @@ for family in families:
 # factory
 print("\n# factory")
 for f in fields:
-    print(f"{f['fieldname']} = factory.Faker(\"random_int\", min=0, max=200)")
+    print(f'{f["fieldname"]} = factory.Faker("random_int", min=0, max=200)')
 
 # serializer
 print("\n# serializer, admin")
 for f in fields:
-    print(f"\"{f['fieldname']}\",")
+    print(f'"{f["fieldname"]}",')
 print("\n# properties")
 labels_and_families = [*labels, *families]
 for t in labels_and_families:
@@ -76,7 +76,7 @@ for t in labels_and_families:
 print("\n# misc")
 print("[", end="")
 for f in fields:
-    print(f"\"{f['fieldname']}\"", end=", ")
+    print(f'"{f["fieldname"]}"', end=", ")
 for t in labels_and_families:
     print(f'"{t[0]}"', end=", ")
 print("]")
@@ -117,13 +117,13 @@ print("")
 # TODO: code for importer view
 print("\n# Documentation")
 for field in fields:
-    print(f"\"{field['description']}\",")
+    print(f'"{field["description"]}",')
 # TODO: can make nicer column names
 
 # test
 print("\n# diagnostic api test")
 for f in fields:
-    print(f"\"{f['fieldname']}\": 10,")
+    print(f'"{f["fieldname"]}": 10,')
 print("")
 for label in labels:
     print(f"self.assertEqual(diagnostic.total_label_{label[0]}, {10 * len(families)})")

@@ -88,7 +88,6 @@ class ETL(ABC):
 
 
 class EXTRACTOR(ETL):
-
     def extract_dataset(self):
         start = time.time()
         view = self.view()

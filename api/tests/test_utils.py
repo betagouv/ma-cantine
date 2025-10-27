@@ -4,7 +4,6 @@ from api.serializers.utils import safe_to_float
 
 
 class TestUtils(APITestCase):
-
     def test_safe_to_float(self):
         test_cases = [
             (None, None),
