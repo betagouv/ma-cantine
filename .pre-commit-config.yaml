@@ -58,22 +58,14 @@ repos:
     rev: v3.21.0
     hooks:
       - id: pyupgrade
-  - repo: https://github.com/ambv/black
-    rev: 25.9.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.2
     hooks:
-      - id: black
-        args: [--line-length=119]
-        exclude: ^migrations/
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.3.0
-    hooks:
-      - id: flake8
-        args: [--config=.flake8]
-  - repo: https://github.com/pycqa/isort
-    rev: 7.0.0
-    hooks:
-      - id: isort
-        args: ["--profile", "black", "--filter-files"]
+      # linter
+      - id: ruff-check
+        args: [--fix]
+      # formatter
+      - id: ruff-format
   - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
     rev: v1.4.2
     hooks:
