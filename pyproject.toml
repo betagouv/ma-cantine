@@ -141,6 +141,7 @@ dependencies = [
     "requests==2.32.4",
     "requests-mock==1.12.1",
     "rpds-py==0.21.0",
+    "ruff>=0.14.2",
     "s3transfer==0.10.4",
     "sentry-sdk==2.10.0",
     "sib-api-v3-sdk==7.6.0",
@@ -174,3 +175,8 @@ dependencies = [
 
 [tool.uv.sources]
 django-magicauth = { git = "https://github.com/betagouv/django-magicauth.git", rev = "51f4709d8593016ac67428a87bbd2810070ae288" }
+
+
+[tool.ruff]
+line-length = 119
+exclude = [".git", "__pycache__", "docs/source/conf.py", "build", "dist", "migrations", "media", "fixtures", "requirements", "static", "assets"]

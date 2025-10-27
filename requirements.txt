@@ -574,6 +574,8 @@ rpds-py==0.21.0
     #   jsonschema
     #   ma-cantine
     #   referencing
+ruff==0.14.2
+    # via ma-cantine
 s3transfer==0.10.4
     # via
     #   boto3
