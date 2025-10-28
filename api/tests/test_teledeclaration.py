@@ -563,7 +563,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             year=2021,
             value_total_ht=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
-        ),
+        )
         cases = [
             {
                 "canteen": CanteenFactory(
