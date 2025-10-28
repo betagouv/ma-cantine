@@ -3,6 +3,7 @@ import { computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
+import badgeService from "@/services/badges.js"
 import cantines from "@/data/cantines.json"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
@@ -45,6 +46,7 @@ const rows = computedAsync(async () => {
   const canteens = await canteenService.fetchCanteensActions()
   const rows = []
   canteens.forEach((canteen) => {
+    const badge = badgeService.getFromAction(canteen.action)
     rows.push({
       name: canteen.name,
       siret: canteen.siret || canteen.sirenUniteLegale,
@@ -54,7 +56,10 @@ const rows = computedAsync(async () => {
         isEmpty: !canteen.city && !canteen.postalCode,
       },
       productionType: getProductionTypeLabel(canteen.productionType),
-      status: canteen.action, // En badge
+      status: {
+        label: badge.body,
+        type: badge.mode.toLowerCase(),
+      },
       actions: "", // TD seulement pour l'instant
     })
   })
@@ -89,6 +94,9 @@ const getProductionTypeLabel = (slug) => {
             <p v-if="cell.name">{{ cell.name }}</p>
             <p v-if="cell.postalCode">{{ cell.postalCode }}</p>
           </div>
+        </template>
+        <template v-else-if="colKey === 'status'">
+          <DsfrBadge :label="cell.label" :type="cell.type" />
         </template>
         <template v-else>
           <p>{{ cell }}</p>

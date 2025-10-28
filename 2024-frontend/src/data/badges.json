@@ -1,0 +1,49 @@
+{
+  "canteen": [
+    {
+      "actions": [],
+      "body": "Année en cours",
+      "mode": "INFO"
+    },
+    {
+      "actions": [
+        "10_add_satellites",
+        "35_fill_canteen_data",
+        "18_prefill_diagnostic",
+        "20_create_diagnostic",
+        "30_fill_diagnostic"
+      ],
+      "body": "Données à compléter",
+      "mode": "ERROR"
+    },
+    {
+      "actions": [
+        "90_nothing_satellite"
+      ],
+      "body": "En attente de la télédéclaration de votre cuisine centrale",
+      "mode": "WARNING"
+    },
+    {
+      "actions": [
+        "45_did_not_teledeclare"
+      ],
+      "body": "Bilan non télédéclaré",
+      "mode": "NEUTRAL"
+    },
+    {
+      "actions": [
+        "40_teledeclare"
+      ],
+      "body": "Bilan à télédéclarer",
+      "mode": "ERROR"
+    },
+    {
+      "actions": [
+        "91_nothing_satellite_teledeclared",
+        "95_nothing"
+      ],
+      "body": "Bilan télédéclaré",
+      "mode": "SUCCESS"
+    }
+  ]
+}
