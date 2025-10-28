@@ -11,22 +11,6 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v3.7.13
+      - uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          release-type: simple
-          changelog-types: |
-            [
-              {"type":"feat","section":"Nouveautés","hidden":false},
-              {"type":"improve","section":"Améliorations","hidden":false},
-              {"type":"fix","section":"Corrections (bugs, typos...)","hidden":false},
-              {"type":"docs","section":"Documentation","hidden":false},
-              {"type":"refactor","section":"Technique","hidden":false},
-              {"type":"revert","section":"Technique","hidden":false},
-              {"type":"style","section":"Technique","hidden":false},
-              {"type":"test","section":"Technique","hidden":false},
-              {"type":"chore","section":"Technique","hidden":false},
-              {"type":"perf","section":"Technique","hidden":false},
-              {"type":"build","section":"Technique","hidden":false},
-              {"type":"ci","section":"Technique","hidden":false}
-            ]
