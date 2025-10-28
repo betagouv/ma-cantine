@@ -3,6 +3,7 @@ import { computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
+import cantines from "@/data/cantines.json"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
 
@@ -52,13 +53,18 @@ const rows = computedAsync(async () => {
         postalCode: canteen.postalCode,
         isEmpty: !canteen.city && !canteen.postalCode,
       },
-      productionType: canteen.productionType, // En FR
+      productionType: getProductionTypeLabel(canteen.productionType),
       status: canteen.action, // En badge
       actions: "", // TD seulement pour l'instant
     })
   })
   return rows
 }, [])
+
+const getProductionTypeLabel = (slug) => {
+  const index = cantines.productionType.findIndex((type) => type.value === slug)
+  return cantines.productionType[index].label
+}
 </script>
 
 <template>
