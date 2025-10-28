@@ -25,10 +25,10 @@ const rows = computedAsync(async () => {
     rows.push([
       canteen.name,
       canteen.siret || canteen.sirenUniteLegale,
-      `${canteen.city} - ${canteen.postalCode}`,
-      canteen.productionType,
-      canteen.action,
-      "",
+      `${canteen.city} - ${canteen.postalCode}`, // En HTML
+      canteen.productionType, // En FR
+      canteen.action, // En badge
+      "", // TD seulement pour l'instant
     ])
   })
   return rows
