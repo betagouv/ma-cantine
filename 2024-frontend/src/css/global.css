@@ -20,6 +20,10 @@ address {
     text-align: center;
 }
 
+.ma-cantine--text-right {
+    text-align: right;
+}
+
 /* PARAGRAPHES */
 .ma-cantine--no-mb-p p {
     margin-bottom: 0 !important;

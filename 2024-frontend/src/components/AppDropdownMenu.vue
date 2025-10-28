@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
-import { useWindowSize } from "@vueuse/core"
 defineProps(["label", "icon", "links"])
 
 /* Icon */
@@ -9,15 +8,6 @@ const isOpened = ref(false)
 const arrow = computed(() => {
   const direction = isOpened.value ? "up" : "down"
   return `fr-icon-arrow-${direction}-s-line`
-})
-
-/* Dropdow alignment */
-const { width } = useWindowSize()
-const dropdownRef = useTemplateRef("dropdown-ref")
-const dropdownAlign = computed(() => {
-  const maxLeftPosition = width.value - 400 // 400px = 25rem
-  const boundingRect = dropdownRef.value.getBoundingClientRect()
-  return boundingRect.left < maxLeftPosition ? "left" : "right"
 })
 
 /* Click outside */
@@ -32,9 +22,8 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 <template>
   <div class="app-dropdown-menu" ref="dropdown-ref">
     <DsfrButton
-      class="app-dropdown-menu__opener"
-      :class="{ hover: isOpened }"
       tertiary
+      :class="{ 'fr-background-contrast--blue-france': isOpened }"
       :icon="arrow"
       icon-right
       @click="isOpened = !isOpened"
@@ -46,14 +35,15 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     </DsfrButton>
     <ul
       v-if="isOpened"
-      :class="
-        `app-dropdown-menu__content app-dropdown-menu__content--${dropdownAlign} fr-background-default--grey ma-cantine--shadow-raised ma-cantine--unstyled-list fr-menu__list fr-my-0`
-      "
+      class="app-dropdown-menu__content fr-background-default--grey ma-cantine--shadow-raised ma-cantine--unstyled-list fr-my-0"
       ref="content"
     >
-      <li v-for="link in links" :key="link.to" class="fr-menu__item fr-pb-0">
-        <router-link :to="link.to" class="ma-cantine--unstyled-link fr-text-title--blue-france fr-nav__link">
-          {{ link.label }}
+      <li v-for="link in links" :key="link.to" class="fr-pb-0">
+        <router-link
+          :to="link.to"
+          class="app-dropdown-menu__link ma-cantine--unstyled-link fr-text-title--blue-france fr-py-1v fr-px-3v fr-nav__link"
+        >
+          <p class="fr-text--sm ma-cantine--text-right fr-col-12">{{ link.label }}</p>
         </router-link>
       </li>
     </ul>
@@ -64,34 +54,19 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 .app-dropdown-menu {
   position: relative;
 
-  &__opener {
-    &.hover {
-      background-color: var(--hover-tint);
-    }
-  }
-
   &__content {
     z-index: 9;
     position: absolute;
     bottom: 0;
-    left: 0;
+    right: 0;
+    left: auto;
     transform: translateY(100%);
     width: max-content !important;
+  }
 
-    @media (min-width: 768px) {
-      &--right {
-        right: 0;
-        left: auto;
-      }
-      &--left {
-        left: 0;
-        right: auto;
-      }
-    }
-
-    *:last-child {
-      margin-bottom: 0 !important;
-    }
+  &__link {
+    min-height: 1rem !important;
+    border-bottom: solid 1px var(--background-contrast-grey);
   }
 }
 </style>
