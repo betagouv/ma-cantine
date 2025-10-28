@@ -98,40 +98,38 @@ const getProductionTypeLabel = (slug) => {
 
 <style lang="scss">
 .gestionnaire-canteens-table {
-  &__table {
-    th,
-    td {
-      white-space: initial !important;
-      word-break: break-word;
-    }
+  th,
+  td {
+    white-space: initial !important;
+    word-break: break-word;
+  }
 
-    th:nth-child(1) {
-      width: 20% !important;
-    }
+  th:nth-child(1) {
+    width: 20% !important;
+  }
 
-    th:nth-child(2) {
-      width: 10% !important;
-    }
+  th:nth-child(2) {
+    width: 10% !important;
+  }
 
-    td:nth-child(2) {
-      padding-right: 0% !important;
-    }
+  td:nth-child(2) {
+    padding-right: 0% !important;
+  }
 
-    th:nth-child(3) {
-      width: 15% !important;
-    }
+  th:nth-child(3) {
+    width: 15% !important;
+  }
 
-    th:nth-child(4) {
-      width: 10% !important;
-    }
+  th:nth-child(4) {
+    width: 10% !important;
+  }
 
-    th:nth-child(5) {
-      width: 20% !important;
-    }
+  th:nth-child(5) {
+    width: 20% !important;
+  }
 
-    th:nth-child(6) {
-      width: 25% !important;
-    }
+  th:nth-child(6) {
+    width: 25% !important;
   }
 }
 </style>
