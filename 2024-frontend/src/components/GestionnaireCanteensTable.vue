@@ -40,6 +40,7 @@ const rows = computedAsync(async () => {
     const city = getCityInfos(canteen)
     const productionType = getProductionTypeInfos(canteen)
     const status = getStatusInfos(canteen)
+    const actions = getActionsInfos(canteen)
 
     rows.push({
       name,
@@ -47,7 +48,7 @@ const rows = computedAsync(async () => {
       city,
       productionType,
       status,
-      actions: "",
+      actions,
     })
   })
   return rows
@@ -86,6 +87,36 @@ const getStatusInfos = (canteen) => {
     type: badge.mode,
   }
 }
+
+const getActionsInfos = (canteen) => {
+  const canteenUrlComponent = urlService.getCanteenUrl(canteen)
+  const links = [
+    {
+      name: "Modifier la cantine",
+      to: "DashboardManager",
+      canteenUrlComponent: canteenUrlComponent,
+    },
+    {
+      name: "Ajouter des achats",
+      to: "PurchasesHome",
+    },
+    {
+      name: "Gérer les collaborateurs",
+      to: "CanteenManagers",
+      canteenUrlComponent: canteenUrlComponent,
+    },
+  ]
+
+  if (canteen.productionType === "central" || canteen.productionType === "central_serving") {
+    links.push({
+      to: "GestionnaireCantineSatellitesGerer",
+      canteenUrlComponent: canteenUrlComponent,
+      name: "Gérer les satellites",
+    })
+  }
+
+  return links
+}
 </script>
 <template>
   <DsfrDataTable class="gestionnaire-canteens-table" title="Vos cantines" no-caption :headers-row="header" :rows="rows">
@@ -115,6 +146,10 @@ const getStatusInfos = (canteen) => {
 
 <style lang="scss">
 .gestionnaire-canteens-table {
+  .fr-table__container {
+    overflow: initial !important;
+  }
+
   th,
   td {
     white-space: initial !important;
