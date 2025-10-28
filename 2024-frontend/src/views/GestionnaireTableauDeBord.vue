@@ -81,7 +81,7 @@ const getProductionTypeLabel = (slug) => {
     <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
     <DsfrDataTable
       v-else
-      class="gestionnaire-canteens-table"
+      class="gestionnaire-tableau-de-bord__table"
       title="Vos cantines"
       no-caption
       :headers-row="header"
@@ -106,3 +106,43 @@ const getProductionTypeLabel = (slug) => {
     <GestionnaireGuides />
   </section>
 </template>
+
+<style lang="scss">
+.gestionnaire-tableau-de-bord {
+  &__table {
+    th,
+    td {
+      white-space: initial !important;
+      word-break: break-word;
+    }
+
+    th:nth-child(1) {
+      width: 20% !important;
+    }
+
+    th:nth-child(2) {
+      width: 10% !important;
+    }
+
+    td:nth-child(2) {
+      padding-right: 0% !important;
+    }
+
+    th:nth-child(3) {
+      width: 15% !important;
+    }
+
+    th:nth-child(4) {
+      width: 10% !important;
+    }
+
+    th:nth-child(5) {
+      width: 20% !important;
+    }
+
+    th:nth-child(6) {
+      width: 25% !important;
+    }
+  }
+}
+</style>
