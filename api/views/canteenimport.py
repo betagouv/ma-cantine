@@ -263,6 +263,15 @@ class ImportCanteensView(APIView):
             raise ValidationError(
                 {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
             )
+        if row[4]:
+            central_producer_siret = utils_utils.normalize_string(row[4])
+            siret = utils_utils.normalize_string(row[0])
+            if central_producer_siret == siret:
+                raise ValidationError(
+                    {
+                        "central_producer_siret": "Le SIRET de la cuisine centrale doit être différent de celui du restaurant satellite"
+                    }
+                )
         if row[8] != Canteen.ProductionType.CENTRAL:
             if not row[7]:
                 raise ValidationError(
