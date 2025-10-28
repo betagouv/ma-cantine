@@ -5,6 +5,7 @@ import badgeService from "@/services/badges.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 import AppRawHTML from "@/components/AppRawHTML.vue"
+import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 const header = [
   {
@@ -136,6 +137,19 @@ const getActionsInfos = (canteen) => {
       </template>
       <template v-else-if="colKey === 'status'">
         <DsfrBadge small :label="cell.label" :type="cell.type" />
+      </template>
+      <template v-else-if="colKey === 'actions'">
+        <div class="fr-grid-row fr-grid-row--right">
+          <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line">
+            <ul class="ma-cantine--unstyled-list">
+              <li v-for="link in cell" :key="link.to">
+                <router-link :to="{ name: link.to, params: { canteenUrlComponent: link.canteenUrlComponent } }">
+                  {{ link.name }}
+                </router-link>
+              </li>
+            </ul>
+          </AppDropdownMenu>
+        </div>
       </template>
       <template v-else>
         <p class="fr-text--xs">{{ cell }}</p>
