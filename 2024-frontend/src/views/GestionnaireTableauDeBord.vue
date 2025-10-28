@@ -75,7 +75,20 @@ const rows = computedAsync(async () => {
       no-caption
       :headers-row="header"
       :rows="rows"
-    />
+    >
+      <template #cell="{ colKey, cell }">
+        <template v-if="colKey === 'city'">
+          <p v-if="cell.isEmpty">Non renseigné</p>
+          <div v-else>
+            <p v-if="cell.name">{{ cell.name }}</p>
+            <p v-if="cell.postalCode">{{ cell.postalCode }}</p>
+          </div>
+        </template>
+        <template v-else>
+          <p>{{ cell }}</p>
+        </template>
+      </template>
+    </DsfrDataTable>
     <GestionnaireGuides />
   </section>
 </template>
