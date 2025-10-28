@@ -5,7 +5,6 @@ import badgeService from "@/services/badges.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 
-/* Table */
 const header = [
   {
     key: "name",
@@ -29,6 +28,7 @@ const header = [
     label: "Actions",
   },
 ]
+
 const rows = computedAsync(async () => {
   const canteens = await canteenService.fetchCanteensActions()
   const rows = []
