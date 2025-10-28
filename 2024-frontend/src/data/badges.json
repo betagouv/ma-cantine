@@ -3,7 +3,7 @@
     {
       "actions": [],
       "body": "Année en cours",
-      "mode": "INFO"
+      "mode": "info"
     },
     {
       "actions": [
@@ -14,28 +14,28 @@
         "30_fill_diagnostic"
       ],
       "body": "Données à compléter",
-      "mode": "ERROR"
+      "mode": "error"
     },
     {
       "actions": [
         "90_nothing_satellite"
       ],
       "body": "En attente de la télédéclaration de votre cuisine centrale",
-      "mode": "WARNING"
+      "mode": "warning"
     },
     {
       "actions": [
         "45_did_not_teledeclare"
       ],
       "body": "Bilan non télédéclaré",
-      "mode": "NEUTRAL"
+      "mode": "neutral"
     },
     {
       "actions": [
         "40_teledeclare"
       ],
       "body": "Bilan à télédéclarer",
-      "mode": "ERROR"
+      "mode": "error"
     },
     {
       "actions": [
@@ -43,7 +43,7 @@
         "95_nothing"
       ],
       "body": "Bilan télédéclaré",
-      "mode": "SUCCESS"
+      "mode": "success"
     }
   ]
 }

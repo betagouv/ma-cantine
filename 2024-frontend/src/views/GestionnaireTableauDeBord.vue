@@ -58,7 +58,7 @@ const rows = computedAsync(async () => {
       productionType: getProductionTypeLabel(canteen.productionType),
       status: {
         label: badge.body,
-        type: badge.mode.toLowerCase(),
+        type: badge.mode,
       },
       actions: "", // TD seulement pour l'instant
     })
