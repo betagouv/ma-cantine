@@ -93,26 +93,23 @@ const getActionsInfos = (canteen) => {
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
   const links = [
     {
-      name: "Modifier la cantine",
-      to: "DashboardManager",
-      canteenUrlComponent: canteenUrlComponent,
+      label: "Modifier la cantine",
+      to: { name: "DashboardManager", params: { canteenUrlComponent: canteenUrlComponent } },
     },
     {
-      name: "Ajouter des achats",
-      to: "PurchasesHome",
+      label: "Ajouter des achats",
+      to: { name: "PurchasesHome" },
     },
     {
-      name: "Gérer les collaborateurs",
-      to: "CanteenManagers",
-      canteenUrlComponent: canteenUrlComponent,
+      label: "Gérer les collaborateurs",
+      to: { name: "CanteenManagers", params: { canteenUrlComponent: canteenUrlComponent } },
     },
   ]
 
   if (canteen.productionType === "central" || canteen.productionType === "central_serving") {
     links.push({
-      to: "GestionnaireCantineSatellitesGerer",
-      canteenUrlComponent: canteenUrlComponent,
-      name: "Gérer les satellites",
+      to: { name: "GestionnaireCantineSatellitesGerer", params: { canteenUrlComponent: canteenUrlComponent } },
+      label: "Gérer les satellites",
     })
   }
 
@@ -140,15 +137,7 @@ const getActionsInfos = (canteen) => {
       </template>
       <template v-else-if="colKey === 'actions'">
         <div class="fr-grid-row fr-grid-row--right">
-          <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line">
-            <ul class="ma-cantine--unstyled-list">
-              <li v-for="link in cell" :key="link.to">
-                <router-link :to="{ name: link.to, params: { canteenUrlComponent: link.canteenUrlComponent } }">
-                  {{ link.name }}
-                </router-link>
-              </li>
-            </ul>
-          </AppDropdownMenu>
+          <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line" :links="cell" />
         </div>
       </template>
       <template v-else>

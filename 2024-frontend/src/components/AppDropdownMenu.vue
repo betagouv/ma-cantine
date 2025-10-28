@@ -2,7 +2,7 @@
 import { computed, ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
 import { useWindowSize } from "@vueuse/core"
-defineProps(["label", "icon"])
+defineProps(["label", "icon", "links"])
 
 /* Icon */
 const isOpened = ref(false)
@@ -44,13 +44,19 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
       <span :class="`${icon} ma-cantine--icon-xs`"></span>
       {{ label }}
     </DsfrButton>
-    <div
+    <ul
       v-if="isOpened"
-      :class="`app-dropdown-menu__content app-dropdown-menu__content--${dropdownAlign} fr-background-default--grey`"
+      :class="
+        `app-dropdown-menu__content app-dropdown-menu__content--${dropdownAlign} fr-background-default--grey ma-cantine--shadow-raised ma-cantine--unstyled-list fr-menu__list fr-my-0`
+      "
       ref="content"
     >
-      <slot></slot>
-    </div>
+      <li v-for="link in links" :key="link.to" class="fr-menu__item fr-pb-0">
+        <router-link :to="link.to" class="ma-cantine--unstyled-link fr-text-title--blue-france fr-nav__link">
+          {{ link.label }}
+        </router-link>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -70,7 +76,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     bottom: 0;
     left: 0;
     transform: translateY(100%);
-    width: max-content;
+    width: max-content !important;
 
     @media (min-width: 768px) {
       &--right {

@@ -156,6 +156,11 @@ address {
     height: 100%;
 }
 
+/* SHADOW */
+.ma-cantine--shadow-raised {
+    filter: drop-shadow(var(--raised-shadow));
+}
+
 /* MARGIN */
 .ma-cantine--stick-to-footer {
     margin-bottom: -3rem !important;
