@@ -44,14 +44,18 @@ const rows = computedAsync(async () => {
   const canteens = await canteenService.fetchCanteensActions()
   const rows = []
   canteens.forEach((canteen) => {
-    rows.push([
-      canteen.name,
-      canteen.siret || canteen.sirenUniteLegale,
-      `${canteen.city} - ${canteen.postalCode}`, // En HTML
-      canteen.productionType, // En FR
-      canteen.action, // En badge
-      "", // TD seulement pour l'instant
-    ])
+    rows.push({
+      name: canteen.name,
+      siret: canteen.siret || canteen.sirenUniteLegale,
+      city: {
+        name: canteen.city,
+        postalCode: canteen.postalCode,
+        isEmpty: !canteen.city && !canteen.postalCode,
+      },
+      productionType: canteen.productionType, // En FR
+      status: canteen.action, // En badge
+      actions: "", // TD seulement pour l'instant
+    })
   })
   return rows
 }, [])
