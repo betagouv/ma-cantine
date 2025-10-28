@@ -9,6 +9,7 @@ from .canteen import (  # noqa: F401
     CanteenPreviewSerializer,
     SatelliteCanteenSerializer,
     CanteenActionsSerializer,
+    CanteenActionsLightSerializer,
     CanteenStatusSerializer,
     CanteenTeledeclarationSerializer,
     SatelliteTeledeclarationSerializer,

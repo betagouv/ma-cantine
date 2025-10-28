@@ -36,6 +36,7 @@ from api.permissions import (
     IsElectedOfficial,
 )
 from api.serializers import (
+    CanteenActionsLightSerializer,
     CanteenActionsSerializer,
     CanteenAnalysisSerializer,
     CanteenOpenDataSerializer,
@@ -352,6 +353,17 @@ class UserCanteenSummaries(ListAPIView):
 
     def get_queryset(self):
         return self.request.user.canteens.all()
+
+
+class UserCanteenActions(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    model = Canteen
+    serializer_class = CanteenActionsLightSerializer
+
+    def get_queryset(self):
+        year = self.request.parser_context.get("kwargs").get("year")
+        user_canteen_queryset = self.request.user.canteens.order_by("name")
+        return user_canteen_queryset.annotate_with_action_for_year(year)
 
 
 @extend_schema_view(
