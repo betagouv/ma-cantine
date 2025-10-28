@@ -64,7 +64,7 @@ const rows = computedAsync(async () => {
         label: badge.body,
         type: badge.mode,
       },
-      actions: "", // TD seulement pour l'instant
+      actions: "",
     })
   })
   return rows
