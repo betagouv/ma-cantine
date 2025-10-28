@@ -151,6 +151,10 @@ const vue2routes = [
       authenticationRequired: true,
     },
   },
+  {
+    path: "/modifier-ma-cantine/:canteenUrlComponent/gestionnaires",
+    name: "CanteenManagers",
+  },
 ]
 
 export default vue2routes
