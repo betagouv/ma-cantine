@@ -17,7 +17,29 @@ const canteenSentence = computed(() => {
 })
 
 /* Table */
-const header = ["Nom de la cantine", "Siret / Siren", "Commune et code postal", "Type", "Statut", "Actions"]
+const header = [
+  {
+    key: "name",
+    label: "Nom de la cantine",
+  },
+  {
+    key: "siret",
+    label: "Siret / Siren",
+  },
+  {
+    key: "city",
+    label: "Commune et code postal",
+  },
+  { key: "productionType", label: "Type" },
+  {
+    key: "status",
+    label: "Statut",
+  },
+  {
+    key: "actions",
+    label: "Actions",
+  },
+]
 const rows = computedAsync(async () => {
   const canteens = await canteenService.fetchCanteensActions()
   const rows = []
