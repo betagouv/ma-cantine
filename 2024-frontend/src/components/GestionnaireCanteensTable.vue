@@ -33,32 +33,56 @@ const rows = computedAsync(async () => {
   const canteens = await canteenService.fetchCanteensActions()
   const rows = []
   canteens.forEach((canteen) => {
-    const badge = badgeService.getFromAction(canteen.action)
+    const name = getNameInfos(canteen)
+    const siret = getSiretOrSirenInfos(canteen)
+    const city = getCityInfos(canteen)
+    const productionType = getProductionTypeInfos(canteen)
+    const status = getStatusInfos(canteen)
+
     rows.push({
-      name: {
-        name: canteen.name,
-        url: urlService.getCanteenUrl(canteen),
-      },
-      siret: canteen.siret || canteen.sirenUniteLegale,
-      city: {
-        name: canteen.city,
-        postalCode: canteen.postalCode,
-        isEmpty: !canteen.city && !canteen.postalCode,
-      },
-      productionType: getProductionTypeLabel(canteen.productionType),
-      status: {
-        label: badge.body,
-        type: badge.mode,
-      },
+      name,
+      siret,
+      city,
+      productionType,
+      status,
       actions: "",
     })
   })
   return rows
 }, [])
 
-const getProductionTypeLabel = (slug) => {
+const getNameInfos = (canteen) => {
+  return {
+    name: canteen.name,
+    url: urlService.getCanteenUrl(canteen),
+  }
+}
+
+const getSiretOrSirenInfos = (canteen) => {
+  return canteen.siret || canteen.sirenUniteLegale
+}
+
+const getCityInfos = (canteen) => {
+  return {
+    name: canteen.city,
+    postalCode: canteen.postalCode,
+    isEmpty: !canteen.city && !canteen.postalCode,
+  }
+}
+
+const getProductionTypeInfos = (canteen) => {
+  const slug = canteen.productionType
   const index = cantines.productionType.findIndex((type) => type.value === slug)
   return cantines.productionType[index].label
+}
+
+const getStatusInfos = (canteen) => {
+  const action = canteen.action
+  const badge = badgeService.getFromAction(action)
+  return {
+    label: badge.body,
+    type: badge.mode,
+  }
 }
 </script>
 <template>
