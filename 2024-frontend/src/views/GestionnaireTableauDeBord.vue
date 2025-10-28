@@ -4,6 +4,7 @@ import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
 import badgeService from "@/services/badges.js"
+import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
@@ -48,7 +49,10 @@ const rows = computedAsync(async () => {
   canteens.forEach((canteen) => {
     const badge = badgeService.getFromAction(canteen.action)
     rows.push({
-      name: canteen.name,
+      name: {
+        name: canteen.name,
+        url: urlService.getCanteenUrl(canteen),
+      },
       siret: canteen.siret || canteen.sirenUniteLegale,
       city: {
         name: canteen.city,
@@ -88,7 +92,17 @@ const getProductionTypeLabel = (slug) => {
       :rows="rows"
     >
       <template #cell="{ colKey, cell }">
-        <template v-if="colKey === 'city'">
+        <template v-if="colKey === 'name'">
+          <p>
+            <router-link
+              :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+              class="fr-text-title--blue-france fr-text--bold"
+            >
+              {{ cell.name }}
+            </router-link>
+          </p>
+        </template>
+        <template v-else-if="colKey === 'city'">
           <p class="fr-text--xs">
             <span v-if="cell.isEmpty">Non renseigné</span>
             <span v-if="cell.name">
