@@ -4,15 +4,15 @@ exclude: ^(.*\/migrations|opendata/.|.*package.json|.*package-lock.json|Pipfile*
 repos:
   # GENERAL
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-merge-conflict
       - id: forbid-new-submodules
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
-      - id: check-byte-order-marker
+      - id: fix-byte-order-marker
       - id: check-case-conflict
       - id: check-executables-have-shebangs
       - id: check-symlinks
@@ -28,7 +28,7 @@ repos:
       - id: forbid-tabs
       - id: remove-tabs
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-json
       - id: pretty-format-json
@@ -36,43 +36,41 @@ repos:
 
   # UV
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.7.9
+    rev: 0.9.5
     hooks:
       - id: uv-lock
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.7.11
+    rev: 0.9.5
     hooks:
       - id: uv-export
         args: ["--no-hashes", "--output-file=requirements.txt"]
 
   # PYTHON
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-ast
       - id: check-builtin-literals
       - id: check-docstring-first
       - id: debug-statements
-      - id: fix-encoding-pragma
-        args: [--remove]
       - id: requirements-txt-fixer
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.20.0
+    rev: v3.21.0
     hooks:
       - id: pyupgrade
   - repo: https://github.com/ambv/black
-    rev: 25.1.0
+    rev: 25.9.0
     hooks:
       - id: black
         args: [--line-length=119]
         exclude: ^migrations/
   - repo: https://github.com/pycqa/flake8
-    rev: 7.2.0
+    rev: 7.3.0
     hooks:
       - id: flake8
         args: [--config=.flake8]
   - repo: https://github.com/pycqa/isort
-    rev: 6.0.1
+    rev: 7.0.0
     hooks:
       - id: isort
         args: ["--profile", "black", "--filter-files"]
@@ -94,7 +92,7 @@ repos:
 
   # XML / YAML
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-xml
   - repo: https://github.com/adrienverge/yamllint.git
@@ -103,7 +101,7 @@ repos:
       - id: yamllint
         args: ["-d {rules: {line-length: {max: 999}}}"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-yaml
       - id: sort-simple-yaml
@@ -114,7 +112,7 @@ repos:
 
   # JS (Vue 2 app)
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.28.0
+    rev: v9.38.0
     hooks:
       - id: eslint
         name: vue2-eslint
@@ -133,7 +131,7 @@ repos:
           - vue
         files: ^frontend/
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.28.0
+    rev: v9.38.0
     hooks:
       - id: eslint
         name: js-eslint-v2
@@ -151,7 +149,7 @@ repos:
         files: ^frontend/
   # JS (Vue 3 app)
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.28.0
+    rev: v9.38.0
     hooks:
       - id: eslint
         name: vue3-eslint
@@ -170,7 +168,7 @@ repos:
           - vue
         files: ^2024-frontend/
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.28.0
+    rev: v9.38.0
     hooks:
       - id: eslint
         name: js-eslint-v3
