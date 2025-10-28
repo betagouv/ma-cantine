@@ -89,17 +89,22 @@ const getProductionTypeLabel = (slug) => {
     >
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'city'">
-          <p v-if="cell.isEmpty">Non renseigné</p>
-          <div v-else>
-            <p v-if="cell.name">{{ cell.name }}</p>
-            <p v-if="cell.postalCode">{{ cell.postalCode }}</p>
-          </div>
+          <p class="fr-text--xs">
+            <span v-if="cell.isEmpty">Non renseigné</span>
+            <span v-if="cell.name">
+              {{ cell.name }}
+              <br />
+            </span>
+            <span v-if="cell.postalCode">
+              {{ cell.postalCode }}
+            </span>
+          </p>
         </template>
         <template v-else-if="colKey === 'status'">
-          <DsfrBadge :label="cell.label" :type="cell.type" />
+          <DsfrBadge small :label="cell.label" :type="cell.type" />
         </template>
         <template v-else>
-          <p>{{ cell }}</p>
+          <p class="fr-text--xs">{{ cell }}</p>
         </template>
       </template>
     </DsfrDataTable>
