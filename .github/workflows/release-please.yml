@@ -1,4 +1,5 @@
 # https://github.com/googleapis/release-please-action
+# config here: release-please-config.json
 
 name: release-please
 
@@ -9,7 +10,7 @@ on:
 
 jobs:
   release-please:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: googleapis/release-please-action@v4
         with:
