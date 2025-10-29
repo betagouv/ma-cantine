@@ -6,6 +6,35 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.35.0](https://github.com/betagouv/ma-cantine/compare/v2025.34.1...v2025.35.0) (2025-10-29)
+
+
+### Nouveautés
+
+* **Tableau de bord:** création de la page vue3 (cachée aux utilisateurs) ([#5784](https://github.com/betagouv/ma-cantine/issues/5784)) ([c4dfd58](https://github.com/betagouv/ma-cantine/commit/c4dfd58ed080032a98a161d87e81dce9e4afcaa3))
+* **Tableau de bord:** intégration de la vue pour un utilisateur sans cantine ([#5785](https://github.com/betagouv/ma-cantine/issues/5785)) ([e1c7498](https://github.com/betagouv/ma-cantine/commit/e1c74986ae52de149f762e8c0fb516d9430ea026))
+
+
+### Améliorations
+
+* **Cantines:** Règles métiers: le SIRET doit être unique (à la création) ([#5797](https://github.com/betagouv/ma-cantine/issues/5797)) ([72ce192](https://github.com/betagouv/ma-cantine/commit/72ce1921fd37fdcb9b61b1379762310e06fefc0e))
+* **Cantines:** Règles métiers: nombre de repas annuels &gt; nombre de repas quotidien ([#5796](https://github.com/betagouv/ma-cantine/issues/5796)) ([bb2df2e](https://github.com/betagouv/ma-cantine/commit/bb2df2e7aa25dfeb6d9b5fcecb20668e383690af))
+* **Cantines:** Règles métiers: règles spécifiques aux cantines satellites (siret CC doit être différent de siret SAT) (à la création) ([#5801](https://github.com/betagouv/ma-cantine/issues/5801)) ([d8b3281](https://github.com/betagouv/ma-cantine/commit/d8b328156a634e0d7046565580f209950c0b30de))
+* **Cantines:** Règles métiers: règles spécifiques aux cantines satellites (siret CC obligatoire) (à la création) ([#5794](https://github.com/betagouv/ma-cantine/issues/5794)) ([714cc75](https://github.com/betagouv/ma-cantine/commit/714cc751cb5a4c8aaa96a6dc1ae444e942f29f6e))
+
+
+### Corrections (bugs, typos...)
+
+* **Tableau de bord:** correctifs du recettage lot 1 ([#5799](https://github.com/betagouv/ma-cantine/issues/5799)) ([7a3440d](https://github.com/betagouv/ma-cantine/commit/7a3440d0c4d4998afd808138b4f188d90587b99b))
+
+
+### Technique
+
+* **Imports:** petit ménage suite à l'ajout des règles métiers récentes ([#5802](https://github.com/betagouv/ma-cantine/issues/5802)) ([d928df3](https://github.com/betagouv/ma-cantine/commit/d928df31e37ccfba1599b7bd7caf5b61d113fa12))
+* **Linting:** ajout de ruff (pour remplacer flake8, black & isort) ([#5806](https://github.com/betagouv/ma-cantine/issues/5806)) ([ea56ee7](https://github.com/betagouv/ma-cantine/commit/ea56ee76e33be4289671a4a4adddbf235a539019))
+* **pre-commit:** mise à jour des versions (avant ruff) ([#5805](https://github.com/betagouv/ma-cantine/issues/5805)) ([abca0e6](https://github.com/betagouv/ma-cantine/commit/abca0e65a1cfbf818b89bdd09cf3cbcdca3ab08e))
+* **release-please:** maj de la config à la v4 (depuis la v3) ([#5804](https://github.com/betagouv/ma-cantine/issues/5804)) ([bdf0c69](https://github.com/betagouv/ma-cantine/commit/bdf0c699b043c37f76b2c762d6aa3a8d33188fdc))
+
 ## [2025.34.1](https://github.com/betagouv/ma-cantine/compare/v2025.34.0...v2025.34.1) (2025-10-21)
 
 
