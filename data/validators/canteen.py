@@ -128,14 +128,21 @@ def validate_canteen_central_producer_siret_field(instance):
             if not instance.pk:  # only for new canteens (TODO: generalize to existing canteens)
                 utils_utils.add_validation_error(
                     errors,
-                    "central_producer_siret",
-                    "Cantine satellite : le champ ne peut pas être vide.",
+                    field_name,
+                    "Restaurant satellite : le champ ne peut pas être vide.",
+                )
+        else:
+            if instance.siret == value:
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    "Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite.",
                 )
     else:
         if value:
             utils_utils.add_validation_error(
                 errors,
-                "central_producer_siret",
-                "Le champ ne peut être rempli que pour les cantines satellites.",
+                field_name,
+                "Le champ ne peut être rempli que pour les restaurants satellites.",
             )
     return errors
