@@ -118,8 +118,8 @@ const teamJoinRequest = (id, userInfos) => {
     .catch((e) => e)
 }
 
-const fetchCanteensActions = () => {
-  return fetch("/api/v1/canteenActions/", {
+const fetchCanteensActions = (year) => {
+  return fetch(`/api/v1/canteenActions/${year}`, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",

@@ -30,7 +30,8 @@ const header = [
 ]
 
 const rows = computedAsync(async () => {
-  const canteens = await canteenService.fetchCanteensActions()
+  const lastYear = new Date().getFullYear() - 1
+  const canteens = await canteenService.fetchCanteensActions(lastYear)
   const rows = []
   canteens.forEach((canteen) => {
     const name = getNameInfos(canteen)

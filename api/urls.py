@@ -92,7 +92,7 @@ urlpatterns = {
         PublishedCanteenSingleView.as_view(),
         name="single_published_canteen",
     ),
-    path("canteenActions/", UserCanteenActions.as_view(), name="user_canteens_actions"),
+    path("canteenActions/<int:year>", UserCanteenActions.as_view(), name="user_canteens_actions"),
     path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
     path("canteenSummaries/", UserCanteenSummaries.as_view(), name="user_canteens_summaries"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
