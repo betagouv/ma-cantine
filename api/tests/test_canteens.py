@@ -1102,10 +1102,9 @@ class TestCanteenActionApi(APITestCase):
         self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.FILL_CANTEEN_DATA)
 
         # Central cuisines should have the number of satellites filled in
-        canteen.yearly_meal_count = 1000
-        canteen.production_type = Canteen.ProductionType.CENTRAL
-        canteen.satellite_canteens_count = None
-        canteen.save()
+        Canteen.objects.filter(id=canteen.id).update(
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1000, satellite_canteens_count=None
+        )
         canteen_sat = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             management_type=Canteen.ManagementType.DIRECT,
@@ -1126,8 +1125,7 @@ class TestCanteenActionApi(APITestCase):
 
         # Central kitchens with missing satellites should return the add satellite action
         canteen_sat.delete()
-        canteen.satellite_canteens_count = 123
-        canteen.save()
+        Canteen.objects.filter(id=canteen.id).update(satellite_canteens_count=123)
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]

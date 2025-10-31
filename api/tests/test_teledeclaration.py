@@ -645,7 +645,6 @@ class TestTeledeclarationCreateApi(APITestCase):
         canteen = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             siret="79300704800044",
-            satellite_canteens_count=3,
             sectors=[sector_ministry],
             line_ministry=None,
             managers=[authenticate.user],
