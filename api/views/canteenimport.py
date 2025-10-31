@@ -292,7 +292,6 @@ class ImportCanteensView(APIView):
         import_source,
         manager_emails,
         silently_added_manager_emails,
-        satellite_canteens_count=None,
     ):
         siret = utils_utils.normalize_string(row[0])
         name = row[1].strip()
@@ -302,6 +301,7 @@ class ImportCanteensView(APIView):
         production_type = row[8].strip().lower()
         economic_model = row[10].strip().lower()
         central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
+        satellite_canteens_count = row[12].strip() if row[12] else None
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
@@ -315,6 +315,7 @@ class ImportCanteensView(APIView):
                 production_type=production_type,
                 economic_model=economic_model,
                 central_producer_siret=central_producer_siret,
+                satellite_canteens_count=satellite_canteens_count,
                 creation_source=CreationSource.IMPORT,
             )
         )
@@ -340,7 +341,7 @@ class ImportCanteensView(APIView):
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower()
         canteen.central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
-        canteen.satellite_canteens_count = row[12].strip() if len(row) > 13 and row[13].strip().isdigit() else None
+        canteen.satellite_canteens_count = row[12].strip() if row[12] else None
         if self.is_admin_import:
             canteen.line_ministry = (
                 next((key for key, value in Canteen.Ministries.choices if value == row[13].strip()), None)

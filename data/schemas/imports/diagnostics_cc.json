@@ -181,7 +181,7 @@
       "type": "string"
     },
     {
-      "description": "Nombre de restaurants satellites pour une cantine qui produit les repas sur place",
+      "description": "Nombre de restaurants satellites pour une cuisine centrale",
       "example": "12",
       "name": "nombre_satellites",
       "title": "Nombre de restaurants satellites",
