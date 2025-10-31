@@ -64,11 +64,11 @@ const getSiretOrSirenInfos = (canteen) => {
 }
 
 const getCityInfos = (canteen) => {
-  return {
-    name: canteen.city,
-    postalCode: canteen.postalCode,
-    isEmpty: !canteen.city && !canteen.postalCode,
-  }
+  let city = ""
+  if (canteen.city) city += canteen.city
+  if (canteen.postalCode) city += ` (${canteen.postalCode})`
+  if (!canteen.city && !canteen.postalCode) city = "Non renseigné"
+  return city
 }
 
 const getProductionTypeInfos = (canteen) => {
@@ -97,18 +97,6 @@ const getStatusInfos = (canteen) => {
           >
             {{ cell.name }}
           </router-link>
-        </p>
-      </template>
-      <template v-else-if="colKey === 'city'">
-        <p class="fr-text--xs">
-          <span v-if="cell.isEmpty">Non renseigné</span>
-          <span v-if="cell.name">
-            {{ cell.name }}
-            <br />
-          </span>
-          <span v-if="cell.postalCode">
-            {{ cell.postalCode }}
-          </span>
         </p>
       </template>
       <template v-else-if="colKey === 'status'">
