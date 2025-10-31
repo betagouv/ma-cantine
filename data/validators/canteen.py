@@ -127,9 +127,13 @@ def validate_canteen_satellite_count(instance):
         if value in [None, ""]:
             utils_utils.add_validation_error(errors, field_name, "Cuisine centrale : le champ ne peut pas être vide.")
         elif not (isinstance(value, int) or (isinstance(value, str) and value.isdigit())):
-            utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")
+            utils_utils.add_validation_error(
+                errors, field_name, "Cuisine centrale : le champ doit être un nombre entier."
+            )
         elif int(value) <= 0:
-            utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier supérieur à 0.")
+            utils_utils.add_validation_error(
+                errors, field_name, "Cuisine centrale : le champ doit être un nombre entier supérieur à 0."
+            )
     else:
         if value not in [None, ""]:
             utils_utils.add_validation_error(
