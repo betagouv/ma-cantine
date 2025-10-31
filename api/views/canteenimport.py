@@ -32,19 +32,15 @@ CANTEEN_SCHEMA_FILE_NAME = "cantines.json"
 CANTEEN_ADMIN_SCHEMA_FILE_NAME = "cantines_admin.json"
 CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
 CANTEEN_ADMIN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_ADMIN_SCHEMA_FILE_NAME}"
-CANTEEN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
-)
-CANTEEN_ADMIN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
-)
+CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/raphodn/backend-canteen-import-satellite-count/{CANTEEN_SCHEMA_FILE_PATH}"
+CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/raphodn/backend-canteen-import-satellite-count/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
 
 
 class ImportCanteensView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     manager_column_idx = 11  # gestionnaires_additionnels
-    silent_manager_idx = 11 + 2  # admin_gestionnaires_additionnels
+    silent_manager_idx = 11 + 3  # admin_gestionnaires_additionnels
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
 
     def __init__(self, **kwargs):
@@ -296,7 +292,6 @@ class ImportCanteensView(APIView):
         import_source,
         manager_emails,
         silently_added_manager_emails,
-        satellite_canteens_count=None,
     ):
         siret = utils_utils.normalize_string(row[0])
         name = row[1].strip()
@@ -306,6 +301,7 @@ class ImportCanteensView(APIView):
         production_type = row[8].strip().lower()
         economic_model = row[10].strip().lower()
         central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
+        satellite_canteens_count = row[12].strip() if row[12] else None
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
@@ -319,6 +315,7 @@ class ImportCanteensView(APIView):
                 production_type=production_type,
                 economic_model=economic_model,
                 central_producer_siret=central_producer_siret,
+                satellite_canteens_count=satellite_canteens_count,
                 creation_source=CreationSource.IMPORT,
             )
         )
@@ -344,10 +341,11 @@ class ImportCanteensView(APIView):
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower()
         canteen.central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
+        canteen.satellite_canteens_count = row[12].strip() if row[12] else None
         if self.is_admin_import:
             canteen.line_ministry = (
-                next((key for key, value in Canteen.Ministries.choices if value == row[12].strip()), None)
-                if row[12]
+                next((key for key, value in Canteen.Ministries.choices if value == row[13].strip()), None)
+                if row[13]
                 else None
             )
             canteen.import_source = import_source
