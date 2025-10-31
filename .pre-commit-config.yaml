@@ -1,6 +1,6 @@
 # https://pre-commit.com/
 
-exclude: ^(.*\/migrations|opendata/.|.*package.json|.*package-lock.json|Pipfile*|.vscode|.*.spec.js|.*jsconfig.json|.*\/tests/files/.*.tsv)
+exclude: ^(.*\/migrations|opendata/.|.*package.json|.*package-lock.json|Pipfile*|.vscode|.*.spec.js|.*jsconfig.json|.*\/tests/files/.*.tsv|.*\/tests/files/.*encoding.*\.csv)
 repos:
   # GENERAL
   - repo: https://github.com/pre-commit/pre-commit-hooks
