@@ -4,6 +4,7 @@ import canteenService from "@/services/canteens.js"
 import badgeService from "@/services/badges.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
+import AppRawHTML from "@/components/AppRawHTML.vue"
 
 const header = [
   {
@@ -16,7 +17,7 @@ const header = [
   },
   {
     key: "city",
-    label: "Commune et code postal",
+    label: "Commune </br> (code postal)",
   },
   { key: "productionType", label: "Type" },
   {
@@ -88,6 +89,9 @@ const getStatusInfos = (canteen) => {
 </script>
 <template>
   <DsfrDataTable class="gestionnaire-canteens-table" title="Vos cantines" no-caption :headers-row="header" :rows="rows">
+    <template #header="{ label }">
+      <AppRawHTML :html="label" />
+    </template>
     <template #cell="{ colKey, cell }">
       <template v-if="colKey === 'name'">
         <p>
