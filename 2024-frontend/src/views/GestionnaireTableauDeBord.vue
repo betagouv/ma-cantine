@@ -3,9 +3,9 @@ import { computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
+import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
 
 const store = useRootStore()
-
 const canteenSentence = computed(() => {
   const count = store.canteenPreviews.length
   if (count === 0) return "vous n'avez pas encore de cantine"
@@ -21,6 +21,7 @@ const canteenSentence = computed(() => {
   </section>
   <section class="ma-cantine--stick-to-footer">
     <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
+    <GestionnaireCanteensTable v-else />
     <GestionnaireGuides />
   </section>
 </template>

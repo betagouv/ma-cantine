@@ -19,6 +19,7 @@ from .canteen import (  # noqa: F401
     TerritoryCanteensListView,
     UndoClaimCanteenView,
     UnlinkSatelliteView,
+    UserCanteenActions,
     UserCanteenPreviews,
     UserCanteenSummaries,
     UserCanteensView,

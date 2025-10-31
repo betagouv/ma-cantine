@@ -118,6 +118,18 @@ const teamJoinRequest = (id, userInfos) => {
     .catch((e) => e)
 }
 
+const fetchCanteensActions = (year) => {
+  return fetch(`/api/v1/canteenActions/${year}`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 export default {
   createCanteen,
   canteenStatus,
@@ -128,4 +140,5 @@ export default {
   addSatellite,
   fetchSatellites,
   unlinkSatellite,
+  fetchCanteensActions,
 }

@@ -557,6 +557,24 @@ class CanteenActionsSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+class CanteenActionsLightSerializer(serializers.ModelSerializer):
+    action = serializers.CharField(allow_null=True)
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "id",
+            "name",
+            "siret",
+            "siren_unite_legale",
+            "city",
+            "postal_code",
+            "production_type",
+            "action",  # annotate
+        )
+        read_only_fields = fields
+
+
 class CanteenStatusSerializer(serializers.ModelSerializer):
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
 
