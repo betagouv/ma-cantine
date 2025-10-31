@@ -6,6 +6,36 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.36.0](https://github.com/betagouv/ma-cantine/compare/v2025.35.0...v2025.36.0) (2025-10-31)
+
+
+### Nouveautés
+
+* **Tableau de bord:** ajout du menu déroulant "Paramètres" pour chaque ligne ([#5810](https://github.com/betagouv/ma-cantine/issues/5810)) ([94415f3](https://github.com/betagouv/ma-cantine/commit/94415f3a9b4b4492ef99752ede871c5fb10e458b))
+* **Tableau de bord:** intégration de la vue tableau sans les actions ([#5808](https://github.com/betagouv/ma-cantine/issues/5808)) ([927bfca](https://github.com/betagouv/ma-cantine/commit/927bfca86521fe80e6b851f4896c0c4e8551681e))
+
+
+### Améliorations
+
+* **Cantines:** Règles métiers: règles spécifiques aux cantines satellites (siret CC doit appartenir à une cantine) (à la création) ([#5817](https://github.com/betagouv/ma-cantine/issues/5817)) ([c5899af](https://github.com/betagouv/ma-cantine/commit/c5899af4ed87333681a6d42c927d2d2822324406))
+* **Cantines:** Règles métiers: règles spécifiques aux cantines satellites (siret CC doit appartenir à une centrale) (à la création)  ([#5800](https://github.com/betagouv/ma-cantine/issues/5800)) ([4ab63d2](https://github.com/betagouv/ma-cantine/commit/4ab63d2141160e42f12b5554bd074529eb4097c5))
+* **Cantines:** Règles métiers: rendre le champ 'nombre de satellites' obligatoire si CC ([#5793](https://github.com/betagouv/ma-cantine/issues/5793)) ([edef7ec](https://github.com/betagouv/ma-cantine/commit/edef7ec5f8a792b82e11fcf298cd78501aad939e))
+* **Imports:** Cantines: ajout du champ nombre_satellites (nécessaire pour les CC) ([#5803](https://github.com/betagouv/ma-cantine/issues/5803)) ([57f2825](https://github.com/betagouv/ma-cantine/commit/57f28255ec3333818d4346085b4b138739d54cd1))
+* **Tableau de bord:** ré-organisation du code ([#5807](https://github.com/betagouv/ma-cantine/issues/5807)) ([c1561db](https://github.com/betagouv/ma-cantine/commit/c1561db2965716bcbaec9d49c29896782f3f8ce2))
+
+
+### Corrections (bugs, typos...)
+
+* **Imports:** pointer vers la bonne URL du schéma suite au merge de [#5803](https://github.com/betagouv/ma-cantine/issues/5803) ([3751d0f](https://github.com/betagouv/ma-cantine/commit/3751d0f5a86f634306a2830c9328ad29595c0d46))
+
+
+### Technique
+
+* **pre-commit:** ignorer les fichiers de tests avec encodage complexes (utf-16, windows) ([#5816](https://github.com/betagouv/ma-cantine/issues/5816)) ([524f8fd](https://github.com/betagouv/ma-cantine/commit/524f8fd1852f7e4cd85df9c9191e2ef2a8b78aae))
+* **PRs:** auto-assign même sur les PR en draft ([#5815](https://github.com/betagouv/ma-cantine/issues/5815)) ([728e241](https://github.com/betagouv/ma-cantine/commit/728e24146d210abcbe03e2c1d53d0781f719e089))
+* **PRs:** basculer la GA auto-reviewer sur ubuntu-slim ([#5813](https://github.com/betagouv/ma-cantine/issues/5813)) ([fdba8c3](https://github.com/betagouv/ma-cantine/commit/fdba8c3ed9d28115ddfbfa5f217a56e8e7a6be1a))
+* **release-please:** basculer sur ubuntu-slim ([#5812](https://github.com/betagouv/ma-cantine/issues/5812)) ([18c26fb](https://github.com/betagouv/ma-cantine/commit/18c26fb8437efe86f717d530ba418b7224dd6104))
+
 ## [2025.35.0](https://github.com/betagouv/ma-cantine/compare/v2025.34.1...v2025.35.0) (2025-10-29)
 
 
