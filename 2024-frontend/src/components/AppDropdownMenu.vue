@@ -1,4 +1,8 @@
 <script setup>
+/*
+  NOT A DSFR component yet : https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/menu-deroulant
+  Needs to be updated when available in vue-dsfr package
+*/
 import { computed, ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
 defineProps(["label", "icon", "links"])
