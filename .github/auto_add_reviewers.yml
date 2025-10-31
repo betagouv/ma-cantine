@@ -12,6 +12,5 @@ reviewers:
 # Set 0 to add all the reviewers (default: 0)
 numberOfReviewers: 0
 
-# Set to true to add assignees to pull requests
-# Set to 'author' to set the PR creator as the assignee
-addAssignees: author
+# Done in auto_add_assignees.yml
+addAssignees: false

@@ -1,14 +1,24 @@
 # https://github.com/kentaro-m/auto-assign-action
-# config here: .github/auto_assign.yml
+# config here: .github/auto_add_assignees.yml & .github/auto_add_reviewers.yml
+# config seperated to allow add-assignee to run on draft PRs
 
-name: PR Auto Reviewers (team) & Assignee (author)
+name: PR Auto Assignee (author) & Reviewers (team)
 
 on:
   pull_request:
-    types: [opened, ready_for_review, reopened]  # will not run on drafts
+    types: [opened, ready_for_review, reopened]
 
 jobs:
+  add-assignee:
+    runs-on: ubuntu-slim
+    steps:
+      - uses: kentaro-m/auto-assign-action@v2.0.0
+        with:
+          configuration-path: .github/auto_add_assignees.yml
+
   add-reviews:
     runs-on: ubuntu-slim
     steps:
       - uses: kentaro-m/auto-assign-action@v2.0.0
+        with:
+          configuration-path: .github/auto_add_reviewers.yml
