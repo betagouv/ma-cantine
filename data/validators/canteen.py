@@ -53,7 +53,8 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
         if not instance.pk:  # only for new canteens (TODO: generalize to existing canteens)
             from data.models import Canteen
 
-            if Canteen.objects.filter(siret=siret).exists():
+            canteen_with_siret_qs = Canteen.objects.filter(siret=siret)
+            if canteen_with_siret_qs.exists():
                 utils_utils.add_validation_error(
                     errors,
                     "siret",
@@ -150,6 +151,7 @@ def validate_canteen_central_producer_siret_field(instance):
     the central_producer_siret field is the correct length and format
     - extra validation:
         - if satellite & new canteen: central_producer_siret must be filled
+        - if satellite & new canteen: central_producer_siret must be the siret of an existing central
         - if not satellite: central_producer_siret must be empty
     """
     errors = {}
@@ -170,6 +172,16 @@ def validate_canteen_central_producer_siret_field(instance):
                     field_name,
                     "Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite.",
                 )
+            else:
+                from data.models import Canteen
+
+                canteen_with_siret_qs = Canteen.objects.filter(siret=value)
+                if not canteen_with_siret_qs.exists():
+                    utils_utils.add_validation_error(
+                        errors,
+                        field_name,
+                        "Restaurant satellite : le champ ne correspond à aucune cuisine centrale connue.",
+                    )
     else:
         if value:
             utils_utils.add_validation_error(

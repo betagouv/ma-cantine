@@ -1,21 +1,19 @@
 from django.core.exceptions import ValidationError
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase
 from freezegun import freeze_time
 
 from data.department_choices import Department
-from data.factories import (
-    CanteenFactory,
-    DiagnosticFactory,
-    PurchaseFactory,
-    SectorFactory,
-    UserFactory,
-)
+from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, SectorFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.region_choices import Region
 from data.utils import CreationSource
 
 
-class CanteenModelSaveTest(TransactionTestCase):
+class CanteenModelSaveTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        CanteenFactory(siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL)
+
     def test_canteen_name_validation(self):
         for TUPLE_OK in [
             ("  ", "  "),
@@ -34,7 +32,7 @@ class CanteenModelSaveTest(TransactionTestCase):
     def test_canteen_siret_validation(self):
         for TUPLE_OK in [
             ("756 656 218 99905", "75665621899905"),
-            ("21590350100017", "21590350100017"),
+            ("75665621899905", "75665621899905"),
             (75665621899905, "75665621899905"),
         ]:
             with self.subTest(
@@ -75,7 +73,6 @@ class CanteenModelSaveTest(TransactionTestCase):
 
         for TUPLE_NOT_OK in [
             ("75665621899905", "756656218"),
-            ("21590350100017", "756656218"),
             ("75665621899905", "756 656 218"),
             ("", ""),
             (None, None),
@@ -193,7 +190,7 @@ class CanteenModelSaveTest(TransactionTestCase):
         for TUPLE_OK in [(key, key) for key in Canteen.ProductionType.values]:
             with self.subTest(production_type=TUPLE_OK[0]):
                 central_producer_siret = (
-                    "75665621899905" if TUPLE_OK[0] == Canteen.ProductionType.ON_SITE_CENTRAL else None
+                    "21590350100017" if TUPLE_OK[0] == Canteen.ProductionType.ON_SITE_CENTRAL else None
                 )
                 canteen = CanteenFactory(production_type=TUPLE_OK[0], central_producer_siret=central_producer_siret)
                 self.assertEqual(canteen.production_type, TUPLE_OK[1])
@@ -238,7 +235,7 @@ class CanteenModelSaveTest(TransactionTestCase):
             for TUPLE_OK in [(None, None)]:
                 with self.subTest(production_type=production_type, satellite_canteens_count=TUPLE_OK[0]):
                     central_producer_siret = (
-                        "75665621899905" if production_type == Canteen.ProductionType.ON_SITE_CENTRAL else None
+                        "21590350100017" if production_type == Canteen.ProductionType.ON_SITE_CENTRAL else None
                     )
                     canteen = CanteenFactory(
                         production_type=production_type,
@@ -253,7 +250,7 @@ class CanteenModelSaveTest(TransactionTestCase):
                         CanteenFactory,
                         production_type=production_type,
                         satellite_canteens_count=VALUE_NOT_OK,
-                        central_producer_siret="75665621899905"
+                        central_producer_siret="21590350100017"
                         if production_type == Canteen.ProductionType.ON_SITE_CENTRAL
                         else None,
                     )
@@ -261,9 +258,9 @@ class CanteenModelSaveTest(TransactionTestCase):
     def test_canteen_central_producer_siret_required_if_satellite_validation(self):
         for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL]:
             for TUPLE_OK in [
-                ("756 656 218 99905", "75665621899905"),
+                ("215 903 501 00017", "21590350100017"),
                 ("21590350100017", "21590350100017"),
-                (75665621899905, "75665621899905"),
+                (21590350100017, "21590350100017"),
             ]:
                 with self.subTest(
                     production_type=production_type,
@@ -295,7 +292,7 @@ class CanteenModelSaveTest(TransactionTestCase):
                 ):
                     canteen = CanteenFactory(production_type=production_type, central_producer_siret=TUPLE_OK[0])
                     self.assertEqual(canteen.central_producer_siret, TUPLE_OK[1])
-            for VALUE_NOT_OK in ["756 656 218 99905", "21590350100017", 75665621899905]:
+            for VALUE_NOT_OK in ["215 903 501 00017", "21590350100017", 21590350100017]:
                 with self.subTest(
                     production_type=production_type,
                     siret=VALUE_NOT_OK,

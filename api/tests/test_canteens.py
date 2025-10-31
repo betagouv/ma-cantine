@@ -1078,6 +1078,10 @@ class TestCanteenActionApi(APITestCase):
         Even if the diagnostic is complete, the mandatory information on the canteen level should
         return a Canteen.Actions.FILL_CANTEEN_DATA
         """
+        canteen_central = CanteenFactory.create(
+            siret="21590350100017",
+            production_type=Canteen.ProductionType.CENTRAL,
+        )
         # First a case in which the canteen is complete
         canteen = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -1133,7 +1137,7 @@ class TestCanteenActionApi(APITestCase):
 
         # Satellites should have the SIRET of the central cuisine (1/2)
         canteen.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
-        canteen.central_producer_siret = "21590350100017"
+        canteen.central_producer_siret = canteen_central.siret
         canteen.save()
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
@@ -1228,6 +1232,10 @@ class TestCanteenActionApi(APITestCase):
         Check that canteens with SIRET issues (no SIRET, SIRET = central_producer_siret) have complete canteen actions and not TD actions
         """
         last_year = 2021
+        canteen_central = CanteenFactory.create(
+            siret="75665621899905",
+            production_type=Canteen.ProductionType.CENTRAL,
+        )
         # canteen not ok with diag
         canteen_with_no_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
@@ -1242,7 +1250,7 @@ class TestCanteenActionApi(APITestCase):
         # canteen not ok with diag
         canteen_with_bad_central_siret = CanteenFactory.create(
             siret="59282615314394",
-            central_producer_siret="75665621899905",  # changed to 59282615314394 below
+            central_producer_siret=canteen_central.siret,  # changed to 59282615314394 below
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             management_type=Canteen.ManagementType.DIRECT,
             economic_model=Canteen.EconomicModel.PUBLIC,
