@@ -117,6 +117,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def exclude_central(self):
         return self.exclude(is_central_query())
 
+    def is_central_cuisine(self):
+        return self.filter(is_central_cuisine_query())
+
     def is_satellite(self):
         return self.filter(is_satellite_query())
 
@@ -292,6 +295,9 @@ class CanteenManager(SoftDeletionManager):
 
     def exclude_central(self):
         return self.get_queryset().exclude_central()
+
+    def is_central_cuisine(self):
+        return self.get_queryset().is_central_cuisine()
 
     def is_satellite(self):
         return self.get_queryset().is_satellite()

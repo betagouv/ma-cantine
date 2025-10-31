@@ -151,7 +151,8 @@ def validate_canteen_central_producer_siret_field(instance):
     the central_producer_siret field is the correct length and format
     - extra validation:
         - if satellite & new canteen: central_producer_siret must be filled
-        - if satellite & new canteen: central_producer_siret must be the siret of an existing central
+        - if satellite & new canteen: central_producer_siret must be the siret of an existing canteen
+        - if satellite & new canteen: central_producer_siret must belong to an existing central kitchen
         - if not satellite: central_producer_siret must be empty
     """
     errors = {}
@@ -181,6 +182,13 @@ def validate_canteen_central_producer_siret_field(instance):
                         errors,
                         field_name,
                         "Restaurant satellite : le champ ne correspond à aucune cuisine centrale connue.",
+                    )
+
+                elif not canteen_with_siret_qs.is_central_cuisine().exists():
+                    utils_utils.add_validation_error(
+                        errors,
+                        field_name,
+                        "Restaurant satellite : le champ correspond à une cantine qui n'est pas une cuisine centrale.",
                     )
     else:
         if value:
