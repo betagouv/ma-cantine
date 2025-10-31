@@ -564,79 +564,78 @@ class TestTeledeclarationCreateApi(APITestCase):
             value_total_ht=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
-        cases = [
-            {
-                "canteen": CanteenFactory(
-                    siret="21340172201787",
-                    production_type=Canteen.ProductionType.ON_SITE,
-                    managers=[authenticate.user],
-                ),
-                "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
-                "expected_teledeclaration_mode": "SITE",
-            },
-            {
-                "canteen": CanteenFactory(
-                    siret="21380185500015",
-                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-                    central_producer_siret="75665621899905",
-                    managers=[authenticate.user],
-                ),
-                "diagnostic": DiagnosticFactory.create(year=2021, value_total_ht=100),
-                "expected_teledeclaration_mode": "SITE",
-            },
-            {
-                "canteen": CanteenFactory(
-                    siret="21670482500019",
-                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-                    central_producer_siret=central.siret,
-                    managers=[authenticate.user],
-                ),
-                "diagnostic": DiagnosticFactory.create(year=2021),
-                "expected_teledeclaration_mode": "SATELLITE_WITHOUT_APPRO",
-            },
-            {
-                "canteen": CanteenFactory(
-                    siret="21640122400011",
-                    production_type=Canteen.ProductionType.CENTRAL,
-                    managers=[authenticate.user],
-                ),
-                "diagnostic": DiagnosticFactory.create(
-                    year=2021,
-                    value_total_ht=100,
-                    central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                ),
-                "expected_teledeclaration_mode": "CENTRAL_ALL",
-            },
-            {
-                "canteen": CanteenFactory(
-                    siret="21630113500010",
-                    production_type=Canteen.ProductionType.CENTRAL_SERVING,
-                    managers=[authenticate.user],
-                ),
-                "diagnostic": DiagnosticFactory.create(
-                    year=2021,
-                    value_total_ht=100,
-                    central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
-                ),
-                "expected_teledeclaration_mode": "CENTRAL_APPRO",
-            },
-        ]
-        for case in cases:
-            canteen = case["canteen"]
-            diagnostic = case["diagnostic"]
-            expected_td_mode = case["expected_teledeclaration_mode"]
-            diagnostic.canteen = canteen
-            diagnostic.save()
 
-            payload = {"diagnosticId": diagnostic.id}
-            self.client.post(reverse("teledeclaration_create"), payload)
+        # Site
+        canteen_site = CanteenFactory(
+            siret="21340172201787",
+            production_type=Canteen.ProductionType.ON_SITE,
+            managers=[authenticate.user],
+        )
+        diagnostic_canteen_site = DiagnosticFactory.create(canteen=canteen_site, year=2021, value_total_ht=100)
+        diagnostic_canteen_site.teledeclare(applicant=authenticate.user)
+        self.assertEqual(diagnostic_canteen_site.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
 
-            teledeclaration = Teledeclaration.objects.get(diagnostic=diagnostic)
-            self.assertEqual(
-                teledeclaration.teledeclaration_mode,
-                expected_td_mode,
-                f"Incorrect mode for canteen with prod type {canteen.production_type}",
-            )
+        # Satellite linked to unknown CC
+        canteen_satellite_1 = CanteenFactory(
+            siret="21380185500015",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            managers=[authenticate.user],
+        )
+        Canteen.objects.filter(id=canteen_satellite_1.id).update(
+            central_producer_siret="75665621899905"
+        )  # change the link
+        canteen_satellite_1.refresh_from_db()
+        diagnostic_canteen_satellite_1 = DiagnosticFactory.create(
+            canteen=canteen_satellite_1, year=2021, value_total_ht=100
+        )
+        diagnostic_canteen_satellite_1.teledeclare(applicant=authenticate.user)
+        self.assertEqual(diagnostic_canteen_satellite_1.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
+
+        # Satellite linked to known CC
+        canteen_satellite_2 = CanteenFactory(
+            siret="21670482500019",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            managers=[authenticate.user],
+        )
+        diagnostic_canteen_satellite_2 = DiagnosticFactory.create(
+            canteen=canteen_satellite_2, year=2021, value_total_ht=100
+        )
+        diagnostic_canteen_satellite_2.teledeclare(applicant=authenticate.user)
+        self.assertEqual(
+            diagnostic_canteen_satellite_2.teledeclaration_mode, Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+        )
+
+        # Central
+        central_2 = CanteenFactory(
+            siret="21640122400011",
+            production_type=Canteen.ProductionType.CENTRAL,
+            managers=[authenticate.user],
+        )
+        diagnostic_central_2 = DiagnosticFactory.create(
+            canteen=central_2,
+            year=2021,
+            value_total_ht=100,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+        )
+        diagnostic_central_2.teledeclare(applicant=authenticate.user)
+        self.assertEqual(diagnostic_central_2.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
+
+        # Central serving
+        central_serving = CanteenFactory(
+            siret="21630113500010",
+            production_type=Canteen.ProductionType.CENTRAL_SERVING,
+            managers=[authenticate.user],
+        )
+        diagnostic_central_serving = DiagnosticFactory.create(
+            canteen=central_serving,
+            year=2021,
+            value_total_ht=100,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+        diagnostic_central_serving.teledeclare(applicant=authenticate.user)
+        self.assertEqual(diagnostic_central_serving.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_APPRO)
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
