@@ -20,6 +20,10 @@ address {
     text-align: center;
 }
 
+.ma-cantine--text-right {
+    text-align: right;
+}
+
 /* PARAGRAPHES */
 .ma-cantine--no-mb-p p {
     margin-bottom: 0 !important;
@@ -154,6 +158,11 @@ address {
     left: calc((100vw - 100%) / 2 * -1);
     width: 100vw;
     height: 100%;
+}
+
+/* SHADOW */
+.ma-cantine--shadow-raised {
+    filter: drop-shadow(var(--raised-shadow));
 }
 
 /* MARGIN */

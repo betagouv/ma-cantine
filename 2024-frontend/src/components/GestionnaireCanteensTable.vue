@@ -5,6 +5,7 @@ import badgeService from "@/services/badges.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 import AppRawHTML from "@/components/AppRawHTML.vue"
+import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 const header = [
   {
@@ -40,6 +41,7 @@ const rows = computedAsync(async () => {
     const city = getCityInfos(canteen)
     const productionType = getProductionTypeInfos(canteen)
     const status = getStatusInfos(canteen)
+    const actions = getActionsInfos(canteen)
 
     rows.push({
       name,
@@ -47,7 +49,7 @@ const rows = computedAsync(async () => {
       city,
       productionType,
       status,
-      actions: "",
+      actions,
     })
   })
   return rows
@@ -86,6 +88,33 @@ const getStatusInfos = (canteen) => {
     type: badge.mode,
   }
 }
+
+const getActionsInfos = (canteen) => {
+  const canteenUrlComponent = urlService.getCanteenUrl(canteen)
+  const links = [
+    {
+      label: "Modifier la cantine",
+      to: { name: "DashboardManager", params: { canteenUrlComponent: canteenUrlComponent } },
+    },
+    {
+      label: "Ajouter des achats",
+      to: { name: "PurchasesHome" },
+    },
+    {
+      label: "Gérer les collaborateurs",
+      to: { name: "CanteenManagers", params: { canteenUrlComponent: canteenUrlComponent } },
+    },
+  ]
+
+  if (canteen.productionType === "central" || canteen.productionType === "central_serving") {
+    links.push({
+      to: { name: "GestionnaireCantineSatellitesGerer", params: { canteenUrlComponent: canteenUrlComponent } },
+      label: "Gérer les satellites",
+    })
+  }
+
+  return links
+}
 </script>
 <template>
   <DsfrDataTable class="gestionnaire-canteens-table" title="Vos cantines" no-caption :headers-row="header" :rows="rows">
@@ -106,6 +135,11 @@ const getStatusInfos = (canteen) => {
       <template v-else-if="colKey === 'status'">
         <DsfrBadge small :label="cell.label" :type="cell.type" />
       </template>
+      <template v-else-if="colKey === 'actions'">
+        <div class="fr-grid-row fr-grid-row--right">
+          <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line" :links="cell" />
+        </div>
+      </template>
       <template v-else>
         <p class="fr-text--xs">{{ cell }}</p>
       </template>
@@ -115,6 +149,10 @@ const getStatusInfos = (canteen) => {
 
 <style lang="scss">
 .gestionnaire-canteens-table {
+  .fr-table__container {
+    overflow: initial !important;
+  }
+
   th,
   td {
     white-space: initial !important;

@@ -1,0 +1,76 @@
+<script setup>
+/*
+  NOT A DSFR component yet : https://www.systeme-de-design.gouv.fr/version-courante/fr/composants/menu-deroulant
+  Needs to be updated when available in vue-dsfr package
+*/
+import { computed, ref, useTemplateRef } from "vue"
+import { onClickOutside } from "@vueuse/core"
+defineProps(["label", "icon", "links"])
+
+/* Icon */
+const isOpened = ref(false)
+const arrow = computed(() => {
+  const direction = isOpened.value ? "up" : "down"
+  return `fr-icon-arrow-${direction}-s-line`
+})
+
+/* Click outside */
+const opener = useTemplateRef("opener")
+const content = useTemplateRef("content")
+const closeDropdown = () => {
+  isOpened.value = false
+}
+onClickOutside(content, closeDropdown, { ignore: [opener] })
+</script>
+
+<template>
+  <div class="app-dropdown-menu" ref="dropdown-ref">
+    <DsfrButton
+      tertiary
+      :class="{ 'fr-background-contrast--blue-france': isOpened }"
+      :icon="arrow"
+      icon-right
+      @click="isOpened = !isOpened"
+      ref="opener"
+      size="small"
+    >
+      <span :class="`${icon} ma-cantine--icon-xs`"></span>
+      {{ label }}
+    </DsfrButton>
+    <ul
+      v-if="isOpened"
+      class="app-dropdown-menu__content fr-background-default--grey ma-cantine--shadow-raised ma-cantine--unstyled-list fr-my-0"
+      ref="content"
+    >
+      <li v-for="link in links" :key="link.to" class="fr-pb-0">
+        <router-link
+          :to="link.to"
+          class="app-dropdown-menu__link ma-cantine--unstyled-link fr-text-title--blue-france fr-py-1v fr-px-3v fr-nav__link"
+        >
+          <p class="fr-text--sm ma-cantine--text-right fr-col-12">{{ link.label }}</p>
+        </router-link>
+      </li>
+    </ul>
+  </div>
+</template>
+
+<style lang="scss">
+.app-dropdown-menu {
+  position: relative;
+
+  &__content {
+    z-index: 9;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    transform: translateY(100%);
+    width: max-content !important;
+  }
+
+  &__link {
+    min-height: 1rem !important;
+    border-bottom: solid 1px var(--background-contrast-grey);
+  }
+}
+</style>
