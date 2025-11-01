@@ -616,7 +616,7 @@ tinycss2==1.4.0
     #   svglib
 toml==0.10.2
     # via ma-cantine
-tomli==2.2.1
+tomli==2.3.0
     # via ma-cantine
 tomlkit==0.13.2
     # via
