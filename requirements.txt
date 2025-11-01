@@ -219,7 +219,7 @@ django-treebeard==4.7.1
     # via
     #   ma-cantine
     #   wagtail
-django-vite-plugin==4.1.0
+django-vite-plugin==4.1.2
     # via ma-cantine
 django-webpack-loader==3.1.0
     # via ma-cantine
