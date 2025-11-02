@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
@@ -10,13 +8,12 @@ from django.db.models.functions import Cast
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
+from data.validators import diagnostic as diagnostic_validators
 from data.fields import ChoiceArrayField
 from data.models import Canteen
 from data.utils import (
     CreationSource,
     CustomJSONEncoder,
-    get_diagnostic_lower_limit_year,
-    get_diagnostic_upper_limit_year,
     make_optional_positive_decimal_field,
     sum_int_with_potential_null,
 )
@@ -1253,15 +1250,15 @@ class Diagnostic(models.Model):
         return submitted_teledeclarations.order_by("-creation_date").first()
 
     def clean(self):
-        self.validate_year()
+        diagnostic_validators.validate_year(self)
 
         if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             self.populate_simplified_diagnostic_values()
 
-        self.validate_approvisionment_total()
-        self.validate_meat_total()
-        self.validate_fish_total()
-        self.validate_meat_fish_egalim()
+        diagnostic_validators.validate_approvisionment_total(self)
+        diagnostic_validators.validate_meat_total(self)
+        diagnostic_validators.validate_fish_total(self)
+        diagnostic_validators.validate_meat_fish_egalim(self)
         return super().clean()
 
     def populate_simplified_diagnostic_values(self):
@@ -1303,83 +1300,6 @@ class Diagnostic(models.Model):
         self.value_meat_poultry_egalim_ht = total_meat_egalim
         self.value_meat_poultry_france_ht = total_meat_france
         self.value_fish_egalim_ht = total_fish_egalim
-
-    def validate_year(self):
-        if self.year is None:
-            return
-        lower_limit_year = get_diagnostic_lower_limit_year()
-        upper_limit_year = get_diagnostic_upper_limit_year()
-        if not isinstance(self.year, int) or self.year < lower_limit_year or self.year > upper_limit_year:
-            raise ValidationError(
-                {"year": f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."}
-            )
-
-    def validate_approvisionment_total(self):
-        if self.value_total_ht is None or not isinstance(self.value_total_ht, Decimal):
-            return
-        value_sum = (
-            (self.value_bio_ht or 0)
-            + (self.value_sustainable_ht or 0)
-            + (self.value_externality_performance_ht or 0)
-            + (self.value_egalim_others_ht or 0)
-        )
-        if value_sum > self.value_total_ht:
-            raise ValidationError(
-                {
-                    "value_total_ht": f"La somme des valeurs d'approvisionnement, {value_sum}, est plus que le total, {self.value_total_ht}"
-                }
-            )
-
-    def validate_meat_total(self):
-        if (
-            self.value_meat_poultry_egalim_ht is not None
-            and self.value_meat_poultry_ht is not None
-            and self.value_meat_poultry_egalim_ht > self.value_meat_poultry_ht
-        ):
-            raise ValidationError(
-                {
-                    "value_meat_poultry_ht": f"La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, {self.value_meat_poultry_egalim_ht}, est plus que la valeur totale (HT) viandes et volailles, {self.value_meat_poultry_ht}"
-                }
-            )
-        elif (
-            self.value_meat_poultry_france_ht is not None
-            and self.value_meat_poultry_ht is not None
-            and self.value_meat_poultry_france_ht > self.value_meat_poultry_ht
-        ):
-            raise ValidationError(
-                {
-                    "value_meat_poultry_ht": f"La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, {self.value_meat_poultry_france_ht}, est plus que la valeur totale (HT) viandes et volailles, {self.value_meat_poultry_ht}"
-                }
-            )
-
-    def validate_fish_total(self):
-        if (
-            self.value_fish_egalim_ht is not None
-            and self.value_fish_ht is not None
-            and self.value_fish_egalim_ht > self.value_fish_ht
-        ):
-            raise ValidationError(
-                {
-                    "value_fish_ht": f"La valeur totale (HT) poissons et produits aquatiques EGalim, {self.value_fish_egalim_ht}, est plus que la valeur totale (HT) poissons et produits aquatiques, {self.value_fish_ht}"
-                }
-            )
-
-    def validate_meat_fish_egalim(self):
-        if self.value_total_ht is None or not isinstance(self.value_total_ht, Decimal):
-            return
-        egalim_sum = (
-            (self.value_bio_ht or 0)
-            + (self.value_sustainable_ht or 0)
-            + (self.value_externality_performance_ht or 0)
-            + (self.value_egalim_others_ht or 0)
-        )
-        meat_fish_egalim_sum = (self.value_fish_egalim_ht or 0) + (self.value_meat_poultry_egalim_ht or 0)
-        if meat_fish_egalim_sum > egalim_sum:
-            raise ValidationError(
-                {
-                    "value_sustainable_ht": f"La somme des valeurs viandes et poissons EGalim, {meat_fish_egalim_sum}, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, {egalim_sum}"
-                }
-            )
 
     def __str__(self):
         return f"Diagnostic pour {self.canteen.name} ({self.year})"
