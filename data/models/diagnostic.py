@@ -8,6 +8,7 @@ from django.db.models.functions import Cast
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
+from common.utils import utils as utils_utils
 from data.validators import diagnostic as diagnostic_validators
 from data.fields import ChoiceArrayField
 from data.models import Canteen
@@ -1253,11 +1254,16 @@ class Diagnostic(models.Model):
         if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             self.populate_simplified_diagnostic_values()
 
-        diagnostic_validators.validate_year(self)
-        diagnostic_validators.validate_approvisionment_total(self)
-        diagnostic_validators.validate_meat_total(self)
-        diagnostic_validators.validate_fish_total(self)
-        diagnostic_validators.validate_meat_fish_egalim(self)
+        validation_errors = utils_utils.merge_validation_errors(
+            diagnostic_validators.validate_year(self),
+            diagnostic_validators.validate_approvisionment_total(self),
+            diagnostic_validators.validate_meat_total(self),
+            diagnostic_validators.validate_fish_total(self),
+            diagnostic_validators.validate_meat_fish_egalim(self),
+        )
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
         return super().clean()
 
     def populate_simplified_diagnostic_values(self):
