@@ -1250,11 +1250,10 @@ class Diagnostic(models.Model):
         return submitted_teledeclarations.order_by("-creation_date").first()
 
     def clean(self):
-        diagnostic_validators.validate_year(self)
-
         if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             self.populate_simplified_diagnostic_values()
 
+        diagnostic_validators.validate_year(self)
         diagnostic_validators.validate_approvisionment_total(self)
         diagnostic_validators.validate_meat_total(self)
         diagnostic_validators.validate_fish_total(self)
