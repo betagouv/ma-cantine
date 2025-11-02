@@ -1495,12 +1495,13 @@ class Diagnostic(models.Model):
         total = self.value_total_ht
         if total:
             bio_percent = (self.value_bio_ht or 0) / total
-            egalim_percent = (
+            egalim_sum = (
                 (self.value_bio_ht or 0)
                 + (self.value_sustainable_ht or 0)
                 + (self.value_externality_performance_ht or 0)
                 + (self.value_egalim_others_ht or 0)
-            ) / total
+            )
+            egalim_percent = egalim_sum / total
 
             bio_threshold = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
             combined_threshold = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
