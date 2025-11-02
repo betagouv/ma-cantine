@@ -1252,18 +1252,6 @@ class Diagnostic(models.Model):
             return None
         return submitted_teledeclarations.order_by("-creation_date").first()
 
-    def clean(self):
-        self.validate_year()
-
-        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            self.populate_simplified_diagnostic_values()
-
-        self.validate_approvisionment_total()
-        self.validate_meat_total()
-        self.validate_fish_total()
-        self.validate_meat_fish_egalim()
-        return super().clean()
-
     def populate_simplified_diagnostic_values(self):
         self.value_bio_ht = self.total_bio
         self.value_sustainable_ht = self.total_sustainable
@@ -1380,6 +1368,24 @@ class Diagnostic(models.Model):
                     "value_sustainable_ht": f"La somme des valeurs viandes et poissons EGalim, {meat_fish_egalim_sum}, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, {egalim_sum}"
                 }
             )
+
+    def clean(self):
+        self.validate_year()
+        self.validate_approvisionment_total()
+        self.validate_meat_total()
+        self.validate_fish_total()
+        self.validate_meat_fish_egalim()
+        return super().clean()
+
+    def save(self, **kwargs):
+        """
+        - populate some fields
+        - full_clean(): run validations (with extra validations in clean())
+        """
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            self.populate_simplified_diagnostic_values()
+        self.full_clean()
+        super().save(**kwargs)
 
     def __str__(self):
         return f"Diagnostic pour {self.canteen.name} ({self.year})"
