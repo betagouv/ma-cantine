@@ -1,2 +1,2 @@
-siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion
-21340172201787,A canteen,,54460,,700,14000,,site,conceded,,
+siret,nom,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,,
+21340172201787,A canteen,,700,14000,,site,conceded,,
