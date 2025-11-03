@@ -6,6 +6,31 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.36.1](https://github.com/betagouv/ma-cantine/compare/v2025.36.0...v2025.36.1) (2025-11-03)
+
+
+### Améliorations
+
+* **Imports:** Cantines: enlève les champs city_insee_code & postal_code ([#5833](https://github.com/betagouv/ma-cantine/issues/5833)) ([008db4c](https://github.com/betagouv/ma-cantine/commit/008db4ce6fb16a58290b24e08d4435854273787f))
+
+
+### Technique
+
+* **Admin:** ne plus faire d'imports relatifs (utils, softdeletionadmin) ([#5836](https://github.com/betagouv/ma-cantine/issues/5836)) ([ca7ee60](https://github.com/betagouv/ma-cantine/commit/ca7ee60baab46fd5a7146c28aaab58976016fe85))
+* **deps-dev:** ajout des mises à jour manquantes de dependabot ([#5844](https://github.com/betagouv/ma-cantine/issues/5844)) ([05e0611](https://github.com/betagouv/ma-cantine/commit/05e06114b8a90124f08c5c13edb88c3990823801))
+* **deps-dev:** bump @rushstack/eslint-patch in /2024-frontend ([b62aa60](https://github.com/betagouv/ma-cantine/commit/b62aa60acb53cab4f5d078005f9167b124a66150))
+* **deps-dev:** bump @vitejs/plugin-vue in /2024-frontend ([27f809f](https://github.com/betagouv/ma-cantine/commit/27f809f21490d62476bcdf11e5702126f09d5d6d))
+* **deps-dev:** bump eslint from 9.32.0 to 9.39.0 in /2024-frontend ([8a04d23](https://github.com/betagouv/ma-cantine/commit/8a04d23a7aa981d2176a6bee761a86da79f70c14))
+* **deps-dev:** bump prettier from 3.5.3 to 3.6.2 in /2024-frontend ([fb9739a](https://github.com/betagouv/ma-cantine/commit/fb9739a380fba5b06dc74e62f453377311802cbb))
+* **deps-dev:** bump vite from 6.3.6 to 7.1.12 in /2024-frontend ([422166c](https://github.com/betagouv/ma-cantine/commit/422166c2b04b84d0a099456834ee29e28ea74082))
+* **deps:** bump @gouvminint/vue-dsfr in /2024-frontend ([b19c448](https://github.com/betagouv/ma-cantine/commit/b19c448fcdedbc7c9563f60bcb7d904d791982b6))
+* **deps:** bump django-vite-plugin from 4.1.0 to 4.1.2 ([cc17d4d](https://github.com/betagouv/ma-cantine/commit/cc17d4d7ae35303fa065788be3657fc8038b4a3c))
+* **deps:** bump django-vite-plugin in /2024-frontend ([bd55d57](https://github.com/betagouv/ma-cantine/commit/bd55d5736b0594af6574200fa507186c660e5aec))
+* **deps:** bump vue-router from 4.5.1 to 4.6.3 in /2024-frontend ([8934d3d](https://github.com/betagouv/ma-cantine/commit/8934d3d1bd3b67fa63f6986bd5fa35be4b4e5c30))
+* **Diagnostic:** basculer les validations dans un fichier dédié ([#5832](https://github.com/betagouv/ma-cantine/issues/5832)) ([caa764c](https://github.com/betagouv/ma-cantine/commit/caa764c2659e910d40b2e759e37ad1be24ab7d0c))
+* **Tests:** basculer 'assert_import_failure_created' dans utils ([#5834](https://github.com/betagouv/ma-cantine/issues/5834)) ([51da402](https://github.com/betagouv/ma-cantine/commit/51da4029ba3159045eabf9ca49fb3b1d8323a927))
+* **Tests:** ne plus faire d'imports relatifs (utils) ([#5835](https://github.com/betagouv/ma-cantine/issues/5835)) ([7c7be4d](https://github.com/betagouv/ma-cantine/commit/7c7be4d5ed79aed6513ef280bc9ceda32e05fbbc))
+
 ## [2025.36.0](https://github.com/betagouv/ma-cantine/compare/v2025.35.0...v2025.36.0) (2025-10-31)
 
 
