@@ -470,7 +470,9 @@ class CanteenCreateApiTest(APITestCase):
                     }
                     response = self.client.post(reverse("user_canteens"), payload, format="json")
                     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-                    Canteen.objects.get(pk=response.json()["id"]).delete()  # to reuse the same SIRET
+                    canteen = Canteen.objects.get(pk=response.json()["id"])
+                    self.assertEqual(canteen.sectors.count(), len(sectors))
+                    canteen.delete()  # to reuse the same SIRET
             for sectors in [[sector_1.id], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
                 with self.subTest(production_type=production_type, sectors=sectors):
                     payload = {
@@ -496,7 +498,9 @@ class CanteenCreateApiTest(APITestCase):
                     }
                     response = self.client.post(reverse("user_canteens"), payload, format="json")
                     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-                    Canteen.objects.get(pk=response.json()["id"]).delete()  # to reuse the same SIRET
+                    canteen = Canteen.objects.get(pk=response.json()["id"])
+                    self.assertEqual(canteen.sectors.count(), len(sectors))
+                    canteen.delete()  # to reuse the same SIRET
             for sectors in [[], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
                 with self.subTest(production_type=production_type, sectors=sectors):
                     payload = {
@@ -731,6 +735,38 @@ class CanteenUpdateApiTest(APITestCase):
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_update_canteen_sectors(self):
+        sector_1 = SectorFactory()
+        sector_2 = SectorFactory()
+        central_kitchen_with_sectors = CanteenFactory.create(
+            siret="03201976246133",
+            production_type=Canteen.ProductionType.CENTRAL,
+            sectors=[sector_1, sector_2],
+            managers=[authenticate.user],
+        )
+        canteen_site = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE, sectors=[], managers=[authenticate.user]
+        )
+
+        # central_kitchen: fix sectors (remove them)
+        self.assertEqual(central_kitchen_with_sectors.sectors.count(), 2)
+        payload = {"sectors": []}
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": central_kitchen_with_sectors.id}), payload, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        central_kitchen_with_sectors.refresh_from_db()
+        self.assertEqual(central_kitchen_with_sectors.sectors.count(), 0)
+
+        # canteen_site: fix sectors (add some)
+        self.assertEqual(canteen_site.sectors.count(), 0)
+        payload = {"sectors": [sector_1.id, sector_2.id]}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen_site.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        canteen_site.refresh_from_db()
+        self.assertEqual(canteen_site.sectors.count(), 2)
 
     @authenticate
     def test_canteen_image_edition_unauthorized(self):
