@@ -214,3 +214,15 @@ def validate_canteen_central_producer_siret_field(instance):
                 "Le champ ne peut être rempli que pour les restaurants satellites.",
             )
     return errors
+
+
+def validate_canteen_sectors(instance):
+    """
+    Canteen.sectors is a M2M relation, so it CANNOT be validated easily in the clean().
+
+    See instead:
+    - API: FullCanteenSerializer.validate()
+    - Import: ImportCanteensView._validate_canteen()
+    - Admin: TODO
+    """
+    return {}

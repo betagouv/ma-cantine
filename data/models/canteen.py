@@ -601,6 +601,7 @@ class Canteen(SoftDeletionModel):
             canteen_validators.validate_canteen_meal_count_fields(self),
             canteen_validators.validate_canteen_satellite_count(self),
             canteen_validators.validate_canteen_central_producer_siret_field(self),
+            canteen_validators.validate_canteen_sectors(self),
         )
         if validation_errors:
             raise ValidationError(validation_errors)

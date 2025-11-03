@@ -340,6 +340,10 @@ class CanteenDetailApiTest(APITestCase):
 class CanteenCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.sector_1 = SectorFactory()
+        cls.sector_2 = SectorFactory()
+        cls.sector_3 = SectorFactory()
+        cls.sector_4 = SectorFactory()
         cls.DEFAULT_PAYLOAD = {
             "name": "My canteen",
             "city": "Lyon",
@@ -349,6 +353,7 @@ class CanteenCreateApiTest(APITestCase):
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
+            "sectors": [cls.sector_1.id, cls.sector_2.id],
         }
 
     @authenticate
@@ -453,10 +458,6 @@ class CanteenCreateApiTest(APITestCase):
     @authenticate
     def test_create_canteen_with_sectors(self):
         central_kitchen = CanteenFactory.create(siret="03201976246133", production_type=Canteen.ProductionType.CENTRAL)
-        sector_1 = SectorFactory()
-        sector_2 = SectorFactory()
-        sector_3 = SectorFactory()
-        sector_4 = SectorFactory()
 
         for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
             # sector should be empty
@@ -465,51 +466,58 @@ class CanteenCreateApiTest(APITestCase):
                     payload = {
                         **self.DEFAULT_PAYLOAD,
                         "productionType": production_type,
+                        "satelliteCanteensCount": 1,  # needed for central kitchens
                         "sectors": sectors,
-                        "satelliteCanteensCount": 1,
                     }
                     response = self.client.post(reverse("user_canteens"), payload, format="json")
                     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
                     canteen = Canteen.objects.get(pk=response.json()["id"])
                     self.assertEqual(canteen.sectors.count(), len(sectors))
                     canteen.delete()  # to reuse the same SIRET
-            for sectors in [[sector_1.id], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
+            for sectors in [
+                [self.sector_1.id],
+                [self.sector_1.id, self.sector_2.id, self.sector_3.id, self.sector_4.id],
+            ]:
                 with self.subTest(production_type=production_type, sectors=sectors):
                     payload = {
                         **self.DEFAULT_PAYLOAD,
                         "productionType": production_type,
+                        "satelliteCanteensCount": 1,  # needed for central kitchens
                         "sectors": sectors,
-                        "satelliteCanteensCount": 2,
                     }
                     response = self.client.post(reverse("user_canteens"), payload, format="json")
                     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         for production_type in [Canteen.ProductionType.ON_SITE, Canteen.ProductionType.ON_SITE_CENTRAL]:
             # sector should be filled (between 1 and 3 sectors)
-            for sectors in [[sector_1.id], [sector_1.id, sector_2.id], [sector_1.id, sector_2.id, sector_3.id]]:
+            for sectors in [
+                [self.sector_1.id],
+                [self.sector_1.id, self.sector_2.id],
+                [self.sector_1.id, self.sector_2.id, self.sector_3.id],
+            ]:
                 with self.subTest(production_type=production_type, sectors=sectors):
                     payload = {
                         **self.DEFAULT_PAYLOAD,
                         "productionType": production_type,
-                        "sectors": sectors,
                         "centralProducerSiret": central_kitchen.siret
                         if production_type == Canteen.ProductionType.ON_SITE_CENTRAL
-                        else None,
+                        else None,  # needed for satellite kitchens
+                        "sectors": sectors,
                     }
                     response = self.client.post(reverse("user_canteens"), payload, format="json")
                     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
                     canteen = Canteen.objects.get(pk=response.json()["id"])
                     self.assertEqual(canteen.sectors.count(), len(sectors))
                     canteen.delete()  # to reuse the same SIRET
-            for sectors in [[], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
+            for sectors in [[], [self.sector_1.id, self.sector_2.id, self.sector_3.id, self.sector_4.id]]:
                 with self.subTest(production_type=production_type, sectors=sectors):
                     payload = {
                         **self.DEFAULT_PAYLOAD,
                         "productionType": production_type,
-                        "sectors": sectors,
                         "centralProducerSiret": central_kitchen.siret
                         if production_type == Canteen.ProductionType.ON_SITE_CENTRAL
-                        else None,
+                        else None,  # needed for satellite kitchens
+                        "sectors": sectors,
                     }
                     response = self.client.post(reverse("user_canteens"), payload, format="json")
                     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
