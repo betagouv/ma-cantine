@@ -3,10 +3,9 @@ from django.contrib import admin
 from django.utils import timezone
 from django.utils.html import format_html
 
+from data.admin.softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
 from data.models import Canteen
 from data.utils import CreationSource
-
-from .softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
 
 last_year = timezone.now().date().year - 1
 

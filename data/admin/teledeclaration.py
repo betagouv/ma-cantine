@@ -5,9 +5,8 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
 
+from data.admin.utils import ReadOnlyAdminMixin
 from data.models import Teledeclaration
-
-from .utils import ReadOnlyAdminMixin
 
 
 class TeledeclarationForm(forms.ModelForm):

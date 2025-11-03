@@ -1,8 +1,7 @@
 from django.contrib import admin
 
+from data.admin.utils import ReadOnlyAdminMixin
 from data.models import WasteAction
-
-from .utils import ReadOnlyAdminMixin
 
 
 @admin.register(WasteAction)
