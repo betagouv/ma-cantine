@@ -9,11 +9,10 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation
 from data.utils import CreationSource
-
-from .utils import authenticate, assert_import_failure_created
 
 
 class TestCanteenSchema(TestCase):

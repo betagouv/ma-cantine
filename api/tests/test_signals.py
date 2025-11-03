@@ -2,10 +2,9 @@ from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import DiagnosticFactory
 from data.models import AuthenticationMethodHistoricalRecords
-
-from .utils import authenticate, get_oauth2_token
 
 
 @freeze_time("2022-08-30")  # during the 2021 campaign

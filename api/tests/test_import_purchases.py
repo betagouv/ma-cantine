@@ -14,12 +14,11 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.purchase import Purchase
 from data.utils import CreationSource
-
-from .utils import authenticate, assert_import_failure_created
 
 
 class TestPurchaseSchema(TestCase):
