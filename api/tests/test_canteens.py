@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory
+from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory, SectorFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
 from data.utils import CreationSource
 
@@ -257,7 +257,7 @@ class CanteenDetailApiTest(APITestCase):
 
     @authenticate
     def test_get_central_kitchen(self):
-        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
+        central_kitchen = CanteenFactory.create(siret="96953195898254", production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory.create(
             central_producer_siret=central_kitchen.siret,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -384,7 +384,7 @@ class CanteenCreateApiTest(APITestCase):
     @authenticate
     def test_create_canteen_missing_siret(self):
         payload = self.DEFAULT_PAYLOAD.copy()
-        del payload["siret"]
+        payload.pop("siret")
 
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -449,6 +449,42 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(body["id"], canteen.id)
         self.assertFalse(body["isManagedByUser"])
         self.assertEqual(Canteen.objects.count(), 1)
+
+    @authenticate
+    def test_create_canteen_with_sectors(self):
+        central_kitchen = CanteenFactory.create(siret="03201976246133", production_type=Canteen.ProductionType.CENTRAL)
+        sector_1 = SectorFactory()
+        sector_2 = SectorFactory()
+        sector_3 = SectorFactory()
+        sector_4 = SectorFactory()
+
+        for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
+            for sectors in [[], [sector_1.id], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
+                with self.subTest(production_type=production_type, sectors=sectors):
+                    payload = {
+                        **self.DEFAULT_PAYLOAD,
+                        "productionType": production_type,
+                        "sectors": sectors,
+                        "satelliteCanteensCount": 1,
+                    }
+                    response = self.client.post(reverse("user_canteens"), payload, format="json")
+                    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                    Canteen.objects.get(pk=response.json()["id"]).delete()  # to reuse the same SIRET
+
+        for production_type in [Canteen.ProductionType.ON_SITE, Canteen.ProductionType.ON_SITE_CENTRAL]:
+            for sectors in [[], [sector_1.id], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
+                with self.subTest(production_type=production_type, sectors=sectors):
+                    payload = {
+                        **self.DEFAULT_PAYLOAD,
+                        "productionType": production_type,
+                        "sectors": sectors,
+                        "centralProducerSiret": central_kitchen.siret
+                        if production_type == Canteen.ProductionType.ON_SITE_CENTRAL
+                        else None,
+                    }
+                    response = self.client.post(reverse("user_canteens"), payload, format="json")
+                    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                    Canteen.objects.get(pk=response.json()["id"]).delete()  # to reuse the same SIRET
 
     @authenticate
     def test_create_canteen_with_images(self):
@@ -540,13 +576,13 @@ class CanteenUpdateApiTest(APITestCase):
         )
         satellites = [
             CanteenFactory.create(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
             ),
             CanteenFactory.create(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
             ),
             CanteenFactory.create(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
             ),
         ]
         payload = {"siret": "35662897196149"}
