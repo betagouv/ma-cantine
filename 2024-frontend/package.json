@@ -29,7 +29,7 @@
     "@rushstack/eslint-patch": "^1.14.1",
     "@vitejs/plugin-vue": "^6.0.0",
     "@vue/eslint-config-prettier": "^10.2.0",
-    "eslint": "^9.32.0",
+    "eslint": "^9.39.0",
     "eslint-plugin-vue": "^9.33.0",
     "prettier": "^3.6.2",
     "vite": "^6.3.5",
