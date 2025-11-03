@@ -1,7 +1,8 @@
 from datetime import datetime
+from decimal import Decimal
 
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 from freezegun import freeze_time
 
@@ -12,6 +13,117 @@ year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
 date_in_correction_campaign = "2025-04-20"
 date_in_last_teledeclaration_campaign = "2024-02-01"
+
+VALID_DIAGNOSTIC = {
+    "year": year_data,
+    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
+    "value_total_ht": 1000,
+    "value_bio_ht": 200,
+    "value_sustainable_ht": 100,
+    "value_externality_performance_ht": 100,
+    "value_egalim_others_ht": 100,
+    "value_meat_poultry_ht": 100,
+    "value_meat_poultry_egalim_ht": 50,
+    "value_meat_poultry_france_ht": 20,
+    "value_fish_ht": 80,
+    "value_fish_egalim_ht": 40,
+}
+
+
+class DiagnosticModelSaveTest(TransactionTestCase):
+    def test_diagnostic_year_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
+        # should be a year (or None)
+        for TUPLE_OK in [
+            (2024, 2024),
+            ("2023", 2023),
+            (None, None),
+        ]:
+            with self.subTest(year=TUPLE_OK[0]):
+                diagnostic = DiagnosticFactory(year=TUPLE_OK[0], **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+                diagnostic.full_clean()
+                self.assertEqual(diagnostic.year, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["", "abcd"]:
+            with self.subTest(year=VALUE_NOT_OK):
+                self.assertRaises(
+                    ValueError, Diagnostic.objects.create, year=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR
+                )
+        # should be in a specific range
+        for VALUE_NOT_OK in [1991]:
+            with self.subTest(year=VALUE_NOT_OK):
+                diagnostic = DiagnosticFactory(year=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_value_total_ht_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT.pop("value_total_ht")
+        # should be a number (or None)
+        for TUPLE_OK in [
+            (1000, 1000),
+            ("2000", 2000),
+            (Decimal("1234.56"), Decimal("1234.56")),
+            (None, None),
+        ]:
+            with self.subTest(value_total_ht=TUPLE_OK[0]):
+                diagnostic = DiagnosticFactory(value_total_ht=TUPLE_OK[0], **VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT)
+                diagnostic.full_clean()
+                self.assertEqual(diagnostic.value_total_ht, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["", "abcd"]:  # Decimal("1234.567")
+            with self.subTest(value_total_ht=VALUE_NOT_OK):
+                self.assertRaises(
+                    (ValueError, ValidationError),
+                    Diagnostic.objects.create,
+                    value_total_ht=VALUE_NOT_OK,
+                    **VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT,
+                )
+        # should be > the sum of other fields
+        self.assertEqual(
+            sum(
+                VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT[k]
+                for k in [
+                    "value_bio_ht",
+                    "value_sustainable_ht",
+                    "value_externality_performance_ht",
+                    "value_egalim_others_ht",
+                ]
+            ),
+            500,
+        )
+        for VALUE_NOT_OK in [-100, 0, 100]:
+            with self.subTest(value_total_ht=VALUE_NOT_OK):
+                diagnostic = DiagnosticFactory(value_total_ht=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT)
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_value_meat_poultry_ht_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT.pop("value_meat_poultry_ht")
+        # should be >= value_meat_poultry_egalim_ht
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT["value_meat_poultry_egalim_ht"], 50)
+        for VALUE_NOT_OK in [-100, 0, 49]:
+            with self.subTest(value_meat_poultry_ht=VALUE_NOT_OK):
+                diagnostic = DiagnosticFactory(
+                    value_meat_poultry_ht=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT
+                )
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+        # should be >= value_meat_poultry_france_ht
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT["value_meat_poultry_france_ht"], 20)
+        for VALUE_NOT_OK in [-100, 0, 19]:
+            with self.subTest(value_meat_poultry_ht=VALUE_NOT_OK):
+                diagnostic = DiagnosticFactory(
+                    value_meat_poultry_ht=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT
+                )
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_value_fish_ht_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_FISH_HT = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_FISH_HT.pop("value_fish_ht")
+        # should be >= value_fish_egalim_ht
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_FISH_HT["value_fish_egalim_ht"], 40)
+        for VALUE_NOT_OK in [-100, 0, 39]:
+            with self.subTest(value_fish_ht=VALUE_NOT_OK):
+                diagnostic = DiagnosticFactory(value_fish_ht=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_FISH_HT)
+                self.assertRaises(ValidationError, diagnostic.full_clean)
 
 
 class DiagnosticQuerySetTest(TestCase):
