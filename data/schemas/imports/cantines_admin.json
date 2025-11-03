@@ -16,14 +16,13 @@
     },
     {
       "constraints": {
-        "pattern": "^[0-9]{5}$",
-        "required": false
+        "required": true
       },
-      "description": "En cas d'absence de code INSEE, ce champ devient obligatoire.",
-      "example": "75100",
+      "description": "",
+      "example": "Ecole Jean Jaurès",
       "format": "default",
-      "name": "code_postal_commune",
-      "title": "Code postal de la commune",
+      "name": "nom",
+      "title": "Nom de l'établissement",
       "type": "string"
     },
     {
