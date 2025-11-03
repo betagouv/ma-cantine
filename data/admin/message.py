@@ -1,8 +1,7 @@
 from django.contrib import admin
 
 from data.models import Message
-
-from .utils import ReadOnlyAdminMixin
+from data.admin.utils import ReadOnlyAdminMixin
 
 
 @admin.action(description="Valider et envoyer")

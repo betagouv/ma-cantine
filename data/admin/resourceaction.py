@@ -3,7 +3,7 @@ from simple_history.admin import SimpleHistoryAdmin
 
 from data.models import ResourceAction
 
-from .utils import ReadOnlyAdminMixin
+from data.admin.utils import ReadOnlyAdminMixin
 
 
 @admin.register(ResourceAction)
