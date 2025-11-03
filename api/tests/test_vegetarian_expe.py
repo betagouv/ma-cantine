@@ -2,10 +2,9 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate
 from data.factories import CanteenFactory, VegetarianExpeFactory
 from data.models import VegetarianExpe
-
-from .utils import authenticate
 
 
 class TestVegetarianExpeApi(APITestCase):

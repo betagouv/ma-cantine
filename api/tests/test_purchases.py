@@ -3,16 +3,10 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from data.factories import (
-    CanteenFactory,
-    DiagnosticFactory,
-    PurchaseFactory,
-    UserFactory,
-)
+from api.tests.utils import authenticate
+from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
 from data.models import Canteen, Diagnostic, Purchase
 from data.utils import CreationSource
-
-from .utils import authenticate
 
 
 class TestPurchaseApi(APITestCase):
