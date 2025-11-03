@@ -27,30 +27,6 @@
     },
     {
       "constraints": {
-        "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
-        "required": false
-      },
-      "description": "",
-      "example": "75105",
-      "format": "default",
-      "name": "code_insee_commune",
-      "title": "Code INSEE de la commune",
-      "type": "string"
-    },
-    {
-      "constraints": {
-        "pattern": "^[0-9]{5}$",
-        "required": false
-      },
-      "description": "En cas d'absence de code INSEE, ce champ devient obligatoire.",
-      "example": "75100",
-      "format": "default",
-      "name": "code_postal_commune",
-      "title": "Code postal de la commune",
-      "type": "string"
-    },
-    {
-      "constraints": {
         "required": false
       },
       "description": "Ce SIRET peut être vide ou utilisé pour plusieurs lignes, dans le cas où c'est le gestionnaire de la cuisine centrale qui remplit les lignes pour chaque restaurant satellite.",

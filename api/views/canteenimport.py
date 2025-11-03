@@ -43,8 +43,8 @@ CANTEEN_ADMIN_SCHEMA_URL = (
 class ImportCanteensView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
-    manager_column_idx = 11  # gestionnaires_additionnels
-    silent_manager_idx = 11 + 3  # admin_gestionnaires_additionnels
+    manager_column_idx = 9  # gestionnaires_additionnels
+    silent_manager_idx = 9 + 3  # admin_gestionnaires_additionnels
     annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
 
     def __init__(self, **kwargs):
@@ -133,7 +133,7 @@ class ImportCanteensView(APIView):
         )
 
     def _process_file(self, data):
-        locations_csv_str = "siret,citycode,postcode\n"
+        locations_csv_str = "siret\n"
         has_locations_to_find = False
         for row_number, row in enumerate(data, start=1):
             try:
@@ -143,10 +143,7 @@ class ImportCanteensView(APIView):
                 self.canteens[canteen.siret] = canteen
                 if should_update_geolocation and not self.errors:
                     has_locations_to_find = True
-                    if canteen.city_insee_code:
-                        locations_csv_str += f"{canteen.siret},{canteen.city_insee_code},\n"
-                    else:
-                        locations_csv_str += f"{canteen.siret},,{canteen.postal_code}\n"
+                    locations_csv_str += f"{canteen.siret}\n"
 
             except Exception as e:
                 for error in self._parse_errors(e, row):
@@ -179,16 +176,6 @@ class ImportCanteensView(APIView):
         )
 
         return (canteen, should_update_geolocation)
-
-    @staticmethod
-    def _should_update_geolocation(canteen, row):
-        if canteen.city:
-            city_code_changed = row[2] and canteen.city_insee_code != row[2].strip()
-            postal_code_changed = row[3] and canteen.postal_code != row[3].strip()
-            return city_code_changed or postal_code_changed
-        else:
-            has_geo_data = canteen.city_insee_code or canteen.postal_code
-            return has_geo_data
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
@@ -259,18 +246,14 @@ class ImportCanteensView(APIView):
 
     @staticmethod
     def _validate_canteen(row):
-        if not row[2] and not row[3]:
-            raise ValidationError(
-                {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
-            )
-        if row[8] != Canteen.ProductionType.CENTRAL:
-            if not row[7]:
+        if row[6] != Canteen.ProductionType.CENTRAL:
+            if not row[5]:
                 raise ValidationError(
                     {
                         "sectors": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
                     }
                 )
-            if row[7].count("+") > 2:
+            if row[5].count("+") > 2:
                 raise ValidationError({"sectors": "Ce champ ne peut avoir plus de 3 valeurs."})
 
     def _get_manager_emails_to_notify(self, row):
@@ -297,15 +280,17 @@ class ImportCanteensView(APIView):
         manager_emails,
         silently_added_manager_emails,
     ):
+        # TODO: remove hardcoded indexes
         siret = utils_utils.normalize_string(row[0])
         name = row[1].strip()
-        daily_meal_count = row[5].strip()
-        yearly_meal_count = row[6].strip()
-        management_type = row[9].strip().lower()
-        production_type = row[8].strip().lower()
-        economic_model = row[10].strip().lower()
-        central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
-        satellite_canteens_count = row[12].strip() if row[12] else None
+        daily_meal_count = row[3].strip()
+        yearly_meal_count = row[4].strip()
+        production_type = row[6].strip().lower()
+        management_type = row[7].strip().lower()
+        economic_model = row[8].strip().lower()
+        central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
+        satellite_canteens_count = row[10].strip() if row[10] else None
+
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
@@ -330,34 +315,27 @@ class ImportCanteensView(APIView):
         if canteen_exists and not self._has_canteen_permission(canteen):
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
-        should_update_geolocation = (
-            ImportCanteensView._should_update_geolocation(canteen, row) if canteen_exists else True
-        )
-
-        # TODO: remove hardcoded indexes
-        canteen.name = row[1].strip()
-        canteen.city_insee_code = row[2].strip() if row[2] else None
-        canteen.postal_code = row[3].strip() if row[3] else None
-        canteen.daily_meal_count = row[5].strip()
-        canteen.yearly_meal_count = row[6].strip()
-        # sectors: see below
-        canteen.production_type = row[8].strip().lower()
-        canteen.management_type = row[9].strip().lower()
-        canteen.economic_model = row[10].strip().lower()
-        canteen.central_producer_siret = utils_utils.normalize_string(row[4]) if row[4] else None
+        canteen.name = name
+        canteen.daily_meal_count = daily_meal_count
+        canteen.yearly_meal_count = yearly_meal_count
+        # sectors (row[5]): see below
+        canteen.production_type = production_type
+        canteen.management_type = management_type
+        canteen.economic_model = economic_model
+        canteen.central_producer_siret = central_producer_siret
         canteen.satellite_canteens_count = satellite_canteens_count
         if self.is_admin_import:
             canteen.line_ministry = (
-                next((key for key, value in Canteen.Ministries.choices if value == row[13].strip()), None)
-                if row[13]
+                next((key for key, value in Canteen.Ministries.choices if value == row[11].strip()), None)
+                if row[11]
                 else None
             )
             canteen.import_source = import_source
-        if row[7]:
+        if row[5]:
             canteen.sectors.set(
                 [
                     self.annotated_sectors.get(name_lower__unaccent=sector.strip().lower())
-                    for sector in row[7].split("+")
+                    for sector in row[5].split("+")
                 ]
             )
 
@@ -372,6 +350,7 @@ class ImportCanteensView(APIView):
             ImportCanteensView._add_managers_to_canteen(
                 silently_added_manager_emails, canteen, send_invitation_mail=False
             )
+        should_update_geolocation = not canteen_exists
         return (canteen, should_update_geolocation)
 
     def _generate_canteen_meta_fields(self, row):
