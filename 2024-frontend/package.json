@@ -16,7 +16,7 @@
     "@gouvminint/vue-dsfr": "^8.9.0",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
-    "@vueuse/core": "^13.8.0",
+    "@vueuse/core": "^14.0.0",
     "django-vite-plugin": "^4.1.2",
     "pinia": "^3.0.3",
     "vue": "^3.5.22",
@@ -32,7 +32,8 @@
     "eslint": "^9.39.0",
     "eslint-plugin-vue": "^9.33.0",
     "prettier": "^3.6.2",
+    "sass-embedded": "^1.93.3",
     "vite": "^7.1.12",
-    "vite-plugin-vue-devtools": "^7.7.6"
+    "vite-plugin-vue-devtools": "^8.0.3"
   }
 }
