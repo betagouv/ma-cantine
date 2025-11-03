@@ -459,7 +459,8 @@ class CanteenCreateApiTest(APITestCase):
         sector_4 = SectorFactory()
 
         for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
-            for sectors in [[], [sector_1.id], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
+            # sector should be empty
+            for sectors in [[]]:
                 with self.subTest(production_type=production_type, sectors=sectors):
                     payload = {
                         **self.DEFAULT_PAYLOAD,
@@ -470,9 +471,20 @@ class CanteenCreateApiTest(APITestCase):
                     response = self.client.post(reverse("user_canteens"), payload, format="json")
                     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
                     Canteen.objects.get(pk=response.json()["id"]).delete()  # to reuse the same SIRET
+            for sectors in [[sector_1.id], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
+                with self.subTest(production_type=production_type, sectors=sectors):
+                    payload = {
+                        **self.DEFAULT_PAYLOAD,
+                        "productionType": production_type,
+                        "sectors": sectors,
+                        "satelliteCanteensCount": 2,
+                    }
+                    response = self.client.post(reverse("user_canteens"), payload, format="json")
+                    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         for production_type in [Canteen.ProductionType.ON_SITE, Canteen.ProductionType.ON_SITE_CENTRAL]:
-            for sectors in [[], [sector_1.id], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
+            # sector should be filled (between 1 and 3 sectors)
+            for sectors in [[sector_1.id], [sector_1.id, sector_2.id], [sector_1.id, sector_2.id, sector_3.id]]:
                 with self.subTest(production_type=production_type, sectors=sectors):
                     payload = {
                         **self.DEFAULT_PAYLOAD,
@@ -485,6 +497,18 @@ class CanteenCreateApiTest(APITestCase):
                     response = self.client.post(reverse("user_canteens"), payload, format="json")
                     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
                     Canteen.objects.get(pk=response.json()["id"]).delete()  # to reuse the same SIRET
+            for sectors in [[], [sector_1.id, sector_2.id, sector_3.id, sector_4.id]]:
+                with self.subTest(production_type=production_type, sectors=sectors):
+                    payload = {
+                        **self.DEFAULT_PAYLOAD,
+                        "productionType": production_type,
+                        "sectors": sectors,
+                        "centralProducerSiret": central_kitchen.siret
+                        if production_type == Canteen.ProductionType.ON_SITE_CENTRAL
+                        else None,
+                    }
+                    response = self.client.post(reverse("user_canteens"), payload, format="json")
+                    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
     def test_create_canteen_with_images(self):

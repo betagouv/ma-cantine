@@ -374,12 +374,36 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             self.fields.pop("creation_mtm_campaign")
             self.fields.pop("creation_mtm_medium")
 
-    def update(self, instance, validated_data):
+    def validate(self, data):
+        """
+        - extra validation:
+            - if central: sectors must be empty
+            - if not central: sectors must be between 1 and 3
+        """
+        production_type = data.get("production_type", getattr(self.instance, "production_type", None))
+        sectors = data.get("sectors", getattr(self.instance, "sectors", None))
+        if production_type in [
+            Canteen.ProductionType.CENTRAL,
+            Canteen.ProductionType.CENTRAL_SERVING,
+        ]:
+            if sectors and len(sectors) > 0:
+                raise serializers.ValidationError({"sectors": "Cuisine centrale : le champ doit être vide."})
+        elif production_type in [
+            Canteen.ProductionType.ON_SITE,
+            Canteen.ProductionType.ON_SITE_CENTRAL,
+        ]:
+            if not sectors or len(sectors) == 0:
+                raise serializers.ValidationError({"sectors": "Le champ doit contenir au moins un secteur."})
+            elif len(sectors) > 3:
+                raise serializers.ValidationError({"sectors": "Le champ ne peut pas contenir plus de trois secteurs."})
+        return data
+
+    def create(self, validated_data):
         if "images" not in validated_data:
-            return super().update(instance, validated_data)
+            return super().create(validated_data)
 
         image_validated_data = validated_data.pop("images", None)
-        canteen = super().update(instance, validated_data)
+        canteen = super().create(validated_data)
 
         if image_validated_data is not None:
             canteen_image_serializer = self.fields["images"]
@@ -389,12 +413,12 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
         return canteen
 
-    def create(self, validated_data):
+    def update(self, instance, validated_data):
         if "images" not in validated_data:
-            return super().create(validated_data)
+            return super().update(instance, validated_data)
 
         image_validated_data = validated_data.pop("images", None)
-        canteen = super().create(validated_data)
+        canteen = super().update(instance, validated_data)
 
         if image_validated_data is not None:
             canteen_image_serializer = self.fields["images"]
