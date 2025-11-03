@@ -1,8 +1,10 @@
 import functools
+import filecmp
 from datetime import timedelta
 
 from django.utils import timezone
 
+from data.models import ImportFailure
 from data.factories import UserFactory
 
 
@@ -22,3 +24,10 @@ def get_oauth2_token(scope):
     user = UserFactory.create()
     token = user.oauth2_provider_accesstoken.create(expires=expiration, token="token", scope=scope)
     return (user, token)
+
+
+def assert_import_failure_created(self, user, type, file_path):
+    self.assertTrue(ImportFailure.objects.count() >= 1)
+    self.assertEqual(ImportFailure.objects.first().user, user)
+    self.assertEqual(ImportFailure.objects.first().import_type, type)
+    self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))

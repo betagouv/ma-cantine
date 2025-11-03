@@ -1,5 +1,4 @@
 import datetime
-import filecmp
 import os
 import unittest
 from decimal import Decimal
@@ -27,19 +26,13 @@ from data.models.teledeclaration import Teledeclaration
 from data.region_choices import Region
 from data.utils import CreationSource
 
-from .utils import authenticate
+from .utils import authenticate, assert_import_failure_created
 
 NEXT_YEAR = datetime.date.today().year + 1
 
 
 @requests_mock.Mocker()
 class TestImportDiagnosticsAPI(APITestCase):
-    def _assertImportFailureCreated(self, user, type, file_path):
-        self.assertTrue(ImportFailure.objects.count() >= 1)
-        self.assertEqual(ImportFailure.objects.first().user, user)
-        self.assertEqual(ImportFailure.objects.first().import_type, type)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
-
     def test_unauthenticated_import_call(self, mock):
         """
         Expect 403 if unauthenticated
@@ -216,7 +209,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(Diagnostic.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
         error = body["errors"][0]
@@ -253,7 +246,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["errors"][0]["status"], 400)
         self.assertEqual(
@@ -336,7 +329,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
@@ -358,7 +351,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         # no new objects should have been saved to the DB since it failed
@@ -532,7 +525,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
@@ -577,7 +570,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
@@ -679,7 +672,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
@@ -867,7 +860,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         with open(file_path) as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
         self.assertEqual(Diagnostic.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
         self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
