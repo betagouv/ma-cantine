@@ -1,4 +1,3 @@
-import filecmp
 import json
 import re
 from unittest import skipIf
@@ -14,7 +13,7 @@ from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation
 from data.utils import CreationSource
 
-from .utils import authenticate
+from .utils import authenticate, assert_import_failure_created
 
 
 class TestCanteenSchema(TestCase):
@@ -116,12 +115,6 @@ class TestCanteenSchema(TestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class TestCanteenImport(APITestCase):
-    def _assertImportFailureCreated(self, user, type, file_path):
-        self.assertTrue(ImportFailure.objects.count() >= 1)
-        self.assertEqual(ImportFailure.objects.first().user, user)
-        self.assertEqual(ImportFailure.objects.first().import_type, type)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
-
     @classmethod
     def setUpTestData(cls):
         SectorFactory.create(name="Cliniques")
@@ -145,7 +138,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
@@ -165,7 +158,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
@@ -180,7 +173,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
@@ -239,7 +232,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -262,7 +255,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 1 + 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -280,7 +273,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -360,7 +353,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
@@ -381,7 +374,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
@@ -424,7 +417,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
         error_message = "Champ 'secteurs d'activité' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
@@ -459,7 +452,7 @@ class TestCanteenImport(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)

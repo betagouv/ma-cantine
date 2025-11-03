@@ -1,4 +1,3 @@
-import filecmp
 import hashlib
 import json
 import re
@@ -20,7 +19,7 @@ from data.models import ImportFailure, ImportType
 from data.models.purchase import Purchase
 from data.utils import CreationSource
 
-from .utils import authenticate
+from .utils import authenticate, assert_import_failure_created
 
 
 class TestPurchaseSchema(TestCase):
@@ -80,12 +79,6 @@ class TestPurchaseSchema(TestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class TestPurchaseImport(APITestCase):
-    def _assertImportFailureCreated(self, user, type, file_path):
-        self.assertTrue(ImportFailure.objects.count() >= 1)
-        self.assertEqual(ImportFailure.objects.first().user, user)
-        self.assertEqual(ImportFailure.objects.first().import_type, type)
-        self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
-
     def test_unauthenticated_import_call(self):
         """
         Expect 403 if unauthenticated
@@ -212,7 +205,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         errors = response.json()["errors"]
         self.assertEqual(len(errors), 1)
         self.assertEqual(
@@ -233,7 +226,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
@@ -256,7 +249,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
@@ -271,7 +264,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["errors"]), 1)
@@ -293,7 +286,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         errors = response.json()["errors"]
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
@@ -336,7 +329,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         errors = response.json()["errors"]
         self.assertEqual(
             errors.pop(0)["message"],
@@ -362,7 +355,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)  # no additional purchases created
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
@@ -385,7 +378,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(len(errors), 1)
@@ -400,7 +393,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(len(errors), 1)
@@ -415,7 +408,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(len(errors), 1)
@@ -449,7 +442,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         self.assertEqual(len(body["errors"]), 48)
         self.assertEqual(body["errorCount"], 48)
@@ -483,7 +476,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
         first_error = errors.pop(0)
@@ -500,7 +493,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
         first_error = errors.pop(0)
@@ -519,7 +512,7 @@ class TestPurchaseImport(APITestCase):
             response = self.client.post(f"{reverse('import_purchases')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
-        self._assertImportFailureCreated(authenticate.user, ImportType.PURCHASE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertTrue(
