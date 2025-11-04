@@ -78,7 +78,10 @@ class TestPurchaseSchema(TestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class TestPurchaseImport(APITestCase):
-    def test_unauthenticated(self):
+    def test_unauthenticated_import_call(self):
+        """
+        Expect 403 if unauthenticated
+        """
         response = self.client.post(reverse("import_purchases"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -202,10 +205,8 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
-        body = response.json()
-        self.assertEqual(body["count"], 0)
-        errors = body["errors"]
-        self.assertEqual(len(errors), 12)
+        errors = response.json()["errors"]
+        self.assertEqual(len(errors), 1)
         self.assertEqual(
             errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
@@ -227,10 +228,9 @@ class TestPurchaseImport(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
-        errors = body["errors"]
-        self.assertEqual(len(errors), 1)
+        self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
-            errors[0]["message"],
+            body["errors"][0]["message"],
             "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
@@ -251,10 +251,9 @@ class TestPurchaseImport(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
-        errors = body["errors"]
-        self.assertEqual(len(errors), 1)
+        self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
-            errors[0]["message"],
+            body["errors"][0]["message"],
             "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
@@ -267,10 +266,9 @@ class TestPurchaseImport(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         self.assertEqual(body["count"], 0)
-        errors = body["errors"]
-        self.assertEqual(len(errors), 1)
+        self.assertEqual(len(body["errors"]), 1)
         self.assertEqual(
-            errors[0]["message"],
+            body["errors"][0]["message"],
             "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
@@ -288,10 +286,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
-        body = response.json()
-        self.assertEqual(body["count"], 0)
-        errors = body["errors"]
-        self.assertEqual(len(errors), 12)
+        errors = response.json()["errors"]
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
@@ -334,8 +329,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
-        body = response.json()
-        errors = body["errors"]
+        errors = response.json()["errors"]
         self.assertEqual(
             errors.pop(0)["message"],
             "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",

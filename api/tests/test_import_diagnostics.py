@@ -26,7 +26,10 @@ NEXT_YEAR = datetime.date.today().year + 1
 
 @requests_mock.Mocker()
 class TestImportDiagnosticsAPI(APITestCase):
-    def test_unauthenticated(self, mock):
+    def test_unauthenticated_import_call(self, mock):
+        """
+        Expect 403 if unauthenticated
+        """
         response = self.client.post(reverse("import_diagnostics"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
