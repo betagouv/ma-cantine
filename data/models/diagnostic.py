@@ -293,6 +293,19 @@ class Diagnostic(models.Model):
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
 
+    class DataQuality(models.TextChoices):
+        VALUE_TOTAL_HT_VIDE = "VALUE_TOTAL_HT_VIDE", "Valeur totale des achats vide"
+        VALUE_BIO_HT_VIDE = "VALUE_BIO_HT_VIDE", "Valeur totale des achats bio vide"
+        CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE = (
+            "CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE",
+            "Cantine supprimée pendant la campagne",
+        )
+        CANTINE_SANS_SIRET_OU_SIREN = "CANTINE_SANS_SIRET_OU_SIREN", "Cantine sans siret ou siren"
+        VALEURS_ABERRANTES = "VALEURS_ABERRANTES", "Valeurs aberrantes"
+        DOUBLON_SATELLITE_CENTRALE = "DOUBLON_SATELLITE_CENTRALE", "Doublon satellite / centrale"
+        VALEURS_INCOHERENTES = "VALEURS_INCOHERENTES", "Valeurs incohérentes"
+        RAPPORT = "RAPPORT", "Présent dans le rapport"
+
     SIMPLE_APPRO_FIELDS = [
         "value_total_ht",
         "value_bio_ht",
@@ -1225,6 +1238,15 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         encoder=CustomJSONEncoder,
+    )
+
+    # Data quality
+    tags = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=DataQuality.choices),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="tags de qualité des données",
     )
 
     @property
