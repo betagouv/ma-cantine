@@ -391,7 +391,7 @@ class CanteenCreateApiTest(APITestCase):
         payload = self.DEFAULT_PAYLOAD.copy()
         payload.pop("siret")
 
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(reverse("user_canteens"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["Ce champ est obligatoire."])
@@ -566,9 +566,9 @@ class CanteenCreateApiTest(APITestCase):
 
 class CanteenUpdateApiTest(APITestCase):
     @authenticate
-    def test_modify_canteen_unauthorized(self):
+    def test_update_canteen_unauthorized(self):
         """
-        Users can only modify the canteens they manage
+        Users can only update the canteens they manage
         """
         canteen = CanteenFactory.create(city="Paris")
         payload = {"city": "Lyon"}
@@ -577,21 +577,23 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_modify_canteen(self):
+    def test_update_canteen(self):
         """
-        Users can modify the canteens they manage
+        Users can update the canteens they manage
         """
         canteen = CanteenFactory.create(city="Paris", managers=[authenticate.user])
         payload = {
             "city": "Lyon",
             "siret": "21340172201787",
-            "managementType": Canteen.ManagementType.DIRECT,
-            "reservationExpeParticipant": True,
-            "satelliteCanteensCount": 130,
             "productionType": Canteen.ProductionType.CENTRAL,
+            "managementType": Canteen.ManagementType.DIRECT,
+            "satelliteCanteensCount": 130,
+            "reservationExpeParticipant": True,
+            "sectors": [],
         }
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
+        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         created_canteen = Canteen.objects.get(pk=canteen.id)
         self.assertEqual(created_canteen.city, "Lyon")
@@ -600,9 +602,10 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(created_canteen.satellite_canteens_count, 130)
         self.assertEqual(created_canteen.production_type, "central")
         self.assertEqual(created_canteen.reservation_expe_participant, True)
+        self.assertEqual(created_canteen.sectors.count(), 0)
 
     @authenticate
-    def test_modify_central_kitchen_siret(self):
+    def test_update_central_kitchen_siret(self):
         """
         A change in the SIRET of a central cuisine must update the "central_producer_siret" of
         its satellites
@@ -623,7 +626,9 @@ class CanteenUpdateApiTest(APITestCase):
         ]
         payload = {"siret": "35662897196149"}
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": central_kitchen.id}), payload)
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": central_kitchen.id}), payload, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for satellite in satellites:
             satellite.refresh_from_db()
@@ -632,7 +637,7 @@ class CanteenUpdateApiTest(APITestCase):
     @authenticate
     def test_add_siret_to_central_kitchen(self):
         """
-        A central cuisine without a SIRET can add one without modifying everybody else
+        A central cuisine without a SIRET can add one without updating everybody else
         """
         central_kitchen_without_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
@@ -664,7 +669,7 @@ class CanteenUpdateApiTest(APITestCase):
             self.assertIsNone(canteen.central_producer_siret)
 
     @authenticate
-    def test_refuse_patch_without_siret(self):
+    def test_refuse_update_without_siret(self):
         """
         A canteen modification shouldn't allow deleting a SIRET with sending blank or null value
         """
@@ -733,7 +738,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertTrue(body["isManagedByUser"])
 
     @authenticate
-    def test_patch_with_own_siret(self):
+    def test_update_with_own_siret(self):
         """
         A canteen modification should pass if the siret in the payload is already the canteen's siret
         """

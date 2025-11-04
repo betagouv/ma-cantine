@@ -259,8 +259,9 @@ class CanteenFactory(factory.django.DjangoModelFactory):
             for sector in extracted:
                 self.sectors.add(sector)
         else:
-            for _ in range(random.randint(1, 3)):
-                self.sectors.add(SectorFactory.create())
+            if self.production_type not in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
+                for _ in range(random.randint(1, 3)):
+                    self.sectors.add(SectorFactory.create())
 
     @factory.post_generation
     def managers(self, create, extracted, **kwargs):

@@ -381,7 +381,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             - if not central: sectors must be between 1 and 3
         """
         production_type = data.get("production_type", getattr(self.instance, "production_type", None))
-        sectors = data.get("sectors", getattr(self.instance, "sectors", None))
+        sectors = data.get("sectors", self.instance.sectors.all() if self.instance else [])
         if production_type in [
             Canteen.ProductionType.CENTRAL,
             Canteen.ProductionType.CENTRAL_SERVING,
