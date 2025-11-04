@@ -177,7 +177,7 @@ class CanteenImportErrorTest(APITestCase):
     @authenticate
     def test_validata_empty_rows_error(self):
         """
-        A file should not be valid if it contains empty rows (Validata)
+        A file should not be valid if it contains empty rows
         """
         file_path = "./api/tests/files/canteens/canteens_bad_empty_rows.csv"
         with open(file_path) as canteen_file:
@@ -200,7 +200,6 @@ class CanteenImportErrorTest(APITestCase):
         If a canteen succeeds and another one doesn't, no canteen should be saved
         and the array of canteens should return zero
         """
-        # 3 format errors
         file_path = "./api/tests/files/canteens/canteens_bad_nearly_good.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(f"{reverse('import_canteens')}", {"file": canteen_file})
@@ -290,11 +289,12 @@ class CanteenImportErrorTest(APITestCase):
         )
 
     @authenticate
-    def test_sectors_empty(self):
+    def test_sectors_error(self):
         """
-        Sectors are required if canteen production_type is site, site_cooked_elsewhere, central_serving
+        - Sectors are required if canteen production_type is site, site_cooked_elsewhere, central_serving
+        - Canteen can't have more than 3 sectors
         """
-        file_path = "./api/tests/files/canteens/canteen_bad_empty_sectors.csv"
+        file_path = "./api/tests/files/canteens/canteen_bad_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -302,20 +302,23 @@ class CanteenImportErrorTest(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
-        error_message = "Champ 'secteurs d'activité' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
+        error_message_max = "Champ 'secteurs d'activité' : Ce champ ne peut avoir plus de 3 valeurs."
+        error_message_empty = "Champ 'secteurs d'activité' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 3, errors)
-        self.assertEqual(errors[0]["message"], error_message)
-        self.assertEqual(errors[1]["message"], error_message)
-        self.assertEqual(errors[2]["message"], error_message)
+        # note: the error "central has sector" error is not raised (line 1) because the check is done later
+        self.assertEqual(errors[0]["message"], error_message_max)
+        self.assertEqual(errors[1]["message"], error_message_empty)
+        self.assertEqual(errors[2]["message"], error_message_empty)
 
     @authenticate
-    def test_sectors_more_than_max(self):
+    def test_model_validation_error(self):
         """
-        Canteen can't have more than 3 sectors
+        If a canteen doesn't pass model validation, no canteen should be saved
+        and the array of canteens should return zero
         """
-        file_path = "./api/tests/files/canteens/canteen_bad_max_sectors.csv"
+        file_path = "./api/tests/files/canteens/canteens_bad.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -325,9 +328,21 @@ class CanteenImportErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 1, errors)
-        self.assertEqual(
-            errors[0]["message"], "Champ 'secteurs d'activité' : Ce champ ne peut avoir plus de 3 valeurs."
+        self.assertEqual(len(errors), 3, errors)
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Champ 'repas par jour' : Le champ doit être un nombre entier supérieur à 0."
+            ),
+        )
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Champ 'repas par an (y compris livrés)' : Le champ doit être un nombre entier supérieur à 0."
+            ),
+        )
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Champ 'siret de la cuisine centrale' : Restaurant satellite : le champ ne correspond à aucune cuisine centrale connue."
+            ),
         )
 
 
