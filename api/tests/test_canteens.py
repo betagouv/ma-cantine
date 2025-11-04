@@ -338,9 +338,9 @@ class CanteenDetailApiTest(APITestCase):
 
 
 class CanteenCreateApiTest(APITestCase):
-    @authenticate
-    def test_create_canteen(self):
-        payload = {
+    @classmethod
+    def setUpTestData(cls):
+        cls.DEFAULT_PAYLOAD = {
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
@@ -351,7 +351,9 @@ class CanteenCreateApiTest(APITestCase):
             "economicModel": Canteen.EconomicModel.PUBLIC,
         }
 
-        response = self.client.post(reverse("user_canteens"), payload)
+    @authenticate
+    def test_create_canteen(self):
+        response = self.client.post(reverse("user_canteens"), self.DEFAULT_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -359,19 +361,8 @@ class CanteenCreateApiTest(APITestCase):
 
     @authenticate
     def test_create_canteen_creation_source(self):
-        payload = {
-            "name": "My canteen",
-            "city": "Lyon",
-            "siret": "21340172201787",
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-        }
-
         # from the APP
-        response = self.client.post(reverse("user_canteens"), {**payload, "creation_source": "APP"})
+        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "creation_source": "APP"})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -379,7 +370,7 @@ class CanteenCreateApiTest(APITestCase):
         created_canteen.hard_delete()
 
         # defaults to API
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(reverse("user_canteens"), self.DEFAULT_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -387,75 +378,40 @@ class CanteenCreateApiTest(APITestCase):
         created_canteen.hard_delete()
 
         # returns a 404 if the creation_source is not valid
-        response = self.client.post(reverse("user_canteens"), {**payload, "creation_source": "UNKNOWN"})
+        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "creation_source": "UNKNOWN"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
     def test_create_canteen_missing_siret(self):
-        payload = {
-            "name": "My canteen",
-            "city": "Lyon",
-            # "siret": "21340172201787",
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-        }
+        payload = self.DEFAULT_PAYLOAD.copy()
+        del payload["siret"]
 
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
         body = response.json()
         self.assertEqual(body["siret"], ["Ce champ est obligatoire."])
 
     @authenticate
     def test_create_canteen_bad_siret(self):
-        payload = {
-            "name": "My canteen",
-            "city": "Lyon",
-            "siret": "0123",
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-        }
-
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": "0123"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["14 caractères numériques sont attendus"])
 
-        payload = {
-            "name": "My canteen",
-            "city": "Lyon",
-            "siret": "01234567891011",
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-        }
-
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": "01234567891011"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["Le numéro SIRET n'est pas valide."])
 
-        payload = {
-            "name": "My canteen",
-            "city": "Lyon",
-            "siret": "01234567891011",
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-            "centralProducerSiret": "01234567891011",
-        }
-
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(
+            reverse("user_canteens"),
+            {
+                **self.DEFAULT_PAYLOAD,
+                "siret": "01234567891011",
+                "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
+                "centralProducerSiret": "01234567891011",
+            },
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["centralProducerSiret"], ["Le numéro SIRET n'est pas valide."])
@@ -469,17 +425,7 @@ class CanteenCreateApiTest(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
 
-        payload = {
-            "name": "My canteen",
-            "city": "Lyon",
-            "siret": siret,
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-        }
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": siret})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -496,17 +442,7 @@ class CanteenCreateApiTest(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret)
 
-        payload = {
-            "name": "My canteen",
-            "city": "Lyon",
-            "siret": siret,
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-        }
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": siret})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -524,21 +460,13 @@ class CanteenCreateApiTest(APITestCase):
         with open(image_path, "rb") as image:
             image_base_64 = base64.b64encode(image.read()).decode("utf-8")
 
-        payload = {
-            "name": "My canteen",
-            "city": "Lyon",
-            "siret": "21340172201787",
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-            "images": [
-                {
-                    "image": "data:image/jpeg;base64," + image_base_64,
-                }
-            ],
-        }
+        payload = self.DEFAULT_PAYLOAD.copy()
+        payload["images"] = [
+            {
+                "image": "data:image/jpeg;base64," + image_base_64,
+            }
+        ]
+
         response = self.client.post(reverse("user_canteens"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -550,19 +478,11 @@ class CanteenCreateApiTest(APITestCase):
         """
         The app should store the mtm paramteres on creation
         """
-        payload = {
-            "name": "My canteen",
-            "city": "Lyon",
-            "siret": "21340172201787",
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-            "creation_mtm_source": "mtm_source_value",
-            "creation_mtm_campaign": "mtm_campaign_value",
-            "creation_mtm_medium": "mtm_medium_value",
-        }
+        payload = self.DEFAULT_PAYLOAD.copy()
+        payload["creation_mtm_source"] = "mtm_source_value"
+        payload["creation_mtm_campaign"] = "mtm_campaign_value"
+        payload["creation_mtm_medium"] = "mtm_medium_value"
+
         response = self.client.post(reverse("user_canteens"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -580,8 +500,8 @@ class CanteenUpdateApiTest(APITestCase):
         """
         canteen = CanteenFactory.create(city="Paris")
         payload = {"city": "Lyon"}
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
 
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -598,8 +518,8 @@ class CanteenUpdateApiTest(APITestCase):
             "satelliteCanteensCount": 130,
             "productionType": Canteen.ProductionType.CENTRAL,
         }
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
 
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         created_canteen = Canteen.objects.get(pk=canteen.id)
         self.assertEqual(created_canteen.city, "Lyon")
@@ -618,7 +538,6 @@ class CanteenUpdateApiTest(APITestCase):
         central_kitchen = CanteenFactory.create(
             siret="03201976246133", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-
         satellites = [
             CanteenFactory.create(
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
@@ -630,10 +549,9 @@ class CanteenUpdateApiTest(APITestCase):
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
             ),
         ]
-
         payload = {"siret": "35662897196149"}
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": central_kitchen.id}), payload)
 
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": central_kitchen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for satellite in satellites:
             satellite.refresh_from_db()
@@ -662,8 +580,8 @@ class CanteenUpdateApiTest(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE, central_producer_siret=None
         )
         other_canteens = [canteen_satellite, canteen_central_serving, canteen_on_site]
-
         payload = {"siret": "35662897196149"}
+
         response = self.client.patch(
             reverse("single_canteen", kwargs={"pk": central_kitchen_without_siret.id}), payload
         )
@@ -674,34 +592,32 @@ class CanteenUpdateApiTest(APITestCase):
             self.assertIsNone(canteen.central_producer_siret)
 
     @authenticate
-    def test_refuse_patch_with_blank_siret(self):
+    def test_refuse_patch_without_siret(self):
         """
-        A canteen modification shouldn't allow deleting a SIRET with sending blank value
+        A canteen modification shouldn't allow deleting a SIRET with sending blank or null value
         """
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
 
+        # Test with blank value
         payload = {"siret": ""}
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        body = response.json()
-        self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
 
-    @authenticate
-    def test_refuse_patch_with_no_siret(self):
-        """
-        A canteen modification shouldn't allow deleting a SIRET with sending null value
-        """
-        canteen = CanteenFactory.create(siret="21340172201787", managers=[authenticate.user])
-        payload = {
-            "siret": None,
-        }
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
         canteen.refresh_from_db()
-        self.assertEqual(canteen.siret, "21340172201787")
+        self.assertEqual(canteen.siret, siret)
+
+        # Test with missing value
+        payload = {"siret": None}
+
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.siret, siret)
 
     @authenticate
     def test_update_canteen_duplicate_siret_unmanaged(self):
@@ -712,8 +628,8 @@ class CanteenUpdateApiTest(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret)
         canteen_to_test = CanteenFactory.create(managers=[authenticate.user])
-
         payload = {"siret": siret}
+
         response = self.client.patch(
             reverse("single_canteen", kwargs={"pk": canteen_to_test.id}), payload, format="json"
         )
@@ -733,8 +649,8 @@ class CanteenUpdateApiTest(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
         canteen_to_test = CanteenFactory.create(managers=[authenticate.user])
-
         payload = {"siret": siret}
+
         response = self.client.patch(
             reverse("single_canteen", kwargs={"pk": canteen_to_test.id}), payload, format="json"
         )
@@ -751,8 +667,8 @@ class CanteenUpdateApiTest(APITestCase):
         """
         siret = "26566234910966"
         canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
-
         payload = {"siret": siret}
+
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -775,6 +691,7 @@ class CanteenUpdateApiTest(APITestCase):
                 }
             ]
         }
+
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         canteen.refresh_from_db()
@@ -801,15 +718,15 @@ class CanteenUpdateApiTest(APITestCase):
                 }
             ]
         }
-        self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
 
+        self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         canteen.refresh_from_db()
         self.assertEqual(canteen.images.count(), 1)
 
         # Delete image
         payload = {"images": []}
-        self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
 
+        self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         canteen.refresh_from_db()
         self.assertEqual(canteen.images.count(), 0)
 
@@ -832,6 +749,7 @@ class CanteenUpdateApiTest(APITestCase):
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
         }
+
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         canteen.refresh_from_db()
@@ -849,4 +767,6 @@ class CanteenDeleteApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # Model was only soft-deleted but remains in the DB
+        self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
+        self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
         self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
