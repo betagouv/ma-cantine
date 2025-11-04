@@ -279,8 +279,8 @@ class TestETLAnalysisTD(TestCase):
 
     def test_cout_denrees(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            canteen = CanteenFactory(daily_meal_count=1, yearly_meal_count=2)
-            diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, value_total_ht=1)
+            canteen = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
+            diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, value_total_ht=1000)
             diagnostic.teledeclare(applicant=UserFactory.create())
 
             self.serializer_data = {
@@ -296,10 +296,10 @@ class TestETLAnalysisTD(TestCase):
 
         with freeze_time("2022-08-30"):  # during the 2021 campaign
             # canteen with an invalid yearly_meal_count
-            canteen = CanteenFactory(daily_meal_count=1, yearly_meal_count=2)
+            canteen = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
             Canteen.objects.filter(id=canteen.id).update(yearly_meal_count=0)
             canteen.refresh_from_db()
-            diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=1)
+            diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=1000)
             diagnostic.teledeclare(applicant=UserFactory.create())
 
             self.serializer_data = {

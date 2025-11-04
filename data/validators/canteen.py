@@ -1,6 +1,10 @@
 from common.utils import utils as utils_utils
 
 
+CANTEEN_DAILY_MEAL_COUNT_MIN = 3
+CANTEEN_YEARLY_MEAL_COUNT_MIN = 420
+
+
 def validate_canteen_siret_or_siren_unite_legale(instance):
     """
     - clean_fields() (called by full_clean()) already checks that
@@ -83,8 +87,9 @@ def validate_canteen_meal_count_fields(instance):
     - extra validation:
         - daily_meal_count & yearly_meal_count must be filled
         - daily_meal_count & yearly_meal_count must be integers
-        - daily_meal_count & yearly_meal_count must be > 0
         - daily_meal_count < yearly_meal_count
+        - daily_meal_count >= 3
+        - yearly_meal_count >= 420
     - notes:
         - django will convert strings to integers
         - django will convert floats to integers by truncating the decimal part (e.g. 10.5 -> 10)
@@ -96,9 +101,19 @@ def validate_canteen_meal_count_fields(instance):
             utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
         elif not (isinstance(value, int) or (isinstance(value, str) and value.isdigit())):
             utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")
-        elif int(value) <= 0:
-            utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier supérieur à 0.")
     if not errors:
+        if int(instance.daily_meal_count) < CANTEEN_DAILY_MEAL_COUNT_MIN:
+            utils_utils.add_validation_error(
+                errors,
+                "daily_meal_count",
+                f"Le nombre de repas servis quotidiennement doit être au moins égal à {CANTEEN_DAILY_MEAL_COUNT_MIN}.",
+            )
+        if int(instance.yearly_meal_count) < CANTEEN_YEARLY_MEAL_COUNT_MIN:
+            utils_utils.add_validation_error(
+                errors,
+                "yearly_meal_count",
+                f"Le nombre de repas servis annuellement doit être au moins égal à {CANTEEN_YEARLY_MEAL_COUNT_MIN}.",
+            )
         if int(instance.daily_meal_count) >= int(instance.yearly_meal_count):
             utils_utils.add_validation_error(
                 errors,

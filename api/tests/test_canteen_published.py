@@ -273,12 +273,12 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         )
         Canteen.objects.filter(id=canteen_daily_meal_count_0.id).update(daily_meal_count=0)
         CanteenFactory.create(
-            daily_meal_count=1,
+            daily_meal_count=3,
             name="Mochi",
             creation_date=(timezone.now() - datetime.timedelta(days=6)),
         )
         CanteenFactory.create(
-            daily_meal_count=2,
+            daily_meal_count=4,
             name="Umami",
             creation_date=(timezone.now() - datetime.timedelta(days=4)),
         )
