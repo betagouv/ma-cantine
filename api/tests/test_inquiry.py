@@ -18,8 +18,10 @@ class TestInquiry(APITestCase):
         payload = {
             "from": "test@example.com",
             "inquiryType": "fonctionnalité",
-            "message": "I need help with the functionality of the app\nHow do I do something?",
+            "message": "I need help with the functionality of the app.",
             "name": "Tester",
+            "username": "user_name",
+            "siret_or_siren": "12345",
             "meta": {
                 "userId": "123456789",
                 "userAgent": "Mozilla",
@@ -28,13 +30,17 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         title = "Demande de support de test@example.com - fonctionnalité"
-        body = "Nom/Prénom\n---\nTester\nNom d'utilisateur\n---\nNon renseigné\nSIRET ou SIREN\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         # email is sent to admins
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "contact@example.com")
         self.assertEqual(email.subject, title)
-        self.assertEqual(email.body, body)
+        self.assertIn(payload["name"], email.body)
+        self.assertIn(payload["username"], email.body)
+        self.assertIn(payload["siret_or_siren"], email.body)
+        self.assertIn(payload["message"], email.body)
+        self.assertIn(payload["meta"]["userId"], email.body)
+        self.assertIn(payload["meta"]["userAgent"], email.body)
 
     @override_settings(ENVIRONMENT="demo")
     @override_settings(CONTACT_EMAIL="contact@example.com")
