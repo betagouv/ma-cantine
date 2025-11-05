@@ -1,6 +1,5 @@
 from common.utils import utils as utils_utils
 
-
 CANTEEN_DAILY_MEAL_COUNT_MIN = 3
 CANTEEN_YEARLY_MEAL_COUNT_MIN = 420
 
@@ -20,9 +19,7 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
     siren_unite_legale = instance.siren_unite_legale
     if siret and siren_unite_legale:
         utils_utils.add_validation_error(
-            errors,
-            "siret",
-            "Le champ SIRET et le champ SIREN unité légale ne peuvent pas être remplis en même temps.",
+            errors, "siret", "Le champ SIRET et le champ SIREN unité légale ne peuvent pas être remplis en même temps."
         )
         utils_utils.add_validation_error(
             errors,
@@ -31,9 +28,7 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
         )
     elif not siret and not siren_unite_legale:
         utils_utils.add_validation_error(
-            errors,
-            "siret",
-            "Le champ SIRET ou le champ SIREN unité légale ne peuvent pas être vides en même temps.",
+            errors, "siret", "Le champ SIRET ou le champ SIREN unité légale ne peuvent pas être vides en même temps."
         )
         utils_utils.add_validation_error(
             errors,
@@ -42,16 +37,10 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
         )
     if instance.is_central_cuisine:
         if not siret:
-            utils_utils.add_validation_error(
-                errors,
-                "siret",
-                "Cuisine centrale : le champ ne peut pas être vide.",
-            )
+            utils_utils.add_validation_error(errors, "siret", "Cuisine centrale : le champ ne peut pas être vide.")
         if siren_unite_legale:
             utils_utils.add_validation_error(
-                errors,
-                "siren_unite_legale",
-                "Cuisine centrale : le champ ne peut pas être rempli.",
+                errors, "siren_unite_legale", "Cuisine centrale : le champ ne peut pas être rempli."
             )
     if siret:
         from data.models import Canteen
@@ -60,11 +49,7 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
         if instance.pk:
             canteen_with_siret_qs = canteen_with_siret_qs.exclude(pk=instance.pk)
         if canteen_with_siret_qs.exists():
-            utils_utils.add_validation_error(
-                errors,
-                "siret",
-                "Le SIRET est déjà utilisé par une autre cantine.",
-            )
+            utils_utils.add_validation_error(errors, "siret", "Le SIRET est déjà utilisé par une autre cantine.")
     return errors
 
 
@@ -105,26 +90,19 @@ def validate_canteen_meal_count_fields(instance):
     if not errors:
         if int(instance.daily_meal_count) < CANTEEN_DAILY_MEAL_COUNT_MIN:
             utils_utils.add_validation_error(
-                errors,
-                "daily_meal_count",
-                f"Le nombre de repas servis quotidiennement doit être au moins égal à {CANTEEN_DAILY_MEAL_COUNT_MIN}.",
+                errors, "daily_meal_count", f"Le champ doit être au moins égal à {CANTEEN_DAILY_MEAL_COUNT_MIN}."
             )
         if int(instance.yearly_meal_count) < CANTEEN_YEARLY_MEAL_COUNT_MIN:
             utils_utils.add_validation_error(
-                errors,
-                "yearly_meal_count",
-                f"Le nombre de repas servis annuellement doit être au moins égal à {CANTEEN_YEARLY_MEAL_COUNT_MIN}.",
+                errors, "yearly_meal_count", f"Le champ doit être au moins égal à {CANTEEN_YEARLY_MEAL_COUNT_MIN}."
             )
+    if not errors:
         if int(instance.daily_meal_count) >= int(instance.yearly_meal_count):
             utils_utils.add_validation_error(
-                errors,
-                "daily_meal_count",
-                "Le nombre de repas servis quotidiennement doit être inférieur au nombre de repas servis annuellement.",
+                errors, "daily_meal_count", "Le champ doit être inférieur au nombre de repas servis annuellement."
             )
             utils_utils.add_validation_error(
-                errors,
-                "yearly_meal_count",
-                "Le nombre de repas servis annuellement doit être supérieur au nombre de repas servis quotidiennement.",
+                errors, "yearly_meal_count", "Le champ doit être supérieur au nombre de repas servis quotidiennement."
             )
     return errors
 
@@ -153,11 +131,7 @@ def validate_canteen_satellite_count(instance):
             )
     else:
         if value not in [None, ""]:
-            utils_utils.add_validation_error(
-                errors,
-                field_name,
-                "Le champ doit être vide.",
-            )
+            utils_utils.add_validation_error(errors, field_name, "Le champ doit être vide.")
     return errors
 
 
@@ -178,16 +152,12 @@ def validate_canteen_central_producer_siret_field(instance):
         if not value:
             if not instance.pk:  # only for new canteens (TODO: generalize to existing canteens)
                 utils_utils.add_validation_error(
-                    errors,
-                    field_name,
-                    "Restaurant satellite : le champ ne peut pas être vide.",
+                    errors, field_name, "Restaurant satellite : le champ ne peut pas être vide."
                 )
         else:
             if instance.siret == value:
                 utils_utils.add_validation_error(
-                    errors,
-                    field_name,
-                    "Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite.",
+                    errors, field_name, "Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite."
                 )
             else:
                 from data.models import Canteen
@@ -209,8 +179,6 @@ def validate_canteen_central_producer_siret_field(instance):
     else:
         if value:
             utils_utils.add_validation_error(
-                errors,
-                field_name,
-                "Le champ ne peut être rempli que pour les restaurants satellites.",
+                errors, field_name, "Le champ ne peut être rempli que pour les restaurants satellites."
             )
     return errors
