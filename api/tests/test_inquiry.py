@@ -66,7 +66,7 @@ class TestInquiry(APITestCase):
         self.assertEqual(email.to[0], "contact@example.com")
         self.assertEqual(email.subject, title)
 
-    def test_missing_fields(self):
+    def test_inquiry_missing_fields(self):
         """
         Test that a 400 error response with details is returned when the requests is missing fields
         """
@@ -90,7 +90,7 @@ class TestInquiry(APITestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     @override_settings(CONTACT_EMAIL="contact@example.com")
-    def test_misc_inquiry(self):
+    def test_inquiry_misc(self):
         """
         Test misc inquiry type displayed in card title
         """
