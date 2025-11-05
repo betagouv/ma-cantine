@@ -147,7 +147,7 @@ const getActionsInfos = (canteen) => {
       </template>
       <template v-else-if="colKey === 'actions'">
         <div class="fr-grid-row fr-grid-row--right">
-          <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line" :links="cell" />
+          <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line" :links="cell" size="small" />
         </div>
       </template>
       <template v-else>

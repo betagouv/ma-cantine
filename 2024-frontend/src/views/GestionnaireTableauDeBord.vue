@@ -4,6 +4,7 @@ import { useRootStore } from "@/stores/root"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
 import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
+import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 const store = useRootStore()
 const canteenSentence = computed(() => {
@@ -12,12 +13,40 @@ const canteenSentence = computed(() => {
   else if (count === 1) return "1 cantine"
   return `${count} cantines`
 })
+
+const links = [
+  {
+    to: { name: "GestionnaireCantineAjouter" },
+    label: "Créer une cantine",
+  },
+  {
+    to: { name: "GestionnaireImportCantines" },
+    label: "Importer des cantines",
+  },
+  {
+    to: { name: "GestionnaireImportAchats" },
+    label: "Importer des achats",
+  },
+  {
+    to: { name: "GestionnaireImport" },
+    label: "Importer un bilan simple",
+  },
+  {
+    to: { name: "GestionnaireImport" },
+    label: "Importer un bilan détaillé",
+  },
+]
 </script>
 
 <template>
-  <section>
-    <h1>Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
-    <p class="fr-text--lead">{{ canteenSentence }}</p>
+  <section class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+      <h1>Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
+      <p class="fr-text--lead">{{ canteenSentence }}</p>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-grid-row fr-grid-row--right fr-grid-row--top">
+      <AppDropdownMenu label="Gérer mes cantines" :links="links" size="medium" />
+    </div>
   </section>
   <section class="ma-cantine--stick-to-footer">
     <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />

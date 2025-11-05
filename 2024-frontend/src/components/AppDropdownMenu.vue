@@ -5,7 +5,7 @@
 */
 import { computed, ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
-defineProps(["label", "icon", "links"])
+defineProps(["label", "icon", "links", "size"])
 
 /* Icon */
 const isOpened = ref(false)
@@ -32,7 +32,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
       icon-right
       @click="isOpened = !isOpened"
       ref="opener"
-      size="small"
+      :size="size"
     >
       <span :class="`${icon} ma-cantine--icon-xs`"></span>
       {{ label }}
@@ -47,7 +47,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
           :to="link.to"
           class="app-dropdown-menu__link ma-cantine--unstyled-link fr-text-title--blue-france fr-py-1v fr-px-3v fr-nav__link"
         >
-          <p class="fr-text--sm ma-cantine--text-right fr-col-12">{{ link.label }}</p>
+          <p class="fr-text--sm ma-cantine--text-right fr-col-12 fr-mb-0">{{ link.label }}</p>
         </router-link>
       </li>
     </ul>
