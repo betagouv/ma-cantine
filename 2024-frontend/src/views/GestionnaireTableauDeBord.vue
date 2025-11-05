@@ -15,9 +15,14 @@ const canteenSentence = computed(() => {
 </script>
 
 <template>
-  <section>
-    <h1>Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
-    <p class="fr-text--lead">{{ canteenSentence }}</p>
+  <section class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+      <h1>Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
+      <p class="fr-text--lead">{{ canteenSentence }}</p>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-grid-row fr-grid-row--right fr-grid-row--top">
+      <p>button</p>
+    </div>
   </section>
   <section class="ma-cantine--stick-to-footer">
     <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
