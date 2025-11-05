@@ -35,6 +35,7 @@ class TestInquiry(APITestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "contact@example.com")
         self.assertEqual(email.subject, title)
+        self.assertIn("test@example.com", email.reply_to)
         self.assertIn(payload["name"], email.body)
         self.assertIn(payload["username"], email.body)
         self.assertIn(payload["siret_or_siren"], email.body)
@@ -88,34 +89,6 @@ class TestInquiry(APITestCase):
         self.assertEqual(body.get("from"), "Merci d'indiquer une adresse email")
         self.assertEqual(body.get("message"), "Message manquant dans la requête")
         self.assertEqual(len(mail.outbox), 0)
-
-    @override_settings(CONTACT_EMAIL="contact@example.com")
-    def test_inquiry_misc(self):
-        """
-        Test misc inquiry type displayed in card title
-        """
-        payload = {
-            "from": "test@example.com",
-            "inquiryType": "cantine SIRET",
-            "message": "I need help with the functionality of the app\nHow do I do something?",
-            "siretOrSiren": "12345678901234",
-            "username": "my_tester",
-            "meta": {
-                "userId": "123456789",
-                "userAgent": "Mozilla",
-            },
-        }
-        response = self.client.post(reverse("inquiry"), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        title = "Demande de support de test@example.com - cantine SIRET"
-        body = "Nom/Prénom\n---\nNon renseigné\nNom d'utilisateur\n---\nmy_tester\nSIRET ou SIREN\n---\n12345678901234\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
-
-        # email is sent to admins
-        email = mail.outbox[0]
-        self.assertEqual(email.to[0], "contact@example.com")
-        self.assertEqual(email.subject, title)
-        self.assertEqual(email.body, body)
-        self.assertIn("test@example.com", email.reply_to)
 
 
 class TestEmail(APITestCase):
