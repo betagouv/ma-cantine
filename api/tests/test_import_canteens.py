@@ -330,13 +330,11 @@ class CanteenImportErrorTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 3, errors)
         self.assertTrue(
-            errors.pop(0)["message"].startswith(
-                "Champ 'repas par jour' : Le champ doit être un nombre entier supérieur à 0."
-            ),
+            errors.pop(0)["message"].startswith("Champ 'repas par jour' : Le champ doit être au moins égal à 3."),
         )
         self.assertTrue(
             errors.pop(0)["message"].startswith(
-                "Champ 'repas par an (y compris livrés)' : Le champ doit être un nombre entier supérieur à 0."
+                "Champ 'repas par an (y compris livrés)' : Le champ doit être au moins égal à 420."
             ),
         )
         self.assertTrue(
