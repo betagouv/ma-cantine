@@ -1,0 +1,28 @@
+<body>
+    <p>
+      Nom/Prénom : </br>
+      {{ name }}
+    </p>
+    <p>
+      Nom d'utilisateur :</br>
+      {{ username }}
+    </p>
+    <p>
+      SIRET ou SIREN :</br>
+      {{ siret_or_siren }}
+    </p>
+    <p>
+      Message :</br>
+      {{ message }}
+    </p>
+    <div>
+      <p>Details :</p>
+      <ul>
+        {% for key, value in details %}
+          <li>
+            <p>{{ key }} : {{ value }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+</body>

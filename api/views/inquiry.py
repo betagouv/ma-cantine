@@ -25,24 +25,24 @@ class InquiryView(APIView):
             InquiryView._raise_for_mandatory_fields(email, message)
 
             title = f"Demande de support de {email} - {inquiry_type}"
+            context = {
+                "name": name or "Non renseigné",
+                "username": username or "Non renseigné",
+                "siret_or_siren": siret_or_siren or "Non renseigné",
+                "message": message,
+                "details": meta.items(),
+            }
 
-            body = f"Nom/Prénom\n---\n{name or 'Non renseigné'}"
-            body += f"\nNom d'utilisateur\n---\n{username or 'Non renseigné'}"
-            body += f"\nSIRET ou SIREN\n---\n{siret_or_siren or 'Non renseigné'}"
-            body += f"\nMessage\n---\n{message}"
-            body += "\nDétails\n---"
-            body += f"\nAdresse : {email}"
-            for key, value in meta.items():
-                body += f"\n{key} : {value}"
-
-            utils.send_mail(message=body, subject=title, to=[settings.CONTACT_EMAIL], reply_to=[email])
+            utils.send_mail(
+                template="email_contact", context=context, subject=title, to=[settings.CONTACT_EMAIL], reply_to=[email]
+            )
 
             return JsonResponse({}, status=status.HTTP_200_OK)
         except ValidationError as e:
             logger.exception("Missing field from inquiry view:\n{e}")
             raise e
         except Exception as e:
-            logger.exception(f"Exception ocurred while handling inquiry. Title: {title}, Body:\n{body}:\n{e}")
+            logger.exception(f"Exception ocurred while handling inquiry. Title: {title}, Context:\n{context}:\n{e}")
             return JsonResponse(
                 {"error": "An error has ocurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
