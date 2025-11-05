@@ -40,7 +40,7 @@
       "constraints": {
         "required": true
       },
-      "description": "Y compris les couverts livrés.",
+      "description": "Minimum 3, y compris les couverts livrés.",
       "example": "300",
       "format": "default",
       "name": "nombre_repas_jour",
@@ -51,8 +51,8 @@
       "constraints": {
         "required": true
       },
-      "description": "Y compris les couverts livrés.",
-      "example": "67000",
+      "description": "Minimum 420, y compris les couverts livrés.",
+      "example": "42000",
       "format": "default",
       "name": "nombre_repas_an",
       "title": "Nombre de repas servis, en moyenne, par an dans la cantine",
