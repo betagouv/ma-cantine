@@ -11,11 +11,7 @@ from freezegun import freeze_time
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
 from data.models import Canteen, Diagnostic
-from macantine.etl.analysis import (
-    ETL_ANALYSIS_CANTEEN,
-    ETL_ANALYSIS_TELEDECLARATIONS,
-    aggregate_col,
-)
+from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS, aggregate_col
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 
 
@@ -279,12 +275,12 @@ class TestETLAnalysisTD(TestCase):
 
     def test_cout_denrees(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            canteen = CanteenFactory(daily_meal_count=1, yearly_meal_count=2)
-            diagnostic = DiagnosticFactory.create(canteen=canteen, year=2022, value_total_ht=1)
+            canteen_ok = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
+            diagnostic = DiagnosticFactory.create(canteen=canteen_ok, year=2022, value_total_ht=1000)
             diagnostic.teledeclare(applicant=UserFactory.create())
 
             self.serializer_data = {
-                "yearly_meal_count": canteen.yearly_meal_count,
+                "yearly_meal_count": canteen_ok.yearly_meal_count,
                 "value_total_ht": diagnostic.value_total_ht,
             }
             self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
@@ -296,14 +292,16 @@ class TestETLAnalysisTD(TestCase):
 
         with freeze_time("2022-08-30"):  # during the 2021 campaign
             # canteen with an invalid yearly_meal_count
-            canteen = CanteenFactory(daily_meal_count=1, yearly_meal_count=2)
-            Canteen.objects.filter(id=canteen.id).update(yearly_meal_count=0)
-            canteen.refresh_from_db()
-            diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=1)
+            canteen_invalid_yearly_meal_count = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
+            Canteen.objects.filter(id=canteen_invalid_yearly_meal_count.id).update(yearly_meal_count=0)
+            canteen_invalid_yearly_meal_count.refresh_from_db()
+            diagnostic = DiagnosticFactory.create(
+                canteen=canteen_invalid_yearly_meal_count, year=2021, value_total_ht=1000
+            )
             diagnostic.teledeclare(applicant=UserFactory.create())
 
             self.serializer_data = {
-                "yearly_meal_count": canteen.yearly_meal_count,
+                "yearly_meal_count": canteen_invalid_yearly_meal_count.yearly_meal_count,
                 "value_total_ht": diagnostic.value_total_ht,
             }
             self.serializer = DiagnosticTeledeclaredAnalysisSerializer(

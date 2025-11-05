@@ -1,8 +1,8 @@
 siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels,nombre_satellites,année_bilan,valeur_totale,valeur_bio,valeur_siqo,valeur_environnemental,valeur_autres_egalim,valeur_viandes,valeur_viandes_egalim,valeur_viandes_france,valeur_poissons,valeur_poissons_egalim
 29969025300230,CC Ma Cantine,69123,69001,,700,14000,,central,conceded,public,,3,2021,10500,500,100.1,0,0,0,0,0,0,0
-96463820453707,CC Ma deuxième Cantine,69123,69001,,790,14000,,central,conceded,public,,2,2022,30300,1000,900,800,700,6000,500,400,3000,200
-38589540005962,Sat Ma Cantine 1,69123,69001,29969025300230,20,400,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
-30218342886548,Sat Ma Cantine 2,69123,69001,29969025300230,30,500,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
-27309825823572,Sat Ma Cantine 3,69123,69001,29969025300230,40,600,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
-65436828882140,Sat Ma deuxième Cantine 1,69123,69001,96463820453707,50,700,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
-21231178258956,Sat Ma deuxième Cantine 2,69123,69001,96463820453707,60,800,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
+96463820453707,CC Ma deuxième Cantine,69123,69001,,700,14000,,central,conceded,public,,2,2022,30300,1000,900,800,700,6000,500,400,3000,200
+38589540005962,Sat Ma Cantine 1,69123,69001,29969025300230,20,500,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
+30218342886548,Sat Ma Cantine 2,69123,69001,29969025300230,20,500,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
+27309825823572,Sat Ma Cantine 3,69123,69001,29969025300230,20,600,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
+65436828882140,Sat Ma deuxième Cantine 1,69123,69001,96463820453707,20,500,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,
+21231178258956,Sat Ma deuxième Cantine 2,69123,69001,96463820453707,20,500,,site_cooked_elsewhere,conceded,public,,,,,,,,,,,,,

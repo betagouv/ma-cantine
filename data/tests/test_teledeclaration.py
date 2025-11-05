@@ -16,9 +16,7 @@ date_in_last_teledeclaration_campaign = "2024-02-01"
 class TeledeclarationQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.valid_canteen_1 = CanteenFactory(
-            siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=100
-        )
+        cls.valid_canteen_1 = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
         cls.valid_canteen_2 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.valid_canteen_3 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.valid_canteen_4 = CanteenFactory(siret="40419443300078")

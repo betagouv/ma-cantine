@@ -129,11 +129,9 @@ class DiagnosticModelSaveTest(TransactionTestCase):
 class DiagnosticQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_valid_1 = CanteenFactory(
-            siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=100
-        )
-        cls.canteen_valid_2 = CanteenFactory(siret=None, siren_unite_legale="123456789", yearly_meal_count=100)
-        cls.canteen_valid_3 = CanteenFactory(siret=None, siren_unite_legale="123456789", yearly_meal_count=100)
+        cls.canteen_valid_1 = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_valid_2 = CanteenFactory(siret=None, siren_unite_legale="123456789")
+        cls.canteen_valid_3 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.canteen_valid_4 = CanteenFactory(siret="40419443300078")
         Canteen.objects.filter(id=cls.canteen_valid_4.id).update(yearly_meal_count=0)  # not aberrant
         cls.canteen_valid_4.refresh_from_db()
@@ -145,18 +143,15 @@ class DiagnosticQuerySetTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_valid_1.siret,
         )
-        cls.canteen_valid_6_armee = CanteenFactory(
-            siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE, yearly_meal_count=100
-        )
-        cls.canteen_missing_siret = CanteenFactory(yearly_meal_count=100)
+        cls.canteen_valid_6_armee = CanteenFactory(siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE)
+        cls.canteen_missing_siret = CanteenFactory()
         Canteen.objects.filter(id=cls.canteen_missing_siret.id).update(siret="")  # siret missing
         cls.canteen_missing_siret.refresh_from_db()
-        cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=100)
+        cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
         cls.canteen_value_total_ht_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
-        cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=100)
+        cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=1000)
         cls.canteen_deleted = CanteenFactory(
             siret="21730065600014",
-            yearly_meal_count=100,
             deletion_date=timezone.make_aware(
                 datetime.strptime(date_in_teledeclaration_campaign, "%Y-%m-%d")
             ),  # soft deleted
@@ -302,8 +297,8 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.with_meal_price()
         self.assertEqual(diagnostics.count(), 17)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).canteen_yearly_meal_count, 100)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).meal_price, 10.0)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).canteen_yearly_meal_count, 1000)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).meal_price, 1.0)
         self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).canteen_yearly_meal_count, 0)
         self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).meal_price, None)
 
