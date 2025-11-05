@@ -254,9 +254,10 @@ const changeProductionMode = () => {
 }
 
 /* Fields verification */
-const { required, integer, minValue, requiredIf, minLength, maxLength } = useValidators()
+const { required, integer, minValue, maxValue, requiredIf, minLength, maxLength } = useValidators()
 const productionTypeRequired = computed(() => !props.addSatellite)
-const yearlyMealMinValue = computed(() => form.dailyMealCount || 1)
+const yearlyMealMinValue = computed(() => Math.max(form.dailyMealCount, 420))
+const dailyMealMaxValue = computed(() => form.yearlyMealCount)
 const siretIsRequired = computed(() => form.hasSiret === "has-siret")
 const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
 const sectorsAreRequired = computed(() => form.productionType !== "central")
@@ -284,7 +285,7 @@ const rules = {
     ),
   },
   lineMinistry: { required: requiredIf(showLineMinistry) },
-  dailyMealCount: { required, integer, minValue: minValue(1) },
+  dailyMealCount: { required, integer, minValue: minValue(3), maxValue: maxValue(dailyMealMaxValue) },
   yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
   satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(1) },
   centralProducerSiret: {
