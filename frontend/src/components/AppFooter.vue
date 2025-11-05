@@ -146,6 +146,10 @@ export default {
           text: "Statistiques",
           href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/0589649a-fabc-4001-82d6-f5f4fc15710d",
         },
+        {
+          text: "Code source",
+          href: "https://github.com/betagouv/ma-cantine",
+        },
       ],
       govLinks: ["legifrance.gouv.fr", "gouvernement.fr", "service-public.fr", "data.gouv.fr"],
       matomoId: window.MATOMO_ID,

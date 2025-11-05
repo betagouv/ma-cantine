@@ -21,6 +21,11 @@ const descText =
         href: 'https://ma-cantine-metabase.cleverapps.io/public/dashboard/0589649a-fabc-4001-82d6-f5f4fc15710d',
         target: '_blank',
       },
+      {
+        text: 'Code source',
+        href: 'https://github.com/betagouv/ma-cantine',
+        target: '_blank',
+      }
     ]"
     :desc-text
     licenceTo="https://github.com/betagouv/ma-cantine/blob/staging/LICENSE"
