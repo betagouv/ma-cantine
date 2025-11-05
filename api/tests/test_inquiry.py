@@ -20,7 +20,7 @@ class TestInquiry(APITestCase):
             "inquiryType": "fonctionnalité",
             "message": "I need help with the functionality of the app.",
             "name": "Tester",
-            "username": "user_name",
+            "username": None,
             "siret_or_siren": "12345",
             "meta": {
                 "userId": "123456789",
@@ -37,11 +37,11 @@ class TestInquiry(APITestCase):
         self.assertEqual(email.subject, title)
         self.assertIn("test@example.com", email.reply_to)
         self.assertIn(payload["name"], email.body)
-        self.assertIn(payload["username"], email.body)
         self.assertIn(payload["siret_or_siren"], email.body)
         self.assertIn(payload["message"], email.body)
         self.assertIn(payload["meta"]["userId"], email.body)
         self.assertIn(payload["meta"]["userAgent"], email.body)
+        self.assertIn("Non renseigné", email.body)
 
     @override_settings(ENVIRONMENT="demo")
     @override_settings(CONTACT_EMAIL="contact@example.com")
