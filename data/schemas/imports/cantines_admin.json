@@ -40,7 +40,7 @@
       "constraints": {
         "required": true
       },
-      "description": "Minimum 3. Y compris les couverts livrés.",
+      "description": "Minimum 3, y compris les couverts livrés.",
       "example": "300",
       "format": "default",
       "name": "nombre_repas_jour",
@@ -51,7 +51,7 @@
       "constraints": {
         "required": true
       },
-      "description": "Minimum 420. Y compris les couverts livrés.",
+      "description": "Minimum 420, y compris les couverts livrés.",
       "example": "67000",
       "format": "default",
       "name": "nombre_repas_an",
