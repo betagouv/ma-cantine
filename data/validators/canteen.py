@@ -10,10 +10,10 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
     - clean_fields() (called by full_clean()) already checks that
     the siret and siren_unite_legale fields are the correct length and format
     - extra validation:
-        - siret or siren_unite_legale must be filled
-        - both cannot be filled at the same time
-        - central: only the siret field should be filled
-        - if siret & new canteen: check that siret is not already used by another canteen
+        - siret & siren_unite_legale: at least one must be filled
+        - siret & siren_unite_legale: both cannot be filled at the same time
+        - if central: only the siret field must be filled
+        - if siret: must be unique (NOTE: check is NOT done on all_objects)
     """
     errors = {}
     siret = instance.siret
@@ -54,16 +54,17 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
                 "Cuisine centrale : le champ ne peut pas être rempli.",
             )
     if siret:
-        if not instance.pk:  # only for new canteens (TODO: generalize to existing canteens)
-            from data.models import Canteen
+        from data.models import Canteen
 
-            canteen_with_siret_qs = Canteen.objects.filter(siret=siret)
-            if canteen_with_siret_qs.exists():
-                utils_utils.add_validation_error(
-                    errors,
-                    "siret",
-                    "Le SIRET est déjà utilisé par une autre cantine.",
-                )
+        canteen_with_siret_qs = Canteen.objects.filter(siret=siret)
+        if instance.pk:
+            canteen_with_siret_qs = canteen_with_siret_qs.exclude(pk=instance.pk)
+        if canteen_with_siret_qs.exists():
+            utils_utils.add_validation_error(
+                errors,
+                "siret",
+                "Le SIRET est déjà utilisé par une autre cantine.",
+            )
     return errors
 
 

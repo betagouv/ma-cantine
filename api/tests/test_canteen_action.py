@@ -542,21 +542,21 @@ class CanteenActionApiTest(APITestCase):
         """
         canteen_td = CanteenFactory.create(
             id=2,
-            production_type=Canteen.ProductionType.ON_SITE,
-            management_type=Canteen.ManagementType.DIRECT,
             siret="21590350100017",
             city_insee_code="69123",
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             sectors=[SectorFactory.create()],
             managers=[authenticate.user],
         )
         canteen_did_not_td = CanteenFactory.create(
             id=3,
-            production_type=Canteen.ProductionType.ON_SITE,
-            siret="21590350100017",
+            siret="21010034300016",
             city_insee_code="69123",
-            economic_model=Canteen.EconomicModel.PUBLIC,
             management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             sectors=[SectorFactory.create()],
             managers=[authenticate.user],
         )

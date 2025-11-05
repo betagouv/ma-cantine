@@ -107,7 +107,8 @@ class CanteenModelSaveTest(TestCase):
                     )
 
     def test_canteen_siret_unique_validation(self):
-        CanteenFactory(siret="75665621899905", siren_unite_legale=None)
+        canteen_existing = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
+        # on create
         for VALUE_NOT_OK in ["75665621899905", "756 656 218 99905", 75665621899905]:
             with self.subTest(siret=VALUE_NOT_OK):
                 self.assertRaises(
@@ -116,6 +117,9 @@ class CanteenModelSaveTest(TestCase):
                     siret=VALUE_NOT_OK,
                     siren_unite_legale=None,
                 )
+        # on update
+        self.central_kitchen.siret = canteen_existing.siret
+        self.assertRaises(ValidationError, self.central_kitchen.save)
 
     def test_canteen_epci_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
