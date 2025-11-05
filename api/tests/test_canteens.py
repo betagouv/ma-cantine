@@ -593,7 +593,6 @@ class CanteenUpdateApiTest(APITestCase):
         }
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         created_canteen = Canteen.objects.get(pk=canteen.id)
         self.assertEqual(created_canteen.city, "Lyon")
@@ -753,6 +752,8 @@ class CanteenUpdateApiTest(APITestCase):
     def test_update_canteen_sectors(self):
         sector_1 = SectorFactory()
         sector_2 = SectorFactory()
+        sector_3 = SectorFactory()
+        sector_4 = SectorFactory()
         central_kitchen_with_sectors = CanteenFactory.create(
             siret="03201976246133",
             production_type=Canteen.ProductionType.CENTRAL,
@@ -773,11 +774,27 @@ class CanteenUpdateApiTest(APITestCase):
         central_kitchen_with_sectors.refresh_from_db()
         self.assertEqual(central_kitchen_with_sectors.sectors.count(), 0)
 
+        # central_kitchen: cannot add them back
+        payload = {"sectors": [sector_1.id, sector_2.id]}
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": central_kitchen_with_sectors.id}), payload, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        central_kitchen_with_sectors.refresh_from_db()
+        self.assertEqual(central_kitchen_with_sectors.sectors.count(), 0)
+
         # canteen_site: fix sectors (add some)
         self.assertEqual(canteen_site.sectors.count(), 0)
         payload = {"sectors": [sector_1.id, sector_2.id]}
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen_site.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        canteen_site.refresh_from_db()
+        self.assertEqual(canteen_site.sectors.count(), 2)
+
+        # canteen_site: but cannot add too many
+        payload = {"sectors": [sector_1.id, sector_2.id, sector_3.id, sector_4.id]}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen_site.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         canteen_site.refresh_from_db()
         self.assertEqual(canteen_site.sectors.count(), 2)
 
