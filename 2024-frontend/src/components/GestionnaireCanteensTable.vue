@@ -126,6 +126,7 @@ const getActionsInfos = (canteen) => {
     :pagination="true"
     :pagination-options="[50, 100, 200]"
     :rows-per-page="50"
+    pagination-wrapper-class="fr-mt-2w"
   >
     <template #header="{ label }">
       <AppRawHTML :html="label" />
