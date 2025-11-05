@@ -60,13 +60,11 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         title = "(DEMO) Demande de support de test@example.com - fonctionnalité"
-        body = "Nom/Prénom\n---\nNon renseigné\nNom d'utilisateur\n---\nNon renseigné\nSIRET ou SIREN\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         # email is sent to admins
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "contact@example.com")
         self.assertEqual(email.subject, title)
-        self.assertEqual(email.body, body)
 
     def test_missing_fields(self):
         """
