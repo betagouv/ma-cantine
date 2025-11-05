@@ -64,12 +64,20 @@ const resetForm = (name) => {
     <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
       <h1>{{ route.meta.title }}</h1>
       <p>
-        La mission de la plateforme
+        En accord avec
+        <a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/" target="_blank">
+          l’arrêté du 14 septembre 2022
+        </a>
+        , chaque restaurant collectif doit être inscrit sur
         <em>ma cantine</em>
-        est de référencer toutes les cantines de France afin d’aider le ministère de l’Agriculture, de
-        l’Agro-alimentaire et de la Souveraineté alimentaire à déployer sa transition alimentaire.
+        : étape préalable à la déclaration des informations nécessaires à la réalisation du bilan statistique national.
+        Veuillez remplir ce formulaire pour l’ensemble des restaurants collectifs dont vous avez la charge.
       </p>
-      <p class="fr-mb-0">Remplissez le formulaire ci-dessous pour créer votre établissement.</p>
+      <p class="fr-mb-0 fr-text--bold">
+        Tout restaurant satellite doit être rattaché à la cuisine centrale qui livre les repas. Ainsi, la cuisine
+        centrale doit être préalablement inscrite sur
+        <em>ma cantine.</em>
+      </p>
     </div>
     <div class="fr-col-offset-md-1"></div>
     <AppRessources>
