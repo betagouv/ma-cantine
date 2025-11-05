@@ -40,7 +40,7 @@ dependencies = [
     "distlib==0.3.9",
     "django==5.1.14",
     "django-anymail==12.0",
-    "django-celery-results==2.5.1",
+    "django-celery-results==2.6.0",
     "django-ckeditor==6.7.1",
     "django-csp==3.8",
     "django-debug-toolbar==4.4.6",
