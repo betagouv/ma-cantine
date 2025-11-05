@@ -117,7 +117,17 @@ const getActionsInfos = (canteen) => {
 }
 </script>
 <template>
-  <DsfrDataTable class="gestionnaire-canteens-table" title="Vos cantines" no-caption :headers-row="header" :rows="rows">
+  <DsfrDataTable
+    class="gestionnaire-canteens-table"
+    title="Vos cantines"
+    no-caption
+    :headers-row="header"
+    :rows="rows"
+    :pagination="true"
+    :pagination-options="[50, 100, 200]"
+    :rows-per-page="50"
+    pagination-wrapper-class="fr-mt-2w"
+  >
     <template #header="{ label }">
       <AppRawHTML :html="label" />
     </template>
