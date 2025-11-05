@@ -12,8 +12,8 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
     - extra validation:
         - siret & siren_unite_legale: at least one must be filled
         - siret & siren_unite_legale: both cannot be filled at the same time
-        - central: only the siret field must be filled
-        - if siret: must be unique
+        - if central: only the siret field must be filled
+        - if siret: must be unique (NOTE: check is NOT done on all_objects)
     """
     errors = {}
     siret = instance.siret
