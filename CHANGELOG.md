@@ -6,6 +6,43 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.37.0](https://github.com/betagouv/ma-cantine/compare/v2025.36.1...v2025.37.0) (2025-11-06)
+
+
+### Nouveautés
+
+* **Ressources:** ajout des documents de notre ancien support gitbook ([#5848](https://github.com/betagouv/ma-cantine/issues/5848)) ([691b199](https://github.com/betagouv/ma-cantine/commit/691b199191f7ea5ce0dd36c03ae5d41580529a57))
+* **Tableau de bord:** ajout du bouton "Gérer mes cantines" ([#5853](https://github.com/betagouv/ma-cantine/issues/5853)) ([b49a39c](https://github.com/betagouv/ma-cantine/commit/b49a39c72d55d5ecd372467be435aa41434b1d9d))
+* **Tableau de bord:** ajoute la pagination ([#5852](https://github.com/betagouv/ma-cantine/issues/5852)) ([f3cf800](https://github.com/betagouv/ma-cantine/commit/f3cf8000aa96c2d08b99e0d6e69d35ae2f5e8df0))
+
+
+### Améliorations
+
+* **Cantines:** Règles métiers: ajout des min sur daily_meal_count (3) & yearly_meal_count (420) ([#5847](https://github.com/betagouv/ma-cantine/issues/5847)) ([3175065](https://github.com/betagouv/ma-cantine/commit/31750657fbd78fd03f666de9423e2d01d2663514))
+* **Cantines:** Règles métiers: rendre le champ siret unique (sur les cantines ouvertes) ([#5849](https://github.com/betagouv/ma-cantine/issues/5849)) ([2675442](https://github.com/betagouv/ma-cantine/commit/26754429bd1e98cde475685bc54694fce9ca5a93))
+* **Création de cantines:** intégrer la vérification du nombre minimum de repas jours et annuels côté frontend  ([#5857](https://github.com/betagouv/ma-cantine/issues/5857)) ([3bfe964](https://github.com/betagouv/ma-cantine/commit/3bfe9645f545c74320f6afd2e9913ca415dc94cc))
+* **Footer:** ajout d'un lien vers le code source ([#5861](https://github.com/betagouv/ma-cantine/issues/5861)) ([a531a66](https://github.com/betagouv/ma-cantine/commit/a531a66e7dc9faebc23c2ed4af81e4b18131308f))
+
+
+### Corrections (bugs, typos...)
+
+* **Ajouter une cantine:** modification du texte d'introduction ([#5854](https://github.com/betagouv/ma-cantine/issues/5854)) ([1fa3595](https://github.com/betagouv/ma-cantine/commit/1fa359567ab427de04fa38f22c5dc251ae744f4a))
+* **Cantines:** Règles métiers: répare un test suite aux nouvelles contraintes sur le min des meal_count. ref [#5847](https://github.com/betagouv/ma-cantine/issues/5847) ([#5855](https://github.com/betagouv/ma-cantine/issues/5855)) ([c31becd](https://github.com/betagouv/ma-cantine/commit/c31becdf6a6476fccecdead52d2d928c7eddac60))
+* **Formulaire de contact:** envoyer les emails au format text/html ([#5856](https://github.com/betagouv/ma-cantine/issues/5856)) ([e46cd39](https://github.com/betagouv/ma-cantine/commit/e46cd39bdfc2f27aebcf469de7e28b57da500aad))
+
+
+### Technique
+
+* **deps:** bump django from 5.1.13 to 5.1.14 ([#5860](https://github.com/betagouv/ma-cantine/issues/5860)) ([a63a92f](https://github.com/betagouv/ma-cantine/commit/a63a92fb7bfc4b68a5aaed3e4f031e48ce4e7b92))
+* **Tests:** Cantines: réorganise les fichiers de tests pour en avoir 1 par endpoint ([#5845](https://github.com/betagouv/ma-cantine/issues/5845)) ([7d40390](https://github.com/betagouv/ma-cantine/commit/7d403908850cbf961e2a98e1135c16d3ef9175c2))
+* **Tests:** Imports cantines: clean & ajout de tests 'model' (post-Validata) ([#5850](https://github.com/betagouv/ma-cantine/issues/5850)) ([6c1b433](https://github.com/betagouv/ma-cantine/commit/6c1b433d22941bf11dabdfae62410a8490785815))
+
+
+### Documentation
+
+* **README:** ajout de Crisp dans les outils ([#5859](https://github.com/betagouv/ma-cantine/issues/5859)) ([9f1173a](https://github.com/betagouv/ma-cantine/commit/9f1173a0003a9c7d4a47cf0687cd823ecdeac924))
+* **README:** on ne se sert plus d'ELK (Elastic & Kibana) ([#5858](https://github.com/betagouv/ma-cantine/issues/5858)) ([ac001ac](https://github.com/betagouv/ma-cantine/commit/ac001ac5eef99b61ba1487b8bf7f6e55a0e57810))
+
 ## [2025.36.1](https://github.com/betagouv/ma-cantine/compare/v2025.36.0...v2025.36.1) (2025-11-03)
 
 
