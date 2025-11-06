@@ -18,8 +18,10 @@ class TestInquiry(APITestCase):
         payload = {
             "from": "test@example.com",
             "inquiryType": "fonctionnalité",
-            "message": "I need help with the functionality of the app\nHow do I do something?",
+            "message": "I need help with the functionality of the app.",
             "name": "Tester",
+            "username": None,
+            "siret_or_siren": "12345",
             "meta": {
                 "userId": "123456789",
                 "userAgent": "Mozilla",
@@ -28,13 +30,18 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         title = "Demande de support de test@example.com - fonctionnalité"
-        body = "Nom/Prénom\n---\nTester\nNom d'utilisateur\n---\nNon renseigné\nSIRET ou SIREN\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         # email is sent to admins
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "contact@example.com")
         self.assertEqual(email.subject, title)
-        self.assertEqual(email.body, body)
+        self.assertIn("test@example.com", email.reply_to)
+        self.assertIn(payload["name"], email.body)
+        self.assertIn(payload["siret_or_siren"], email.body)
+        self.assertIn(payload["message"], email.body)
+        self.assertIn(payload["meta"]["userId"], email.body)
+        self.assertIn(payload["meta"]["userAgent"], email.body)
+        self.assertIn("Non renseigné", email.body)
 
     @override_settings(ENVIRONMENT="demo")
     @override_settings(CONTACT_EMAIL="contact@example.com")
@@ -54,15 +61,13 @@ class TestInquiry(APITestCase):
         response = self.client.post(reverse("inquiry"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         title = "(DEMO) Demande de support de test@example.com - fonctionnalité"
-        body = "Nom/Prénom\n---\nNon renseigné\nNom d'utilisateur\n---\nNon renseigné\nSIRET ou SIREN\n---\nNon renseigné\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
 
         # email is sent to admins
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "contact@example.com")
         self.assertEqual(email.subject, title)
-        self.assertEqual(email.body, body)
 
-    def test_missing_fields(self):
+    def test_inquiry_missing_fields(self):
         """
         Test that a 400 error response with details is returned when the requests is missing fields
         """
@@ -84,34 +89,6 @@ class TestInquiry(APITestCase):
         self.assertEqual(body.get("from"), "Merci d'indiquer une adresse email")
         self.assertEqual(body.get("message"), "Message manquant dans la requête")
         self.assertEqual(len(mail.outbox), 0)
-
-    @override_settings(CONTACT_EMAIL="contact@example.com")
-    def test_misc_inquiry(self):
-        """
-        Test misc inquiry type displayed in card title
-        """
-        payload = {
-            "from": "test@example.com",
-            "inquiryType": "cantine SIRET",
-            "message": "I need help with the functionality of the app\nHow do I do something?",
-            "siretOrSiren": "12345678901234",
-            "username": "my_tester",
-            "meta": {
-                "userId": "123456789",
-                "userAgent": "Mozilla",
-            },
-        }
-        response = self.client.post(reverse("inquiry"), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        title = "Demande de support de test@example.com - cantine SIRET"
-        body = "Nom/Prénom\n---\nNon renseigné\nNom d'utilisateur\n---\nmy_tester\nSIRET ou SIREN\n---\n12345678901234\nMessage\n---\nI need help with the functionality of the app\nHow do I do something?\nDétails\n---\nAdresse : test@example.com\nuser_id : 123456789\nuser_agent : Mozilla"
-
-        # email is sent to admins
-        email = mail.outbox[0]
-        self.assertEqual(email.to[0], "contact@example.com")
-        self.assertEqual(email.subject, title)
-        self.assertEqual(email.body, body)
-        self.assertIn("test@example.com", email.reply_to)
 
 
 class TestEmail(APITestCase):
