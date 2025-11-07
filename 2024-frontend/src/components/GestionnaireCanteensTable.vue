@@ -116,48 +116,62 @@ const getActionsInfos = (canteen) => {
 }
 </script>
 <template>
-  <DsfrDataTable
-    class="gestionnaire-canteens-table"
-    title="Vos cantines"
-    no-caption
-    :headers-row="header"
-    :rows="rows"
-    :pagination="true"
-    :pagination-options="[50, 100, 200]"
-    :rows-per-page="50"
-    pagination-wrapper-class="fr-mt-2w"
-  >
-    <template #header="{ label }">
-      <AppRawHTML :html="label" />
-    </template>
-    <template #cell="{ colKey, cell }">
-      <template v-if="colKey === 'name'">
-        <p>
-          <router-link
-            :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
-            class="fr-text-title--blue-france fr-text--bold"
-          >
-            {{ cell.name }}
-          </router-link>
-        </p>
-      </template>
-      <template v-else-if="colKey === 'status'">
-        <DsfrBadge small :label="cell.label" :type="cell.type" />
-      </template>
-      <template v-else-if="colKey === 'actions'">
-        <div class="fr-grid-row fr-grid-row--right">
-          <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line" :links="cell" size="small" />
-        </div>
-      </template>
-      <template v-else>
-        <p class="fr-text--xs">{{ cell }}</p>
-      </template>
-    </template>
-  </DsfrDataTable>
+  <div class="gestionnaire-canteens-table">
+    <div class="gestionnaire-canteens-table__scrollable">
+      <DsfrDataTable
+        class="gestionnaire-canteens-table__content"
+        title="Vos cantines"
+        no-caption
+        :headers-row="header"
+        :rows="rows"
+        :pagination="true"
+        :pagination-options="[50, 100, 200]"
+        :rows-per-page="50"
+        pagination-wrapper-class="fr-mt-2w"
+      >
+        <template #header="{ label }">
+          <AppRawHTML :html="label" />
+        </template>
+        <template #cell="{ colKey, cell }">
+          <template v-if="colKey === 'name'">
+            <p>
+              <router-link
+                :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+                class="fr-text-title--blue-france fr-text--bold"
+              >
+                {{ cell.name }}
+              </router-link>
+            </p>
+          </template>
+          <template v-else-if="colKey === 'status'">
+            <DsfrBadge small :label="cell.label" :type="cell.type" />
+          </template>
+          <template v-else-if="colKey === 'actions'">
+            <div class="fr-grid-row fr-grid-row--right">
+              <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line" :links="cell" size="small" />
+            </div>
+          </template>
+          <template v-else>
+            <p class="fr-text--xs">{{ cell }}</p>
+          </template>
+        </template>
+      </DsfrDataTable>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">
 .gestionnaire-canteens-table {
+  overflow-x: hidden;
+
+  &__scrollable {
+    overflow: scroll;
+  }
+
+  &__content {
+    min-width: 75rem; // Calculated from fr-container { max-width 78rem, padding-left: 1.5rem, padding-right: 1.5rem }
+  }
+
   .fr-table__container {
     overflow: initial !important;
   }
