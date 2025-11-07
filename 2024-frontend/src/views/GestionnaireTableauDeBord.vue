@@ -19,12 +19,6 @@ const canteenSentence = computed(() => {
   return `${count} cantines`
 })
 
-/* CANTEENS */
-const lastYear = new Date().getFullYear() - 1
-const canteens = computedAsync(async () => {
-  return await canteenService.fetchCanteensActions(lastYear)
-}, [])
-
 /* BUTTON */
 const links = [
   {
@@ -53,9 +47,35 @@ const links = [
 const search = ref()
 const isSearching = ref(false)
 const clicSearch = () => {
+  const searchValue = search.value.trim()
   isSearching.value = true
-  console.log("searchCanteen", search.value)
+  if (searchValue === "") clearSearch()
+  else searchCanteens(searchValue)
+  // TODO si pas de résultat
+  isSearching.value = false
 }
+
+const clearSearch = () => {
+  filteredCanteens.value = []
+}
+
+const searchCanteens = (searchValue) => {
+  filteredCanteens.value = allCanteens.value.filter((canteen) => {
+    if (canteen.siret && canteen.siret.indexOf(searchValue) === 0) return true
+    if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchValue) === 0) return true
+    if (canteen.name.indexOf(searchValue) > 0) return true
+  })
+}
+
+/* CANTEENS */
+const lastYear = new Date().getFullYear() - 1
+const filteredCanteens = ref([])
+const allCanteens = computedAsync(async () => {
+  return await canteenService.fetchCanteensActions(lastYear)
+}, [])
+const canteensTable = computed(() => {
+  return filteredCanteens.value.length > 0 ? filteredCanteens.value : allCanteens.value
+})
 </script>
 
 <template>
