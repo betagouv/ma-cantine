@@ -18,8 +18,6 @@
         les cantines de votre territoire
       </router-link>
     </p>
-    <InformationBanner v-if="showInformationBanner" />
-    <InformationCampaignBanner />
     <div v-if="canteenCount > 0" class="mt-4">
       <SuccessBanner v-if="showSuccessBanner" />
       <ActionsBanner v-else />
@@ -93,8 +91,6 @@ import CanteensPagination from "./CanteensPagination.vue"
 import PageSatisfaction from "@/components/PageSatisfaction.vue"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import UserTools from "./UserTools"
-import InformationBanner from "./InformationBanner"
-import InformationCampaignBanner from "./InformationCampaignBanner"
 import CanteenCreationDialog from "./CanteenCreationDialog"
 import ActionsBanner from "./ActionsBanner"
 import SuccessBanner from "./SuccessBanner"
@@ -112,8 +108,6 @@ export default {
     CanteensPagination,
     UserTools,
     PageSatisfaction,
-    InformationBanner,
-    InformationCampaignBanner,
     ActionsBanner,
     SuccessBanner,
     CanteenCreationDialog,
@@ -176,7 +170,6 @@ export default {
           style: "background-color: #E8EDFF; border: none;", // light / background / contrast-info
         },
       ],
-      showInformationBanner: window.SHOW_MANAGEMENT_INFORMATION_BANNER,
       viewStyles: [
         {
           text: "Vue cartes",
