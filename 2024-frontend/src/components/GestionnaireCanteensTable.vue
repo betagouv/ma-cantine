@@ -1,11 +1,12 @@
 <script setup>
-import { computedAsync } from "@vueuse/core"
-import canteenService from "@/services/canteens.js"
+import { computed } from "vue"
 import badgeService from "@/services/badges.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 import AppRawHTML from "@/components/AppRawHTML.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
+
+const props = defineProps(["canteens"])
 
 const header = [
   {
@@ -31,11 +32,9 @@ const header = [
   },
 ]
 
-const rows = computedAsync(async () => {
-  const lastYear = new Date().getFullYear() - 1
-  const canteens = await canteenService.fetchCanteensActions(lastYear)
+const rows = computed(() => {
   const rows = []
-  canteens.forEach((canteen) => {
+  props.canteens.forEach((canteen) => {
     const name = getNameInfos(canteen)
     const siret = getSiretOrSirenInfos(canteen)
     const city = getCityInfos(canteen)
@@ -53,7 +52,7 @@ const rows = computedAsync(async () => {
     })
   })
   return rows
-}, [])
+})
 
 const getNameInfos = (canteen) => {
   return {
