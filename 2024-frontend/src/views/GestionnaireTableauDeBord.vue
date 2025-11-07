@@ -54,9 +54,8 @@ const search = ref("")
     <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
     <template v-else>
       <DsfrSearchBar
-        label="Rechercher"
-        :modelValue="search"
         :large="true"
+        label="Rechercher"
         button-text="Rechercher"
         placeholder="Rechercher une cantine par son nom, son siret, ou son siren"
       />
