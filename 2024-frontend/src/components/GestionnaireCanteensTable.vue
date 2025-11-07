@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue"
-import actionService from "@/services/badges.js"
+import actionService from "@/services/actions.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 import AppRawHTML from "@/components/AppRawHTML.vue"
@@ -121,57 +121,11 @@ const getDropdownLinks = (canteen) => {
 }
 
 const getQuickAction = (canteen) => {
-  let noQuickAction = false
-  let label = null
-  let name = null
-  let icon = null
-  let measure = null
-
-  switch (true) {
-    case canteen.action === "10_add_satellites":
-      label = "Ajouter"
-      name = "GestionnaireCantineSatellitesGerer"
-      icon = "fr-icon-add-line"
-      break
-    case canteen.action === "20_create_diagnostic" || canteen.action === "18_prefill_diagnostic":
-      label = "Créer"
-      name = "MyProgress"
-      icon = "fr-icon-add-line"
-      measure = "qualite-des-produits"
-      break
-    case canteen.action === "30_fill_diagnostic":
-      label = "Modifier"
-      name = "MyProgress"
-      icon = "fr-icon-edit-line"
-      measure = "qualite-des-produits"
-      break
-    case canteen.action === "35_fill_canteen_data":
-      label = "Modifier"
-      name = "GestionnaireCantineGerer"
-      icon = "fr-icon-edit-line"
-      break
-    case canteen.action === "40_teledeclare":
-      label = "Télédéclarer"
-      name = "MyProgress"
-      icon = "fr-icon-send-plane-line"
-      measure = "etablissement"
-      break
-    default:
-      noQuickAction = true
-  }
-
-  if (noQuickAction) return false
+  const button = actionService.getButton(canteen.action)
+  if (!button) return false
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
   const year = new Date().getFullYear() - 1
-
-  return {
-    label,
-    year,
-    name,
-    canteenUrlComponent,
-    icon,
-    measure,
-  }
+  return { ...button, canteenUrlComponent, year }
 }
 </script>
 <template>
