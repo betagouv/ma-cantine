@@ -84,8 +84,8 @@ const canteensTable = computed(() => {
 
 <template>
   <section class="fr-grid-row">
-    <h1 class="fr-col-12 fr-col-md-8">Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
-    <div class="fr-col-12 fr-col-md-4 fr-grid-row fr-grid-row--right fr-grid-row--top">
+    <h1 class="fr-col-12 fr-col-md-6">Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
+    <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--right fr-grid-row--top">
       <AppDropdownMenu label="Gérer mes cantines" :links="links" size="medium" />
     </div>
   </section>
@@ -93,15 +93,15 @@ const canteensTable = computed(() => {
     <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
     <template v-else>
       <div class="fr-grid-row">
-        <div class="fr-col-12 fr-col-md-8">
+        <div class="fr-col-12 fr-col-md-6">
           <p class="fr-mb-0 fr-text--lead">{{ canteenSentence }}</p>
         </div>
-        <div class="fr-col-12 fr-col-md-4">
+        <div class="fr-col-12 fr-col-md-6">
           <DsfrSearchBar
             v-model="search"
             label="Rechercher"
             button-text="Rechercher"
-            placeholder="Chercher une cantine"
+            placeholder="Rechercher par le nom, siret ou siren de l'établissement"
             @search="clicSearch"
           />
         </div>
