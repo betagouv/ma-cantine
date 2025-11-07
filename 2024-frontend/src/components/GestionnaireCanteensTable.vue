@@ -207,6 +207,25 @@ const getQuickAction = (canteen) => {
           </template>
           <template v-else-if="colKey === 'actions'">
             <div class="fr-grid-row fr-grid-row--right">
+              <router-link
+                :to="{
+                  name: cell.quickAction.name,
+                  params: {
+                    year: cell.quickAction.year,
+                    canteenUrlComponent: cell.quickAction.canteenUrlComponent,
+                    measureId: cell.quickAction.measure,
+                  },
+                }"
+                class="ma-cantine--unstyled-link"
+              >
+                <DsfrButton
+                  v-if="cell.quickAction"
+                  :label="cell.quickAction.label"
+                  :icon="cell.quickAction.icon"
+                  size="small"
+                  class="fr-mr-1v"
+                />
+              </router-link>
               <AppDropdownMenu
                 label="Paramètres"
                 icon="fr-icon-settings-5-line"
