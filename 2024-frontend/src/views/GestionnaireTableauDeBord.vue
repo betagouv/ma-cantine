@@ -37,7 +37,13 @@ const links = [
   },
 ]
 
+/* SEARCH */
 const search = ref()
+const isSearching = ref(false)
+const searchCanteen = () => {
+  isSearching.value = true
+  console.log("searchCanteen", search.value)
+}
 </script>
 
 <template>
@@ -59,6 +65,7 @@ const search = ref()
         label="Rechercher"
         button-text="Rechercher"
         placeholder="Rechercher une cantine par son nom, son siret, ou son siren"
+        @search="searchCanteen"
       />
       <GestionnaireCanteensTable />
     </template>
