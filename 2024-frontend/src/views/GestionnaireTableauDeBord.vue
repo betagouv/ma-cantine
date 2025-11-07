@@ -67,7 +67,7 @@ const searchCanteens = (searchValue) => {
   filteredCanteens.value = allCanteens.value.filter((canteen) => {
     if (canteen.siret && canteen.siret.indexOf(searchValue) === 0) return true
     if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchValue) === 0) return true
-    if (canteen.name.indexOf(searchValue) > 0) return true
+    if (canteen.name.indexOf(searchValue) >= 0) return true
   })
 }
 
