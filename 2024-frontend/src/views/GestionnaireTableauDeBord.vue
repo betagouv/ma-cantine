@@ -5,6 +5,7 @@ import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
 import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
+import AppLoader from "@/components/AppLoader.vue"
 
 const store = useRootStore()
 const canteenSentence = computed(() => {
@@ -68,7 +69,8 @@ const searchCanteen = () => {
         placeholder="Rechercher une cantine par son nom, son siret, ou son siren"
         @search="searchCanteen"
       />
-      <GestionnaireCanteensTable />
+      <AppLoader v-if="isSearching" class="fr-my-4w" />
+      <GestionnaireCanteensTable v-if="!isSearching" />
     </template>
     <GestionnaireGuides />
   </section>
