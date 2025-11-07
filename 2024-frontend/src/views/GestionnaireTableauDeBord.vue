@@ -3,6 +3,7 @@ import { ref, computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
+import stringService from "@/services/strings.js"
 
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
@@ -67,7 +68,7 @@ const searchCanteens = (searchValue) => {
   filteredCanteens.value = allCanteens.value.filter((canteen) => {
     if (canteen.siret && canteen.siret.indexOf(searchValue) === 0) return true
     if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchValue) === 0) return true
-    if (canteen.name.indexOf(searchValue) >= 0) return true
+    if (stringService.checkIfContains(canteen.name, searchValue)) return true
   })
 }
 
