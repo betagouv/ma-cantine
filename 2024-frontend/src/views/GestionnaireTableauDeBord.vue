@@ -13,7 +13,7 @@ import AppLoader from "@/components/AppLoader.vue"
 /* INTRO */
 const store = useRootStore()
 const canteenSentence = computed(() => {
-  const count = store.canteenPreviews.length
+  const count = canteensTable.value.length
   if (count === 0) return "vous n'avez pas encore de cantine"
   else if (count === 1) return "1 cantine"
   return `${count} cantines`
