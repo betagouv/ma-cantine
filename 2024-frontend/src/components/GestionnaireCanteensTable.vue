@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue"
-import badgeService from "@/services/badges.js"
+import actionService from "@/services/actions.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 import AppRawHTML from "@/components/AppRawHTML.vue"
@@ -81,7 +81,7 @@ const getProductionTypeInfos = (canteen) => {
 
 const getStatusInfos = (canteen) => {
   const action = canteen.action
-  const badge = badgeService.getFromAction(action)
+  const badge = actionService.getBadge(action)
   return {
     label: badge.body,
     type: badge.mode,
@@ -89,6 +89,12 @@ const getStatusInfos = (canteen) => {
 }
 
 const getActionsInfos = (canteen) => {
+  const dropdownLinks = getDropdownLinks(canteen)
+  const quickAction = getQuickAction(canteen)
+  return { dropdownLinks, quickAction }
+}
+
+const getDropdownLinks = (canteen) => {
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
   const links = [
     {
@@ -111,8 +117,15 @@ const getActionsInfos = (canteen) => {
       label: "Gérer les satellites",
     })
   }
-
   return links
+}
+
+const getQuickAction = (canteen) => {
+  const button = actionService.getButton(canteen.action)
+  if (!button) return false
+  const canteenUrlComponent = urlService.getCanteenUrl(canteen)
+  const year = new Date().getFullYear() - 1
+  return { ...button, canteenUrlComponent, year }
 }
 </script>
 <template>
@@ -148,7 +161,31 @@ const getActionsInfos = (canteen) => {
           </template>
           <template v-else-if="colKey === 'actions'">
             <div class="fr-grid-row fr-grid-row--right">
-              <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line" :links="cell" size="small" />
+              <router-link
+                :to="{
+                  name: cell.quickAction.name,
+                  params: {
+                    year: cell.quickAction.year,
+                    canteenUrlComponent: cell.quickAction.canteenUrlComponent,
+                    measureId: cell.quickAction.measure,
+                  },
+                }"
+                class="ma-cantine--unstyled-link"
+              >
+                <DsfrButton
+                  v-if="cell.quickAction"
+                  :label="cell.quickAction.label"
+                  :icon="cell.quickAction.icon"
+                  size="small"
+                  class="fr-mr-1v"
+                />
+              </router-link>
+              <AppDropdownMenu
+                label="Paramètres"
+                icon="fr-icon-settings-5-line"
+                :links="cell.dropdownLinks"
+                size="small"
+              />
             </div>
           </template>
           <template v-else>
@@ -192,6 +229,10 @@ const getActionsInfos = (canteen) => {
 
   td:nth-child(2) {
     padding-right: 0% !important;
+  }
+
+  td:last-child {
+    padding-left: 0 !important;
   }
 
   th:nth-child(3) {
