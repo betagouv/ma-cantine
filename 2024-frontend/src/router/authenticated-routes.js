@@ -47,7 +47,7 @@ const routes = [
     name: "GestionnaireTableauDeBord",
     component: GestionnaireTableauDeBord,
     meta: {
-      title: "Tableau de bord",
+      title: "Mon tableau de bord",
     },
   },
   {
