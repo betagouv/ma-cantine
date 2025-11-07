@@ -52,7 +52,7 @@ const links = [
 /* SEARCH */
 const search = ref()
 const isSearching = ref(false)
-const searchCanteen = () => {
+const clicSearch = () => {
   isSearching.value = true
   console.log("searchCanteen", search.value)
 }
@@ -77,10 +77,10 @@ const searchCanteen = () => {
         label="Rechercher"
         button-text="Rechercher"
         placeholder="Rechercher une cantine par son nom, son siret, ou son siren"
-        @search="searchCanteen"
+        @search="clicSearch"
       />
       <AppLoader v-if="isSearching" class="fr-my-4w" />
-      <GestionnaireCanteensTable v-if="!isSearching && canteens.length > 0" :canteens="canteens" />
+      <GestionnaireCanteensTable v-if="!isSearching && canteensTable.length > 0" :canteens="canteensTable" />
     </template>
     <GestionnaireGuides />
   </section>
