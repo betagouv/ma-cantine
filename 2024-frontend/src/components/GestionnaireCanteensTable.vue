@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue"
-import badgeService from "@/services/badges.js"
+import actionService from "@/services/badges.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 import AppRawHTML from "@/components/AppRawHTML.vue"
@@ -81,7 +81,7 @@ const getProductionTypeInfos = (canteen) => {
 
 const getStatusInfos = (canteen) => {
   const action = canteen.action
-  const badge = badgeService.getFromAction(action)
+  const badge = actionService.getBadge(action)
   return {
     label: badge.body,
     type: badge.mode,
