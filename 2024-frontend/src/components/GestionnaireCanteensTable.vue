@@ -89,6 +89,11 @@ const getStatusInfos = (canteen) => {
 }
 
 const getActionsInfos = (canteen) => {
+  const dropdownLinks = getDropdownLinks(canteen)
+  return { dropdownLinks }
+}
+
+const getDropdownLinks = (canteen) => {
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
   const links = [
     {
@@ -111,7 +116,6 @@ const getActionsInfos = (canteen) => {
       label: "Gérer les satellites",
     })
   }
-
   return links
 }
 </script>
@@ -148,7 +152,12 @@ const getActionsInfos = (canteen) => {
           </template>
           <template v-else-if="colKey === 'actions'">
             <div class="fr-grid-row fr-grid-row--right">
-              <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line" :links="cell" size="small" />
+              <AppDropdownMenu
+                label="Paramètres"
+                icon="fr-icon-settings-5-line"
+                :links="cell.dropdownLinks"
+                size="small"
+              />
             </div>
           </template>
           <template v-else>
