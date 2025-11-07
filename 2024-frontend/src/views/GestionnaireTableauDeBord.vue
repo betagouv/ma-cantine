@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue"
+import { ref, computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
@@ -36,6 +36,8 @@ const links = [
     label: "Importer un bilan détaillé",
   },
 ]
+
+const search = ref("")
 </script>
 
 <template>
@@ -50,7 +52,16 @@ const links = [
   </section>
   <section class="ma-cantine--stick-to-footer">
     <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
-    <GestionnaireCanteensTable v-else />
+    <template v-else>
+      <DsfrSearchBar
+        label="Rechercher"
+        :modelValue="search"
+        :large="true"
+        button-text="Rechercher"
+        placeholder="Rechercher une cantine par son nom, son siret, ou son siren"
+      />
+      <GestionnaireCanteensTable />
+    </template>
     <GestionnaireGuides />
   </section>
 </template>
