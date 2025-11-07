@@ -1,12 +1,16 @@
 <script setup>
 import { ref, computed } from "vue"
+import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
+import canteenService from "@/services/canteens.js"
+
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
 import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppLoader from "@/components/AppLoader.vue"
 
+/* INTRO */
 const store = useRootStore()
 const canteenSentence = computed(() => {
   const count = store.canteenPreviews.length
@@ -14,6 +18,12 @@ const canteenSentence = computed(() => {
   else if (count === 1) return "1 cantine"
   return `${count} cantines`
 })
+
+/* CANTEENS */
+const lastYear = new Date().getFullYear() - 1
+const canteens = computedAsync(async () => {
+  return await canteenService.fetchCanteensActions(lastYear)
+}, [])
 
 /* BUTTON */
 const links = [
@@ -70,7 +80,7 @@ const searchCanteen = () => {
         @search="searchCanteen"
       />
       <AppLoader v-if="isSearching" class="fr-my-4w" />
-      <GestionnaireCanteensTable v-if="!isSearching" />
+      <GestionnaireCanteensTable v-if="!isSearching && canteens.length > 0" :canteens="canteens" />
     </template>
     <GestionnaireGuides />
   </section>
