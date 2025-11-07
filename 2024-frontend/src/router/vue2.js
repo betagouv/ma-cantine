@@ -139,15 +139,6 @@ const vue2routes = [
     name: "CanteenDeletion",
   },
   {
-    path: "/actions-en-attente",
-    name: "PendingActions",
-    meta: {
-      title: "Actions en attente",
-      siteMap: diag,
-      authenticationRequired: true,
-    },
-  },
-  {
     path: "/modifier-ma-cantine/:canteenUrlComponent/gestionnaires",
     name: "CanteenManagers",
   },

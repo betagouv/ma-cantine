@@ -28,7 +28,6 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
@@ -261,15 +260,6 @@ const routes = [
     component: NewPartner,
     meta: {
       title: "Nouvel acteur de l'éco-système",
-    },
-  },
-  {
-    path: "/actions-en-attente",
-    name: "PendingActions",
-    component: PendingActions,
-    meta: {
-      title: "Actions en attente",
-      authenticationRequired: true,
     },
   },
   {
@@ -538,6 +528,11 @@ routes.push({
 routes.push({
   path: "/statistiques-regionales",
   redirect: { name: "Observatoire" },
+})
+
+routes.push({
+  path: "/actions-en-attente",
+  redirect: { name: "GestionnaireTableauDeBord" },
 })
 
 routes.push({
