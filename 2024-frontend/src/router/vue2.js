@@ -19,10 +19,6 @@ const vue2routes = [
     name: "DashboardManager",
   },
   {
-    path: "/gestion",
-    name: "ManagementPage",
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     meta: {

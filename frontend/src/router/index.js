@@ -506,6 +506,10 @@ const vue3Routes = [
     path: "/observatoire",
     name: "Observatoire",
   },
+  {
+    path: "/gestion",
+    name: "GestionnaireTableauDeBord",
+  },
 ]
 const VUE3_PREFIX = "/v2"
 vue3Routes.forEach((r) => {
