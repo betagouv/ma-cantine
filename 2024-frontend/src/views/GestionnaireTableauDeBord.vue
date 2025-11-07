@@ -14,6 +14,7 @@ const canteenSentence = computed(() => {
   return `${count} cantines`
 })
 
+/* BUTTON */
 const links = [
   {
     to: { name: "GestionnaireCantineAjouter" },
