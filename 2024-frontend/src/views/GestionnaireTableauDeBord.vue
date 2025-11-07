@@ -46,12 +46,16 @@ const links = [
 /* SEARCH */
 const search = ref()
 const isSearching = ref(false)
+const searchIsEmpty = ref(false)
 const clicSearch = () => {
   const searchValue = search.value.trim()
   isSearching.value = true
+  searchIsEmpty.value = false
   if (searchValue === "") clearSearch()
-  else searchCanteens(searchValue)
-  // TODO si pas de résultat
+  else {
+    searchCanteens(searchValue)
+    if (filteredCanteens.value.length === 0) searchIsEmpty.value = true
+  }
   isSearching.value = false
 }
 
@@ -99,8 +103,9 @@ const canteensTable = computed(() => {
         placeholder="Rechercher une cantine par son nom, son siret, ou son siren"
         @search="clicSearch"
       />
-      <AppLoader v-if="isSearching" class="fr-my-4w" />
-      <GestionnaireCanteensTable v-if="!isSearching && canteensTable.length > 0" :canteens="canteensTable" />
+      <AppLoader v-if="isSearching" class="fr-mt-2w fr-mb-4w" />
+      <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty">Aucun résultat trouvé pour la recherche « {{ search }} »</p>
+      <GestionnaireCanteensTable v-else :canteens="canteensTable" />
     </template>
     <GestionnaireGuides />
   </section>
