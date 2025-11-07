@@ -233,7 +233,6 @@ const getQuickAction = (canteen) => {
 
   td:last-child {
     padding-left: 0 !important;
-    padding-right: 0 !important;
   }
 
   th:nth-child(3) {
