@@ -84,10 +84,7 @@ const canteensTable = computed(() => {
 
 <template>
   <section class="fr-grid-row">
-    <div class="fr-col-12 fr-col-md-8">
-      <h1>Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
-      <p class="fr-text--lead">{{ canteenSentence }}</p>
-    </div>
+    <h1 class="fr-col-12 fr-col-md-8">Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
     <div class="fr-col-12 fr-col-md-4 fr-grid-row fr-grid-row--right fr-grid-row--top">
       <AppDropdownMenu label="Gérer mes cantines" :links="links" size="medium" />
     </div>
@@ -95,14 +92,20 @@ const canteensTable = computed(() => {
   <section class="ma-cantine--stick-to-footer">
     <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
     <template v-else>
-      <DsfrSearchBar
-        v-model="search"
-        :large="true"
-        label="Rechercher"
-        button-text="Rechercher"
-        placeholder="Rechercher une cantine par son nom, son siret, ou son siren"
-        @search="clicSearch"
-      />
+      <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-md-8">
+          <p class="fr-mb-0 fr-text--lead">{{ canteenSentence }}</p>
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+          <DsfrSearchBar
+            v-model="search"
+            label="Rechercher"
+            button-text="Rechercher"
+            placeholder="Chercher une cantine"
+            @search="clicSearch"
+          />
+        </div>
+      </div>
       <AppLoader v-if="isSearching" class="fr-mt-2w fr-mb-4w" />
       <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty">Aucun résultat trouvé pour la recherche « {{ search }} »</p>
       <GestionnaireCanteensTable v-else :canteens="canteensTable" />
