@@ -40,7 +40,7 @@
             <v-alert v-else type="success" class="mb-0">
               <p class="mb-0">
                 Votre demande a bien été prise en compte. Nous reviendrons vers vous au plus vite.
-                <router-link class="white--text" :to="{ name: 'ManagementPage' }">
+                <router-link class="white--text" :to="{ name: 'GestionnaireTableauDeBord' }">
                   Revenir à mes cantines
                 </router-link>
               </p>
@@ -70,7 +70,7 @@
             <v-alert v-else type="success" class="mb-0">
               <p class="mb-0">
                 Message envoyé,
-                <router-link class="white--text" :to="{ name: 'ManagementPage' }">
+                <router-link class="white--text" :to="{ name: 'GestionnaireTableauDeBord' }">
                   revenir à mes cantines
                 </router-link>
               </p>
@@ -203,7 +203,7 @@ export default {
               })
             })
         })
-        .catch(() => this.$router.push({ name: "ManagementPage" }))
+        .catch(() => this.$router.push({ name: "GestionnaireTableauDeBord" }))
     },
     saveSiretIfNeeded() {
       if (!this.canteen?.id) return Promise.resolve()

@@ -1,6 +1,6 @@
 <template>
   <div class="text-left">
-    <BreadcrumbsNav :links="[{ to: { name: 'ManagementPage' } }]" />
+    <BreadcrumbsNav :links="[{ to: { name: 'GestionnaireTableauDeBord' } }]" />
     <h1 class="font-weight-black text-h4 mb-8">Actions en attente en {{ year }}</h1>
     <AnnualActionableCanteensTable />
   </div>

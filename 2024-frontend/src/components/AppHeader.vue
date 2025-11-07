@@ -18,14 +18,14 @@ const quickLinks = computed(() => {
     const apis = { to: { name: "Developpeurs" }, label: "Développement et APIs" }
     return [apis]
   }
-  const mesCantines = { to: { name: "ManagementPage" }, label: "Mon tableau de bord" }
+  const mesCantines = { to: { name: "GestionnaireTableauDeBord" }, label: "Mon tableau de bord" }
   return [mesCantines]
 })
 
 const navItems = [
   {
     text: "Mon tableau de bord",
-    to: { name: "ManagementPage" },
+    to: { name: "GestionnaireTableauDeBord" },
     authenticationState: true,
   },
   {

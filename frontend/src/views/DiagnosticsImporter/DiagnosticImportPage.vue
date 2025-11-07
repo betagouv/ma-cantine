@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav
-      :links="[{ to: { name: 'ManagementPage' } }, { to: { name: 'GestionnaireImport' } }]"
+      :links="[{ to: { name: 'GestionnaireTableauDeBord' } }, { to: { name: 'GestionnaireImport' } }]"
       :title="type.title"
     />
 

@@ -13,7 +13,7 @@ const router = useRouter()
 const canteenId = computed(() => +props.canteenUrlComponent.split("--")[0])
 const canteen = computed(() => {
   const canteen = store.canteenPreviews.find((canteen) => canteen.id === canteenId.value)
-  if (!canteen) router.replace({ name: "ManagementPage" })
+  if (!canteen) router.replace({ name: "GestionnaireTableauDeBord" })
   return {
     id: canteenId,
     name: canteen?.name,
@@ -41,7 +41,7 @@ onMounted(() => {
     <h1>Déchets alimentaires</h1>
     <p>
       {{ canteen.name }}&nbsp;
-      <router-link :to="{ name: 'ManagementPage' }" class="fr-btn fr-btn--tertiary fr-btn--sm">
+      <router-link :to="{ name: 'GestionnaireTableauDeBord' }" class="fr-btn fr-btn--tertiary fr-btn--sm">
         Changer d'établissement
       </router-link>
     </p>

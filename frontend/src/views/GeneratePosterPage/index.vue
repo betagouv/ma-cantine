@@ -93,7 +93,10 @@
       <v-row>
         <v-col cols="12" md="7" class="text-body-2 mb-2">
           Pour mettre à jour ces données, rendez-vous sur
-          <router-link :to="{ name: 'ManagementPage' }" class="text-decoration-underline primary--text text-body-2">
+          <router-link
+            :to="{ name: 'GestionnaireTableauDeBord' }"
+            class="text-decoration-underline primary--text text-body-2"
+          >
             mes cantines
           </router-link>
           .

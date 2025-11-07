@@ -37,7 +37,7 @@ const routes = [
     meta: {
       title: "Déchets alimentaires",
       breadcrumbs: [
-        { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+        { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
         { to: { name: "DashboardManager" }, useCanteenName: true },
       ],
     },
@@ -66,7 +66,7 @@ const routes = [
     meta: {
       title: "Importer des achats",
       breadcrumbs: [
-        { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+        { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
         { to: { name: "GestionnaireImport" }, title: "Importer des données" },
       ],
     },
@@ -78,7 +78,7 @@ const routes = [
     meta: {
       title: "Importer des cantines",
       breadcrumbs: [
-        { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+        { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
         { to: { name: "GestionnaireImport" }, title: "Importer des données" },
       ],
     },
@@ -89,7 +89,7 @@ const routes = [
     component: GestionnaireCantineAjouter,
     meta: {
       title: "Ajouter une cantine",
-      breadcrumbs: [{ to: { name: "ManagementPage" }, title: "Mon tableau de bord" }],
+      breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
       siteMap: action,
     },
   },
@@ -103,7 +103,7 @@ const routes = [
         meta: {
           title: "Gérer mon établissement",
           breadcrumbs: [
-            { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },
           ],
         },
@@ -115,7 +115,7 @@ const routes = [
         meta: {
           title: "Modifier mon établissement",
           breadcrumbs: [
-            { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },
             { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
           ],
@@ -131,7 +131,7 @@ const routes = [
             meta: {
               title: "Gérer mes restaurants satellites",
               breadcrumbs: [
-                { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
                 { to: { name: "DashboardManager" }, useCanteenName: true },
               ],
             },
@@ -143,7 +143,7 @@ const routes = [
             meta: {
               title: "Ajouter un restaurant satellite",
               breadcrumbs: [
-                { to: { name: "ManagementPage" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
                 { to: { name: "DashboardManager" }, useCanteenName: true },
                 { to: { name: "GestionnaireCantineSatellitesGerer" }, title: "Gérer mes restaurants satellites" },
               ],

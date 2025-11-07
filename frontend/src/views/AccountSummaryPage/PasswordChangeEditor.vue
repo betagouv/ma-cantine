@@ -90,7 +90,7 @@ export default {
       this.$store
         .dispatch("changePassword", { payload })
         .then(() => {
-          this.$router.push({ name: "ManagementPage" }).then(() => {
+          this.$router.push({ name: "GestionnaireTableauDeBord" }).then(() => {
             this.$store.dispatch("notify", {
               title: "Mise à jour prise en compte",
               message: "Votre mot de passe a bien été mis à jour",

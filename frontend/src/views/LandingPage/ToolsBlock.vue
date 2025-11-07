@@ -37,7 +37,7 @@
         <v-spacer></v-spacer>
         <v-btn v-if="!loggedUser" href="/s-identifier" color="primary" large outlined class="mr-2">M'identifier</v-btn>
         <v-btn v-if="!loggedUser" href="/creer-mon-compte" color="primary" large>Créer mon compte</v-btn>
-        <v-btn v-if="loggedUser" :to="{ name: 'ManagementPage' }" color="primary" large outlined>
+        <v-btn v-if="loggedUser" :to="{ name: 'GestionnaireTableauDeBord' }" color="primary" large outlined>
           Gérer mes cantines
         </v-btn>
         <v-spacer></v-spacer>

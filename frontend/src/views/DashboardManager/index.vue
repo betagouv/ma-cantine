@@ -13,7 +13,7 @@
 
     <v-row v-if="canteenPreviews.length > 1">
       <v-col>
-        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'ManagementPage' }">
+        <v-btn outlined color="primary" class="fr-btn--tertiary" :to="{ name: 'GestionnaireTableauDeBord' }">
           Changer d'établissement
         </v-btn>
       </v-col>
@@ -126,7 +126,7 @@ export default {
         })
         .catch(() => {
           this.$set(this, "canteen", null)
-          this.$router.replace({ name: "ManagementPage" }).then(() => {
+          this.$router.replace({ name: "GestionnaireTableauDeBord" }).then(() => {
             this.$store.dispatch("notify", {
               message: "Nous n'avons pas trouvé cette cantine",
               status: "error",

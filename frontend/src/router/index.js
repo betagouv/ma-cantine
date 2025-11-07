@@ -64,7 +64,7 @@ const routes = [
     name: "ManagerLanding",
     component: ManagerLanding,
     beforeEnter: (_to, _from, next) => {
-      store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
+      store.state.loggedUser ? next({ name: "GestionnaireTableauDeBord" }) : next()
     },
   },
   {
@@ -110,7 +110,7 @@ const routes = [
       title: "M'auto-évaluer",
     },
     beforeEnter: (_to, _from, next) => {
-      store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
+      store.state.loggedUser ? next({ name: "GestionnaireTableauDeBord" }) : next()
     },
   },
   {
@@ -398,7 +398,7 @@ const routes = [
       authenticationRequired: true,
     },
     beforeEnter: (_to, _from, next) => {
-      store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "ManagementPage" })
+      store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "GestionnaireTableauDeBord" })
     },
   },
 ]
@@ -509,6 +509,9 @@ const vue3Routes = [
   {
     path: "/gestion",
     name: "GestionnaireTableauDeBord",
+    meta: {
+      title: "Mon tableau de bord",
+    },
   },
 ]
 const VUE3_PREFIX = "/v2"
@@ -563,7 +566,8 @@ function chooseAuthorisedRoute(to, from, next) {
         next({ name: "LandingPage" })
       })
   } else {
-    if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev) next({ name: "ManagementPage" })
+    if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev)
+      next({ name: "GestionnaireTableauDeBord" })
     else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "Developpeurs" })
     else if (to.meta.home) next({ name: "LandingPage" })
     else if (!to.meta.authenticationRequired || store.state.loggedUser) next()

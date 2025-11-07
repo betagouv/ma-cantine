@@ -214,7 +214,7 @@ export default {
       navLinks: [
         {
           text: "Mon tableau de bord",
-          to: { name: "ManagementPage" },
+          to: { name: "GestionnaireTableauDeBord" },
           authenticationState: true,
         },
         {
@@ -369,7 +369,7 @@ export default {
         const apis = { to: { name: "Developpeurs" }, text: "Développement et APIs" }
         return [apis, logout]
       }
-      const mesCantines = { to: { name: "ManagementPage" }, text: "Mon tableau de bord" }
+      const mesCantines = { to: { name: "GestionnaireTableauDeBord" }, text: "Mon tableau de bord" }
       return [mesCantines, logout]
     },
   },
