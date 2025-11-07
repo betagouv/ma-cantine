@@ -37,7 +37,7 @@ const links = [
   },
 ]
 
-const search = ref("")
+const search = ref()
 </script>
 
 <template>
@@ -54,6 +54,7 @@ const search = ref("")
     <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
     <template v-else>
       <DsfrSearchBar
+        v-model="search"
         :large="true"
         label="Rechercher"
         button-text="Rechercher"
