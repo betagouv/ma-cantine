@@ -28,7 +28,6 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import ManagementPage from "@/views/ManagementPage"
 import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
@@ -262,15 +261,6 @@ const routes = [
     component: NewPartner,
     meta: {
       title: "Nouvel acteur de l'éco-système",
-    },
-  },
-  {
-    path: "/gestion",
-    name: "ManagementPage",
-    component: ManagementPage,
-    meta: {
-      title: "Mon tableau de bord",
-      authenticationRequired: true,
     },
   },
   {
