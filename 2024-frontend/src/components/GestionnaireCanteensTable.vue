@@ -98,7 +98,7 @@ const getDropdownLinks = (canteen) => {
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
   const links = [
     {
-      label: "Modifier la cantine",
+      label: "Modifier l'établissement",
       to: { name: "GestionnaireCantineGerer", params: { canteenUrlComponent: canteenUrlComponent } },
     },
     {
