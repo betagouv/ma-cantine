@@ -20,16 +20,14 @@ const tiles = ref([
 </script>
 
 <template>
-  <div>
+  <section class="fr-col-12 fr-col-md-7">
     <h1>{{ route.meta.title }}</h1>
-    <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
-      <li v-for="tile in tiles" :key="tile.name" class="fr-col-12 fr-col-md-4">
-        <DsfrTile :title="tile.title" :to="{ name: tile.name }" :description="tile.description">
-          <template #header>
-            <DsfrBadge v-for="tag in tile.tags" :key="tag" :label="tag" class="fr-mr-1v" :no-icon="true" />
-          </template>
-        </DsfrTile>
-      </li>
-    </ul>
-  </div>
+    <p>
+      Gagnez du temps en important vos données directement dans
+      <em>ma cantine.</em>
+      <br />
+      Pour une expérience optimale, veuillez bien respecter les formats attendus.
+    </p>
+  </section>
+  <section></section>
 </template>
