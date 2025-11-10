@@ -149,7 +149,7 @@ const sendInquiry = () => {
         </form>
       </div>
       <div class="fr-col-4 fr-hidden fr-unhidden-lg">
-        <img :src="sittingDoodle" class="app-form-send-inquiry__illustration" />
+        <img :src="sittingDoodle" class="app-form-send-inquiry__illustration" alt="" />
       </div>
     </div>
   </div>

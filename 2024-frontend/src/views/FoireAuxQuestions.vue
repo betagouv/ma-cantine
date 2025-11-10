@@ -22,7 +22,7 @@ const readingDoodleIllustration = "/static/images/doodles-dsfr/primary/ReadingDo
       <AppMultipleAccordionsGroup v-for="(group, index) in groups" :key="index" :group="group" />
     </div>
     <div class="fr-hidden fr-unhidden-lg fr-col-4 fr-grid-row fr-grid-row--right ma-cantine--sticky">
-      <img :src="readingDoodleIllustration" class="faq__illustration" />
+      <img :src="readingDoodleIllustration" class="faq__illustration" alt="" />
     </div>
   </section>
   <AppNeedHelp badge="Une suggestion" title="Vous ne trouvez pas ce que vous cherchez ?">
