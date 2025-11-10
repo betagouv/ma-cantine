@@ -34,7 +34,6 @@ import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
-import DiagnosticImportPage from "@/views/DiagnosticsImporter/DiagnosticImportPage"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasePage from "@/views/PurchasePage"
 import PurchasesSummary from "@/views/PurchasesSummary"
@@ -319,16 +318,6 @@ const routes = [
     },
   },
   {
-    path: "/importer-diagnostics/:importUrlSlug",
-    name: "DiagnosticImportPage",
-    component: DiagnosticImportPage,
-    props: true,
-    beforeEnter: (to, _from, next) => {
-      if (to.params.importUrlSlug === "cantines-seules") next({ name: "GestionnaireImportCantines" })
-      else next()
-    },
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     component: PurchasesHome,
@@ -538,6 +527,11 @@ routes.push({
 routes.push({
   path: "/gestion",
   redirect: { name: "GestionnaireTableauDeBord", params: null, query: null },
+})
+
+routes.push({
+  path: "/importer-diagnostics/*",
+  redirect: { name: "GestionnaireImport", params: null, query: null },
 })
 
 routes.push({
