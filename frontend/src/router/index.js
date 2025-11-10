@@ -536,6 +536,11 @@ routes.push({
 })
 
 routes.push({
+  path: "/gestion",
+  redirect: { name: "GestionnaireTableauDeBord", params: null, query: null },
+})
+
+routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
   name: "NotFound",
