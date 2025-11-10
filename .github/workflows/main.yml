@@ -4,6 +4,7 @@ on: [push]
 
 jobs:
   build:
+    name: "ma-cantine: build and test"
     runs-on: ubuntu-latest
 
     steps:
@@ -96,3 +97,8 @@ jobs:
           DEFAULT_FILE_STORAGE: django.core.files.storage.FileSystemStorage
         run: |
           uv run python manage.py buildnpmvue3
+
+      - name: Vue 3 lint
+        working-directory: ./2024-frontend
+        run: |
+          npm run lint
