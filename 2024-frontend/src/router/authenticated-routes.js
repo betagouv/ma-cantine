@@ -51,37 +51,43 @@ const routes = [
     },
   },
   {
-    path: "/tableau-de-bord/imports",
-    name: "GestionnaireImport",
-    component: GestionnaireImport,
-    meta: {
-      title: "Importer des données",
-      siteMap: diag,
-    },
-  },
-  {
-    path: "/tableau-de-bord/imports/achats",
-    name: "GestionnaireImportAchats",
-    component: GestionnaireImportAchats,
-    meta: {
-      title: "Importer des achats",
-      breadcrumbs: [
-        { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-        { to: { name: "GestionnaireImport" }, title: "Importer des données" },
-      ],
-    },
-  },
-  {
-    path: "/tableau-de-bord/imports/cantines",
-    name: "GestionnaireImportCantines",
-    component: GestionnaireImportCantines,
-    meta: {
-      title: "Importer des cantines",
-      breadcrumbs: [
-        { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-        { to: { name: "GestionnaireImport" }, title: "Importer des données" },
-      ],
-    },
+    path: "/tableau-de-bord/imports/",
+    children: [
+      {
+        path: "",
+        name: "GestionnaireImport",
+        component: GestionnaireImport,
+        meta: {
+          title: "Importer des données",
+          siteMap: diag,
+          breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
+        },
+      },
+      {
+        path: "achats",
+        name: "GestionnaireImportAchats",
+        component: GestionnaireImportAchats,
+        meta: {
+          title: "Importer des achats",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "cantines",
+        name: "GestionnaireImportCantines",
+        component: GestionnaireImportCantines,
+        meta: {
+          title: "Importer des cantines",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+    ],
   },
   {
     path: "/tableau-de-bord/cantines/ajouter",
