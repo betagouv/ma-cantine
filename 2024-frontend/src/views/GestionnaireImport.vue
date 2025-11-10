@@ -33,9 +33,11 @@ const pages = ref([
       <br />
       Pour une expérience optimale, veuillez bien respecter les formats attendus.
     </p>
-    <ul class="ma-cantine--unstyled-list">
-      <li v-for="page in pages" :key="page.name" class="fr-mb-1w">
-        <DsfrCard :title="page.title" :link="page.to" :description="page.description" :horizontal="true">
+  </section>
+  <section>
+    <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
+      <li v-for="page in pages" :key="page.name" class="fr-col-12 fr-col-md-4">
+        <DsfrCard :title="page.title" :link="page.to" :description="page.description">
           <template #start-details v-if="page.badges">
             <DsfrBadge v-for="badge in page.badges" :key="badge" :label="badge" class="fr-mr-1v" no-icon />
           </template>
