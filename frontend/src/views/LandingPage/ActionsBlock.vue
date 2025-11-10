@@ -3,7 +3,7 @@
     <li class="col-12 col-md-4">
       <v-card
         outlined
-        :to="loggedUser ? { name: 'ManagementPage' } : undefined"
+        :to="loggedUser ? { name: 'GestionnaireTableauDeBord' } : undefined"
         :href="loggedUser ? undefined : '/s-identifier'"
         class="fill-height pa-4 d-flex flex-column hover-transition dsfr mt-n6"
       >

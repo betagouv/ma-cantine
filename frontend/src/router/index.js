@@ -28,8 +28,6 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import ManagementPage from "@/views/ManagementPage"
-import PendingActions from "@/views/PendingActions"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
@@ -65,7 +63,7 @@ const routes = [
     name: "ManagerLanding",
     component: ManagerLanding,
     beforeEnter: (_to, _from, next) => {
-      store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
+      store.state.loggedUser ? next({ name: "GestionnaireTableauDeBord" }) : next()
     },
   },
   {
@@ -111,7 +109,7 @@ const routes = [
       title: "M'auto-évaluer",
     },
     beforeEnter: (_to, _from, next) => {
-      store.state.loggedUser ? next({ name: "ManagementPage" }) : next()
+      store.state.loggedUser ? next({ name: "GestionnaireTableauDeBord" }) : next()
     },
   },
   {
@@ -265,24 +263,6 @@ const routes = [
     },
   },
   {
-    path: "/gestion",
-    name: "ManagementPage",
-    component: ManagementPage,
-    meta: {
-      title: "Mon tableau de bord",
-      authenticationRequired: true,
-    },
-  },
-  {
-    path: "/actions-en-attente",
-    name: "PendingActions",
-    component: PendingActions,
-    meta: {
-      title: "Actions en attente",
-      authenticationRequired: true,
-    },
-  },
-  {
     path: "/modifier-ma-cantine/:canteenUrlComponent",
     name: "GestionnaireCantineModifier",
     props: true,
@@ -408,7 +388,7 @@ const routes = [
       authenticationRequired: true,
     },
     beforeEnter: (_to, _from, next) => {
-      store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "ManagementPage" })
+      store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "GestionnaireTableauDeBord" })
     },
   },
 ]
@@ -446,7 +426,7 @@ const vue3Routes = [
     name: "GestionnaireGaspillageAlimentaireModifier",
   },
   {
-    path: "/gestion/imports",
+    path: "/tableau-de-bord/imports",
     name: "GestionnaireImport",
     meta: {
       title: "Importer des données",
@@ -473,31 +453,31 @@ const vue3Routes = [
     name: "Contact",
   },
   {
-    path: "/gestion/imports/achats",
+    path: "/tableau-de-bord/imports/achats",
     name: "GestionnaireImportAchats",
   },
   {
-    path: "/gestion/imports/cantines",
+    path: "/tableau-de-bord/imports/cantines",
     name: "GestionnaireImportCantines",
   },
   {
-    path: "/gestion/cantines/ajouter",
+    path: "/tableau-de-bord/cantines/ajouter",
     name: "GestionnaireCantineAjouter",
   },
   {
-    path: "/gestion/cantines/:canteenUrlComponent/modifier",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/modifier",
     name: "CanteenForm",
   },
   {
-    path: "/gestion/cantines/:canteenUrlComponent/gerer",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/gerer",
     name: "GestionnaireCantineGerer",
   },
   {
-    path: "/gestion/cantines/:canteenUrlComponent/satellites/gerer",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/satellites/gerer",
     name: "GestionnaireCantineSatellitesGerer",
   },
   {
-    path: "/gestion/cantines/:canteenUrlComponent/satellites/ajouter",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/satellites/ajouter",
     name: "GestionnaireCantineSatellitesAjouter",
   },
   {
@@ -515,6 +495,13 @@ const vue3Routes = [
   {
     path: "/observatoire",
     name: "Observatoire",
+  },
+  {
+    path: "/tableau-de-bord",
+    name: "GestionnaireTableauDeBord",
+    meta: {
+      title: "Mon tableau de bord",
+    },
   },
 ]
 const VUE3_PREFIX = "/v2"
@@ -544,6 +531,16 @@ routes.push({
 })
 
 routes.push({
+  path: "/actions-en-attente",
+  redirect: { name: "GestionnaireTableauDeBord" },
+})
+
+routes.push({
+  path: "/gestion",
+  redirect: { name: "GestionnaireTableauDeBord", params: null, query: null },
+})
+
+routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
   name: "NotFound",
@@ -569,7 +566,8 @@ function chooseAuthorisedRoute(to, from, next) {
         next({ name: "LandingPage" })
       })
   } else {
-    if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev) next({ name: "ManagementPage" })
+    if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev)
+      next({ name: "GestionnaireTableauDeBord" })
     else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "Developpeurs" })
     else if (to.meta.home) next({ name: "LandingPage" })
     else if (!to.meta.authenticationRequired || store.state.loggedUser) next()

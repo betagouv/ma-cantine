@@ -35,7 +35,7 @@ export default {
       this.$store
         .dispatch("deleteCanteen", { id: this.originalCanteen.id })
         .then(() => {
-          this.$router.push({ name: "ManagementPage" }).then(() => {
+          this.$router.push({ name: "GestionnaireTableauDeBord" }).then(() => {
             this.$store.dispatch("notify", {
               message:
                 "Votre cantine a bien été supprimée. En cas d'erreur vous pouvez nous contacter à l'adresse support-egalim@beta.gouv.fr",

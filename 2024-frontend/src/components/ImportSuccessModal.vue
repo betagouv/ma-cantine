@@ -16,7 +16,7 @@ defineProps(["message", "opened"])
       {
         label: 'Aller sur mon tableau de bord',
         onClick() {
-          router.push({ name: 'ManagementPage' })
+          router.push({ name: 'GestionnaireTableauDeBord' })
         },
       },
       {

@@ -2,7 +2,7 @@
   <div class="text-left">
     <BreadcrumbsNav
       :links="[
-        { to: { name: 'ManagementPage' } },
+        { to: { name: 'GestionnaireTableauDeBord' } },
         { to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' },
       ]"
     />
@@ -29,7 +29,7 @@
           outlined
           color="primary"
           class="fr-btn--tertiary"
-          :to="{ name: 'ManagementPage' }"
+          :to="{ name: 'GestionnaireTableauDeBord' }"
         >
           Changer d'établissement
         </v-btn>
@@ -455,7 +455,7 @@ export default {
             message: "Nous n'avons pas trouvé cette cantine",
             status: "error",
           })
-          this.$router.push({ name: "ManagementPage" })
+          this.$router.push({ name: "GestionnaireTableauDeBord" })
         })
     },
     fetchCanteenAction() {

@@ -35,8 +35,11 @@ export default {
       return !this.canteenUrlComponent
     },
     breadcrumbLinks() {
-      if (this.isNewCanteen) return [{ to: { name: "ManagementPage" } }]
-      return [{ to: { name: "ManagementPage" } }, { to: { name: "DashboardManager" }, title: this.canteen.name }]
+      if (this.isNewCanteen) return [{ to: { name: "GestionnaireTableauDeBord" } }]
+      return [
+        { to: { name: "GestionnaireTableauDeBord" } },
+        { to: { name: "DashboardManager" }, title: this.canteen.name },
+      ]
     },
   },
   methods: {
@@ -51,7 +54,7 @@ export default {
         .dispatch("fetchCanteen", { id })
         .then((canteen) => (this.canteen = canteen))
         .catch(() => {
-          this.$router.push({ name: "ManagementPage" }).then(() => {
+          this.$router.push({ name: "GestionnaireTableauDeBord" }).then(() => {
             this.$store.dispatch("notify", {
               message: "Nous n'avons pas trouvé cette cantine",
               status: "error",

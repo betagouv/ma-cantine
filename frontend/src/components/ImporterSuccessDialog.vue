@@ -24,7 +24,7 @@
           </v-row>
           <v-row>
             <v-spacer></v-spacer>
-            <router-link :to="{ name: 'ManagementPage' }">
+            <router-link :to="{ name: 'GestionnaireTableauDeBord' }">
               <v-btn color="primary" class="px-4">
                 Aller sur mon tableau de bord
               </v-btn>

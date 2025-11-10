@@ -19,10 +19,6 @@ const vue2routes = [
     name: "DashboardManager",
   },
   {
-    path: "/gestion",
-    name: "ManagementPage",
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     meta: {
@@ -141,15 +137,6 @@ const vue2routes = [
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent/supprimer",
     name: "CanteenDeletion",
-  },
-  {
-    path: "/actions-en-attente",
-    name: "PendingActions",
-    meta: {
-      title: "Actions en attente",
-      siteMap: diag,
-      authenticationRequired: true,
-    },
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent/gestionnaires",
