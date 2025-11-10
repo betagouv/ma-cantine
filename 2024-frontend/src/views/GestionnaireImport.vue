@@ -8,18 +8,39 @@ const pages = ref([
     title: "Importer des cantines",
     to: { name: "GestionnaireImportCantines" },
     description: "Vous voulez créer ou mettre à jour des cantines.",
-    badges: ["Excel", "CSV"],
+    badges: [
+      {
+        label: "Excel",
+        noIcon: true,
+      },
+      {
+        label: "CSV",
+        noIcon: true,
+      },
+    ],
   },
   {
     title: "Importer des achats",
     to: { name: "GestionnaireImportAchats" },
     description: "Vous voulez importer des données d'achat pour des cantines existantes.",
-    badges: ["CSV"],
+    badges: [
+      {
+        label: "CSV",
+        noIcon: true,
+      },
+    ],
   },
   {
     title: "Importer des bilans",
     disabled: true,
     description: "Cette fonctionnalité est en cours de construction et sera disponible prochainement.",
+    badges: [
+      {
+        label: "Bientôt disponible",
+        type: "warning",
+        noIcon: false,
+      },
+    ],
   },
 ])
 </script>
@@ -39,7 +60,14 @@ const pages = ref([
       <li v-for="page in pages" :key="page.name" class="fr-col-12 fr-col-md-4">
         <DsfrCard :title="page.title" :link="page.to" :description="page.description">
           <template #start-details v-if="page.badges">
-            <DsfrBadge v-for="badge in page.badges" :key="badge" :label="badge" class="fr-mr-1v" no-icon />
+            <DsfrBadge
+              v-for="badge in page.badges"
+              :key="badge"
+              :label="badge.label"
+              :type="badge.type || 'info'"
+              class="fr-mr-1v"
+              :no-icon="badge.noIcon"
+            />
           </template>
         </DsfrCard>
       </li>
