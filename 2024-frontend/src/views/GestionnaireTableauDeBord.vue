@@ -3,6 +3,7 @@ import { ref, computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
+import stringService from "@/services/strings.js"
 
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
@@ -47,28 +48,27 @@ const links = [
 const search = ref()
 const isSearching = ref(false)
 const searchIsEmpty = ref(false)
+
 const clicSearch = () => {
-  const searchValue = search.value.trim()
   isSearching.value = true
-  searchIsEmpty.value = false
-  if (searchValue === "") clearSearch()
-  else {
-    searchCanteens(searchValue)
-    if (filteredCanteens.value.length === 0) searchIsEmpty.value = true
-  }
+  searchCanteens()
   isSearching.value = false
 }
 
-const clearSearch = () => {
-  filteredCanteens.value = []
+const updateSearch = () => {
+  const searchValue = search.value.trim()
+  searchIsEmpty.value = searchValue === ""
+  if (searchIsEmpty.value) filteredCanteens.value = []
 }
 
-const searchCanteens = (searchValue) => {
+const searchCanteens = () => {
+  const searchValue = search.value.trim()
   filteredCanteens.value = allCanteens.value.filter((canteen) => {
     if (canteen.siret && canteen.siret.indexOf(searchValue) === 0) return true
     if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchValue) === 0) return true
-    if (canteen.name.indexOf(searchValue) > 0) return true
+    if (stringService.checkIfContains(canteen.name, searchValue)) return true
   })
+  if (filteredCanteens.value.length === 0) searchIsEmpty.value = true
 }
 
 /* CANTEENS */
@@ -101,12 +101,15 @@ const canteensTable = computed(() => {
           label="Rechercher"
           button-text="Rechercher"
           placeholder="Rechercher par le nom, siret ou siren de l'établissement"
+          @update:modelValue="updateSearch"
           @search="clicSearch"
         />
       </div>
     </div>
     <AppLoader v-if="isSearching" class="fr-mt-2w fr-mb-4w" />
-    <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty">Aucun résultat trouvé pour la recherche « {{ search }} »</p>
+    <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty && search">
+      Aucun résultat trouvé pour la recherche « {{ search }} »
+    </p>
     <GestionnaireCanteensTable v-else :canteens="canteensTable" />
   </section>
   <GestionnaireGuides class="ma-cantine--stick-to-footer" />
