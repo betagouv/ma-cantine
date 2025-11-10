@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory
+from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory, SectorFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
 from data.utils import CreationSource
 
@@ -257,7 +257,7 @@ class CanteenDetailApiTest(APITestCase):
 
     @authenticate
     def test_get_central_kitchen(self):
-        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
+        central_kitchen = CanteenFactory.create(siret="96953195898254", production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory.create(
             central_producer_siret=central_kitchen.siret,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -340,6 +340,10 @@ class CanteenDetailApiTest(APITestCase):
 class CanteenCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.sector_1 = SectorFactory()
+        cls.sector_2 = SectorFactory()
+        cls.sector_3 = SectorFactory()
+        cls.sector_4 = SectorFactory()
         cls.DEFAULT_PAYLOAD = {
             "name": "My canteen",
             "city": "Lyon",
@@ -349,6 +353,7 @@ class CanteenCreateApiTest(APITestCase):
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
+            "sectors": [cls.sector_1.id, cls.sector_2.id],
         }
 
     @authenticate
@@ -384,9 +389,9 @@ class CanteenCreateApiTest(APITestCase):
     @authenticate
     def test_create_canteen_missing_siret(self):
         payload = self.DEFAULT_PAYLOAD.copy()
-        del payload["siret"]
+        payload.pop("siret")
 
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(reverse("user_canteens"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["Ce champ est obligatoire."])
@@ -451,6 +456,73 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
 
     @authenticate
+    def test_create_canteen_with_sectors(self):
+        central_kitchen = CanteenFactory.create(siret="03201976246133", production_type=Canteen.ProductionType.CENTRAL)
+
+        for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
+            # sector should be empty
+            for sectors in [[]]:
+                with self.subTest(production_type=production_type, sectors=sectors):
+                    payload = {
+                        **self.DEFAULT_PAYLOAD,
+                        "productionType": production_type,
+                        "satelliteCanteensCount": 1,  # needed for central kitchens
+                        "sectors": sectors,
+                    }
+                    response = self.client.post(reverse("user_canteens"), payload, format="json")
+                    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                    canteen = Canteen.objects.get(pk=response.json()["id"])
+                    self.assertEqual(canteen.sectors.count(), len(sectors))
+                    canteen.delete()  # to reuse the same SIRET
+            for sectors in [
+                [self.sector_1.id],
+                [self.sector_1.id, self.sector_2.id, self.sector_3.id, self.sector_4.id],
+            ]:
+                with self.subTest(production_type=production_type, sectors=sectors):
+                    payload = {
+                        **self.DEFAULT_PAYLOAD,
+                        "productionType": production_type,
+                        "satelliteCanteensCount": 1,  # needed for central kitchens
+                        "sectors": sectors,
+                    }
+                    response = self.client.post(reverse("user_canteens"), payload, format="json")
+                    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        for production_type in [Canteen.ProductionType.ON_SITE, Canteen.ProductionType.ON_SITE_CENTRAL]:
+            # sector should be filled (between 1 and 3 sectors)
+            for sectors in [
+                [self.sector_1.id],
+                [self.sector_1.id, self.sector_2.id],
+                [self.sector_1.id, self.sector_2.id, self.sector_3.id],
+            ]:
+                with self.subTest(production_type=production_type, sectors=sectors):
+                    payload = {
+                        **self.DEFAULT_PAYLOAD,
+                        "productionType": production_type,
+                        "centralProducerSiret": central_kitchen.siret
+                        if production_type == Canteen.ProductionType.ON_SITE_CENTRAL
+                        else None,  # needed for satellite kitchens
+                        "sectors": sectors,
+                    }
+                    response = self.client.post(reverse("user_canteens"), payload, format="json")
+                    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                    canteen = Canteen.objects.get(pk=response.json()["id"])
+                    self.assertEqual(canteen.sectors.count(), len(sectors))
+                    canteen.delete()  # to reuse the same SIRET
+            for sectors in [[], [self.sector_1.id, self.sector_2.id, self.sector_3.id, self.sector_4.id]]:
+                with self.subTest(production_type=production_type, sectors=sectors):
+                    payload = {
+                        **self.DEFAULT_PAYLOAD,
+                        "productionType": production_type,
+                        "centralProducerSiret": central_kitchen.siret
+                        if production_type == Canteen.ProductionType.ON_SITE_CENTRAL
+                        else None,  # needed for satellite kitchens
+                        "sectors": sectors,
+                    }
+                    response = self.client.post(reverse("user_canteens"), payload, format="json")
+                    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
     def test_create_canteen_with_images(self):
         """
         The app should create the necessary image models upon the creation of a canteen
@@ -494,9 +566,9 @@ class CanteenCreateApiTest(APITestCase):
 
 class CanteenUpdateApiTest(APITestCase):
     @authenticate
-    def test_modify_canteen_unauthorized(self):
+    def test_update_canteen_unauthorized(self):
         """
-        Users can only modify the canteens they manage
+        Users can only update the canteens they manage
         """
         canteen = CanteenFactory.create(city="Paris")
         payload = {"city": "Lyon"}
@@ -505,21 +577,22 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_modify_canteen(self):
+    def test_update_canteen(self):
         """
-        Users can modify the canteens they manage
+        Users can update the canteens they manage
         """
         canteen = CanteenFactory.create(city="Paris", managers=[authenticate.user])
         payload = {
             "city": "Lyon",
             "siret": "21340172201787",
-            "managementType": Canteen.ManagementType.DIRECT,
-            "reservationExpeParticipant": True,
-            "satelliteCanteensCount": 130,
             "productionType": Canteen.ProductionType.CENTRAL,
+            "managementType": Canteen.ManagementType.DIRECT,
+            "satelliteCanteensCount": 130,
+            "reservationExpeParticipant": True,
+            "sectors": [],
         }
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         created_canteen = Canteen.objects.get(pk=canteen.id)
         self.assertEqual(created_canteen.city, "Lyon")
@@ -528,9 +601,10 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(created_canteen.satellite_canteens_count, 130)
         self.assertEqual(created_canteen.production_type, "central")
         self.assertEqual(created_canteen.reservation_expe_participant, True)
+        self.assertEqual(created_canteen.sectors.count(), 0)
 
     @authenticate
-    def test_modify_central_kitchen_siret(self):
+    def test_update_central_kitchen_siret(self):
         """
         A change in the SIRET of a central cuisine must update the "central_producer_siret" of
         its satellites
@@ -540,18 +614,20 @@ class CanteenUpdateApiTest(APITestCase):
         )
         satellites = [
             CanteenFactory.create(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
             ),
             CanteenFactory.create(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
             ),
             CanteenFactory.create(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
             ),
         ]
         payload = {"siret": "35662897196149"}
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": central_kitchen.id}), payload)
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": central_kitchen.id}), payload, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for satellite in satellites:
             satellite.refresh_from_db()
@@ -560,7 +636,7 @@ class CanteenUpdateApiTest(APITestCase):
     @authenticate
     def test_add_siret_to_central_kitchen(self):
         """
-        A central cuisine without a SIRET can add one without modifying everybody else
+        A central cuisine without a SIRET can add one without updating everybody else
         """
         central_kitchen_without_siret = CanteenFactory.create(
             production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
@@ -592,7 +668,7 @@ class CanteenUpdateApiTest(APITestCase):
             self.assertIsNone(canteen.central_producer_siret)
 
     @authenticate
-    def test_refuse_patch_without_siret(self):
+    def test_refuse_update_without_siret(self):
         """
         A canteen modification shouldn't allow deleting a SIRET with sending blank or null value
         """
@@ -661,7 +737,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertTrue(body["isManagedByUser"])
 
     @authenticate
-    def test_patch_with_own_siret(self):
+    def test_update_with_own_siret(self):
         """
         A canteen modification should pass if the siret in the payload is already the canteen's siret
         """
@@ -671,6 +747,56 @@ class CanteenUpdateApiTest(APITestCase):
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_update_canteen_sectors(self):
+        sector_1 = SectorFactory()
+        sector_2 = SectorFactory()
+        sector_3 = SectorFactory()
+        sector_4 = SectorFactory()
+        central_kitchen_with_sectors = CanteenFactory.create(
+            siret="03201976246133",
+            production_type=Canteen.ProductionType.CENTRAL,
+            sectors=[sector_1, sector_2],
+            managers=[authenticate.user],
+        )
+        canteen_site = CanteenFactory.create(
+            production_type=Canteen.ProductionType.ON_SITE, sectors=[], managers=[authenticate.user]
+        )
+
+        # central_kitchen: fix sectors (remove them)
+        self.assertEqual(central_kitchen_with_sectors.sectors.count(), 2)
+        payload = {"sectors": []}
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": central_kitchen_with_sectors.id}), payload, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        central_kitchen_with_sectors.refresh_from_db()
+        self.assertEqual(central_kitchen_with_sectors.sectors.count(), 0)
+
+        # central_kitchen: cannot add them back
+        payload = {"sectors": [sector_1.id, sector_2.id]}
+        response = self.client.patch(
+            reverse("single_canteen", kwargs={"pk": central_kitchen_with_sectors.id}), payload, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        central_kitchen_with_sectors.refresh_from_db()
+        self.assertEqual(central_kitchen_with_sectors.sectors.count(), 0)
+
+        # canteen_site: fix sectors (add some)
+        self.assertEqual(canteen_site.sectors.count(), 0)
+        payload = {"sectors": [sector_1.id, sector_2.id]}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen_site.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        canteen_site.refresh_from_db()
+        self.assertEqual(canteen_site.sectors.count(), 2)
+
+        # canteen_site: but cannot add too many
+        payload = {"sectors": [sector_1.id, sector_2.id, sector_3.id, sector_4.id]}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen_site.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        canteen_site.refresh_from_db()
+        self.assertEqual(canteen_site.sectors.count(), 2)
 
     @authenticate
     def test_canteen_image_edition_unauthorized(self):
