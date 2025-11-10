@@ -426,7 +426,7 @@ const vue3Routes = [
     name: "GestionnaireGaspillageAlimentaireModifier",
   },
   {
-    path: "/gestion/imports",
+    path: "/tableau-de-bord/imports",
     name: "GestionnaireImport",
     meta: {
       title: "Importer des données",
@@ -453,31 +453,31 @@ const vue3Routes = [
     name: "Contact",
   },
   {
-    path: "/gestion/imports/achats",
+    path: "/tableau-de-bord/imports/achats",
     name: "GestionnaireImportAchats",
   },
   {
-    path: "/gestion/imports/cantines",
+    path: "/tableau-de-bord/imports/cantines",
     name: "GestionnaireImportCantines",
   },
   {
-    path: "/gestion/cantines/ajouter",
+    path: "/tableau-de-bord/cantines/ajouter",
     name: "GestionnaireCantineAjouter",
   },
   {
-    path: "/gestion/cantines/:canteenUrlComponent/modifier",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/modifier",
     name: "CanteenForm",
   },
   {
-    path: "/gestion/cantines/:canteenUrlComponent/gerer",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/gerer",
     name: "GestionnaireCantineGerer",
   },
   {
-    path: "/gestion/cantines/:canteenUrlComponent/satellites/gerer",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/satellites/gerer",
     name: "GestionnaireCantineSatellitesGerer",
   },
   {
-    path: "/gestion/cantines/:canteenUrlComponent/satellites/ajouter",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/satellites/ajouter",
     name: "GestionnaireCantineSatellitesAjouter",
   },
   {
@@ -497,7 +497,7 @@ const vue3Routes = [
     name: "Observatoire",
   },
   {
-    path: "/gestion",
+    path: "/tableau-de-bord",
     name: "GestionnaireTableauDeBord",
     meta: {
       title: "Mon tableau de bord",

@@ -43,7 +43,7 @@ const routes = [
     },
   },
   {
-    path: "/gestion/",
+    path: "/tableau-de-bord/",
     name: "GestionnaireTableauDeBord",
     component: GestionnaireTableauDeBord,
     meta: {
@@ -51,7 +51,7 @@ const routes = [
     },
   },
   {
-    path: "/gestion/imports",
+    path: "/tableau-de-bord/imports",
     name: "GestionnaireImport",
     component: GestionnaireImport,
     meta: {
@@ -60,7 +60,7 @@ const routes = [
     },
   },
   {
-    path: "/gestion/imports/achats",
+    path: "/tableau-de-bord/imports/achats",
     name: "GestionnaireImportAchats",
     component: GestionnaireImportAchats,
     meta: {
@@ -72,7 +72,7 @@ const routes = [
     },
   },
   {
-    path: "/gestion/imports/cantines",
+    path: "/tableau-de-bord/imports/cantines",
     name: "GestionnaireImportCantines",
     component: GestionnaireImportCantines,
     meta: {
@@ -84,7 +84,7 @@ const routes = [
     },
   },
   {
-    path: "/gestion/cantines/ajouter",
+    path: "/tableau-de-bord/cantines/ajouter",
     name: "GestionnaireCantineAjouter",
     component: GestionnaireCantineAjouter,
     meta: {
@@ -94,7 +94,7 @@ const routes = [
     },
   },
   {
-    path: "/gestion/cantines/:canteenUrlComponent/",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/",
     children: [
       {
         path: "gerer",
