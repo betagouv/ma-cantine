@@ -1,47 +1,13 @@
 <script setup>
-import { ref } from "vue"
 import { useRoute } from "vue-router"
-import Constants from "@/constants.js"
 
-const importTypes = []
-importTypes.push({
-  key: "CANTEENS",
-  title: "Importer des cantines",
-  help: "Vous voulez créer ou mettre à jour des cantines",
-  to: { name: "GestionnaireImportCantines" },
-})
-Object.values(Constants.DiagnosticImportLevels).forEach((level) => {
-  level.to = { name: "DiagnosticImportPage", params: { importUrlSlug: level.urlSlug } }
-  importTypes.push(level)
-})
-Object.values(Constants.CentralKitchenImportLevels).forEach((level) => {
-  level.to = { name: "DiagnosticImportPage", params: { importUrlSlug: level.urlSlug } }
-  importTypes.push(level)
-})
-importTypes.push({
-  key: "PURCHASES",
-  title: "Importer des achats",
-  help: "Vous voulez importer des données d'achat pour des cantines existantes",
-  to: { name: "GestionnaireImportAchats" },
-})
-
-const activeAccordion = ref("")
 const route = useRoute()
+const pages = []
 </script>
 
 <template>
   <div>
     <h1>{{ route.meta.title }}</h1>
-    <DsfrAccordionsGroup v-model="activeAccordion">
-      <DsfrAccordion id="import-list" title="Voir tous les imports disponibles" class="fr-my-4w">
-        <div>
-          <ul>
-            <li v-for="importType in importTypes" :key="importType.key">
-              <router-link :to="importType.to">{{ importType.title }}</router-link>
-            </li>
-          </ul>
-        </div>
-      </DsfrAccordion>
-    </DsfrAccordionsGroup>
+    <pre>{{ pages }}</pre>
   </div>
 </template>
