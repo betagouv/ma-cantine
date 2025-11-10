@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue"
+import { useRoute } from "vue-router"
 import Constants from "@/constants.js"
 
 const importTypes = []
@@ -25,12 +26,12 @@ importTypes.push({
 })
 
 const activeAccordion = ref("")
+const route = useRoute()
 </script>
 
 <template>
   <div>
-    <h1>Importer vos données</h1>
-
+    <h1>{{ route.meta.title }}</h1>
     <DsfrAccordionsGroup v-model="activeAccordion">
       <DsfrAccordion id="import-list" title="Voir tous les imports disponibles" class="fr-my-4w">
         <div>

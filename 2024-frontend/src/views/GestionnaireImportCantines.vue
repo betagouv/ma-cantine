@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue"
 import { useRootStore } from "@/stores/root"
+import { useRoute } from "vue-router"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
@@ -8,8 +9,9 @@ import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportStaffCallout from "@/components/ImportStaffCallout.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 
-/* Store */
+/* Store and Router */
 const store = useRootStore()
+const route = useRoute()
 
 /* Data */
 const schemaFile = store.loggedUser.isStaff ? "cantines_admin.json" : "cantines.json"
@@ -33,7 +35,7 @@ const success = (count) => {
 </script>
 
 <template>
-  <h1>Importer des cantines</h1>
+  <h1>{{ route.meta.title }}</h1>
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet de créer vos cantines ou de modifier vos cantines existantes d’un coup.
     <strong>Il concerne uniquement les gestionnaires qui ont plus de 5&nbsp;cantines.</strong>
