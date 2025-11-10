@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.38.0](https://github.com/betagouv/ma-cantine/compare/v2025.37.0...v2025.38.0) (2025-11-10)
+
+
+### Nouveautés
+
+* **Tableau de bord:** ajout du bouton d'action rapide ([#5862](https://github.com/betagouv/ma-cantine/issues/5862)) ([de67620](https://github.com/betagouv/ma-cantine/commit/de676207387eb7bbdfba71f6e9c21f051b8d6360))
+* **Tableau de bord:** ajoute la barre de recherche ([#5863](https://github.com/betagouv/ma-cantine/issues/5863)) ([f6e1165](https://github.com/betagouv/ma-cantine/commit/f6e1165c589c1976555cc9180702eaf04eb59124))
+* **Tableau de bord:** remplace l'ancienne page par la nouvelle ([#5866](https://github.com/betagouv/ma-cantine/issues/5866)) ([5c392ea](https://github.com/betagouv/ma-cantine/commit/5c392eaa673c9f99adfe281a3b2684f415e546bb))
+
+
+### Améliorations
+
+* **Accessibilité:** ajout du plugin 'eslint-plugin-vuejs-accessibility' pour détecter quelques erreurs de bases ([#5868](https://github.com/betagouv/ma-cantine/issues/5868)) ([c086e87](https://github.com/betagouv/ma-cantine/commit/c086e879f467de617cb3c52ba0fa24d1392a41d8))
+* **Tableau de bord:** améliore le responsive, l'accessibilité et petite simplification de code ([#5864](https://github.com/betagouv/ma-cantine/issues/5864)) ([171942d](https://github.com/betagouv/ma-cantine/commit/171942dbe9fe8f2bc98c226220f879e1cb6e4e78))
+
+
+### Corrections (bugs, typos...)
+
+* **Tableau de bord:** corrige l'url du lien "Modifier la cantine" ([#5869](https://github.com/betagouv/ma-cantine/issues/5869)) ([55da84f](https://github.com/betagouv/ma-cantine/commit/55da84f4eefb6a77bdd577b198371c8a4598c9a0))
+* **Tableau de bord:** multiples corrections suite au recettage ([#5867](https://github.com/betagouv/ma-cantine/issues/5867)) ([14a71a4](https://github.com/betagouv/ma-cantine/commit/14a71a4c485e4c7f3a54f33f824f72153cf1c791))
+
 ## [2025.37.0](https://github.com/betagouv/ma-cantine/compare/v2025.36.1...v2025.37.0) (2025-11-06)
 
 
