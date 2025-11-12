@@ -1,9 +1,19 @@
 <script setup>
+import { ref } from "vue"
 import { useRoute } from "vue-router"
 import { tiles } from "@/constants/crisp-tiles.js"
 import AppNeedHelp from "@/components/AppNeedHelp.vue"
 
 const route = useRoute()
+
+/* MODAL */
+const article = ref(null)
+const openModal = (tile) => {
+  article.value = tile
+}
+const closeModal = () => {
+  article.value = null
+}
 </script>
 
 <template>
@@ -23,11 +33,21 @@ const route = useRoute()
           titleTag="h2"
           :imgSrc="tile.imgSrc"
           :details="tile.details"
-          :to="tile.to"
+          @click="openModal(tile)"
           class="ma-cantine--tile-no-overflow"
         />
       </li>
     </ul>
+    <DsfrModal :opened="article" class="fr-modal--opened" @close="closeModal" size="xl">
+      <template #default>
+        <iframe
+          :title="article.title"
+          :src="`${article.to}/reader/compact/`"
+          class="comprendre-mes-obligations__iframe"
+          frameborder="0"
+        ></iframe>
+      </template>
+    </DsfrModal>
   </section>
   <AppNeedHelp badge="En savoir plus" align="center" title="Pour les acteurs de la restauration collective">
     <p class="fr-mb-0">
@@ -38,3 +58,12 @@ const route = useRoute()
     </p>
   </AppNeedHelp>
 </template>
+
+<style lang="scss">
+.comprendre-mes-obligations {
+  &__iframe {
+    width: 100%;
+    height: 60vh;
+  }
+}
+</style>
