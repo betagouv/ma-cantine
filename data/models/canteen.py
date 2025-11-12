@@ -16,8 +16,8 @@ from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models.sector import Sector
 from data.models.geo import Department, Region, get_region_from_department
+from data.models.creation_source import CreationSource
 from data.utils import (
-    CreationSource,
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
     has_charfield_missing_query,

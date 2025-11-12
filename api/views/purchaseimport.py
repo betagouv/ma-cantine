@@ -19,7 +19,7 @@ from common.api import validata
 from common.utils import file_import
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportFailure, ImportType, Purchase
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 
 from .utils import camelize
 

@@ -11,13 +11,6 @@ from PIL import ExifTags
 from PIL import Image as Img
 
 
-class CreationSource(models.TextChoices):
-    APP = "APP", "APP"
-    API = "API", "API"
-    IMPORT = "IMPORT", "IMPORT"
-    ADMIN = "ADMIN", "ADMIN"
-
-
 class CustomJSONEncoder(DjangoJSONEncoder):
     def default(self, o):
         if isinstance(o, Decimal):

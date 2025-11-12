@@ -9,7 +9,7 @@ from rest_framework.test import APITestCase
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 

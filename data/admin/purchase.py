@@ -5,7 +5,7 @@ from django.utils.html import format_html
 from data.admin.softdeletionadmin import SoftDeletionAdmin, SoftDeletionStatusFilter
 from data.admin.utils import get_arrayfield_list_filter
 from data.models import Purchase
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 
 
 @admin.register(Purchase)

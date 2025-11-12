@@ -12,8 +12,8 @@ from common.utils import utils as utils_utils
 from data.validators import diagnostic as diagnostic_validators
 from data.fields import ChoiceArrayField
 from data.models import Canteen
+from data.models.creation_source import CreationSource
 from data.utils import (
-    CreationSource,
     CustomJSONEncoder,
     make_optional_positive_decimal_field,
     sum_int_with_potential_null,

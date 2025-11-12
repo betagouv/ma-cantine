@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from data.fields import ChoiceArrayField
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 
 from .canteen import Canteen
 from .softdeletionmodel import SoftDeletionModel

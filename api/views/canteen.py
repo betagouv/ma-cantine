@@ -59,7 +59,8 @@ from common.api.recherche_entreprises import (
 )
 from common.utils import send_mail
 from data.models import Canteen, Diagnostic, ManagerInvitation, Sector
-from data.utils import CreationSource, has_charfield_missing_query
+from data.utils import has_charfield_missing_query
+from data.models.creation_source import CreationSource
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
