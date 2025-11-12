@@ -7,12 +7,12 @@ import AppNeedHelp from "@/components/AppNeedHelp.vue"
 const route = useRoute()
 
 /* MODAL */
-const tile = ref(null)
+const modal = ref({})
 const openModal = (tile) => {
-  tile.value = tile
+  modal.value = tile
 }
 const closeModal = () => {
-  tile.value = null
+  modal.value = {}
 }
 </script>
 
@@ -38,11 +38,11 @@ const closeModal = () => {
         />
       </li>
     </ul>
-    <DsfrModal :opened="tile" class="fr-modal--opened" @close="closeModal" size="xl">
+    <DsfrModal :opened="modal.to" class="fr-modal--opened" @close="closeModal" size="xl">
       <template #default>
         <iframe
-          :title="tile.title"
-          :src="`${tile.to}/reader/compact/`"
+          :title="modal.title"
+          :src="`${modal.to}/reader/compact/`"
           class="comprendre-mes-obligations__iframe"
           frameborder="0"
         ></iframe>
