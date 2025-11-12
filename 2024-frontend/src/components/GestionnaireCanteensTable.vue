@@ -23,7 +23,7 @@ const header = [
   },
   { key: "productionType", label: "Type" },
   {
-    key: "status",
+    key: "diagnostic",
     label: `Bilan ${lastYear}`,
   },
   {
@@ -39,7 +39,7 @@ const rows = computed(() => {
     const siret = getSiretOrSirenInfos(canteen)
     const city = getCityInfos(canteen)
     const productionType = getProductionTypeInfos(canteen)
-    const status = getStatusInfos(canteen)
+    const diagnostic = getDiagnosticInfos(canteen)
     const actions = getActionsInfos(canteen)
 
     rows.push({
@@ -47,7 +47,7 @@ const rows = computed(() => {
       siret,
       city,
       productionType,
-      status,
+      diagnostic,
       actions,
     })
   })
@@ -79,7 +79,7 @@ const getProductionTypeInfos = (canteen) => {
   return cantines.productionType[index].label
 }
 
-const getStatusInfos = (canteen) => {
+const getDiagnosticInfos = (canteen) => {
   const action = canteen.action
   const badge = actionService.getBadge(action)
   return {
@@ -155,7 +155,7 @@ const getQuickAction = (canteen) => {
               </router-link>
             </p>
           </template>
-          <template v-else-if="colKey === 'status'">
+          <template v-else-if="colKey === 'diagnostic'">
             <DsfrBadge small :label="cell.label" :type="cell.type" />
           </template>
           <template v-else-if="colKey === 'actions'">
