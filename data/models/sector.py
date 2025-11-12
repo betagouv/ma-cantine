@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Category(models.TextChoices):
+class SectorCategory(models.TextChoices):
     ADMINISTRATION = "administration", "Administration"
     ENTERPRISE = "enterprise", "Entreprise"
     EDUCATION = "education", "Enseignement"

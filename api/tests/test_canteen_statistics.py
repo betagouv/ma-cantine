@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
 from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen, Diagnostic, SectorM2M
+from data.models import Canteen, Diagnostic, SectorCategory
 from data.models.geo import Department, Region
 
 year_data = 2023
@@ -17,10 +17,10 @@ STATS_ENDPOINT_QUERY_COUNT = 8
 class TestCanteenStatsApi(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector_education_primary = SectorM2MFactory(name="Primary", category=SectorM2M.Categories.EDUCATION)
-        cls.sector_education_secondary = SectorM2MFactory(name="Secondary", category=SectorM2M.Categories.EDUCATION)
-        cls.sector_enterprise = SectorM2MFactory(name="Enterprise", category=SectorM2M.Categories.ENTERPRISE)
-        cls.sector_social = SectorM2MFactory(name="Social", category=SectorM2M.Categories.SOCIAL)
+        cls.sector_education_primary = SectorM2MFactory(name="Primary", category=SectorCategory.EDUCATION)
+        cls.sector_education_secondary = SectorM2MFactory(name="Secondary", category=SectorCategory.EDUCATION)
+        cls.sector_enterprise = SectorM2MFactory(name="Enterprise", category=SectorCategory.ENTERPRISE)
+        cls.sector_social = SectorM2MFactory(name="Social", category=SectorCategory.SOCIAL)
         cls.sector_other = SectorM2MFactory(name="Other", category=None)
         with freeze_time(date_in_2023_teledeclaration_campaign):
             canteen_1 = CanteenFactory(
@@ -164,9 +164,9 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["egalimPercent"], 87)  # 43 + 44
         self.assertEqual(body["approPercent"], 100)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[SectorM2M.Categories.EDUCATION], 2)
-        self.assertEqual(sector_categories[SectorM2M.Categories.ENTERPRISE], 2)
-        self.assertEqual(sector_categories[SectorM2M.Categories.SOCIAL], 1)
+        self.assertEqual(sector_categories[SectorCategory.EDUCATION], 2)
+        self.assertEqual(sector_categories[SectorCategory.ENTERPRISE], 2)
+        self.assertEqual(sector_categories[SectorCategory.SOCIAL], 1)
         self.assertEqual(sector_categories["inconnu"], 0)
 
     def test_stats_diagnostic_simple(self):
@@ -361,8 +361,8 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[SectorM2M.Categories.EDUCATION], 2)
-        self.assertEqual(sector_categories[SectorM2M.Categories.ENTERPRISE], 2)
+        self.assertEqual(sector_categories[SectorCategory.EDUCATION], 2)
+        self.assertEqual(sector_categories[SectorCategory.ENTERPRISE], 2)
         self.assertEqual(sector_categories["inconnu"], 0)  # because we filtered on sectors beforehand...
 
     def test_filter_by_management_type(self):
