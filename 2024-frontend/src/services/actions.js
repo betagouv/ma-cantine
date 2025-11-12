@@ -5,7 +5,7 @@ const getBadge = (name) => {
   return badges.canteen[index]
 }
 
-const getButton = (action) => {
+const getTeledeclareButton = (action) => {
   if (action !== "40_teledeclare") return false
 
   return {
@@ -16,4 +16,4 @@ const getButton = (action) => {
   }
 }
 
-export default { getBadge, getButton }
+export default { getBadge, getTeledeclareButton }
