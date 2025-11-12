@@ -10,6 +10,7 @@ import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.
 import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppLoader from "@/components/AppLoader.vue"
+import AppJeDonneMonAvis from "@/components/AppJeDonneMonAvis.vue"
 
 /* INTRO */
 const store = useRootStore()
@@ -112,5 +113,11 @@ const canteensTable = computed(() => {
     </p>
     <GestionnaireCanteensTable v-else :canteens="canteensTable" />
   </section>
-  <GestionnaireGuides class="ma-cantine--stick-to-footer" />
+  <section class="ma-cantine--bg-blue fr-py-4w">
+    <GestionnaireGuides />
+  </section>
+  <AppJeDonneMonAvis
+    url="https://jedonnemonavis.numerique.gouv.fr/Demarches/3661?button=4069"
+    title="Qu'avez-vous pensé de la page Tableau de bord ?"
+  />
 </template>
