@@ -173,7 +173,7 @@ const getTeledeclareButton = (canteen) => {
                 class="fr-mr-1v"
               />
             </router-link>
-            <DsfrBadge v-else small :label="cell.badge.label" :type="cell.badge.type" />
+            <DsfrBadge v-else small :label="cell.badge.label" :type="cell.badge.type" no-icon />
           </template>
           <template v-else-if="colKey === 'actions'">
             <div class="fr-grid-row fr-grid-row--right">
