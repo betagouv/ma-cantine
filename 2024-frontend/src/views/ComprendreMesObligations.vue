@@ -7,12 +7,12 @@ import AppNeedHelp from "@/components/AppNeedHelp.vue"
 const route = useRoute()
 
 /* MODAL */
-const article = ref(null)
+const tile = ref(null)
 const openModal = (tile) => {
-  article.value = tile
+  tile.value = tile
 }
 const closeModal = () => {
-  article.value = null
+  tile.value = null
 }
 </script>
 
@@ -38,11 +38,11 @@ const closeModal = () => {
         />
       </li>
     </ul>
-    <DsfrModal :opened="article" class="fr-modal--opened" @close="closeModal" size="xl">
+    <DsfrModal :opened="tile" class="fr-modal--opened" @close="closeModal" size="xl">
       <template #default>
         <iframe
-          :title="article.title"
-          :src="`${article.to}/reader/compact/`"
+          :title="tile.title"
+          :src="`${tile.to}/reader/compact/`"
           class="comprendre-mes-obligations__iframe"
           frameborder="0"
         ></iframe>
@@ -51,7 +51,7 @@ const closeModal = () => {
   </section>
   <AppNeedHelp badge="En savoir plus" align="center" title="Pour les acteurs de la restauration collective">
     <p class="fr-mb-0">
-      Retrouvez des ressources, contenus videos, documents, témoignages, articles, recettes,
+      Retrouvez des ressources, contenus videos, documents, témoignages, tiles, recettes,
       <a href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank">sur notre documentation</a>
       . Pour toute question, consultez
       <a href="https://ma-cantine.crisp.help/fr/" target="_blank">notre centre d'aide</a>
