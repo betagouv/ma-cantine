@@ -58,10 +58,6 @@ const vue2routes = [
     name: "CanteensHome",
   },
   {
-    path: "/mesures-phares/:id",
-    name: "KeyMeasurePage",
-  },
-  {
     path: "/acteurs-de-l-eco-systeme",
     name: "PartnersHome",
     meta: {

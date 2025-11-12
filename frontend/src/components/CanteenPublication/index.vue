@@ -35,7 +35,7 @@
         />
         <p class="mb-0">
           Se renseigner sur
-          <router-link :to="{ name: 'KeyMeasurePage', params: { id: item.id } }">
+          <router-link :to="{ name: 'ComprendreMesObligations' }">
             la réglementation de la mesure « {{ item.shortTitle }} »
           </router-link>
         </p>

@@ -132,7 +132,6 @@ address {
 
 
 /* ANIMATION */
-
 .ma-cantine--sticky {
     position: sticky;
     top: 1rem;
@@ -168,4 +167,10 @@ address {
 /* MARGIN */
 .ma-cantine--stick-to-footer {
     margin-bottom: -3rem !important;
+}
+
+
+/* TITLE */
+.ma-cantine--tile-no-overflow .fr-tile__pictogram{
+   overflow: visible;
 }
