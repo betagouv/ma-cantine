@@ -302,8 +302,8 @@ class CanteenImportErrorTest(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
-        error_message_max = "Champ 'secteurs d'activité' : Ce champ ne peut avoir plus de 3 valeurs."
-        error_message_empty = "Champ 'secteurs d'activité' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
+        error_message_max = "Champ 'secteurs' : Ce champ ne peut avoir plus de 3 valeurs."
+        error_message_empty = "Champ 'secteurs' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 3, errors)
@@ -421,10 +421,16 @@ class CanteenImportSuccessTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(
-            Canteen.objects.filter(sectors__name__in=["Restaurants administratifs d'Etat (RA)"]).distinct().count(), 2
+            Canteen.objects.filter(sectors_m2m__name__in=["Restaurants administratifs d'Etat (RA)"])
+            .distinct()
+            .count(),
+            2,
         )
         self.assertEqual(
-            Canteen.objects.filter(sectors__name__in=["Restaurants administratifs d’Etat (RA)"]).distinct().count(), 0
+            Canteen.objects.filter(sectors_m2m__name__in=["Restaurants administratifs d’Etat (RA)"])
+            .distinct()
+            .count(),
+            0,
         )
 
         body = response.json()

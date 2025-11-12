@@ -31,7 +31,7 @@
       "modification_date": "2025-01-01T00:00:00+00:00",
       "name": "Administration ma-cantine"
     },
-    "model": "data.sector",
+    "model": "data.sectorm2m",
     "pk": 1
   },
   {

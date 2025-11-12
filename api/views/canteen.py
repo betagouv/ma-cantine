@@ -192,7 +192,7 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
         fields = (
             "department",
             "region",
-            # "sectors",
+            "sectors_m2m",
             "city_insee_code",
             "min_daily_meal_count",
             "max_daily_meal_count",
@@ -920,11 +920,11 @@ class CanteenAnalysisListView(ListAPIView):
     serializer_class = CanteenAnalysisSerializer
 
     def get_queryset(self):
-        return Canteen.objects.prefetch_related("sectors", "managers").order_by("creation_date")
+        return Canteen.objects.prefetch_related("sectors_m2m", "managers").order_by("creation_date")
 
 
 class CanteenOpenDataListView(ListAPIView):
     serializer_class = CanteenOpenDataSerializer
 
     def get_queryset(self):
-        return Canteen.objects.prefetch_related("sectors", "managers").publicly_visible().order_by("creation_date")
+        return Canteen.objects.prefetch_related("sectors_m2m", "managers").publicly_visible().order_by("creation_date")

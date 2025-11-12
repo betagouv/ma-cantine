@@ -630,7 +630,7 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         )
         COMMON = {
             # CanteenFactory generates: name, city_insee_code, sectors...
-            "sectors": [sector],
+            "sectors_m2m": [sector],
         }
         cls.canteen_central = CanteenFactory(
             **COMMON,
@@ -810,11 +810,11 @@ class CanteenAggregateQuerySetTest(TestCase):
         self.assertEqual(result[1]["economic_model"], Canteen.EconomicModel.PRIVATE)
         self.assertEqual(result[1]["count"], 1)
         # group by sectors__category
-        result = Canteen.objects.group_and_count_by_field("sectors__category")
+        result = Canteen.objects.group_and_count_by_field("sectors_m2m__category")
         self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]["sectors__category"], SectorM2M.Categories.ADMINISTRATION)
+        self.assertEqual(result[0]["sectors_m2m__category"], SectorM2M.Categories.ADMINISTRATION)
         self.assertEqual(result[0]["count"], 3)
-        self.assertEqual(result[1]["sectors__category"], SectorM2M.Categories.AUTRES)
+        self.assertEqual(result[1]["sectors_m2m__category"], SectorM2M.Categories.AUTRES)
         self.assertEqual(result[1]["count"], 1)
 
 

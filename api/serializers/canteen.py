@@ -106,7 +106,7 @@ class BadgesSerializer(serializers.ModelSerializer):
 
 
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     appro_diagnostic = PublicApproDiagnosticSerializer(read_only=True, source="latest_published_appro_diagnostic")
     lead_image = CanteenImageSerializer()
     badges = BadgesSerializer(read_only=True, source="*")
@@ -127,7 +127,7 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "department_lib",
             "region",
             "region_lib",
-            "sectors",
+            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "production_type",
             "management_type",
@@ -141,7 +141,7 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     appro_diagnostics = PublicApproDiagnosticSerializer(
         many=True, read_only=True, source="published_appro_diagnostics"
     )
@@ -173,7 +173,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "department_lib",
             "region",
             "region_lib",
-            "sectors",
+            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "production_type",
             "management_type",
@@ -199,7 +199,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
 
 
 class ElectedCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
@@ -224,7 +224,7 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
             "department_lib",
             "region",
             "region_lib",
-            "sectors",
+            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "yearly_meal_count",
             "production_type",
@@ -271,7 +271,9 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 
 
 class FullCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=SectorM2M.objects.all(), required=False)
+    sectors = serializers.PrimaryKeyRelatedField(
+        source="sectors_m2m", many=True, queryset=SectorM2M.objects.all(), required=False
+    )
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
@@ -323,7 +325,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "department_lib",
             "region",
             "region_lib",
-            "sectors",
+            "sectors",  # from "sectors_m2m"
             "central_kitchen_diagnostics",
             "line_ministry",
             "daily_meal_count",
@@ -516,7 +518,7 @@ class ManagingTeamSerializer(serializers.ModelSerializer):
 
 class CanteenActionsSerializer(serializers.ModelSerializer):
     # TODO: is it worth moving the job of fetching the specific diag required to the front?
-    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=SectorM2M.objects.all(), required=False)
+    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
     lead_image = CanteenImageSerializer()
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
@@ -538,7 +540,7 @@ class CanteenActionsSerializer(serializers.ModelSerializer):
             "department_lib",
             "region",
             "region_lib",
-            "sectors",  # M2M
+            "sectors",  # from "sectors_m2m"
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
@@ -600,7 +602,7 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
-    sectors = SectorM2MSerializer(many=True, read_only=True)
+    sectors = SectorM2MSerializer(source="sectors_m2m", many=True, read_only=True)
     central_producer_siret = serializers.SerializerMethodField(read_only=True)
     satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
 
@@ -621,7 +623,7 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             # "department_lib",
             "region",
             # "region_lib",
-            "sectors",
+            "sectors",  # from "sectors_m2m"
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
@@ -648,7 +650,7 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
-    sectors = SectorM2MSerializer(many=True, read_only=True)
+    sectors = SectorM2MSerializer(source="sectors_m2m", many=True, read_only=True)
 
     class Meta:
         model = Canteen
@@ -659,7 +661,7 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
             "siren_unite_legale",
             "daily_meal_count",
             "yearly_meal_count",
-            "sectors",
+            "sectors",  # from "sectors_m2m"
         )
 
 
@@ -768,7 +770,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
 
 class CanteenOpenDataSerializer(serializers.ModelSerializer):
     logo = serializers.SerializerMethodField(read_only=True)
-    sectors = serializers.SerializerMethodField(read_only=True)
+    sectors = serializers.SerializerMethodField(source="sectors_m2m", read_only=True)
     active_on_ma_cantine = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -800,7 +802,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
             "line_ministry",
             "modification_date",
             "logo",
-            "sectors",
+            "sectors",  # from "sectors_m2m"
             "declaration_donnees_2021",
             "declaration_donnees_2022",
             "declaration_donnees_2023",

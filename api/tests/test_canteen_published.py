@@ -170,7 +170,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         CanteenFactory(sectors_m2m=[social], name="Mochi")
         CanteenFactory(sectors_m2m=[school, social], name="Umami")
 
-        url = f"{reverse('published_canteens')}?sectors={school.id}"
+        url = f"{reverse('published_canteens')}?sectors_m2m={school.id}"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 2)
@@ -178,13 +178,13 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertIn("Shiso", result_names)
         self.assertIn("Umami", result_names)
 
-        url = f"{reverse('published_canteens')}?sectors={enterprise.id}"
+        url = f"{reverse('published_canteens')}?sectors_m2m={enterprise.id}"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Wasabi")
 
-        url = f"{reverse('published_canteens')}?sectors={enterprise.id}&sectors={social.id}"
+        url = f"{reverse('published_canteens')}?sectors_m2m={enterprise.id}&sectors_m2m={social.id}"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 3)

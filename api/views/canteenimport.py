@@ -45,7 +45,7 @@ class ImportCanteensView(APIView):
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     manager_column_idx = 9  # gestionnaires_additionnels
     silent_manager_idx = 9 + 3  # admin_gestionnaires_additionnels
-    annotated_sectors = SectorM2M.objects.annotate(name_lower=Lower("name"))
+    annotated_sectors_m2m = SectorM2M.objects.annotate(name_lower=Lower("name"))
 
     def __init__(self, **kwargs):
         self.canteens = {}
@@ -250,11 +250,11 @@ class ImportCanteensView(APIView):
             if not row[5]:
                 raise ValidationError(
                     {
-                        "sectors": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
+                        "secteurs": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
                     }
                 )
             if row[5].count("+") > 2:
-                raise ValidationError({"sectors": "Ce champ ne peut avoir plus de 3 valeurs."})
+                raise ValidationError({"secteurs": "Ce champ ne peut avoir plus de 3 valeurs."})
 
     def _get_manager_emails_to_notify(self, row):
         try:
@@ -334,7 +334,7 @@ class ImportCanteensView(APIView):
         if row[5]:
             canteen.sectors_m2m.set(
                 [
-                    self.annotated_sectors.get(name_lower__unaccent=sector.strip().lower())
+                    self.annotated_sectors_m2m.get(name_lower__unaccent=sector.strip().lower())
                     for sector in row[5].split("+")
                 ]
             )
