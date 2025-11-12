@@ -116,7 +116,7 @@ class CanteenStatisticsView(APIView):
             "epci__in": request.query_params.getlist("epci"),
             "pat_list__overlap": request.query_params.getlist("pat"),
             "city_insee_code__in": request.query_params.getlist("city"),
-            "sectors__in": sectors,
+            "sectors_m2m__in": sectors,
             "management_type__in": request.query_params.getlist("management_type"),
             "production_type__in": request.query_params.getlist("production_type"),
             "economic_model__in": request.query_params.getlist("economic_model"),
