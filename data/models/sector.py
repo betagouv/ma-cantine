@@ -65,13 +65,27 @@ class Sector(models.TextChoices):
     AUTRES_AUTRE = "Autres établissements non listés", "Autres établissements non listés"
 
 
-# 26 : Administration : Etablissements publics d’Etat (EPA ou EPIC)
-# 24 : Administration : Restaurants des prisons
-# 23 : Administration : Restaurants administratifs d’Etat (RA)
-# 22 : Administration : Restaurants des armées / police / gendarmerie
-# 4 : Administration : Restaurants inter-administratifs d’Etat (RIA)
-# 2 : Education : Supérieur et Universitaire
-SECTEURS_SPE = [26, 24, 23, 22, 4, 2]
+SECTOR_HAS_LINE_MINISTRY_LIST = [
+    Sector.ADMINISTRATION_PRISON,
+    Sector.ADMINISTRATION_ADMINISTRATIF,
+    Sector.ADMINISTRATION_ARMEE,
+    Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC,
+    Sector.ADMINISTRATION_INTER_ADMINISTRATIF,
+    Sector.EDUCATION_SUPERIEUR_UNIVERSITAIRE,
+    Sector.EDUCATION_AUTRE,
+    Sector.SOCIAL_PJJ,
+]
+
+
+# SECTEURS_SPE = [26, 24, 23, 22, 4, 2]
+SECTOR_SPE_LIST = [
+    Sector.ADMINISTRATION_PRISON,
+    Sector.ADMINISTRATION_ADMINISTRATIF,
+    Sector.ADMINISTRATION_ARMEE,
+    Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC,
+    Sector.ADMINISTRATION_INTER_ADMINISTRATIF,
+    Sector.EDUCATION_SUPERIEUR_UNIVERSITAIRE,
+]
 
 
 class SectorM2M(models.Model):
