@@ -205,10 +205,13 @@ const getTeledeclareButton = (canteen) => {
     overflow: initial !important;
   }
 
-  th,
-  td {
-    white-space: initial !important;
-    word-break: break-word;
+  th:nth-child(1) {
+    width: 35% !important;
+  }
+
+  td:nth-child(1),
+  td:nth-child(4) {
+    white-space: pre-wrap !important;
   }
 }
 </style>
