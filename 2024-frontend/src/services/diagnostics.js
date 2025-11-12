@@ -1,8 +1,8 @@
-import badges from "@/data/badges.json"
+import cantines from "@/data/cantines.json"
 
 const getBadge = (name) => {
-  const index = badges.canteen.findIndex((badge) => badge.actions.includes(name))
-  return badges.canteen[index]
+  const index = cantines.actions.findIndex((action) => action.names.includes(name))
+  return cantines.actions[index]
 }
 
 const getTeledeclareButton = (action) => {

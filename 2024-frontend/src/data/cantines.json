@@ -1,4 +1,46 @@
 {
+  "actions": [
+    {
+      "label": "À compléter",
+      "names": [
+        "10_add_satellites",
+        "35_fill_canteen_data",
+        "18_prefill_diagnostic",
+        "20_create_diagnostic",
+        "30_fill_diagnostic"
+      ],
+      "type": "error"
+    },
+    {
+      "label": "En attente",
+      "names": [
+        "90_nothing_satellite"
+      ],
+      "type": "warning"
+    },
+    {
+      "label": "Non télédéclaré",
+      "names": [
+        "45_did_not_teledeclare"
+      ],
+      "type": "neutral"
+    },
+    {
+      "label": "À télédéclarer",
+      "names": [
+        "40_teledeclare"
+      ],
+      "type": "error"
+    },
+    {
+      "label": "Télédéclaré",
+      "names": [
+        "91_nothing_satellite_teledeclared",
+        "95_nothing"
+      ],
+      "type": "success"
+    }
+  ],
   "centralProducerSiret": "SIRET de la cuisine centrale",
   "city": "Commune",
   "cityInseeCode": "Code Insee",

@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue"
-import actionService from "@/services/actions.js"
+import diagnosticService from "@/services/diagnostics.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 import AppRawHTML from "@/components/AppRawHTML.vue"
@@ -81,7 +81,7 @@ const getProductionTypeInfos = (canteen) => {
 
 const getDiagnosticInfos = (canteen) => {
   const action = canteen.action
-  const badge = actionService.getBadge(action)
+  const badge = diagnosticService.getBadge(action)
   const button = getTeledeclareButton(canteen)
   return { badge, button }
 }
@@ -118,7 +118,7 @@ const getDropdownLinks = (canteen) => {
 }
 
 const getTeledeclareButton = (canteen) => {
-  const button = actionService.getTeledeclareButton(canteen.action)
+  const button = diagnosticService.getTeledeclareButton(canteen.action)
   if (!button) return false
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
   return { ...button, canteenUrlComponent, year: lastYear }
