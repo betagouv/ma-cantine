@@ -30,7 +30,7 @@ const tiles = [
 ]
 </script>
 <template>
-  <ul class="ma-cantine--unstyled-list ma-cantine--bg-blue fr-grid-row fr-grid-row--gutters fr-py-4w">
+  <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
     <li v-for="tile in tiles" :key="tile.title" class="fr-col-12 fr-col-md-4">
       <DsfrTile
         title-tag="h2"
