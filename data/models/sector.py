@@ -1,6 +1,70 @@
 from django.db import models
 
 
+class Category(models.TextChoices):
+    ADMINISTRATION = "administration", "Administration"
+    ENTERPRISE = "enterprise", "Entreprise"
+    EDUCATION = "education", "Enseignement"
+    HEALTH = "health", "Santé"
+    SOCIAL = "social", "Social / Médico-social"
+    LEISURE = "leisure", "Loisirs"
+    AUTRES = "autres", "Autres"
+
+
+class Sector(models.TextChoices):
+    # administration
+    ADMINISTRATION_PRISON = "Restaurants des prisons", "Restaurants des prisons"
+    ADMINISTRATION_ADMINISTRATIF = "Restaurants administratifs d’Etat (RA)", "Restaurants administratifs d’Etat (RA)"
+    ADMINISTRATION_ARMEE = (
+        "Restaurants des armées / police / gendarmerie",
+        "Restaurants des armées / police / gendarmerie",
+    )
+    ADMINISTRATION_ETABLISSEMENT_PUBLIC = (
+        "Etablissements publics d’Etat (EPA ou EPIC)",
+        "Etablissements publics d’Etat (EPA ou EPIC)",
+    )
+    ADMINISTRATION_INTER_ADMINISTRATIF = (
+        "Restaurants inter-administratifs d’État (RIA)",
+        "Restaurants inter-administratifs d’État (RIA)",
+    )
+    ADMINISTRATION_ADMINISTRATIF_DES_COLLECTIVITES = (
+        "Restaurants administratifs des collectivités territoriales",
+        "Restaurants administratifs des collectivités territoriales",
+    )
+    # entreprise
+    ENTERPRISE_ENTREPRISE = "Restaurants d’entreprises", "Restaurants d’entreprises"
+    ENTERPRISE_INTER_ENTREPRISE = "Restaurants inter-entreprises", "Restaurants inter-entreprises"
+    # education
+    EDUCATION_PRIMAIRE = "Ecole primaire (maternelle et élémentaire)", "Ecole primaire (maternelle et élémentaire)"
+    EDUCATION_SECONDAIRE_COLLEGE = "Secondaire collège", "Secondaire collège"
+    EDUCATION_SECONDAIRE_LYCEE = "Secondaire lycée (hors agricole)", "Secondaire lycée (hors agricole)"
+    EDUCATION_ENSEIGNEMENT_AGRICOLE = (
+        "Etablissements d’enseignement agricole",
+        "Etablissements d’enseignement agricole",
+    )
+    EDUCATION_SUPERIEUR_UNIVERSITAIRE = "Supérieur et Universitaire", "Supérieur et Universitaire"
+    EDUCATION_AUTRE = "Autres structures d’enseignement", "Autres structures d’enseignement"
+    # health
+    HEALTH_HOPITAL = "Hôpitaux", "Hôpitaux"
+    HEALTH_CLINIQUE = "Cliniques", "Cliniques"
+    HEALTH_AUTRE = "Autres établissements de soins", "Autres établissements de soins"
+    # social
+    SOCIAL_CRECHE = "Crèche", "Crèche"
+    SOCIAL_IME = "IME / ITEP", "IME / ITEP"
+    SOCIAL_ESAT = "ESAT / Etablissements spécialisés", "ESAT / Etablissements spécialisés"
+    SOCIAL_EHPAD = (
+        "EHPAD / maisons de retraite / foyers de personnes âgées",
+        "EHPAD / maisons de retraite / foyers de personnes âgées",
+    )
+    SOCIAL_PJJ = "Etablissements de la PJJ", "Etablissements de la PJJ"
+    SOCIAL_AUTRE = "Autres établissements sociaux et médico-sociaux", "Autres établissements sociaux et médico-sociaux"
+    # leisure
+    LEISURE_CENTRE_VACANCE = "Centre de vacances / sportif", "Centre de vacances / sportif"
+    LEISURE_AUTRE = "Autres établissements de loisirs", "Autres établissements de loisirs"
+    # autres
+    AUTRES_AUTRE = "Autres établissements non listés", "Autres établissements non listés"
+
+
 # 26 : Administration : Etablissements publics d’Etat (EPA ou EPIC)
 # 24 : Administration : Restaurants des prisons
 # 23 : Administration : Restaurants administratifs d’Etat (RA)
