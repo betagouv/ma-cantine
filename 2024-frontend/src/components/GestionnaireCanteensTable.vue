@@ -82,10 +82,7 @@ const getProductionTypeInfos = (canteen) => {
 const getDiagnosticInfos = (canteen) => {
   const action = canteen.action
   const badge = actionService.getBadge(action)
-  return {
-    label: badge.body,
-    type: badge.mode,
-  }
+  return badge
 }
 
 const getActionsInfos = (canteen) => {
