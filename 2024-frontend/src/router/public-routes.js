@@ -94,7 +94,7 @@ const routes = [
     component: Observatoire,
     meta: {
       title: "Observatoire EGalim en restauration collective",
-      siteMap: law
+      siteMap: law,
     },
   },
   {
@@ -102,7 +102,7 @@ const routes = [
     name: "ComprendreMesObligations",
     component: ComprendreMesObligations,
     meta: {
-      title: "ComprendreMesObligations",
+      title: "Comprendre mes obligations",
     },
   },
 ]
