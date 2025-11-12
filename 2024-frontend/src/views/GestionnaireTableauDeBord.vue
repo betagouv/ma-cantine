@@ -113,9 +113,7 @@ const canteensTable = computed(() => {
     </p>
     <GestionnaireCanteensTable v-else :canteens="canteensTable" />
   </section>
-  <section class="ma-cantine--bg-blue fr-py-4w">
-    <GestionnaireGuides />
-  </section>
+  <GestionnaireGuides />
   <AppJeDonneMonAvis
     url="https://jedonnemonavis.numerique.gouv.fr/Demarches/3661?button=4069"
     title="Qu'avez-vous pensé de la page Tableau de bord ?"
