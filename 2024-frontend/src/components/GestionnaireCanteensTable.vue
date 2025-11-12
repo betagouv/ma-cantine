@@ -24,7 +24,7 @@ const header = [
   { key: "productionType", label: "Type" },
   {
     key: "diagnostic",
-    label: `Bilan ${lastYear}`,
+    label: `Télédéclaration ${lastYear}`,
   },
   {
     key: "actions",
