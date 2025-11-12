@@ -1,6 +1,7 @@
-const getBadge = (name, isInCampaign) => {
+const getBadge = (name, campaignDates) => {
   let label = null
   let type = null
+  const isInCampaign = campaignDates.inCorrection || campaignDates.inTeledeclaration
   const toTeledeclare = name === "40_teledeclare"
   const hasTeledeclared = ["91_nothing_satellite_teledeclared", "95_nothing"].includes(name)
   const waitingCentral = name === "90_nothing_satellite"
@@ -17,7 +18,7 @@ const getBadge = (name, isInCampaign) => {
       label = "Télédéclaré"
       type = "success"
       break
-    case !isInCampaign && !hasTeledeclared: // If not in campaign this is defaut badge for a diagnostic
+    case !hasTeledeclared && !campaignDates.inTeledeclaration: // If not in teledeclaration campaign this is defaut badge for a diagnostic
       label = "Non télédéclaré"
       type = "neutral"
       break

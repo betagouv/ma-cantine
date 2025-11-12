@@ -81,8 +81,7 @@ const getProductionTypeInfos = (canteen) => {
 
 const getDiagnosticInfos = (canteen) => {
   const action = canteen.action
-  const isInCampaign = props.campaign.inCorrection || props.campaign.inTeledeclaration
-  const badge = diagnosticService.getBadge(action, isInCampaign)
+  const badge = diagnosticService.getBadge(action, props.campaign)
   const button = getTeledeclareButton(canteen)
   console.log(badge, action)
   return { badge, button }
