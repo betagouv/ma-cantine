@@ -6,12 +6,8 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from common.utils.badges import badges_for_queryset
-from data.models import Canteen, Sector
-from macantine.utils import (
-    CAMPAIGN_DATES,
-    EGALIM_OBJECTIVES,
-    get_year_campaign_end_date_or_today_date,
-)
+from data.models import Canteen, SectorM2M
+from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES, get_year_campaign_end_date_or_today_date
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +17,7 @@ def calculate_statistics_canteens(canteens, data):
     data["canteen_count"] = canteens.count()
     # group by
     GROUP_BY_FIELDS = [
-        ("sectors__category", Sector.Categories, "sector_categories"),
+        ("sectors_m2m__category", SectorM2M.Categories, "sector_categories"),
         ("management_type", Canteen.ManagementType, "management_types"),
         ("production_type", Canteen.ProductionType, "production_types"),
         ("economic_model", Canteen.EconomicModel, "economic_models"),

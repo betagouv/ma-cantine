@@ -21,7 +21,7 @@ from api.serializers import FullCanteenSerializer
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportFailure, ImportType, Sector, Diagnostic
+from data.models import Canteen, ImportFailure, ImportType, SectorM2M, Diagnostic
 from data.models.teledeclaration import Teledeclaration
 from data.models.creation_source import CreationSource
 
@@ -41,7 +41,7 @@ DIAGNOSTICS_COMPLETE_CC_SCHEMA_FILE_PATH = "data/schemas/imports/diagnostics_com
 class ImportDiagnosticsView(ABC, APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
-    annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
+    annotated_sectors = SectorM2M.objects.annotate(name_lower=Lower("name"))
     manager_column_idx = 11
     year_idx = 12
 
@@ -382,7 +382,7 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.satellite_canteens_count = satellite_canteens_count
         canteen.import_source = import_source
         if row[7]:
-            canteen.sectors.set(
+            canteen.sectors_m2m.set(
                 [
                     self.annotated_sectors.get(name_lower__unaccent=sector.strip().lower())
                     for sector in row[7].split("+")
@@ -442,7 +442,7 @@ class ImportDiagnosticsView(ABC, APIView):
         errors = []
         if isinstance(e, PermissionDenied):
             ImportDiagnosticsView._add_error(errors, e.detail, 401)
-        elif isinstance(e, Sector.DoesNotExist):
+        elif isinstance(e, SectorM2M.DoesNotExist):
             ImportDiagnosticsView._add_error(errors, "Le secteur spécifié ne fait pas partie des options acceptées")
         elif isinstance(e, ValidationError):
             if hasattr(e, "message_dict"):

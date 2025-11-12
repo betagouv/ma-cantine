@@ -14,7 +14,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
 from common.api.adresse import ADRESSE_CSV_API_URL
-from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
 from data.models import (
     Canteen,
     Diagnostic,
@@ -223,21 +223,21 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         File can specify 0+ sectors to add to the canteen
         """
-        SectorFactory.create(name="Social et Médico-social (ESMS)")
-        SectorFactory.create(name="Crèche")
-        SectorFactory.create(name="Scolaire")
+        SectorM2MFactory.create(name="Social et Médico-social (ESMS)")
+        SectorM2MFactory.create(name="Crèche")
+        SectorM2MFactory.create(name="Scolaire")
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_sectors.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         canteen = Canteen.objects.get(siret="21340172201787")
-        self.assertEqual(canteen.sectors.count(), 3)
+        self.assertEqual(canteen.sectors_m2m.count(), 3)
 
     @authenticate
     def test_invalid_sectors_raise_error(self, mock):
         """
         If file specifies invalid sector, error is raised for that line
         """
-        SectorFactory.create(name="Social et Médico-social (ESMS)")
+        SectorM2MFactory.create(name="Social et Médico-social (ESMS)")
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_sectors.csv"
         with open(file_path) as diag_file:
@@ -1302,5 +1302,9 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         canteen = Canteen.objects.get(siret="32441387130915")
         self.assertEqual(canteen.city_insee_code, "07293")
         self.assertEqual(canteen.postal_code, "07130")
+        self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
+        self.assertEqual(canteen.department, Department.ardeche)
+        self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
+        self.assertEqual(canteen.department, Department.ardeche)
         self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
         self.assertEqual(canteen.department, Department.ardeche)

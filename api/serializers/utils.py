@@ -1,5 +1,5 @@
 from data.models import Diagnostic
-from data.models.sector import Sector
+from data.models.sector import SectorM2M
 
 
 def appro_to_percentages(representation, instance, remove_values=True):
@@ -84,6 +84,6 @@ def extract_category_from_dict_sectors(categories):
     if len(categories) > 1:
         return "Catégories multiples"
     elif len(categories) == 1:
-        return Sector.Categories(categories[0]["category"]).label if categories[0]["category"] else None
+        return SectorM2M.Categories(categories[0]["category"]).label if categories[0]["category"] else None
     else:
         return None

@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, SectorFactory, UserFactory
+from data.factories import CanteenFactory, SectorM2MFactory, UserFactory
 from data.models import Canteen
 
 
@@ -106,8 +106,8 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         )
         # all the mgmt team of the cuisine centrale should be added to the satellite team
         satellite_siret = "38782537682311"
-        school = SectorFactory.create(name="School")
-        enterprise = SectorFactory.create(name="Enterprise")
+        school = SectorM2MFactory.create(name="School")
+        enterprise = SectorM2MFactory.create(name="Enterprise")
         request = {
             "name": "Wanderer",
             "siret": satellite_siret,
@@ -124,9 +124,9 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
 
         satellite = Canteen.objects.get(siret=satellite_siret)
         self.assertEqual(satellite.name, "Wanderer")
-        self.assertEqual(satellite.sectors.count(), 2)
-        self.assertIn(school, satellite.sectors.all())
-        self.assertIn(enterprise, satellite.sectors.all())
+        self.assertEqual(satellite.sectors_m2m.count(), 2)
+        self.assertIn(school, satellite.sectors_m2m.all())
+        self.assertIn(enterprise, satellite.sectors_m2m.all())
         self.assertEqual(satellite.import_source, "Cuisine centrale : 08376514425566")
         self.assertEqual(satellite.central_producer_siret, central_kitchen.siret)
         self.assertEqual(satellite.production_type, Canteen.ProductionType.ON_SITE_CENTRAL)

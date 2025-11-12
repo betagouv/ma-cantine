@@ -9,7 +9,7 @@ from django.utils import timezone
 from freezegun import freeze_time
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
-from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
 from data.models import Canteen, Diagnostic
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS, aggregate_col
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
@@ -18,7 +18,7 @@ from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 class TestETLAnalysisCanteen(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector = SectorFactory.create(id=1, name="Sector factory", category="Category factory")
+        cls.sector = SectorM2MFactory.create(id=1, name="Sector factory", category="Category factory")
         cls.canteen_1 = CanteenFactory(
             name="Cantine",
             siret="19382111300027",
@@ -29,13 +29,13 @@ class TestETLAnalysisCanteen(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            sectors=[cls.sector],
+            sectors_m2m=[cls.sector],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        cls.canteen_2 = CanteenFactory(sectors=[cls.sector])
+        cls.canteen_2 = CanteenFactory(sectors_m2m=[cls.sector])
 
     def test_canteen_extract(self):
         etl = ETL_ANALYSIS_CANTEEN()

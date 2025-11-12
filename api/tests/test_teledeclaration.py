@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from api.serializers.teledeclaration import TeledeclarationAnalysisSerializer
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, TeledeclarationFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, TeledeclarationFactory, UserFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
 
 
@@ -633,11 +633,11 @@ class TestTeledeclarationCreateApi(APITestCase):
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_line_ministry_does_not_depend_on_sector_anymore(self):
-        sector_ministry = SectorFactory.create(has_line_ministry=True)
+        sector_ministry = SectorM2MFactory.create(has_line_ministry=True)
         canteen = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             siret="79300704800044",
-            sectors=[sector_ministry],
+            sectors_m2m=[sector_ministry],
             line_ministry=None,
             managers=[authenticate.user],
         )

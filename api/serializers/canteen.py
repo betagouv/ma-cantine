@@ -4,7 +4,7 @@ import os
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from data.models import Canteen, CanteenImage, Diagnostic, Sector
+from data.models import Canteen, CanteenImage, Diagnostic, SectorM2M
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -16,7 +16,7 @@ from .diagnostic import (
 )
 from .managerinvitation import ManagerInvitationSerializer
 from .resourceaction import ResourceActionFullSerializer
-from .sector import SectorSerializer
+from .sector import SectorM2MSerializer
 from .user import CanteenManagerSerializer
 
 logger = logging.getLogger(__name__)
@@ -271,7 +271,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 
 
 class FullCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
+    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=SectorM2M.objects.all(), required=False)
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
@@ -516,7 +516,7 @@ class ManagingTeamSerializer(serializers.ModelSerializer):
 
 class CanteenActionsSerializer(serializers.ModelSerializer):
     # TODO: is it worth moving the job of fetching the specific diag required to the front?
-    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=Sector.objects.all(), required=False)
+    sectors = serializers.PrimaryKeyRelatedField(many=True, queryset=SectorM2M.objects.all(), required=False)
     publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
     lead_image = CanteenImageSerializer()
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
@@ -600,7 +600,7 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
-    sectors = SectorSerializer(many=True, read_only=True)
+    sectors = SectorM2MSerializer(many=True, read_only=True)
     central_producer_siret = serializers.SerializerMethodField(read_only=True)
     satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
 
@@ -648,7 +648,7 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
-    sectors = SectorSerializer(many=True, read_only=True)
+    sectors = SectorM2MSerializer(many=True, read_only=True)
 
     class Meta:
         model = Canteen
@@ -754,11 +754,11 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
         return "Oui" if obj.is_spe else "Non"
 
     def get_secteur(self, obj):
-        sectors = [sector.name for sector in obj.sectors.all()]
+        sectors = [sector.name for sector in obj.sectors_m2m.all()]
         return ",".join(sectors)
 
     def get_categorie(self, obj):
-        categories = [sector.category for sector in obj.sectors.all()]
+        categories = [sector.category for sector in obj.sectors_m2m.all()]
         return ",".join(categories)
 
     def get_adresses_gestionnaires(self, obj):
@@ -817,7 +817,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
         return ""
 
     def get_sectors(self, obj):
-        return [sector.name for sector in obj.sectors.all()]
+        return [sector.name for sector in obj.sectors_m2m.all()]
 
     def get_active_on_ma_cantine(self, obj):
         return obj.managers.exists()

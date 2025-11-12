@@ -140,7 +140,7 @@ class Command(BaseCommand):
                                 )
                                 # M2M: sectors
                                 for sector in canteen_satellite.get("sectors", []):
-                                    new_canteen.sectors.add(sector["id"])
+                                    new_canteen.sectors_m2m.add(sector["id"])
                             canteens_created_count += 1
                 else:
                     print(f"Canteen satellite in Diagnostic {diagnostic.id} has no id, skipping")

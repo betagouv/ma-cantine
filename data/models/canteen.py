@@ -14,7 +14,7 @@ from simple_history.utils import update_change_reason
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
-from data.models.sector import Sector
+from data.models.sector import SectorM2M
 from data.models.geo import Department, Region, get_region_from_department
 from data.models.creation_source import CreationSource
 from data.utils import (
@@ -440,7 +440,7 @@ class Canteen(SoftDeletionModel):
     region = models.TextField(null=True, blank=True, choices=Region.choices, verbose_name="région")
     region_lib = models.TextField(null=True, blank=True, verbose_name="nom de la région")
 
-    sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
+    sectors_m2m = models.ManyToManyField(SectorM2M, blank=True, verbose_name="secteurs d'activité")
     line_ministry = models.TextField(
         null=True, blank=True, choices=Ministries.choices, verbose_name="Ministère de tutelle"
     )
@@ -689,7 +689,7 @@ class Canteen(SoftDeletionModel):
         )
         # serving-specific rules
         if is_filled and self.is_serving:
-            is_filled = self.sectors.exists()
+            is_filled = self.sectors_m2m.exists()
         # satellite-specific rules
         if is_filled and self.is_satellite:
             is_filled = bool(self.central_producer_siret and self.central_producer_siret != self.siret)
@@ -702,7 +702,7 @@ class Canteen(SoftDeletionModel):
                     Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
                 )
         # line_ministry
-        if is_filled and self.sectors.filter(has_line_ministry=True).exists():
+        if is_filled and self.sectors_m2m.filter(has_line_ministry=True).exists():
             is_filled = bool(self.line_ministry)
         return is_filled
 
@@ -850,18 +850,18 @@ class Canteen(SoftDeletionModel):
 
     @property
     def in_education(self):
-        from data.models import Sector
+        from data.models import SectorM2M
 
-        scolaire_sectors = Sector.objects.filter(category="education")
-        if scolaire_sectors.count() and self.sectors.intersection(scolaire_sectors).exists():
+        scolaire_sectors = SectorM2M.objects.filter(category="education")
+        if scolaire_sectors.count() and self.sectors_m2m.intersection(scolaire_sectors).exists():
             return True
 
     @property
     def in_administration(self):
-        from data.models import Sector
+        from data.models import SectorM2M
 
-        administration_sectors = Sector.objects.filter(category="administration")
-        if administration_sectors.count() and self.sectors.intersection(administration_sectors).exists():
+        administration_sectors = SectorM2M.objects.filter(category="administration")
+        if administration_sectors.count() and self.sectors_m2m.intersection(administration_sectors).exists():
             return True
 
     @property

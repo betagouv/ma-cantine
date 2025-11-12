@@ -11,7 +11,7 @@ from data.factories import (
     CanteenFactory,
     CommunityEventFactory,
     PartnerTypeFactory,
-    SectorFactory,
+    SectorM2MFactory,
     VideoTutorialFactory,
 )
 from data.models import Canteen
@@ -23,7 +23,7 @@ class TestInitialDataApi(APITestCase):
         The initial data request must contain data that is individually managed
         by other views. If the call isn't authenticated, "loggedUser" should be None
         """
-        sector = SectorFactory.create()
+        sector = SectorM2MFactory.create()
         partner_type = PartnerTypeFactory.create()
         community_event = CommunityEventFactory.create(end_date=timezone.now() + datetime.timedelta(days=10))
         video_tutorial = VideoTutorialFactory.create(published=True)

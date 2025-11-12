@@ -1,14 +1,14 @@
 from rest_framework import serializers
 
-from data.models import Sector
+from data.models import SectorM2M
 
 
 # remember to update TD version if you update this
-class SectorSerializer(serializers.ModelSerializer):
+class SectorM2MSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="get_category_display")
 
     class Meta:
-        model = Sector
+        model = SectorM2M
         fields = (
             "id",
             "name",

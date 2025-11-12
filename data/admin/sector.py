@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 
-from data.models import Sector
+from data.models import SectorM2M
 
 
 class SectorForm(forms.ModelForm):
@@ -11,8 +11,8 @@ class SectorForm(forms.ModelForm):
         }
 
 
-@admin.register(Sector)
-class SectorAdmin(admin.ModelAdmin):
+@admin.register(SectorM2M)
+class SectorM2MAdmin(admin.ModelAdmin):
     form = SectorForm
     fields = (
         "name",

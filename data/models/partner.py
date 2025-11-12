@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from data.fields import ChoiceArrayField
 from data.utils import optimize_image
 from data.models.partnertype import PartnerType
-from data.models.sector import Sector
+from data.models.sector import SectorM2M
 from data.models.geo import Department
 
 
@@ -66,9 +66,9 @@ class Partner(models.Model):
         null=True,
         verbose_name="Le partenaire est présent dans tout le territoire national (tous les departements)",
     )
-    sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
+    sectors_m2m = models.ManyToManyField(SectorM2M, blank=True, verbose_name="secteurs d'activité")
     sector_categories = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=Sector.Categories.choices),
+        base_field=models.CharField(max_length=255, choices=SectorM2M.Categories.choices),
         blank=True,
         null=True,
         size=None,

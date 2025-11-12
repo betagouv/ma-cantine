@@ -37,7 +37,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticTeledeclaredOpenDataSerializer,
 )
 from .wastemeasurement import WasteMeasurementSerializer  # noqa: F401
-from .sector import SectorSerializer  # noqa: F401
+from .sector import SectorM2MSerializer  # noqa: F401
 from .partnertype import PartnerTypeSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401
 from .password import PasswordSerializer  # noqa: F401

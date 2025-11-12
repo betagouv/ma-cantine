@@ -93,7 +93,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
     def _load_data_parquet(self, filename):
         with default_storage.open(filename + ".parquet", "wb") as parquet_file:
             if "sectors" in self.df.columns:
-                self.df.sectors = self.df.sectors.astype(str)
+                self.df.sectors = self.df.sectors_m2m.astype(str)
             self.df.to_parquet(parquet_file)
 
     def _load_data_xlsx(self, filename):

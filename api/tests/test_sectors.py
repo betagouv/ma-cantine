@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from data.factories import SectorFactory
+from data.factories import SectorM2MFactory
 
 
 class TestSectorApi(APITestCase):
@@ -10,9 +10,9 @@ class TestSectorApi(APITestCase):
         """
         The API should return all sectors
         """
-        SectorFactory.create()
-        SectorFactory.create()
-        SectorFactory.create()
+        SectorM2MFactory.create()
+        SectorM2MFactory.create()
+        SectorM2MFactory.create()
 
         response = self.client.get(reverse("sectors_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
