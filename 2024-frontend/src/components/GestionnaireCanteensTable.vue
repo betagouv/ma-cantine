@@ -7,7 +7,7 @@ import AppRawHTML from "@/components/AppRawHTML.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 const props = defineProps(["canteens"])
-
+const lastYear = new Date().getFullYear() - 1
 const header = [
   {
     key: "name",
@@ -24,7 +24,7 @@ const header = [
   { key: "productionType", label: "Type" },
   {
     key: "status",
-    label: "Statut",
+    label: `Bilan ${lastYear}`,
   },
   {
     key: "actions",
@@ -124,8 +124,7 @@ const getQuickAction = (canteen) => {
   const button = actionService.getButton(canteen.action)
   if (!button) return false
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
-  const year = new Date().getFullYear() - 1
-  return { ...button, canteenUrlComponent, year }
+  return { ...button, canteenUrlComponent, year: lastYear }
 }
 </script>
 <template>
