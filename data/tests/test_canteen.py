@@ -2,10 +2,8 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from freezegun import freeze_time
 
-from data.department_choices import Department
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, SectorFactory, UserFactory
-from data.models import Canteen, Diagnostic, Sector, Teledeclaration
-from data.region_choices import Region
+from data.models import Canteen, Diagnostic, Sector, Teledeclaration, Department, Region
 from data.utils import CreationSource
 
 

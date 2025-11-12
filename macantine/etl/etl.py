@@ -9,8 +9,7 @@ import pandas as pd
 import requests
 from django.core.files.storage import default_storage
 
-from data.department_choices import Department
-from data.region_choices import Region
+from data.models import Department, Region
 from macantine.etl.utils import format_geo_name
 
 logger = logging.getLogger(__name__)

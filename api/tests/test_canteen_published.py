@@ -10,8 +10,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, TeledeclarationFactory, UserFactory, SectorFactory
-from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration
-from data.region_choices import Region
+from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration, Region
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 

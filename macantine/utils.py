@@ -6,7 +6,8 @@ import redis as r
 from django.conf import settings
 from django.utils import timezone
 
-from data.region_choices import REGION_HEXAGONE_LIST, Region
+from data.models import Region
+from data.models.geo import REGION_HEXAGONE_LIST
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)

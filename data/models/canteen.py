@@ -13,10 +13,8 @@ from simple_history.utils import update_change_reason
 
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
-from data.department_choices import Department
 from data.fields import ChoiceArrayField
-from data.models.sector import Sector
-from data.region_choices import Region
+from data.models import Sector, Department, Region
 from data.utils import (
     CreationSource,
     get_diagnostic_lower_limit_year,

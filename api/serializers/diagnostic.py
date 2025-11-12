@@ -7,9 +7,7 @@ from api.serializers.utils import (
     extract_category_from_dict_sectors,
     extract_sector_from_dict_sectors,
 )
-from data.department_choices import Department
-from data.models import Diagnostic
-from data.region_choices import Region
+from data.models import Diagnostic, Department, Region
 from macantine.etl import utils
 
 from .teledeclaration import ShortTeledeclarationSerializer

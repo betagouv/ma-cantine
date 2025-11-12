@@ -21,9 +21,7 @@ from api.serializers import FullCanteenSerializer
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportFailure, ImportType, Sector
-from data.models.diagnostic import Diagnostic
-from data.models.teledeclaration import Teledeclaration
+from data.models import Canteen, ImportFailure, ImportType, Sector, Diagnostic, Teledeclaration
 from data.utils import CreationSource
 
 from .canteen import AddManagerView

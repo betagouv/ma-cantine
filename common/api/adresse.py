@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-from data.region_choices import Region
+from data.models import Region
 
 logger = logging.getLogger(__name__)
 
