@@ -6,7 +6,7 @@ import cantines from "@/data/cantines.json"
 import AppRawHTML from "@/components/AppRawHTML.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
-const props = defineProps(["canteens"])
+const props = defineProps(["canteens", "campaign"])
 const lastYear = new Date().getFullYear() - 1
 const header = [
   {
@@ -81,8 +81,10 @@ const getProductionTypeInfos = (canteen) => {
 
 const getDiagnosticInfos = (canteen) => {
   const action = canteen.action
-  const badge = diagnosticService.getBadge(action)
+  const isInCampaign = props.campaign.inCorrection || props.campaign.inTeledeclaration
+  const badge = diagnosticService.getBadge(action, isInCampaign)
   const button = getTeledeclareButton(canteen)
+  console.log(badge, action)
   return { badge, button }
 }
 
