@@ -1,10 +1,14 @@
 <script setup>
 import { ref } from "vue"
+import { useRoute } from "vue-router"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
+
+/* Router */
+const route = useRoute()
 
 /* Data */
 const schemaFile = "achats.json"
@@ -24,7 +28,7 @@ const success = (count) => {
 </script>
 
 <template>
-  <h1>Importer des achats</h1>
+  <h1>{{ route.meta.title }}</h1>
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet d’ajouter les achats de toutes vos cantines d’un coup.
     <strong>Si vous avez moins de 10 achats,</strong>
