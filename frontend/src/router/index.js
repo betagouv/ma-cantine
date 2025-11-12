@@ -529,33 +529,7 @@ routes.push({
 })
 
 routes.push({
-  path: "/mesures-phares/qualite-des-produits",
-  redirect: { name: "ComprendreMesObligations" },
-})
-
-routes.push({
-  path: "/mesures-phares/gaspillage-alimentaire",
-  redirect: { name: "ComprendreMesObligations" },
-})
-
-routes.push({
-  path: "/mesures-phares/menus-vegetariens",
-  redirect: { name: "ComprendreMesObligations" },
-})
-
-routes.push({
-  path: "/mesures-phares/interdiction-du-plastique",
-  redirect: { name: "ComprendreMesObligations" },
-})
-
-routes.push({
-  path: "/mesures-phares/information-des-usagers",
-  redirect: { name: "ComprendreMesObligations" },
-})
-
-// Old url visible on google
-routes.push({
-  path: "/mesures-phares/diversification-des-menus",
+  path: "/mesures-phares/*",
   redirect: { name: "ComprendreMesObligations" },
 })
 
