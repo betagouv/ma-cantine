@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-from data.models import Region
+from data.models.geo import Region
 
 logger = logging.getLogger(__name__)
 

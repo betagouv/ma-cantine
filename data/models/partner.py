@@ -6,7 +6,9 @@ from django.utils.translation import gettext_lazy as _
 
 from data.fields import ChoiceArrayField
 from data.utils import optimize_image
-from data.models import Department, PartnerType, Sector
+from data.models.partnertype import PartnerType
+from data.models.sector import Sector
+from data.models.geo import Department
 
 
 class Partner(models.Model):

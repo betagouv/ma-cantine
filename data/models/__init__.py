@@ -23,4 +23,4 @@ from .importtype import ImportType  # noqa: F401
 from .importfailure import ImportFailure  # noqa: F401
 from .wasteaction import WasteAction  # noqa: F401
 from .resourceaction import ResourceAction  # noqa: F401
-from .geo import Department, Region  # noqa: F401
+# from .geo import Department, Region  # noqa: F401

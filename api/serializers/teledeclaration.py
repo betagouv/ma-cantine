@@ -5,7 +5,8 @@ from api.serializers.utils import (
     extract_sector_from_dict_sectors,
     safe_to_float,
 )
-from data.models import Diagnostic, Teledeclaration, Department, Region
+from data.models import Diagnostic, Teledeclaration
+from data.models.geo import Department, Region
 from macantine.etl import utils
 
 
