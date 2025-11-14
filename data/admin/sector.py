@@ -1,26 +1,18 @@
-from django import forms
 from django.contrib import admin
 
 from data.models import SectorM2M
 
 
-class SectorForm(forms.ModelForm):
-    class Meta:
-        widgets = {
-            "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
-        }
-
-
 @admin.register(SectorM2M)
 class SectorM2MAdmin(admin.ModelAdmin):
-    form = SectorForm
     fields = (
         "name",
         "category",
         "has_line_ministry",
         "creation_date",
+        "modification_date",
     )
-    readonly_fields = ("creation_date",)
+    readonly_fields = ("creation_date", "modification_date")
     list_display = (
         "name",
         "category",
