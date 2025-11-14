@@ -14,7 +14,7 @@ from simple_history.utils import update_change_reason
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
-from data.models.sector import SectorM2M
+from data.models.sector import SectorM2M, Sector
 from data.models.geo import Department, Region, get_region_from_department
 from data.models.creation_source import CreationSource
 from data.utils import (
@@ -437,6 +437,12 @@ class Canteen(SoftDeletionModel):
     region_lib = models.TextField(null=True, blank=True, verbose_name="nom de la région")
 
     sectors_m2m = models.ManyToManyField(SectorM2M, blank=True, verbose_name="secteurs d'activité")
+    sectors = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=Sector.choices),
+        default=list,
+        blank=True,
+        verbose_name="secteurs d'activité",
+    )
     line_ministry = models.TextField(
         null=True, blank=True, choices=Ministries.choices, verbose_name="Ministère de tutelle"
     )
