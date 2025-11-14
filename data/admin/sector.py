@@ -28,3 +28,12 @@ class SectorAdmin(admin.ModelAdmin):
         "creation_date",
     )
     list_filter = ("category", "has_line_ministry")
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
