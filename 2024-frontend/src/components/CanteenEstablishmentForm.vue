@@ -288,9 +288,6 @@ const rules = {
   dailyMealCount: { required, integer, minValue: minValue(3), maxValue: maxValue(dailyMealMaxValue) },
   yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
   satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(1) },
-  centralProducerSiret: {
-    required: requiredIf(showCentralProducerSiret),
-  },
   oneDelivery: {
     beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxOneDelivery.value || value),
   },
@@ -350,7 +347,6 @@ if (props.establishmentData) {
         <CanteenEstablishmentCentralSelector
           v-if="showCentralProducerSiret"
           @select="(siret) => selectCentralSiret(siret)"
-          :error-required="formatError(v$.centralProducerSiret)"
           :establishment-data="prefillEstablishment"
         />
         <DsfrInputGroup

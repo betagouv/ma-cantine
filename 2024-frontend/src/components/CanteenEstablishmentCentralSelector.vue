@@ -97,7 +97,7 @@ const unselectCanteen = () => {
 
 <template>
   <div class="canteen-establishment-search">
-    <p class="fr-mb-0">Cuisine centrale *</p>
+    <p class="fr-mb-0">Cuisine centrale</p>
     <p class="fr-hint-text">
       Nous utilisons le numéro SIRET pour vérfier votre cuisine centrale. Vous ne le connaissez pas ? Trouvez-le avec
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'annuaire-des-entreprises</a>

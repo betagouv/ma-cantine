@@ -3,4 +3,4 @@ siret,nom,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_pr
 21380185500015,Another canteen,,10,0,Cliniques+Hôpitaux,central,conceded,public,,1
 21670482500019,A third canteen,,700,14000,Cliniques+Hôpitaux,central_serving,conceded,public,,1
 40419443300078,A satellite canteen,21380185500015,700,14000,Cliniques+Hôpitaux,site_cooked_elsewhere,conceded,public,,
-83014132100034,Another satellite canteen,21670482500019,700,14000,Cliniques+Hôpitaux,site_cooked_elsewhere,conceded,public,,
+83014132100034,Another satellite canteen,83014132100034,700,14000,Cliniques+Hôpitaux,site_cooked_elsewhere,conceded,public,,

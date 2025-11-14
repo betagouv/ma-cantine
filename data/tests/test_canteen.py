@@ -192,10 +192,7 @@ class CanteenModelSaveTest(TestCase):
     def test_canteen_production_type_validation(self):
         for TUPLE_OK in [(key, key) for key in Canteen.ProductionType.values]:
             with self.subTest(production_type=TUPLE_OK[0]):
-                central_producer_siret = (
-                    self.central_kitchen.siret if TUPLE_OK[0] == Canteen.ProductionType.ON_SITE_CENTRAL else None
-                )
-                canteen = CanteenFactory(production_type=TUPLE_OK[0], central_producer_siret=central_producer_siret)
+                canteen = CanteenFactory(production_type=TUPLE_OK[0])
                 self.assertEqual(canteen.production_type, TUPLE_OK[1])
         for VALUE_NOT_OK in [None, "", "  ", 123, "invalid"]:
             with self.subTest(production_type=VALUE_NOT_OK):
@@ -237,14 +234,8 @@ class CanteenModelSaveTest(TestCase):
         for production_type in [Canteen.ProductionType.ON_SITE, Canteen.ProductionType.ON_SITE_CENTRAL]:
             for TUPLE_OK in [(None, None)]:
                 with self.subTest(production_type=production_type, satellite_canteens_count=TUPLE_OK[0]):
-                    central_producer_siret = (
-                        self.central_kitchen.siret
-                        if production_type == Canteen.ProductionType.ON_SITE_CENTRAL
-                        else None
-                    )
                     canteen = CanteenFactory(
                         production_type=production_type,
-                        central_producer_siret=central_producer_siret,
                         satellite_canteens_count=TUPLE_OK[0],
                     )
                     self.assertEqual(canteen.satellite_canteens_count, TUPLE_OK[1])
@@ -255,18 +246,15 @@ class CanteenModelSaveTest(TestCase):
                         CanteenFactory,
                         production_type=production_type,
                         satellite_canteens_count=VALUE_NOT_OK,
-                        central_producer_siret=self.central_kitchen.siret
-                        if production_type == Canteen.ProductionType.ON_SITE_CENTRAL
-                        else None,
                     )
 
     def test_canteen_central_producer_siret_required_if_satellite_validation(self):
         for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL]:
-            # 21590350100017 ok because the central kitchen was created in setUpTestData
             for TUPLE_OK in [
                 ("215 903 501 00017", self.central_kitchen.siret),
                 (self.central_kitchen.siret, self.central_kitchen.siret),
                 (int(self.central_kitchen.siret), self.central_kitchen.siret),
+                ("75665621899905", "75665621899905"),
             ]:
                 with self.subTest(
                     production_type=production_type,
@@ -274,17 +262,6 @@ class CanteenModelSaveTest(TestCase):
                 ):
                     canteen = CanteenFactory(production_type=production_type, central_producer_siret=TUPLE_OK[0])
                     self.assertEqual(canteen.central_producer_siret, TUPLE_OK[1])
-            for VALUE_NOT_OK in [None, ""]:
-                with self.subTest(
-                    production_type=production_type,
-                    central_producer_siret=VALUE_NOT_OK,
-                ):
-                    self.assertRaises(
-                        ValidationError,
-                        CanteenFactory,
-                        production_type=production_type,
-                        central_producer_siret=VALUE_NOT_OK,
-                    )
             # the canteen's central_producer_siret cannot be the canteen's own siret
             self.assertRaises(
                 ValidationError,
@@ -293,27 +270,7 @@ class CanteenModelSaveTest(TestCase):
                 production_type=production_type,
                 central_producer_siret="21380185500015",
             )
-            # the canteen's central_producer_siret must be an existing canteen siret
-            self.assertRaises(
-                ValidationError,
-                CanteenFactory,
-                siret="21380185500015",
-                production_type=production_type,
-                central_producer_siret="75665621899905",
-            )
-            # the canteen's central_producer_siret must be an existing central kitchen siret
-            self.assertRaises(
-                ValidationError,
-                CanteenFactory,
-                siret="75665621899905",
-                production_type=production_type,
-                central_producer_siret=self.canteen_site.siret,
-            )
-        for production_type in [
-            Canteen.ProductionType.CENTRAL,
-            Canteen.ProductionType.CENTRAL_SERVING,
-            Canteen.ProductionType.ON_SITE,
-        ]:
+        for production_type in Canteen.ProductionType.values:
             for TUPLE_OK in [(None, None), ("", "")]:
                 with self.subTest(
                     production_type=production_type,
@@ -321,6 +278,11 @@ class CanteenModelSaveTest(TestCase):
                 ):
                     canteen = CanteenFactory(production_type=production_type, central_producer_siret=TUPLE_OK[0])
                     self.assertEqual(canteen.central_producer_siret, TUPLE_OK[1])
+        for production_type in [
+            Canteen.ProductionType.CENTRAL,
+            Canteen.ProductionType.CENTRAL_SERVING,
+            Canteen.ProductionType.ON_SITE,
+        ]:
             for VALUE_NOT_OK in [
                 "215 903 501 00017",
                 self.central_kitchen.siret,
