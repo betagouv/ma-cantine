@@ -5,16 +5,9 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
-<<<<<<< HEAD
-from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Canteen, Diagnostic, Sector
-from data.models.geo import Department, Region
-=======
-from data.department_choices import Department
 from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
 from data.models import Canteen, Diagnostic, SectorM2M
-from data.region_choices import Region
->>>>>>> d79266ef0 (refactor(Secteurs): renommer 'sectors' en 'sectors_m2m')
+from data.models.geo import Department, Region
 
 year_data = 2023
 date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
@@ -485,8 +478,4 @@ class TestCanteenLocationsApi(APITestCase):
         self.assertEqual(Region.auvergne_rhone_alpes, body["regions"][2])
         self.assertEqual(len(body["departments"]), 2)
         self.assertIn(Department.ain, body["departments"][0])
-        self.assertIn(Department.aisne, body["departments"][1])
-        self.assertIn(Department.aisne, body["departments"][1])
-        self.assertIn(Department.aisne, body["departments"][1])
-        self.assertIn(Department.aisne, body["departments"][1])
         self.assertIn(Department.aisne, body["departments"][1])

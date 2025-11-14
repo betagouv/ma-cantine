@@ -280,7 +280,3 @@ class TestETLOpenData(TestCase):
             # Cleaning files
             for file_extension in ["csv", "parquet", "xslx"]:
                 default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")
-            for file_extension in ["csv", "parquet", "xslx"]:
-                default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")
-            for file_extension in ["csv", "parquet", "xslx"]:
-                default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")

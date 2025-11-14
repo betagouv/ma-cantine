@@ -1293,7 +1293,6 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         self.assertEqual(canteen.city_insee_code, "54318")
         self.assertEqual(canteen.city, "Liverdun")
         self.assertEqual(canteen.department, Department.meurthe_et_moselle)
-
         canteen = Canteen.objects.get(siret="21380185500015")
         self.assertEqual(canteen.postal_code, "07130")
         self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
@@ -1302,9 +1301,5 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         canteen = Canteen.objects.get(siret="32441387130915")
         self.assertEqual(canteen.city_insee_code, "07293")
         self.assertEqual(canteen.postal_code, "07130")
-        self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
-        self.assertEqual(canteen.department, Department.ardeche)
-        self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
-        self.assertEqual(canteen.department, Department.ardeche)
         self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
         self.assertEqual(canteen.department, Department.ardeche)

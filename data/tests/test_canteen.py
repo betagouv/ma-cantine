@@ -885,7 +885,3 @@ class CanteenModelPropertiesTest(TestCase):
         self.assertEqual(canteen.service_diagnostics.count(), 2)
         self.assertEqual(canteen.service_diagnostics.first().year, 2023)
         self.assertEqual(canteen.latest_published_year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)

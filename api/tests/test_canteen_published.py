@@ -1174,9 +1174,3 @@ class CanteenPreviewDetailApiTest(APITestCase):
         self.assertIn("info", body["badges"])
         self.assertIn("approDiagnostic", body)
         self.assertIn("percentageValueBioHt", body["approDiagnostic"])
-
-    # TODO: test satellites: CC APPRO, CC ALL, own diag
-
-    # TODO: test satellites: CC APPRO, CC ALL, own diag
-
-    # TODO: test satellites: CC APPRO, CC ALL, own diag
