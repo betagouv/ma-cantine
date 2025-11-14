@@ -26,7 +26,7 @@ const getBadge = (name, campaignDates) => {
       label = "À télédéclarer"
       type = "error"
       break
-    case isInCampaign && waitingCentral: // If central did not teledeclare her diagnostic
+    case isInCampaign && waitingCentral: // If central did not teledeclare its diagnostic
       label = "En attente"
       type = "warning"
       break
