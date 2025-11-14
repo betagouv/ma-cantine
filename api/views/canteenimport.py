@@ -21,7 +21,7 @@ from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportFailure, ImportType, Sector
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 
 from .canteen import AddManagerView
 from .utils import camelize

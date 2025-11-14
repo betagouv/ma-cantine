@@ -6,8 +6,7 @@ from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
 
 from data.models import Diagnostic
-from data.utils import CreationSource
-
+from data.models.creation_source import CreationSource
 from .teledeclaration import TeledeclarationInline
 
 

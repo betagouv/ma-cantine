@@ -24,7 +24,7 @@ from api.serializers import (
     PurchaseSummarySerializer,
 )
 from data.models import Canteen, Diagnostic, Purchase
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 
 logger = logging.getLogger(__name__)
 

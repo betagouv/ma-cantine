@@ -34,7 +34,7 @@ from api.views.utils import update_change_reason_with_auth
 from common.utils import file_import, send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.diagnostic import Diagnostic
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 from macantine.utils import CAMPAIGN_DATES, is_in_correction
 
 logger = logging.getLogger(__name__)

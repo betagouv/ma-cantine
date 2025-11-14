@@ -18,7 +18,7 @@ from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.purchase import Purchase
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 
 
 class TestPurchaseSchema(TestCase):

@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
 from data.models import Canteen, Diagnostic, Purchase
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 
 
 class TestPurchaseApi(APITestCase):

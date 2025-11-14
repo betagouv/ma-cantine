@@ -21,10 +21,10 @@ from data.models import (
     ImportFailure,
     ImportType,
     ManagerInvitation,
-    Teledeclaration,
 )
 from data.models.geo import Department, Region
-from data.utils import CreationSource
+from data.models.teledeclaration import Teledeclaration
+from data.models.creation_source import CreationSource
 
 NEXT_YEAR = datetime.date.today().year + 1
 

@@ -12,7 +12,7 @@ from rest_framework.test import APITestCase
 from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation
-from data.utils import CreationSource
+from data.models.creation_source import CreationSource
 
 
 class CanteenSchemaTest(TestCase):
