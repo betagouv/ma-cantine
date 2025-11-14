@@ -1,10 +1,10 @@
 import factory
 
-from data.models import Sector
+from data.models import SectorM2M
 
 
-class SectorFactory(factory.django.DjangoModelFactory):
+class SectorM2MFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = Sector
+        model = SectorM2M
 
     name = factory.Faker("text", max_nb_chars=20)

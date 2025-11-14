@@ -58,7 +58,7 @@ from common.api.recherche_entreprises import (
     fetch_geo_data_from_siret,
 )
 from common.utils import send_mail
-from data.models import Canteen, Diagnostic, ManagerInvitation, Sector
+from data.models import Canteen, Diagnostic, ManagerInvitation, SectorM2M
 from data.utils import has_charfield_missing_query
 from data.models.creation_source import CreationSource
 
@@ -113,7 +113,7 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         all_sector_canteens = filter_by_diagnostic_params(all_sector_canteens, query_params)
 
         self.sectors = (
-            Sector.objects.filter(canteen__in=list(all_sector_canteens)).values_list("id", flat=True).distinct()
+            SectorM2M.objects.filter(canteen__in=list(all_sector_canteens)).values_list("id", flat=True).distinct()
         )
 
         return super().paginate_queryset(queryset, request, view)
@@ -192,7 +192,7 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
         fields = (
             "department",
             "region",
-            "sectors",
+            "sectors_m2m",
             "city_insee_code",
             "min_daily_meal_count",
             "max_daily_meal_count",
@@ -810,7 +810,7 @@ class SatelliteListCreateView(ListCreateAPIView):
             serialized_canteen = FullCanteenSerializer(satellite).data
             return_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
             return JsonResponse(camelize(serialized_canteen), status=return_status)
-        except Sector.DoesNotExist:
+        except SectorM2M.DoesNotExist:
             raise BadRequest()
 
 
@@ -920,11 +920,11 @@ class CanteenAnalysisListView(ListAPIView):
     serializer_class = CanteenAnalysisSerializer
 
     def get_queryset(self):
-        return Canteen.objects.prefetch_related("sectors", "managers").order_by("creation_date")
+        return Canteen.objects.prefetch_related("sectors_m2m", "managers").order_by("creation_date")
 
 
 class CanteenOpenDataListView(ListAPIView):
     serializer_class = CanteenOpenDataSerializer
 
     def get_queryset(self):
-        return Canteen.objects.prefetch_related("sectors", "managers").publicly_visible().order_by("creation_date")
+        return Canteen.objects.prefetch_related("sectors_m2m", "managers").publicly_visible().order_by("creation_date")

@@ -77,7 +77,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "satellite_canteens_count",
         "satellites_display",
         "economic_model",
-        "sectors",
+        "sectors_m2m",
         "line_ministry",
         "publication_status_display",
         "claimed_by",
@@ -139,7 +139,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "deleted",
     )
     filter_vertical = (
-        "sectors",
+        "sectors_m2m",
         "managers",
     )
     list_filter = (
@@ -148,7 +148,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "production_type",
         "economic_model",
         SoftDeletionStatusFilter,
-        "sectors",
+        "sectors_m2m",
         "region",
         "department",
         "import_source",

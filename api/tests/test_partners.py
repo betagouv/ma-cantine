@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from data.factories import PartnerFactory, PartnerTypeFactory, UserFactory
-from data.models import Partner, Sector
+from data.models import Partner, SectorM2M
 
 
 class TestPartnersApi(APITestCase):
@@ -11,9 +11,9 @@ class TestPartnersApi(APITestCase):
         """
         Returns partners and the types that are in use therefore available for filtering
         """
-        sector_category_1 = Sector.Categories.ADMINISTRATION
-        sector_category_2 = Sector.Categories.AUTRES
-        sector_category_3 = Sector.Categories.EDUCATION
+        sector_category_1 = SectorM2M.Categories.ADMINISTRATION
+        sector_category_2 = SectorM2M.Categories.AUTRES
+        sector_category_3 = SectorM2M.Categories.EDUCATION
         type = PartnerTypeFactory.create(name="Test type")
         type_2 = PartnerTypeFactory.create(name="Test type 2")
         PartnerTypeFactory.create(name="Unused type")
@@ -162,7 +162,7 @@ class TestPartnersApi(APITestCase):
         """
         Test that unauthenticated users can create draft partners
         """
-        sector_cateory = Sector.Categories.ADMINISTRATION
+        sector_cateory = SectorM2M.Categories.ADMINISTRATION
         partner_type = PartnerTypeFactory.create()
         self.assertEqual(Partner.objects.count(), 0)
         payload = {

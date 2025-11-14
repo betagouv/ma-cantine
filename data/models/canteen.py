@@ -14,7 +14,7 @@ from simple_history.utils import update_change_reason
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
-from data.models.sector import Sector
+from data.models.sector import SectorM2M
 from data.models.geo import Department, Region, get_region_from_department
 from data.models.creation_source import CreationSource
 from data.utils import (
@@ -24,17 +24,9 @@ from data.utils import (
     optimize_image,
 )
 from data.validators import canteen as canteen_validators
-from macantine.utils import (
-    get_year_campaign_end_date_or_today_date,
-    is_in_correction,
-    is_in_teledeclaration,
-)
+from macantine.utils import get_year_campaign_end_date_or_today_date, is_in_correction, is_in_teledeclaration
 
-from .softdeletionmodel import (
-    SoftDeletionManager,
-    SoftDeletionModel,
-    SoftDeletionQuerySet,
-)
+from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
 
 
 def get_diagnostic_year_choices():
@@ -84,8 +76,8 @@ def has_missing_data_query():
         | Q(production_type=None)
         | Q(management_type=None)
         | Q(economic_model=None)
-        # serving-specific rules (with annotate_with_sectors_count)
-        | (is_serving_query() & (Q(sectors__count=0) | Q(sectors__count__gt=3)))
+        # serving-specific rules (with annotate_with_sectors_m2m_count)
+        | (is_serving_query() & (Q(sectors_m2m__count=0) | Q(sectors_m2m__count__gt=3)))
         # satellite-specific rules
         | (is_satellite_query() & has_charfield_missing_query("central_producer_siret"))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
@@ -182,14 +174,14 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.annotate(has_td=Exists(Subquery(tds)), has_td_submitted=Exists(Subquery(tds_submitted)))
 
     def annotate_with_requires_line_ministry(self):
-        canteen_sector_relation = apps.get_model(app_label="data", model_name="Canteen_sectors")
+        canteen_sector_relation = apps.get_model(app_label="data", model_name="Canteen_sectors_m2m")
         has_sector_requiring_line_ministry = canteen_sector_relation.objects.filter(
-            canteen=OuterRef("pk"), sector__has_line_ministry=True
+            canteen=OuterRef("pk"), sectorm2m__has_line_ministry=True
         )
         return self.annotate(requires_line_ministry=Exists(has_sector_requiring_line_ministry))
 
-    def annotate_with_sectors_count(self):
-        return self.annotate(Count("sectors"))
+    def annotate_with_sectors_m2m_count(self):
+        return self.annotate(Count("sectors_m2m", distinct=True))
 
     def has_siret(self):
         return self.exclude(has_charfield_missing_query("siret"))
@@ -205,12 +197,16 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def has_missing_data(self):
         return (
-            self.annotate_with_requires_line_ministry().annotate_with_sectors_count().filter(has_missing_data_query())
+            self.annotate_with_requires_line_ministry()
+            .annotate_with_sectors_m2m_count()
+            .filter(has_missing_data_query())
         )
 
     def filled(self):
         return (
-            self.annotate_with_requires_line_ministry().annotate_with_sectors_count().exclude(has_missing_data_query())
+            self.annotate_with_requires_line_ministry()
+            .annotate_with_sectors_m2m_count()
+            .exclude(has_missing_data_query())
         )
 
     def group_and_count_by_field(self, field):
@@ -228,7 +224,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
         # prep missing data action
         self = self.annotate_with_requires_line_ministry()
-        self = self.annotate_with_sectors_count()
+        self = self.annotate_with_sectors_m2m_count()
         # prep add satellites action
         self = self.annotate_with_satellites_in_db_count()
         self = self.annotate_with_central_kitchen_id()
@@ -440,7 +436,7 @@ class Canteen(SoftDeletionModel):
     region = models.TextField(null=True, blank=True, choices=Region.choices, verbose_name="région")
     region_lib = models.TextField(null=True, blank=True, verbose_name="nom de la région")
 
-    sectors = models.ManyToManyField(Sector, blank=True, verbose_name="secteurs d'activité")
+    sectors_m2m = models.ManyToManyField(SectorM2M, blank=True, verbose_name="secteurs d'activité")
     line_ministry = models.TextField(
         null=True, blank=True, choices=Ministries.choices, verbose_name="Ministère de tutelle"
     )
@@ -689,7 +685,7 @@ class Canteen(SoftDeletionModel):
         )
         # serving-specific rules
         if is_filled and self.is_serving:
-            is_filled = self.sectors.exists()
+            is_filled = self.sectors_m2m.exists()
         # satellite-specific rules
         if is_filled and self.is_satellite:
             is_filled = bool(self.central_producer_siret and self.central_producer_siret != self.siret)
@@ -702,7 +698,7 @@ class Canteen(SoftDeletionModel):
                     Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
                 )
         # line_ministry
-        if is_filled and self.sectors.filter(has_line_ministry=True).exists():
+        if is_filled and self.sectors_m2m.filter(has_line_ministry=True).exists():
             is_filled = bool(self.line_ministry)
         return is_filled
 
@@ -850,18 +846,18 @@ class Canteen(SoftDeletionModel):
 
     @property
     def in_education(self):
-        from data.models import Sector
+        from data.models import SectorM2M
 
-        scolaire_sectors = Sector.objects.filter(category="education")
-        if scolaire_sectors.count() and self.sectors.intersection(scolaire_sectors).exists():
+        scolaire_sectors = SectorM2M.objects.filter(category="education")
+        if scolaire_sectors.count() and self.sectors_m2m.intersection(scolaire_sectors).exists():
             return True
 
     @property
     def in_administration(self):
-        from data.models import Sector
+        from data.models import SectorM2M
 
-        administration_sectors = Sector.objects.filter(category="administration")
-        if administration_sectors.count() and self.sectors.intersection(administration_sectors).exists():
+        administration_sectors = SectorM2M.objects.filter(category="administration")
+        if administration_sectors.count() and self.sectors_m2m.intersection(administration_sectors).exists():
             return True
 
     @property

@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from data.factories import CanteenFactory, SectorFactory, UserFactory
+from data.factories import CanteenFactory, SectorM2MFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation
 from data.models.creation_source import CreationSource
 
@@ -116,9 +116,9 @@ class CanteenSchemaTest(TestCase):
 class CanteenImportErrorTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        SectorFactory.create(name="Cliniques")
-        SectorFactory.create(name="Hôpitaux")
-        SectorFactory.create(name="Crèche")
+        SectorM2MFactory.create(name="Cliniques")
+        SectorM2MFactory.create(name="Hôpitaux")
+        SectorM2MFactory.create(name="Crèche")
 
     def test_unauthenticated(self):
         response = self.client.post(reverse("import_canteens"))
@@ -302,8 +302,8 @@ class CanteenImportErrorTest(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
-        error_message_max = "Champ 'secteurs d'activité' : Ce champ ne peut avoir plus de 3 valeurs."
-        error_message_empty = "Champ 'secteurs d'activité' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
+        error_message_max = "Champ 'secteurs' : Ce champ ne peut avoir plus de 3 valeurs."
+        error_message_empty = "Champ 'secteurs' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 3, errors)
@@ -348,9 +348,9 @@ class CanteenImportErrorTest(APITestCase):
 class CanteenImportSuccessTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        SectorFactory.create(name="Cliniques")
-        SectorFactory.create(name="Hôpitaux")
-        SectorFactory.create(name="Crèche")
+        SectorM2MFactory.create(name="Cliniques")
+        SectorM2MFactory.create(name="Hôpitaux")
+        SectorM2MFactory.create(name="Crèche")
 
     @authenticate
     def test_import_only_canteens(self):
@@ -404,7 +404,7 @@ class CanteenImportSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
         canteen_created = Canteen.objects.first()
         self.assertEqual(canteen_created.production_type, "central")
-        self.assertEqual(canteen_created.sectors.count(), 0)
+        self.assertEqual(canteen_created.sectors_m2m.count(), 0)
 
     @authenticate
     def test_sectors_apostrophes(self):
@@ -412,7 +412,7 @@ class CanteenImportSuccessTest(APITestCase):
         Different apostrophes caracters should be accepted but a unique one should be saved
         """
         file_path = "./api/tests/files/canteens/canteens_sectors.csv"
-        sector = SectorFactory(name="Restaurants administratifs d'Etat (RA)")
+        sector = SectorM2MFactory(name="Restaurants administratifs d'Etat (RA)")
         sector.save()
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
@@ -421,10 +421,16 @@ class CanteenImportSuccessTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(
-            Canteen.objects.filter(sectors__name__in=["Restaurants administratifs d'Etat (RA)"]).distinct().count(), 2
+            Canteen.objects.filter(sectors_m2m__name__in=["Restaurants administratifs d'Etat (RA)"])
+            .distinct()
+            .count(),
+            2,
         )
         self.assertEqual(
-            Canteen.objects.filter(sectors__name__in=["Restaurants administratifs d’Etat (RA)"]).distinct().count(), 0
+            Canteen.objects.filter(sectors_m2m__name__in=["Restaurants administratifs d’Etat (RA)"])
+            .distinct()
+            .count(),
+            0,
         )
 
         body = response.json()

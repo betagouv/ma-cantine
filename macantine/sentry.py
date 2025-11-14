@@ -26,9 +26,9 @@ def before_send(event, hint):
         # django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
 
         from api.views.diagnosticimport import FileFormatError
-        from data.models import Sector
+        from data.models import SectorM2M
 
-        exceptions.append(Sector.DoesNotExist)
+        exceptions.append(SectorM2M.DoesNotExist)
         exceptions.append(FileFormatError)
     except Exception:
         pass

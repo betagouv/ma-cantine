@@ -3,8 +3,8 @@ import logging
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import ListAPIView
 
-from api.serializers import SectorSerializer
-from data.models import Sector
+from api.serializers import SectorM2MSerializer
+from data.models import SectorM2M
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +18,6 @@ logger = logging.getLogger(__name__)
 class SectorListView(ListAPIView):
     include_in_documentation = True
     required_scopes = ["canteen"]
-    model = Sector
-    serializer_class = SectorSerializer
-    queryset = Sector.objects.all()
+    model = SectorM2M
+    serializer_class = SectorM2MSerializer
+    queryset = SectorM2M.objects.all()

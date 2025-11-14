@@ -8,19 +8,16 @@ from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
 from common.api.datagouv import update_dataset_resources
-from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Canteen, Sector
-from macantine.etl.open_data import (
-    ETL_OPEN_DATA_CANTEEN,
-    ETL_OPEN_DATA_TELEDECLARATIONS,
-)
+from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
+from data.models import Canteen, SectorM2M
+from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 
 
 @requests_mock.Mocker()
 class TestETLOpenData(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector_school = SectorFactory(name="School", category=Sector.Categories.EDUCATION)
+        cls.sector_school = SectorM2MFactory(name="School", category=SectorM2M.Categories.EDUCATION)
         cls.user_manager = UserFactory.create()
         cls.canteen = CanteenFactory.create(
             name="Cantine",
@@ -37,7 +34,7 @@ class TestETLOpenData(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            sectors=[cls.sector_school],
+            sectors_m2m=[cls.sector_school],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
@@ -50,7 +47,7 @@ class TestETLOpenData(TestCase):
         cls.canteen_2 = CanteenFactory.create(
             name="Cantine 2",
             siret="19382111300035",
-            sectors=[],
+            sectors_m2m=[],
             managers=[cls.user_manager],
             declaration_donnees_2022=True,
         )
@@ -67,7 +64,7 @@ class TestETLOpenData(TestCase):
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2024, diagnostic_type=None)
             diagnostic.teledeclare(cls.user_manager)
 
-        cls.canteen_without_manager = CanteenFactory.create(siret="21590350100017", sectors=[])
+        cls.canteen_without_manager = CanteenFactory.create(siret="21590350100017", sectors_m2m=[])
         cls.canteen_without_manager.managers.clear()
 
     def test_teledeclaration_extract(self, mock):

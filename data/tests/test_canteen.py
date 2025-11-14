@@ -2,8 +2,8 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from freezegun import freeze_time
 
-from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, SectorFactory, UserFactory
-from data.models import Canteen, Diagnostic, Sector, Teledeclaration
+from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, SectorM2MFactory, UserFactory
+from data.models import Canteen, Diagnostic, SectorM2M, Teledeclaration
 from data.models.geo import Department, Region
 from data.models.creation_source import CreationSource
 
@@ -624,13 +624,13 @@ class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
 class CanteenCompleteQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorFactory(name="Sector", category=Sector.Categories.ADMINISTRATION)
-        sector_line_ministry = SectorFactory(
-            name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
+        sector = SectorM2MFactory(name="Sector", category=SectorM2M.Categories.ADMINISTRATION)
+        sector_line_ministry = SectorM2MFactory(
+            name="Sector ministry", category=SectorM2M.Categories.AUTRES, has_line_ministry=True
         )
         COMMON = {
             # CanteenFactory generates: name, city_insee_code, sectors...
-            "sectors": [sector],
+            "sectors_m2m": [sector],
         }
         cls.canteen_central = CanteenFactory(
             **COMMON,
@@ -680,7 +680,7 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             siret="21670482500019",
             production_type=Canteen.ProductionType.ON_SITE,
         )
-        cls.canteen_on_site_incomplete_2.sectors.clear()  # incomplete
+        cls.canteen_on_site_incomplete_2.sectors_m2m.clear()  # incomplete
         cls.canteen_on_site_incomplete_3 = CanteenFactory(
             **COMMON,
             siret="21640122400011",
@@ -688,7 +688,7 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             line_ministry=None,  # incomplete
         )
-        cls.canteen_on_site_incomplete_3.sectors.set([sector_line_ministry])
+        cls.canteen_on_site_incomplete_3.sectors_m2m.set([sector_line_ministry])
         cls.canteen_on_site_central_1 = CanteenFactory(
             **COMMON,
             siret="21630113500010",
@@ -748,9 +748,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
 class CanteenAggregateQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorFactory(name="Sector", category=Sector.Categories.ADMINISTRATION)
-        sector_line_ministry = SectorFactory(
-            name="Sector ministry", category=Sector.Categories.AUTRES, has_line_ministry=True
+        sector = SectorM2MFactory(name="Sector", category=SectorM2M.Categories.ADMINISTRATION)
+        sector_line_ministry = SectorM2MFactory(
+            name="Sector ministry", category=SectorM2M.Categories.AUTRES, has_line_ministry=True
         )
         cls.canteen_central = CanteenFactory(
             siret="21590350100017",
@@ -758,7 +758,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
             satellite_canteens_count=1,
-            sectors=[sector],
+            sectors_m2m=[sector],
         )
         cls.canteen_central_serving = CanteenFactory(
             siret="21010034300016",
@@ -767,7 +767,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             daily_meal_count=12,
             satellite_canteens_count=1,
-            sectors=[sector],
+            sectors_m2m=[sector],
         )
         cls.canteen_on_site = CanteenFactory(
             siret=None,
@@ -776,7 +776,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             daily_meal_count=12,
-            sectors=[sector],
+            sectors_m2m=[sector],
         )
         cls.canteen_on_site_central = CanteenFactory(
             siret="96766910375238",
@@ -785,7 +785,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             economic_model=Canteen.EconomicModel.PRIVATE,
             daily_meal_count=12,
             central_producer_siret=cls.canteen_central.siret,
-            sectors=[sector_line_ministry],
+            sectors_m2m=[sector_line_ministry],
         )
 
     def test_group_and_count_by_field(self):
@@ -810,17 +810,19 @@ class CanteenAggregateQuerySetTest(TestCase):
         self.assertEqual(result[1]["economic_model"], Canteen.EconomicModel.PRIVATE)
         self.assertEqual(result[1]["count"], 1)
         # group by sectors__category
-        result = Canteen.objects.group_and_count_by_field("sectors__category")
+        result = Canteen.objects.group_and_count_by_field("sectors_m2m__category")
         self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]["sectors__category"], Sector.Categories.ADMINISTRATION)
+        self.assertEqual(result[0]["sectors_m2m__category"], SectorM2M.Categories.ADMINISTRATION)
         self.assertEqual(result[0]["count"], 3)
-        self.assertEqual(result[1]["sectors__category"], Sector.Categories.AUTRES)
+        self.assertEqual(result[1]["sectors_m2m__category"], SectorM2M.Categories.AUTRES)
         self.assertEqual(result[1]["count"], 1)
 
 
 class CanteenModelPropertiesTest(TestCase):
     def test_canteen_is_spe(self):
-        canteen_1 = CanteenFactory(sectors=[SectorFactory(name="Sector 1")], line_ministry=Canteen.Ministries.CULTURE)
+        canteen_1 = CanteenFactory(
+            sectors_m2m=[SectorM2MFactory(name="Sector 1")], line_ministry=Canteen.Ministries.CULTURE
+        )
         canteen_2 = CanteenFactory()
         self.assertTrue(canteen_1.is_spe)
         self.assertFalse(canteen_2.is_spe)

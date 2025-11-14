@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, SectorFactory
+from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, SectorM2MFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
 
 
@@ -43,7 +43,7 @@ class CanteenActionApiTest(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
             satellite_canteens_count=1,
-            sectors=None,
+            sectors_m2m=None,
         )
         central_with_one_sat_siret = "21670482500019"
         complete_central_with_diff_sat_count = CanteenFactory.create(
@@ -53,7 +53,7 @@ class CanteenActionApiTest(APITestCase):
             siret=central_with_one_sat_siret,
             managers=[authenticate.user],
             satellite_canteens_count=10,
-            sectors=None,
+            sectors_m2m=None,
         )
         CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_with_one_sat_siret
@@ -65,7 +65,7 @@ class CanteenActionApiTest(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
-            sectors=[SectorFactory.create()],
+            sectors_m2m=[SectorM2MFactory.create()],
         )
         # complete diag
         needs_to_fill_diag = CanteenFactory.create(
@@ -89,7 +89,7 @@ class CanteenActionApiTest(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
             managers=[authenticate.user],
-            sectors=[],
+            sectors_m2m=[],
         )
         needs_daily_meal_count = CanteenFactory.create(
             siret="40419443300078",
@@ -107,11 +107,11 @@ class CanteenActionApiTest(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             economic_model=Canteen.EconomicModel.PRIVATE,
             city_insee_code="69123",
-            sectors=[
-                SectorFactory.create(name="1"),
-                SectorFactory.create(name="2"),
-                SectorFactory.create(name="3"),
-                SectorFactory.create(name="4"),
+            sectors_m2m=[
+                SectorM2MFactory.create(name="1"),
+                SectorM2MFactory.create(name="2"),
+                SectorM2MFactory.create(name="3"),
+                SectorM2MFactory.create(name="4"),
             ],
         )
         # TD
@@ -453,7 +453,7 @@ class CanteenActionApiTest(APITestCase):
         CanteenFactory.create(
             id=3,
             production_type=Canteen.ProductionType.ON_SITE,
-            sectors=[SectorFactory.create()],
+            sectors_m2m=[SectorM2MFactory.create()],
             managers=[authenticate.user],
         )
 
@@ -473,7 +473,7 @@ class CanteenActionApiTest(APITestCase):
             siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
-            sectors=[SectorFactory.create()],
+            sectors_m2m=[SectorM2MFactory.create()],
             managers=[authenticate.user],
         )
         last_year = 2024
@@ -503,7 +503,7 @@ class CanteenActionApiTest(APITestCase):
             siret="21590350100017",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
-            sectors=[SectorFactory.create()],
+            sectors_m2m=[SectorM2MFactory.create()],
             managers=[authenticate.user],
         )
         last_year = 2024
@@ -547,7 +547,7 @@ class CanteenActionApiTest(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
-            sectors=[SectorFactory.create()],
+            sectors_m2m=[SectorM2MFactory.create()],
             managers=[authenticate.user],
         )
         canteen_did_not_td = CanteenFactory.create(
@@ -557,7 +557,7 @@ class CanteenActionApiTest(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
-            sectors=[SectorFactory.create()],
+            sectors_m2m=[SectorM2MFactory.create()],
             managers=[authenticate.user],
         )
         last_year = 2024
@@ -615,15 +615,15 @@ class CanteenActionApiTest(APITestCase):
         Even if the diagnostic is complete, the mandatory information on the canteen level should
         return a Canteen.Actions.FILL_CANTEEN_DATA if line ministry is not there
         """
-        with_lm = SectorFactory.create(has_line_ministry=True)
-        without_lm = SectorFactory.create(has_line_ministry=False)
+        with_lm = SectorM2MFactory.create(has_line_ministry=True)
+        without_lm = SectorM2MFactory.create(has_line_ministry=False)
         canteen = CanteenFactory.create(
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
             siret="96766910375238",
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
-            sectors=[with_lm, without_lm],
+            sectors_m2m=[with_lm, without_lm],
             line_ministry=None,
             managers=[authenticate.user],
         )
@@ -643,10 +643,12 @@ class CanteenActionApiTest(APITestCase):
 
         # a canteen without a line ministry and without a sector that demands one is also complete
         canteen.line_ministry = None
-        canteen.sectors.clear()
-        canteen.sectors.set([without_lm])
+        canteen.sectors_m2m.clear()
+        canteen.sectors_m2m.set([without_lm])
         canteen.save()
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
+        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
         self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)

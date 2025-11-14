@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # 26 : Administration : Etablissements publics d’Etat (EPA ou EPIC)
 # 24 : Administration : Restaurants des prisons
 # 23 : Administration : Restaurants administratifs d’Etat (RA)
@@ -9,7 +10,7 @@ from django.db import models
 SECTEURS_SPE = [26, 24, 23, 22, 4, 2]
 
 
-class Sector(models.Model):
+class SectorM2M(models.Model):
     class Meta:
         verbose_name = "secteur d'activité"
         verbose_name_plural = "secteurs d'activité"

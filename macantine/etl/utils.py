@@ -5,7 +5,6 @@ from typing import Dict
 import numpy as np
 import pandas as pd
 
-from data.models import Sector
 from macantine.etl.data_ware_house import DataWareHouse
 
 warnings.filterwarnings("ignore", message="SparkPandasCompare currently only supports Numpy < 2")  # Needed for the CI
@@ -86,12 +85,13 @@ def map_sectors():
     Populate the details of a sector, given its id
     """
 
-    from api.serializers import SectorSerializer  # avoid circular import
+    from api.serializers import SectorM2MSerializer  # avoid circular import
+    from data.models import SectorM2M
 
-    sectors = Sector.objects.all()
+    sectors = SectorM2M.objects.all()
     sectors_mapper = {}
     for sector in sectors:
-        sector = SectorSerializer(sector).data
+        sector = SectorM2MSerializer(sector).data
         sectors_mapper[sector["id"]] = sector
     return sectors_mapper
 

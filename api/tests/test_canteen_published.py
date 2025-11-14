@@ -1,5 +1,5 @@
-import os
 import datetime
+import os
 from datetime import date
 
 from django.core.files import File
@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, DiagnosticFactory, TeledeclarationFactory, UserFactory, SectorFactory
+from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, TeledeclarationFactory, UserFactory
 from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration
 from data.models.geo import Region
 
@@ -162,15 +162,15 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertEqual(results[0].get("name"), "Shiso")
 
     def test_sectors_filter(self):
-        school = SectorFactory.create(name="School")
-        enterprise = SectorFactory.create(name="Enterprise")
-        social = SectorFactory.create(name="Social")
-        CanteenFactory(sectors=[school], name="Shiso")
-        CanteenFactory(sectors=[enterprise], name="Wasabi")
-        CanteenFactory(sectors=[social], name="Mochi")
-        CanteenFactory(sectors=[school, social], name="Umami")
+        school = SectorM2MFactory.create(name="School")
+        enterprise = SectorM2MFactory.create(name="Enterprise")
+        social = SectorM2MFactory.create(name="Social")
+        CanteenFactory(sectors_m2m=[school], name="Shiso")
+        CanteenFactory(sectors_m2m=[enterprise], name="Wasabi")
+        CanteenFactory(sectors_m2m=[social], name="Mochi")
+        CanteenFactory(sectors_m2m=[school, social], name="Umami")
 
-        url = f"{reverse('published_canteens')}?sectors={school.id}"
+        url = f"{reverse('published_canteens')}?sectors_m2m={school.id}"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 2)
@@ -178,13 +178,13 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertIn("Shiso", result_names)
         self.assertIn("Umami", result_names)
 
-        url = f"{reverse('published_canteens')}?sectors={enterprise.id}"
+        url = f"{reverse('published_canteens')}?sectors_m2m={enterprise.id}"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Wasabi")
 
-        url = f"{reverse('published_canteens')}?sectors={enterprise.id}&sectors={social.id}"
+        url = f"{reverse('published_canteens')}?sectors_m2m={enterprise.id}&sectors_m2m={social.id}"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 3)
@@ -540,15 +540,15 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         """
         The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
         """
-        school = SectorFactory.create(name="School")
-        enterprise = SectorFactory.create(name="Enterprise")
-        administration = SectorFactory.create(name="Administration")
+        school = SectorM2MFactory.create(name="School")
+        enterprise = SectorM2MFactory.create(name="Enterprise")
+        administration = SectorM2MFactory.create(name="Administration")
         # unused sectors shouldn't show up as an option
-        SectorFactory.create(name="Unused")
-        CanteenFactory(sectors=[school, enterprise], name="Shiso")
-        CanteenFactory(sectors=[school], name="Wasabi")
-        CanteenFactory(sectors=[school], name="Mochi")
-        CanteenFactory(sectors=[administration], name="Umami")
+        SectorM2MFactory.create(name="Unused")
+        CanteenFactory(sectors_m2m=[school, enterprise], name="Shiso")
+        CanteenFactory(sectors_m2m=[school], name="Wasabi")
+        CanteenFactory(sectors_m2m=[school], name="Mochi")
+        CanteenFactory(sectors_m2m=[administration], name="Umami")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -573,15 +573,15 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
         It should not return sectors from hidden canteens
         """
-        school = SectorFactory.create(name="School")
-        enterprise = SectorFactory.create(name="Enterprise")
-        administration = SectorFactory.create(name="Administration")
+        school = SectorM2MFactory.create(name="School")
+        enterprise = SectorM2MFactory.create(name="Enterprise")
+        administration = SectorM2MFactory.create(name="Administration")
         # unused sectors shouldn't show up as an option
-        unused = SectorFactory.create(name="Unused")
-        CanteenFactory.create(line_ministry=None, sectors=[school, enterprise], name="Shiso")
-        CanteenFactory.create(line_ministry=None, sectors=[school, administration], name="Umami")
+        unused = SectorM2MFactory.create(name="Unused")
+        CanteenFactory.create(line_ministry=None, sectors_m2m=[school, enterprise], name="Shiso")
+        CanteenFactory.create(line_ministry=None, sectors_m2m=[school, administration], name="Umami")
 
-        CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE, sectors=[unused], name="Secret")
+        CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE, sectors_m2m=[unused], name="Secret")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -1174,5 +1174,3 @@ class CanteenPreviewDetailApiTest(APITestCase):
         self.assertIn("info", body["badges"])
         self.assertIn("approDiagnostic", body)
         self.assertIn("percentageValueBioHt", body["approDiagnostic"])
-
-    # TODO: test satellites: CC APPRO, CC ALL, own diag

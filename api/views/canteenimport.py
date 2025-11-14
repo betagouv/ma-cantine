@@ -20,7 +20,7 @@ from common.api import validata
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportFailure, ImportType, Sector
+from data.models import Canteen, ImportFailure, ImportType, SectorM2M
 from data.models.creation_source import CreationSource
 
 from .canteen import AddManagerView
@@ -45,7 +45,7 @@ class ImportCanteensView(APIView):
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     manager_column_idx = 9  # gestionnaires_additionnels
     silent_manager_idx = 9 + 3  # admin_gestionnaires_additionnels
-    annotated_sectors = Sector.objects.annotate(name_lower=Lower("name"))
+    annotated_sectors_m2m = SectorM2M.objects.annotate(name_lower=Lower("name"))
 
     def __init__(self, **kwargs):
         self.canteens = {}
@@ -250,11 +250,11 @@ class ImportCanteensView(APIView):
             if not row[5]:
                 raise ValidationError(
                     {
-                        "sectors": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
+                        "secteurs": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
                     }
                 )
             if row[5].count("+") > 2:
-                raise ValidationError({"sectors": "Ce champ ne peut avoir plus de 3 valeurs."})
+                raise ValidationError({"secteurs": "Ce champ ne peut avoir plus de 3 valeurs."})
 
     def _get_manager_emails_to_notify(self, row):
         try:
@@ -332,9 +332,9 @@ class ImportCanteensView(APIView):
             )
             canteen.import_source = import_source
         if row[5]:
-            canteen.sectors.set(
+            canteen.sectors_m2m.set(
                 [
-                    self.annotated_sectors.get(name_lower__unaccent=sector.strip().lower())
+                    self.annotated_sectors_m2m.get(name_lower__unaccent=sector.strip().lower())
                     for sector in row[5].split("+")
                 ]
             )
@@ -376,7 +376,7 @@ class ImportCanteensView(APIView):
         errors = []
         if isinstance(e, PermissionDenied):
             ImportCanteensView._add_error(errors, e.detail, 401)
-        elif isinstance(e, Sector.DoesNotExist):
+        elif isinstance(e, SectorM2M.DoesNotExist):
             ImportCanteensView._add_error(errors, "Le secteur spécifié ne fait pas partie des options acceptées")
         elif isinstance(e, ValidationError):
             if hasattr(e, "message_dict"):

@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
-from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Canteen, Diagnostic, Sector
+from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
+from data.models import Canteen, Diagnostic, SectorM2M
 from data.models.geo import Department, Region
 
 year_data = 2023
@@ -17,11 +17,11 @@ STATS_ENDPOINT_QUERY_COUNT = 8
 class TestCanteenStatsApi(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector_education_primary = SectorFactory(name="Primary", category=Sector.Categories.EDUCATION)
-        cls.sector_education_secondary = SectorFactory(name="Secondary", category=Sector.Categories.EDUCATION)
-        cls.sector_enterprise = SectorFactory(name="Enterprise", category=Sector.Categories.ENTERPRISE)
-        cls.sector_social = SectorFactory(name="Social", category=Sector.Categories.SOCIAL)
-        cls.sector_other = SectorFactory(name="Other", category=None)
+        cls.sector_education_primary = SectorM2MFactory(name="Primary", category=SectorM2M.Categories.EDUCATION)
+        cls.sector_education_secondary = SectorM2MFactory(name="Secondary", category=SectorM2M.Categories.EDUCATION)
+        cls.sector_enterprise = SectorM2MFactory(name="Enterprise", category=SectorM2M.Categories.ENTERPRISE)
+        cls.sector_social = SectorM2MFactory(name="Social", category=SectorM2M.Categories.SOCIAL)
+        cls.sector_other = SectorM2MFactory(name="Other", category=None)
         with freeze_time(date_in_2023_teledeclaration_campaign):
             canteen_1 = CanteenFactory(
                 siret="21010034300016",
@@ -30,7 +30,7 @@ class TestCanteenStatsApi(APITestCase):
                 pat_list=["1"],
                 department="01",
                 region="84",
-                sectors=[cls.sector_education_primary],
+                sectors_m2m=[cls.sector_education_primary],
                 management_type=Canteen.ManagementType.DIRECT,
                 production_type=Canteen.ProductionType.CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
@@ -58,7 +58,7 @@ class TestCanteenStatsApi(APITestCase):
                 pat_list=["1", "2"],
                 department="69",
                 region="84",
-                sectors=[cls.sector_enterprise],
+                sectors_m2m=[cls.sector_enterprise],
                 management_type=Canteen.ManagementType.DIRECT,
                 production_type=Canteen.ProductionType.CENTRAL_SERVING,
                 economic_model=Canteen.EconomicModel.PUBLIC,
@@ -90,7 +90,7 @@ class TestCanteenStatsApi(APITestCase):
                 pat_list=["2"],
                 department="38",
                 region="84",
-                sectors=[cls.sector_enterprise, cls.sector_social, cls.sector_education_primary],
+                sectors_m2m=[cls.sector_enterprise, cls.sector_social, cls.sector_education_primary],
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE,
                 economic_model=Canteen.EconomicModel.PRIVATE,
@@ -118,7 +118,7 @@ class TestCanteenStatsApi(APITestCase):
                 pat_list=["3"],
                 department="59",
                 region="32",
-                sectors=[cls.sector_social],
+                sectors_m2m=[cls.sector_social],
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PRIVATE,
@@ -129,7 +129,7 @@ class TestCanteenStatsApi(APITestCase):
                 siret="21730065600014",
                 city_insee_code="00002",
                 epci=None,
-                sectors=None,
+                sectors_m2m=None,
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
@@ -164,9 +164,9 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["egalimPercent"], 87)  # 43 + 44
         self.assertEqual(body["approPercent"], 100)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
-        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
-        self.assertEqual(sector_categories[Sector.Categories.SOCIAL], 1)
+        self.assertEqual(sector_categories[SectorM2M.Categories.EDUCATION], 2)
+        self.assertEqual(sector_categories[SectorM2M.Categories.ENTERPRISE], 2)
+        self.assertEqual(sector_categories[SectorM2M.Categories.SOCIAL], 1)
         self.assertEqual(sector_categories["inconnu"], 0)
 
     def test_stats_diagnostic_simple(self):
@@ -361,8 +361,8 @@ class TestCanteenStatsApi(APITestCase):
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[Sector.Categories.EDUCATION], 2)
-        self.assertEqual(sector_categories[Sector.Categories.ENTERPRISE], 2)
+        self.assertEqual(sector_categories[SectorM2M.Categories.EDUCATION], 2)
+        self.assertEqual(sector_categories[SectorM2M.Categories.ENTERPRISE], 2)
         self.assertEqual(sector_categories["inconnu"], 0)  # because we filtered on sectors beforehand...
 
     def test_filter_by_management_type(self):

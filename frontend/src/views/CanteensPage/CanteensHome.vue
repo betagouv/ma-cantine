@@ -95,13 +95,13 @@
                     for="select-sector"
                     :class="{
                       'fr-text': true,
-                      'active-filter-label': filters.sectors.value && !!filters.sectors.value.length,
+                      'active-filter-label': filters.sectors_m2m.value && !!filters.sectors_m2m.value.length,
                     }"
                   >
                     Secteur d'activité
                   </label>
                   <DsfrSelect
-                    v-model="filters.sectors.value"
+                    v-model="filters.sectors_m2m.value"
                     multiple
                     :items="sectors"
                     clearable
@@ -417,7 +417,7 @@ export default {
             return Constants.ProductionTypes.find((pt) => pt.value === value)?.text
           },
         },
-        sectors: {
+        sectors_m2m: {
           param: "secteurs",
           value: [],
           default: [],

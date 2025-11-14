@@ -6,7 +6,7 @@ from django.test import TestCase
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import DECOUPAGE_ADMINISTRATIF_API_URL
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.factories import CanteenFactory, SectorFactory, UserFactory
+from data.factories import CanteenFactory, SectorM2MFactory, UserFactory
 from data.models import Canteen
 from data.models.geo import Department
 from macantine import tasks
@@ -19,14 +19,14 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         There should be one request for every canteens
         """
         manager = UserFactory.create()  # Avoids integrity errors from user creation
-        sector = SectorFactory.create()
+        sector = SectorM2MFactory.create()
         for i in range(130):
             CanteenFactory.create(
                 city=None,
                 geolocation_bot_attempts=0,
                 city_insee_code="69383",
                 managers=[manager],
-                sectors=[sector],
+                sectors_m2m=[sector],
             )
         mock.get(
             f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes",
