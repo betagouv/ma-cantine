@@ -10,9 +10,8 @@
       <v-col cols="12" md="9" lg="10">
         <DataInfoBadge
           :currentYear="+year === currentYear"
-          :missingData="!readyToTeledeclare"
-          :readyToTeledeclare="readyToTeledeclare"
-          :hasActiveTeledeclaration="hasActiveTeledeclaration"
+          :inTeledeclaration="inTeledeclarationCampaign"
+          :inCorrection="inCorrectionCampaign"
           :canteenAction="canteenAction"
           class="my-2"
         />
@@ -41,9 +40,8 @@
         <DsfrNativeSelect v-model="selectedYear" :items="yearOptions" class="mb-3 mt-2" />
         <DataInfoBadge
           :currentYear="+year === currentYear"
-          :missingData="!readyToTeledeclare"
-          :readyToTeledeclare="readyToTeledeclare"
-          :hasActiveTeledeclaration="hasActiveTeledeclaration"
+          :inTeledeclaration="inTeledeclarationCampaign"
+          :inCorrection="inCorrectionCampaign"
           :canteenAction="canteenAction"
           class="my-2"
         />

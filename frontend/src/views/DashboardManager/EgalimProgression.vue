@@ -15,9 +15,8 @@
         <div>
           <DataInfoBadge
             :currentYear="isCurrentYear"
-            :missingData="needsData"
-            :readyToTeledeclare="readyToTeledeclare"
-            :hasActiveTeledeclaration="hasActiveTeledeclaration"
+            :inTeledeclaration="inTeledeclarationCampaign"
+            :inCorrection="inCorrectionCampaign"
             :canteenAction="canteenAction"
             class="mt-4"
           />
@@ -145,7 +144,6 @@ import {
   lastYear,
   customDiagnosticYears,
   readyToTeledeclare,
-  inTeledeclarationCampaign,
   missingCanteenData,
   hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
@@ -187,6 +185,8 @@ export default {
       showTeledeclarationPreview: false,
       purchasesSummary: undefined,
       canteenAction: null,
+      inTeledeclarationCampaign: false,
+      inCorrectionCampaign: false,
     }
   },
   computed: {
@@ -250,9 +250,6 @@ export default {
     },
     actionIsTeledeclare() {
       return actionIsTeledeclare(this.canteenAction)
-    },
-    inTeledeclarationCampaign() {
-      return inTeledeclarationCampaign(this.year)
     },
     missingCanteenData() {
       return missingCanteenData(this.canteen, this.$store.state.sectors)
@@ -332,8 +329,17 @@ export default {
           this.canteenAction = canteen.action
         })
     },
+    fetchCampaignDates() {
+      fetch(`/api/v1/campaignDates/${this.year}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.inTeledeclarationCampaign = response.inTeledeclaration
+          this.inCorrectionCampaign = response.inCorrection
+        })
+    },
   },
   mounted() {
+    this.fetchCampaignDates()
     if (this.$route.query?.year && this.diagnosticYears.indexOf(+this.$route.query.year) > -1) {
       this.year = +this.$route.query.year
       this.$router.replace({ query: {} })

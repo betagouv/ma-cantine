@@ -48,6 +48,11 @@ export default {
           color: "rgb(105, 82, 64)",
           icon: "$error-warning-fill",
         },
+        WAITING: {
+          backgroundColor: "rgb(254, 235, 208)",
+          color: "rgb(105, 82, 64)",
+          icon: "$error-warning-fill",
+        },
         SUCCESS: {
           backgroundColor: "rgb(184, 254, 201)",
           color: "rgb(24, 117, 60)",
