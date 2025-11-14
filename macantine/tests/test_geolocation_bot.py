@@ -6,9 +6,9 @@ from django.test import TestCase
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import DECOUPAGE_ADMINISTRATIF_API_URL
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.department_choices import Department
 from data.factories import CanteenFactory, SectorFactory, UserFactory
 from data.models import Canteen
+from data.models.geo import Department
 from macantine import tasks
 
 

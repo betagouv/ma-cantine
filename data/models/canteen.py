@@ -13,15 +13,13 @@ from simple_history.utils import update_change_reason
 
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
-from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.models.sector import Sector
-from data.region_choices import Region
+from data.models.geo import Department, Region, get_region_from_department
 from data.utils import (
     CreationSource,
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
-    get_region,
     has_charfield_missing_query,
     optimize_image,
 )
@@ -752,7 +750,7 @@ class Canteen(SoftDeletionModel):
         return f'Cantine "{self.name}"'
 
     def _get_region(self):
-        return get_region(self.department)
+        return get_region_from_department(self.department)
 
     def reset_geo_fields(self, with_city_insee_code=False):
         """

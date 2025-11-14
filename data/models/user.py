@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from data.department_choices import Department
+from data.models.geo import Department
 from data.fields import ChoiceArrayField
 from data.utils import optimize_image
 
@@ -132,18 +132,6 @@ class User(AbstractUser):
         verbose_name="Nombre d'établissements gérés par l'utilisateur",
     )
 
-    # Django fields
-    # last_login, date_joined, is_active, is_staff, is_superuser
-
-    def save(self, **kwargs):
-        max_avatar_size = 640
-        if self.avatar:
-            self.avatar = optimize_image(self.avatar, self.avatar.name, max_avatar_size)
-        super().save(**kwargs)
-
-    def __str__(self):
-        return f"{self.get_full_name()} ({self.username})"
-
     # Geographical scope for elected profiles
     departments = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=Department.choices),
@@ -156,6 +144,18 @@ class User(AbstractUser):
     last_brevo_update = models.DateTimeField(
         null=True, blank=True, verbose_name="Date de la dernière mise à jour Brevo"
     )
+
+    # Django fields
+    # last_login, date_joined, is_active, is_staff, is_superuser
+
+    def save(self, **kwargs):
+        max_avatar_size = 640
+        if self.avatar:
+            self.avatar = optimize_image(self.avatar, self.avatar.name, max_avatar_size)
+        super().save(**kwargs)
+
+    def __str__(self):
+        return f"{self.get_full_name()} ({self.username})"
 
     @property
     def has_mtm_data(self):

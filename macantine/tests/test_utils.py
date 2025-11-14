@@ -1,7 +1,7 @@
 from django.test import TestCase
 from freezegun import freeze_time
 
-from data.region_choices import Region
+from data.models.geo import Region
 from macantine.utils import (
     get_egalim_group,
     is_in_correction,

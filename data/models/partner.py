@@ -4,12 +4,11 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from data.department_choices import Department
 from data.fields import ChoiceArrayField
 from data.utils import optimize_image
-
-from .partnertype import PartnerType
-from .sector import Sector
+from data.models.partnertype import PartnerType
+from data.models.sector import Sector
+from data.models.geo import Department
 
 
 class Partner(models.Model):

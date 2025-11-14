@@ -14,11 +14,16 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
 from common.api.adresse import ADRESSE_CSV_API_URL
-from data.department_choices import Department
 from data.factories import CanteenFactory, DiagnosticFactory, SectorFactory, UserFactory
-from data.models import Canteen, Diagnostic, ImportFailure, ImportType, ManagerInvitation
-from data.models.teledeclaration import Teledeclaration
-from data.region_choices import Region
+from data.models import (
+    Canteen,
+    Diagnostic,
+    ImportFailure,
+    ImportType,
+    ManagerInvitation,
+    Teledeclaration,
+)
+from data.models.geo import Department, Region
 from data.utils import CreationSource
 
 NEXT_YEAR = datetime.date.today().year + 1

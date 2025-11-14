@@ -24,9 +24,8 @@ from common.api.decoupage_administratif import (
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from common.utils import siret as utils_siret
-from data.department_choices import get_lib_department_from_code
+from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 from data.models import Canteen, User
-from data.region_choices import get_lib_region_from_code
 from data.utils import has_arrayfield_missing_query, has_charfield_missing_query
 
 from .celery import app
