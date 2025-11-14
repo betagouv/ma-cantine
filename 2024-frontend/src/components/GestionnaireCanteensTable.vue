@@ -1,12 +1,12 @@
 <script setup>
 import { computed } from "vue"
-import actionService from "@/services/actions.js"
+import diagnosticService from "@/services/diagnostics.js"
 import urlService from "@/services/urls.js"
 import cantines from "@/data/cantines.json"
 import AppRawHTML from "@/components/AppRawHTML.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
-const props = defineProps(["canteens"])
+const props = defineProps(["canteens", "campaign"])
 const lastYear = new Date().getFullYear() - 1
 const header = [
   {
@@ -81,7 +81,7 @@ const getProductionTypeInfos = (canteen) => {
 
 const getDiagnosticInfos = (canteen) => {
   const action = canteen.action
-  const badge = actionService.getBadge(action)
+  const badge = diagnosticService.getBadge(action, props.campaign)
   const button = getTeledeclareButton(canteen)
   return { badge, button }
 }
@@ -118,7 +118,7 @@ const getDropdownLinks = (canteen) => {
 }
 
 const getTeledeclareButton = (canteen) => {
-  const button = actionService.getTeledeclareButton(canteen.action)
+  const button = diagnosticService.getTeledeclareButton(canteen.action)
   if (!button) return false
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
   return { ...button, canteenUrlComponent, year: lastYear }
@@ -173,7 +173,7 @@ const getTeledeclareButton = (canteen) => {
                 class="fr-mr-1v"
               />
             </router-link>
-            <DsfrBadge v-else small :label="cell.badge.label" :type="cell.badge.type" />
+            <DsfrBadge v-else small :label="cell.badge.label" :type="cell.badge.type" no-icon />
           </template>
           <template v-else-if="colKey === 'actions'">
             <div class="fr-grid-row fr-grid-row--right">

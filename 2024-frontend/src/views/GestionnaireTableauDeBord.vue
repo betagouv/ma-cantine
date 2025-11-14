@@ -4,6 +4,7 @@ import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
 import stringService from "@/services/strings.js"
+import campaignService from "@/services/campaigns.js"
 
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
@@ -81,6 +82,11 @@ const allCanteens = computedAsync(async () => {
 const canteensTable = computed(() => {
   return filteredCanteens.value.length > 0 ? filteredCanteens.value : allCanteens.value
 })
+
+/* CAMPAIGN */
+const campaign = computedAsync(async () => {
+  return await campaignService.getYearCampaignDates(lastYear)
+}, false)
 </script>
 
 <template>
@@ -91,7 +97,7 @@ const canteensTable = computed(() => {
     </div>
   </section>
   <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
-  <section v-else>
+  <section v-else-if="store.canteenPreviews.length > 0 && campaign">
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-md-6">
         <p class="fr-mb-0 fr-text--lead">{{ canteenSentence }}</p>
@@ -111,7 +117,7 @@ const canteensTable = computed(() => {
     <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty && search">
       Aucun résultat trouvé pour la recherche « {{ search }} »
     </p>
-    <GestionnaireCanteensTable v-else :canteens="canteensTable" />
+    <GestionnaireCanteensTable v-if="campaign" :canteens="canteensTable" :campaign="campaign" />
   </section>
   <section class="ma-cantine--bg-blue fr-py-4w">
     <GestionnaireGuides />
