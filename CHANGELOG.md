@@ -6,6 +6,38 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.39.0](https://github.com/betagouv/ma-cantine/compare/v2025.38.0...v2025.39.0) (2025-11-14)
+
+
+### Nouveautés
+
+* **Badge:** ajoute le nouvel affichage du badge en vue2 ([#5883](https://github.com/betagouv/ma-cantine/issues/5883)) ([5acddcd](https://github.com/betagouv/ma-cantine/commit/5acddcd96e83ec543f9074727dd67ce342956c58))
+* **Comprendre mes obligation:** remplace la page par le contenu récupéré depuis Crisp ([#5505](https://github.com/betagouv/ma-cantine/issues/5505)) ([87ec4cc](https://github.com/betagouv/ma-cantine/commit/87ec4cc0c0577512723184b1c67e703e3577b77b))
+* **Tableu de bord:** ajout du bouton "Je donne mon avis" ([#5874](https://github.com/betagouv/ma-cantine/issues/5874)) ([a7ca3cd](https://github.com/betagouv/ma-cantine/commit/a7ca3cdfd1e821b37086fa8009115e51510cd85c))
+
+
+### Améliorations
+
+* **Imports bilan:** suppression des pages en attendant leur mise à jour  ([#5873](https://github.com/betagouv/ma-cantine/issues/5873)) ([fb2799b](https://github.com/betagouv/ma-cantine/commit/fb2799b3a9cfe016c7ac6be9c220712a47259967))
+* **Imports:** simplification de la page tampon ([#5870](https://github.com/betagouv/ma-cantine/issues/5870)) ([fd6ac98](https://github.com/betagouv/ma-cantine/commit/fd6ac985df6eff65d0a88c58db071c3b1ab7fc10))
+* **Tableau de bord:** mise en avant des tuiles ([#5882](https://github.com/betagouv/ma-cantine/issues/5882)) ([132d0aa](https://github.com/betagouv/ma-cantine/commit/132d0aaccddaf4d05cd433d27ebf0822a338370b))
+* **Tableau de bord:** ré-organisation des colonnes "Statut" et "Actions" pour regrouper dans "Télédéclaration" ([#5877](https://github.com/betagouv/ma-cantine/issues/5877)) ([8895310](https://github.com/betagouv/ma-cantine/commit/88953102d04c1f4e33eafca12b74866606865be2))
+* **Tableau de bord:** simplification du badge ([#5881](https://github.com/betagouv/ma-cantine/issues/5881)) ([062eb3a](https://github.com/betagouv/ma-cantine/commit/062eb3af59b8efefa4b18079f715158d125b09e9))
+
+
+### Corrections (bugs, typos...)
+
+* **Tableau de bord:** renommer 'Créer une cantine' en 'Ajouter une cantine' pour homogénéiser ([#5885](https://github.com/betagouv/ma-cantine/issues/5885)) ([2b34a4d](https://github.com/betagouv/ma-cantine/commit/2b34a4d293ea677cbbffccb19bd60512ba588516))
+
+
+### Technique
+
+* **Admin:** basculer la liste des secteurs en lecture-seule ([#5875](https://github.com/betagouv/ma-cantine/issues/5875)) ([bcb09d6](https://github.com/betagouv/ma-cantine/commit/bcb09d69f849e8679c95cd0afd3c58098212fda4))
+* bouge les CreationSource dans un fichier dédié ([#5880](https://github.com/betagouv/ma-cantine/issues/5880)) ([53939ff](https://github.com/betagouv/ma-cantine/commit/53939ffaba475c267184158943219c1be0e9e35f))
+* Checker le linting de l'app Vue 3 + noms de tâches plus claires ([#5871](https://github.com/betagouv/ma-cantine/issues/5871)) ([e0978b7](https://github.com/betagouv/ma-cantine/commit/e0978b7be37f874a1fb233a37d9b8af4792aa65a))
+* **Geo:** bouger les départements & les régions dans le même fichier ([#5879](https://github.com/betagouv/ma-cantine/issues/5879)) ([63ab776](https://github.com/betagouv/ma-cantine/commit/63ab7761a0f142a0aa834704bc9cf95bb48ac15b))
+* **Secteurs:** renommer 'sectors' en 'sectors_m2m' ([#5876](https://github.com/betagouv/ma-cantine/issues/5876)) ([1ab566d](https://github.com/betagouv/ma-cantine/commit/1ab566dfd42e80b8c2a73108368d551ba0c4a400))
+
 ## [2025.38.0](https://github.com/betagouv/ma-cantine/compare/v2025.37.0...v2025.38.0) (2025-11-10)
 
 
