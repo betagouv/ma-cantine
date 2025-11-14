@@ -7,7 +7,7 @@ import AppRawHTML from "@/components/AppRawHTML.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 const props = defineProps(["canteens"])
-
+const lastYear = new Date().getFullYear() - 1
 const header = [
   {
     key: "name",
@@ -23,8 +23,8 @@ const header = [
   },
   { key: "productionType", label: "Type" },
   {
-    key: "status",
-    label: "Statut",
+    key: "diagnostic",
+    label: `Télédéclaration ${lastYear}`,
   },
   {
     key: "actions",
@@ -39,7 +39,7 @@ const rows = computed(() => {
     const siret = getSiretOrSirenInfos(canteen)
     const city = getCityInfos(canteen)
     const productionType = getProductionTypeInfos(canteen)
-    const status = getStatusInfos(canteen)
+    const diagnostic = getDiagnosticInfos(canteen)
     const actions = getActionsInfos(canteen)
 
     rows.push({
@@ -47,7 +47,7 @@ const rows = computed(() => {
       siret,
       city,
       productionType,
-      status,
+      diagnostic,
       actions,
     })
   })
@@ -79,19 +79,16 @@ const getProductionTypeInfos = (canteen) => {
   return cantines.productionType[index].label
 }
 
-const getStatusInfos = (canteen) => {
+const getDiagnosticInfos = (canteen) => {
   const action = canteen.action
   const badge = actionService.getBadge(action)
-  return {
-    label: badge.body,
-    type: badge.mode,
-  }
+  const button = getTeledeclareButton(canteen)
+  return { badge, button }
 }
 
 const getActionsInfos = (canteen) => {
   const dropdownLinks = getDropdownLinks(canteen)
-  const quickAction = getQuickAction(canteen)
-  return { dropdownLinks, quickAction }
+  return dropdownLinks
 }
 
 const getDropdownLinks = (canteen) => {
@@ -120,12 +117,11 @@ const getDropdownLinks = (canteen) => {
   return links
 }
 
-const getQuickAction = (canteen) => {
-  const button = actionService.getButton(canteen.action)
+const getTeledeclareButton = (canteen) => {
+  const button = actionService.getTeledeclareButton(canteen.action)
   if (!button) return false
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
-  const year = new Date().getFullYear() - 1
-  return { ...button, canteenUrlComponent, year }
+  return { ...button, canteenUrlComponent, year: lastYear }
 }
 </script>
 <template>
@@ -156,36 +152,32 @@ const getQuickAction = (canteen) => {
               </router-link>
             </p>
           </template>
-          <template v-else-if="colKey === 'status'">
-            <DsfrBadge small :label="cell.label" :type="cell.type" />
+          <template v-else-if="colKey === 'diagnostic'">
+            <router-link
+              v-if="cell.button"
+              :to="{
+                name: cell.button.name,
+                params: {
+                  year: cell.button.year,
+                  canteenUrlComponent: cell.button.canteenUrlComponent,
+                  measureId: cell.button.measure,
+                },
+              }"
+              class="ma-cantine--unstyled-link"
+            >
+              <DsfrButton
+                v-if="cell.button"
+                :label="cell.button.label"
+                :icon="cell.button.icon"
+                size="small"
+                class="fr-mr-1v"
+              />
+            </router-link>
+            <DsfrBadge v-else small :label="cell.badge.label" :type="cell.badge.type" />
           </template>
           <template v-else-if="colKey === 'actions'">
             <div class="fr-grid-row fr-grid-row--right">
-              <router-link
-                :to="{
-                  name: cell.quickAction.name,
-                  params: {
-                    year: cell.quickAction.year,
-                    canteenUrlComponent: cell.quickAction.canteenUrlComponent,
-                    measureId: cell.quickAction.measure,
-                  },
-                }"
-                class="ma-cantine--unstyled-link"
-              >
-                <DsfrButton
-                  v-if="cell.quickAction"
-                  :label="cell.quickAction.label"
-                  :icon="cell.quickAction.icon"
-                  size="small"
-                  class="fr-mr-1v"
-                />
-              </router-link>
-              <AppDropdownMenu
-                label="Paramètres"
-                icon="fr-icon-settings-5-line"
-                :links="cell.dropdownLinks"
-                size="small"
-              />
+              <AppDropdownMenu label="Paramètres" icon="fr-icon-settings-5-line" :links="cell" size="small" />
             </div>
           </template>
           <template v-else>
@@ -213,42 +205,13 @@ const getQuickAction = (canteen) => {
     overflow: initial !important;
   }
 
-  th,
-  td {
-    white-space: initial !important;
-    word-break: break-word;
-  }
-
   th:nth-child(1) {
-    width: 20% !important;
+    width: 35% !important;
   }
 
-  th:nth-child(2) {
-    width: 10% !important;
-  }
-
-  td:nth-child(2) {
-    padding-right: 0% !important;
-  }
-
-  td:last-child {
-    padding-left: 0 !important;
-  }
-
-  th:nth-child(3) {
-    width: 15% !important;
-  }
-
-  th:nth-child(4) {
-    width: 10% !important;
-  }
-
-  th:nth-child(5) {
-    width: 20% !important;
-  }
-
-  th:nth-child(6) {
-    width: 25% !important;
+  td:nth-child(1),
+  td:nth-child(4) {
+    white-space: pre-wrap !important;
   }
 }
 </style>
