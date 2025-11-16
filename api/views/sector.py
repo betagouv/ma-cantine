@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 )
 class SectorListView(ListAPIView):
     include_in_documentation = True
-    required_scopes = ["canteen"]
     model = SectorM2M
     serializer_class = SectorM2MSerializer
     queryset = SectorM2M.objects.all()

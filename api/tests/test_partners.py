@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from data.factories import PartnerFactory, PartnerTypeFactory, UserFactory
-from data.models import Partner, SectorM2M
+from data.models import Partner, SectorM2M, SectorCategory
 
 
 class TestPartnersApi(APITestCase):
@@ -11,9 +11,9 @@ class TestPartnersApi(APITestCase):
         """
         Returns partners and the types that are in use therefore available for filtering
         """
-        sector_category_1 = SectorM2M.Categories.ADMINISTRATION
-        sector_category_2 = SectorM2M.Categories.AUTRES
-        sector_category_3 = SectorM2M.Categories.EDUCATION
+        sector_category_1 = SectorCategory.ADMINISTRATION
+        sector_category_2 = SectorCategory.AUTRES
+        sector_category_3 = SectorCategory.EDUCATION
         type = PartnerTypeFactory.create(name="Test type")
         type_2 = PartnerTypeFactory.create(name="Test type 2")
         PartnerTypeFactory.create(name="Unused type")
