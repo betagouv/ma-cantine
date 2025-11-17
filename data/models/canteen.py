@@ -680,6 +680,13 @@ class Canteen(SoftDeletionModel):
             return self.central_kitchen.diagnostic_set.filter(central_kitchen_diagnostic_mode__isnull=False)
 
     @property
+    def category_list_from_sector_list(self):
+        from data.models.sector import get_sector_category_from_sector
+
+        category_list = [get_sector_category_from_sector(sector) for sector in self.sector_list]
+        return list(set(category_list))
+
+    @property
     def is_spe(self) -> bool:
         return bool(self.line_ministry)
 

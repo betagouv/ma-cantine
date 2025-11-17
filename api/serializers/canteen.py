@@ -760,8 +760,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
         return ",".join(obj.sector_list)
 
     def get_categorie(self, obj):
-        categories = set()
-        return ",".join(categories)
+        return ",".join([category.label for category in obj.category_list_from_sector_list])
 
     def get_adresses_gestionnaires(self, obj):
         emails = [manager.email for manager in obj.managers.all()]

@@ -8,8 +8,8 @@ def populate_sector_list_from_sectors_m2m(apps, schema_editor):
     Canteen = apps.get_model("data", "Canteen")
 
     for canteen in Canteen.objects.prefetch_related("sectors_m2m").all():
-        sector_values = list(canteen.sectors_m2m.values_list("name", flat=True))
-        canteen.sector_list = sector_values
+        sectors_m2m_name_list = list(canteen.sectors_m2m.values_list("name", flat=True))
+        canteen.sector_list = [sector.replace("’", "'") for sector in sectors_m2m_name_list]
         canteen.save()
 
 
