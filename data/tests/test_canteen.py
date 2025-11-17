@@ -3,7 +3,7 @@ from django.test import TestCase
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen, Diagnostic, SectorM2M, Teledeclaration
+from data.models import Canteen, Diagnostic, SectorCategory, Teledeclaration
 from data.models.geo import Department, Region
 from data.models.creation_source import CreationSource
 
@@ -624,9 +624,9 @@ class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
 class CanteenCompleteQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorM2MFactory(name="Sector", category=SectorM2M.Categories.ADMINISTRATION)
+        sector = SectorM2MFactory(name="Sector", category=SectorCategory.ADMINISTRATION)
         sector_line_ministry = SectorM2MFactory(
-            name="Sector ministry", category=SectorM2M.Categories.AUTRES, has_line_ministry=True
+            name="Sector ministry", category=SectorCategory.AUTRES, has_line_ministry=True
         )
         COMMON = {
             # CanteenFactory generates: name, city_insee_code, sectors...
@@ -748,9 +748,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
 class CanteenAggregateQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorM2MFactory(name="Sector", category=SectorM2M.Categories.ADMINISTRATION)
+        sector = SectorM2MFactory(name="Sector", category=SectorCategory.ADMINISTRATION)
         sector_line_ministry = SectorM2MFactory(
-            name="Sector ministry", category=SectorM2M.Categories.AUTRES, has_line_ministry=True
+            name="Sector ministry", category=SectorCategory.AUTRES, has_line_ministry=True
         )
         cls.canteen_central = CanteenFactory(
             siret="21590350100017",
@@ -812,9 +812,9 @@ class CanteenAggregateQuerySetTest(TestCase):
         # group by sectors__category
         result = Canteen.objects.group_and_count_by_field("sectors_m2m__category")
         self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]["sectors_m2m__category"], SectorM2M.Categories.ADMINISTRATION)
+        self.assertEqual(result[0]["sectors_m2m__category"], SectorCategory.ADMINISTRATION)
         self.assertEqual(result[0]["count"], 3)
-        self.assertEqual(result[1]["sectors_m2m__category"], SectorM2M.Categories.AUTRES)
+        self.assertEqual(result[1]["sectors_m2m__category"], SectorCategory.AUTRES)
         self.assertEqual(result[1]["count"], 1)
 
 

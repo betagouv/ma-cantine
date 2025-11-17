@@ -18,7 +18,7 @@ class Purchase(SoftDeletionModel):
         ordering = ["-date", "-creation_date"]
         indexes = [models.Index(fields=["import_source"])]
 
-    class Category(models.TextChoices):
+    class PurchaseCategory(models.TextChoices):
         VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes, volailles"
         PRODUITS_DE_LA_MER = "PRODUITS_DE_LA_MER", "Produits de la mer"
         FRUITS_ET_LEGUMES = "FRUITS_ET_LEGUMES", "Fruits, légumes, légumineuses et oléagineux"
@@ -79,7 +79,7 @@ class Purchase(SoftDeletionModel):
     description = models.TextField(null=True, blank=True, verbose_name="description du produit")
     provider = models.TextField(null=True, blank=True, verbose_name="fournisseur")
     category = models.CharField(
-        max_length=255, choices=Category.choices, null=True, blank=True, verbose_name="catégorie"
+        max_length=255, choices=PurchaseCategory.choices, null=True, blank=True, verbose_name="catégorie"
     )
     family = models.CharField(
         max_length=255, choices=Family.choices, null=True, blank=True, verbose_name="famille de produits"
