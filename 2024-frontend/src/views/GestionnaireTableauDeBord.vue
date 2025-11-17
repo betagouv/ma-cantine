@@ -64,6 +64,7 @@ const updateSearch = () => {
 }
 
 const searchCanteens = () => {
+  if (!search.value) return
   const searchValue = search.value.trim()
   const searchWithoutSpaces = searchValue.replace(/\s/g, "")
   filteredCanteens.value = allCanteens.value.filter((canteen) => {
