@@ -28,26 +28,26 @@ class Migration(migrations.Migration):
                     choices=[
                         ("Restaurants des prisons", "Restaurants des prisons"),
                         (
-                            "Restaurants administratifs d’Etat (RA)",
-                            "Restaurants administratifs d’Etat (RA)",
+                            "Restaurants administratifs d'Etat (RA)",
+                            "Restaurants administratifs d'Etat (RA)",
                         ),
                         (
                             "Restaurants des armées / police / gendarmerie",
                             "Restaurants des armées / police / gendarmerie",
                         ),
                         (
-                            "Etablissements publics d’Etat (EPA ou EPIC)",
-                            "Etablissements publics d’Etat (EPA ou EPIC)",
+                            "Etablissements publics d'Etat (EPA ou EPIC)",
+                            "Etablissements publics d'Etat (EPA ou EPIC)",
                         ),
                         (
-                            "Restaurants inter-administratifs d’État (RIA)",
-                            "Restaurants inter-administratifs d’État (RIA)",
+                            "Restaurants inter-administratifs d'État (RIA)",
+                            "Restaurants inter-administratifs d'État (RIA)",
                         ),
                         (
                             "Restaurants administratifs des collectivités territoriales",
                             "Restaurants administratifs des collectivités territoriales",
                         ),
-                        ("Restaurants d’entreprises", "Restaurants d’entreprises"),
+                        ("Restaurants d'entreprises", "Restaurants d'entreprises"),
                         (
                             "Restaurants inter-entreprises",
                             "Restaurants inter-entreprises",
@@ -62,13 +62,13 @@ class Migration(migrations.Migration):
                             "Secondaire lycée (hors agricole)",
                         ),
                         (
-                            "Etablissements d’enseignement agricole",
-                            "Etablissements d’enseignement agricole",
+                            "Etablissements d'enseignement agricole",
+                            "Etablissements d'enseignement agricole",
                         ),
                         ("Supérieur et Universitaire", "Supérieur et Universitaire"),
                         (
-                            "Autres structures d’enseignement",
-                            "Autres structures d’enseignement",
+                            "Autres structures d'enseignement",
+                            "Autres structures d'enseignement",
                         ),
                         ("Hôpitaux", "Hôpitaux"),
                         ("Cliniques", "Cliniques"),
@@ -120,26 +120,26 @@ class Migration(migrations.Migration):
                     choices=[
                         ("Restaurants des prisons", "Restaurants des prisons"),
                         (
-                            "Restaurants administratifs d’Etat (RA)",
-                            "Restaurants administratifs d’Etat (RA)",
+                            "Restaurants administratifs d'Etat (RA)",
+                            "Restaurants administratifs d'Etat (RA)",
                         ),
                         (
                             "Restaurants des armées / police / gendarmerie",
                             "Restaurants des armées / police / gendarmerie",
                         ),
                         (
-                            "Etablissements publics d’Etat (EPA ou EPIC)",
-                            "Etablissements publics d’Etat (EPA ou EPIC)",
+                            "Etablissements publics d'Etat (EPA ou EPIC)",
+                            "Etablissements publics d'Etat (EPA ou EPIC)",
                         ),
                         (
-                            "Restaurants inter-administratifs d’État (RIA)",
-                            "Restaurants inter-administratifs d’État (RIA)",
+                            "Restaurants inter-administratifs d'État (RIA)",
+                            "Restaurants inter-administratifs d'État (RIA)",
                         ),
                         (
                             "Restaurants administratifs des collectivités territoriales",
                             "Restaurants administratifs des collectivités territoriales",
                         ),
-                        ("Restaurants d’entreprises", "Restaurants d’entreprises"),
+                        ("Restaurants d'entreprises", "Restaurants d'entreprises"),
                         (
                             "Restaurants inter-entreprises",
                             "Restaurants inter-entreprises",
@@ -154,13 +154,13 @@ class Migration(migrations.Migration):
                             "Secondaire lycée (hors agricole)",
                         ),
                         (
-                            "Etablissements d’enseignement agricole",
-                            "Etablissements d’enseignement agricole",
+                            "Etablissements d'enseignement agricole",
+                            "Etablissements d'enseignement agricole",
                         ),
                         ("Supérieur et Universitaire", "Supérieur et Universitaire"),
                         (
-                            "Autres structures d’enseignement",
-                            "Autres structures d’enseignement",
+                            "Autres structures d'enseignement",
+                            "Autres structures d'enseignement",
                         ),
                         ("Hôpitaux", "Hôpitaux"),
                         ("Cliniques", "Cliniques"),

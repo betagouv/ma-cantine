@@ -10,8 +10,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from data.factories import CanteenFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation
+from data.factories import CanteenFactory, UserFactory
+from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation, Sector
 from data.models.creation_source import CreationSource
 
 
@@ -114,12 +114,6 @@ class CanteenSchemaTest(TestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteenImportErrorTest(APITestCase):
-    @classmethod
-    def setUpTestData(cls):
-        SectorM2MFactory.create(name="Cliniques")
-        SectorM2MFactory.create(name="Hôpitaux")
-        SectorM2MFactory.create(name="Crèche")
-
     def test_unauthenticated(self):
         response = self.client.post(reverse("import_canteens"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -346,12 +340,6 @@ class CanteenImportErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteenImportSuccessTest(APITestCase):
-    @classmethod
-    def setUpTestData(cls):
-        SectorM2MFactory.create(name="Cliniques")
-        SectorM2MFactory.create(name="Hôpitaux")
-        SectorM2MFactory.create(name="Crèche")
-
     @authenticate
     def test_import_only_canteens(self):
         """
@@ -404,7 +392,7 @@ class CanteenImportSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
         canteen_created = Canteen.objects.first()
         self.assertEqual(canteen_created.production_type, "central")
-        self.assertEqual(canteen_created.sectors_m2m.count(), 0)
+        self.assertEqual(len(canteen_created.sectors), 0)
 
     @authenticate
     def test_sectors_apostrophes(self):
@@ -412,8 +400,6 @@ class CanteenImportSuccessTest(APITestCase):
         Different apostrophes caracters should be accepted but a unique one should be saved
         """
         file_path = "./api/tests/files/canteens/canteens_sectors.csv"
-        sector = SectorM2MFactory(name="Restaurants administratifs d'Etat (RA)")
-        sector.save()
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -421,16 +407,8 @@ class CanteenImportSuccessTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(
-            Canteen.objects.filter(sectors_m2m__name__in=["Restaurants administratifs d'Etat (RA)"])
-            .distinct()
-            .count(),
+            Canteen.objects.filter(sectors__contains=[Sector.ADMINISTRATION_ADMINISTRATIF]).distinct().count(),
             2,
-        )
-        self.assertEqual(
-            Canteen.objects.filter(sectors_m2m__name__in=["Restaurants administratifs d’Etat (RA)"])
-            .distinct()
-            .count(),
-            0,
         )
 
         body = response.json()

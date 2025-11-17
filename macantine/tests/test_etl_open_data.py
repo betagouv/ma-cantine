@@ -8,8 +8,8 @@ from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
 from common.api.datagouv import update_dataset_resources
-from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen, SectorM2M
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, SectorM2MFactory
+from data.models import Canteen, Sector, SectorM2M
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 
 
@@ -34,6 +34,7 @@ class TestETLOpenData(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
+            sectors=[Sector.EDUCATION_PRIMAIRE],
             sectors_m2m=[cls.sector_school],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
@@ -47,6 +48,7 @@ class TestETLOpenData(TestCase):
         cls.canteen_2 = CanteenFactory.create(
             name="Cantine 2",
             siret="19382111300035",
+            sectors=[],
             sectors_m2m=[],
             managers=[cls.user_manager],
             declaration_donnees_2022=True,
@@ -175,7 +177,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(canteen["management_type"], "direct")
         self.assertEqual(canteen["production_type"], "site")
         self.assertEqual(canteen["economic_model"], "public")
-        self.assertEqual(canteen["sectors"], ["School"])
+        self.assertEqual(canteen["sectors"], "School")
         self.assertTrue(canteen["declaration_donnees_2022"])
         self.assertFalse(canteen["declaration_donnees_2023"])
         self.assertTrue(canteen["declaration_donnees_2024"])
@@ -183,7 +185,7 @@ class TestETLOpenData(TestCase):
 
         canteen_without_manager = canteens[canteens.id == self.canteen_without_manager.id].iloc[0]
         self.assertEqual(canteen_without_manager["line_ministry"], None)
-        self.assertEqual(canteen_without_manager["sectors"], [])
+        self.assertEqual(canteen_without_manager["sectors"], "")
         self.assertFalse(canteen_without_manager["active_on_ma_cantine"])
 
     @freeze_time("2023-05-14")  # during the 2022 campaign

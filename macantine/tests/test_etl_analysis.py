@@ -10,7 +10,7 @@ from freezegun import freeze_time
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
 from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen, Diagnostic
+from data.models import Canteen, Diagnostic, Sector
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS, aggregate_col
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 
@@ -29,13 +29,14 @@ class TestETLAnalysisCanteen(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
+            sectors=[Sector.ADMINISTRATION_PRISON],
             sectors_m2m=[cls.sector],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        cls.canteen_2 = CanteenFactory(sectors_m2m=[cls.sector])
+        cls.canteen_2 = CanteenFactory(sectors=[Sector.ADMINISTRATION_PRISON], sectors_m2m=[cls.sector])
 
     def test_canteen_extract(self):
         etl = ETL_ANALYSIS_CANTEEN()
@@ -69,6 +70,7 @@ class TestETLAnalysisCanteen(TestCase):
         self.assertEqual(canteen_1["departement_lib"], "Isère")
         self.assertEqual(canteen_1["region"], "84")
         self.assertEqual(canteen_1["region_lib"], "Auvergne-Rhône-Alpes")
+        # self.assertEqual(canteen_1["secteur"], "Restaurants des prisons")
         self.assertEqual(canteen_1["secteur"], "Sector factory")
         self.assertEqual(canteen_1["ministere_tutelle"], "Agriculture, Alimentation et Forêts")
         self.assertEqual(canteen_1["type_gestion"], "Directe")
