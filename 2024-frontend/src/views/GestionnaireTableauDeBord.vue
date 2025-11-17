@@ -64,10 +64,12 @@ const updateSearch = () => {
 }
 
 const searchCanteens = () => {
+  if (!search.value) return
   const searchValue = search.value.trim()
+  const searchWithoutSpaces = searchValue.replace(/\s/g, "")
   filteredCanteens.value = allCanteens.value.filter((canteen) => {
-    if (canteen.siret && canteen.siret.indexOf(searchValue) === 0) return true
-    if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchValue) === 0) return true
+    if (canteen.siret && canteen.siret.indexOf(searchWithoutSpaces) === 0) return true
+    if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchWithoutSpaces) === 0) return true
     if (stringService.checkIfContains(canteen.name, searchValue)) return true
   })
   if (filteredCanteens.value.length === 0) searchIsEmpty.value = true
@@ -113,11 +115,13 @@ const campaign = computedAsync(async () => {
         />
       </div>
     </div>
-    <AppLoader v-if="isSearching" class="fr-mt-2w fr-mb-4w" />
-    <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty && search">
-      Aucun résultat trouvé pour la recherche « {{ search }} »
-    </p>
-    <GestionnaireCanteensTable v-if="campaign" :canteens="canteensTable" :campaign="campaign" />
+    <template v-if="campaign">
+      <AppLoader v-if="isSearching" class="fr-mt-2w fr-mb-4w" />
+      <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty && search">
+        Aucun résultat trouvé pour la recherche « {{ search }} »
+      </p>
+      <GestionnaireCanteensTable v-else :canteens="canteensTable" :campaign="campaign" />
+    </template>
   </section>
   <section class="ma-cantine--bg-blue fr-py-4w">
     <GestionnaireGuides />
