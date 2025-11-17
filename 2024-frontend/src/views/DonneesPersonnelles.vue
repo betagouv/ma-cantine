@@ -56,12 +56,12 @@ onMounted(() => {
           l’administration, lors des campagnes officielles annuelles.
         </li>
       </ul>
-      <p>L’autodiagnostic sur « ma cantine » est disponible sans création de compte.</p>
+      <p>L’autodiagnostic sur <em>ma cantine</em> est disponible sans création de compte.</p>
     </section>
     <section>
       <h2>3 - Quelles sont les données que nous traitons ?</h2>
       <p>
-        Ma Cantine traite les données à caractère personnel suivantes :
+        <em>ma cantine</em> traite les données à caractère personnel suivantes :
       </p>
       <DsfrTable
         :headers="['Type de données', 'Description des données']"
@@ -94,7 +94,7 @@ onMounted(() => {
     <section>
       <h2>4 - Qu’est-ce qui nous autorise à traiter ces données ?</h2>
       <p>
-        « ma cantine » traite des données à caractère personnel en se basant sur :
+        <em>ma cantine</em> traite des données à caractère personnel en se basant sur :
       </p>
       <ul>
         <li>
@@ -255,7 +255,7 @@ onMounted(() => {
         Ce consentement de la personne concernée pour une ou plusieurs finalités spécifiques constitue une base légale
         au sens du RGPD et doit être entendu au sens de l'article 6-1 a) du RGPD et à la libre circulation des données.
       </p>
-      <p>Cookies recensés sur Ma Cantine :</p>
+      <p>Cookies recensés sur <em>ma cantine</em> :</p>
       <DsfrTable
         :headers="['Site', 'Description', 'Autorisation']"
         :rows="[
@@ -272,7 +272,7 @@ onMounted(() => {
           {
             rowData: [
               'Crisp',
-              'Chatbot qui permet d’interagir avec les équipes de Ma Cantine pour toutes questions concernant la plateforme.',
+              'Chatbot qui permet d’interagir avec les équipes de ma cantine pour toutes questions concernant la plateforme.',
               'Toujours actif.',
             ],
           },
