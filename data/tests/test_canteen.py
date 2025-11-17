@@ -376,7 +376,7 @@ class CanteenCentralAndSatelliteQuerySetTest(TestCase):
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=2,
-            sectors=[],
+            sector_list=[],
         )  # 1 missing
         cls.canteen_central_2 = CanteenFactory(
             siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
@@ -399,7 +399,7 @@ class CanteenCentralAndSatelliteQuerySetTest(TestCase):
         cls.canteen_central_serving_1 = CanteenFactory(
             siret="11007001800012",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
-            sectors=[Sector.EDUCATION_PRIMAIRE],
+            sector_list=[Sector.EDUCATION_PRIMAIRE],
         )
 
     def test_is_central(self):
@@ -595,18 +595,18 @@ class CanteenLineMinistryAndSectorQuerySetTest(TestCase):
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=2,
-            sectors=[],
+            sector_list=[],
         )
         cls.canteen_central_serving = CanteenFactory(
             siret="11007001800012",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
-            sectors=[Sector.EDUCATION_PRIMAIRE],
+            sector_list=[Sector.EDUCATION_PRIMAIRE],
         )
         cls.canteen_satellite_spe = CanteenFactory(
             siret="92341284500011",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central.siret,
-            sectors=[Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC],
+            sector_list=[Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC],
             line_ministry=Canteen.Ministries.CULTURE,
         )
 
@@ -631,17 +631,20 @@ class CanteenLineMinistryAndSectorQuerySetTest(TestCase):
             .requires_line_ministry
         )
 
-    def test_annotate_with_sectors_count(self):
+    def test_annotate_with_sector_list_count(self):
         self.assertEqual(Canteen.objects.count(), 3)
         self.assertEqual(
-            Canteen.objects.annotate_with_sectors_count().filter(id=self.canteen_central.id).first().sectors_count,
+            Canteen.objects.annotate_with_sector_list_count()
+            .filter(id=self.canteen_central.id)
+            .first()
+            .sector_list_count,
             0,
         )
         self.assertEqual(
-            Canteen.objects.annotate_with_sectors_count()
+            Canteen.objects.annotate_with_sector_list_count()
             .filter(id=self.canteen_central_serving.id)
             .first()
-            .sectors_count,
+            .sector_list_count,
             1,
         )
 
@@ -689,13 +692,13 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         cls.canteen_on_site_incomplete_2 = CanteenFactory(
             siret="21670482500019",
             production_type=Canteen.ProductionType.ON_SITE,
-            sectors=[],  # incomplete
+            sector_list=[],  # incomplete
         )
         cls.canteen_on_site_incomplete_3 = CanteenFactory(
             siret="21640122400011",
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
-            sectors=[Sector.ADMINISTRATION_PRISON],
+            sector_list=[Sector.ADMINISTRATION_PRISON],
             line_ministry=None,  # incomplete
         )
         cls.canteen_on_site_central_1 = CanteenFactory(
@@ -791,7 +794,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             economic_model=Canteen.EconomicModel.PRIVATE,
             daily_meal_count=12,
             central_producer_siret=cls.canteen_central.siret,
-            sectors=[Sector.ADMINISTRATION_PRISON],
+            sector_list=[Sector.ADMINISTRATION_PRISON],
             sectors_m2m=[sector_line_ministry],
         )
 
@@ -828,7 +831,7 @@ class CanteenAggregateQuerySetTest(TestCase):
 class CanteenModelPropertiesTest(TestCase):
     def test_canteen_is_spe(self):
         canteen_1 = CanteenFactory(
-            sectors=[Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC], line_ministry=Canteen.Ministries.CULTURE
+            sector_list=[Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC], line_ministry=Canteen.Ministries.CULTURE
         )
         canteen_2 = CanteenFactory()
         self.assertTrue(canteen_1.is_spe)

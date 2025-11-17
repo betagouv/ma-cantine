@@ -15,16 +15,10 @@ from rest_framework.test import APITestCase
 from api.tests.utils import assert_import_failure_created, authenticate
 from common.api.adresse import ADRESSE_CSV_API_URL
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import (
-    Canteen,
-    Diagnostic,
-    ImportFailure,
-    ImportType,
-    ManagerInvitation,
-)
+from data.models import Canteen, Diagnostic, ImportFailure, ImportType, ManagerInvitation
+from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region
 from data.models.teledeclaration import Teledeclaration
-from data.models.creation_source import CreationSource
 
 NEXT_YEAR = datetime.date.today().year + 1
 
@@ -213,10 +207,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         error = body["errors"][0]
         self.assertEqual(error["row"], 1)
         self.assertEqual(error["status"], 401)
-        self.assertEqual(
-            error["message"],
-            "Vous n'êtes pas un gestionnaire de cette cantine.",
-        )
+        self.assertEqual(error["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
     @authenticate
     def test_valid_sectors_parsed(self, mock):
@@ -227,7 +218,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         canteen = Canteen.objects.get(siret="21340172201787")
-        self.assertEqual(len(canteen.sectors), 3)
+        self.assertEqual(len(canteen.sector_list), 3)
 
     @authenticate
     def test_import_some_without_diagnostic(self, mock):

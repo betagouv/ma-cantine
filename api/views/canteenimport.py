@@ -317,7 +317,7 @@ class ImportCanteensView(APIView):
         canteen.name = name
         canteen.daily_meal_count = daily_meal_count
         canteen.yearly_meal_count = yearly_meal_count
-        canteen.sectors = sectors
+        canteen.sector_list = sectors
         canteen.production_type = production_type
         canteen.management_type = management_type
         canteen.economic_model = economic_model

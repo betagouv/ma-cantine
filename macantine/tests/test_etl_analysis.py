@@ -29,14 +29,14 @@ class TestETLAnalysisCanteen(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            sectors=[Sector.ADMINISTRATION_PRISON],
+            sector_list=[Sector.ADMINISTRATION_PRISON],
             sectors_m2m=[cls.sector],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        cls.canteen_2 = CanteenFactory(sectors=[Sector.ADMINISTRATION_PRISON], sectors_m2m=[cls.sector])
+        cls.canteen_2 = CanteenFactory(sector_list=[Sector.ADMINISTRATION_PRISON], sectors_m2m=[cls.sector])
 
     def test_canteen_extract(self):
         etl = ETL_ANALYSIS_CANTEEN()

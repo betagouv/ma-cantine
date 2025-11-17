@@ -757,11 +757,10 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
         return "Oui" if obj.is_spe else "Non"
 
     def get_secteur(self, obj):
-        sectors = [sector.name for sector in obj.sectors_m2m.all()]
-        return ",".join(sectors)
+        return ",".join(obj.sector_list)
 
     def get_categorie(self, obj):
-        categories = [sector.category for sector in obj.sectors_m2m.all()]
+        categories = set()
         return ",".join(categories)
 
     def get_adresses_gestionnaires(self, obj):
@@ -803,6 +802,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
             "line_ministry",
             "modification_date",
             "logo",
+            "sector_list",
             "sectors",  # from "sectors_m2m"
             "declaration_donnees_2021",
             "declaration_donnees_2022",

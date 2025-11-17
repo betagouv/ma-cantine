@@ -15,7 +15,7 @@ from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region, get_region_from_department
-from data.models.sector import SECTOR_HAS_LINE_MINISTRY_LIST, Sector, SectorM2M
+from data.models.sector import SECTOR_HAS_LINE_MINISTRY_LIST, Sector, SectorM2M, ADMINISTRATION_SECTOR_LIST
 from data.utils import (
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
@@ -75,8 +75,8 @@ def has_missing_data_query():
         | Q(production_type=None)
         | Q(management_type=None)
         | Q(economic_model=None)
-        # serving-specific rules (with annotate_with_sectors_count)
-        | (is_serving_query() & (Q(sectors_count=0) | Q(sectors_count__gt=3)))
+        # serving-specific rules (with annotate_with_sector_list_count)
+        | (is_serving_query() & (Q(sector_list_count=0) | Q(sector_list_count__gt=3)))
         # satellite-specific rules
         | (is_satellite_query() & has_charfield_missing_query("central_producer_siret"))
         | (is_satellite_query() & Q(central_producer_siret=F("siret")))
@@ -179,14 +179,14 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         """
         return self.annotate(
             requires_line_ministry=Case(
-                When(sectors__overlap=SECTOR_HAS_LINE_MINISTRY_LIST, then=Value(True)),
+                When(sector_list__overlap=SECTOR_HAS_LINE_MINISTRY_LIST, then=Value(True)),
                 default=Value(False),
                 output_field=BooleanField(),
             )
         )
 
-    def annotate_with_sectors_count(self):
-        return self.annotate(sectors_count=F("sectors__len"))
+    def annotate_with_sector_list_count(self):
+        return self.annotate(sector_list_count=F("sector_list__len"))
 
     def has_siret(self):
         return self.exclude(has_charfield_missing_query("siret"))
@@ -202,12 +202,16 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def has_missing_data(self):
         return (
-            self.annotate_with_requires_line_ministry().annotate_with_sectors_count().filter(has_missing_data_query())
+            self.annotate_with_requires_line_ministry()
+            .annotate_with_sector_list_count()
+            .filter(has_missing_data_query())
         )
 
     def filled(self):
         return (
-            self.annotate_with_requires_line_ministry().annotate_with_sectors_count().exclude(has_missing_data_query())
+            self.annotate_with_requires_line_ministry()
+            .annotate_with_sector_list_count()
+            .exclude(has_missing_data_query())
         )
 
     def group_and_count_by_field(self, field):
@@ -225,7 +229,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
         # prep missing data action
         self = self.annotate_with_requires_line_ministry()
-        self = self.annotate_with_sectors_count()
+        self = self.annotate_with_sector_list_count()
         # prep add satellites action
         self = self.annotate_with_satellites_in_db_count()
         self = self.annotate_with_central_kitchen_id()
@@ -318,8 +322,8 @@ class CanteenManager(SoftDeletionManager):
     def annotate_with_requires_line_ministry(self):
         return self.get_queryset().annotate_with_requires_line_ministry()
 
-    def annotate_with_sectors_count(self):
-        return self.get_queryset().annotate_with_sectors_count()
+    def annotate_with_sector_list_count(self):
+        return self.get_queryset().annotate_with_sector_list_count()
 
     def has_siret(self):
         return self.get_queryset().has_siret()
@@ -444,7 +448,7 @@ class Canteen(SoftDeletionModel):
     region_lib = models.TextField(null=True, blank=True, verbose_name="nom de la région")
 
     sectors_m2m = models.ManyToManyField(SectorM2M, blank=True, verbose_name="secteurs d'activité")
-    sectors = ChoiceArrayField(
+    sector_list = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=Sector.choices),
         default=list,
         blank=True,
@@ -698,7 +702,7 @@ class Canteen(SoftDeletionModel):
         )
         # serving-specific rules
         if is_filled and self.is_serving:
-            is_filled = bool(self.sectors)
+            is_filled = bool(self.sector_list)
         # satellite-specific rules
         if is_filled and self.is_satellite:
             is_filled = bool(self.central_producer_siret and self.central_producer_siret != self.siret)
@@ -711,7 +715,7 @@ class Canteen(SoftDeletionModel):
                     Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
                 )
         # line_ministry
-        if is_filled and set(self.sectors).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
+        if is_filled and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
             is_filled = bool(self.line_ministry)
         return is_filled
 
@@ -858,20 +862,8 @@ class Canteen(SoftDeletionModel):
         return self.published_service_diagnostics.filter(year=self.latest_published_year).first()
 
     @property
-    def in_education(self):
-        from data.models import SectorM2M
-
-        scolaire_sectors = SectorM2M.objects.filter(category="education")
-        if scolaire_sectors.count() and self.sectors_m2m.intersection(scolaire_sectors).exists():
-            return True
-
-    @property
     def in_administration(self):
-        from data.models import SectorM2M
-
-        administration_sectors = SectorM2M.objects.filter(category="administration")
-        if administration_sectors.count() and self.sectors_m2m.intersection(administration_sectors).exists():
-            return True
+        return set(self.sector_list).intersection(ADMINISTRATION_SECTOR_LIST)
 
     @property
     def lead_image(self):

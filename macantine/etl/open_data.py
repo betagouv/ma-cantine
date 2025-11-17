@@ -34,8 +34,8 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         )
 
     def transform_canteen_arrayfields(self, prefix=""):
-        # pat_list & pat_lib_list
-        self.df[prefix + "sectors"] = self.df[prefix + "sectors"].apply(lambda x: ",".join(x))
+        # sector_list, pat_list & pat_lib_list
+        self.df[prefix + "sector_list"] = self.df[prefix + "sector_list"].apply(lambda x: ",".join(x))
         self.df[prefix + "pat_list"] = self.df[prefix + "pat_list"].apply(lambda x: ",".join(x))
         self.df[prefix + "pat_lib_list"] = self.df[prefix + "pat_lib_list"].apply(lambda x: ",".join(x))
 

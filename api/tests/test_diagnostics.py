@@ -571,7 +571,7 @@ class TestDiagnosticsApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
-            sectors=[Sector.ADMINISTRATION_PRISON],
+            sector_list=[Sector.ADMINISTRATION_PRISON],
             line_ministry=None,
             managers=[authenticate.user],
         )

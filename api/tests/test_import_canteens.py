@@ -390,9 +390,9 @@ class CanteenImportSuccessTest(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 1)
-        canteen_created = Canteen.objects.first()
-        self.assertEqual(canteen_created.production_type, "central")
-        self.assertEqual(len(canteen_created.sectors), 0)
+        canteen = Canteen.objects.get(siret="16463707389922")
+        self.assertEqual(canteen.production_type, "central")
+        self.assertEqual(len(canteen.sector_list), 0)
 
     @authenticate
     def test_sectors_apostrophes(self):
@@ -407,7 +407,7 @@ class CanteenImportSuccessTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(
-            Canteen.objects.filter(sectors__contains=[Sector.ADMINISTRATION_ADMINISTRATIF]).distinct().count(),
+            Canteen.objects.filter(sector_list__contains=[Sector.ADMINISTRATION_ADMINISTRATIF]).distinct().count(),
             2,
         )
 

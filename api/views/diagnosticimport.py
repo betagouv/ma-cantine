@@ -374,7 +374,7 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.postal_code = row[3].strip()
         canteen.daily_meal_count = row[5].strip()
         canteen.yearly_meal_count = row[6].strip()
-        canteen.sectors = sectors
+        canteen.sector_list = sectors
         canteen.production_type = row[8].strip().lower()
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None

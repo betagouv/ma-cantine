@@ -4,12 +4,12 @@ import data.fields
 from django.db import migrations, models
 
 
-def populate_sectors_from_sectors_m2m(apps, schema_editor):
+def populate_sector_list_from_sectors_m2m(apps, schema_editor):
     Canteen = apps.get_model("data", "Canteen")
 
     for canteen in Canteen.objects.prefetch_related("sectors_m2m").all():
         sector_values = list(canteen.sectors_m2m.values_list("name", flat=True))
-        canteen.sectors = sector_values
+        canteen.sector_list = sector_values
         canteen.save()
 
 
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="canteen",
-            name="sectors",
+            name="sector_list",
             field=data.fields.ChoiceArrayField(
                 base_field=models.CharField(
                     choices=[
@@ -114,7 +114,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="historicalcanteen",
-            name="sectors",
+            name="sector_list",
             field=data.fields.ChoiceArrayField(
                 base_field=models.CharField(
                     choices=[
@@ -204,5 +204,5 @@ class Migration(migrations.Migration):
                 verbose_name="secteurs d'activité",
             ),
         ),
-        migrations.RunPython(populate_sectors_from_sectors_m2m, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(populate_sector_list_from_sectors_m2m, reverse_code=migrations.RunPython.noop),
     ]
