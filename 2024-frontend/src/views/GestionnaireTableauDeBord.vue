@@ -65,9 +65,10 @@ const updateSearch = () => {
 
 const searchCanteens = () => {
   const searchValue = search.value.trim()
+  const searchWithoutSpaces = searchValue.replace(/\s/g, "")
   filteredCanteens.value = allCanteens.value.filter((canteen) => {
-    if (canteen.siret && canteen.siret.indexOf(searchValue) === 0) return true
-    if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchValue) === 0) return true
+    if (canteen.siret && canteen.siret.indexOf(searchWithoutSpaces) === 0) return true
+    if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchWithoutSpaces) === 0) return true
     if (stringService.checkIfContains(canteen.name, searchValue)) return true
   })
   if (filteredCanteens.value.length === 0) searchIsEmpty.value = true
