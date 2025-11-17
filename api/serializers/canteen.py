@@ -430,6 +430,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
 
 class CanteenSummarySerializer(serializers.ModelSerializer):
+    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     lead_image = CanteenImageSerializer()
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
