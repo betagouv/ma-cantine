@@ -29,7 +29,7 @@ onMounted(() => {
         2 - Pourquoi traitons-nous ces données ?
       </h2>
       <p>
-        « ma cantine » traite des données à caractère personnel pour accompagner au mieux les acteurs de la restauration
+        <em>ma cantine</em> traite des données à caractère personnel pour accompagner au mieux les acteurs de la restauration
         collective dans leur offre aux consommateurs pour une alimentation de qualité, saine et durable.
       </p>
       <p>
