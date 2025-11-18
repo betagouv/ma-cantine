@@ -271,6 +271,11 @@ const rules = {
   economicModel: { required },
   managementType: { required },
   productionType: { required: requiredIf(productionTypeRequired) },
+  centralProducerSiret: {
+    required: false,
+    minLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", minLength(14)),
+    maxLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", maxLength(14)),
+  },
   sectors: {
     required: requiredIf(sectorsAreRequired),
     maxThree: helpers.withMessage(
@@ -344,6 +349,7 @@ if (props.establishmentData) {
           label="SIRET de la cuisine centrale"
           hint="Optionnel"
           :label-visible="true"
+          :error-message="formatError(v$.centralProducerSiret)"
         />
         <DsfrInputGroup
           v-if="showSatelliteCanteensCount"
