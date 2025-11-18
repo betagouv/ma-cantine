@@ -246,11 +246,12 @@ class TestCanteenStatsApi(APITestCase):
         self.assertEqual(body["canteenCount"], 1)  # canteens created in 2024 are not returned
         self.assertEqual(body["teledeclarationsCount"], 1)
         self.assertEqual(body["bioPercent"], 20)
-        self.assertEqual(body["sustainablePercent"], 45)  # 15 + 15 + 15
-        self.assertEqual(body["egalimPercent"], 65)  # 20 + 45
+        self.assertEqual(body["sustainablePercent"], 45)  # 15 + 15 + 15 (same denominator)
+        self.assertEqual(body["egalimPercent"], 65)  # 20 + 45 (same denominator)
         self.assertEqual(body["meatEgalimPercent"], 50)
         self.assertEqual(body["meatFrancePercent"], 25)
         self.assertEqual(body["fishEgalimPercent"], 80)
+        self.assertEqual(body["meatFishEgalimPercent"], 51)
         self.assertEqual(body["approPercent"], 100)
 
     def test_filter_out_armee(self):

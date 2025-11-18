@@ -3,7 +3,7 @@ import stringsService from "@/services/strings"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import ObservatoryGraphSustainable from "@/components/ObservatoryGraphSustainable.vue"
-import ObservatoryGraphFishMeat from "@/components/ObservatoryGraphFishMeat.vue"
+import ObservatoryGraphMeatFishEgalim from "@/components/ObservatoryGraphMeatFishEgalim.vue"
 import ObservatoryGraphMeatFrance from "@/components/ObservatoryGraphMeatFrance.vue"
 import ObservatoryGraphEgalim from "@/components/ObservatoryGraphEgalim.vue"
 
@@ -36,7 +36,7 @@ const approBadge = "/static/images/badges/appro.svg"
         />
       </li>
       <li class="fr-mb-8w">
-        <ObservatoryGraphFishMeat :meatPercent="stats.meatEgalimPercent" :fishPercent="stats.fishEgalimPercent" />
+        <ObservatoryGraphMeatFishEgalim :meatFishEgalimPercent="stats.meatFishEgalimPercent" />
       </li>
       <li>
         <ObservatoryGraphMeatFrance :meatFrancePercent="stats.meatFrancePercent" />
