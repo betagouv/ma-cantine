@@ -7,7 +7,7 @@ from django.utils import timezone
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Diagnostic
+from data.models import Canteen, Diagnostic, Sector
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -143,7 +143,9 @@ class DiagnosticQuerySetTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_valid_1.siret,
         )
-        cls.canteen_valid_6_armee = CanteenFactory(siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE)
+        cls.canteen_valid_6_armee = CanteenFactory(
+            siret="21640122400011", sector_list=[Sector.ADMINISTRATION_ARMEE], line_ministry=Canteen.Ministries.ARMEE
+        )
         cls.canteen_missing_siret = CanteenFactory()
         Canteen.objects.filter(id=cls.canteen_missing_siret.id).update(siret="")  # siret missing
         cls.canteen_missing_siret.refresh_from_db()
