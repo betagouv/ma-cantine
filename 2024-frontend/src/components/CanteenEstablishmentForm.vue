@@ -11,7 +11,6 @@ import openDataService from "@/services/openData.js"
 import arraysService from "@/services/arrays.js"
 import options from "@/constants/canteen-establishment-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
-import CanteenEstablishmentCentralSelector from "@/components/CanteenEstablishmentCentralSelector.vue"
 
 /* Data */
 const store = useRootStore()
@@ -70,11 +69,6 @@ const productionTypeOptions = computed(() => {
   optionsWithDisabled[indexCentralServingType].hint = disabledHint || optionsWithDisabled[indexCentralType].hint
   return optionsWithDisabled
 })
-
-/* Central */
-const selectCentralSiret = (siret) => {
-  form.centralProducerSiret = siret
-}
 
 /* Sectors */
 const sectorsOptions = ref([])
@@ -277,6 +271,11 @@ const rules = {
   economicModel: { required },
   managementType: { required },
   productionType: { required: requiredIf(productionTypeRequired) },
+  centralProducerSiret: {
+    required: false,
+    minLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", minLength(14)),
+    maxLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", maxLength(14)),
+  },
   sectors: {
     required: requiredIf(sectorsAreRequired),
     maxThree: helpers.withMessage(
@@ -344,10 +343,13 @@ if (props.establishmentData) {
           :error-message="formatError(v$.productionType)"
           @change="changeProductionMode"
         />
-        <CanteenEstablishmentCentralSelector
+        <DsfrInputGroup
           v-if="showCentralProducerSiret"
-          @select="(siret) => selectCentralSiret(siret)"
-          :establishment-data="prefillEstablishment"
+          v-model="form.centralProducerSiret"
+          label="SIRET de la cuisine centrale"
+          hint="Optionnel"
+          :label-visible="true"
+          :error-message="formatError(v$.centralProducerSiret)"
         />
         <DsfrInputGroup
           v-if="showSatelliteCanteensCount"
