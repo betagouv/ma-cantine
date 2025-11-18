@@ -140,42 +140,19 @@ def validate_canteen_central_producer_siret_field(instance):
     - clean_fields() (called by full_clean()) already checks that
     the central_producer_siret field is the correct length and format
     - extra validation:
-        - if satellite & new canteen: central_producer_siret must be filled
-        - if satellite & new canteen: central_producer_siret must be the siret of an existing canteen
-        - if satellite & new canteen: central_producer_siret must belong to an existing central kitchen
+        - if satellite: central_producer_siret is not mandatory
+        - if satellite & central_producer_siret: must be different from the satellite siret
         - if not satellite: central_producer_siret must be empty
     """
     errors = {}
     field_name = "central_producer_siret"
     value = getattr(instance, field_name)
     if instance.is_satellite:
-        if not value:
-            if not instance.pk:  # only for new canteens (TODO: generalize to existing canteens)
-                utils_utils.add_validation_error(
-                    errors, field_name, "Restaurant satellite : le champ ne peut pas être vide."
-                )
-        else:
+        if value:
             if instance.siret == value:
                 utils_utils.add_validation_error(
                     errors, field_name, "Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite."
                 )
-            else:
-                from data.models import Canteen
-
-                canteen_with_siret_qs = Canteen.objects.filter(siret=value)
-                if not canteen_with_siret_qs.exists():
-                    utils_utils.add_validation_error(
-                        errors,
-                        field_name,
-                        "Restaurant satellite : le champ ne correspond à aucune cuisine centrale connue.",
-                    )
-
-                elif not canteen_with_siret_qs.is_central_cuisine().exists():
-                    utils_utils.add_validation_error(
-                        errors,
-                        field_name,
-                        "Restaurant satellite : le champ correspond à une cantine qui n'est pas une cuisine centrale.",
-                    )
     else:
         if value:
             utils_utils.add_validation_error(

@@ -339,7 +339,7 @@ class CanteenImportErrorTest(APITestCase):
         )
         self.assertTrue(
             errors.pop(0)["message"].startswith(
-                "Champ 'siret de la cuisine centrale' : Restaurant satellite : le champ ne correspond à aucune cuisine centrale connue."
+                "Champ 'siret de la cuisine centrale' : Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite."
             ),
         )
 
