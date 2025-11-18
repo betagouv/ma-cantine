@@ -50,8 +50,6 @@ class TestETLOpenData(TestCase):
         cls.canteen_2 = CanteenFactory.create(
             name="Cantine 2",
             siret="19382111300035",
-            sector_list=[],
-            sectors_m2m=[],
             managers=[cls.user_manager],
             declaration_donnees_2022=True,
         )
@@ -68,8 +66,10 @@ class TestETLOpenData(TestCase):
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2024, diagnostic_type=None)
             diagnostic.teledeclare(cls.user_manager)
 
-        cls.canteen_without_manager = CanteenFactory.create(siret="21590350100017", sector_list=[], sectors_m2m=[])
-        cls.canteen_without_manager.managers.clear()
+        cls.canteen_central_without_manager = CanteenFactory.create(
+            siret="21590350100017", sector_list=[], sectors_m2m=[], production_type=Canteen.ProductionType.CENTRAL
+        )
+        cls.canteen_central_without_manager.managers.clear()
 
     def test_teledeclaration_extract(self, mock):
         # Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
@@ -140,7 +140,7 @@ class TestETLOpenData(TestCase):
         etl_canteen.extract_dataset()
         self.assertEqual(len(etl_canteen.df.id.unique()), 2, "There should be one canteen less after soft deletion")
 
-        self.canteen_without_manager.hard_delete()
+        self.canteen_central_without_manager.hard_delete()
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
         etl_canteen.extract_dataset()
         self.assertEqual(etl_canteen.len_dataset(), 1, "There should be one canteen less after hard deletion")
@@ -187,10 +187,10 @@ class TestETLOpenData(TestCase):
         self.assertTrue(canteen["declaration_donnees_2024"])
         self.assertTrue(canteen["active_on_ma_cantine"])
 
-        canteen_without_manager = canteens[canteens.id == self.canteen_without_manager.id].iloc[0]
-        self.assertEqual(canteen_without_manager["line_ministry"], None)
-        self.assertEqual(canteen_without_manager["sector_list"], "")
-        self.assertFalse(canteen_without_manager["active_on_ma_cantine"])
+        canteen_central_without_manager = canteens[canteens.id == self.canteen_central_without_manager.id].iloc[0]
+        self.assertEqual(canteen_central_without_manager["line_ministry"], None)
+        self.assertEqual(canteen_central_without_manager["sector_list"], "")
+        self.assertFalse(canteen_central_without_manager["active_on_ma_cantine"])
 
     @freeze_time("2023-05-14")  # during the 2022 campaign
     def test_update_ressource(self, mock):

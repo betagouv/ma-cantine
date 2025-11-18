@@ -324,11 +324,11 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
-        first_error = errors.pop(0)
-        self.assertEqual(first_error["row"], 1)
-        self.assertEqual(first_error["status"], 400)
+        self.assertEqual(len(errors), 22, errors)
+        self.assertEqual(errors[0]["row"], 1)
+        self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
-            first_error["message"],
+            errors.pop(0)["message"],
             "Champ 'année' : L'année est obligatoire pour créer un diagnostic.",
         )
         self.assertEqual(
@@ -346,6 +346,10 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'mode de production' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -410,7 +414,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Bio - Valeur annuelle HT' : Assurez-vous que cette valeur est supérieure ou égale à 0.",
+            "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs.",
         )
 
     @authenticate
@@ -642,30 +646,29 @@ class TestImportDiagnosticsAPI(APITestCase):
         body = response.json()
         self.assertEqual(body["count"], 0)
         errors = body["errors"]
-        self.assertGreater(len(errors), 0)
+        self.assertEqual(len(errors), 6, errors)
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[0]["message"],
             "Champ 'année' : Ce champ doit être un nombre entier. Si vous voulez importer que la cantine, veuillez changer le type d'import et réessayer.",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[1]["message"],
             "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide.",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[2]["message"],
             "Champ 'Produits aquatiques frais et surgelés, Bio' : La valeur « lol » doit être vide ou un nombre décimal.",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[3]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 10",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[4]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 920, est plus que la valeur totale (HT) viandes et volailles, 100",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
-            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 10",
+            errors[5]["message"], "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs."
         )
 
     @authenticate

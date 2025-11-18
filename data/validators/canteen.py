@@ -107,6 +107,26 @@ def validate_canteen_meal_count_fields(instance):
     return errors
 
 
+def validate_canteen_sector_list_field(instance):
+    """
+    - clean_fields() (called by full_clean()) already checks that the value is a list (empty or with Sectors)
+    - extra validation:
+        - if central: the sector_list should be empty
+        - if not central: the sector_list should be between 1 & 3
+    """
+    errors = {}
+    field_name = "sector_list"
+    value = getattr(instance, field_name)
+    if value is not None:  # check done in clean_fields()
+        if instance.is_central:
+            if len(value):
+                utils_utils.add_validation_error(errors, field_name, "Cuisine centrale : le champ doit être vide.")
+        else:
+            if (len(value) == 0) or (len(value) > 3):
+                utils_utils.add_validation_error(errors, field_name, "Le champ doit contenir entre 1 et 3 secteurs.")
+    return errors
+
+
 def validate_canteen_satellite_count(instance):
     """
     - extra validation:

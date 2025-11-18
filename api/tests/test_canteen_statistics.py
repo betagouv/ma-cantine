@@ -25,7 +25,7 @@ class CanteenStatsApiTest(APITestCase):
                 pat_list=["1"],
                 department="01",
                 region="84",
-                sector_list=[Sector.EDUCATION_PRIMAIRE],
+                sector_list=[],
                 management_type=Canteen.ManagementType.DIRECT,
                 production_type=Canteen.ProductionType.CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
@@ -124,7 +124,7 @@ class CanteenStatsApiTest(APITestCase):
                 siret="21730065600014",
                 city_insee_code="00002",
                 epci=None,
-                sector_list=[],
+                sector_list=[Sector.EDUCATION_PRIMAIRE],
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
@@ -159,7 +159,7 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(body["egalimPercent"], 87)  # 43 + 44
         self.assertEqual(body["approPercent"], 100)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[SectorCategory.EDUCATION], 2)
+        self.assertEqual(sector_categories[SectorCategory.EDUCATION], 1)
         self.assertEqual(sector_categories[SectorCategory.ENTERPRISE], 2)
         self.assertEqual(sector_categories[SectorCategory.SOCIAL], 1)
         self.assertEqual(sector_categories["inconnu"], 0)
@@ -355,9 +355,9 @@ class CanteenStatsApiTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["canteenCount"], 2)
         sector_categories = body["sectorCategories"]
-        self.assertEqual(sector_categories[SectorCategory.EDUCATION], 2)
+        self.assertEqual(sector_categories[SectorCategory.EDUCATION], 1)
         self.assertEqual(sector_categories[SectorCategory.ENTERPRISE], 2)
         self.assertEqual(sector_categories["inconnu"], 0)  # because we filtered on sectors beforehand...
 

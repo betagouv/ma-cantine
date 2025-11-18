@@ -1,2 +1,2 @@
 siret,nom,code_insee_commune,code_postal_commune,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels,année_bilan,valeur_totale,valeur_bio,valeur_siqo,valeur_environnemental,valeur_autres_egalim,valeur_viandes,valeur_viandes_egalim,valeur_viandes_france,valeur_poissons,valeur_poissons_egalim
-96463820453707,CC Ma deuxième Cantine,69123,69001,,790,14000,,site,conceded,public,"test1@example.com,test2@example.com",2022,30300,,10,,,,,,,
+96463820453707,CC Ma deuxième Cantine,69123,69001,,790,14000,Secondaire collège,site,conceded,public,"test1@example.com,test2@example.com",2022,30300,,10,,,,,,,

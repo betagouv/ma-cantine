@@ -626,6 +626,7 @@ class Canteen(SoftDeletionModel):
             canteen_validators.validate_canteen_siret_or_siren_unite_legale(self),
             canteen_validators.validate_canteen_choice_fields(self),
             canteen_validators.validate_canteen_meal_count_fields(self),
+            canteen_validators.validate_canteen_sector_list_field(self),
             canteen_validators.validate_canteen_satellite_count(self),
             canteen_validators.validate_canteen_central_producer_siret_field(self),
         )
@@ -655,6 +656,12 @@ class Canteen(SoftDeletionModel):
     @property
     def siret_or_siren_unite_legale(self) -> str:
         return self.siret or self.siren_unite_legale or ""
+
+    @property
+    def is_central(self) -> bool:
+        return self.production_type and self.production_type in [
+            Canteen.ProductionType.CENTRAL,
+        ]
 
     @property
     def is_central_cuisine(self) -> bool:
