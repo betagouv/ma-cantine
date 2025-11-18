@@ -20,9 +20,9 @@ from api.serializers import FullCanteenSerializer
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportFailure, ImportType, Diagnostic
-from data.models.teledeclaration import Teledeclaration
+from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource
+from data.models.teledeclaration import Teledeclaration
 
 from .canteen import AddManagerView
 from .utils import camelize
@@ -335,7 +335,7 @@ class ImportDiagnosticsView(ABC, APIView):
         name = row[1].strip()
         daily_meal_count = row[5].strip()
         yearly_meal_count = row[6].strip()
-        sectors = [sector.replace("’", "'") for sector in row[7].strip().split("+") if sector] if row[7] else []
+        sector_list = [sector.replace("’", "'") for sector in row[7].strip().split("+") if sector] if row[7] else []
         management_type = row[9].strip().lower()
         production_type = row[8].strip().lower()
         economic_model = row[10].strip().lower()
@@ -350,6 +350,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 siret=siret,
                 daily_meal_count=daily_meal_count,
                 yearly_meal_count=yearly_meal_count,
+                sector_list=sector_list,
                 management_type=management_type,
                 production_type=production_type,
                 economic_model=economic_model,
@@ -374,7 +375,7 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.postal_code = row[3].strip()
         canteen.daily_meal_count = row[5].strip()
         canteen.yearly_meal_count = row[6].strip()
-        canteen.sector_list = sectors
+        canteen.sector_list = sector_list
         canteen.production_type = row[8].strip().lower()
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None

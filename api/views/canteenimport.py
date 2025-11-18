@@ -283,7 +283,7 @@ class ImportCanteensView(APIView):
         name = row[1].strip()
         daily_meal_count = row[3].strip()
         yearly_meal_count = row[4].strip()
-        sectors = [sector.replace("’", "'") for sector in row[5].strip().split("+") if sector] if row[5] else []
+        sector_list = [sector.replace("’", "'") for sector in row[5].strip().split("+") if sector] if row[5] else []
         production_type = row[6].strip().lower()
         management_type = row[7].strip().lower()
         economic_model = row[8].strip().lower()
@@ -299,6 +299,7 @@ class ImportCanteensView(APIView):
                 siret=siret,
                 daily_meal_count=daily_meal_count,
                 yearly_meal_count=yearly_meal_count,
+                sector_list=sector_list,
                 management_type=management_type,
                 production_type=production_type,
                 economic_model=economic_model,
@@ -317,7 +318,7 @@ class ImportCanteensView(APIView):
         canteen.name = name
         canteen.daily_meal_count = daily_meal_count
         canteen.yearly_meal_count = yearly_meal_count
-        canteen.sector_list = sectors
+        canteen.sector_list = sector_list
         canteen.production_type = production_type
         canteen.management_type = management_type
         canteen.economic_model = economic_model
