@@ -85,6 +85,15 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
         data["fish_egalim_percent"] = round(100 * agg["value_fish_egalim_ht__sum"] / agg["value_fish_ht__sum"])
     else:
         data["fish_egalim_percent"] = 0
+    # percent of meat+fish egalim
+    if (agg["value_meat_poultry_ht__sum"] + agg["value_fish_ht__sum"]) > 0:
+        data["meat_fish_egalim_percent"] = round(
+            100
+            * (agg["value_meat_poultry_egalim_ht__sum"] + agg["value_fish_egalim_ht__sum"])
+            / (agg["value_meat_poultry_ht__sum"] + agg["value_fish_ht__sum"])
+        )
+    else:
+        data["meat_fish_egalim_percent"] = 0
     # percent of appro
     badge_querysets = badges_for_queryset(teledeclarations)
     data["appro_percent"] = (
@@ -104,6 +113,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         "meat_egalim_percent",
         "meat_france_percent",
         "fish_egalim_percent",
+        "meat_fish_egalim_percent",
         "appro_percent",
     ]
     FIELDS_TO_HIDE_IF_CAMPAIGN_NOT_FOUND = ["teledeclarations_count"] + FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED
@@ -124,6 +134,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     meat_egalim_percent = serializers.IntegerField()
     meat_france_percent = serializers.IntegerField()
     fish_egalim_percent = serializers.IntegerField()
+    meat_fish_egalim_percent = serializers.IntegerField()
     appro_percent = serializers.IntegerField()
     # notes
     notes = serializers.DictField()
