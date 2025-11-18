@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.39.1](https://github.com/betagouv/ma-cantine/compare/v2025.39.0...v2025.39.1) (2025-11-18)
+
+
+### Améliorations
+
+* **Cantines:** Règles métiers: enlever les contraintes sur le siret de la CC ([#5884](https://github.com/betagouv/ma-cantine/issues/5884)) ([b457b36](https://github.com/betagouv/ma-cantine/commit/b457b363220c1e722bba82ae22e91ee4892392ac))
+* **Cantines:** supprime le sélecteur de cuisine centrale ([#5891](https://github.com/betagouv/ma-cantine/issues/5891)) ([46227aa](https://github.com/betagouv/ma-cantine/commit/46227aa86c11c4bd6ad9fca5d0f0ec2bbb133c72))
+* **Tableau de bord:** multiples améliorations ([#5888](https://github.com/betagouv/ma-cantine/issues/5888)) ([1267809](https://github.com/betagouv/ma-cantine/commit/12678094e042059375ededb24328154e3081d8cd))
+
+
+### Corrections (bugs, typos...)
+
+* **Données personnelles:** homogénéise le nom de la plateforme ([#5889](https://github.com/betagouv/ma-cantine/issues/5889)) ([fce131a](https://github.com/betagouv/ma-cantine/commit/fce131ac7f3fe37eede7f09814d62a1527e3ab0e))
+* **Observatoire:** répare la stat 'viande & aquaculture EGalim' ([#5893](https://github.com/betagouv/ma-cantine/issues/5893)) ([fcb8fae](https://github.com/betagouv/ma-cantine/commit/fcb8faea41e1b013fbced3ebe0adbd86110dda7d))
+* **Secteurs:** API: répare un bug sur le swagger suite au récent renommage ([#5892](https://github.com/betagouv/ma-cantine/issues/5892)) ([a828b51](https://github.com/betagouv/ma-cantine/commit/a828b518d5d27b54be97d8988d567f3cac9f3218))
+
+
+### Technique
+
+* **Secteurs:** créer les enum dans le code à partir des données présentes en DB ([#5878](https://github.com/betagouv/ma-cantine/issues/5878)) ([0069f23](https://github.com/betagouv/ma-cantine/commit/0069f2347d35b8fbd7d1e588f3ae21b5143f4f7b))
+
 ## [2025.39.0](https://github.com/betagouv/ma-cantine/compare/v2025.38.0...v2025.39.0) (2025-11-14)
 
 
