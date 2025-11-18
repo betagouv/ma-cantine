@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
+import { getServerError } from "@/services/api"
 import urlService from "@/services/urls"
 import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
 import AppLoader from "@/components/AppLoader.vue"
@@ -35,9 +36,15 @@ const saveCanteen = (props) => {
     .updateCanteen(form, canteenId)
     .then((response) => {
       if (response.id) goToCanteenPage(response)
-      else store.notifyServerError()
+      else displayError(response)
     })
     .catch((e) => store.notifyServerError(e))
+}
+
+const displayError = async (error) => {
+  const messages = await getServerError(error)
+  console.log("error", error)
+  console.log("messages", messages)
 }
 
 /* After canteen is saved */

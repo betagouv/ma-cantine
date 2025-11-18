@@ -256,8 +256,6 @@ const changeProductionMode = () => {
 /* Fields verification */
 const { required, integer, minValue, maxValue, requiredIf, minLength, maxLength } = useValidators()
 const productionTypeRequired = computed(() => !props.addSatellite)
-const yearlyMealMinValue = computed(() => Math.max(form.dailyMealCount, 420))
-const dailyMealMaxValue = computed(() => form.yearlyMealCount)
 const siretIsRequired = computed(() => form.hasSiret === "has-siret")
 const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
 const sectorsAreRequired = computed(() => form.productionType !== "central")
@@ -285,8 +283,6 @@ const rules = {
     ),
   },
   lineMinistry: { required: requiredIf(showLineMinistry) },
-  dailyMealCount: { required, integer, minValue: minValue(3), maxValue: maxValue(dailyMealMaxValue) },
-  yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
   satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(1) },
   centralProducerSiret: {
     required: requiredIf(showCentralProducerSiret),
@@ -454,22 +450,10 @@ if (props.establishmentData) {
         <legend class="fr-h5 fr-mb-2w">5. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
           <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              v-model="form.dailyMealCount"
-              label="Par jour *"
-              :label-visible="true"
-              type="number"
-              :error-message="formatError(v$.dailyMealCount)"
-            />
+            <DsfrInputGroup v-model="form.dailyMealCount" label="Par jour *" :label-visible="true" type="number" />
           </div>
           <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              v-model="form.yearlyMealCount"
-              label="Par an *"
-              :label-visible="true"
-              type="number"
-              :error-message="formatError(v$.yearlyMealCount)"
-            />
+            <DsfrInputGroup v-model="form.yearlyMealCount" label="Par an *" :label-visible="true" type="number" />
           </div>
         </div>
       </fieldset>

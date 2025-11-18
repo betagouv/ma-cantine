@@ -19,4 +19,23 @@ const verifyResponse = function(response) {
   return hasJSON ? response.json() : response.text()
 }
 
-export { verifyResponse }
+const getServerError = (error) => {
+  if (error instanceof BadRequestError) {
+    return error.jsonPromise
+      .then((errorDetail) => {
+        const keys = Object.keys(errorDetail)
+        const errors = []
+        console.log(keys)
+        keys.forEach((key) => {
+          errors.push({
+            name: key,
+            message: errorDetail[key],
+          })
+        })
+        return errors
+      })
+      .catch((e) => e)
+  }
+}
+
+export { verifyResponse, getServerError }
