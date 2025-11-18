@@ -296,15 +296,15 @@ class CanteenImportErrorTest(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
-        error_message_max = "Champ 'secteurs' : Ce champ ne peut avoir plus de 3 valeurs."
-        error_message_empty = "Champ 'secteurs' : Ce champ ne peut pas être vide sauf pour les cantines avec le type de production central."
+        error_message_central = "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
+        error_message_min_max = "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs."
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 3, errors)
-        # note: the error "central has sector" error is not raised (line 1) because the check is done later
-        self.assertEqual(errors[0]["message"], error_message_max)
-        self.assertEqual(errors[1]["message"], error_message_empty)
-        self.assertEqual(errors[2]["message"], error_message_empty)
+        self.assertEqual(len(errors), 4, errors)
+        self.assertEqual(errors[0]["message"], error_message_central)
+        self.assertEqual(errors[1]["message"], error_message_min_max)
+        self.assertEqual(errors[2]["message"], error_message_min_max)
+        self.assertEqual(errors[3]["message"], error_message_min_max)
 
     @authenticate
     def test_model_validation_error(self):
@@ -322,13 +322,18 @@ class CanteenImportErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 3, errors)
+        self.assertEqual(len(errors), 4, errors)
         self.assertTrue(
             errors.pop(0)["message"].startswith("Champ 'repas par jour' : Le champ doit être au moins égal à 3."),
         )
         self.assertTrue(
             errors.pop(0)["message"].startswith(
                 "Champ 'repas par an (y compris livrés)' : Le champ doit être au moins égal à 420."
+            ),
+        )
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
             ),
         )
         self.assertTrue(

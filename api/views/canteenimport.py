@@ -160,8 +160,6 @@ class ImportCanteensView(APIView):
     def _save_data_from_row(self, row):
         if row[0] == "":
             raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
-        # validate data for format etc, starting with basic non-data-specific row checks
-        ImportCanteensView._validate_canteen(row)
         manager_emails = self._get_manager_emails_to_notify(row)
         # return staff-customisable fields
         (
@@ -241,18 +239,6 @@ class ImportCanteensView(APIView):
     @staticmethod
     def _add_error(errors, message, code=400):
         errors.append({"message": message, "code": code})
-
-    @staticmethod
-    def _validate_canteen(row):
-        if row[6] != Canteen.ProductionType.CENTRAL:
-            if not row[5]:
-                raise ValidationError(
-                    {
-                        "secteurs": f"Ce champ ne peut pas être vide sauf pour les cantines avec le type de production {Canteen.ProductionType.CENTRAL}."
-                    }
-                )
-            if row[5].count("+") > 2:
-                raise ValidationError({"secteurs": "Ce champ ne peut avoir plus de 3 valeurs."})
 
     def _get_manager_emails_to_notify(self, row):
         try:
