@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.db import IntegrityError
+from django.test import TestCase, TransactionTestCase
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
@@ -8,11 +9,10 @@ from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region
 
 
-class CanteenModelSaveTest(TestCase):
+class CanteenModelSaveTest(TransactionTestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.central_kitchen = CanteenFactory(siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL)
-        cls.canteen_site = CanteenFactory(siret="83014132100034", production_type=Canteen.ProductionType.ON_SITE)
+        pass
 
     def test_canteen_name_validation(self):
         for TUPLE_OK in [
@@ -106,6 +106,7 @@ class CanteenModelSaveTest(TestCase):
                     )
 
     def test_canteen_siret_unique_validation(self):
+        central_kitchen = CanteenFactory(siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL)
         canteen_existing = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
         # on create
         for VALUE_NOT_OK in ["75665621899905", "756 656 218 99905", 75665621899905]:
@@ -117,8 +118,8 @@ class CanteenModelSaveTest(TestCase):
                     siren_unite_legale=None,
                 )
         # on update
-        self.central_kitchen.siret = canteen_existing.siret
-        self.assertRaises(ValidationError, self.central_kitchen.save)
+        central_kitchen.siret = canteen_existing.siret
+        self.assertRaises(ValidationError, central_kitchen.save)
 
     def test_canteen_epci_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
@@ -207,6 +208,65 @@ class CanteenModelSaveTest(TestCase):
             with self.subTest(economic_model=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, economic_model=VALUE_NOT_OK)
 
+    def test_canteen_sector_list_validation(self):
+        # central kitchen: must be empty
+        for production_type in [Canteen.ProductionType.CENTRAL]:
+            for TUPLE_OK in [([], [])]:
+                with self.subTest(production_type=production_type, sector_list=TUPLE_OK[0]):
+                    canteen = CanteenFactory(production_type=production_type, sector_list=TUPLE_OK[0])
+                    self.assertEqual(canteen.sector_list, TUPLE_OK[1])
+            for VALUE_NOT_OK in [None]:
+                with self.subTest(production_type=production_type, sector_list=VALUE_NOT_OK):
+                    self.assertRaises(
+                        IntegrityError, CanteenFactory, production_type=production_type, sector_list=VALUE_NOT_OK
+                    )
+            for VALUE_NOT_OK in [[Sector.EDUCATION_PRIMAIRE], [999], ["invalid"], [Sector.EDUCATION_PRIMAIRE, 999]]:
+                with self.subTest(production_type=production_type, sector_list=VALUE_NOT_OK):
+                    self.assertRaises(
+                        ValidationError, CanteenFactory, production_type=production_type, sector_list=VALUE_NOT_OK
+                    )
+        # other types: must be filled, between 1 & 3
+        for production_type in [
+            Canteen.ProductionType.CENTRAL_SERVING,
+            Canteen.ProductionType.ON_SITE,
+            Canteen.ProductionType.ON_SITE_CENTRAL,
+        ]:
+            for TUPLE_OK in [
+                ([Sector.EDUCATION_PRIMAIRE], [Sector.EDUCATION_PRIMAIRE]),
+                (
+                    [Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL],
+                    [Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL],
+                ),
+                (
+                    [Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL, Sector.ENTERPRISE_ENTREPRISE],
+                    [Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL, Sector.ENTERPRISE_ENTREPRISE],
+                ),
+            ]:
+                with self.subTest(production_type=production_type, sector_list=TUPLE_OK[0]):
+                    canteen = CanteenFactory(production_type=production_type, sector_list=TUPLE_OK[0])
+                    self.assertEqual(canteen.sector_list, TUPLE_OK[1])
+            for VALUE_NOT_OK in [None]:
+                with self.subTest(production_type=production_type, sector_list=VALUE_NOT_OK):
+                    self.assertRaises(
+                        IntegrityError, CanteenFactory, production_type=production_type, sector_list=VALUE_NOT_OK
+                    )
+            for VALUE_NOT_OK in [
+                [],
+                [
+                    Sector.EDUCATION_PRIMAIRE,
+                    Sector.SANTE_HOPITAL,
+                    Sector.ENTERPRISE_ENTREPRISE,
+                    Sector.ADMINISTRATION_ADMINISTRATIF,
+                ],
+                [999],
+                ["invalid"],
+                [Sector.EDUCATION_PRIMAIRE, 999],
+            ]:
+                with self.subTest(production_type=production_type, sector_list=VALUE_NOT_OK):
+                    self.assertRaises(
+                        ValidationError, CanteenFactory, production_type=production_type, sector_list=VALUE_NOT_OK
+                    )
+
     def test_canteen_line_ministry_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.Ministries.values)]:
             with self.subTest(line_ministry=TUPLE_OK[0]):
@@ -249,11 +309,14 @@ class CanteenModelSaveTest(TestCase):
                     )
 
     def test_canteen_central_producer_siret_required_if_satellite_validation(self):
+        central_kitchen = CanteenFactory(siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL)
+        canteen_site = CanteenFactory(siret="83014132100034", production_type=Canteen.ProductionType.ON_SITE)
+
         for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL]:
             for TUPLE_OK in [
-                ("215 903 501 00017", self.central_kitchen.siret),
-                (self.central_kitchen.siret, self.central_kitchen.siret),
-                (int(self.central_kitchen.siret), self.central_kitchen.siret),
+                ("215 903 501 00017", central_kitchen.siret),
+                (central_kitchen.siret, central_kitchen.siret),
+                (int(central_kitchen.siret), central_kitchen.siret),
                 ("75665621899905", "75665621899905"),
             ]:
                 with self.subTest(
@@ -285,9 +348,9 @@ class CanteenModelSaveTest(TestCase):
         ]:
             for VALUE_NOT_OK in [
                 "215 903 501 00017",
-                self.central_kitchen.siret,
-                int(self.central_kitchen.siret),
-                self.canteen_site.siret,
+                central_kitchen.siret,
+                int(central_kitchen.siret),
+                canteen_site.siret,
                 "75665621899905",
             ]:
                 with self.subTest(
@@ -734,8 +797,10 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         cls.canteen_on_site_incomplete_2 = CanteenFactory(
             siret="21670482500019",
             production_type=Canteen.ProductionType.ON_SITE,
-            sector_list=[],  # incomplete
+            # sector_list=[],  # incomplete
         )
+        Canteen.objects.filter(id=cls.canteen_on_site_incomplete_2.id).update(sector_list=[])  # incomplete
+        cls.canteen_on_site_incomplete_2.refresh_from_db()
         cls.canteen_on_site_incomplete_3 = CanteenFactory(
             siret="21640122400011",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -921,5 +986,9 @@ class CanteenModelPropertiesTest(TestCase):
         self.assertEqual(canteen.appro_diagnostics.count(), 2)
         self.assertEqual(canteen.appro_diagnostics.first().year, 2023)
         self.assertEqual(canteen.service_diagnostics.count(), 2)
+        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
+        self.assertEqual(canteen.latest_published_year, 2023)
+        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
+        self.assertEqual(canteen.latest_published_year, 2023)
         self.assertEqual(canteen.service_diagnostics.first().year, 2023)
         self.assertEqual(canteen.latest_published_year, 2023)
