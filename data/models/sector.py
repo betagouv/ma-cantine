@@ -1,4 +1,6 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.db.models import Case, F, Func, Value, When
 
 
 class SectorCategory(models.TextChoices):
@@ -146,6 +148,57 @@ def get_sector_category_from_sector(sector: str) -> str:
         return SectorCategory.LEISURE
     else:
         return SectorCategory.AUTRES
+
+
+def annotate_with_sector_category_list(queryset):
+    """
+    Annotate with sector_category_list based on the sector_list field.
+    Returns an array of categories.
+    """
+    queryset = queryset.annotate(
+        _sector_category_administration=Case(
+            When(sector_list__overlap=ADMINISTRATION_SECTOR_LIST, then=Value([SectorCategory.ADMINISTRATION])),
+            default=Value([], output_field=ArrayField(models.TextField())),
+        ),
+        _sector_category_enterprise=Case(
+            When(sector_list__overlap=ENTERPRISE_SECTOR_LIST, then=Value([SectorCategory.ENTERPRISE])),
+            default=Value([], output_field=ArrayField(models.TextField())),
+        ),
+        _sector_category_education=Case(
+            When(sector_list__overlap=EDUCATION_SECTOR_LIST, then=Value([SectorCategory.EDUCATION])),
+            default=Value([], output_field=ArrayField(models.TextField())),
+        ),
+        _sector_category_health=Case(
+            When(sector_list__overlap=HEALTH_SECTOR_LIST, then=Value([SectorCategory.HEALTH])),
+            default=Value([], output_field=ArrayField(models.TextField())),
+        ),
+        _sector_category_social=Case(
+            When(sector_list__overlap=SOCIAL_SECTOR_LIST, then=Value([SectorCategory.SOCIAL])),
+            default=Value([], output_field=ArrayField(models.TextField())),
+        ),
+        _sector_category_leisure=Case(
+            When(sector_list__overlap=LEISURE_SECTOR_LIST, then=Value([SectorCategory.LEISURE])),
+            default=Value([], output_field=ArrayField(models.TextField())),
+        ),
+        _sector_category_autres=Case(
+            When(sector_list__overlap=AUTRES_SECTOR_LIST, then=Value([SectorCategory.AUTRES])),
+            default=Value([], output_field=ArrayField(models.TextField())),
+        ),
+    )
+    # array_cat: Postgres function that concatenates two arrays
+    queryset = queryset.annotate(
+        _cat1=Func(F("_sector_category_administration"), F("_sector_category_enterprise"), function="array_cat")
+    )
+    queryset = queryset.annotate(_cat2=Func(F("_cat1"), F("_sector_category_education"), function="array_cat"))
+    queryset = queryset.annotate(_cat3=Func(F("_cat2"), F("_sector_category_health"), function="array_cat"))
+    queryset = queryset.annotate(_cat4=Func(F("_cat3"), F("_sector_category_social"), function="array_cat"))
+    queryset = queryset.annotate(_cat5=Func(F("_cat4"), F("_sector_category_leisure"), function="array_cat"))
+    queryset = queryset.annotate(
+        sector_category_list=Func(
+            F("_cat5"), F("_sector_category_autres"), function="array_cat", output_field=ArrayField(models.TextField())
+        )
+    )
+    return queryset
 
 
 class SectorM2M(models.Model):

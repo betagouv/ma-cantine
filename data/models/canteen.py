@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import ValidationError
 from django.db import models
-from django.db.models import BooleanField, Case, Count, Exists, F, OuterRef, Q, Subquery, Value, When
+from django.db.models import BooleanField, Case, Count, Exists, F, OuterRef, Q, Subquery, Value, When, Func
 from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
@@ -15,7 +15,13 @@ from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region, get_region_from_department
-from data.models.sector import SECTOR_HAS_LINE_MINISTRY_LIST, Sector, SectorM2M, ADMINISTRATION_SECTOR_LIST
+from data.models.sector import (
+    SECTOR_HAS_LINE_MINISTRY_LIST,
+    Sector,
+    SectorM2M,
+    ADMINISTRATION_SECTOR_LIST,
+    annotate_with_sector_category_list,
+)
 from data.utils import (
     get_diagnostic_lower_limit_year,
     get_diagnostic_upper_limit_year,
@@ -188,6 +194,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_sector_list_count(self):
         return self.annotate(sector_list_count=F("sector_list__len"))
 
+    def annotate_with_sector_category_list(self):
+        return annotate_with_sector_category_list(self)
+
     def has_siret(self):
         return self.exclude(has_charfield_missing_query("siret"))
 
@@ -222,6 +231,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         - Usage: group_and_count_by_field('management_type')
         - Output: [{'management_type': 'direct', 'count': 3}, {'management_type': 'conceded', 'count': 1}]
         """
+        if field == "sector_category":
+            self = self.annotate_with_sector_category_list().annotate(
+                sector_category=Func(F("sector_category_list"), function="unnest")
+            )
         return self.values(field).annotate(count=Count("id", distinct=True)).order_by("-count")
 
     def annotate_with_action_for_year(self, year):
@@ -324,6 +337,9 @@ class CanteenManager(SoftDeletionManager):
 
     def annotate_with_sector_list_count(self):
         return self.get_queryset().annotate_with_sector_list_count()
+
+    def annotate_with_sector_category_list(self):
+        return self.get_queryset().annotate_with_sector_category_list()
 
     def has_siret(self):
         return self.get_queryset().has_siret()

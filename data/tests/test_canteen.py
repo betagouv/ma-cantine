@@ -2,10 +2,10 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from freezegun import freeze_time
 
-from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory, SectorM2MFactory
-from data.models import Canteen, Diagnostic, SectorCategory, Teledeclaration, Sector
-from data.models.geo import Department, Region
+from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
+from data.models import Canteen, Diagnostic, Sector, SectorCategory, Teledeclaration
 from data.models.creation_source import CreationSource
+from data.models.geo import Department, Region
 
 
 class CanteenModelSaveTest(TestCase):
@@ -652,6 +652,32 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
             3,
         )
 
+    def test_annotate_with_sector_category_list_queryset(self):
+        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(
+            Canteen.objects.annotate_with_sector_category_list()
+            .filter(id=self.canteen_central.id)
+            .first()
+            .sector_category_list,
+            [],
+        )
+        self.assertEqual(
+            len(
+                Canteen.objects.annotate_with_sector_category_list()
+                .filter(id=self.canteen_central_serving.id)
+                .first()
+                .sector_category_list
+            ),
+            2,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_sector_category_list()
+            .filter(id=self.canteen_satellite_spe.id)
+            .first()
+            .sector_category_list,
+            [SectorCategory.ADMINISTRATION.value],
+        )
+
     def test_category_list_from_sector_list_property(self):
         self.assertEqual(Canteen.objects.count(), 3)
         self.assertEqual(self.canteen_central.category_list_from_sector_list, [])
@@ -773,17 +799,13 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
 class CanteenAggregateQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sector = SectorM2MFactory(name="Sector", category=SectorCategory.ADMINISTRATION)
-        sector_line_ministry = SectorM2MFactory(
-            name="Sector ministry", category=SectorCategory.AUTRES, has_line_ministry=True
-        )
         cls.canteen_central = CanteenFactory(
             siret="21590350100017",
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
             satellite_canteens_count=1,
-            sectors_m2m=[sector],
+            sector_list=[],
         )
         cls.canteen_central_serving = CanteenFactory(
             siret="21010034300016",
@@ -792,7 +814,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             daily_meal_count=12,
             satellite_canteens_count=1,
-            sectors_m2m=[sector],
+            sector_list=[Sector.EDUCATION_SECONDAIRE_LYCEE, Sector.ENTERPRISE_ENTREPRISE],
         )
         cls.canteen_on_site = CanteenFactory(
             siret=None,
@@ -801,7 +823,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             daily_meal_count=12,
-            sectors_m2m=[sector],
+            sector_list=[Sector.EDUCATION_SECONDAIRE_LYCEE, Sector.AUTRES_AUTRE],
         )
         cls.canteen_on_site_central = CanteenFactory(
             siret="96766910375238",
@@ -811,7 +833,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             daily_meal_count=12,
             central_producer_siret=cls.canteen_central.siret,
             sector_list=[Sector.ADMINISTRATION_PRISON],
-            sectors_m2m=[sector_line_ministry],
+            line_ministry=Canteen.Ministries.ARMEE,
         )
 
     def test_group_and_count_by_field(self):
@@ -835,13 +857,11 @@ class CanteenAggregateQuerySetTest(TestCase):
         self.assertEqual(result[0]["count"], 3)
         self.assertEqual(result[1]["economic_model"], Canteen.EconomicModel.PRIVATE)
         self.assertEqual(result[1]["count"], 1)
-        # group by sectors__category
-        result = Canteen.objects.group_and_count_by_field("sectors_m2m__category")
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]["sectors_m2m__category"], SectorCategory.ADMINISTRATION)
-        self.assertEqual(result[0]["count"], 3)
-        self.assertEqual(result[1]["sectors_m2m__category"], SectorCategory.AUTRES)
-        self.assertEqual(result[1]["count"], 1)
+        # group by sector_category
+        result = Canteen.objects.group_and_count_by_field("sector_category")
+        self.assertEqual(len(result), 4)
+        self.assertEqual(result[0]["sector_category"], SectorCategory.EDUCATION)
+        self.assertEqual(result[0]["count"], 2)
 
 
 class CanteenModelPropertiesTest(TestCase):
@@ -901,5 +921,9 @@ class CanteenModelPropertiesTest(TestCase):
         self.assertEqual(canteen.appro_diagnostics.count(), 2)
         self.assertEqual(canteen.appro_diagnostics.first().year, 2023)
         self.assertEqual(canteen.service_diagnostics.count(), 2)
+        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
+        self.assertEqual(canteen.latest_published_year, 2023)
+        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
+        self.assertEqual(canteen.latest_published_year, 2023)
         self.assertEqual(canteen.service_diagnostics.first().year, 2023)
         self.assertEqual(canteen.latest_published_year, 2023)
