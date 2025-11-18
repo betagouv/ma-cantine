@@ -45,6 +45,21 @@ class CanteenSchemaTest(TestCase):
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
+    def test_line_ministry_regex(self):
+        pattern = self.get_pattern(self.schema, "line_ministry")
+        for VALUE_OK in [
+            "",
+            " ",
+            "affaires_etrangeres",
+            " agriculture",
+            "armee ",
+        ]:
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["Agriculture, Alimentation et Forêts"]:
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
     def test_type_production_regex(self):
         pattern = self.get_pattern(self.schema, "type_production")
         for VALUE_OK in [

@@ -102,6 +102,39 @@
     },
     {
       "constraints": {
+        "pattern": "(^ *$)|(^ *(affaires_etrangeres|agriculture|armee|territoires|culture|economie|jeunesse|enseignement_superieur|ecologie|transformation|interieur|justice|mer|administration_territoriale|autorites_independantes|premier_ministre|sante|sport|travail) *)$",
+        "required": false
+      },
+      "description": "Laisser vide, sauf si l'un des secteurs suivant est sélectionné : 'Restaurants des prisons', 'Restaurants administratifs d'Etat (RA)', 'Restaurants des armées / police / gendarmerie', 'Etablissements publics d'Etat (EPA ou EPIC)', 'Restaurants inter-administratifs d'État (RIA)', 'Supérieur et Universitaire', 'Autres structures d'enseignement', 'Etablissements de la PJJ'.",
+      "doc_enum": [
+        "affaires_etrangeres",
+        "agriculture",
+        "armee",
+        "territoires",
+        "culture",
+        "economie",
+        "jeunesse",
+        "enseignement_superieur",
+        "ecologie",
+        "transformation",
+        "interieur",
+        "justice",
+        "mer",
+        "administration_territoriale",
+        "autorites_independantes",
+        "premier_ministre",
+        "sante",
+        "sport",
+        "travail"
+      ],
+      "example": "affaires_etrangeres",
+      "format": "default",
+      "name": "line_ministry",
+      "title": "Ministère de tutelle",
+      "type": "string"
+    },
+    {
+      "constraints": {
         "pattern": "^ *(central|central_serving|site|site_cooked_elsewhere) *$",
         "required": true
       },
