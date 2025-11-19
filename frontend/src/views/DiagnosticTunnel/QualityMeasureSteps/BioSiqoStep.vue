@@ -15,7 +15,6 @@
           <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
           <label class="ml-4 ml-md-0" for="bio">
             La valeur (en € HT) de mes achats Bio ou en conversion Bio
-            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
@@ -24,6 +23,7 @@
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
+          :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
@@ -99,6 +99,7 @@
 </template>
 
 <script>
+import validators from "@/validators"
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import FormErrorCallout from "@/components/FormErrorCallout"
 import ErrorHelper from "./ErrorHelper"
@@ -138,6 +139,9 @@ export default {
     }
   },
   computed: {
+    validators() {
+      return validators
+    },
     displayPurchaseHints() {
       return !!this.purchasesSummary
     },
