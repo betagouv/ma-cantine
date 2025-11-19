@@ -37,7 +37,6 @@
               <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$award-line</v-icon>
               <label for="meat-poultry-egalim">
                 Total (en € HT) de mes achats EGalim en viandes et volailles
-                <span class="fr-hint-text mt-2">Optionnel</span>
               </label>
             </div>
             <DsfrCurrencyField
@@ -46,6 +45,7 @@
               @blur="updatePayload"
               :error="totalEgalimMeatPoultryError"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+              :rules="[validators.required, validators.decimalPlaces(2)]"
             />
             <PurchaseHint
               v-if="displayPurchaseHints"
