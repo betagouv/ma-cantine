@@ -129,6 +129,11 @@ export default {
           componentName: "FishStep",
           urlSlug: "valeurs-totales-mer-aquaculture",
         },
+        {
+          title: "Zoom sur l'origine France",
+          componentName: "FranceStep",
+          urlSlug: "valeurs-totales-france",
+        },
       ]
       const detailedSteps = [
         {
