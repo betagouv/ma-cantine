@@ -23,7 +23,7 @@
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
-          :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
+          :rules="[validators.decimalPlaces(2)]"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
