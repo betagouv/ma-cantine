@@ -325,6 +325,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "department_lib",
             "region",
             "region_lib",
+            "sector_list",
             "sectors",  # from "sectors_m2m"
             "central_kitchen_diagnostics",
             "line_ministry",

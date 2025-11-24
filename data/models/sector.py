@@ -5,7 +5,7 @@ from django.db.models import Case, F, Func, Value, When
 
 class SectorCategory(models.TextChoices):
     ADMINISTRATION = "administration", "Administration"
-    ENTERPRISE = "enterprise", "Entreprise"
+    ENTERPRISE = "enterprise", "Entreprise"  # TODO: rename to ENTREPRISE?
     EDUCATION = "education", "Enseignement"
     HEALTH = "health", "Santé"  # TODO: rename to SANTE?
     SOCIAL = "social", "Social / Médico-social"

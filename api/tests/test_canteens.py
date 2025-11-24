@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.models import Canteen, Diagnostic, Teledeclaration, Sector
 from data.models.creation_source import CreationSource
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -349,6 +349,7 @@ class CanteenCreateApiTest(APITestCase):
             "managementType": Canteen.ManagementType.DIRECT,
             "productionType": Canteen.ProductionType.ON_SITE,
             "economicModel": Canteen.EconomicModel.PUBLIC,
+            "sectorList": [Sector.EDUCATION_PRIMAIRE, Sector.ENTERPRISE_ENTREPRISE],
         }
 
     @authenticate
@@ -515,19 +516,34 @@ class CanteenUpdateApiTest(APITestCase):
             "siret": "21340172201787",
             "managementType": Canteen.ManagementType.DIRECT,
             "reservationExpeParticipant": True,
-            "satelliteCanteensCount": 130,
-            "productionType": Canteen.ProductionType.CENTRAL,
         }
+        print(canteen.production_type, canteen.sector_list)
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        created_canteen = Canteen.objects.get(pk=canteen.id)
-        self.assertEqual(created_canteen.city, "Lyon")
-        self.assertEqual(created_canteen.siret, "21340172201787")
-        self.assertEqual(created_canteen.management_type, "direct")
-        self.assertEqual(created_canteen.satellite_canteens_count, 130)
-        self.assertEqual(created_canteen.production_type, "central")
-        self.assertEqual(created_canteen.reservation_expe_participant, True)
+        updated_canteen = Canteen.objects.get(pk=canteen.id)
+        self.assertEqual(updated_canteen.city, "Lyon")
+        self.assertEqual(updated_canteen.siret, "21340172201787")
+        self.assertEqual(updated_canteen.management_type, "direct")
+        self.assertEqual(updated_canteen.reservation_expe_participant, True)
+
+    @authenticate
+    def test_modify_canteen_production_type(self):
+        """
+        Users can modify the production type and related fields of the canteens they manage
+        """
+        canteen = CanteenFactory.create(city="Paris", managers=[authenticate.user])
+        payload = {
+            "productionType": Canteen.ProductionType.CENTRAL,
+            "sectorList": [],
+            "satelliteCanteensCount": 130,
+        }
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_canteen = Canteen.objects.get(pk=canteen.id)
+        self.assertEqual(updated_canteen.production_type, "central")
+        self.assertEqual(len(updated_canteen.sector_list), 0)
+        self.assertEqual(updated_canteen.satellite_canteens_count, 130)
 
     @authenticate
     def test_modify_central_kitchen_siret(self):
