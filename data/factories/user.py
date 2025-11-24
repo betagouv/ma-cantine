@@ -9,6 +9,6 @@ class UserFactory(factory.django.DjangoModelFactory):
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     username = factory.Sequence(lambda n: "user_%d" % n)
-    email = factory.Faker("email")
+    email = factory.LazyAttribute(lambda obj: f"{obj.username}@example.net")
     is_dev = False
     is_elected_official = False
