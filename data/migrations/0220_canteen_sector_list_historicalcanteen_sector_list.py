@@ -3,15 +3,23 @@
 from django.db import migrations, models
 
 import data.fields
+from data.models.sector import Sector
 
 
 def populate_sector_list_from_sectors_m2m(apps, schema_editor):
+    """
+    Populate the sector_list field from the sectors_m2m ManyToMany field.
+    - map old sector names to new sector values ("Restaurants des prisons" -> "administration_prison")
+    - run on all_objects to include soft-deleted canteens
+    - small optimizations: prefetch_related, exclude canteens without sectors
+    - bulk update to skip validation checks on save()
+    """
     Canteen = apps.get_model("data", "Canteen")
 
-    for canteen in Canteen.objects.prefetch_related("sectors_m2m").all():
+    for canteen in Canteen.objects.prefetch_related("sectors_m2m").exclude(sectors_m2m=None).all():
         sectors_m2m_name_list = list(canteen.sectors_m2m.values_list("name", flat=True))
-        canteen.sector_list = [sector.replace("’", "'") for sector in sectors_m2m_name_list]
-        canteen.save()
+        sector_list = [next(value for value, label in Sector.choices if label == sector.replace("’", "'")) for sector in sectors_m2m_name_list]
+        Canteen.objects.filter(id=canteen.id).update(sector_list=sector_list)
 
 
 class Migration(migrations.Migration):
