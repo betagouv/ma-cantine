@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen
+from data.factories import CanteenFactory, UserFactory
+from data.models import Canteen, Sector
 
 
 class TestRelationCentralSatelliteGet(APITestCase):
@@ -106,8 +106,6 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         )
         # all the mgmt team of the cuisine centrale should be added to the satellite team
         satellite_siret = "38782537682311"
-        school = SectorM2MFactory.create(name="School")
-        enterprise = SectorM2MFactory.create(name="Enterprise")
         request = {
             "name": "Wanderer",
             "siret": satellite_siret,
@@ -115,7 +113,7 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
             "yearlyMealCount": 1000,
             "managementType": Canteen.ManagementType.DIRECT,
             "economicModel": Canteen.EconomicModel.PUBLIC,
-            "sectors": [school.id, enterprise.id],
+            "sectorList": [Sector.EDUCATION_PRIMAIRE, Sector.ENTERPRISE_ENTREPRISE],
         }
         response = self.client.post(
             reverse("list_create_update_satellite", kwargs={"canteen_pk": central_kitchen.id}), request
@@ -124,9 +122,7 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
 
         satellite = Canteen.objects.get(siret=satellite_siret)
         self.assertEqual(satellite.name, "Wanderer")
-        self.assertEqual(satellite.sectors_m2m.count(), 2)
-        self.assertIn(school, satellite.sectors_m2m.all())
-        self.assertIn(enterprise, satellite.sectors_m2m.all())
+        self.assertEqual(len(satellite.sector_list), 2)
         self.assertEqual(satellite.import_source, "Cuisine centrale : 08376514425566")
         self.assertEqual(satellite.central_producer_siret, central_kitchen.siret)
         self.assertEqual(satellite.production_type, Canteen.ProductionType.ON_SITE_CENTRAL)
