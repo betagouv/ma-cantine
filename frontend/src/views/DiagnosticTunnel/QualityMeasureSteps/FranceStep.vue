@@ -86,6 +86,32 @@
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
           </div>
+
+          <!-- Boulangerie / Pâtisserie fraîches -->
+          <div class="mt-4">
+            <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_BOULANGERIE_PATISSERIE">
+              Total (en € HT) de mes achats origine France - Boulangerie / Pâtisserie fraîches
+              <span class="fr-hint-text grey--text">
+                Optionnel
+              </span>
+            </label>
+            <DsfrCurrencyField
+              id="TO_FILL_TOTAL_FRANCE_BOULANGERIE_PATISSERIE"
+              v-model.number="payload.TO_FILL_TOTAL_FRANCE_BOULANGERIE_PATISSERIE"
+              @blur="updatePayload"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+              :error="totalError"
+              :rules="[validators.decimalPlaces(2)]"
+            />
+            <PurchaseHint
+              v-if="displayPurchaseHints"
+              v-model="payload.valueBoulangerieFrance"
+              @autofill="updatePayload"
+              purchaseType="boulangerie / pâtisserie fraîches"
+              :amount="purchasesSummary.valueBoulangerieFrance"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+            />
+          </div>
         </v-col>
         <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
           <!-- Tile -->
@@ -176,6 +202,7 @@ export default {
         d.TO_FILL_TOTAL_FRANCE_CHARCUTERIE,
         d.TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES,
         d.TO_FILL_TOTAL_FRANCE_BOF,
+        d.TO_FILL_TOTAL_FRANCE_BOULANGERIE_PATISSERIE,
       ]
       let total = 0
       franceValues.forEach((val) => {
