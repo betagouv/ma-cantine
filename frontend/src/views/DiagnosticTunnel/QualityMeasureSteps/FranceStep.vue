@@ -112,6 +112,32 @@
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
           </div>
+
+          <!-- Boissons -->
+          <div class="mt-4">
+            <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_BOISSONS">
+              Total (en € HT) de mes achats origine France - Boissons
+              <span class="fr-hint-text grey--text">
+                Optionnel
+              </span>
+            </label>
+            <DsfrCurrencyField
+              id="TO_FILL_TOTAL_FRANCE_BOISSONS"
+              v-model.number="payload.TO_FILL_TOTAL_FRANCE_BOISSONS"
+              @blur="updatePayload"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+              :error="totalError"
+              :rules="[validators.decimalPlaces(2)]"
+            />
+            <PurchaseHint
+              v-if="displayPurchaseHints"
+              v-model="payload.valueBoissonsFrance"
+              @autofill="updatePayload"
+              purchaseType="boissons"
+              :amount="purchasesSummary.valueBoissonsFrance"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+            />
+          </div>
         </v-col>
         <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
           <!-- Tile -->
@@ -203,6 +229,7 @@ export default {
         d.TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES,
         d.TO_FILL_TOTAL_FRANCE_BOF,
         d.TO_FILL_TOTAL_FRANCE_BOULANGERIE_PATISSERIE,
+        d.TO_FILL_TOTAL_FRANCE_BOISSONS,
       ]
       let total = 0
       franceValues.forEach((val) => {
