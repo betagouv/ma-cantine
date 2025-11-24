@@ -48,6 +48,7 @@ import MeatPoultryStep from "./MeatPoultryStep"
 import FishStep from "./FishStep"
 import MeatFishStep from "./MeatFishStep"
 import FamilyFieldsStep from "./FamilyFieldsStep"
+import FranceStep from "./FranceStep"
 import Constants from "@/constants"
 import { getObjectDiff } from "@/utils"
 
@@ -74,6 +75,7 @@ export default {
     FishStep,
     MeatFishStep,
     FamilyFieldsStep,
+    FranceStep,
   },
   data() {
     return {
