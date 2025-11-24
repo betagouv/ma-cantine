@@ -138,6 +138,10 @@ def get_sector_category_from_sector(sector: str) -> str:
         return SectorCategory.AUTRES
 
 
+def is_sector_with_line_ministry(sector: str) -> bool:
+    return sector in SECTOR_HAS_LINE_MINISTRY_LIST
+
+
 def annotate_with_sector_category_list(queryset):
     """
     Annotate with sector_category_list based on the sector_list field.
