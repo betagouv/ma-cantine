@@ -4,6 +4,7 @@ import factory
 
 from data.models import Canteen
 from data.models.sector import Sector
+
 from .sector import SectorM2MFactory
 from .user import UserFactory
 
@@ -244,9 +245,9 @@ class CanteenFactory(factory.django.DjangoModelFactory):
     economic_model = factory.Iterator([key for key, _ in Canteen.EconomicModel.choices])
     sector_list = [Sector.SANTE_HOPITAL]
     satellite_canteens_count = factory.LazyAttribute(
-        lambda x: (
+        lambda obj: (
             2
-            if x.production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
+            if obj.production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
             else None
         )
     )
