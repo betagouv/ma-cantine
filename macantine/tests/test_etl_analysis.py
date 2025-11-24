@@ -29,14 +29,14 @@ class TestETLAnalysisCanteen(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            sector_list=[Sector.ADMINISTRATION_PRISON],
+            sector_list=[Sector.EDUCATION_SUPERIEUR_UNIVERSITAIRE],
             sectors_m2m=[cls.sector],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        cls.canteen_2 = CanteenFactory(sector_list=[Sector.ADMINISTRATION_PRISON], sectors_m2m=[cls.sector])
+        cls.canteen_2 = CanteenFactory(sector_list=[Sector.EDUCATION_PRIMAIRE], sectors_m2m=[cls.sector])
 
     def test_canteen_extract(self):
         etl = ETL_ANALYSIS_CANTEEN()
@@ -70,8 +70,8 @@ class TestETLAnalysisCanteen(TestCase):
         self.assertEqual(canteen_1["departement_lib"], "Isère")
         self.assertEqual(canteen_1["region"], "84")
         self.assertEqual(canteen_1["region_lib"], "Auvergne-Rhône-Alpes")
-        self.assertEqual(canteen_1["secteur"], "Restaurants des prisons")
-        self.assertEqual(canteen_1["categorie"], "Administration")
+        self.assertEqual(canteen_1["secteur"], "Supérieur et Universitaire")
+        self.assertEqual(canteen_1["categorie"], "Enseignement")
         self.assertEqual(canteen_1["ministere_tutelle"], "Agriculture, Alimentation et Forêts")
         self.assertEqual(canteen_1["type_gestion"], "Directe")
         self.assertEqual(canteen_1["type_production"], "Produit sur place les repas qu'il sert aux convives")
@@ -382,7 +382,9 @@ class TestETLAnalysisTD(TestCase):
 
     def test_line_ministry_and_spe(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            canteen_with_line_ministry = CanteenFactory.create(line_ministry=Canteen.Ministries.AGRICULTURE)
+            canteen_with_line_ministry = CanteenFactory.create(
+                sector_list=[Sector.ADMINISTRATION_ARMEE], line_ministry=Canteen.Ministries.ARMEE
+            )
             diagnostic = DiagnosticFactory.create(canteen=canteen_with_line_ministry, year=2022)
             diagnostic.teledeclare(applicant=UserFactory.create())
 
@@ -391,7 +393,7 @@ class TestETLAnalysisTD(TestCase):
         )
         data = self.serializer.data
 
-        self.assertEqual(data["line_ministry"], Canteen.Ministries.AGRICULTURE)
+        self.assertEqual(data["line_ministry"], Canteen.Ministries.ARMEE)
         self.assertEqual(data["spe"], "Oui")
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign

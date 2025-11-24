@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, TeledeclarationFactory, UserFactory
-from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration
+from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration, Sector
 from data.models.geo import Region
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -22,13 +22,17 @@ class CanteenPublishedListApiTest(APITestCase):
         All canteens except with line ministry ARMEE should be public
         """
         published_canteens = [
-            CanteenFactory(line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES),
-            CanteenFactory(line_ministry=None),
-            CanteenFactory(line_ministry=Canteen.Ministries.AGRICULTURE),
+            CanteenFactory(),
+            CanteenFactory(
+                sector_list=[Sector.ADMINISTRATION_ADMINISTRATIF], line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES
+            ),
+            CanteenFactory(
+                sector_list=[Sector.EDUCATION_SUPERIEUR_UNIVERSITAIRE], line_ministry=Canteen.Ministries.AGRICULTURE
+            ),
         ]
         private_canteens = [
-            CanteenFactory(line_ministry=Canteen.Ministries.ARMEE),
-            CanteenFactory(line_ministry=Canteen.Ministries.ARMEE),
+            CanteenFactory(sector_list=[Sector.ADMINISTRATION_ARMEE], line_ministry=Canteen.Ministries.ARMEE),
+            CanteenFactory(sector_list=[Sector.ADMINISTRATION_ARMEE], line_ministry=Canteen.Ministries.ARMEE),
         ]
         response = self.client.get(reverse("published_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -581,7 +585,12 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         CanteenFactory.create(line_ministry=None, sectors_m2m=[school, enterprise], name="Shiso")
         CanteenFactory.create(line_ministry=None, sectors_m2m=[school, administration], name="Umami")
 
-        CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE, sectors_m2m=[unused], name="Secret")
+        CanteenFactory.create(
+            line_ministry=Canteen.Ministries.ARMEE,
+            sectors_m2m=[unused],
+            sector_list=[Sector.ADMINISTRATION_ARMEE],
+            name="Secret",
+        )
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -646,7 +655,9 @@ class PublishedCanteenDetailApiTest(APITestCase):
         A 404 is raised if we try to get a single published canteen
         that has not been published by the manager.
         """
-        private_canteen = CanteenFactory(line_ministry=Canteen.Ministries.ARMEE)
+        private_canteen = CanteenFactory(
+            sector_list=[Sector.ADMINISTRATION_ARMEE], line_ministry=Canteen.Ministries.ARMEE
+        )
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 

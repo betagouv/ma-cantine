@@ -5,7 +5,7 @@ from freezegun import freeze_time
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.models import Canteen, Diagnostic, Teledeclaration, Sector
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -29,6 +29,7 @@ class TeledeclarationQuerySetTest(TestCase):
         )
         cls.valid_canteen_5_armee = CanteenFactory(
             siret="21640122400011",
+            sector_list=[Sector.ADMINISTRATION_ARMEE],
             line_ministry=Canteen.Ministries.ARMEE,
         )
         cls.invalid_canteen = CanteenFactory(deletion_date=None)

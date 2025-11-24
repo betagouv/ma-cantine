@@ -181,11 +181,11 @@ class TestETLOpenData(TestCase):
             canteen["pat_lib_list"],
             "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
         )
+        self.assertEqual(canteen["sector_list"], "Ecole primaire (maternelle et élémentaire),Secondaire collège")
         self.assertEqual(canteen["line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertEqual(canteen["management_type"], "direct")
         self.assertEqual(canteen["production_type"], "site")
         self.assertEqual(canteen["economic_model"], "public")
-        self.assertEqual(canteen["sector_list"], "Ecole primaire (maternelle et élémentaire),Secondaire collège")
         self.assertTrue(canteen["declaration_donnees_2022"])
         self.assertFalse(canteen["declaration_donnees_2023"])
         self.assertTrue(canteen["declaration_donnees_2024"])
