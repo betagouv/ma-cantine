@@ -4,7 +4,7 @@ import os
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from data.models import Canteen, CanteenImage, Diagnostic, SectorM2M
+from data.models import Canteen, CanteenImage, Diagnostic, SectorM2M, Sector
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -757,7 +757,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
         return "Oui" if obj.is_spe else "Non"
 
     def get_secteur(self, obj):
-        return ",".join(obj.sector_list)
+        return ",".join([Sector(sector).label for sector in obj.sector_list])
 
     def get_categorie(self, obj):
         return ",".join([category.label for category in obj.category_list_from_sector_list])
@@ -769,6 +769,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
 
 class CanteenOpenDataSerializer(serializers.ModelSerializer):
     logo = serializers.SerializerMethodField(read_only=True)
+    sector_list = serializers.SerializerMethodField(source="sector_list", read_only=True)
     sectors = serializers.SerializerMethodField(source="sectors_m2m", read_only=True)
     active_on_ma_cantine = serializers.SerializerMethodField(read_only=True)
 
@@ -817,6 +818,9 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
         if obj.logo:
             return f"{bucket_url}/{bucket_name}/media/{obj.logo}"
         return ""
+
+    def get_sector_list(self, obj):
+        return [Sector(sector).label for sector in obj.sector_list]
 
     def get_sectors(self, obj):
         return [sector.name for sector in obj.sectors_m2m.all()]

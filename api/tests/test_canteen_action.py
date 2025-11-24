@@ -109,7 +109,7 @@ class CanteenActionApiTest(APITestCase):
             sector_list=[
                 Sector.ADMINISTRATION_PRISON,
                 Sector.EDUCATION_PRIMAIRE,
-                Sector.HEALTH_HOPITAL,
+                Sector.SANTE_HOPITAL,
                 Sector.SOCIAL_EHPAD,
             ],
         )

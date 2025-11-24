@@ -19,7 +19,7 @@ class SectorTextChoicesTest(TestCase):
         )
         self.assertEqual(
             SectorCategory.HEALTH,
-            get_sector_category_from_sector(Sector.HEALTH_HOPITAL),
+            get_sector_category_from_sector(Sector.SANTE_HOPITAL),
         )
         self.assertEqual(
             SectorCategory.SOCIAL,
@@ -27,7 +27,7 @@ class SectorTextChoicesTest(TestCase):
         )
         self.assertEqual(
             SectorCategory.LEISURE,
-            get_sector_category_from_sector(Sector.LEISURE_CENTRE_VACANCE),
+            get_sector_category_from_sector(Sector.LOISIR_CENTRE_VACANCES),
         )
         self.assertEqual(
             SectorCategory.AUTRES,

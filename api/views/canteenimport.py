@@ -19,7 +19,7 @@ from common.api import validata
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportFailure, ImportType
+from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.creation_source import CreationSource
 
 from .canteen import AddManagerView
@@ -283,7 +283,11 @@ class ImportCanteensView(APIView):
         name = row[1].strip()
         daily_meal_count = row[3].strip()
         yearly_meal_count = row[4].strip()
-        sector_list = [sector.replace("’", "'") for sector in row[5].strip().split("+") if sector] if row[5] else []
+        sector_list = [
+            next(value for value, label in Sector.choices if label == sector.replace("’", "'"))
+            for sector in row[5].strip().split("+")
+            if sector
+        ]
         production_type = row[6].strip().lower()
         management_type = row[7].strip().lower()
         economic_model = row[8].strip().lower()
@@ -326,7 +330,7 @@ class ImportCanteensView(APIView):
         canteen.satellite_canteens_count = satellite_canteens_count
         if self.is_admin_import:
             canteen.line_ministry = (
-                next((key for key, value in Canteen.Ministries.choices if value == row[11].strip()), None)
+                next((value for value, label in Canteen.Ministries.choices if label == row[11].strip()), None)
                 if row[11]
                 else None
             )

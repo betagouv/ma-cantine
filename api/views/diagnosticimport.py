@@ -20,7 +20,7 @@ from api.serializers import FullCanteenSerializer
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils import utils as utils_utils
-from data.models import Canteen, Diagnostic, ImportFailure, ImportType
+from data.models import Canteen, Diagnostic, ImportFailure, ImportType, Sector
 from data.models.creation_source import CreationSource
 from data.models.teledeclaration import Teledeclaration
 
@@ -335,7 +335,11 @@ class ImportDiagnosticsView(ABC, APIView):
         name = row[1].strip()
         daily_meal_count = row[5].strip()
         yearly_meal_count = row[6].strip()
-        sector_list = [sector.replace("’", "'") for sector in row[7].strip().split("+") if sector] if row[7] else []
+        sector_list = [
+            next(value for value, label in Sector.choices if label == sector.replace("’", "'"))
+            for sector in row[7].strip().split("+")
+            if sector
+        ]
         management_type = row[9].strip().lower()
         production_type = row[8].strip().lower()
         economic_model = row[10].strip().lower()

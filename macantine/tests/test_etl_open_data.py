@@ -17,8 +17,11 @@ from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDEC
 class TestETLOpenData(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector_school = SectorM2MFactory(
+        cls.sector_education_primaire = SectorM2MFactory(
             name="Ecole primaire (maternelle et élémentaire)", category=SectorM2M.Categories.EDUCATION
+        )
+        cls.sector_education_secondaire_college = SectorM2MFactory(
+            name="Secondaire collège", category=SectorM2M.Categories.EDUCATION
         )
         cls.user_manager = UserFactory.create()
         cls.canteen = CanteenFactory.create(
@@ -36,8 +39,8 @@ class TestETLOpenData(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            sector_list=[Sector.EDUCATION_PRIMAIRE],
-            sectors_m2m=[cls.sector_school],
+            sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.EDUCATION_SECONDAIRE_COLLEGE],
+            sectors_m2m=[cls.sector_education_primaire, cls.sector_education_secondaire_college],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
@@ -118,7 +121,8 @@ class TestETLOpenData(TestCase):
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_central_kitchen_siret"], None)
         self.assertEqual(str(etl_td.get_dataset().iloc[0]["canteen_satellite_canteens_count"]), "<NA>")
         self.assertEqual(
-            etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[""Ecole primaire (maternelle et élémentaire)""]"'
+            etl_td.get_dataset().iloc[0]["canteen_sectors"],
+            '"[""Ecole primaire (maternelle et élémentaire)"", ""Secondaire collège""]"',
         )
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertGreater(
@@ -181,7 +185,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(canteen["management_type"], "direct")
         self.assertEqual(canteen["production_type"], "site")
         self.assertEqual(canteen["economic_model"], "public")
-        self.assertEqual(canteen["sector_list"], "Ecole primaire (maternelle et élémentaire)")
+        self.assertEqual(canteen["sector_list"], "Ecole primaire (maternelle et élémentaire),Secondaire collège")
         self.assertTrue(canteen["declaration_donnees_2022"])
         self.assertFalse(canteen["declaration_donnees_2023"])
         self.assertTrue(canteen["declaration_donnees_2024"])
