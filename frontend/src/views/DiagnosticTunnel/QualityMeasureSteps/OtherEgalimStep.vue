@@ -75,8 +75,9 @@
             </v-icon>
           </div>
           <label class="ml-4 ml-md-0" for="ext-perf">
-            Critères d'achat : La valeur (en € HT) de mes achats prenant en compte les coûts imputés aux externalités
-            environnementales ou acquis sur la base de leurs performances en matière environnementale.
+            Critères d'achat : La valeur (en € HT) mes achats réalisés selon des modalités de sélection prenant en
+            compte les coûts imputés aux externalités environnementales ou prenant en compte les performances
+            environnementales et d’approvisionnements directs
             <br />
             <v-dialog v-model="valueExternalityPerformanceHtDialog" max-width="600">
               <template v-slot:activator="{ on, attrs }">
