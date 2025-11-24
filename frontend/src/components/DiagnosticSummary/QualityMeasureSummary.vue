@@ -249,7 +249,7 @@ export default {
           key: "valueMeatPoultryEgalimHt",
         },
         {
-          text: "Total (en € HT) de mes achats provenance France en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats origine France en viandes et volailles fraiches ou surgelées",
           key: "valueMeatPoultryFranceHt",
         },
         {
