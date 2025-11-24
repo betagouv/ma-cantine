@@ -71,7 +71,7 @@ const getSectorsOptions = async () => {
     const label = `${sector.categoryName} - ${sector.name}`
     const option = {
       label,
-      value: { value: sector.id, label },
+      value: { value: sector.value, label },
     }
     sectorsOptions.push(option)
   })
