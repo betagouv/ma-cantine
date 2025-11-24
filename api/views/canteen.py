@@ -50,6 +50,7 @@ from api.serializers import (
     PublicCanteenPreviewSerializer,
     PublicCanteenSerializer,
     SatelliteCanteenSerializer,
+    CanteenMinistriesSerializer,
 )
 from api.views.utils import camelize, update_change_reason_with_auth
 from common.api.adresse import fetch_geo_data_from_code
@@ -904,6 +905,7 @@ class CanteenMinistriesView(APIView):
     include_in_documentation = True
     required_scopes = ["canteen"]
 
+    @extend_schema(responses=CanteenMinistriesSerializer(many=True))
     def get(self, request, format=None):
         ministries = []
         for ministry in Canteen.Ministries:
@@ -913,7 +915,7 @@ class CanteenMinistriesView(APIView):
                     "name": ministry.label,
                 }
             )
-        return Response(ministries)
+        return Response(CanteenMinistriesSerializer(ministries, many=True).data)
 
 
 class CanteenAnalysisListView(ListAPIView):

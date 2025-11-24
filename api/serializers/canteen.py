@@ -827,3 +827,8 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
 
     def get_active_on_ma_cantine(self, obj):
         return obj.managers.exists()
+
+
+class CanteenMinistriesSerializer(serializers.Serializer):
+    value = serializers.ChoiceField(choices=Canteen.Ministries.choices)
+    name = serializers.CharField()
