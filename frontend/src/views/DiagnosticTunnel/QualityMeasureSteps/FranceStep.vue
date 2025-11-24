@@ -1,19 +1,65 @@
 <template>
-  <div>
+  <section>
+    <!-- A SUPPR -->
     <pre>{{ purchasesSummary }}</pre>
-  </div>
+    <!-- A SUPPR on garde uniquement la div dans tpl -->
+
+    <div>
+      <FormErrorCallout v-if="totalError" :errorMessages="[totalErrorMessage]" />
+
+      <v-row class="my-0 my-md-6">
+        <v-col cols="12" md="8" class="pr-4 pr-md-10">
+          <label class="ml-4 ml-md-0" for="TO-FILL-TOTAL-FRANCE-CHARCUTERIE">
+            Total (en € HT) de mes achats origine France - Charcuterie
+            <span class="fr-hint-text grey--text">
+              Optionnel
+            </span>
+          </label>
+          <DsfrCurrencyField
+            id="TO-FILL-TOTAL-FRANCE-CHARCUTERIE"
+            v-model.number="payload.valueCharcuterieFrance"
+            @blur="updatePayload"
+            :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+            :error="totalError"
+            :rules="[validators.decimalPlaces(2)]"
+          />
+          <PurchaseHint
+            v-if="displayPurchaseHints"
+            v-model="payload.valueCharcuterieFrance"
+            @autofill="updatePayload"
+            purchaseType="charcuterie origine France"
+            :amount="purchasesSummary.valueCharcuterieFrance"
+            :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+          />
+        </v-col>
+        <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
+          <!-- Tile -->
+        </v-col>
+      </v-row>
+      <ErrorHelper
+        v-if="hasError || errorHelperUsed"
+        :showFields="errorHelperFields"
+        :errorFields="erroringFields"
+        :diagnostic="payload"
+        :purchasesSummary="purchasesSummary"
+        @field-update="errorUpdate"
+        class="mt-8"
+      />
+    </div>
+  </section>
 </template>
 
 <script>
-// import DsfrCurrencyField from "@/components/DsfrCurrencyField"
-// import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
-// import ErrorHelper from "./ErrorHelper"
-// import FormErrorCallout from "@/components/FormErrorCallout"
+import validators from "@/validators"
+import DsfrCurrencyField from "@/components/DsfrCurrencyField"
+import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import { toCurrency } from "@/utils"
+import FormErrorCallout from "@/components/FormErrorCallout"
+import ErrorHelper from "./ErrorHelper"
 
 export default {
-  name: "FishStep",
-  // components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout },
+  name: "OtherEgalimStep",
+  components: { DsfrCurrencyField, PurchaseHint, FormErrorCallout, ErrorHelper },
   props: {
     diagnostic: {
       type: Object,
@@ -29,72 +75,58 @@ export default {
   },
   data() {
     return {
-      fishTotalErrorMessage: null,
-      fishErrorMessage: null,
-      totalFamiliesErrorMessage: null,
+      totalErrorMessage: null,
       errorHelperUsed: false,
-      errorHelperFields: [],
+      errorHelperFields: ["valueTotalHt"],
     }
   },
   computed: {
+    validators() {
+      return validators
+    },
     displayPurchaseHints() {
       return !!this.purchasesSummary
     },
-    fishError() {
-      return !!this.fishErrorMessage
-    },
-    totalFishError() {
-      return !!this.fishTotalErrorMessage
-    },
-    totalFamiliesError() {
-      return !!this.totalFamiliesErrorMessage
-    },
-    hasError() {
-      return [this.totalFishError, this.fishError, this.totalFamiliesError].some((x) => !!x)
-    },
-    errorMessages() {
-      return [this.fishTotalErrorMessage, this.fishErrorMessage, this.totalFamiliesErrorMessage].filter((x) => !!x)
+    totalError() {
+      return !!this.totalErrorMessage
     },
     erroringFields() {
-      const fields = []
-      if (this.totalFishError) fields.push("valueTotalHt")
-      if (this.totalFamiliesError) fields.push(...["valueTotalHt", "valueMeatPoultryHt"])
-      return fields
+      return this.totalError ? this.errorHelperFields : []
+    },
+    hasError() {
+      return [this.totalErrorMessage].some((x) => !!x)
     },
   },
   methods: {
     updatePayload() {
       this.checkTotal()
-      if (!this.hasError) this.$emit("update-payload", { payload: this.payload })
+      if (!this.totalError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
-      this.fishTotalErrorMessage = null
-      this.fishErrorMessage = null
-      this.totalFamiliesErrorMessage = null
+      this.totalErrorMessage = null
 
       const d = this.payload
-      const sumFish = d.valueFishEgalimHt
+      const sumFrance = this.sumAllFrance()
       const total = d.valueTotalHt
-      const totalFish = d.valueFishHt
-      const totalMeatPoultry = d.valueMeatPoultryHt
-      const totalFamilies = totalMeatPoultry + totalFish
 
-      if (totalFish > total) {
-        this.fishTotalErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
-          totalFish
-        )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
-        this.errorHelperFields.push("valueTotalHt")
-      } else if (totalFamilies > total) {
-        this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
-          totalFamilies
-        )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
-        this.errorHelperFields.push(...["valueTotalHt", "valueMeatPoultryHt"])
+      if (sumFrance > total) {
+        this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
+          d.valueTotalHt
+        )}) doit être plus élévé que la somme des valeurs origine France (${toCurrency(sumFrance || 0)})`
       }
-      if (sumFish > totalFish) {
-        this.fishErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
-          totalFish
-        )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumFish)})`
-      }
+    },
+    sumAllFrance() {
+      const d = this.payload
+      const franceValues = [d.valueCharcuterieFrance]
+      let total = 0
+      franceValues.forEach((val) => {
+        total += parseFloat(val) || 0
+      })
+      return total
+    },
+    errorUpdate() {
+      this.errorHelperUsed = true
+      this.checkTotal()
     },
   },
   mounted() {
