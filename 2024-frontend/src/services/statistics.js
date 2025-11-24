@@ -11,7 +11,7 @@ const formatMultipleValues = (name, list) => {
 const filtersToQuery = (filters) => {
   let query = "?"
   query += `year=${filters.year}`
-  if (filters.sectors.length > 0) query += formatMultipleValues("sectors", filters.sectors)
+  if (filters.sectors.length > 0) query += formatMultipleValues("sector", filters.sectors)
   if (filters.regions.length > 0) query += formatMultipleValues("region", filters.regions)
   if (filters.departments.length >= 0) query += formatMultipleValues("department", filters.departments)
   if (filters.epcis.length >= 0) query += formatMultipleValues("epci", filters.epcis)
