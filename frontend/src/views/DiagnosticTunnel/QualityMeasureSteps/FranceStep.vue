@@ -60,6 +60,32 @@
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
           </div>
+
+          <!-- BOF (Produits laitiers, beurre et œufs) -->
+          <div class="mt-4">
+            <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_BOF">
+              Total (en € HT) de mes achats origine France - BOF (Produits laitiers, beurre et œufs)
+              <span class="fr-hint-text grey--text">
+                Optionnel
+              </span>
+            </label>
+            <DsfrCurrencyField
+              id="TO_FILL_TOTAL_FRANCE_BOF"
+              v-model.number="payload.TO_FILL_TOTAL_FRANCE_BOF"
+              @blur="updatePayload"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+              :error="totalError"
+              :rules="[validators.decimalPlaces(2)]"
+            />
+            <PurchaseHint
+              v-if="displayPurchaseHints"
+              v-model="payload.valueProduitsLaitiersFrance"
+              @autofill="updatePayload"
+              purchaseType="BOF (Produits laitiers, beurre et œufs)"
+              :amount="purchasesSummary.valueProduitsLaitiersFrance"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+            />
+          </div>
         </v-col>
         <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
           <!-- Tile -->
@@ -146,7 +172,11 @@ export default {
     },
     sumAllFrance() {
       const d = this.payload
-      const franceValues = [d.TO_FILL_TOTAL_FRANCE_CHARCUTERIE, d.TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES]
+      const franceValues = [
+        d.TO_FILL_TOTAL_FRANCE_CHARCUTERIE,
+        d.TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES,
+        d.TO_FILL_TOTAL_FRANCE_BOF,
+      ]
       let total = 0
       franceValues.forEach((val) => {
         total += parseFloat(val) || 0
