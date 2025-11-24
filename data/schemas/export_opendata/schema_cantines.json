@@ -183,11 +183,11 @@
       "type": "string"
     },
     {
-      "description": "Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
-      "example": "[\"Secondaire collège\", \"Ecole primaire (maternelle et élémentaire)\"]",
-      "name": "sectors",
+      "description": "Liste des secteurs d'activités de la cantine.",
+      "example": "Secondaire collège,Ecole primaire (maternelle et élémentaire)",
+      "name": "sector_list",
       "title": "Secteurs",
-      "type": "array"
+      "type": "string"
     },
     {
       "description": "A télédéclaré ses données lors de la campagne 2022 (portant sur les données 2021)",

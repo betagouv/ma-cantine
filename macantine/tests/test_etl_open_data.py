@@ -8,8 +8,8 @@ from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
 from common.api.datagouv import update_dataset_resources
-from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen, SectorM2M
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory, SectorM2MFactory
+from data.models import Canteen, Sector, SectorM2M
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 
 
@@ -17,7 +17,12 @@ from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDEC
 class TestETLOpenData(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector_school = SectorM2MFactory(name="School", category=SectorM2M.Categories.EDUCATION)
+        cls.sector_education_primaire = SectorM2MFactory(
+            name="Ecole primaire (maternelle et élémentaire)", category=SectorM2M.Categories.EDUCATION
+        )
+        cls.sector_education_secondaire_college = SectorM2MFactory(
+            name="Secondaire collège", category=SectorM2M.Categories.EDUCATION
+        )
         cls.user_manager = UserFactory.create()
         cls.canteen = CanteenFactory.create(
             name="Cantine",
@@ -34,7 +39,8 @@ class TestETLOpenData(TestCase):
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            sectors_m2m=[cls.sector_school],
+            sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.EDUCATION_SECONDAIRE_COLLEGE],
+            sectors_m2m=[cls.sector_education_primaire, cls.sector_education_secondaire_college],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
@@ -47,6 +53,7 @@ class TestETLOpenData(TestCase):
         cls.canteen_2 = CanteenFactory.create(
             name="Cantine 2",
             siret="19382111300035",
+            sector_list=[],
             sectors_m2m=[],
             managers=[cls.user_manager],
             declaration_donnees_2022=True,
@@ -64,7 +71,7 @@ class TestETLOpenData(TestCase):
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2024, diagnostic_type=None)
             diagnostic.teledeclare(cls.user_manager)
 
-        cls.canteen_without_manager = CanteenFactory.create(siret="21590350100017", sectors_m2m=[])
+        cls.canteen_without_manager = CanteenFactory.create(siret="21590350100017", sector_list=[], sectors_m2m=[])
         cls.canteen_without_manager.managers.clear()
 
     def test_teledeclaration_extract(self, mock):
@@ -113,7 +120,10 @@ class TestETLOpenData(TestCase):
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_name"], "Cantine")
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_central_kitchen_siret"], None)
         self.assertEqual(str(etl_td.get_dataset().iloc[0]["canteen_satellite_canteens_count"]), "<NA>")
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_sectors"], '"[""School""]"')
+        self.assertEqual(
+            etl_td.get_dataset().iloc[0]["canteen_sectors"],
+            '"[""Ecole primaire (maternelle et élémentaire)"", ""Secondaire collège""]"',
+        )
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertGreater(
             etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"],
@@ -175,7 +185,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(canteen["management_type"], "direct")
         self.assertEqual(canteen["production_type"], "site")
         self.assertEqual(canteen["economic_model"], "public")
-        self.assertEqual(canteen["sectors"], ["School"])
+        self.assertEqual(canteen["sector_list"], "Ecole primaire (maternelle et élémentaire),Secondaire collège")
         self.assertTrue(canteen["declaration_donnees_2022"])
         self.assertFalse(canteen["declaration_donnees_2023"])
         self.assertTrue(canteen["declaration_donnees_2024"])
@@ -183,7 +193,7 @@ class TestETLOpenData(TestCase):
 
         canteen_without_manager = canteens[canteens.id == self.canteen_without_manager.id].iloc[0]
         self.assertEqual(canteen_without_manager["line_ministry"], None)
-        self.assertEqual(canteen_without_manager["sectors"], [])
+        self.assertEqual(canteen_without_manager["sector_list"], "")
         self.assertFalse(canteen_without_manager["active_on_ma_cantine"])
 
     @freeze_time("2023-05-14")  # during the 2022 campaign

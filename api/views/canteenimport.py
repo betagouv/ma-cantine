@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
-from django.db.models.functions import Lower
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
@@ -20,7 +19,7 @@ from common.api import validata
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportFailure, ImportType, SectorM2M
+from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.creation_source import CreationSource
 
 from .canteen import AddManagerView
@@ -45,7 +44,6 @@ class ImportCanteensView(APIView):
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     manager_column_idx = 9  # gestionnaires_additionnels
     silent_manager_idx = 9 + 3  # admin_gestionnaires_additionnels
-    annotated_sectors_m2m = SectorM2M.objects.annotate(name_lower=Lower("name"))
 
     def __init__(self, **kwargs):
         self.canteens = {}
@@ -285,6 +283,11 @@ class ImportCanteensView(APIView):
         name = row[1].strip()
         daily_meal_count = row[3].strip()
         yearly_meal_count = row[4].strip()
+        sector_list = [
+            next(value for value, label in Sector.choices if label == sector.replace("’", "'"))
+            for sector in row[5].strip().split("+")
+            if sector
+        ]
         production_type = row[6].strip().lower()
         management_type = row[7].strip().lower()
         economic_model = row[8].strip().lower()
@@ -300,6 +303,7 @@ class ImportCanteensView(APIView):
                 siret=siret,
                 daily_meal_count=daily_meal_count,
                 yearly_meal_count=yearly_meal_count,
+                sector_list=sector_list,
                 management_type=management_type,
                 production_type=production_type,
                 economic_model=economic_model,
@@ -318,7 +322,7 @@ class ImportCanteensView(APIView):
         canteen.name = name
         canteen.daily_meal_count = daily_meal_count
         canteen.yearly_meal_count = yearly_meal_count
-        # sectors (row[5]): see below
+        canteen.sector_list = sector_list
         canteen.production_type = production_type
         canteen.management_type = management_type
         canteen.economic_model = economic_model
@@ -326,18 +330,11 @@ class ImportCanteensView(APIView):
         canteen.satellite_canteens_count = satellite_canteens_count
         if self.is_admin_import:
             canteen.line_ministry = (
-                next((key for key, value in Canteen.Ministries.choices if value == row[11].strip()), None)
+                next((value for value, label in Canteen.Ministries.choices if label == row[11].strip()), None)
                 if row[11]
                 else None
             )
             canteen.import_source = import_source
-        if row[5]:
-            canteen.sectors_m2m.set(
-                [
-                    self.annotated_sectors_m2m.get(name_lower__unaccent=sector.strip().lower())
-                    for sector in row[5].split("+")
-                ]
-            )
 
         canteen.save()
         update_change_reason(canteen, f"Mass CSV import. {self.__class__.__name__[:100]}")
@@ -376,8 +373,6 @@ class ImportCanteensView(APIView):
         errors = []
         if isinstance(e, PermissionDenied):
             ImportCanteensView._add_error(errors, e.detail, 401)
-        elif isinstance(e, SectorM2M.DoesNotExist):
-            ImportCanteensView._add_error(errors, "Le secteur spécifié ne fait pas partie des options acceptées")
         elif isinstance(e, ValidationError):
             if hasattr(e, "message_dict"):
                 for field, messages in e.message_dict.items():

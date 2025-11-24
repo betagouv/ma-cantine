@@ -9,7 +9,6 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
-from django.db.models.functions import Lower
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
@@ -21,9 +20,9 @@ from api.serializers import FullCanteenSerializer
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportFailure, ImportType, SectorM2M, Diagnostic
-from data.models.teledeclaration import Teledeclaration
+from data.models import Canteen, Diagnostic, ImportFailure, ImportType, Sector
 from data.models.creation_source import CreationSource
+from data.models.teledeclaration import Teledeclaration
 
 from .canteen import AddManagerView
 from .utils import camelize
@@ -41,7 +40,6 @@ DIAGNOSTICS_COMPLETE_CC_SCHEMA_FILE_PATH = "data/schemas/imports/diagnostics_com
 class ImportDiagnosticsView(ABC, APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
-    annotated_sectors = SectorM2M.objects.annotate(name_lower=Lower("name"))
     manager_column_idx = 11
     year_idx = 12
 
@@ -337,6 +335,11 @@ class ImportDiagnosticsView(ABC, APIView):
         name = row[1].strip()
         daily_meal_count = row[5].strip()
         yearly_meal_count = row[6].strip()
+        sector_list = [
+            next(value for value, label in Sector.choices if label == sector.replace("’", "'"))
+            for sector in row[7].strip().split("+")
+            if sector
+        ]
         management_type = row[9].strip().lower()
         production_type = row[8].strip().lower()
         economic_model = row[10].strip().lower()
@@ -351,6 +354,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 siret=siret,
                 daily_meal_count=daily_meal_count,
                 yearly_meal_count=yearly_meal_count,
+                sector_list=sector_list,
                 management_type=management_type,
                 production_type=production_type,
                 economic_model=economic_model,
@@ -375,19 +379,13 @@ class ImportDiagnosticsView(ABC, APIView):
         canteen.postal_code = row[3].strip()
         canteen.daily_meal_count = row[5].strip()
         canteen.yearly_meal_count = row[6].strip()
+        canteen.sector_list = sector_list
         canteen.production_type = row[8].strip().lower()
         canteen.management_type = row[9].strip().lower()
         canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None
         canteen.central_producer_siret = utils_utils.normalize_string(row[4])
         canteen.satellite_canteens_count = satellite_canteens_count
         canteen.import_source = import_source
-        if row[7]:
-            canteen.sectors_m2m.set(
-                [
-                    self.annotated_sectors.get(name_lower__unaccent=sector.strip().lower())
-                    for sector in row[7].split("+")
-                ]
-            )
 
         canteen.save()
         update_change_reason(canteen, f"Mass CSV import. {self.__class__.__name__[:100]}")
@@ -442,8 +440,6 @@ class ImportDiagnosticsView(ABC, APIView):
         errors = []
         if isinstance(e, PermissionDenied):
             ImportDiagnosticsView._add_error(errors, e.detail, 401)
-        elif isinstance(e, SectorM2M.DoesNotExist):
-            ImportDiagnosticsView._add_error(errors, "Le secteur spécifié ne fait pas partie des options acceptées")
         elif isinstance(e, ValidationError):
             if hasattr(e, "message_dict"):
                 for field, messages in e.message_dict.items():

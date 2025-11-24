@@ -3,7 +3,7 @@ import random
 import factory
 
 from data.models import Canteen
-
+from data.models.sector import Sector
 from .sector import SectorM2MFactory
 from .user import UserFactory
 
@@ -242,7 +242,7 @@ class CanteenFactory(factory.django.DjangoModelFactory):
     management_type = factory.Iterator([key for key, _ in Canteen.ManagementType.choices])
     production_type = Canteen.ProductionType.ON_SITE  # the production_type with the least constraints
     economic_model = factory.Iterator([key for key, _ in Canteen.EconomicModel.choices])
-
+    sector_list = [Sector.SANTE_HOPITAL]
     satellite_canteens_count = factory.LazyAttribute(
         lambda x: (
             2

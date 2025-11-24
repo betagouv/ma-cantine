@@ -42,7 +42,7 @@ class CanteenStatisticsView(APIView):
                 name="city", type=str, many=True, description="Filter by city(ies), using their Insee code"
             ),
             OpenApiParameter(
-                name="sectors", type=int, many=True, description="Filter by sector(s), using their internal id"
+                name="sector", type=str, many=True, description="Filter by sector(s), using their full name"
             ),
             OpenApiParameter(
                 name="management_type",
@@ -109,14 +109,13 @@ class CanteenStatisticsView(APIView):
         """
         Extract and clean filter parameters from the request.
         """
-        sectors = [s for s in request.query_params.getlist("sectors") if str(s).isdigit()]
         return {
             "region__in": request.query_params.getlist("region"),
             "department__in": request.query_params.getlist("department"),
             "epci__in": request.query_params.getlist("epci"),
             "pat_list__overlap": request.query_params.getlist("pat"),
             "city_insee_code__in": request.query_params.getlist("city"),
-            "sectors_m2m__in": sectors,
+            "sector_list__overlap": request.query_params.getlist("sector"),
             "management_type__in": request.query_params.getlist("management_type"),
             "production_type__in": request.query_params.getlist("production_type"),
             "economic_model__in": request.query_params.getlist("economic_model"),

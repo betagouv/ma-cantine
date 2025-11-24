@@ -182,15 +182,15 @@
       "type": "string"
     },
     {
-      "description": "Secteur d'activité de l'établissement",
-      "example": "Restaurants administratifs des collectivités territoriales",
+      "description": "Liste des secteurs d'activité de l'établissement",
+      "example": "Secondaire collège,Ecole primaire (maternelle et élémentaire)",
       "name": "secteur",
       "title": "Secteur",
       "type": "string"
     },
     {
-      "description": "Catégorie du secteur d'activité de l'établissement",
-      "example": "Administration",
+      "description": "Liste des catégories des secteurs d'activité de l'établissement",
+      "example": "Enseignement",
       "name": "categorie",
       "title": "Catégorie",
       "type": "string"

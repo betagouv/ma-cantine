@@ -14,17 +14,11 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
 from common.api.adresse import ADRESSE_CSV_API_URL
-from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
-from data.models import (
-    Canteen,
-    Diagnostic,
-    ImportFailure,
-    ImportType,
-    ManagerInvitation,
-)
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models import Canteen, Diagnostic, ImportFailure, ImportType, ManagerInvitation
+from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region
 from data.models.teledeclaration import Teledeclaration
-from data.models.creation_source import CreationSource
 
 NEXT_YEAR = datetime.date.today().year + 1
 
@@ -213,44 +207,18 @@ class TestImportDiagnosticsAPI(APITestCase):
         error = body["errors"][0]
         self.assertEqual(error["row"], 1)
         self.assertEqual(error["status"], 401)
-        self.assertEqual(
-            error["message"],
-            "Vous n'êtes pas un gestionnaire de cette cantine.",
-        )
+        self.assertEqual(error["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
     @authenticate
     def test_valid_sectors_parsed(self, mock):
         """
         File can specify 0+ sectors to add to the canteen
         """
-        SectorM2MFactory.create(name="Social et Médico-social (ESMS)")
-        SectorM2MFactory.create(name="Crèche")
-        SectorM2MFactory.create(name="Scolaire")
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_sectors.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         canteen = Canteen.objects.get(siret="21340172201787")
-        self.assertEqual(canteen.sectors_m2m.count(), 3)
-
-    @authenticate
-    def test_invalid_sectors_raise_error(self, mock):
-        """
-        If file specifies invalid sector, error is raised for that line
-        """
-        SectorM2MFactory.create(name="Social et Médico-social (ESMS)")
-
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_sectors.csv"
-        with open(file_path) as diag_file:
-            response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
-        body = response.json()
-        self.assertEqual(body["errors"][0]["status"], 400)
-        self.assertEqual(
-            body["errors"][0]["message"],
-            "Le secteur spécifié ne fait pas partie des options acceptées",
-        )
+        self.assertEqual(len(canteen.sector_list), 3)
 
     @authenticate
     def test_import_some_without_diagnostic(self, mock):

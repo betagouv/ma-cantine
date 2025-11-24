@@ -9,8 +9,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.factories import CanteenFactory, DiagnosticFactory
+from data.models import Canteen, Diagnostic, Teledeclaration, Sector
 from data.models.creation_source import CreationSource
 
 
@@ -571,12 +571,10 @@ class TestDiagnosticsApi(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
+            sector_list=[Sector.ADMINISTRATION_PRISON],
             line_ministry=None,
             managers=[authenticate.user],
         )
-        sector = SectorM2MFactory(has_line_ministry=True)
-        canteen_without_line_ministry.sectors_m2m.set([sector])
-        canteen_without_line_ministry.save()
         DiagnosticFactory.create(canteen=canteen_without_line_ministry, year=last_year, value_total_ht=10000)
 
         # to verify we are returning the correct diag for the canteen, create another diag for a different year

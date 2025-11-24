@@ -4,7 +4,7 @@ import os
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from data.models import Canteen, CanteenImage, Diagnostic, SectorM2M
+from data.models import Canteen, CanteenImage, Diagnostic, SectorM2M, Sector
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -757,12 +757,10 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
         return "Oui" if obj.is_spe else "Non"
 
     def get_secteur(self, obj):
-        sectors = [sector.name for sector in obj.sectors_m2m.all()]
-        return ",".join(sectors)
+        return ",".join([Sector(sector).label for sector in obj.sector_list])
 
     def get_categorie(self, obj):
-        categories = [sector.category for sector in obj.sectors_m2m.all()]
-        return ",".join(categories)
+        return ",".join([category.label for category in obj.category_list_from_sector_list])
 
     def get_adresses_gestionnaires(self, obj):
         emails = [manager.email for manager in obj.managers.all()]
@@ -771,6 +769,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
 
 class CanteenOpenDataSerializer(serializers.ModelSerializer):
     logo = serializers.SerializerMethodField(read_only=True)
+    sector_list = serializers.SerializerMethodField(source="sector_list", read_only=True)
     sectors = serializers.SerializerMethodField(source="sectors_m2m", read_only=True)
     active_on_ma_cantine = serializers.SerializerMethodField(read_only=True)
 
@@ -803,6 +802,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
             "line_ministry",
             "modification_date",
             "logo",
+            "sector_list",
             "sectors",  # from "sectors_m2m"
             "declaration_donnees_2021",
             "declaration_donnees_2022",
@@ -818,6 +818,9 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
         if obj.logo:
             return f"{bucket_url}/{bucket_name}/media/{obj.logo}"
         return ""
+
+    def get_sector_list(self, obj):
+        return [Sector(sector).label for sector in obj.sector_list]
 
     def get_sectors(self, obj):
         return [sector.name for sector in obj.sectors_m2m.all()]

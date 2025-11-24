@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
-from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen, Diagnostic, SectorCategory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models import Canteen, Diagnostic, SectorCategory, Sector
 from data.models.geo import Department, Region
 
 year_data = 2023
@@ -14,14 +14,9 @@ date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
 STATS_ENDPOINT_QUERY_COUNT = 8
 
 
-class TestCanteenStatsApi(APITestCase):
+class CanteenStatsApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector_education_primary = SectorM2MFactory(name="Primary", category=SectorCategory.EDUCATION)
-        cls.sector_education_secondary = SectorM2MFactory(name="Secondary", category=SectorCategory.EDUCATION)
-        cls.sector_enterprise = SectorM2MFactory(name="Enterprise", category=SectorCategory.ENTERPRISE)
-        cls.sector_social = SectorM2MFactory(name="Social", category=SectorCategory.SOCIAL)
-        cls.sector_other = SectorM2MFactory(name="Other", category=None)
         with freeze_time(date_in_2023_teledeclaration_campaign):
             canteen_1 = CanteenFactory(
                 siret="21010034300016",
@@ -30,7 +25,7 @@ class TestCanteenStatsApi(APITestCase):
                 pat_list=["1"],
                 department="01",
                 region="84",
-                sectors_m2m=[cls.sector_education_primary],
+                sector_list=[Sector.EDUCATION_PRIMAIRE],
                 management_type=Canteen.ManagementType.DIRECT,
                 production_type=Canteen.ProductionType.CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
@@ -58,7 +53,7 @@ class TestCanteenStatsApi(APITestCase):
                 pat_list=["1", "2"],
                 department="69",
                 region="84",
-                sectors_m2m=[cls.sector_enterprise],
+                sector_list=[Sector.ENTERPRISE_ENTREPRISE],
                 management_type=Canteen.ManagementType.DIRECT,
                 production_type=Canteen.ProductionType.CENTRAL_SERVING,
                 economic_model=Canteen.EconomicModel.PUBLIC,
@@ -90,7 +85,7 @@ class TestCanteenStatsApi(APITestCase):
                 pat_list=["2"],
                 department="38",
                 region="84",
-                sectors_m2m=[cls.sector_enterprise, cls.sector_social, cls.sector_education_primary],
+                sector_list=[Sector.ENTERPRISE_ENTREPRISE, Sector.SOCIAL_CRECHE, Sector.EDUCATION_PRIMAIRE],
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE,
                 economic_model=Canteen.EconomicModel.PRIVATE,
@@ -118,7 +113,7 @@ class TestCanteenStatsApi(APITestCase):
                 pat_list=["3"],
                 department="59",
                 region="32",
-                sectors_m2m=[cls.sector_social],
+                sector_list=[Sector.SOCIAL_CRECHE],
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PRIVATE,
@@ -129,7 +124,7 @@ class TestCanteenStatsApi(APITestCase):
                 siret="21730065600014",
                 city_insee_code="00002",
                 epci=None,
-                sectors_m2m=None,
+                sector_list=[],
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
@@ -356,7 +351,7 @@ class TestCanteenStatsApi(APITestCase):
     def test_filter_by_sectors(self):
         response = self.client.get(
             reverse("canteen_statistics"),
-            {"year": year_data, "sectors": [self.sector_education_primary.id, self.sector_enterprise.id]},
+            {"year": year_data, "sector": [Sector.EDUCATION_PRIMAIRE, Sector.ENTERPRISE_ENTREPRISE]},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()

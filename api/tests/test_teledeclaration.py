@@ -633,7 +633,9 @@ class TestTeledeclarationCreateApi(APITestCase):
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_line_ministry_does_not_depend_on_sector_anymore(self):
-        sector_ministry = SectorM2MFactory.create(has_line_ministry=True)
+        sector_ministry = SectorM2MFactory.create(
+            name="Restaurants administratifs d'Etat (RA)", has_line_ministry=True
+        )
         canteen = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             siret="79300704800044",
