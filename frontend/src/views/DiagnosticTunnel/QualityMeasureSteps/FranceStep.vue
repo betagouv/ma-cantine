@@ -29,7 +29,7 @@
               v-if="displayPurchaseHints"
               v-model="payload.valueCharcuterieFrance"
               @autofill="updatePayload"
-              purchaseType="charcuterie origine France"
+              purchaseType="« charcuterie origine France »"
               :amount="purchasesSummary.valueCharcuterieFrance"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
@@ -55,7 +55,7 @@
               v-if="displayPurchaseHints"
               v-model="payload.valueFruitsEtLegumesFrance"
               @autofill="updatePayload"
-              purchaseType="fruits et légumes frais et surgelés origine France"
+              purchaseType="« fruits et légumes frais et surgelés origine France origine France »"
               :amount="purchasesSummary.valueFruitsEtLegumesFrance"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
@@ -81,7 +81,7 @@
               v-if="displayPurchaseHints"
               v-model="payload.valueProduitsLaitiersFrance"
               @autofill="updatePayload"
-              purchaseType="BOF (Produits laitiers, beurre et œufs)"
+              purchaseType="« BOF (Produits laitiers, beurre et œufs) origine France »"
               :amount="purchasesSummary.valueProduitsLaitiersFrance"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
@@ -107,7 +107,7 @@
               v-if="displayPurchaseHints"
               v-model="payload.valueBoulangerieFrance"
               @autofill="updatePayload"
-              purchaseType="boulangerie / pâtisserie fraîches"
+              purchaseType="« boulangerie / pâtisserie fraîches origine France »"
               :amount="purchasesSummary.valueBoulangerieFrance"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
@@ -133,7 +133,7 @@
               v-if="displayPurchaseHints"
               v-model="payload.valueBoissonsFrance"
               @autofill="updatePayload"
-              purchaseType="boissons"
+              purchaseType="« boissons origine France »"
               :amount="purchasesSummary.valueBoissonsFrance"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
@@ -159,7 +159,7 @@
               v-if="displayPurchaseHints"
               v-model="payload.valueAutresFrance"
               @autofill="updatePayload"
-              purchaseType="autres produits frais, surgelés et d’épicerie"
+              purchaseType="« autres produits frais, surgelés et d’épicerie origine France »"
               :amount="purchasesSummary.valueAutresFrance"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
