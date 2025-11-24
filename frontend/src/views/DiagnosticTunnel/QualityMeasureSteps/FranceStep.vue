@@ -9,28 +9,57 @@
 
       <v-row class="my-0 my-md-6">
         <v-col cols="12" md="8" class="pr-4 pr-md-10">
-          <label class="ml-4 ml-md-0" for="TO-FILL-TOTAL-FRANCE-CHARCUTERIE">
-            Total (en € HT) de mes achats origine France - Charcuterie
-            <span class="fr-hint-text grey--text">
-              Optionnel
-            </span>
-          </label>
-          <DsfrCurrencyField
-            id="TO-FILL-TOTAL-FRANCE-CHARCUTERIE"
-            v-model.number="payload.valueCharcuterieFrance"
-            @blur="updatePayload"
-            :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
-            :error="totalError"
-            :rules="[validators.decimalPlaces(2)]"
-          />
-          <PurchaseHint
-            v-if="displayPurchaseHints"
-            v-model="payload.valueCharcuterieFrance"
-            @autofill="updatePayload"
-            purchaseType="charcuterie origine France"
-            :amount="purchasesSummary.valueCharcuterieFrance"
-            :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
-          />
+          <!-- Charcuterie -->
+          <div>
+            <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_CHARCUTERIE">
+              Total (en € HT) de mes achats origine France - Charcuterie
+              <span class="fr-hint-text grey--text">
+                Optionnel
+              </span>
+            </label>
+            <DsfrCurrencyField
+              id="TO_FILL_TOTAL_FRANCE_CHARCUTERIE"
+              v-model.number="payload.TO_FILL_TOTAL_FRANCE_CHARCUTERIE"
+              @blur="updatePayload"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+              :error="totalError"
+              :rules="[validators.decimalPlaces(2)]"
+            />
+            <PurchaseHint
+              v-if="displayPurchaseHints"
+              v-model="payload.valueCharcuterieFrance"
+              @autofill="updatePayload"
+              purchaseType="charcuterie origine France"
+              :amount="purchasesSummary.valueCharcuterieFrance"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+            />
+          </div>
+
+          <!-- Fruits et légumes frais et surgelés -->
+          <div class="mt-4">
+            <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES">
+              Total (en € HT) de mes achats origine France - Fruits et légumes frais et surgelés
+              <span class="fr-hint-text grey--text">
+                Optionnel
+              </span>
+            </label>
+            <DsfrCurrencyField
+              id="TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES"
+              v-model.number="payload.TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES"
+              @blur="updatePayload"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+              :error="totalError"
+              :rules="[validators.decimalPlaces(2)]"
+            />
+            <PurchaseHint
+              v-if="displayPurchaseHints"
+              v-model="payload.valueFruitsEtLegumesFrance"
+              @autofill="updatePayload"
+              purchaseType="fruits et légumes frais et surgelés origine France"
+              :amount="purchasesSummary.valueFruitsEtLegumesFrance"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+            />
+          </div>
         </v-col>
         <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
           <!-- Tile -->
@@ -117,7 +146,7 @@ export default {
     },
     sumAllFrance() {
       const d = this.payload
-      const franceValues = [d.valueCharcuterieFrance]
+      const franceValues = [d.TO_FILL_TOTAL_FRANCE_CHARCUTERIE, d.TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES]
       let total = 0
       franceValues.forEach((val) => {
         total += parseFloat(val) || 0
