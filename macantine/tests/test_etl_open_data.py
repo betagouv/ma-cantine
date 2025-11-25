@@ -60,9 +60,10 @@ class TestETLOpenData(TestCase):
         )
         with freeze_time("2023-05-14"):  # during the 2022 campaign
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2022, diagnostic_type=None)
-            diagnostic.teledeclare(cls.user_manager)
             diagnostic_2 = DiagnosticFactory.create(canteen=cls.canteen_2, year=2022, diagnostic_type=None)
             diagnostic_2.teledeclare(cls.user_manager)
+        with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
+            diagnostic.teledeclare(cls.user_manager)
         with freeze_time("2024-04-01"):  # during the 2023 campaign
             diagnostic = DiagnosticFactory.create(canteen=cls.canteen, year=2023, diagnostic_type=None)
             diagnostic.teledeclare(cls.user_manager)
@@ -81,7 +82,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(etl_td_2022.len_dataset(), 2, "2 TDs in the 2022 campaign")
         self.assertEqual(
             etl_td_2022.get_dataset().iloc[0]["canteen_id"],
-            self.canteen.id,
+            self.canteen_2.id,
             "Order by teledeclaration date ascending",
         )
 
