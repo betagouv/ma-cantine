@@ -347,6 +347,9 @@ class Diagnostic(models.Model):
         "value_fish_ht",
         "value_fish_egalim_ht",
     ]
+    SIMPLE_APPRO_FIELDS_FOR_IMPORT = [
+        field_name for field_name in SIMPLE_APPRO_FIELDS if "commerce_equitable" not in field_name
+    ]
 
     AGGREGATED_APPRO_FIELDS = [
         "value_bio_ht_agg",
@@ -478,6 +481,10 @@ class Diagnostic(models.Model):
         "value_boulangerie_local",
         "value_boissons_local",
         "value_autres_local",
+    ]
+    # TODO: clean up when updating the imports
+    APPRO_FIELDS_FOR_IMPORT = [
+        field_name for field_name in APPRO_FIELDS if "bio_dont_commerce_equitable" not in field_name
     ]
 
     COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht"] + APPRO_FIELDS
