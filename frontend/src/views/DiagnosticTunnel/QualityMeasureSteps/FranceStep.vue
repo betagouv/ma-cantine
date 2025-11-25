@@ -5,15 +5,15 @@
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <!-- Charcuterie -->
         <div>
-          <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_CHARCUTERIE">
+          <label class="ml-4 ml-md-0" for="valueCharcuterieFrance">
             Total (en € HT) de mes achats origine France - Charcuterie
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="TO_FILL_TOTAL_FRANCE_CHARCUTERIE"
-            v-model.number="payload.TO_FILL_TOTAL_FRANCE_CHARCUTERIE"
+            id="valueCharcuterieFrance"
+            v-model.number="payload.valueCharcuterieFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -31,15 +31,15 @@
 
         <!-- Fruits et légumes frais et surgelés -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES">
+          <label class="ml-4 ml-md-0" for="valueFruitsEtLegumesFrance">
             Total (en € HT) de mes achats origine France - Fruits et légumes frais et surgelés
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES"
-            v-model.number="payload.TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES"
+            id="valueFruitsEtLegumesFrance"
+            v-model.number="payload.valueFruitsEtLegumesFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -57,15 +57,15 @@
 
         <!-- BOF (Produits laitiers, beurre et œufs) -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_BOF">
+          <label class="ml-4 ml-md-0" for="valueProduitsLaitiersFrance">
             Total (en € HT) de mes achats origine France - BOF (Produits laitiers, beurre et œufs)
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="TO_FILL_TOTAL_FRANCE_BOF"
-            v-model.number="payload.TO_FILL_TOTAL_FRANCE_BOF"
+            id="valueProduitsLaitiersFrance"
+            v-model.number="payload.valueProduitsLaitiersFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -83,15 +83,15 @@
 
         <!-- Boulangerie / Pâtisserie fraîches -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_BOULANGERIE_PATISSERIE">
+          <label class="ml-4 ml-md-0" for="valueBoulangerieFrance">
             Total (en € HT) de mes achats origine France - Boulangerie / Pâtisserie fraîches
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="TO_FILL_TOTAL_FRANCE_BOULANGERIE_PATISSERIE"
-            v-model.number="payload.TO_FILL_TOTAL_FRANCE_BOULANGERIE_PATISSERIE"
+            id="valueBoulangerieFrance"
+            v-model.number="payload.valueBoulangerieFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -109,15 +109,15 @@
 
         <!-- Boissons -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_BOISSONS">
+          <label class="ml-4 ml-md-0" for="valueBoissonsFrance">
             Total (en € HT) de mes achats origine France - Boissons
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="TO_FILL_TOTAL_FRANCE_BOISSONS"
-            v-model.number="payload.TO_FILL_TOTAL_FRANCE_BOISSONS"
+            id="valueBoissonsFrance"
+            v-model.number="payload.valueBoissonsFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -135,15 +135,15 @@
 
         <!-- Autres produits frais, surgelés et d’épicerie -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="TO_FILL_TOTAL_FRANCE_OTHER">
+          <label class="ml-4 ml-md-0" for="valueAutresFrance">
             Total (en € HT) de mes achats origine France - Autres produits frais, surgelés et d’épicerie
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="TO_FILL_TOTAL_FRANCE_OTHER"
-            v-model.number="payload.TO_FILL_TOTAL_FRANCE_OTHER"
+            id="valueAutresFrance"
+            v-model.number="payload.valueAutresFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -246,12 +246,12 @@ export default {
     sumAllFrance() {
       const d = this.payload
       const franceValues = [
-        d.TO_FILL_TOTAL_FRANCE_CHARCUTERIE,
-        d.TO_FILL_TOTAL_FRANCE_FRUITS_ET_LEGUMES,
-        d.TO_FILL_TOTAL_FRANCE_BOF,
-        d.TO_FILL_TOTAL_FRANCE_BOULANGERIE_PATISSERIE,
-        d.TO_FILL_TOTAL_FRANCE_BOISSONS,
-        d.TO_FILL_TOTAL_FRANCE_OTHER,
+        d.valueCharcuterieFrance,
+        d.valueFruitsLegumesFrance,
+        d.valueBoeufFrance,
+        d.valueBoulangerieFrance,
+        d.valueBoissonsFrance,
+        d.valueAutresFrance,
       ]
       let total = 0
       franceValues.forEach((val) => {
