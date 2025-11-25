@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory
-from data.models import Canteen, Diagnostic, Teledeclaration, Sector
+from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.models.creation_source import CreationSource
 
 
@@ -200,6 +200,14 @@ class TestDiagnosticsApi(APITestCase):
             "value_boulangerie_rup": 10,
             "value_boissons_rup": 10,
             "value_autres_rup": 10,
+            "value_viandes_volailles_commerce_equitable": 10,
+            "value_produits_de_la_mer_commerce_equitable": 10,
+            "value_fruits_et_legumes_commerce_equitable": 10,
+            "value_charcuterie_commerce_equitable": 10,
+            "value_produits_laitiers_commerce_equitable": 10,
+            "value_boulangerie_commerce_equitable": 10,
+            "value_boissons_commerce_equitable": 10,
+            "value_autres_commerce_equitable": 10,
             "value_viandes_volailles_fermier": 10,
             "value_produits_de_la_mer_fermier": 10,
             "value_fruits_et_legumes_fermier": 10,
@@ -216,14 +224,6 @@ class TestDiagnosticsApi(APITestCase):
             "value_boulangerie_externalites": 10,
             "value_boissons_externalites": 10,
             "value_autres_externalites": 10,
-            "value_viandes_volailles_commerce_equitable": 10,
-            "value_produits_de_la_mer_commerce_equitable": 10,
-            "value_fruits_et_legumes_commerce_equitable": 10,
-            "value_charcuterie_commerce_equitable": 10,
-            "value_produits_laitiers_commerce_equitable": 10,
-            "value_boulangerie_commerce_equitable": 10,
-            "value_boissons_commerce_equitable": 10,
-            "value_autres_commerce_equitable": 10,
             "value_viandes_volailles_performance": 10,
             "value_produits_de_la_mer_performance": 10,
             "value_fruits_et_legumes_performance": 10,
@@ -288,27 +288,27 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.creation_mtm_source, "mtm_source_value")
         self.assertEqual(diagnostic.creation_mtm_campaign, "mtm_campaign_value")
         self.assertEqual(diagnostic.creation_mtm_medium, "mtm_medium_value")
-        self.assertEqual(diagnostic.total_label_bio, 80)
-        self.assertEqual(diagnostic.total_label_label_rouge, 80)
-        self.assertEqual(diagnostic.total_label_aocaop_igp_stg, 80)
-        self.assertEqual(diagnostic.total_label_hve, 80)
-        self.assertEqual(diagnostic.total_label_peche_durable, 80)
-        self.assertEqual(diagnostic.total_label_rup, 80)
-        self.assertEqual(diagnostic.total_label_fermier, 80)
-        self.assertEqual(diagnostic.total_label_externalites, 80)
-        self.assertEqual(diagnostic.total_label_commerce_equitable, 80)
-        self.assertEqual(diagnostic.total_label_performance, 80)
-        self.assertEqual(diagnostic.total_label_france, 80)
-        self.assertEqual(diagnostic.total_label_short_distribution, 80)
-        self.assertEqual(diagnostic.total_label_local, 80)
-        self.assertEqual(diagnostic.total_family_viandes_volailles, 110)
-        self.assertEqual(diagnostic.total_family_produits_de_la_mer, 110)
-        self.assertEqual(diagnostic.total_family_fruits_et_legumes, 110)
-        self.assertEqual(diagnostic.total_family_charcuterie, 110)
-        self.assertEqual(diagnostic.total_family_produits_laitiers, 110)
-        self.assertEqual(diagnostic.total_family_boulangerie, 110)
-        self.assertEqual(diagnostic.total_family_boissons, 110)
-        self.assertEqual(diagnostic.total_family_autres, 110)
+        self.assertEqual(diagnostic.label_sum("bio"), 80)
+        self.assertEqual(diagnostic.label_sum("label_rouge"), 80)
+        self.assertEqual(diagnostic.label_sum("aocaop_igp_stg"), 80)
+        self.assertEqual(diagnostic.label_sum("hve"), 80)
+        self.assertEqual(diagnostic.label_sum("peche_durable"), 80)
+        self.assertEqual(diagnostic.label_sum("rup"), 80)
+        self.assertEqual(diagnostic.label_sum("commerce_equitable"), 80)
+        self.assertEqual(diagnostic.label_sum("fermier"), 80)
+        self.assertEqual(diagnostic.label_sum("externalites"), 80)
+        self.assertEqual(diagnostic.label_sum("performance"), 80)
+        self.assertEqual(diagnostic.label_sum("france"), 80)
+        self.assertEqual(diagnostic.label_sum("short_distribution"), 80)
+        self.assertEqual(diagnostic.label_sum("local"), 80)
+        self.assertEqual(diagnostic.family_sum("viandes_volailles"), 110)
+        self.assertEqual(diagnostic.family_sum("produits_de_la_mer"), 110)
+        self.assertEqual(diagnostic.family_sum("fruits_et_legumes"), 110)
+        self.assertEqual(diagnostic.family_sum("charcuterie"), 110)
+        self.assertEqual(diagnostic.family_sum("produits_laitiers"), 110)
+        self.assertEqual(diagnostic.family_sum("boulangerie"), 110)
+        self.assertEqual(diagnostic.family_sum("boissons"), 110)
+        self.assertEqual(diagnostic.family_sum("autres"), 110)
 
     @authenticate
     def test_create_duplicate_diagnostic(self):
