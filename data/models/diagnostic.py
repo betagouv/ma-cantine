@@ -469,7 +469,7 @@ class Diagnostic(models.Model):
 
     COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht"] + APPRO_FIELDS
 
-    NON_APPRO_FIELDS = [
+    WASTE_FIELDS = [
         "has_waste_diagnostic",
         "has_waste_plan",
         "waste_actions",
@@ -486,16 +486,25 @@ class Diagnostic(models.Model):
         "donation_quantity",
         "donation_food_type",
         "other_waste_comments",
+    ]
+
+    DIVERSIFICATION_FIELDS = [
         "has_diversification_plan",
         "diversification_plan_actions",
         "service_type",
         "vegetarian_weekly_recurrence",
         "vegetarian_menu_type",
         "vegetarian_menu_bases",
+    ]
+
+    PLASTIC_FIELDS = [
         "cooking_plastic_substituted",
         "serving_plastic_substituted",
         "plastic_bottles_substituted",
         "plastic_tableware_substituted",
+    ]
+
+    INFO_FIELDS = [
         "communication_supports",
         "other_communication_support",
         "communication_support_url",
@@ -503,6 +512,8 @@ class Diagnostic(models.Model):
         "communicates_on_food_quality",
         "communication_frequency",
     ]
+
+    NON_APPRO_FIELDS = WASTE_FIELDS + DIVERSIFICATION_FIELDS + PLASTIC_FIELDS + INFO_FIELDS
 
     META_FIELDS = [
         "id",
@@ -529,9 +540,21 @@ class Diagnostic(models.Model):
     TUNNEL_PROGRESS_FIELDS = [
         "tunnel_appro",
         "tunnel_waste",
-        "tunnel_plastic",
         "tunnel_diversification",
+        "tunnel_plastic",
         "tunnel_info",
+    ]
+
+    TELEDECLARATION_FIELDS = [
+        "teledeclaration_date",
+        "teledeclaration_mode",
+        "teledeclaration_version",
+        "teledeclaration_id",
+    ]
+    TELEDECLARATION_SNAPSHOT_FIELDS = [
+        "canteen_snapshot",
+        "satellites_snapshot",
+        "applicant_snapshot",
     ]
 
     objects = models.Manager.from_queryset(DiagnosticQuerySet)()
