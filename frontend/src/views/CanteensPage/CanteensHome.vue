@@ -423,11 +423,10 @@ export default {
           default: [],
           transformToFrontend(values) {
             if (!values) return
-            return Array.isArray(values) ? values.map((v) => +v) : [+values]
+            return values
           },
           displayName(value) {
-            value = +value
-            return sectors.find((s) => s.id === value)?.name || value
+            return sectors.find((s) => s.value === value)?.name || value
           },
         },
         min_daily_meal_count: {
