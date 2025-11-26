@@ -174,6 +174,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sectors",  # from "sectors_m2m"
+            "sector_list",
             "daily_meal_count",
             "production_type",
             "management_type",
