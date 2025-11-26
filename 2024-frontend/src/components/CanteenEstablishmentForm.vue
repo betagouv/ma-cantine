@@ -176,7 +176,7 @@ const resetFields = () => {
   form.economicModel = null
   form.managementType = null
   form.productionType = null
-  form.sectors = []
+  form.sectorList = []
   form.lineMinistry = null
   form.dailyMealCount = null
   form.yearlyMealCount = null
@@ -200,7 +200,7 @@ const prefillFields = () => {
   form.economicModel = props.establishmentData.economicModel
   form.managementType = props.establishmentData.managementType
   form.productionType = props.establishmentData.productionType
-  form.sectors = props.establishmentData.sectors
+  form.sectorList = props.establishmentData.sectors
   form.lineMinistry = props.establishmentData.lineMinistry
   form.dailyMealCount = props.establishmentData.dailyMealCount
   form.yearlyMealCount = props.establishmentData.yearlyMealCount
@@ -224,10 +224,10 @@ const showSatelliteCanteensCount = computed(
 )
 const showLineMinistry = computed(() => {
   if (sectorsOptions.value.length === 0) return false
-  if (form.sectors.length === 0) return false
+  if (form.sectorList.length === 0) return false
   if (form.economicModel !== "public") return false
-  for (let i = 0; i < form.sectors.length; i++) {
-    const index = sectorsOptions.value.findIndex((option) => option.sectorId === form.sectors[i])
+  for (let i = 0; i < form.sectorList.length; i++) {
+    const index = sectorsOptions.value.findIndex((option) => option.sectorId === form.sectorList[i])
     const sector = sectorsOptions.value[index]
     const hasLineMinistry = sector.hasLineMinistry
     if (hasLineMinistry) return true
@@ -242,7 +242,7 @@ const showCitySelector = computed(() => form.hasSiret === "no-siret")
 const changeProductionMode = () => {
   form.satelliteCanteensCount = null
   form.centralProducerSiret = null
-  form.sectors = []
+  form.sectorList = []
   form.lineMinistry = null
   forceRerender.value++
 }
@@ -276,11 +276,11 @@ const rules = {
     minLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", minLength(14)),
     maxLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", maxLength(14)),
   },
-  sectors: {
+  sectorList: {
     required: requiredIf(sectorsAreRequired),
     maxThree: helpers.withMessage(
       "Vous ne pouvez pas sélectionner plus de 3 secteurs",
-      (sectors) => sectors.length <= 3
+      (sectorList) => sectorList.length <= 3
     ),
   },
   lineMinistry: { required: requiredIf(showLineMinistry) },
@@ -418,7 +418,7 @@ if (props.establishmentData) {
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
         <DsfrMultiselect
           v-if="form.productionType !== 'central'"
-          v-model="form.sectors"
+          v-model="form.sectorList"
           label="Secteurs *"
           labelVisible
           hint="3 secteurs maximum"
@@ -428,7 +428,7 @@ if (props.establishmentData) {
           label-key="name"
           @update:modelValue="resetLineMinistry()"
           :filtering-keys="['name']"
-          :error-message="formatError(v$.sectors)"
+          :error-message="formatError(v$.sectorList)"
         >
           <template #checkbox-label="{ option }">
             <div>
