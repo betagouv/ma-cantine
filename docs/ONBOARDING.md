@@ -64,7 +64,7 @@ uv add xxx
 uv remove xxx
 ```
 
-### Installer les dépendances _des_ frontends
+### Installer les dépendances *des* frontends
 
 On utilise les dernières versions LTS de `node` et `npm`.
 
@@ -109,7 +109,7 @@ psql -c "ALTER USER macantine_egalim_team CREATEROLE CREATEDB"
 
 L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), vous pouvez donc créer un fichier `.env` à la racine du projet avec les variables définies ci-dessous.
 
-_Attention_ : Certaines variables d'environnement sont utilisées uniquement dans les **tasks celery** (ex: mise à jours des contacts Brevo). Elles sont alors renseignées dans `celery.md`.
+*Attention* : Certaines variables d'environnement sont utilisées uniquement dans les **tasks celery** (ex: mise à jours des contacts Brevo). Elles sont alors renseignées dans `celery.md`.
 Pour tester ces tâches en local, vous pouvez renseigner ces variables d'environnement dans votre `.env`.
 
 ```
@@ -155,7 +155,6 @@ CSV_PURCHASE_CHUNK_LINES= Optionnel - Définit le nombre de lignes dans chaque c
 Elles sont définies dans le fichier `macantine.utils.CAMPAIGN_DATES`.
 
 Il est possible de les overrider (pour l'année en cours) grâce aux variables d'environment suivantes :
-
 ```
 TELEDECLARATION_START_DATE_OVERRIDE= Optionnel (exemple : `2025-01-07`)
 TELEDECLARATION_END_DATE_OVERRIDE= Optionnel
@@ -172,7 +171,7 @@ ENABLE_TELEDECLARATION= Optionnel - `True` pour permettre les utilisateurs de t�
 ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des gestionnaires.
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
 ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation gaspillage alimentaire disponible
-SHOW_INFORMATION_BANNER= Optionnel - `True` pour afficher le bandeau d'information sous le menu
+SHOW_MANAGEMENT_INFORMATION_BANNER= Optionnel - `True` pour afficher une bannière dans la page d'accueil du tableau de bord
 ```
 
 ### Mise à jour des métadonnées sur data.gouv.fr
@@ -291,11 +290,11 @@ python manage.py createsuperuser
 ## Utilisation des magic token
 
 Les `magic token` permettent de se connecter à la place d'un utilisateur à des fins de support. Voici comment les utiliser :
+* Générer un token depuis l'interface admin de Django
+* Déconnecter-vous ou utiliser une navigation privée (recommandé)
+* Saisir l'adresse sur le navigateur: `<URL MA CANTINE>/code/<MAGIC TOKEN>`
+* Se déconnecter après usage
 
-- Générer un token depuis l'interface admin de Django
-- Déconnecter-vous ou utiliser une navigation privée (recommandé)
-- Saisir l'adresse sur le navigateur: `<URL MA CANTINE>/code/<MAGIC TOKEN>`
-- Se déconnecter après usage
 
 ## Reception d'emails en local
 
@@ -335,18 +334,17 @@ Des extensions utiles :
 ### Commits
 
 Pas de convention particulière à respecter !
-
 - anglais ou français
 - pas besoin de respecter les Conventional Commits (voir ci-dessous)
 
 ### PR
 
 - le nommage des PR doit respecter les [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
-  - pour pouvoir être bien interprété par `release-please`
+    - pour pouvoir être bien interprété par `release-please`
 - au moins 1 review est nécessaire avant de pouvoir merger
 - les PR sont **squashées** avant d'être mergées (option "Squash & Merge" sur Github)
-  - pour avoir un historique simple et clair
-  - et ainsi plus facilement retrouver la PR qui a effectué un changement donné
+    - pour avoir un historique simple et clair
+    - et ainsi plus facilement retrouver la PR qui a effectué un changement donné
 
 ### CI
 
@@ -400,13 +398,13 @@ CC_PYTHON_MANAGE_TASKS=buildnpm, buildnpmvue3, collectstatic --noinput, migrate 
 
 1. grâce à `release-please`, une PR nommée `chore(staging): release YYYY.X.Z` est ouverte, et liste les PR mergées sur `staging` depuis la dernière release
 2. il faut merger cette PR. Il se passera alors 2 choses :
-   - une nouvelle release va être automatiquement crée : voir [la liste des releases](https://github.com/betagouv/ma-cantine/releases)
-     - optionnel : supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
-   - le CHANGELOG.md sera mis à jour sur `staging`
+    - une nouvelle release va être automatiquement crée : voir [la liste des releases](https://github.com/betagouv/ma-cantine/releases)
+        - optionnel : supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
+    - le CHANGELOG.md sera mis à jour sur `staging`
 3. il reste maintenant à déployer (manuellement) en mettant à jour la branche `main`
-   - si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo côté Clever Cloud
-   - en local, preparer la branche `main` : `git checkout staging && git pull && git checkout main && git rebase staging`
-   - puis publier les changements : `git push` (peut-être `git push -f`)
+    - si il y a des variables d'environnement à ajouter, ajoutez-les sur prod et demo côté Clever Cloud
+    - en local, preparer la branche `main` : `git checkout staging && git pull && git checkout main && git rebase staging`
+    - puis publier les changements : `git push` (peut-être `git push -f`)
 4. le déploiement va commencer automatiquement. Ça prend un moment pour déployer côté Clever Cloud... suivez la progression là-bas.
 5. une fois le déploiement terminé, envoyer un message sur mattermost (canal produit) pour tenir l'équipe au courant ! (en copiant-collant le contenu de la dernière release)
 
