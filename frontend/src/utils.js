@@ -579,9 +579,9 @@ export const lineMinistryRequired = (canteen, allSectors) => {
   // - canteen must be Public
   // - canteen has Sector(s) with line_ministry
   if (canteen.economicModel !== "public") return false
-  const concernedSectors = allSectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+  const concernedSectors = allSectors.filter((x) => !!x.hasLineMinistry).map((x) => x.value)
   if (concernedSectors.length === 0) return false
-  return canteen.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
+  return canteen.sectorList?.some((x) => concernedSectors.indexOf(x) > -1)
 }
 
 export const missingCanteenData = (canteen, sectors) => {
