@@ -564,7 +564,7 @@ export default {
       return [...beforeWasteMeasurements, ...wasteMeasurements, ...afterWasteMeasurements]
     },
     sectors() {
-      return sectorDisplayString(this.canteen.sectors, this.$store.state.sectors)
+      return sectorDisplayString(this.canteen.sectorList, this.$store.state.sectors)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
