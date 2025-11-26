@@ -32,7 +32,7 @@ const filterEditableInfos = (canteenInfos) => {
   // Next required field for all canteen
   fieldsName.push("economicModel", "managementType", "productionType", "dailyMealCount", "yearlyMealCount")
   // Required fields for canteen with site
-  if (canteenInfos.productionType !== "central") fieldsName.push("sectors")
+  if (canteenInfos.productionType !== "central") fieldsName.push("sectorList")
   if (canteenInfos.lineMinistry) fieldsName.push("lineMinistry")
   // Required field for satellite
   if (canteenInfos.isSatellite) fieldsName.push("centralProducerSiret")
@@ -71,7 +71,7 @@ const getPrettyValue = (info) => {
       prettyValue = getMinistrieName(value)
       break
     }
-    case name === "sectors": {
+    case name === "sectorList": {
       prettyValue = getSectorsNames(value)
       break
     }
@@ -104,7 +104,7 @@ const ministries = computedAsync(async () => {
 }, [])
 
 const getSectorsNames = (canteenSectorsIds) => {
-  const filteredSectors = sectors.value.filter((sector) => canteenSectorsIds.includes(sector.id))
+  const filteredSectors = sectors.value.filter((sector) => canteenSectorsIds.includes(sector.value))
   const sectorsName = filteredSectors.map((filter) => filter.name)
   return sectorsName.join(" ; ")
 }

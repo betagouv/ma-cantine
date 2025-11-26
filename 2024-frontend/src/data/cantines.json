@@ -75,7 +75,7 @@
     "leisure": "Loisirs",
     "social": "Social / Médico-social"
   },
-  "sectors": "Secteurs d'activité",
+  "sectorList": "Secteurs d'activité",
   "sirenUniteLegale": "Numéro SIREN de l'unité légale",
   "siret": "Numéro SIRET",
   "yearlyMealCount": "Couverts par an"
