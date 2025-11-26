@@ -22,6 +22,7 @@ def calculate_statistics_canteens(canteens, data):
         ("production_type", Canteen.ProductionType, "production_types"),
         ("economic_model", Canteen.EconomicModel, "economic_models"),
     ]
+    INCONNU_EMPTY_VALUES = [None, "", []]
     for field_name_input, field_enum, field_name_output in GROUP_BY_FIELDS:
         data[field_name_output] = {}
         canteen_count_per_field = canteens.group_and_count_by_field(field_name_input)
@@ -30,7 +31,7 @@ def calculate_statistics_canteens(canteens, data):
                 (item["count"] for item in canteen_count_per_field if item[field_name_input] == field_enum_value), 0
             )
         data[field_name_output]["inconnu"] = next(
-            (item["count"] for item in canteen_count_per_field if item[field_name_input] in ["", None]), 0
+            (item["count"] for item in canteen_count_per_field if item[field_name_input] in INCONNU_EMPTY_VALUES), 0
         )
     # return
     return data
