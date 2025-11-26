@@ -187,13 +187,14 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
     min_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="gte")
     max_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="lte")
     production_type = ProductionTypeInFilter(field_name="production_type")
+    sector = django_filters.CharFilter(field_name="sector_list", lookup_expr="icontains")
 
     class Meta:
         model = Canteen
         fields = (
             "department",
             "region",
-            "sectors_m2m",
+            "sector",
             "city_insee_code",
             "min_daily_meal_count",
             "max_daily_meal_count",
