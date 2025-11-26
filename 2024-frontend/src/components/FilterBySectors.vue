@@ -34,8 +34,8 @@ const query = route.query
 const updateParamsFromQuery = (allSectors) => {
   if (query.sectors) {
     const hasMultipleValues = typeof query.sectors !== "string"
-    const sectorsSlugs = hasMultipleValues ? query.sectors.map((value) => value) : [query.sectors]
-    storeFilters.setFromQuery("sectors", sectorsSlugs, allSectors)
+    const sectorsValues = hasMultipleValues ? query.sectors.map((value) => value) : [query.sectors]
+    storeFilters.setFromQuery("sectors", sectorsValues, allSectors)
   }
 }
 </script>
