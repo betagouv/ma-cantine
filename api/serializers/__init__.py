@@ -18,6 +18,7 @@ from .canteen import (  # noqa: F401
     CanteenSummarySerializer,
     CanteenAnalysisSerializer,
     CanteenOpenDataSerializer,
+    CanteenMinistriesSerializer,
 )
 from .diagnostic import (  # noqa: F401
     ManagerDiagnosticSerializer,
