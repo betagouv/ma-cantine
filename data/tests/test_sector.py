@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from data.models.sector import Sector, SectorCategory, get_sector_category_from_sector
+from data.models.sector import Sector, SectorCategory, get_sector_category_from_sector, is_sector_with_line_ministry
 
 
 class SectorTextChoicesTest(TestCase):
@@ -33,3 +33,9 @@ class SectorTextChoicesTest(TestCase):
             SectorCategory.AUTRES,
             get_sector_category_from_sector(Sector.AUTRES_AUTRE),
         )
+
+    def test_is_sector_with_line_ministry(self):
+        self.assertTrue(is_sector_with_line_ministry(Sector.ADMINISTRATION_PRISON))
+        self.assertTrue(is_sector_with_line_ministry(Sector.EDUCATION_SUPERIEUR_UNIVERSITAIRE))
+        self.assertFalse(is_sector_with_line_ministry(Sector.EDUCATION_PRIMAIRE))
+        self.assertFalse(is_sector_with_line_ministry(Sector.SANTE_HOPITAL))
