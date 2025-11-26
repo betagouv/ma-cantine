@@ -631,7 +631,7 @@ export default {
           this.visibleCanteens = response.results
           this.selectableDepartments = response.departments
           this.selectableRegions = response.regions
-          this.setSectors(response.sectors)
+          this.setSectors()
           this.setManagementTypes(response.managementTypes)
           this.setProductionTypes(response.productionTypes)
         })
@@ -735,14 +735,14 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
-    setSectors(enabledSectorIds) {
+    setSectors() {
       this.sectors = sectorsSelectList(this.$store.state.sectors).map((x) => {
         return x.header
           ? { header: x.header }
           : {
               text: x.name,
-              value: x.id,
-              disabled: enabledSectorIds.indexOf(x.id) === -1,
+              value: x.value,
+              disabled: false,
             }
       })
     },
