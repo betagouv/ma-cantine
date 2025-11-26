@@ -423,7 +423,7 @@ export default {
           default: [],
           transformToFrontend(values) {
             if (!values) return
-            return values
+            return Array.isArray(values) ? values.map((v) => v) : [values]
           },
           displayName(value) {
             return sectors.find((s) => s.value === value)?.name || value
