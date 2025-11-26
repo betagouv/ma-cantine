@@ -200,7 +200,7 @@ const prefillFields = () => {
   form.economicModel = props.establishmentData.economicModel
   form.managementType = props.establishmentData.managementType
   form.productionType = props.establishmentData.productionType
-  form.sectorList = props.establishmentData.sectors
+  form.sectorList = props.establishmentData.sectorList
   form.lineMinistry = props.establishmentData.lineMinistry
   form.dailyMealCount = props.establishmentData.dailyMealCount
   form.yearlyMealCount = props.establishmentData.yearlyMealCount
