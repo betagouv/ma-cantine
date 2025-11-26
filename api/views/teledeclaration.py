@@ -5,7 +5,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.template.loader import get_template
 from django.utils.text import slugify
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
@@ -25,7 +25,6 @@ from macantine.utils import (
     is_in_teledeclaration_or_correction,
 )
 
-from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
@@ -60,8 +59,7 @@ class TeledeclarationCreateView(APIView):
             raise ValidationError("diagnosticId manquant")
 
         td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
-        data = FullDiagnosticSerializer(td.diagnostic).data
-        return JsonResponse(camelize(data), status=status.HTTP_201_CREATED)
+        return Response(FullDiagnosticSerializer(td.diagnostic).data, status=status.HTTP_201_CREATED)
 
     def _teledeclare_diagnostic(diagnostic_id, user):  # noqa: C901
         last_year = datetime.now().year - 1
@@ -167,8 +165,7 @@ class TeledeclarationCancelView(APIView):
             # all the checks avec passed, we can cancel the teledeclaration
             teledeclaration.cancel()
 
-            data = FullDiagnosticSerializer(teledeclaration.diagnostic).data
-            return JsonResponse(camelize(data), status=status.HTTP_200_OK)
+            return Response(FullDiagnosticSerializer(teledeclaration.diagnostic).data, status=status.HTTP_200_OK)
 
         except Teledeclaration.DoesNotExist:
             raise ValidationError("La télédéclaration specifiée n'existe pas")
