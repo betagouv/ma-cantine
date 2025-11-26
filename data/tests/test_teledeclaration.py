@@ -60,13 +60,11 @@ class TeledeclarationQuerySetTest(TestCase):
             )
             setattr(cls, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
             with freeze_time(date_in_teledeclaration_campaign):
-                teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant=UserFactory.create())
+                teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, applicant=UserFactory())
             setattr(cls, f"valid_canteen_td_{index + 1}", teledeclaration)
 
             with freeze_time(date_in_last_teledeclaration_campaign):
-                teledeclaration = Teledeclaration.create_from_diagnostic(
-                    diagnostic_last_year, applicant=UserFactory.create()
-                )
+                teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic_last_year, applicant=UserFactory())
 
         # Corrected TD
         cls.valid_canteen_diagnostic_correction = DiagnosticFactory(
@@ -80,7 +78,7 @@ class TeledeclarationQuerySetTest(TestCase):
             value_externality_performance_ht=100.00,
             value_egalim_others_ht=100.00,
         )
-        user_correction_campaign = UserFactory.create()
+        user_correction_campaign = UserFactory()
         cls.valid_correction_td = Teledeclaration.create_from_diagnostic(
             cls.valid_canteen_diagnostic_correction, applicant=user_correction_campaign
         )
@@ -102,7 +100,7 @@ class TeledeclarationQuerySetTest(TestCase):
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.invalid_canteen_td = Teledeclaration.create_from_diagnostic(
-                cls.invalid_canteen_diagnostic, applicant=UserFactory.create()
+                cls.invalid_canteen_diagnostic, applicant=UserFactory()
             )
 
         cls.deleted_canteen_diagnostic = DiagnosticFactory(
@@ -115,7 +113,7 @@ class TeledeclarationQuerySetTest(TestCase):
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.deleted_canteen_td = Teledeclaration.create_from_diagnostic(
-                cls.deleted_canteen_diagnostic, applicant=UserFactory.create()
+                cls.deleted_canteen_diagnostic, applicant=UserFactory()
             )
         cls.canteen_sat_diagnostic = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -127,7 +125,7 @@ class TeledeclarationQuerySetTest(TestCase):
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.canteen_sat_td = Teledeclaration.create_from_diagnostic(
-                cls.canteen_sat_diagnostic, applicant=UserFactory.create()
+                cls.canteen_sat_diagnostic, applicant=UserFactory()
             )
         cls.canteen_sat_td.teledeclaration_mode = Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
         cls.canteen_sat_diagnostic.save()
@@ -198,10 +196,8 @@ class TestTeledeclarationModelConstraintsTest(TestCase):
         If the diagnostic used for the teledeclaration is deleted, the teledeclaration
         should be cancelled
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         diagnostic.delete()
@@ -216,9 +212,9 @@ class TestTeledeclarationModelConstraintsTest(TestCase):
         # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
         # bulk_create does not pass through the `save` method, so it allows us to test the
         # actual constraint.
-        canteen = CanteenFactory.create()
-        diagnostic = DiagnosticFactory.create(canteen=canteen)
-        applicant = UserFactory.create()
+        canteen = CanteenFactory()
+        diagnostic = DiagnosticFactory(canteen=canteen)
+        applicant = UserFactory()
         teledeclaration_1 = Teledeclaration(
             canteen=canteen,
             year=year_data,
@@ -245,9 +241,9 @@ class TestTeledeclarationModelConstraintsTest(TestCase):
         # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
         # bulk_create does not pass through the `save` method, so it allows us to test the
         # actual constraint.
-        canteen = CanteenFactory.create()
-        diagnostic = DiagnosticFactory.create(canteen=canteen)
-        applicant = UserFactory.create()
+        canteen = CanteenFactory()
+        diagnostic = DiagnosticFactory(canteen=canteen)
+        applicant = UserFactory()
         teledeclaration_1 = Teledeclaration(
             canteen=canteen,
             year=year_data,
@@ -277,7 +273,7 @@ class TestTeledeclarationModelConstraintsTest(TestCase):
         # Doesn't use the TeledeclarationFactory to escape the `clean` function validation
         # bulk_create does not pass through the `save` method, so it allows us to test the
         # actual constraint.
-        applicant = UserFactory.create()
+        applicant = UserFactory()
         teledeclaration_1 = Teledeclaration(
             canteen=None,
             year=year_data,

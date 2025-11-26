@@ -270,7 +270,7 @@ class CanteenFactory(factory.django.DjangoModelFactory):
                 self.sectors_m2m.add(sector)
         else:
             for _ in range(random.randint(1, 3)):
-                self.sectors_m2m.add(SectorM2MFactory.create())
+                self.sectors_m2m.add(SectorM2MFactory())
 
     @factory.post_generation
     def managers(self, create, extracted, **kwargs):
@@ -281,4 +281,4 @@ class CanteenFactory(factory.django.DjangoModelFactory):
                 self.managers.add(manager)
         else:
             for _ in range(random.randint(1, 2)):
-                self.managers.add(UserFactory.create())
+                self.managers.add(UserFactory())

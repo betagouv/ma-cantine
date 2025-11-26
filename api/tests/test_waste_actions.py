@@ -2,19 +2,14 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from data.factories import (
-    CanteenFactory,
-    ResourceActionFactory,
-    UserFactory,
-    WasteActionFactory,
-)
+from data.factories import CanteenFactory, ResourceActionFactory, UserFactory, WasteActionFactory
 from data.models import WasteAction
 
 
 class TestWasteActionsListApi(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.waste_action = WasteActionFactory.create()
+        cls.waste_action = WasteActionFactory()
 
     def test_get_waste_actions_list(self):
         response = self.client.get(reverse("waste_actions_list"))
@@ -24,9 +19,9 @@ class TestWasteActionsListApi(APITestCase):
 
 class TestWasteActionsListFiltersApi(APITestCase):
     def test_effort_filter(self):
-        WasteActionFactory.create(effort=WasteAction.Effort.LARGE)
-        WasteActionFactory.create(effort=WasteAction.Effort.MEDIUM)
-        WasteActionFactory.create(effort=WasteAction.Effort.SMALL)
+        WasteActionFactory(effort=WasteAction.Effort.LARGE)
+        WasteActionFactory(effort=WasteAction.Effort.MEDIUM)
+        WasteActionFactory(effort=WasteAction.Effort.SMALL)
 
         response = self.client.get(
             f"{reverse('waste_actions_list')}?effort={WasteAction.Effort.SMALL}&effort={WasteAction.Effort.MEDIUM}"
@@ -35,9 +30,9 @@ class TestWasteActionsListFiltersApi(APITestCase):
         self.assertEqual(len(results), 2)
 
     def test_origin_filter(self):
-        WasteActionFactory.create(waste_origins=[WasteAction.WasteOrigin.PLATE])
-        WasteActionFactory.create(waste_origins=[WasteAction.WasteOrigin.PLATE, WasteAction.WasteOrigin.PREP])
-        WasteActionFactory.create(waste_origins=[WasteAction.WasteOrigin.UNSERVED])
+        WasteActionFactory(waste_origins=[WasteAction.WasteOrigin.PLATE])
+        WasteActionFactory(waste_origins=[WasteAction.WasteOrigin.PLATE, WasteAction.WasteOrigin.PREP])
+        WasteActionFactory(waste_origins=[WasteAction.WasteOrigin.UNSERVED])
 
         response = self.client.get(
             f"{reverse('waste_actions_list')}?waste_origins={WasteAction.WasteOrigin.PREP}&waste_origins={WasteAction.WasteOrigin.UNSERVED}"
@@ -49,9 +44,9 @@ class TestWasteActionsListFiltersApi(APITestCase):
         """
         A text search is carried out on title and subtitle, ignoring casing and accents
         """
-        WasteActionFactory.create(title="Évaluation de travail", subtitle="Du texte")
-        WasteActionFactory.create(title="Du texte", subtitle="Faire une évaluation")
-        WasteActionFactory.create(title="Autre texte", subtitle="Ne m'évalue pas")
+        WasteActionFactory(title="Évaluation de travail", subtitle="Du texte")
+        WasteActionFactory(title="Du texte", subtitle="Faire une évaluation")
+        WasteActionFactory(title="Autre texte", subtitle="Ne m'évalue pas")
 
         response = self.client.get(f"{reverse('waste_actions_list')}?search=evaluation")
         results = response.data["results"]
@@ -61,14 +56,12 @@ class TestWasteActionsListFiltersApi(APITestCase):
 class TestWasteActionsDetailApi(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.waste_action = WasteActionFactory.create()
+        cls.waste_action = WasteActionFactory()
         cls.user = UserFactory()
         cls.user_with_canteen = UserFactory()
         CanteenFactory()
         cls.canteen = CanteenFactory(managers=[cls.user_with_canteen])
-        cls.resource_action = ResourceActionFactory.create(
-            resource=cls.waste_action, canteen=cls.canteen, is_done=True
-        )
+        cls.resource_action = ResourceActionFactory(resource=cls.waste_action, canteen=cls.canteen, is_done=True)
 
     def test_get_waste_action_detail(self):
         # anonymous

@@ -18,9 +18,9 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         """
         There should be one request for every canteens
         """
-        manager = UserFactory.create()  # Avoids integrity errors from user creation
+        manager = UserFactory()  # Avoids integrity errors from user creation
         for i in range(130):
-            CanteenFactory.create(
+            CanteenFactory(
                 city=None,
                 geolocation_bot_attempts=0,
                 city_insee_code="69383",
@@ -69,7 +69,7 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         Geolocation data should be filled with the response
         from the API
         """
-        canteen = CanteenFactory.create(city_insee_code="38185", city=None, geolocation_bot_attempts=0)
+        canteen = CanteenFactory(city_insee_code="38185", city=None, geolocation_bot_attempts=0)
 
         mock.get(
             f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes",
@@ -130,11 +130,9 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         Data that we want to recover is: city, postal code, department, region
         """
         candidate_canteens = [
-            CanteenFactory.create(city=None, geolocation_bot_attempts=0, postal_code="69003", city_insee_code="69383"),
-            CanteenFactory.create(
-                department=None, geolocation_bot_attempts=9, postal_code="69003", city_insee_code="69383"
-            ),
-            CanteenFactory.create(
+            CanteenFactory(city=None, geolocation_bot_attempts=0, postal_code="69003", city_insee_code="69383"),
+            CanteenFactory(department=None, geolocation_bot_attempts=9, postal_code="69003", city_insee_code="69383"),
+            CanteenFactory(
                 department=Department.ain,
                 city="Une ville",
                 geolocation_bot_attempts=4,
@@ -143,27 +141,27 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
             ),
         ]
         _ = [
-            CanteenFactory.create(
+            CanteenFactory(
                 department=Department.ain,
                 city="Une ville",
                 geolocation_bot_attempts=1,
                 postal_code="69003",
                 city_insee_code=None,
             ),
-            CanteenFactory.create(city=None, geolocation_bot_attempts=20, postal_code="69003"),
-            CanteenFactory.create(
+            CanteenFactory(city=None, geolocation_bot_attempts=20, postal_code="69003"),
+            CanteenFactory(
                 city=None,
                 geolocation_bot_attempts=0,
                 postal_code="69",
                 city_insee_code=None,
             ),
-            CanteenFactory.create(
+            CanteenFactory(
                 city=None,
                 geolocation_bot_attempts=0,
                 city_insee_code="6009",
                 postal_code=None,
             ),
-            CanteenFactory.create(
+            CanteenFactory(
                 department=None,
                 geolocation_bot_attempts=1,
                 city_insee_code=None,
@@ -183,7 +181,7 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         On every attempt, the geolocation bot count of the
         canteen increases, even if the API returns an error.
         """
-        canteen = CanteenFactory.create(city=None, geolocation_bot_attempts=0, city_insee_code="69883")
+        canteen = CanteenFactory(city=None, geolocation_bot_attempts=0, city_insee_code="69883")
 
         mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes", text="", status_code=403)
         mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code", text=json.dumps([]), status_code=403)
@@ -204,9 +202,9 @@ class TestGeolocationBotUsingSiret(TestCase):
         """
         Only canteens with no city_insee_code and with a SIRET
         """
-        candidate_canteen = CanteenFactory.create(city_insee_code=None, siret="89394682276911")
-        CanteenFactory.create(city_insee_code=29890)  # canteen with city_insee_code
-        canteen_without_siret = CanteenFactory.create(city_insee_code=None)
+        candidate_canteen = CanteenFactory(city_insee_code=None, siret="89394682276911")
+        CanteenFactory(city_insee_code=29890)  # canteen with city_insee_code
+        canteen_without_siret = CanteenFactory(city_insee_code=None)
         Canteen.objects.filter(id=canteen_without_siret.id).update(siret=None)  # override validations
 
         result = list(tasks._get_candidate_canteens_for_siret_to_insee_code_bot())
@@ -218,7 +216,7 @@ class TestGeolocationBotUsingSiret(TestCase):
         Should retrieve geo info for a canteen that have a SIRET
         """
         siret_canteen = "89394682276911"
-        candidate_canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
+        candidate_canteen = CanteenFactory(city_insee_code=None, siret=siret_canteen)
         city_insee_code = "29352"
 
         mock.get(
@@ -254,7 +252,7 @@ class TestGeolocationBotUsingSiret(TestCase):
         from the API
         """
         siret_canteen = "89394682276911"
-        canteen = CanteenFactory.create(city_insee_code=None, siret=siret_canteen)
+        canteen = CanteenFactory(city_insee_code=None, siret=siret_canteen)
         city_insee_code = "29352"
         code_postal = "29890"
         mock.get(

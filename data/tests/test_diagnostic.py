@@ -323,8 +323,8 @@ class DiagnosticQuerySetTest(TestCase):
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.diagnostic_empty = DiagnosticFactory.create(canteen=CanteenFactory(), value_total_ht=None)
-        cls.diagnostic_filled = DiagnosticFactory.create(canteen=CanteenFactory(), value_total_ht=1000)
+        cls.diagnostic_empty = DiagnosticFactory(canteen=CanteenFactory(), value_total_ht=None)
+        cls.diagnostic_filled = DiagnosticFactory(canteen=CanteenFactory(), value_total_ht=1000)
 
     def test_filled_queryset(self):
         self.assertEqual(Diagnostic.objects.all().count(), 2)
@@ -338,9 +338,9 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
 class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.diagnostic_empty_draft = DiagnosticFactory.create(canteen=CanteenFactory(), value_total_ht=None)
-        cls.diagnostic_filled_draft = DiagnosticFactory.create(canteen=CanteenFactory(), value_total_ht=1000)
-        cls.diagnostic_filled_submitted = DiagnosticFactory.create(
+        cls.diagnostic_empty_draft = DiagnosticFactory(canteen=CanteenFactory(), value_total_ht=None)
+        cls.diagnostic_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), value_total_ht=1000)
+        cls.diagnostic_filled_submitted = DiagnosticFactory(
             canteen=CanteenFactory(), value_total_ht=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED
         )
 

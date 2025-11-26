@@ -20,22 +20,22 @@ class TestRelationCentralSatelliteGet(APITestCase):
         producer for other canteens, return some data for those canteens
         """
         central_siret = "22730656663081"
-        central = CanteenFactory.create(
+        central = CanteenFactory(
             siret=central_siret, production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        satellite_1 = CanteenFactory.create(
+        satellite_1 = CanteenFactory(
             central_producer_siret=central_siret,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
         )
         # although user does not have mgmt rights on this, can get same data
-        satellite_2 = CanteenFactory.create(
+        satellite_2 = CanteenFactory(
             central_producer_siret=central_siret,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
         )
         # satellite with siren
-        satellite_3 = CanteenFactory.create(
+        satellite_3 = CanteenFactory(
             central_producer_siret=central_siret,
             siren_unite_legale="227306566",
             siret="",
@@ -43,9 +43,9 @@ class TestRelationCentralSatelliteGet(APITestCase):
             managers=[authenticate.user],
         )
         # the following canteen should not be returned
-        CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
         # neither should this canteen which isn't the satellite production type
-        canteen_on_site_with_central_producer_siret = CanteenFactory.create(
+        canteen_on_site_with_central_producer_siret = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
         )
         Canteen.objects.filter(id=canteen_on_site_with_central_producer_siret.id).update(
@@ -77,19 +77,19 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         """
         Shouldn't be able to create satellites if not logged in
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         response = self.client.post(reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_create_satellite_not_manager(self):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         response = self.client.post(reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_get_satellites_not_manager(self):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         response = self.client.get(reverse("list_create_update_satellite", kwargs={"canteen_pk": canteen.id}), {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -98,8 +98,8 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         """
         When the endpoint is called, create new canteens, adding in some additional helpful information
         """
-        second_manager = UserFactory.create()
-        central_kitchen = CanteenFactory.create(
+        second_manager = UserFactory()
+        central_kitchen = CanteenFactory(
             siret="08376514425566",
             production_type=Canteen.ProductionType.CENTRAL,
             managers=[authenticate.user, second_manager],
@@ -136,10 +136,10 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         Ability to create a link between a central and a satellite that already exists,
         sending off a request to join the mgmt team if necessary (200)
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        existing_canteen = CanteenFactory.create(
+        existing_canteen = CanteenFactory(
             siret="89834106501485",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central_kitchen.siret,
@@ -166,12 +166,10 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         If the added canteen exists already and has a "site" production type,
         it will be updated to "satellite"
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        existing_canteen = CanteenFactory.create(
-            siret="89834106501485", production_type=Canteen.ProductionType.ON_SITE
-        )
+        existing_canteen = CanteenFactory(siret="89834106501485", production_type=Canteen.ProductionType.ON_SITE)
 
         request = {
             "name": existing_canteen.name,
@@ -191,10 +189,10 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         """
         If the satellite has no managers, the CC managers get access to it
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        existing_canteen = CanteenFactory.create(
+        existing_canteen = CanteenFactory(
             siret="89834106501485",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central_kitchen.siret,
@@ -221,14 +219,14 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         """
         If the satellite already has managers, the CC managers do not get automatic access
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        existing_canteen = CanteenFactory.create(
+        existing_canteen = CanteenFactory(
             siret="89834106501485",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central_kitchen.siret,
-            managers=[UserFactory.create()],
+            managers=[UserFactory()],
         )
         Canteen.objects.filter(id=existing_canteen.id).update(central_producer_siret=None)  # clear the link
         existing_canteen.refresh_from_db()
@@ -251,13 +249,11 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         """
         If the satellite targeted already has a central siret listed, don't change anything
         """
-        central_kitchen_1 = CanteenFactory.create(
-            siret="21822171376603", production_type=Canteen.ProductionType.CENTRAL
-        )
-        central_kitchen_2 = CanteenFactory.create(
+        central_kitchen_1 = CanteenFactory(siret="21822171376603", production_type=Canteen.ProductionType.CENTRAL)
+        central_kitchen_2 = CanteenFactory(
             siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        existing_canteen_satellite = CanteenFactory.create(
+        existing_canteen_satellite = CanteenFactory(
             siret="89834106501485",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central_kitchen_1.siret,
@@ -282,10 +278,10 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         """
         It should not be possible to add a central cuisine as a satellite of another central cuisine
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        existing_canteen_central = CanteenFactory.create(
+        existing_canteen_central = CanteenFactory(
             siret="89834106501485", production_type=Canteen.ProductionType.CENTRAL
         )
 
@@ -308,12 +304,10 @@ class TestRelationCentralSatelliteCreateUpdate(APITestCase):
         """
         It should not be possible to add a satellites to canteens that are not central cuisines
         """
-        canteen_not_central_kitchen = CanteenFactory.create(
+        canteen_not_central_kitchen = CanteenFactory(
             siret="08376514425566", production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user]
         )
-        existing_canteen = CanteenFactory.create(
-            siret="89834106501485", production_type=Canteen.ProductionType.ON_SITE
-        )
+        existing_canteen = CanteenFactory(siret="89834106501485", production_type=Canteen.ProductionType.ON_SITE)
 
         request = {
             "name": existing_canteen.name,
@@ -334,8 +328,8 @@ class TestRelationCentralSatelliteUnlink(APITestCase):
         """
         Shouldn't be able to remove satellites if not logged in
         """
-        central_kitchen = CanteenFactory.create(siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
+        central_kitchen = CanteenFactory(siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
         )
 
@@ -349,8 +343,8 @@ class TestRelationCentralSatelliteUnlink(APITestCase):
         """
         Shouldn't be able to remove satellites if the user does not manage the central kitchen
         """
-        central_kitchen = CanteenFactory.create(siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
+        central_kitchen = CanteenFactory(siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
         )
 
@@ -364,10 +358,10 @@ class TestRelationCentralSatelliteUnlink(APITestCase):
         """
         Should be able to remove satellites from a central kitchen
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        satellite = CanteenFactory.create(
+        satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_kitchen.siret
         )
 
@@ -387,7 +381,7 @@ class TestRelationCentralSatelliteUnlink(APITestCase):
         """
         Removing a non-linked satellite from a central kitchen should be a transparent operation
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             siret="08376514425566", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
         unlinked_satellite_siret = "86891081916867"

@@ -18,7 +18,7 @@ from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 class TestETLAnalysisCanteen(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector = SectorM2MFactory.create(id=1, name="Sector factory", category="Category factory")
+        cls.sector = SectorM2MFactory(id=1, name="Sector factory", category="Category factory")
         cls.canteen_1 = CanteenFactory(
             name="Cantine",
             siret="19382111300027",
@@ -85,12 +85,12 @@ class TestETLAnalysisCanteen(TestCase):
 
 class TestETLAnalysisTD(TestCase):
     def test_extraction_teledeclaration(self):
-        applicant = UserFactory.create()
-        canteen = CanteenFactory.create(siret="98648424243607")
-        canteen_deleted = CanteenFactory.create(
+        applicant = UserFactory()
+        canteen = CanteenFactory(siret="98648424243607")
+        canteen_deleted = CanteenFactory(
             siret="92341284500011", deletion_date=timezone.make_aware(datetime.strptime("2023-03-31", "%Y-%m-%d"))
         )
-        canteen_without_siret = CanteenFactory.create()
+        canteen_without_siret = CanteenFactory()
         Canteen.objects.filter(id=canteen_without_siret.id).update(siret=None)  # override validations
         canteen_without_siret.refresh_from_db()
 
@@ -144,7 +144,7 @@ class TestETLAnalysisTD(TestCase):
         for tc in test_cases:
             canteen = CanteenFactory()
             with freeze_time(tc["date_mocked"]):  # Faking time to mock creation_date
-                diagnostic = DiagnosticFactory.create(
+                diagnostic = DiagnosticFactory(
                     canteen=canteen,
                     year=tc["year"],
                     diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -154,7 +154,7 @@ class TestETLAnalysisTD(TestCase):
                     value_externality_performance_ht=tc["data"]["value_externality_performance_ht_agg"],
                     value_egalim_others_ht=tc["data"]["value_egalim_others_ht_agg"],
                 )
-                diagnostic.teledeclare(applicant=UserFactory.create())
+                diagnostic.teledeclare(applicant=UserFactory())
 
                 self.serializer_data = {
                     "value_total_ht": tc["data"]["value_total_ht"],
@@ -278,8 +278,8 @@ class TestETLAnalysisTD(TestCase):
     def test_cout_denrees(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_ok = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
-            diagnostic = DiagnosticFactory.create(canteen=canteen_ok, year=2022, value_total_ht=1000)
-            diagnostic.teledeclare(applicant=UserFactory.create())
+            diagnostic = DiagnosticFactory(canteen=canteen_ok, year=2022, value_total_ht=1000)
+            diagnostic.teledeclare(applicant=UserFactory())
 
             self.serializer_data = {
                 "yearly_meal_count": canteen_ok.yearly_meal_count,
@@ -297,10 +297,8 @@ class TestETLAnalysisTD(TestCase):
             canteen_invalid_yearly_meal_count = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
             Canteen.objects.filter(id=canteen_invalid_yearly_meal_count.id).update(yearly_meal_count=0)
             canteen_invalid_yearly_meal_count.refresh_from_db()
-            diagnostic = DiagnosticFactory.create(
-                canteen=canteen_invalid_yearly_meal_count, year=2021, value_total_ht=1000
-            )
-            diagnostic.teledeclare(applicant=UserFactory.create())
+            diagnostic = DiagnosticFactory(canteen=canteen_invalid_yearly_meal_count, year=2021, value_total_ht=1000)
+            diagnostic.teledeclare(applicant=UserFactory())
 
             self.serializer_data = {
                 "yearly_meal_count": canteen_invalid_yearly_meal_count.yearly_meal_count,
@@ -315,7 +313,7 @@ class TestETLAnalysisTD(TestCase):
 
     def test_geo_columns(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            canteen_with_geo_data = CanteenFactory.create(
+            canteen_with_geo_data = CanteenFactory(
                 department="38",
                 department_lib="Isère",
                 region="84",
@@ -323,8 +321,8 @@ class TestETLAnalysisTD(TestCase):
                 epci="200040715",
                 epci_lib="Grenoble-Alpes-Métropole",
             )
-            diagnostic = DiagnosticFactory.create(canteen=canteen_with_geo_data, year=2022)
-            diagnostic.teledeclare(applicant=UserFactory.create())
+            diagnostic = DiagnosticFactory(canteen=canteen_with_geo_data, year=2022)
+            diagnostic.teledeclare(applicant=UserFactory())
 
         self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
@@ -337,7 +335,7 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(data["lib_region"], "Auvergne-Rhône-Alpes")
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            canteen_half_geo_data = CanteenFactory.create(
+            canteen_half_geo_data = CanteenFactory(
                 department="38",
                 department_lib=None,
                 region="84",
@@ -345,8 +343,8 @@ class TestETLAnalysisTD(TestCase):
                 epci="200040715",
                 epci_lib=None,
             )
-            diagnostic_half_geo = DiagnosticFactory.create(canteen=canteen_half_geo_data, year=2022)
-            diagnostic_half_geo.teledeclare(applicant=UserFactory.create())
+            diagnostic_half_geo = DiagnosticFactory(canteen=canteen_half_geo_data, year=2022)
+            diagnostic_half_geo.teledeclare(applicant=UserFactory())
 
         self.serializer_half_geo = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_half_geo.id)
@@ -359,7 +357,7 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(data["lib_region"], "Auvergne-Rhône-Alpes")  # filled with the serializer
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            canteen_without_geo_data = CanteenFactory.create(
+            canteen_without_geo_data = CanteenFactory(
                 department=None,
                 department_lib=None,
                 region=None,
@@ -367,8 +365,8 @@ class TestETLAnalysisTD(TestCase):
                 epci=None,
                 epci_lib=None,
             )
-            diagnostic_without_geo = DiagnosticFactory.create(canteen=canteen_without_geo_data, year=2022)
-            diagnostic_without_geo.teledeclare(applicant=UserFactory.create())
+            diagnostic_without_geo = DiagnosticFactory(canteen=canteen_without_geo_data, year=2022)
+            diagnostic_without_geo.teledeclare(applicant=UserFactory())
 
         self.serializer_without_geo = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_without_geo.id)
@@ -382,9 +380,9 @@ class TestETLAnalysisTD(TestCase):
 
     def test_line_ministry_and_spe(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            canteen_with_line_ministry = CanteenFactory.create(line_ministry=Canteen.Ministries.AGRICULTURE)
-            diagnostic = DiagnosticFactory.create(canteen=canteen_with_line_ministry, year=2022)
-            diagnostic.teledeclare(applicant=UserFactory.create())
+            canteen_with_line_ministry = CanteenFactory(line_ministry=Canteen.Ministries.AGRICULTURE)
+            diagnostic = DiagnosticFactory(canteen=canteen_with_line_ministry, year=2022)
+            diagnostic.teledeclare(applicant=UserFactory())
 
         self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
@@ -395,11 +393,9 @@ class TestETLAnalysisTD(TestCase):
         self.assertEqual(data["spe"], "Oui")
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            canteen_without_line_ministry = CanteenFactory.create(line_ministry=None)
-            diagnostic_without_line_ministry = DiagnosticFactory.create(
-                canteen=canteen_without_line_ministry, year=2022
-            )
-            diagnostic_without_line_ministry.teledeclare(applicant=UserFactory.create())
+            canteen_without_line_ministry = CanteenFactory(line_ministry=None)
+            diagnostic_without_line_ministry = DiagnosticFactory(canteen=canteen_without_line_ministry, year=2022)
+            diagnostic_without_line_ministry.teledeclare(applicant=UserFactory())
 
         self.serializer_without_line_ministry = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_without_line_ministry.id)

@@ -8,13 +8,13 @@ from data.factories import VideoTutorialFactory
 class TestVideoTutorial(APITestCase):
     def test_get_published_video_tutorials(self):
         published_video_tutorials = [
-            VideoTutorialFactory.create(published=True),
-            VideoTutorialFactory.create(published=True),
+            VideoTutorialFactory(published=True),
+            VideoTutorialFactory(published=True),
         ]
         draft_video_tutorials = [
-            VideoTutorialFactory.create(published=False),
-            VideoTutorialFactory.create(published=False),
-            VideoTutorialFactory.create(published=False),
+            VideoTutorialFactory(published=False),
+            VideoTutorialFactory(published=False),
+            VideoTutorialFactory(published=False),
         ]
         response = self.client.get(reverse("video_tutorials"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

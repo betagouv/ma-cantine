@@ -11,7 +11,7 @@ from macantine import tasks
 class TestModelHistory(TestCase):
     @override_settings(MAX_DAYS_HISTORICAL_RECORDS=1)
     def test_old_history_removal(self):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         canteen.name = "Updated name"
         canteen.save()
 
@@ -29,7 +29,7 @@ class TestModelHistory(TestCase):
 
     @override_settings(MAX_DAYS_HISTORICAL_RECORDS=None)
     def test_keep_history_if_env_var_not_set(self):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
 
         history_count = canteen.history.count()
 
@@ -46,7 +46,7 @@ class TestModelHistory(TestCase):
         """
         Objects created in code should save the corresponding authentication method
         """
-        td = TeledeclarationFactory.create()
+        td = TeledeclarationFactory()
 
         self.assertEqual(
             td.history.first().authentication_method, AuthenticationMethodHistoricalRecords.AuthMethodChoices.AUTO

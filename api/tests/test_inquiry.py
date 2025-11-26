@@ -98,12 +98,12 @@ class TestEmail(APITestCase):
     @override_settings(HOSTNAME="mysite.com")
     @override_settings(SECURE="True")
     def test_send_message(self):
-        canteen = CanteenFactory.create(
+        canteen = CanteenFactory(
             siret="76494221950672",
             name="Hugo",
             managers=[
-                UserFactory.create(email="mgmt1@example.com"),
-                UserFactory.create(email="mgmt2@example.com"),
+                UserFactory(email="mgmt1@example.com"),
+                UserFactory(email="mgmt2@example.com"),
             ],
         )
 
@@ -138,7 +138,7 @@ class TestEmail(APITestCase):
     @override_settings(HOSTNAME="mysite.com")
     @override_settings(SECURE="True")
     def test_send_message_no_managers(self):
-        canteen = CanteenFactory.create(siret="76494221950672", name="Hugo")
+        canteen = CanteenFactory(siret="76494221950672", name="Hugo")
         canteen.managers.clear()
 
         payload = {

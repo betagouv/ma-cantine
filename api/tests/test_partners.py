@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from data.factories import PartnerFactory, PartnerTypeFactory, UserFactory
-from data.models import Partner, SectorM2M, SectorCategory
+from data.models import Partner, SectorCategory, SectorM2M
 
 
 class TestPartnersApi(APITestCase):
@@ -14,13 +14,13 @@ class TestPartnersApi(APITestCase):
         sector_category_1 = SectorCategory.ADMINISTRATION
         sector_category_2 = SectorCategory.AUTRES
         sector_category_3 = SectorCategory.EDUCATION
-        type = PartnerTypeFactory.create(name="Test type")
-        type_2 = PartnerTypeFactory.create(name="Test type 2")
-        PartnerTypeFactory.create(name="Unused type")
+        type = PartnerTypeFactory(name="Test type")
+        type_2 = PartnerTypeFactory(name="Test type 2")
+        PartnerTypeFactory(name="Unused type")
         partners = [
-            PartnerFactory.create(departments=["01", "02"], published=True),
-            PartnerFactory.create(departments=["01", "11"], published=True),
-            PartnerFactory.create(departments=None, published=True),
+            PartnerFactory(departments=["01", "02"], published=True),
+            PartnerFactory(departments=["01", "11"], published=True),
+            PartnerFactory(departments=None, published=True),
         ]
         partners[0].types.add(type)
         partners[0].sector_categories = [sector_category_1]
@@ -61,20 +61,20 @@ class TestPartnersApi(APITestCase):
         """
         Return the union of all partners based on the types requested
         """
-        good = PartnerTypeFactory.create(name="Good")
-        also = PartnerTypeFactory.create(name="Also good")
-        ignored = PartnerTypeFactory.create(name="Ignored")
+        good = PartnerTypeFactory(name="Good")
+        also = PartnerTypeFactory(name="Also good")
+        ignored = PartnerTypeFactory(name="Ignored")
 
-        find_me_1 = PartnerFactory.create(name="Find me", published=True)
+        find_me_1 = PartnerFactory(name="Find me", published=True)
         find_me_1.types.add(good)
-        find_me_2 = PartnerFactory.create(name="Find me too", published=True)
+        find_me_2 = PartnerFactory(name="Find me too", published=True)
         find_me_2.types.add(ignored)
         find_me_2.types.add(good)
-        find_me_3 = PartnerFactory.create(name="Me three", published=True)
+        find_me_3 = PartnerFactory(name="Me three", published=True)
         find_me_3.types.add(also)
-        ignore_me = PartnerFactory.create(name="Ignore me", published=True)
+        ignore_me = PartnerFactory(name="Ignore me", published=True)
         ignore_me.types.add(ignored)
-        PartnerFactory.create(name="Typeless", published=True)
+        PartnerFactory(name="Typeless", published=True)
 
         url = f"{reverse('partners_list')}?type=Good&type=Also good"
         response = self.client.get(url)
@@ -89,10 +89,10 @@ class TestPartnersApi(APITestCase):
         """
         Return the union of all partners based on departments requested
         """
-        PartnerFactory.create(name="Find me", departments=["09"], published=True)
-        PartnerFactory.create(name="Find me too", departments=["10"], published=True)
-        PartnerFactory.create(name="Me three", departments=["10", "11"], published=True)
-        PartnerFactory.create(name="But not me", departments=["11"], published=True)
+        PartnerFactory(name="Find me", departments=["09"], published=True)
+        PartnerFactory(name="Find me too", departments=["10"], published=True)
+        PartnerFactory(name="Me three", departments=["10", "11"], published=True)
+        PartnerFactory(name="But not me", departments=["11"], published=True)
 
         url = f"{reverse('partners_list')}?department=09&department=10"
         response = self.client.get(url)
@@ -107,8 +107,8 @@ class TestPartnersApi(APITestCase):
         """
         Return all the free partners
         """
-        PartnerFactory.create(name="Find me", gratuity_option=Partner.GratuityOption.FREE, published=True)
-        PartnerFactory.create(name="But not me", gratuity_option=Partner.GratuityOption.PAID, published=True)
+        PartnerFactory(name="Find me", gratuity_option=Partner.GratuityOption.FREE, published=True)
+        PartnerFactory(name="But not me", gratuity_option=Partner.GratuityOption.PAID, published=True)
 
         url = f"{reverse('partners_list')}?gratuityOption=free"
         response = self.client.get(url)
@@ -120,10 +120,10 @@ class TestPartnersApi(APITestCase):
         """
         Returns the union of all partners based on categories (aka needs) requested
         """
-        PartnerFactory.create(name="Find me", categories=["appro"], published=True)
-        PartnerFactory.create(name="Find me too", categories=["plastic"], published=True)
-        PartnerFactory.create(name="Me three", categories=["plastic", "asso"], published=True)
-        PartnerFactory.create(name="But not me", categories=["asso"], published=True)
+        PartnerFactory(name="Find me", categories=["appro"], published=True)
+        PartnerFactory(name="Find me too", categories=["plastic"], published=True)
+        PartnerFactory(name="Me three", categories=["plastic", "asso"], published=True)
+        PartnerFactory(name="But not me", categories=["asso"], published=True)
 
         url = f"{reverse('partners_list')}?category=appro&category=plastic"
         response = self.client.get(url)
@@ -135,8 +135,8 @@ class TestPartnersApi(APITestCase):
         self.assertIn("Me three", results)
 
     def test_get_single_partner(self):
-        type = PartnerTypeFactory.create(name="Test type")
-        partner = PartnerFactory.create(published=True)
+        type = PartnerTypeFactory(name="Test type")
+        partner = PartnerFactory(published=True)
         partner.types.add(type)
 
         response = self.client.get(reverse("single_partner", kwargs={"pk": partner.id}))
@@ -144,8 +144,8 @@ class TestPartnersApi(APITestCase):
         self.assertIn("Test type", response.json()["types"])
 
     def test_get_published_partners_only(self):
-        PartnerFactory.create(name="I am published", published=True)
-        PartnerFactory.create(name="I am secret", published=False)
+        PartnerFactory(name="I am published", published=True)
+        PartnerFactory(name="I am secret", published=False)
 
         response = self.client.get(reverse("partners_list"))
         partners = response.json().get("results")
@@ -153,7 +153,7 @@ class TestPartnersApi(APITestCase):
         self.assertEqual(partners[0]["name"], "I am published")
 
     def test_get_published_partner_only(self):
-        partner = PartnerFactory.create(name="I am secret", published=False)
+        partner = PartnerFactory(name="I am secret", published=False)
 
         response = self.client.get(reverse("single_partner", kwargs={"pk": partner.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -163,7 +163,7 @@ class TestPartnersApi(APITestCase):
         Test that unauthenticated users can create draft partners
         """
         sector_cateory = SectorM2M.Categories.ADMINISTRATION
-        partner_type = PartnerTypeFactory.create()
+        partner_type = PartnerTypeFactory()
         self.assertEqual(Partner.objects.count(), 0)
         payload = {
             "name": "New partner please",
@@ -186,7 +186,7 @@ class TestPartnersApi(APITestCase):
         self.assertFalse(partner.published, "A user can't create a published partner")
 
     def test_cannot_fetch_contact_info(self):
-        partner = PartnerFactory.create(published=True, contact_email="secret@mi5.com")
+        partner = PartnerFactory(published=True, contact_email="secret@mi5.com")
 
         response = self.client.get(reverse("partners_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -199,9 +199,9 @@ class TestPartnersApi(APITestCase):
         Results should be randomized yet consistent with the session
         """
         for i in range(50):
-            PartnerFactory.create(published=True)
-        user_1 = UserFactory.create()
-        user_2 = UserFactory.create()
+            PartnerFactory(published=True)
+        user_1 = UserFactory()
+        user_2 = UserFactory()
 
         # Creates a session
         self.client.force_login(user=user_1)

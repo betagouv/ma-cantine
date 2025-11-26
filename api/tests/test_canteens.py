@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory
-from data.models import Canteen, Diagnostic, Teledeclaration, Sector
+from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.models.creation_source import CreationSource
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -31,7 +31,7 @@ class CanteenListApiTest(APITestCase):
 
     def test_get_canteens_correct_token(self):
         user, token = get_oauth2_token("canteen:read")
-        canteen = CanteenFactory.create(managers=[user])
+        canteen = CanteenFactory(managers=[user])
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("user_canteens"))
@@ -48,12 +48,12 @@ class CanteenListApiTest(APITestCase):
         is paginated
         """
         user_canteens = [
-            ManagerInvitationFactory.create().canteen,
-            ManagerInvitationFactory.create().canteen,
+            ManagerInvitationFactory().canteen,
+            ManagerInvitationFactory().canteen,
         ]
         other_canteens = [
-            CanteenFactory.create(),
-            CanteenFactory.create(),
+            CanteenFactory(),
+            CanteenFactory(),
         ]
         for canteen in user_canteens:
             canteen.managers.set([authenticate.user])
@@ -77,7 +77,7 @@ class CanteenListApiTest(APITestCase):
         """
         Full representation should not contain the tracking info
         """
-        CanteenFactory.create(
+        CanteenFactory(
             creation_mtm_source="mtm_source_value",
             creation_mtm_campaign="mtm_campaign_value",
             creation_mtm_medium="mtm_medium_value",
@@ -95,11 +95,9 @@ class CanteenListApiTest(APITestCase):
 class CanteenListFilterApiTest(APITestCase):
     @authenticate
     def test_get_canteens_filter_production_type(self):
-        CanteenFactory.create(production_type="site", managers=[authenticate.user])
-        user_central_cuisine = CanteenFactory.create(production_type="central", managers=[authenticate.user])
-        user_central_serving_cuisine = CanteenFactory.create(
-            production_type="central_serving", managers=[authenticate.user]
-        )
+        CanteenFactory(production_type="site", managers=[authenticate.user])
+        user_central_cuisine = CanteenFactory(production_type="central", managers=[authenticate.user])
+        user_central_serving_cuisine = CanteenFactory(production_type="central_serving", managers=[authenticate.user])
 
         response = self.client.get(f"{reverse('user_canteens')}?production_type=central,central_serving")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -119,12 +117,12 @@ class CanteenListPreviewApiTest(APITestCase):
         canteens (even if they are not published).
         """
         user_canteens = [
-            CanteenFactory.create(managers=[authenticate.user]),
-            CanteenFactory.create(managers=[authenticate.user]),
+            CanteenFactory(managers=[authenticate.user]),
+            CanteenFactory(managers=[authenticate.user]),
         ]
         _ = [
-            CanteenFactory.create(),
-            CanteenFactory.create(),
+            CanteenFactory(),
+            CanteenFactory(),
         ]
 
         response = self.client.get(reverse("user_canteen_previews"))
@@ -137,7 +135,7 @@ class CanteenListPreviewApiTest(APITestCase):
 
     def test_canteen_preview_wrong_token(self):
         user, token = get_oauth2_token("user:read")
-        CanteenFactory.create(managers=[user])
+        CanteenFactory(managers=[user])
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("user_canteen_previews"))
@@ -145,7 +143,7 @@ class CanteenListPreviewApiTest(APITestCase):
 
     def test_canteen_preview_correct_token(self):
         user, token = get_oauth2_token("canteen:read")
-        canteen = CanteenFactory.create(managers=[user])
+        canteen = CanteenFactory(managers=[user])
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("user_canteen_previews"))
@@ -162,7 +160,7 @@ class CanteenDetailApiTest(APITestCase):
         Users can access to the full representation of a single
         canteen as long as they manage it.
         """
-        user_canteen = CanteenFactory.create(managers=[authenticate.user])
+        user_canteen = CanteenFactory(managers=[authenticate.user])
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -177,9 +175,9 @@ class CanteenDetailApiTest(APITestCase):
         The endpoint for canteen managers should return the economic data of the appro
         values - as opposed to the published endpoint which returns percentage values
         """
-        user_canteen = CanteenFactory.create(managers=[authenticate.user])
+        user_canteen = CanteenFactory(managers=[authenticate.user])
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=user_canteen,
             year=2021,
             value_total_ht=1200,
@@ -204,7 +202,7 @@ class CanteenDetailApiTest(APITestCase):
         Users cannot access to the full representation of a single
         canteen if they are not managers.
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -214,7 +212,7 @@ class CanteenDetailApiTest(APITestCase):
         """
         Full representation should not contain the tracking info
         """
-        user_canteen = CanteenFactory.create(
+        user_canteen = CanteenFactory(
             creation_mtm_source="mtm_source_value",
             creation_mtm_campaign="mtm_campaign_value",
             creation_mtm_medium="mtm_medium_value",
@@ -234,8 +232,8 @@ class CanteenDetailApiTest(APITestCase):
         """
         Only submitted TDs are returned to the managers
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2020)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2020)
 
         # submit a teledeclaration
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
@@ -257,8 +255,8 @@ class CanteenDetailApiTest(APITestCase):
 
     @authenticate
     def test_get_central_kitchen(self):
-        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
-        satellite = CanteenFactory.create(
+        central_kitchen = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
+        satellite = CanteenFactory(
             central_producer_siret=central_kitchen.siret,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
@@ -279,9 +277,9 @@ class CanteenDetailApiTest(APITestCase):
         A badge can be True, False, or None. None = !True and the tunnel wasn't started,
         False = !True and the tunnel was started.
         """
-        user_canteen = CanteenFactory.create(managers=[authenticate.user])
+        user_canteen = CanteenFactory(managers=[authenticate.user])
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=user_canteen,
             year=2023,
             # test appro badge as true
@@ -310,21 +308,21 @@ class CanteenDetailApiTest(APITestCase):
         """
         Test whether the canteen returns the latest year it has data for
         """
-        central = CanteenFactory.create(siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
+        central = CanteenFactory(siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(
             central_producer_siret="21340172201787",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[authenticate.user],
         )
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=satellite,
             year=2021,
             value_total_ht=100,
             value_bio_ht=0,
             value_sustainable_ht=30,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
             year=2022,
@@ -424,7 +422,7 @@ class CanteenCreateApiTest(APITestCase):
         me 400 with canteen name and id
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
+        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
 
         response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": siret})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -441,7 +439,7 @@ class CanteenCreateApiTest(APITestCase):
         me 400 with canteen name
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret)
+        canteen = CanteenFactory(siret=siret)
 
         response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": siret})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -499,7 +497,7 @@ class CanteenUpdateApiTest(APITestCase):
         """
         Users can only modify the canteens they manage
         """
-        canteen = CanteenFactory.create(city="Paris")
+        canteen = CanteenFactory(city="Paris")
         payload = {"city": "Lyon"}
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
@@ -510,7 +508,7 @@ class CanteenUpdateApiTest(APITestCase):
         """
         Users can modify the canteens they manage
         """
-        canteen = CanteenFactory.create(city="Paris", managers=[authenticate.user])
+        canteen = CanteenFactory(city="Paris", managers=[authenticate.user])
         payload = {
             "city": "Lyon",
             "siret": "21340172201787",
@@ -531,7 +529,7 @@ class CanteenUpdateApiTest(APITestCase):
         """
         Users can modify the production type and related fields of the canteens they manage
         """
-        canteen = CanteenFactory.create(city="Paris", managers=[authenticate.user])
+        canteen = CanteenFactory(city="Paris", managers=[authenticate.user])
         payload = {
             "productionType": Canteen.ProductionType.CENTRAL,
             "sectorList": [],
@@ -550,17 +548,17 @@ class CanteenUpdateApiTest(APITestCase):
         A change in the SIRET of a central cuisine must update the "central_producer_siret" of
         its satellites
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             siret="03201976246133", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
         satellites = [
-            CanteenFactory.create(
+            CanteenFactory(
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
             ),
-            CanteenFactory.create(
+            CanteenFactory(
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
             ),
-            CanteenFactory.create(
+            CanteenFactory(
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
             ),
         ]
@@ -577,10 +575,10 @@ class CanteenUpdateApiTest(APITestCase):
         """
         A central cuisine without a SIRET can add one without modifying everybody else
         """
-        central_kitchen_without_siret = CanteenFactory.create(
+        central_kitchen_without_siret = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        canteen_satellite = CanteenFactory.create(
+        canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central_kitchen_without_siret.siret,
         )
@@ -588,12 +586,10 @@ class CanteenUpdateApiTest(APITestCase):
         central_kitchen_without_siret.refresh_from_db()
         Canteen.objects.filter(id=canteen_satellite.id).update(central_producer_siret=None)
         canteen_satellite.refresh_from_db()
-        canteen_central_serving = CanteenFactory.create(
+        canteen_central_serving = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL_SERVING, central_producer_siret=None
         )
-        canteen_on_site = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE, central_producer_siret=None
-        )
+        canteen_on_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, central_producer_siret=None)
         other_canteens = [canteen_satellite, canteen_central_serving, canteen_on_site]
         payload = {"siret": "35662897196149"}
 
@@ -612,7 +608,7 @@ class CanteenUpdateApiTest(APITestCase):
         A canteen modification shouldn't allow deleting a SIRET with sending blank or null value
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
+        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
 
         # Test with blank value
         payload = {"siret": ""}
@@ -641,8 +637,8 @@ class CanteenUpdateApiTest(APITestCase):
         me 400 with canteen name
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret)
-        canteen_to_test = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(siret=siret)
+        canteen_to_test = CanteenFactory(managers=[authenticate.user])
         payload = {"siret": siret}
 
         response = self.client.patch(
@@ -662,8 +658,8 @@ class CanteenUpdateApiTest(APITestCase):
         me 400 with canteen name and id
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
-        canteen_to_test = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
+        canteen_to_test = CanteenFactory(managers=[authenticate.user])
         payload = {"siret": siret}
 
         response = self.client.patch(
@@ -681,7 +677,7 @@ class CanteenUpdateApiTest(APITestCase):
         A canteen modification should pass if the siret in the payload is already the canteen's siret
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
+        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
         payload = {"siret": siret}
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
@@ -692,7 +688,7 @@ class CanteenUpdateApiTest(APITestCase):
         """
         The API should not allow image modification for non-managers
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
         image_base_64 = None
         with open(image_path, "rb") as image:
@@ -717,7 +713,7 @@ class CanteenUpdateApiTest(APITestCase):
         """
         The API should allow image addition and deletion for canteen managers
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
         self.assertEqual(canteen.images.count(), 0)
 
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
@@ -750,7 +746,7 @@ class CanteenUpdateApiTest(APITestCase):
         """
         The app should not allow the tracking info to be updated
         """
-        canteen = CanteenFactory.create(
+        canteen = CanteenFactory(
             creation_mtm_source=None,
             creation_mtm_campaign=None,
             creation_mtm_medium=None,
@@ -776,12 +772,13 @@ class CanteenUpdateApiTest(APITestCase):
 class CanteenDeleteApiTest(APITestCase):
     @authenticate
     def test_soft_delete(self):
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         response = self.client.delete(reverse("single_canteen", kwargs={"pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # Model was only soft-deleted but remains in the DB
+        self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
         self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
         self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
         self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)

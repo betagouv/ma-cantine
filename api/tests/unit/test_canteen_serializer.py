@@ -12,6 +12,6 @@ class TestCanteenSerializer(APITestCase):
         self.assertEqual(serialized_canteen["publication_status"], "published")
 
     def test_army_canteens_are_draft(self):
-        canteen = CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE)
+        canteen = CanteenFactory(line_ministry=Canteen.Ministries.ARMEE)
         serialized_canteen = MinimalCanteenSerializer(canteen).data
         self.assertEqual(serialized_canteen["publication_status"], "draft")

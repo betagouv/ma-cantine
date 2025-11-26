@@ -21,9 +21,9 @@ class CanteenTerritoryApiTest(APITestCase):
         user.save()
 
         # Create canteens
-        canteen_01 = CanteenFactory.create(department="01")
-        canteen_02 = CanteenFactory.create(department="02")
-        out_of_place_canteen = CanteenFactory.create(department="03")
+        canteen_01 = CanteenFactory(department="01")
+        canteen_02 = CanteenFactory(department="02")
+        out_of_place_canteen = CanteenFactory(department="03")
 
         # Make request
         response = self.client.get(reverse("territory_canteens"))

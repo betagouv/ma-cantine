@@ -51,7 +51,7 @@ class TestManagerInvitationApi(APITestCase):
         When calling this API on a canteen that the user doesn't manage,
         we expect a 404
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         payload = {"canteenId": canteen.id, "email": "test@example.com"}
         response = self.client.post(reverse("add_manager"), payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -64,7 +64,7 @@ class TestManagerInvitationApi(APITestCase):
         When calling this API on a canteen that the user doesn't manage,
         we expect a 404
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         payload = {"canteenId": canteen.id, "email": "test@example.com"}
         response = self.client.post(reverse("remove_manager"), payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -77,7 +77,7 @@ class TestManagerInvitationApi(APITestCase):
         an unassociated email in the invitations table with the canteen id
         and email an invitation to sign up to the invited manager
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
         payload = {"canteenId": canteen.id, "email": "  test@example.com"}
         response = self.client.post(reverse("add_manager"), payload)
         body = response.json()
@@ -100,7 +100,7 @@ class TestManagerInvitationApi(APITestCase):
         If API called twice with the same data, only save once,
         and only send one email
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
         payload = {"canteenId": canteen.id, "email": "test@example.com"}
         self.client.post(reverse("add_manager"), payload)
         response = self.client.post(reverse("add_manager"), payload)
@@ -118,8 +118,8 @@ class TestManagerInvitationApi(APITestCase):
         One email can be associated to more than one canteen,
         one canteen can be associated to more than one email
         """
-        canteen1 = CanteenFactory.create(managers=[authenticate.user])
-        canteen2 = CanteenFactory.create(managers=[authenticate.user])
+        canteen1 = CanteenFactory(managers=[authenticate.user])
+        canteen2 = CanteenFactory(managers=[authenticate.user])
 
         self.client.post(
             reverse("add_manager"),
@@ -148,8 +148,8 @@ class TestManagerInvitationApi(APITestCase):
         If the email matches an existing user, add the user to the canteen managers
         without going through invitations table. No email sent for now
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        other_user = UserFactory.create(email="test@example.com")
+        canteen = CanteenFactory(managers=[authenticate.user])
+        other_user = UserFactory(email="test@example.com")
         payload = {"canteenId": canteen.id, "email": other_user.email}
 
         response = self.client.post(reverse("add_manager"), payload)
@@ -172,8 +172,8 @@ class TestManagerInvitationApi(APITestCase):
         """
         It should be possible to remove a given manager from a canteen
         """
-        coworker = UserFactory.create()
-        canteen = CanteenFactory.create(managers=[authenticate.user, coworker])
+        coworker = UserFactory()
+        canteen = CanteenFactory(managers=[authenticate.user, coworker])
 
         payload = {"canteenId": canteen.id, "email": coworker.email}
         response = self.client.post(reverse("remove_manager"), payload)
@@ -190,8 +190,8 @@ class TestManagerInvitationApi(APITestCase):
         When trying to remove a manager that does not manage a canteen, we will
         respond 200 OK.
         """
-        coworker = UserFactory.create()
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        coworker = UserFactory()
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         payload = {"canteenId": canteen.id, "email": coworker.email}
         response = self.client.post(reverse("remove_manager"), payload)
@@ -208,8 +208,8 @@ class TestManagerInvitationApi(APITestCase):
         We should be able to remove a pending invitation
         """
         invitedManagerEmail = "invited-manager@example.com"
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        invitation = ManagerInvitationFactory.create(canteen=canteen, email=invitedManagerEmail)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        invitation = ManagerInvitationFactory(canteen=canteen, email=invitedManagerEmail)
 
         payload = {"canteenId": canteen.id, "email": invitedManagerEmail}
         self.client.post(reverse("remove_manager"), payload)
@@ -226,8 +226,8 @@ class TestManagerInvitationApi(APITestCase):
         """
         If the email does not match an existing user, we try with a case insensitive query
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        other_user = UserFactory.create(email="TEst@example.com")
+        canteen = CanteenFactory(managers=[authenticate.user])
+        other_user = UserFactory(email="TEst@example.com")
 
         payload = {"canteenId": canteen.id, "email": "test@example.com"}
         response = self.client.post(reverse("add_manager"), payload)
@@ -252,10 +252,10 @@ class TestManagerInvitationApi(APITestCase):
         If the email does not match an existing user, we try with a case insensitive query. If several
         users have a similar email with different cases, we don't proceed.
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        UserFactory.create(email="TEst@example.com")
-        UserFactory.create(email="TEST@example.com")
-        UserFactory.create(email="TesT@example.com")
+        canteen = CanteenFactory(managers=[authenticate.user])
+        UserFactory(email="TEst@example.com")
+        UserFactory(email="TEST@example.com")
+        UserFactory(email="TesT@example.com")
 
         payload = {"canteenId": canteen.id, "email": "test@example.com"}
         response = self.client.post(reverse("add_manager"), payload)
@@ -272,10 +272,10 @@ class TestManagerInvitationApi(APITestCase):
         If invitations match a newly created user's email address (case insensitive),
         add that user to the canteen's managers
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         self.assertFalse(canteen.managers.filter(email="new.user@example.com").exists())
 
-        ManagerInvitationFactory.create(canteen=canteen, email="new.USER@example.com")
-        UserFactory.create(email="new.user@example.com")
+        ManagerInvitationFactory(canteen=canteen, email="new.USER@example.com")
+        UserFactory(email="new.user@example.com")
 
         self.assertTrue(canteen.managers.filter(email="new.user@example.com").exists())
