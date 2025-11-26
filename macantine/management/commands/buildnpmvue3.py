@@ -13,6 +13,6 @@ class Command(BaseCommand):
         print(BASE_DIR)
 
         os.chdir(os.path.join(BASE_DIR, "2024-frontend"))
-        subprocess.run(["npm", "install"])
+        subprocess.run(["npm", "ci"])
         subprocess.run(["npm", "run", "build"])
         os.chdir(os.path.join(BASE_DIR))
