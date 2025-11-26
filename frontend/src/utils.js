@@ -597,7 +597,7 @@ export const missingCanteenData = (canteen, sectors) => {
 
   // sectors checks
   if (lineMinistryRequired(canteen, sectors) && !canteen.lineMinistry) return true
-  if (canteen.sectors && canteen.sectors.length > 3) return true
+  if (canteen.sectorList.length === 0 || canteen.sectorList.length > 3) return true
 
   // production type specific checks
   const yearlyMealCountKey = "yearlyMealCount"
