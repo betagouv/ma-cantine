@@ -88,8 +88,9 @@ class CanteenActionApiTest(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
             managers=[authenticate.user],
-            sector_list=[],
         )
+        Canteen.objects.filter(id=needs_sectors.id).update(sector_list=[])
+        needs_sectors.refresh_from_db()
         needs_daily_meal_count = CanteenFactory.create(
             siret="40419443300078",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -106,12 +107,14 @@ class CanteenActionApiTest(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             economic_model=Canteen.EconomicModel.PRIVATE,
             city_insee_code="69123",
+        )
+        Canteen.objects.filter(id=too_many_sectors.id).update(
             sector_list=[
                 Sector.ADMINISTRATION_PRISON,
                 Sector.EDUCATION_PRIMAIRE,
                 Sector.SANTE_HOPITAL,
                 Sector.SOCIAL_EHPAD,
-            ],
+            ]
         )
         # TD
         needs_td = CanteenFactory.create(
