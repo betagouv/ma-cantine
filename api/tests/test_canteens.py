@@ -517,7 +517,6 @@ class CanteenUpdateApiTest(APITestCase):
             "managementType": Canteen.ManagementType.DIRECT,
             "reservationExpeParticipant": True,
         }
-        print(canteen.production_type, canteen.sector_list)
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

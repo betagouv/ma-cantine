@@ -282,5 +282,3 @@ class CanteenFactory(factory.django.DjangoModelFactory):
         else:
             for _ in range(random.randint(1, 2)):
                 self.managers.add(UserFactory.create())
-                self.managers.add(UserFactory.create())
-                self.managers.add(UserFactory.create())

@@ -497,10 +497,10 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
         body = response.json()
-        self.assertEqual(body["count"], 0)
         errors = body["errors"]
+        self.assertEqual(body["count"], 0)
         self.assertEqual(
-            errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
+            errors.pop(0)["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
 
     @authenticate
