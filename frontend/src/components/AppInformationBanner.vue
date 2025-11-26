@@ -3,7 +3,7 @@
     <div class="fr-container">
       <div class="fr-notice__body">
         <p class="mb-0">
-          <span class="fr-notice__title"></span>
+          <span class="fr-notice__title">Campagne de télédéclaration 2026 : du 12 janvier au 31 mars 2026.</span>
         </p>
       </div>
     </div>
