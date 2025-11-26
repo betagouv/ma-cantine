@@ -76,8 +76,8 @@ sectorsService.getSectors().then((sectors) => {
   const options = []
   for (let i = 0; i < sectors.length; i++) {
     const sector = sectors[i]
-    const { name, id, categoryName, hasLineMinistry } = sector
-    options.push({ name: name, sectorId: id, hasLineMinistry, hint: categoryName })
+    const { name, value, categoryName, hasLineMinistry } = sector
+    options.push({ name: name, sectorId: value, hasLineMinistry, hint: categoryName })
   }
   const optionsSortedAlphabetically = options.sort((sectorBefore, sectorAfter) => {
     if (sectorBefore.name < sectorAfter.name) return -1
