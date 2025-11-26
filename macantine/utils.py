@@ -120,8 +120,15 @@ CAMPAIGN_DATES = {
         ),
         "rapport_parlement_url": None,  # not published yet
     },
+    2025: {
+        # TODO: basculer les OVERRIDE
+        "teledeclaration_start_date": datetime(2026, 1, 12, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_end_date": datetime(
+            2026, 3, 31, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
+        ),
+    },
     # Note: au moment d'ajouter une nouvelle année :
-    # - penser à y ajouter les settings (pour override)
+    # - penser à y ajouter les settings (pour override dans les environnements non-prod)
     # - et enlever les settings de l'année précédente
 }
 
