@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, TeledeclarationFactory, UserFactory
-from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration
+from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration, Sector
 from data.models.geo import Region
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -162,15 +162,12 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertEqual(results[0].get("name"), "Shiso")
 
     def test_sectors_filter(self):
-        school = SectorM2MFactory.create(name="School")
-        enterprise = SectorM2MFactory.create(name="Enterprise")
-        social = SectorM2MFactory.create(name="Social")
-        CanteenFactory(sectors_m2m=[school], name="Shiso")
-        CanteenFactory(sectors_m2m=[enterprise], name="Wasabi")
-        CanteenFactory(sectors_m2m=[social], name="Mochi")
-        CanteenFactory(sectors_m2m=[school, social], name="Umami")
+        CanteenFactory(sector_list=[Sector.EDUCATION_PRIMAIRE], name="Shiso")
+        CanteenFactory(sector_list=[Sector.ENTERPRISE_ENTREPRISE], name="Wasabi")
+        CanteenFactory(sector_list=[Sector.SOCIAL_AUTRE], name="Mochi")
+        CanteenFactory(sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.SOCIAL_AUTRE], name="Umami")
 
-        url = f"{reverse('published_canteens')}?sectors_m2m={school.id}"
+        url = f"{reverse('published_canteens')}?sector={Sector.EDUCATION_PRIMAIRE}"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 2)
@@ -178,13 +175,13 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertIn("Shiso", result_names)
         self.assertIn("Umami", result_names)
 
-        url = f"{reverse('published_canteens')}?sectors_m2m={enterprise.id}"
+        url = f"{reverse('published_canteens')}?sector={Sector.ENTERPRISE_ENTREPRISE}"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Wasabi")
 
-        url = f"{reverse('published_canteens')}?sectors_m2m={enterprise.id}&sectors_m2m={social.id}"
+        url = f"{reverse('published_canteens')}?sector={Sector.ENTERPRISE_ENTREPRISE}&sector={Sector.SOCIAL_AUTRE}"
         response = self.client.get(url)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 3)

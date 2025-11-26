@@ -128,6 +128,7 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sectors",  # from "sectors_m2m"
+            "sector_list",
             "daily_meal_count",
             "production_type",
             "management_type",
@@ -174,6 +175,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sectors",  # from "sectors_m2m"
+            "sector_list",
             "daily_meal_count",
             "production_type",
             "management_type",
@@ -326,6 +328,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sectors",  # from "sectors_m2m"
+            "sector_list",
             "central_kitchen_diagnostics",
             "line_ministry",
             "daily_meal_count",

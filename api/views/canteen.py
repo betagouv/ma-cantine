@@ -59,7 +59,7 @@ from common.api.recherche_entreprises import (
     fetch_geo_data_from_siret,
 )
 from common.utils import send_mail
-from data.models import Canteen, Diagnostic, ManagerInvitation, SectorM2M
+from data.models import Canteen, Diagnostic, ManagerInvitation, SectorM2M, Sector
 from data.utils import has_charfield_missing_query
 from data.models.creation_source import CreationSource
 
@@ -187,13 +187,16 @@ class PublishedCanteenFilterSet(django_filters.FilterSet):
     min_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="gte")
     max_daily_meal_count = django_filters.NumberFilter(field_name="daily_meal_count", lookup_expr="lte")
     production_type = ProductionTypeInFilter(field_name="production_type")
+    sector = django_filters.MultipleChoiceFilter(
+        field_name="sector_list", choices=Sector.choices, lookup_expr="icontains"
+    )
 
     class Meta:
         model = Canteen
         fields = (
             "department",
             "region",
-            "sectors_m2m",
+            "sector",
             "city_insee_code",
             "min_daily_meal_count",
             "max_daily_meal_count",

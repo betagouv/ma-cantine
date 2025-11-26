@@ -564,7 +564,7 @@ export default {
       return [...beforeWasteMeasurements, ...wasteMeasurements, ...afterWasteMeasurements]
     },
     sectors() {
-      return sectorDisplayString(this.canteen.sectors, this.$store.state.sectors)
+      return sectorDisplayString(this.canteen.sectorList, this.$store.state.sectors)
     },
     usesCentralProducer() {
       return this.canteen.productionType === "site_cooked_elsewhere"
@@ -577,9 +577,9 @@ export default {
     },
     showMinistryField() {
       const sectors = sectorsSelectList(this.$store.state.sectors)
-      const concernedSectors = sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+      const concernedSectors = sectors.filter((x) => !!x.hasLineMinistry).map((x) => x.value)
       if (concernedSectors.length === 0) return false
-      return this.canteen.sectors.some((x) => concernedSectors.indexOf(x) > -1)
+      return this.canteen.sectorList.some((x) => concernedSectors.indexOf(x) > -1)
     },
     approSummary() {
       return approSummary(this.diagnostic)

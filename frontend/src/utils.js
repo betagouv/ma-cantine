@@ -398,7 +398,7 @@ export const sectorsSelectList = (sectors, category = null) => {
 export const sectorDisplayString = (canteenSectors, sectors) => {
   if (!canteenSectors) return ""
   const sectorDisplay = canteenSectors
-    .map((sectorId) => sectors.find((x) => x.id === sectorId).name.toLowerCase())
+    .map((sectorName) => sectors.find((x) => x.value === sectorName).name.toLowerCase())
     .join(", ")
   return capitalise(sectorDisplay)
 }
@@ -579,9 +579,9 @@ export const lineMinistryRequired = (canteen, allSectors) => {
   // - canteen must be Public
   // - canteen has Sector(s) with line_ministry
   if (canteen.economicModel !== "public") return false
-  const concernedSectors = allSectors.filter((x) => !!x.hasLineMinistry).map((x) => x.id)
+  const concernedSectors = allSectors.filter((x) => !!x.hasLineMinistry).map((x) => x.value)
   if (concernedSectors.length === 0) return false
-  return canteen.sectors?.some((x) => concernedSectors.indexOf(x) > -1)
+  return canteen.sectorList?.some((x) => concernedSectors.indexOf(x) > -1)
 }
 
 export const missingCanteenData = (canteen, sectors) => {
@@ -597,12 +597,12 @@ export const missingCanteenData = (canteen, sectors) => {
 
   // sectors checks
   if (lineMinistryRequired(canteen, sectors) && !canteen.lineMinistry) return true
-  if (canteen.sectors && canteen.sectors.length > 3) return true
+  if (canteen.sectorList.length === 0 || canteen.sectorList.length > 3) return true
 
   // production type specific checks
   const yearlyMealCountKey = "yearlyMealCount"
   const dailyMealCountKey = "dailyMealCount"
-  const onSiteFields = [dailyMealCountKey, yearlyMealCountKey, "sectors"]
+  const onSiteFields = [dailyMealCountKey, yearlyMealCountKey, "sectorList"]
   const centralKitchenFields = [dailyMealCountKey, yearlyMealCountKey, "satelliteCanteensCount"]
   const satelliteFields = ["centralProducerSiret"]
 

@@ -95,13 +95,13 @@
                     for="select-sector"
                     :class="{
                       'fr-text': true,
-                      'active-filter-label': filters.sectors_m2m.value && !!filters.sectors_m2m.value.length,
+                      'active-filter-label': filters.sector.value && !!filters.sector.value.length,
                     }"
                   >
                     Secteur d'activité
                   </label>
                   <DsfrSelect
-                    v-model="filters.sectors_m2m.value"
+                    v-model="filters.sector.value"
                     multiple
                     :items="sectors"
                     clearable
@@ -417,17 +417,16 @@ export default {
             return Constants.ProductionTypes.find((pt) => pt.value === value)?.text
           },
         },
-        sectors_m2m: {
+        sector: {
           param: "secteurs",
           value: [],
           default: [],
           transformToFrontend(values) {
             if (!values) return
-            return Array.isArray(values) ? values.map((v) => +v) : [+values]
+            return Array.isArray(values) ? values.map((v) => v) : [values]
           },
           displayName(value) {
-            value = +value
-            return sectors.find((s) => s.id === value)?.name || value
+            return sectors.find((s) => s.value === value)?.name || value
           },
         },
         min_daily_meal_count: {
@@ -631,7 +630,7 @@ export default {
           this.visibleCanteens = response.results
           this.selectableDepartments = response.departments
           this.selectableRegions = response.regions
-          this.setSectors(response.sectors)
+          this.setSectors()
           this.setManagementTypes(response.managementTypes)
           this.setProductionTypes(response.productionTypes)
         })
@@ -735,14 +734,14 @@ export default {
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
-    setSectors(enabledSectorIds) {
+    setSectors() {
       this.sectors = sectorsSelectList(this.$store.state.sectors).map((x) => {
         return x.header
           ? { header: x.header }
           : {
               text: x.name,
-              value: x.id,
-              disabled: enabledSectorIds.indexOf(x.id) === -1,
+              value: x.value,
+              disabled: false,
             }
       })
     },

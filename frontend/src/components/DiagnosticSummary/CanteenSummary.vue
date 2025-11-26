@@ -160,7 +160,7 @@ export default {
       return managementType?.text
     },
     sectors() {
-      return sectorDisplayString(this.canteen.sectors, this.$store.state.sectors)
+      return sectorDisplayString(this.canteen.sectorList, this.$store.state.sectors)
     },
     lineMinistryRequired() {
       return lineMinistryRequired(this.canteen, this.$store.state.sectors)

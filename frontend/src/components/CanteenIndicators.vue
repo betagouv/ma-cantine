@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     businessSegments() {
-      if (!this.canteen.sectors) return null
+      if (!this.canteen.sectorList) return null
       return this.useCategories ? this.categoriesDisplayString : this.sectorsDisplayString
     },
     categoriesDisplayString() {
@@ -69,7 +69,7 @@ export default {
     },
     sectors() {
       const sectors = this.$store.state.sectors
-      return this.canteen.sectors.map((sectorId) => sectors.find((s) => s.id === sectorId))
+      return this.canteen.sectorList.map((sectorValue) => sectors.find((s) => s.value === sectorValue))
     },
     satelliteCount() {
       return this.canteen.isCentralCuisine ? this.canteen.satelliteCanteensCount : undefined
