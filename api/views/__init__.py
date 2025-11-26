@@ -3,7 +3,6 @@ from .canteen import (  # noqa: F401
     ActionableCanteenRetrieveView,
     ActionableCanteensListView,
     AddManagerView,
-    CanteenLocationsView,
     CanteenMinistriesView,
     CanteenStatusBySirenView,
     CanteenStatusBySiretView,

@@ -7,7 +7,6 @@ from rest_framework.test import APITestCase
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, SectorCategory, Sector
-from data.models.geo import Department, Region
 
 year_data = 2023
 date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
@@ -449,29 +448,3 @@ class CanteenStatsApiTest(APITestCase):
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-class TestCanteenLocationsApi(APITestCase):
-    def test_canteen_locations(self):
-        """
-        Test that the right subset of regions and departments 'in use' by canteens are returned
-        """
-        CanteenFactory(department=Department.aisne, department_lib=Department.aisne.label)
-        CanteenFactory(department=Department.ain, department_lib=Department.ain.label)
-        # set region directly
-        CanteenFactory(department=None, region=Region.guadeloupe, region_lib=Region.guadeloupe.label)
-        # create extra to check that list returned doesn't contain duplicates
-        CanteenFactory(department=Department.aisne, department_lib=Department.aisne.label)
-        CanteenFactory(department="", region="")  # checking exlusion of blank strings
-
-        response = self.client.get(reverse("canteen_locations"))
-
-        self.assertEqual(response.status_code, 200)
-        body = response.json()
-        self.assertEqual(len(body["regions"]), 3)
-        self.assertEqual(Region.guadeloupe, body["regions"][0])
-        self.assertEqual(Region.hauts_de_france, body["regions"][1])
-        self.assertEqual(Region.auvergne_rhone_alpes, body["regions"][2])
-        self.assertEqual(len(body["departments"]), 2)
-        self.assertIn(Department.ain, body["departments"][0])
-        self.assertIn(Department.aisne, body["departments"][1])
