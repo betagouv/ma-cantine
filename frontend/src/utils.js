@@ -398,7 +398,7 @@ export const sectorsSelectList = (sectors, category = null) => {
 export const sectorDisplayString = (canteenSectors, sectors) => {
   if (!canteenSectors) return ""
   const sectorDisplay = canteenSectors
-    .map((sectorName) => sectors.find((x) => x.name === sectorName).name.toLowerCase())
+    .map((sectorName) => sectors.find((x) => x.value === sectorName).name.toLowerCase())
     .join(", ")
   return capitalise(sectorDisplay)
 }
