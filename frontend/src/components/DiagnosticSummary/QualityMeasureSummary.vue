@@ -117,6 +117,14 @@
             :value="diagnostic[field.key]"
           />
         </div>
+        <div class="my-8 mb-0">
+          <QualityDiagnosticValue
+            v-for="(field, idx) in franceFields"
+            :key="`family-${idx}`"
+            :text="field.text"
+            :value="diagnostic[field.key]"
+          />
+        </div>
         <div v-if="isDetailedDiagnostic">
           <h6 class="font-weight-bold fr-text grey--text text--darken-3 mt-4">
             Catégories EGalim par famille de produit
@@ -257,16 +265,42 @@ export default {
           key: "valueMeatPoultryEgalimHt",
         },
         {
-          text: "Total (en € HT) de mes achats origine France en viandes et volailles",
-          key: "valueMeatPoultryFranceHt",
-        },
-        {
           text: "Total (en € HT) de mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
           key: "valueFishEgalimHt",
         },
+      ],
+      franceFields: [
         {
-          text: "Total (en € HT) de mes achats origine France en poissons, produits de la mer et de l'aquaculture",
+          text: "Total (en € HT) de mes achats origine France - Viandes et volailles",
+          key: "valueMeatPoultryFranceHt",
+        },
+        {
+          text: "Total (en € HT) de mes achats origine France - Poissons, produits de la mer et de l'aquaculture",
           key: "valueProduitsDeLaMerFrance",
+        },
+        {
+          text: "Total (en € HT) de mes achats origine France - Charcuterie",
+          key: "valueCharcuterieFrance",
+        },
+        {
+          text: "Total (en € HT) de mes achats origine France - Fruits et légumes frais et surgelés",
+          key: "valueFruitsEtLegumesFrance",
+        },
+        {
+          text: "Total (en € HT) de mes achats origine France - BOF (Produits laitiers, beurre et œufs)",
+          key: "valueProduitsLaitiersFrance",
+        },
+        {
+          text: "Total (en € HT) de mes achats origine France - Boulangerie / Pâtisserie fraîches",
+          key: "valueBoulangerieFrance",
+        },
+        {
+          text: "Total (en € HT) de mes achats origine France - Boissons",
+          key: "valueBoissonsFrance",
+        },
+        {
+          text: "Total (en € HT) de mes achats origine France - Autres produits frais, surgelés et d’épicerie",
+          key: "valueAutresFrance",
         },
       ],
     }
