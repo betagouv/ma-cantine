@@ -65,18 +65,20 @@
     <!-- Autre EGalim dont Commerce equitable -->
     <v-row class="my-0 my-md-6">
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
-        <div class="d-block d-sm-flex align-center" v-if="$vuetify.breakpoint.smAndDown">
-          <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
-            mdi-cow
-          </v-icon>
-          <div v-for="label in otherLabelsCommerceEquitable" :key="label.title">
-            <img
-              :src="`/static/images/quality-labels/${label.src}`"
-              :alt="label.title"
-              :title="label.title"
-              class="mr-1"
-              style="max-height: 40px;"
-            />
+        <div class="d-block d-sm-flex align-center">
+          <div class="d-block d-sm-flex align-center" v-if="$vuetify.breakpoint.smAndDown">
+            <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
+              mdi-cow
+            </v-icon>
+            <div v-for="label in otherLabelsCommerceEquitable" :key="label.title">
+              <img
+                :src="`/static/images/quality-labels/${label.src}`"
+                :alt="label.title"
+                :title="label.title"
+                class="mr-1"
+                style="max-height: 40px;"
+              />
+            </div>
           </div>
 
           <label class="ml-4 ml-md-0" for="other-commerce-equitable">
