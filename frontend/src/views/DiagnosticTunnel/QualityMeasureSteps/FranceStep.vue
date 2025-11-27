@@ -159,6 +159,12 @@
           />
         </div>
       </v-col>
+      <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="4" class="pl-14">
+        <div class="d-flex align-center justify-center left-border fill-height">
+          <v-icon size="25" color="#4d4db2">$france-line</v-icon>
+          <p class="fr-text-xs font-weight-bold mb-0 ml-6">FRANCE</p>
+        </div>
+      </v-col>
       <!--
         <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
           Tile
