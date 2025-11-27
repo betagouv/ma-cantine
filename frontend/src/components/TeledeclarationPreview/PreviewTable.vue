@@ -402,14 +402,42 @@ export default {
           param: "valueMeatPoultryEgalimHt",
           label: "Mes achats EGalim en viandes et volailles fraiches ou surgelées",
         },
-        {
-          param: "valueMeatPoultryFranceHt",
-          label: "Mes achats origine France en viandes et volailles fraiches ou surgelées",
-        },
         { param: "valueFishHt", label: "Mes achats en poissons, produits de la mer et de l'aquaculture total" },
         {
           param: "valueFishEgalimHt",
           label: "Mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
+        },
+        {
+          param: "Mes achats origine France en viandes et volailles",
+          label: "valueMeatPoultryFranceHt",
+        },
+        {
+          param: "Mes achats origine France en poissons, produits de la mer et de l'aquaculture",
+          label: "valueProduitsDeLaMerFrance",
+        },
+        {
+          param: "Mes achats origine France en charcuterie",
+          label: "valueCharcuterieFrance",
+        },
+        {
+          param: "Mes achats origine France en fruits et légumes frais et surgelés",
+          label: "valueFruitsEtLegumesFrance",
+        },
+        {
+          param: "Mes achats origine France en BOF (Produits laitiers, beurre et œufs)",
+          label: "valueProduitsLaitiersFrance",
+        },
+        {
+          param: "Mes achats origine France en boulangerie / pâtisserie fraîches",
+          label: "valueBoulangerieFrance",
+        },
+        {
+          param: "Mes achats origine France en boissons",
+          label: "valueBoissonsFrance",
+        },
+        {
+          param: "Mes achats origine France en autres produits frais, surgelés et d’épicerie",
+          label: "valueAutresFrance",
         },
       ]
     },
