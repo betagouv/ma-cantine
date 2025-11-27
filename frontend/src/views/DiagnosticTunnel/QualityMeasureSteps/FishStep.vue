@@ -174,7 +174,7 @@ export default {
       this.totalFamiliesErrorMessage = null
 
       const d = this.payload
-      const sumFish = d.valueFishEgalimHt
+      const sumFish = d.valueFishEgalimHt + d.valueProduitsDeLaMerFrance
       const total = d.valueTotalHt
       const totalFish = d.valueFishHt
       const totalMeatPoultry = d.valueMeatPoultryHt
