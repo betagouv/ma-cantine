@@ -84,7 +84,7 @@
               v-if="displayPurchaseHints"
               v-model="payload.valueMeatPoultryFranceHt"
               @autofill="updatePayload"
-              purchaseType="viandes et volailles provenance France"
+              purchaseType="viandes et volailles origine France"
               :amount="purchasesSummary.valueMeatPoultryFranceHt"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
@@ -221,7 +221,7 @@ export default {
         if (d.valueMeatPoultryFranceHt > totalMeatPoultry) {
           this.totalFranceMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
             totalMeatPoultry
-          )}) doit être supérieur au champ provenance France (${toCurrency(d.valueMeatPoultryFranceHt)})`
+          )}) doit être supérieur au champ origine France (${toCurrency(d.valueMeatPoultryFranceHt)})`
         }
       }
     },
