@@ -278,6 +278,7 @@ export default {
     sumAllFrance() {
       const d = this.payload
       const franceValues = [
+        d.valueMeatPoultryFranceHt,
         d.valueCharcuterieFrance,
         d.valueFruitsLegumesFrance,
         d.valueBoeufFrance,
