@@ -39,6 +39,37 @@
       </v-col>
     </v-row>
 
+    <!-- Bio dont commerce équitable -->
+    <v-row class="my-0 my-md-6">
+      <v-col cols="12" md="8" class="pr-4 pr-md-10">
+        <div class="d-block d-sm-flex align-center">
+          <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
+          <label class="ml-4 ml-md-0" for="bio-commerce-equitable">
+            Dont valeur (en € HT) de mes achats Bio et Commerce équitable
+          </label>
+        </div>
+        <DsfrCurrencyField
+          id="bio-commerce-equitable"
+          v-model.number="payload.valueBioDontCommerceEquitableHt"
+          @blur="updatePayload"
+          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+          :error="totalError"
+          :rules="[validators.decimalPlaces(2)]"
+        />
+        <PurchaseHint
+          v-if="displayPurchaseHints"
+          v-model="payload.valueBioDontCommerceEquitableHt"
+          purchaseType="Bio et Commerce équitable"
+          :amount="purchasesSummary.valueBioDontCommerceEquitableHt"
+          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+          @autofill="updatePayload"
+        />
+      </v-col>
+      <v-col md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
+        <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" />
+      </v-col>
+    </v-row>
+
     <!-- SIQO -->
     <v-row>
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
@@ -193,5 +224,33 @@ export default {
 <style scoped>
 .left-border {
   border-left: solid #4d4db2;
+}
+
+.input-child-icon {
+  display: block;
+  width: 4rem;
+  height: 2rem;
+  position: relative;
+}
+
+.input-child-icon::before {
+  content: "";
+  background-color: #000000;
+  width: 50%;
+  position: absolute;
+  right: 0;
+  bottom: 50%;
+  height: 2px;
+}
+
+.input-child-icon::after {
+  content: "";
+  background-color: #000000;
+  width: 2px;
+  position: absolute;
+  right: 50%;
+  bottom: 50%;
+  top: 0;
+  height: 50%;
 }
 </style>
