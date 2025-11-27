@@ -379,6 +379,10 @@ export default {
       return [
         { param: "valueTotalHt", label: "Mes achats alimentaires total" },
         { param: "valueBioHt", label: "Mes achats Bio ou en conversion Bio" },
+        {
+          param: "valueBioDontCommerceEquitableHt",
+          label: "Dont valeur de mes achats Bio et Commerce équitable",
+        },
         { param: "valueSustainableHt", label: "Mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)" },
         {
           param: "valueExternalityPerformanceHt",
@@ -386,6 +390,10 @@ export default {
             "Mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
         },
         { param: "valueEgalimOthersHt", label: "Autres achats EGalim" },
+        {
+          param: "valueCommerceEquitableHt",
+          label: "Dont valeur des achats Commerce équitable (hors bio)",
+        },
         {
           param: "valueMeatPoultryHt",
           label: "Mes achats en viandes et volailles fraiches ou surgelées total",
