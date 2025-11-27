@@ -280,7 +280,7 @@ export default {
       otherLabelsCommerceEquitable: labels.filter((x) => commerceEquitableLogo.includes(x.title)),
       valueExternalityPerformanceHtDialog: false,
       errorHelperUsed: false,
-      errorHelperFields: ["valueTotalHt", "valueBioHt", "valueSustainableHt"],
+      errorHelperFields: [],
     }
   },
   computed: {
@@ -313,6 +313,13 @@ export default {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
         )}) doit être plus élévé que la somme des valeurs EGalim (${toCurrency(sumEgalim || 0)})`
+        this.errorHelperFields = ["valueTotalHt", "valueBioHt", "valueSustainableHt"]
+      }
+
+      if (d.valueCommerceEquitableHt > d.valueEgalimOthersHt) {
+        this.totalErrorMessage = `La valeur de vos achats Commerce équitable (hors bio) (${toCurrency(
+          d.valueCommerceEquitableHt
+        )}) ne peut pas être plus élévée que la valeur des autres achats EGalim (${toCurrency(total)})`
       }
     },
     sumAllEgalim() {
