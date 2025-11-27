@@ -58,6 +58,39 @@
             />
           </v-col>
         </v-row>
+        <v-row>
+          <v-col v-if="$vuetify.breakpoint.mdAndUp" cols="4" class="pl-14">
+            <div class="d-flex align-center justify-center left-border fill-height">
+              <v-icon size="25" color="#4d4db2">$france-line</v-icon>
+              <p class="fr-text-xs font-weight-bold mb-0 ml-6">FRANCE</p>
+            </div>
+          </v-col>
+          <v-col cols="12" md="6">
+            <!-- Fish France -->
+            <div class="d-block d-sm-flex align-center">
+              <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
+              <label for="fish-france">
+                Total (en € HT) de mes achats origine France en poissons, produits de la mer et de l'aquaculture
+                <span class="fr-hint-text mt-2">Optionnel</span>
+              </label>
+            </div>
+            <DsfrCurrencyField
+              id="fish-france"
+              v-model.number="payload.valueProduitsDeLaMerFrance"
+              :error="fishError"
+              @blur="updatePayload"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+            />
+            <PurchaseHint
+              v-if="displayPurchaseHints"
+              v-model="payload.valueProduitsDeLaMerFrance"
+              @autofill="updatePayload"
+              purchaseType="poissons, produits de la mer et de l'aquaculture origine France"
+              :amount="purchasesSummary.valueProduitsDeLaMerFrance"
+              :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+            />
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <ErrorHelper
