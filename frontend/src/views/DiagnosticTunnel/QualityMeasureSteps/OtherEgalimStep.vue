@@ -56,9 +56,58 @@
             style="max-height: 40px;"
           />
         </div>
+
+    <!-- Autre EGalim dont Commerce equitable -->
+    <v-row class="my-0 my-md-6">
+      <v-col cols="12" md="8" class="pr-4 pr-md-10">
+        <div class="d-block d-sm-flex align-center" v-if="$vuetify.breakpoint.smAndDown">
+          <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
+            mdi-cow
+          </v-icon>
+          <div v-for="label in otherLabelsCommerceEquitable" :key="label.title">
+            <img
+              :src="`/static/images/quality-labels/${label.src}`"
+              :alt="label.title"
+              :title="label.title"
+              class="mr-1"
+              style="max-height: 40px;"
+            />
+          </div>
+
+          <label class="ml-4 ml-md-0" for="other-commerce-equitable">
+            Dont valeur (en € HT) des achats Commerce équitable (hors bio)
+          </label>
+        </div>
+        <DsfrCurrencyField
+          id="other-commerce-equitable"
+          v-model.number="payload.valueCommerceEquitableHt"
+          @blur="updatePayload"
+          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+          :error="totalError"
+          :rules="[validators.required, validators.decimalPlaces(2)]"
+        />
+        <PurchaseHint
+          v-if="displayPurchaseHints"
+          v-model="payload.valueCommerceEquitableHt"
+          @autofill="updatePayload"
+          purchaseType="« commerce équitable (hors bio) »"
+          :amount="purchasesSummary.valueCommerceEquitableHt"
+          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+        />
+      </v-col>
+      <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
         <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
           mdi-cow
         </v-icon>
+        <div v-for="label in otherLabelsCommerceEquitable" :key="label.title">
+          <img
+            :src="`/static/images/quality-labels/${label.src}`"
+            :alt="label.title"
+            :title="label.title"
+            class="mr-1"
+            style="max-height: 40px;"
+          />
+        </div>
       </v-col>
     </v-row>
 
