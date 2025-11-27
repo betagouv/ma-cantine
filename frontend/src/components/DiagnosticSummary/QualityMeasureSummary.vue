@@ -264,6 +264,10 @@ export default {
           text: "Total (en € HT) de mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
           key: "valueFishEgalimHt",
         },
+        {
+          text: "Total (en € HT) de mes achats origine France en poissons, produits de la mer et de l'aquaculture",
+          key: "valueProduitsDeLaMerFrance",
+        },
       ],
     }
   },
