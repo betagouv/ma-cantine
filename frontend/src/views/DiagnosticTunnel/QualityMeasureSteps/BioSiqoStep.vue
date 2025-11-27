@@ -68,6 +68,13 @@
       </v-col>
       <v-col md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
         <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" />
+        <img
+          class="ml-2"
+          :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+          :alt="commerceEquitableLabels[0].title"
+          :title="commerceEquitableLabels[0].title"
+          style="max-height: 40px;"
+        />
       </v-col>
     </v-row>
 
@@ -163,9 +170,11 @@ export default {
       "Indication géographique (IGP)",
       "Spécialité traditionnelle garantie (STG)",
     ]
+    const commerceEquitableLogos = ["Commerce Équitable"]
     return {
       totalErrorMessage: "",
       siqoLabels: labels.filter((x) => siqoLogos.includes(x.title)),
+      commerceEquitableLabels: labels.filter((x) => commerceEquitableLogos.includes(x.title)),
       errorHelperUsed: false,
       errorHelperFields: [],
     }
