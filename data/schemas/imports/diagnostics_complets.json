@@ -213,7 +213,7 @@
       "type": "number"
     },
     {
-      "description": "Bio : Produits aquatiques frais et surgelés",
+      "description": "Bio : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_bio_produits_aquatiques",
       "type": "number"
@@ -261,7 +261,7 @@
       "type": "number"
     },
     {
-      "description": "Label rouge : Produits aquatiques frais et surgelés",
+      "description": "Label rouge : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_label_rouge_produits_aquatiques",
       "type": "number"
@@ -309,7 +309,7 @@
       "type": "number"
     },
     {
-      "description": "AOC / AOP / IGP / STG : Produits aquatiques frais et surgelés",
+      "description": "AOC / AOP / IGP / STG : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_aoc_aop_igp_stg_produits_aquatiques",
       "type": "number"
@@ -357,7 +357,7 @@
       "type": "number"
     },
     {
-      "description": "Certification environnementale de niveau 2 ou HVE : Produits aquatiques frais et surgelés",
+      "description": "Certification environnementale de niveau 2 ou HVE : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_certification_environnementale_produits_aquatiques",
       "type": "number"
@@ -405,7 +405,7 @@
       "type": "number"
     },
     {
-      "description": "Pêche durable : Produits aquatiques frais et surgelés",
+      "description": "Pêche durable : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_peche_durable_produits_aquatiques",
       "type": "number"
@@ -453,7 +453,7 @@
       "type": "number"
     },
     {
-      "description": "Région ultrapériphérique : Produits aquatiques frais et surgelés",
+      "description": "Région ultrapériphérique : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_region_ultraperipherique_produits_aquatiques",
       "type": "number"
@@ -501,7 +501,7 @@
       "type": "number"
     },
     {
-      "description": "Commerce équitable : Produits aquatiques frais et surgelés",
+      "description": "Commerce équitable : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_commerce_equitable_produits_aquatiques",
       "type": "number"
@@ -549,7 +549,7 @@
       "type": "number"
     },
     {
-      "description": "Fermier : Produits aquatiques frais et surgelés",
+      "description": "Fermier : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_fermier_produits_aquatiques",
       "type": "number"
@@ -597,7 +597,7 @@
       "type": "number"
     },
     {
-      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Produits aquatiques frais et surgelés",
+      "description": "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_couts_externalites_produits_aquatiques",
       "type": "number"
@@ -645,7 +645,7 @@
       "type": "number"
     },
     {
-      "description": "Produits acquis sur la base de leurs performances en matière environnementale : Produits aquatiques frais et surgelés",
+      "description": "Produits acquis sur la base de leurs performances en matière environnementale : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_performances_environnementales_produits_aquatiques",
       "type": "number"
@@ -693,7 +693,7 @@
       "type": "number"
     },
     {
-      "description": "Non-EGalim : Produits aquatiques frais et surgelés",
+      "description": "Non-EGalim : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_non_egalim_produits_aquatiques",
       "type": "number"
@@ -741,7 +741,7 @@
       "type": "number"
     },
     {
-      "description": "Provenance France : Produits aquatiques frais et surgelés",
+      "description": "Provenance France : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_provenance_france_produits_aquatiques",
       "type": "number"
@@ -789,7 +789,7 @@
       "type": "number"
     },
     {
-      "description": "Circuit-court : Produits aquatiques frais et surgelés",
+      "description": "Circuit-court : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_circuit_court_produits_aquatiques",
       "type": "number"
@@ -837,7 +837,7 @@
       "type": "number"
     },
     {
-      "description": "Produit local : Produits aquatiques frais et surgelés",
+      "description": "Produit local : Poissons, produits de la mer et de l'aquaculture",
       "exemple": "1234.99",
       "name": "valeur_produit_local_produits_aquatiques",
       "type": "number"
