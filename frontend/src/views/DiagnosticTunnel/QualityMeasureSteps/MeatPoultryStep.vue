@@ -196,6 +196,7 @@ export default {
       const totalMeatPoultry = d.valueMeatPoultryHt
       const totalFish = d.valueFishHt
       const totalFamilies = totalMeatPoultry + totalFish
+      const sumMeat = d.valueMeatPoultryEgalimHt + d.valueMeatPoultryFranceHt
 
       if (totalMeatPoultry > total) {
         this.totalMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
@@ -207,6 +208,10 @@ export default {
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
         this.errorHelperFields.push(...["valueTotalHt", "valueFishHt"])
+      } else if (sumMeat > totalMeatPoultry) {
+        this.totalFamiliesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+          totalFish
+        )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumMeat)})`
       } else {
         if (d.valueMeatPoultryEgalimHt > totalMeatPoultry) {
           this.totalEgalimMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
