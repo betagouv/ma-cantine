@@ -408,36 +408,36 @@ export default {
           label: "Mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
         },
         {
-          param: "Mes achats origine France en viandes et volailles",
-          label: "valueMeatPoultryFranceHt",
+          label: "Mes achats origine France en viandes et volailles",
+          param: "valueMeatPoultryFranceHt",
         },
         {
-          param: "Mes achats origine France en poissons, produits de la mer et de l'aquaculture",
-          label: "valueProduitsDeLaMerFrance",
+          label: "Mes achats origine France en poissons, produits de la mer et de l'aquaculture",
+          param: "valueProduitsDeLaMerFrance",
         },
         {
-          param: "Mes achats origine France en charcuterie",
-          label: "valueCharcuterieFrance",
+          label: "Mes achats origine France en charcuterie",
+          param: "valueCharcuterieFrance",
         },
         {
-          param: "Mes achats origine France en fruits et légumes frais et surgelés",
-          label: "valueFruitsEtLegumesFrance",
+          label: "Mes achats origine France en fruits et légumes frais et surgelés",
+          param: "valueFruitsEtLegumesFrance",
         },
         {
-          param: "Mes achats origine France en BOF (Produits laitiers, beurre et œufs)",
-          label: "valueProduitsLaitiersFrance",
+          label: "Mes achats origine France en BOF (Produits laitiers, beurre et œufs)",
+          param: "valueProduitsLaitiersFrance",
         },
         {
-          param: "Mes achats origine France en boulangerie / pâtisserie fraîches",
-          label: "valueBoulangerieFrance",
+          label: "Mes achats origine France en boulangerie / pâtisserie fraîches",
+          param: "valueBoulangerieFrance",
         },
         {
-          param: "Mes achats origine France en boissons",
-          label: "valueBoissonsFrance",
+          label: "Mes achats origine France en boissons",
+          param: "valueBoissonsFrance",
         },
         {
-          param: "Mes achats origine France en autres produits frais, surgelés et d’épicerie",
-          label: "valueAutresFrance",
+          label: "Mes achats origine France en autres produits frais, surgelés et d’épicerie",
+          param: "valueAutresFrance",
         },
       ]
     },
