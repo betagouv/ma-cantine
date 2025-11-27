@@ -3,8 +3,34 @@
     <FormErrorCallout v-if="totalError" :errorMessages="[totalErrorMessage]" />
     <v-row class="my-0 my-md-6">
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
-        <!-- Charcuterie -->
+        <!-- Viande -->
         <div>
+          <div class="d-block d-sm-flex align-center">
+            <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
+            <label for="meat-poultry-france">
+              Total (en € HT) de mes achats provenance France en viandes et volailles
+              <span class="fr-hint-text mt-2">Optionnel</span>
+            </label>
+          </div>
+          <DsfrCurrencyField
+            id="meat-poultry-france"
+            v-model.number="payload.valueMeatPoultryFranceHt"
+            @blur="updatePayload"
+            :error="totalFranceMeatPoultryError"
+            :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+          />
+          <PurchaseHint
+            v-if="displayPurchaseHints"
+            v-model="payload.valueMeatPoultryFranceHt"
+            @autofill="updatePayload"
+            purchaseType="viandes et volailles provenance France"
+            :amount="purchasesSummary.valueMeatPoultryFranceHt"
+            :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+          />
+        </div>
+
+        <!-- Charcuterie -->
+        <div class="mt-4">
           <label class="ml-4 ml-md-0" for="valueCharcuterieFrance">
             Total (en € HT) de mes achats origine France - Charcuterie
             <span class="fr-hint-text grey--text">
