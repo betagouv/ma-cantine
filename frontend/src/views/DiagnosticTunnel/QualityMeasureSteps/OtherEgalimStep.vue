@@ -83,6 +83,7 @@
 
           <label class="ml-4 ml-md-0" for="other-commerce-equitable">
             Dont valeur (en € HT) des achats Commerce équitable (hors bio)
+            <span class="fr-hint-text my-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
@@ -91,7 +92,7 @@
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
-          :rules="[validators.required, validators.decimalPlaces(2)]"
+          :rules="[validators.decimalPlaces(2)]"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
