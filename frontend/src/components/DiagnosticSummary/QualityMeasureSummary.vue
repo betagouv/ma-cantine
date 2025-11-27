@@ -230,12 +230,20 @@ export default {
           key: "valueBioHt",
         },
         {
+          text: "Dont valeur (en € HT) de mes achats Bio et Commerce équitable",
+          key: "valueBioDontCommerceEquitableHt",
+        },
+        {
           text: "Total (en € HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
           key: "valueSustainableHt",
         },
         {
           text: "Total (en € HT) des autres achats EGalim",
           key: "valueEgalimOthersHt",
+        },
+        {
+          text: "Dont valeur (en € HT) des achats Commerce équitable (hors bio)",
+          key: "valueCommerceEquitableHt",
         },
         {
           text:
