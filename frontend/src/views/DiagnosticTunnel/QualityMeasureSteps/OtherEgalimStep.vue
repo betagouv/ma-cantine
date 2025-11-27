@@ -64,7 +64,10 @@
 
     <!-- Autre EGalim dont Commerce equitable -->
     <v-row class="my-0 my-md-6">
-      <v-col cols="12" md="8" class="pr-4 pr-md-10">
+      <v-col cols="1" class="pt-0 d-flex align-top justify-end">
+        <div class="input-child-icon"></div>
+      </v-col>
+      <v-col cols="11" md="7" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <div class="d-block d-sm-flex align-center" v-if="$vuetify.breakpoint.smAndDown">
             <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
@@ -342,7 +345,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "../../../scss/common.scss";
+
 .left-border {
   border-left: solid #4d4db2;
 }

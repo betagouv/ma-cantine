@@ -249,35 +249,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "../../../scss/common.scss";
+
 .left-border {
   border-left: solid #4d4db2;
-}
-
-.input-child-icon {
-  display: block;
-  height: 100%;
-  width: 100%;
-  position: relative;
-}
-
-.input-child-icon::before {
-  content: "";
-  background-color: #000000;
-  width: 50%;
-  position: absolute;
-  right: 0;
-  bottom: 30%;
-  height: 1px;
-}
-
-.input-child-icon::after {
-  content: "";
-  background-color: #000000;
-  width: 1px;
-  position: absolute;
-  right: 50%;
-  bottom: 30%;
-  top: 0;
 }
 </style>
