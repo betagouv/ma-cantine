@@ -253,11 +253,11 @@ export default {
       ],
       familyFields: [
         {
-          text: "Total (en € HT) de mes achats EGalim en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats EGalim en viandes et volailles",
           key: "valueMeatPoultryEgalimHt",
         },
         {
-          text: "Total (en € HT) de mes achats origine France en viandes et volailles fraiches ou surgelées",
+          text: "Total (en € HT) de mes achats origine France en viandes et volailles",
           key: "valueMeatPoultryFranceHt",
         },
         {
