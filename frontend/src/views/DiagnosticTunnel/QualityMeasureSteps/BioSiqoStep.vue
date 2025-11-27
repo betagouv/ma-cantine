@@ -46,6 +46,7 @@
           <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
           <label class="ml-4 ml-md-0" for="bio-commerce-equitable">
             Dont valeur (en € HT) de mes achats Bio et Commerce équitable
+            <span class="fr-hint-text my-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
