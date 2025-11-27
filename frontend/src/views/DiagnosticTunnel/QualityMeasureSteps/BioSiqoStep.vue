@@ -41,7 +41,10 @@
 
     <!-- Bio dont commerce équitable -->
     <v-row class="my-0 my-md-6">
-      <v-col cols="12" md="8" class="pr-4 pr-md-10">
+      <v-col cols="12" md="1" class="pt-0 d-flex align-top justify-end">
+        <div class="input-child-icon"></div>
+      </v-col>
+      <v-col cols="12" md="7" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
           <label class="ml-4 ml-md-0" for="bio-commerce-equitable">
@@ -66,7 +69,7 @@
           @autofill="updatePayload"
         />
       </v-col>
-      <v-col md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
+      <v-col cols="12" md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
         <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" />
         <img
           class="ml-2"
@@ -245,8 +248,8 @@ export default {
 
 .input-child-icon {
   display: block;
-  width: 4rem;
-  height: 2rem;
+  height: 100%;
+  width: 100%;
   position: relative;
 }
 
@@ -256,18 +259,17 @@ export default {
   width: 50%;
   position: absolute;
   right: 0;
-  bottom: 50%;
-  height: 2px;
+  bottom: 30%;
+  height: 1px;
 }
 
 .input-child-icon::after {
   content: "";
   background-color: #000000;
-  width: 2px;
+  width: 1px;
   position: absolute;
   right: 50%;
-  bottom: 50%;
+  bottom: 30%;
   top: 0;
-  height: 50%;
 }
 </style>
