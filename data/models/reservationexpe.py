@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from .canteen import Canteen
+from data.utils import make_optional_positive_decimal_field
 
 
 class ReservationExpe(models.Model):
@@ -42,20 +43,10 @@ class ReservationExpe(models.Model):
     )
     has_committee = models.BooleanField(default=False, verbose_name="Un comité de pilotage du projet a été défini")
 
-    avg_weight_not_served_t0 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_not_served_t0 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés (g/ convive) sur 20 déjeuners successifs",
     )
-    avg_weight_leftover_t0 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_leftover_t0 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des restes des assiettes exprimées (g/convive) sur 20 déjeuners successifs",
     )
     ratio_edible_non_edible_t0 = models.DecimalField(
@@ -63,31 +54,16 @@ class ReservationExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Ratio de la part non comestible (g) rapportée à la part comestible (g)",
     )
-    avg_weight_preparation_leftover_t0 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_preparation_leftover_t0 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des déchets alimentaires issus de la préparation (g/convive)",
     )
-    avg_weight_bread_leftover_t0 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_bread_leftover_t0 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des pains jetés sur 20 déjeuners successifs (g/convive)",
     )
-    avg_attendance_from_evaluation_t0 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_attendance_from_evaluation_t0 = make_optional_positive_decimal_field(
         verbose_name="Nombre moyen d'usagers à partir de l'évaluation",
     )
     solution_use_rate_t0 = models.DecimalField(
@@ -95,26 +71,16 @@ class ReservationExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Taux d’utilisation de la solution de réservation",
     )
     comments_t0 = models.TextField(null=True, blank=True, verbose_name="Commentaires")
 
     # T1
-    avg_weight_not_served_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_not_served_t1 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés (g/ convive) sur 20 déjeuners successifs",
     )
-    avg_weight_leftover_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_leftover_t1 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des restes des assiettes exprimées (g/convive) sur 20 déjeuners successifs",
     )
     ratio_edible_non_edible_t1 = models.DecimalField(
@@ -122,58 +88,28 @@ class ReservationExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Ratio de la part non comestible (g) rapportée à la part comestible (g)",
     )
-    avg_weight_preparation_leftover_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_preparation_leftover_t1 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des déchets alimentaires issus de la préparation (g/convive)",
     )
-    avg_weight_bread_leftover_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_bread_leftover_t1 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des pains jetés sur 20 déjeuners successifs (g/convive)",
     )
-    avg_attendance_from_evaluation_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_attendance_from_evaluation_t1 = make_optional_positive_decimal_field(
         verbose_name="Nombre moyen d'usagers à partir de l'évaluation",
     )
-    solution_use_rate_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    solution_use_rate_t1 = make_optional_positive_decimal_field(
         verbose_name="Taux d’utilisation de la solution de réservation",
     )
     comments_t1 = models.TextField(null=True, blank=True, verbose_name="Commentaires")
 
     # T2
-    avg_weight_not_served_t2 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_not_served_t2 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés (g/ convive) sur 20 déjeuners successifs",
     )
-    avg_weight_leftover_t2 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_leftover_t2 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des restes des assiettes exprimées (g/convive) sur 20 déjeuners successifs",
     )
     ratio_edible_non_edible_t2 = models.DecimalField(
@@ -181,39 +117,19 @@ class ReservationExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Ratio de la part non comestible (g) rapportée à la part comestible (g)",
     )
-    avg_weight_preparation_leftover_t2 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_preparation_leftover_t2 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des déchets alimentaires issus de la préparation (g/convive)",
     )
-    avg_weight_bread_leftover_t2 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_weight_bread_leftover_t2 = make_optional_positive_decimal_field(
         verbose_name="Moyenne des pesées des pains jetés sur 20 déjeuners successifs (g/convive)",
     )
-    avg_attendance_from_evaluation_t2 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    avg_attendance_from_evaluation_t2 = make_optional_positive_decimal_field(
         verbose_name="Nombre moyen d'usagers à partir de l'évaluation",
     )
-    solution_use_rate_t2 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    solution_use_rate_t2 = make_optional_positive_decimal_field(
         verbose_name="Taux d’utilisation de la solution de réservation",
     )
     comments_t2 = models.TextField(null=True, blank=True, verbose_name="Commentaires")
@@ -223,32 +139,17 @@ class ReservationExpe(models.Model):
         null=True,
         blank=True,
         verbose_name="Satisfaction",
-        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(5))],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("5"))],
     )
-    system_cost = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    system_cost = make_optional_positive_decimal_field(
         verbose_name="Coût de la solution de réservation sur 3 ans",
     )
-    participation_cost = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    participation_cost = make_optional_positive_decimal_field(
         verbose_name="Coûts liés à la participation à l'expérimentation sur 3 ans",
     )
     participation_cost_details = models.TextField(
         null=True, blank=True, verbose_name="Détails des coûts liés à la participation à l'expérimentation"
     )
-    money_saved = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal(0))],
+    money_saved = make_optional_positive_decimal_field(
         verbose_name="Gains générés par l'évitement du gaspillage laimentaire en euros sur 3 ans",
     )
