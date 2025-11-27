@@ -167,7 +167,7 @@ export default {
       totalErrorMessage: "",
       siqoLabels: labels.filter((x) => siqoLogos.includes(x.title)),
       errorHelperUsed: false,
-      errorHelperFields: ["valueTotalHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"],
+      errorHelperFields: [],
     }
   },
   computed: {
@@ -200,6 +200,13 @@ export default {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
         )}) doit être plus élévé que la somme des valeurs EGalim (${toCurrency(sumEgalim || 0)})`
+        this.errorHelperFields = ["valueTotalHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"]
+      }
+
+      if (d.valueBioDontCommerceEquitableHt > total) {
+        this.totalErrorMessage = `La valeur de vos achats Bio et Commerce équitable (${toCurrency(
+          d.valueBioDontCommerceEquitableHt
+        )}) ne peut pas être plus élévée que la valeur de vos achats Bio ou en conversion Bio (${toCurrency(total)})`
       }
     },
     sumAllEgalim() {
