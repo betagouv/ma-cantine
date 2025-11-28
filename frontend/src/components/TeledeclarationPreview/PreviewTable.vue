@@ -341,17 +341,17 @@ export default {
           { param: "valueBoissonsNonEgalim", label: "Mes achats boissons non-EGalim" },
           { param: "valueAutresNonEgalim", label: "Mes autres achats non-EGalim" },
 
-          { param: "valueViandesVolaillesFrance", label: "Mes achats viandes et volailles provenance France" },
+          { param: "valueViandesVolaillesFrance", label: "Mes achats viandes et volailles origine France" },
           {
             param: "valueProduitsDeLaMerFrance",
-            label: "Mes achats poissons, produits de la mer et de l'aquaculture provenance France",
+            label: "Mes achats poissons, produits de la mer et de l'aquaculture origine France",
           },
-          { param: "valueFruitsEtLegumesFrance", label: "Mes achats fruits et legumes provenance France" },
-          { param: "valueCharcuterieFrance", label: "Mes achats charcuterie provenance France" },
-          { param: "valueProduitsLaitiersFrance", label: "Mes achats produits laitiers provenance France" },
-          { param: "valueBoulangerieFrance", label: "Mes achats boulangerie provenance France" },
-          { param: "valueBoissonsFrance", label: "Mes achats boissons provenance France" },
-          { param: "valueAutresFrance", label: "Mes autres achats provenance France" },
+          { param: "valueFruitsEtLegumesFrance", label: "Mes achats fruits et legumes origine France" },
+          { param: "valueCharcuterieFrance", label: "Mes achats charcuterie origine France" },
+          { param: "valueProduitsLaitiersFrance", label: "Mes achats produits laitiers origine France" },
+          { param: "valueBoulangerieFrance", label: "Mes achats boulangerie origine France" },
+          { param: "valueBoissonsFrance", label: "Mes achats boissons origine France" },
+          { param: "valueAutresFrance", label: "Mes autres achats origine France" },
           { param: "valueViandesVolaillesShortDistribution", label: "Mes achats viandes et volailles circuit-court" },
           {
             param: "valueProduitsDeLaMerShortDistribution",
@@ -396,7 +396,7 @@ export default {
         },
         {
           param: "valueMeatPoultryFranceHt",
-          label: "Mes achats provenance France en viandes et volailles fraiches ou surgelées",
+          label: "Mes achats origine France en viandes et volailles fraiches ou surgelées",
         },
         { param: "valueFishHt", label: "Mes achats en poissons, produits de la mer et de l'aquaculture total" },
         {

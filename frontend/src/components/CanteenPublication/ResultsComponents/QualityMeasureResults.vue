@@ -108,7 +108,7 @@
                 <span class="font-weight-bold percentage">{{ percentageDisplay(meatFrancePercentage) }}</span>
                 de viandes et volailles
                 <br />
-                provenance France
+                origine France
               </p>
             </v-col>
             <v-col cols="12" sm="4" class="pa-4">

@@ -397,7 +397,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées origine France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -657,7 +657,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors[2]["message"],
-            "Champ 'Produits aquatiques frais et surgelés, Bio' : La valeur « lol » doit être vide ou un nombre décimal.",
+            "Champ 'Poissons, produits de la mer et de l'aquaculture, Bio' : La valeur « lol » doit être vide ou un nombre décimal.",
         )
         self.assertEqual(
             errors[3]["message"],
@@ -665,7 +665,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         )
         self.assertEqual(
             errors[4]["message"],
-            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 920, est plus que la valeur totale (HT) viandes et volailles, 100",
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées origine France, 920, est plus que la valeur totale (HT) viandes et volailles, 100",
         )
         self.assertEqual(
             errors[5]["message"], "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs."

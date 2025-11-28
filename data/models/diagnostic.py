@@ -693,7 +693,7 @@ class Diagnostic(models.Model):
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim",
     )
     value_meat_poultry_france_ht = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France",
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées origine France",
     )
     value_fish_ht = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) poissons et produits aquatiques",
@@ -933,7 +933,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Bio dont commerce équitable",
     )
     value_produits_de_la_mer_bio = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Bio",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Bio",
     )
     value_produits_de_la_mer_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Produits aquatiques frais et surgelés, Bio dont commerce équitable",
@@ -978,7 +978,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Label rouge",
     )
     value_produits_de_la_mer_label_rouge = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Label rouge",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Label rouge",
     )
     value_fruits_et_legumes_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Label rouge",
@@ -1002,7 +1002,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
     )
     value_produits_de_la_mer_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, AOC / AOP / IGP / STG",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, AOC / AOP / IGP / STG",
     )
     value_fruits_et_legumes_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
@@ -1026,7 +1026,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Haute valeur environnementale",
     )
     value_produits_de_la_mer_hve = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Haute valeur environnementale",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Haute valeur environnementale",
     )
     value_fruits_et_legumes_hve = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Haute valeur environnementale",
@@ -1050,7 +1050,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Pêche durable",
     )
     value_produits_de_la_mer_peche_durable = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Pêche durable",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Pêche durable",
     )
     value_fruits_et_legumes_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Pêche durable",
@@ -1074,7 +1074,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Région ultrapériphérique",
     )
     value_produits_de_la_mer_rup = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Région ultrapériphérique",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Région ultrapériphérique",
     )
     value_fruits_et_legumes_rup = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Région ultrapériphérique",
@@ -1098,7 +1098,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Commerce équitable",
     )
     value_produits_de_la_mer_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Commerce équitable",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Commerce équitable",
     )
     value_fruits_et_legumes_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Commerce équitable",
@@ -1122,7 +1122,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Fermier",
     )
     value_produits_de_la_mer_fermier = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Fermier",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Fermier",
     )
     value_fruits_et_legumes_fermier = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Fermier",
@@ -1146,7 +1146,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
     value_produits_de_la_mer_externalites = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
     value_fruits_et_legumes_externalites = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
@@ -1170,7 +1170,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
     )
     value_produits_de_la_mer_performance = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Produits acquis sur la base de leurs performances en matière environnementale",
     )
     value_fruits_et_legumes_performance = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
@@ -1194,7 +1194,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, non-EGalim.",
     )
     value_produits_de_la_mer_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, non-EGalim.",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, non-EGalim.",
     )
     value_fruits_et_legumes_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, non-EGalim.",
@@ -1218,7 +1218,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Provenance France",
     )
     value_produits_de_la_mer_france = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Provenance France",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Provenance France",
     )
     value_fruits_et_legumes_france = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Provenance France",
@@ -1242,7 +1242,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Circuit-court",
     )
     value_produits_de_la_mer_short_distribution = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Circuit-court",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Circuit-court",
     )
     value_fruits_et_legumes_short_distribution = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Circuit-court",
@@ -1266,7 +1266,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Produit local",
     )
     value_produits_de_la_mer_local = make_optional_positive_decimal_field(
-        verbose_name="Produits aquatiques frais et surgelés, Produit local",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Produit local",
     )
     value_fruits_et_legumes_local = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Produit local",
