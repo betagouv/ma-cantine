@@ -510,20 +510,8 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             mandatory_fields = [
                 "value_total_ht",
             ]
-            value_fields = [
-                "value_total_ht",
-                "value_bio_ht",
-                "value_sustainable_ht",
-                "value_externality_performance_ht",
-                "value_egalim_others_ht",
-                "value_meat_poultry_ht",
-                "value_meat_poultry_egalim_ht",
-                "value_meat_poultry_france_ht",
-                "value_fish_ht",
-                "value_fish_egalim_ht",
-            ]
             appro_fields_length = len(row) - self.total_value_idx
-            value_fields = value_fields[:appro_fields_length]
+            value_fields = Diagnostic.SIMPLE_APPRO_FIELDS_FOR_IMPORT[:appro_fields_length]
             values_dict = {}
             value_offset = 0
             for value in value_fields:
@@ -574,7 +562,7 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
             values_dict["value_total_ht"] = Decimal(row[value_idx].strip().replace(",", "."))
         except InvalidOperation:
             raise ValidationError({"value_total_ht": "Ce champ ne peut pas être vide."})
-        for value in ["value_meat_poultry_ht", "value_fish_ht", *Diagnostic.APPRO_FIELDS]:
+        for value in ["value_meat_poultry_ht", "value_fish_ht"] + Diagnostic.APPRO_FIELDS_FOR_IMPORT:
             try:
                 value_idx = value_idx + 1
                 if row[value_idx]:
