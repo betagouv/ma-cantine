@@ -36,7 +36,7 @@ class Purchase(SoftDeletionModel):
     class Family(models.TextChoices):
         VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes et volailles fraîches et surgelées"
         CHARCUTERIE = "CHARCUTERIE", "Charcuterie"
-        PRODUITS_DE_LA_MER = "PRODUITS_DE_LA_MER", "Produits aquatiques frais et surgelés"
+        PRODUITS_DE_LA_MER = "PRODUITS_DE_LA_MER", "Poissons, produits de la mer et de l'aquaculture"
         FRUITS_ET_LEGUMES = "FRUITS_ET_LEGUMES", "Fruits et légumes frais et surgelés"
         PRODUITS_LAITIERS = "PRODUITS_LAITIERS", "BOF (Produits laitiers, beurre et œufs)"
         BOULANGERIE = "BOULANGERIE", "Boulangerie/Pâtisserie fraîches et surgelées"

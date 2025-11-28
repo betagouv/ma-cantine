@@ -22,7 +22,7 @@ labels = [
 ]
 families = [
     ("VIANDES_VOLAILLES", "Viandes et volailles fraîches et surgelées"),
-    ("PRODUITS_DE_LA_MER", "Produits aquatiques frais et surgelés"),
+    ("PRODUITS_DE_LA_MER", "Poissons, produits de la mer et de l'aquaculture"),
     ("FRUITS_ET_LEGUMES", "Fruits et légumes frais et surgelés"),
     ("CHARCUTERIE", "Charcuterie"),
     ("PRODUITS_LAITIERS", "BOF (Produits laitiers, beurre et œufs)"),
