@@ -302,6 +302,7 @@ class Diagnostic(models.Model):
 
     APPRO_LABELS_EGALIM = [
         "bio",
+        # "bio_dont_commerce_equitable",
         "label_rouge",
         "aocaop_igp_stg",
         "hve",
@@ -335,14 +336,20 @@ class Diagnostic(models.Model):
     SIMPLE_APPRO_FIELDS = [
         "value_total_ht",
         "value_bio_ht",
+        "value_bio_dont_commerce_equitable_ht",
         "value_sustainable_ht",
         "value_externality_performance_ht",
         "value_egalim_others_ht",
+        "value_commerce_equitable_ht",
         "value_meat_poultry_ht",
         "value_meat_poultry_egalim_ht",
         "value_meat_poultry_france_ht",
         "value_fish_ht",
         "value_fish_egalim_ht",
+    ]
+    # TODO: clean up when updating the imports
+    SIMPLE_APPRO_FIELDS_FOR_IMPORT = [
+        field_name for field_name in SIMPLE_APPRO_FIELDS if "commerce_equitable" not in field_name
     ]
 
     AGGREGATED_APPRO_FIELDS = [
@@ -350,17 +357,27 @@ class Diagnostic(models.Model):
         "value_sustainable_ht_agg",
         "value_externality_performance_ht_agg",
         "value_egalim_others_ht_agg",
+        # "value_egalim_hors_bio_ht_agg",
+        # "value_egalim_ht_agg",
     ]
 
     APPRO_FIELDS = [
         "value_viandes_volailles_bio",
+        "value_viandes_volailles_bio_dont_commerce_equitable",
         "value_produits_de_la_mer_bio",
+        "value_produits_de_la_mer_bio_dont_commerce_equitable",
         "value_fruits_et_legumes_bio",
+        "value_fruits_et_legumes_bio_dont_commerce_equitable",
         "value_charcuterie_bio",
+        "value_charcuterie_bio_dont_commerce_equitable",
         "value_produits_laitiers_bio",
+        "value_produits_laitiers_bio_dont_commerce_equitable",
         "value_boulangerie_bio",
+        "value_boulangerie_bio_dont_commerce_equitable",
         "value_boissons_bio",
+        "value_boissons_bio_dont_commerce_equitable",
         "value_autres_bio",
+        "value_autres_bio_dont_commerce_equitable",
         "value_viandes_volailles_label_rouge",
         "value_produits_de_la_mer_label_rouge",
         "value_fruits_et_legumes_label_rouge",
@@ -465,6 +482,10 @@ class Diagnostic(models.Model):
         "value_boulangerie_local",
         "value_boissons_local",
         "value_autres_local",
+    ]
+    # TODO: clean up when updating the imports
+    APPRO_FIELDS_FOR_IMPORT = [
+        field_name for field_name in APPRO_FIELDS if "bio_dont_commerce_equitable" not in field_name
     ]
 
     COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht"] + APPRO_FIELDS
@@ -644,6 +665,9 @@ class Diagnostic(models.Model):
     value_bio_ht = make_optional_positive_decimal_field(
         verbose_name="Bio - Valeur annuelle HT",
     )
+    value_bio_dont_commerce_equitable_ht = make_optional_positive_decimal_field(
+        verbose_name="Bio dont commerce équitable - Valeur annuelle HT",
+    )
     value_fair_trade_ht = make_optional_positive_decimal_field(  # legacy
         verbose_name="Commerce équitable - Valeur annuelle HT",
     )
@@ -658,6 +682,9 @@ class Diagnostic(models.Model):
     )
     value_egalim_others_ht = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) des autres achats EGalim",
+    )
+    value_commerce_equitable_ht = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
     )
     value_meat_poultry_ht = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
@@ -902,26 +929,50 @@ class Diagnostic(models.Model):
     value_viandes_volailles_bio = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Bio",
     )
+    value_viandes_volailles_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, Bio dont commerce équitable",
+    )
     value_produits_de_la_mer_bio = make_optional_positive_decimal_field(
         verbose_name="Produits aquatiques frais et surgelés, Bio",
+    )
+    value_produits_de_la_mer_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Produits aquatiques frais et surgelés, Bio dont commerce équitable",
     )
     value_fruits_et_legumes_bio = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Bio",
     )
+    value_fruits_et_legumes_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, Bio dont commerce équitable",
+    )
     value_charcuterie_bio = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Bio",
+    )
+    value_charcuterie_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, Bio dont commerce équitable",
     )
     value_produits_laitiers_bio = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Bio",
     )
+    value_produits_laitiers_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Bio dont commerce équitable",
+    )
     value_boulangerie_bio = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Bio",
+    )
+    value_boulangerie_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Bio dont commerce équitable",
     )
     value_boissons_bio = make_optional_positive_decimal_field(
         verbose_name="Boissons, Bio",
     )
+    value_boissons_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Boissons, Bio dont commerce équitable",
+    )
     value_autres_bio = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Bio",
+    )
+    value_autres_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d’épicerie, Bio dont commerce équitable",
     )
     value_viandes_volailles_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Label rouge",
@@ -1310,9 +1361,11 @@ class Diagnostic(models.Model):
 
     def populate_simplified_diagnostic_values(self):
         self.value_bio_ht = self.label_group_sum("bio")
+        self.value_bio_dont_commerce_equitable_ht = self.label_sum("bio_dont_commerce_equitable")
         self.value_sustainable_ht = self.label_group_sum("sustainable")
         self.value_externality_performance_ht = self.label_group_sum("externality_performance")
         self.value_egalim_others_ht = self.label_group_sum("egalim_others")
+        self.value_commerce_equitable_ht = self.label_sum("commerce_equitable")
 
         total_meat_egalim = total_meat_france = total_fish_egalim = 0
         for label in Diagnostic.APPRO_LABELS_EGALIM:
@@ -1336,6 +1389,7 @@ class Diagnostic(models.Model):
         self.value_sustainable_ht_agg = self.label_group_sum("sustainable")
         self.value_externality_performance_ht_agg = self.label_group_sum("externality_performance")
         self.value_egalim_others_ht_agg = self.label_group_sum("egalim_others")
+        # group_group
         self.value_egalim_hors_bio_ht_agg = self.label_group_group_sum("egalim_hors_bio")
         self.value_egalim_ht_agg = self.label_group_group_sum("egalim")
 
