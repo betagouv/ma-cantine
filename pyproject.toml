@@ -58,7 +58,7 @@ dependencies = [
     "django-treebeard==4.7.1",
     "django-vite-plugin==4.1.2",
     "django-webpack-loader==3.1.0",
-    "djangorestframework==3.15.2",
+    "djangorestframework==3.16.1",
     "djangorestframework-camel-case==1.4.2",
     "djlint==1.36.3",
     "draftjs-exporter==5.0.0",

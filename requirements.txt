@@ -223,7 +223,7 @@ django-vite-plugin==4.1.2
     # via ma-cantine
 django-webpack-loader==3.1.0
     # via ma-cantine
-djangorestframework==3.15.2
+djangorestframework==3.16.1
     # via
     #   drf-base64
     #   drf-excel
