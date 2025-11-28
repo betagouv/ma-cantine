@@ -12,6 +12,15 @@
         €
     </li>
     <li>
+        <span>Dont valeur en € HT de mes achats Bio et Commerce équitable</span> :
+        {% if not value_bio_dont_commerce_equitableHt is None %}
+            {{ value_bio_dont_commerce_equitableHt|floatformat:2 }}
+        {% else %}
+            —
+        {% endif %}
+        €
+    </li>
+    <li>
         <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)</span> :
         {% if not value_sustainable_ht is None %}
             {{ value_sustainable_ht|floatformat:2 }}
@@ -24,6 +33,15 @@
         <span>Valeur en HT de mes autres achats EGalim</span> :
         {% if not value_egalim_others_ht is None %}
             {{ value_egalim_others_ht|floatformat:2 }}
+        {% else %}
+            —
+        {% endif %}
+        €
+    </li>
+     <li>
+        <span>Dont valeur en € HT des achats Commerce équitable (hors bio)</span> :
+        {% if not value_commerce_equitable_ht is None %}
+            {{ value_commerce_equitable_ht|floatformat:2 }}
         {% else %}
             —
         {% endif %}
