@@ -69,7 +69,7 @@
             <div class="d-block d-sm-flex align-center">
               <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
               <label for="meat-poultry-france">
-                Total (en € HT) de mes achats provenance France en viandes et volailles
+                Total (en € HT) de mes achats origine France en viandes et volailles
                 <span class="fr-hint-text mt-2">Optionnel</span>
               </label>
             </div>
