@@ -13,6 +13,6 @@ class Command(BaseCommand):
         print(BASE_DIR)
 
         os.chdir(os.path.join(BASE_DIR, "frontend"))
-        subprocess.run(["npm", "ci"])
+        subprocess.run(["npm", "ci", "--ignore-scripts"])
         subprocess.run(["npm", "run", "build"])
         os.chdir(os.path.join(BASE_DIR))

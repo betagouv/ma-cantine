@@ -74,7 +74,7 @@ jobs:
         env:
           NODE_OPTIONS: --openssl-legacy-provider
         run: |
-          npm ci
+          npm ci --ignore-scripts
 
       - name: Vue 2 build
         working-directory: ./frontend
