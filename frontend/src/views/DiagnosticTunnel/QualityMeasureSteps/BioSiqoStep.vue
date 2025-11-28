@@ -39,6 +39,56 @@
       </v-col>
     </v-row>
 
+    <!-- Bio dont commerce équitable -->
+    <v-row class="my-0 my-md-6">
+      <v-col cols="1" class="pt-0 d-flex align-top justify-end">
+        <div class="input-child-icon"></div>
+      </v-col>
+      <v-col cols="11" md="7" class="pr-4 pr-md-10">
+        <div class="d-block d-sm-flex align-center">
+          <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
+          <img
+            v-if="$vuetify.breakpoint.smAndDown"
+            class="ml-2"
+            :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+            :alt="commerceEquitableLabels[0].title"
+            :title="commerceEquitableLabels[0].title"
+            style="max-height: 40px;"
+          />
+          <label class="ml-4 ml-md-0" for="bio-commerce-equitable">
+            Dont valeur (en € HT) de mes achats Bio et Commerce équitable
+            <span class="fr-hint-text my-2">Optionnel</span>
+          </label>
+        </div>
+        <DsfrCurrencyField
+          id="bio-commerce-equitable"
+          v-model.number="payload.valueBioDontCommerceEquitableHt"
+          @blur="updatePayload"
+          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+          :error="totalError"
+          :rules="[validators.decimalPlaces(2)]"
+        />
+        <PurchaseHint
+          v-if="displayPurchaseHints"
+          v-model="payload.valueBioDontCommerceEquitableHt"
+          purchaseType="Bio et Commerce équitable"
+          :amount="purchasesSummary.valueBioDontCommerceEquitableHt"
+          :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+          @autofill="updatePayload"
+        />
+      </v-col>
+      <v-col cols="12" md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
+        <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" />
+        <img
+          class="ml-2"
+          :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+          :alt="commerceEquitableLabels[0].title"
+          :title="commerceEquitableLabels[0].title"
+          style="max-height: 40px;"
+        />
+      </v-col>
+    </v-row>
+
     <!-- SIQO -->
     <v-row>
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
@@ -131,11 +181,13 @@ export default {
       "Indication géographique (IGP)",
       "Spécialité traditionnelle garantie (STG)",
     ]
+    const commerceEquitableLogos = ["Commerce Équitable"]
     return {
       totalErrorMessage: "",
       siqoLabels: labels.filter((x) => siqoLogos.includes(x.title)),
+      commerceEquitableLabels: labels.filter((x) => commerceEquitableLogos.includes(x.title)),
       errorHelperUsed: false,
-      errorHelperFields: ["valueTotalHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"],
+      errorHelperFields: [],
     }
   },
   computed: {
@@ -168,6 +220,13 @@ export default {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
           d.valueTotalHt
         )}) doit être plus élévé que la somme des valeurs EGalim (${toCurrency(sumEgalim || 0)})`
+        this.errorHelperFields = ["valueTotalHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"]
+      }
+
+      if (d.valueBioDontCommerceEquitableHt > d.valueBioHt) {
+        this.totalErrorMessage = `La valeur de vos achats Bio et Commerce équitable (${toCurrency(
+          d.valueBioDontCommerceEquitableHt
+        )}) ne peut pas être plus élévée que la valeur de vos achats Bio ou en conversion Bio (${toCurrency(total)})`
       }
     },
     sumAllEgalim() {
@@ -190,7 +249,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "../../../scss/common.scss";
+
 .left-border {
   border-left: solid #4d4db2;
 }
