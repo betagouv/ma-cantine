@@ -349,7 +349,7 @@ class TestTeledeclarationCreateApi(APITestCase):
 
         # Checking the aggregation
         self.assertEqual(teledeclaration.value_total_ht, 1000)
-        self.assertIsNone(teledeclaration.value_bio_ht_agg)
+        self.assertEqual(teledeclaration.value_bio_ht_agg, 0)
         self.assertEqual(
             teledeclaration.value_sustainable_ht_agg,
             json_teledeclaration["value_boissons_label_rouge"]

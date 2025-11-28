@@ -51,11 +51,11 @@ print("\n# properties")
 print("\n# TODO: define label_sum and family_sum methods")
 for label in labels:
     print("@property")
-    print(f"def total_label_{label[0]}(self):")
+    print(f'def label_sum(self, "{label[0]}"):')
     print(f'    return self.label_sum("{label[0]}")')
 for family in families:
     print("@property")
-    print(f"def total_family_{family[0]}(self):")
+    print(f'def family_sum(self, "{family[0]}"):')
     print(f'    return self.family_sum("{family[0]}")')
 
 # factory
@@ -126,9 +126,9 @@ for f in fields:
     print(f'"{f["fieldname"]}": 10,')
 print("")
 for label in labels:
-    print(f"self.assertEqual(diagnostic.total_label_{label[0]}, {10 * len(families)})")
+    print(f'self.assertEqual(diagnostic.label_sum("{label[0]}"), {10 * len(families)})')
 for family in families:
-    print(f"self.assertEqual(diagnostic.total_family_{family[0]}, {10 * len(labels)})")
+    print(f'self.assertEqual(diagnostic.family_sum("{family[0]}"), {10 * len(labels)})')
 
 # fields for purchase summary serializer
 fields = []
