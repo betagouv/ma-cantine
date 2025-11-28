@@ -5,7 +5,7 @@ WORKDIR /app/2024-frontend
 USER root
 
 # NB: this wont reinstall on build, must rebuild server image first
-RUN npm install
+RUN npm ci --ignore-scripts
 
 EXPOSE 5173
 
