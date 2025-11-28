@@ -12,8 +12,12 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
   - package-ecosystem: "npm"
     target-branch: "staging"
     directory: "/2024-frontend"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
