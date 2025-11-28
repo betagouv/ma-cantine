@@ -379,6 +379,10 @@ export default {
       return [
         { param: "valueTotalHt", label: "Mes achats alimentaires total" },
         { param: "valueBioHt", label: "Mes achats Bio ou en conversion Bio" },
+        {
+          param: "valueBioDontCommerceEquitableHt",
+          label: "Dont valeur de mes achats Bio et Commerce équitable",
+        },
         { param: "valueSustainableHt", label: "Mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)" },
         {
           param: "valueExternalityPerformanceHt",
@@ -387,6 +391,10 @@ export default {
         },
         { param: "valueEgalimOthersHt", label: "Autres achats EGalim" },
         {
+          param: "valueCommerceEquitableHt",
+          label: "Dont valeur des achats Commerce équitable (hors bio)",
+        },
+        {
           param: "valueMeatPoultryHt",
           label: "Mes achats en viandes et volailles fraiches ou surgelées total",
         },
@@ -394,14 +402,42 @@ export default {
           param: "valueMeatPoultryEgalimHt",
           label: "Mes achats EGalim en viandes et volailles fraiches ou surgelées",
         },
-        {
-          param: "valueMeatPoultryFranceHt",
-          label: "Mes achats origine France en viandes et volailles fraiches ou surgelées",
-        },
         { param: "valueFishHt", label: "Mes achats en poissons, produits de la mer et de l'aquaculture total" },
         {
           param: "valueFishEgalimHt",
           label: "Mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
+        },
+        {
+          label: "Mes achats origine France en viandes et volailles",
+          param: "valueMeatPoultryFranceHt",
+        },
+        {
+          label: "Mes achats origine France en poissons, produits de la mer et de l'aquaculture",
+          param: "valueProduitsDeLaMerFrance",
+        },
+        {
+          label: "Mes achats origine France en charcuterie",
+          param: "valueCharcuterieFrance",
+        },
+        {
+          label: "Mes achats origine France en fruits et légumes frais et surgelés",
+          param: "valueFruitsEtLegumesFrance",
+        },
+        {
+          label: "Mes achats origine France en BOF (Produits laitiers, beurre et œufs)",
+          param: "valueProduitsLaitiersFrance",
+        },
+        {
+          label: "Mes achats origine France en boulangerie / pâtisserie fraîches",
+          param: "valueBoulangerieFrance",
+        },
+        {
+          label: "Mes achats origine France en boissons",
+          param: "valueBoissonsFrance",
+        },
+        {
+          label: "Mes achats origine France en autres produits frais, surgelés et d’épicerie",
+          param: "valueAutresFrance",
         },
       ]
     },
