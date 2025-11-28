@@ -347,6 +347,7 @@ class Diagnostic(models.Model):
         "value_fish_ht",
         "value_fish_egalim_ht",
     ]
+    # TODO: clean up when updating the imports
     SIMPLE_APPRO_FIELDS_FOR_IMPORT = [
         field_name for field_name in SIMPLE_APPRO_FIELDS if "commerce_equitable" not in field_name
     ]
