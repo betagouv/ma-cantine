@@ -654,7 +654,7 @@ uritemplate==4.1.1
     # via
     #   drf-spectacular
     #   ma-cantine
-uritools==4.0.3
+uritools==5.0.0
     # via
     #   ma-cantine
     #   pyhanko-certvalidator
