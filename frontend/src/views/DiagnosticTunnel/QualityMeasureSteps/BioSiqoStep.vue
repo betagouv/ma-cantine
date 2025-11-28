@@ -226,7 +226,9 @@ export default {
       if (d.valueBioDontCommerceEquitableHt > d.valueBioHt) {
         this.totalErrorMessage = `La valeur de vos achats Bio et Commerce équitable (${toCurrency(
           d.valueBioDontCommerceEquitableHt
-        )}) ne peut pas être plus élévée que la valeur de vos achats Bio ou en conversion Bio (${toCurrency(total)})`
+        )}) ne peut pas être plus élévée que la valeur de vos achats Bio ou en conversion Bio (${toCurrency(
+          d.valueBioHt
+        )})`
       }
     },
     sumAllEgalim() {
