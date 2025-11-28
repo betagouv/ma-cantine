@@ -38,16 +38,16 @@ def populate_simplified_diagnostic_values(td, diag):
     # Attention : pour répliquer les données officielles on doit 
     # pour les TD simples : considérer les valeurs nulles comme nulles
     # pour les TD détaillées : considérer les valeurs nulles comme 0
-    td.value_bio_ht_agg = total_label_bio(diag)
-    td.value_sustainable_ht_agg = sum_int_with_potential_null([total_label_label_rouge(diag), total_label_aocaop_igp_stg(diag)])
-    td.value_externality_performance_ht_agg = sum_int_with_potential_null([total_label_externalites(diag), total_label_performance(diag)])
+    td.value_bio_ht_agg = label_sum(diag, "bio")
+    td.value_sustainable_ht_agg = sum_int_with_potential_null([label_sum(diag, "label_rouge"), label_sum(diag, "aocaop_igp_stg")])
+    td.value_externality_performance_ht_agg = sum_int_with_potential_null([label_sum(diag, "externalites"), label_sum(diag, "performance")])
     td.value_egalim_others_ht_agg = sum_int_with_potential_null(
         [
-            total_label_hve(diag),
-            total_label_peche_durable(diag),
-            total_label_rup(diag),
-            total_label_commerce_equitable(diag),
-            total_label_fermier(diag)
+            label_sum(diag, "hve"),
+            label_sum(diag, "peche_durable"),
+            label_sum(diag, "rup"),
+            label_sum(diag, "commerce_equitable"),
+            label_sum(diag, "fermier")
         ]
     )
     return td
@@ -60,36 +60,6 @@ def populate_simple_values(td, diag):
     td.yearly_meal_count = 0
     td.meal_price = 0
     return td
-
-def total_label_bio(diagnostic):
-    return label_sum(diagnostic, "bio")
-
-def total_label_label_rouge(diagnostic):
-    return label_sum(diagnostic, "label_rouge")
-
-def total_label_aocaop_igp_stg(diagnostic):
-    return label_sum(diagnostic, "aocaop_igp_stg")
-
-def total_label_hve(diagnostic):
-    return label_sum(diagnostic, "hve")
-
-def total_label_externalites(diagnostic):
-    return label_sum(diagnostic, "externalites")
-
-def total_label_performance(diagnostic):
-    return label_sum(diagnostic, "performance")
-
-def total_label_commerce_equitable(diagnostic):
-    return label_sum(diagnostic, "commerce_equitable")
-
-def total_label_fermier(diagnostic):
-    return label_sum(diagnostic, "fermier")
-
-def total_label_peche_durable(diagnostic):
-    return label_sum(diagnostic, "peche_durable")
-
-def total_label_rup(diagnostic):
-    return label_sum(diagnostic, "rup")
 #########################################################
 
 
