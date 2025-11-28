@@ -74,14 +74,14 @@ L'application frontend Vue2 se trouve sous `/frontend`. Pour installer les dépe
 
 ```
 cd frontend
-npm install
+npm ci --ignore-scripts
 ```
 
 L'application frontend Vue3 se trouve sous `/2024-frontend`. Pour installer les dépendances :
 
 ```
 cd 2024-frontend
-npm install
+npm ci --ignore-scripts
 ```
 
 ### Créer la base de données
