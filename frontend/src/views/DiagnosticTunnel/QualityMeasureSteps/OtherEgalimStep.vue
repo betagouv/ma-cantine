@@ -322,7 +322,7 @@ export default {
       if (d.valueCommerceEquitableHt > d.valueEgalimOthersHt) {
         this.totalErrorMessage = `La valeur de vos achats Commerce équitable (hors bio) (${toCurrency(
           d.valueCommerceEquitableHt
-        )}) ne peut pas être plus élévée que la valeur des autres achats EGalim (${toCurrency(total)})`
+        )}) ne peut pas être plus élévée que la valeur des autres achats EGalim (${toCurrency(d.valueEgalimOthersHt)})`
       }
     },
     sumAllEgalim() {
