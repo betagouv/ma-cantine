@@ -234,7 +234,7 @@ djangorestframework-camel-case==1.4.2
     # via ma-cantine
 djlint==1.36.3
     # via ma-cantine
-draftjs-exporter==5.0.0
+draftjs-exporter==5.1.0
     # via
     #   ma-cantine
     #   wagtail
