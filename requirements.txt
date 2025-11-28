@@ -181,7 +181,7 @@ django-ckeditor==6.7.1
     # via ma-cantine
 django-csp==3.8
     # via ma-cantine
-django-debug-toolbar==4.4.6
+django-debug-toolbar==6.1.0
     # via ma-cantine
 django-extensions==4.1
     # via ma-cantine
