@@ -9,15 +9,11 @@ from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
-from data.validators import diagnostic as diagnostic_validators
 from data.fields import ChoiceArrayField
 from data.models import Canteen
 from data.models.creation_source import CreationSource
-from data.utils import (
-    CustomJSONEncoder,
-    make_optional_positive_decimal_field,
-    sum_int_with_potential_null,
-)
+from data.utils import CustomJSONEncoder, make_optional_positive_decimal_field, sum_int_with_potential_null
+from data.validators import diagnostic as diagnostic_validators
 from macantine.utils import (
     CAMPAIGN_DATES,
     EGALIM_OBJECTIVES,
@@ -293,6 +289,49 @@ class Diagnostic(models.Model):
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
 
+    APPRO_FAMILIES = [
+        "viandes_volailles",
+        "produits_de_la_mer",
+        "fruits_et_legumes",
+        "charcuterie",
+        "produits_laitiers",
+        "boulangerie",
+        "boissons",
+        "autres",
+    ]
+
+    APPRO_LABELS_EGALIM = [
+        "bio",
+        "label_rouge",
+        "aocaop_igp_stg",
+        "hve",
+        "peche_durable",
+        "rup",
+        "commerce_equitable",
+        "fermier",
+        "externalites",
+        "performance",
+    ]
+    APPRO_LABELS_NON_EGALIM = [
+        "non_egalim",
+    ]
+    APPRO_LABELS_FRANCE = [
+        "france",
+        "short_distribution",
+        "local",
+    ]
+    APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
+    APPRO_LABELS_GROUPS_MAPPING = {
+        "bio": ["bio"],
+        "sustainable": ["label_rouge", "aocaop_igp_stg"],
+        "externality_performance": ["externalites", "performance"],
+        "egalim_others": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
+    }
+    APPRO_LABELS_GROUPS_GROUPS_MAPPING = {
+        "egalim_hors_bio": ["sustainable", "externality_performance", "egalim_others"],
+        "egalim": ["bio", "sustainable", "externality_performance", "egalim_others"],
+    }
+
     SIMPLE_APPRO_FIELDS = [
         "value_total_ht",
         "value_bio_ht",
@@ -430,7 +469,7 @@ class Diagnostic(models.Model):
 
     COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht"] + APPRO_FIELDS
 
-    NON_APPRO_FIELDS = [
+    WASTE_FIELDS = [
         "has_waste_diagnostic",
         "has_waste_plan",
         "waste_actions",
@@ -447,16 +486,25 @@ class Diagnostic(models.Model):
         "donation_quantity",
         "donation_food_type",
         "other_waste_comments",
+    ]
+
+    DIVERSIFICATION_FIELDS = [
         "has_diversification_plan",
         "diversification_plan_actions",
         "service_type",
         "vegetarian_weekly_recurrence",
         "vegetarian_menu_type",
         "vegetarian_menu_bases",
+    ]
+
+    PLASTIC_FIELDS = [
         "cooking_plastic_substituted",
         "serving_plastic_substituted",
         "plastic_bottles_substituted",
         "plastic_tableware_substituted",
+    ]
+
+    INFO_FIELDS = [
         "communication_supports",
         "other_communication_support",
         "communication_support_url",
@@ -464,6 +512,8 @@ class Diagnostic(models.Model):
         "communicates_on_food_quality",
         "communication_frequency",
     ]
+
+    NON_APPRO_FIELDS = WASTE_FIELDS + DIVERSIFICATION_FIELDS + PLASTIC_FIELDS + INFO_FIELDS
 
     META_FIELDS = [
         "id",
@@ -490,9 +540,21 @@ class Diagnostic(models.Model):
     TUNNEL_PROGRESS_FIELDS = [
         "tunnel_appro",
         "tunnel_waste",
-        "tunnel_plastic",
         "tunnel_diversification",
+        "tunnel_plastic",
         "tunnel_info",
+    ]
+
+    TELEDECLARATION_FIELDS = [
+        "teledeclaration_date",
+        "teledeclaration_mode",
+        "teledeclaration_version",
+        "teledeclaration_id",
+    ]
+    TELEDECLARATION_SNAPSHOT_FIELDS = [
+        "canteen_snapshot",
+        "satellites_snapshot",
+        "applicant_snapshot",
     ]
 
     objects = models.Manager.from_queryset(DiagnosticQuerySet)()
@@ -576,20 +638,20 @@ class Diagnostic(models.Model):
     )
 
     # Product origin
+    value_total_ht = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale annuelle HT",
+    )
     value_bio_ht = make_optional_positive_decimal_field(
         verbose_name="Bio - Valeur annuelle HT",
     )
-    value_fair_trade_ht = make_optional_positive_decimal_field(
+    value_fair_trade_ht = make_optional_positive_decimal_field(  # legacy
         verbose_name="Commerce équitable - Valeur annuelle HT",
     )
     value_sustainable_ht = make_optional_positive_decimal_field(
         verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT",
     )
-    value_pat_ht = make_optional_positive_decimal_field(
+    value_pat_ht = make_optional_positive_decimal_field(  # legacy
         verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
-    )
-    value_total_ht = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale annuelle HT",
     )
     value_externality_performance_ht = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
@@ -1227,6 +1289,93 @@ class Diagnostic(models.Model):
         encoder=CustomJSONEncoder,
     )
 
+    def __str__(self):
+        return f"Diagnostic pour {self.canteen.name} ({self.year})"
+
+    def clean(self):
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            self.populate_simplified_diagnostic_values()
+
+        validation_errors = utils_utils.merge_validation_errors(
+            diagnostic_validators.validate_year(self),
+            diagnostic_validators.validate_approvisionment_total(self),
+            diagnostic_validators.validate_meat_total(self),
+            diagnostic_validators.validate_fish_total(self),
+            diagnostic_validators.validate_meat_fish_egalim(self),
+        )
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
+        return super().clean()
+
+    def populate_simplified_diagnostic_values(self):
+        self.value_bio_ht = self.label_group_sum("bio")
+        self.value_sustainable_ht = self.label_group_sum("sustainable")
+        self.value_externality_performance_ht = self.label_group_sum("externality_performance")
+        self.value_egalim_others_ht = self.label_group_sum("egalim_others")
+
+        total_meat_egalim = total_meat_france = total_fish_egalim = 0
+        for label in Diagnostic.APPRO_LABELS_EGALIM:
+            family = "viandes_volailles"
+            # need to do or 0 and not give a default value because the value can be explicitly set to None
+            total_meat_egalim = total_meat_egalim + (getattr(self, f"value_{family}_{label}") or 0)
+
+            family = "produits_de_la_mer"
+            total_fish_egalim = total_fish_egalim + (getattr(self, f"value_{family}_{label}") or 0)
+
+        for label in Diagnostic.APPRO_LABELS_FRANCE:
+            family = "viandes_volailles"
+            total_meat_france = total_meat_france + (getattr(self, f"value_{family}_{label}") or 0)
+
+        self.value_meat_poultry_egalim_ht = total_meat_egalim
+        self.value_meat_poultry_france_ht = total_meat_france
+        self.value_fish_egalim_ht = total_fish_egalim
+
+    def populate_aggregated_values(self):
+        self.value_bio_ht_agg = self.label_group_sum("bio")
+        self.value_sustainable_ht_agg = self.label_group_sum("sustainable")
+        self.value_externality_performance_ht_agg = self.label_group_sum("externality_performance")
+        self.value_egalim_others_ht_agg = self.label_group_sum("egalim_others")
+        self.value_egalim_hors_bio_ht_agg = self.label_group_group_sum("egalim_hors_bio")
+        self.value_egalim_ht_agg = self.label_group_group_sum("egalim")
+
+    def label_sum(self, label: str):
+        sum = 0
+        is_null = True
+        for family in Diagnostic.APPRO_FAMILIES:
+            value = getattr(self, f"value_{family}_{label}")
+            if value is not None:
+                is_null = False
+                sum = sum + value
+        if not is_null:
+            return sum
+
+    def label_group_sum(self, label_group: str):
+        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            return sum_int_with_potential_null(
+                [self.label_sum(label) for label in Diagnostic.APPRO_LABELS_GROUPS_MAPPING[label_group]]
+            )
+        return getattr(self, f"value_{label_group}_ht")
+
+    def label_group_group_sum(self, label_group_group: str):
+        return sum_int_with_potential_null(
+            [
+                self.label_group_sum(label_group)
+                for label_group in Diagnostic.APPRO_LABELS_GROUPS_GROUPS_MAPPING[label_group_group]
+            ]
+        )
+
+    def family_sum(self, family: str):
+        """
+        NOTE: APPRO_LABELS does not include APPRO_LABELS_FRANCE
+        """
+        sum = 0
+        for label in Diagnostic.APPRO_LABELS:
+            value = getattr(self, f"value_{family}_{label}")
+            if value:
+                sum = sum + value
+        return sum
+
     @property
     def is_filled(self):
         return self.value_total_ht > 0 if self.value_total_ht else False
@@ -1249,246 +1398,6 @@ class Diagnostic(models.Model):
         if submitted_teledeclarations.count() == 0:
             return None
         return submitted_teledeclarations.order_by("-creation_date").first()
-
-    def clean(self):
-        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            self.populate_simplified_diagnostic_values()
-
-        validation_errors = utils_utils.merge_validation_errors(
-            diagnostic_validators.validate_year(self),
-            diagnostic_validators.validate_approvisionment_total(self),
-            diagnostic_validators.validate_meat_total(self),
-            diagnostic_validators.validate_fish_total(self),
-            diagnostic_validators.validate_meat_fish_egalim(self),
-        )
-        if validation_errors:
-            raise ValidationError(validation_errors)
-
-        return super().clean()
-
-    def populate_simplified_diagnostic_values(self):
-        self.value_bio_ht = self.total_bio
-        self.value_sustainable_ht = self.total_sustainable
-        self.value_externality_performance_ht = self.total_externality_performance
-        self.value_egalim_others_ht = self.total_egalim_others
-
-        total_meat_egalim = total_meat_france = total_fish_egalim = 0
-        egalim_labels = [
-            "bio",
-            "label_rouge",
-            "aocaop_igp_stg",
-            "hve",
-            "peche_durable",
-            "rup",
-            "fermier",
-            "externalites",
-            "commerce_equitable",
-            "performance",
-        ]
-        for label in egalim_labels:
-            family = "viandes_volailles"
-            # need to do or 0 and not give a default value because the value can be explicitly set to None
-            total_meat_egalim = total_meat_egalim + (getattr(self, f"value_{family}_{label}") or 0)
-
-            family = "produits_de_la_mer"
-            total_fish_egalim = total_fish_egalim + (getattr(self, f"value_{family}_{label}") or 0)
-
-        france_labels = [
-            "france",
-            "short_distribution",
-            "local",
-        ]
-        for label in france_labels:
-            family = "viandes_volailles"
-            total_meat_france = total_meat_france + (getattr(self, f"value_{family}_{label}") or 0)
-
-        self.value_meat_poultry_egalim_ht = total_meat_egalim
-        self.value_meat_poultry_france_ht = total_meat_france
-        self.value_fish_egalim_ht = total_fish_egalim
-
-    def __str__(self):
-        return f"Diagnostic pour {self.canteen.name} ({self.year})"
-
-    def label_sum(self, label):
-        families = [
-            "viandes_volailles",
-            "produits_de_la_mer",
-            "fruits_et_legumes",
-            "charcuterie",
-            "produits_laitiers",
-            "boulangerie",
-            "boissons",
-            "autres",
-        ]
-        sum = 0
-        is_null = True
-        for family in families:
-            value = getattr(self, f"value_{family}_{label}")
-            if value is not None:
-                is_null = False
-                sum = sum + value
-        if not is_null:
-            return sum
-
-    def family_sum(self, family):
-        labels = [
-            "bio",
-            "label_rouge",
-            "aocaop_igp_stg",
-            "hve",
-            "peche_durable",
-            "rup",
-            "fermier",
-            "externalites",
-            "commerce_equitable",
-            "performance",
-            "non_egalim",
-        ]
-        sum = 0
-        for label in labels:
-            value = getattr(self, f"value_{family}_{label}")
-            if value:
-                sum = sum + value
-        return sum
-
-    @property
-    def total_bio(self):
-        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            return self.total_label_bio
-        return self.value_bio_ht
-
-    @property
-    def total_sustainable(self):
-        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            return sum_int_with_potential_null([self.total_label_label_rouge, self.total_label_aocaop_igp_stg])
-        return self.value_sustainable_ht
-
-    @property
-    def total_externality_performance(self):
-        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            return sum_int_with_potential_null([self.total_label_externalites, self.total_label_performance])
-        return self.value_externality_performance_ht
-
-    @property
-    def total_egalim_others(self):
-        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            return sum_int_with_potential_null(
-                [
-                    self.total_label_hve,
-                    self.total_label_peche_durable,
-                    self.total_label_rup,
-                    self.total_label_commerce_equitable,
-                    self.total_label_fermier,
-                ]
-            )
-        return self.value_egalim_others_ht
-
-    @property
-    def total_egalim_hors_bio(self):
-        return sum_int_with_potential_null(
-            [
-                self.total_sustainable,
-                self.total_externality_performance,
-                self.total_egalim_others,
-            ]
-        )
-
-    @property
-    def total_egalim(self):
-        return sum_int_with_potential_null(
-            [
-                self.total_bio,
-                self.total_egalim_hors_bio,
-            ]
-        )
-
-    @property
-    def total_label_bio(self):
-        return self.label_sum("bio")
-
-    @property
-    def total_label_label_rouge(self):
-        return self.label_sum("label_rouge")
-
-    @property
-    def total_label_aocaop_igp_stg(self):
-        return self.label_sum("aocaop_igp_stg")
-
-    @property
-    def total_label_hve(self):
-        return self.label_sum("hve")
-
-    @property
-    def total_label_peche_durable(self):
-        return self.label_sum("peche_durable")
-
-    @property
-    def total_label_rup(self):
-        return self.label_sum("rup")
-
-    @property
-    def total_label_fermier(self):
-        return self.label_sum("fermier")
-
-    @property
-    def total_label_externalites(self):
-        return self.label_sum("externalites")
-
-    @property
-    def total_label_commerce_equitable(self):
-        return self.label_sum("commerce_equitable")
-
-    @property
-    def total_label_performance(self):
-        return self.label_sum("performance")
-
-    @property
-    def total_label_non_egalim(self):
-        return self.label_sum("non_egalim")
-
-    @property
-    def total_label_france(self):
-        return self.label_sum("france")
-
-    @property
-    def total_label_short_distribution(self):
-        return self.label_sum("short_distribution")
-
-    @property
-    def total_label_local(self):
-        return self.label_sum("local")
-
-    @property
-    def total_family_viandes_volailles(self):
-        return self.family_sum("viandes_volailles")
-
-    @property
-    def total_family_produits_de_la_mer(self):
-        return self.family_sum("produits_de_la_mer")
-
-    @property
-    def total_family_fruits_et_legumes(self):
-        return self.family_sum("fruits_et_legumes")
-
-    @property
-    def total_family_charcuterie(self):
-        return self.family_sum("charcuterie")
-
-    @property
-    def total_family_produits_laitiers(self):
-        return self.family_sum("produits_laitiers")
-
-    @property
-    def total_family_boulangerie(self):
-        return self.family_sum("boulangerie")
-
-    @property
-    def total_family_boissons(self):
-        return self.family_sum("boissons")
-
-    @property
-    def total_family_autres(self):
-        return self.family_sum("autres")
 
     @property
     def appro_badge(self) -> bool | None:
@@ -1602,10 +1511,7 @@ class Diagnostic(models.Model):
         if not self.is_filled:
             raise ValidationError("Ce diagnostic n'est pas rempli")
 
-        from api.serializers import (
-            CanteenTeledeclarationSerializer,
-            SatelliteTeledeclarationSerializer,
-        )
+        from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 
         # canteen data
         serialized_canteen = CanteenTeledeclarationSerializer(self.canteen).data
@@ -1626,12 +1532,7 @@ class Diagnostic(models.Model):
 
         # aggregated data
         # TODO: compute on save() instead
-        self.value_bio_ht_agg = self.total_bio
-        self.value_sustainable_ht_agg = self.total_sustainable
-        self.value_externality_performance_ht_agg = self.total_externality_performance
-        self.value_egalim_others_ht_agg = self.total_egalim_others
-        self.value_egalim_hors_bio_ht_agg = self.total_egalim_hors_bio
-        self.value_egalim_ht_agg = self.total_egalim  # total_bio + total_egalim_hors_bio
+        self.populate_aggregated_values()
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
