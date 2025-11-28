@@ -77,8 +77,8 @@ const SIMPLE_FIELDS = [
   },
   {
     name: "valueMeatPoultryFranceHt",
-    label: "La valeur (en € HT) de mes achats provenance France en viandes et volailles fraiches ou surgelées",
-    purchaseType: "viandes et volailles provenance France",
+    label: "La valeur (en € HT) de mes achats origine France en viandes et volailles fraiches ou surgelées",
+    purchaseType: "viandes et volailles origine France",
   },
   {
     name: "valueFishHt",

@@ -8,7 +8,7 @@
           <div class="d-block d-sm-flex align-center">
             <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
             <label for="meat-poultry-france">
-              Total (en € HT) de mes achats provenance France - Viandes et volailles
+              Total (en € HT) de mes achats origine France - Viandes et volailles
               <span class="fr-hint-text mt-2">Optionnel</span>
             </label>
           </div>
@@ -23,7 +23,7 @@
             v-if="displayPurchaseHints"
             v-model="payload.valueMeatPoultryFranceHt"
             @autofill="updatePayload"
-            purchaseType="« viandes et volailles provenance France »"
+            purchaseType="« viandes et volailles origine France »"
             :amount="purchasesSummary.valueMeatPoultryFranceHt"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />

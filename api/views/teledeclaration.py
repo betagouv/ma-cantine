@@ -410,7 +410,7 @@ class TeledeclarationPdfView(APIView):
             "externalites": "Externalités environnementales",
             "performance": "Performance environnementale",
             "non_egalim": "non-EGalim",
-            "france": "provenance France",
+            "france": "origine France",
             "short_distribution": "circuit-court",
             "local": "« local »",
         }
