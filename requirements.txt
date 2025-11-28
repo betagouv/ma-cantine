@@ -631,7 +631,7 @@ traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
-typing-extensions==4.12.2
+typing-extensions==4.15.0
     # via
     #   ipython
     #   jwcrypto
