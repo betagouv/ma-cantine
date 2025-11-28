@@ -8,7 +8,7 @@
           <div class="d-block d-sm-flex align-center">
             <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
             <label for="meat-poultry-france">
-              Total (en € HT) de mes achats provenance France en viandes et volailles
+              Total (en € HT) de mes achats provenance France - Viandes et volailles
               <span class="fr-hint-text mt-2">Optionnel</span>
             </label>
           </div>
@@ -23,8 +23,34 @@
             v-if="displayPurchaseHints"
             v-model="payload.valueMeatPoultryFranceHt"
             @autofill="updatePayload"
-            purchaseType="viandes et volailles provenance France"
+            purchaseType="« viandes et volailles provenance France »"
             :amount="purchasesSummary.valueMeatPoultryFranceHt"
+            :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
+          />
+        </div>
+
+        <!-- Poissons -->
+        <div class="mt-4">
+          <div class="d-block d-sm-flex align-center">
+            <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
+            <label for="fish-france">
+              Total (en € HT) de mes achats origine France - Poissons, produits de la mer et de l'aquaculture
+              <span class="fr-hint-text mt-2">Optionnel</span>
+            </label>
+          </div>
+          <DsfrCurrencyField
+            id="fish-france"
+            v-model.number="payload.valueProduitsDeLaMerFrance"
+            :error="fishError"
+            @blur="updatePayload"
+            :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
+          />
+          <PurchaseHint
+            v-if="displayPurchaseHints"
+            v-model="payload.valueProduitsDeLaMerFrance"
+            @autofill="updatePayload"
+            purchaseType="« poissons, produits de la mer et de l'aquaculture origine France »"
+            :amount="purchasesSummary.valueProduitsDeLaMerFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
@@ -285,6 +311,7 @@ export default {
         d.valueBoulangerieFrance,
         d.valueBoissonsFrance,
         d.valueAutresFrance,
+        d.valueProduitsDeLaMerFrance,
       ]
       let total = 0
       franceValues.forEach((val) => {
