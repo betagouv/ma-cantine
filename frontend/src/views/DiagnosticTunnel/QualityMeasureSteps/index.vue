@@ -48,6 +48,7 @@ import MeatPoultryStep from "./MeatPoultryStep"
 import FishStep from "./FishStep"
 import MeatFishStep from "./MeatFishStep"
 import FamilyFieldsStep from "./FamilyFieldsStep"
+import FranceStep from "./FranceStep"
 import Constants from "@/constants"
 import { getObjectDiff } from "@/utils"
 
@@ -74,6 +75,7 @@ export default {
     FishStep,
     MeatFishStep,
     FamilyFieldsStep,
+    FranceStep,
   },
   data() {
     return {
@@ -128,6 +130,11 @@ export default {
           title: "Zoom sur la famille « produits de la mer et de l’aquaculture »",
           componentName: "FishStep",
           urlSlug: "valeurs-totales-mer-aquaculture",
+        },
+        {
+          title: "Zoom sur l'origine France",
+          componentName: "FranceStep",
+          urlSlug: "valeurs-totales-france",
         },
       ]
       const detailedSteps = [
