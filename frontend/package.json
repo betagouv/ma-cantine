@@ -40,7 +40,7 @@
     "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-template-compiler": "^2.7.16",
     "vuetify-loader": "^1.9.2",
-    "webpack-bundle-tracker": "3.1.1"
+    "webpack-bundle-tracker": "3.2.2"
   },
   "browserslist": [
     "> 1%",
