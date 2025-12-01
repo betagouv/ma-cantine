@@ -82,7 +82,9 @@
             <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
               mdi-cow
             </v-icon>
-            <span class="px-2">+</span>
+            <v-icon class="px-2" size="20" color="black" aria-hidden="true" title="Fermier">
+              mdi-plus
+            </v-icon>
             <img
               class="ml-2"
               :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
@@ -127,7 +129,9 @@
         <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
           mdi-cow
         </v-icon>
-        <span class="px-2">+</span>
+        <v-icon class="px-2" size="20" color="black" aria-hidden="true" title="Fermier">
+          mdi-plus
+        </v-icon>
         <img
           class="ml-2"
           :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
