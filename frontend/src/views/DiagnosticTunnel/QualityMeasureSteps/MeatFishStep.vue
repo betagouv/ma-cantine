@@ -41,6 +41,7 @@
           </div>
           <label class="fr-text ml-4" :for="'valeurProduitsDeLaMer' + diagnostic.year">
             La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture
+            <span class="fr-hint-text mt-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
