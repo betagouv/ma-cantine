@@ -12,9 +12,6 @@
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <div class="d-flex" v-if="$vuetify.breakpoint.smAndDown">
-            <v-icon size="30" color="brown" aria-hidden="true" title="Fermier">
-              mdi-cow
-            </v-icon>
             <div v-for="label in otherLabels" :key="label.title">
               <img
                 :src="`/static/images/quality-labels/${label.src}`"
@@ -23,6 +20,9 @@
                 style="max-height: 30px;"
               />
             </div>
+            <v-icon size="30" color="brown" aria-hidden="true" title="Fermier">
+              mdi-cow
+            </v-icon>
           </div>
 
           <label class="ml-4 ml-md-0" for="other">
@@ -47,9 +47,6 @@
         />
       </v-col>
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
-        <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
-          mdi-cow
-        </v-icon>
         <div v-for="label in otherLabels" :key="label.title">
           <img
             :src="`/static/images/quality-labels/${label.src}`"
@@ -59,10 +56,13 @@
             style="max-height: 40px;"
           />
         </div>
+        <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
+          mdi-cow
+        </v-icon>
       </v-col>
     </v-row>
 
-    <!-- Autre EGalim dont Commerce equitable -->
+    <!-- Autre EGalim dont commerce équitable -->
     <v-row class="my-0 my-md-6">
       <v-col cols="1" class="pt-0 d-flex align-top justify-end">
         <div class="input-child-icon"></div>
@@ -70,18 +70,28 @@
       <v-col cols="11" md="7" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <div class="d-block d-sm-flex align-center" v-if="$vuetify.breakpoint.smAndDown">
+            <img
+              v-for="label in otherLabels"
+              :key="label.title"
+              :src="`/static/images/quality-labels/${label.src}`"
+              :alt="label.title"
+              :title="label.title"
+              class="mr-1"
+              style="max-height: 40px;"
+            />
             <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
               mdi-cow
             </v-icon>
-            <div v-for="label in otherLabelsCommerceEquitable" :key="label.title">
-              <img
-                :src="`/static/images/quality-labels/${label.src}`"
-                :alt="label.title"
-                :title="label.title"
-                class="mr-1"
-                style="max-height: 40px;"
-              />
-            </div>
+            <v-icon class="px-2" size="20" color="black" aria-hidden="true" title="Fermier">
+              mdi-plus
+            </v-icon>
+            <img
+              class="ml-2"
+              :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+              :alt="commerceEquitableLabels[0].title"
+              :title="commerceEquitableLabels[0].title"
+              style="max-height: 40px;"
+            />
           </div>
 
           <label class="ml-4 ml-md-0" for="other-commerce-equitable">
@@ -107,18 +117,28 @@
         />
       </v-col>
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
+        <img
+          v-for="label in otherLabels"
+          :key="label.title"
+          :src="`/static/images/quality-labels/${label.src}`"
+          :alt="label.title"
+          :title="label.title"
+          class="mr-1"
+          style="max-height: 40px;"
+        />
         <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
           mdi-cow
         </v-icon>
-        <div v-for="label in otherLabelsCommerceEquitable" :key="label.title">
-          <img
-            :src="`/static/images/quality-labels/${label.src}`"
-            :alt="label.title"
-            :title="label.title"
-            class="mr-1"
-            style="max-height: 40px;"
-          />
-        </div>
+        <v-icon class="px-2" size="20" color="black" aria-hidden="true" title="Fermier">
+          mdi-plus
+        </v-icon>
+        <img
+          class="ml-2"
+          :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+          :alt="commerceEquitableLabels[0].title"
+          :title="commerceEquitableLabels[0].title"
+          style="max-height: 40px;"
+        />
       </v-col>
     </v-row>
 
@@ -271,16 +291,11 @@ export default {
       "Écolabel pêche durable",
       "Région Ultrapériphérique (RUP)",
     ]
-    const commerceEquitableLogo = [
-      "Haute Valeur Environnementale (HVE)",
-      "Écolabel pêche durable",
-      "Région Ultrapériphérique (RUP)",
-      "Commerce Équitable",
-    ]
+    const commerceEquitableLogos = ["Commerce Équitable"]
     return {
       totalErrorMessage: null,
       otherLabels: labels.filter((x) => otherLogos.includes(x.title)),
-      otherLabelsCommerceEquitable: labels.filter((x) => commerceEquitableLogo.includes(x.title)),
+      commerceEquitableLabels: labels.filter((x) => commerceEquitableLogos.includes(x.title)),
       valueExternalityPerformanceHtDialog: false,
       errorHelperUsed: false,
       errorHelperFields: [],
@@ -322,7 +337,7 @@ export default {
       if (d.valueCommerceEquitableHt > d.valueEgalimOthersHt) {
         this.totalErrorMessage = `La valeur de vos achats Commerce équitable (hors bio) (${toCurrency(
           d.valueCommerceEquitableHt
-        )}) ne peut pas être plus élévée que la valeur des autres achats EGalim (${toCurrency(total)})`
+        )}) ne peut pas être plus élévée que la valeur des autres achats EGalim (${toCurrency(d.valueEgalimOthersHt)})`
       }
     },
     sumAllEgalim() {
