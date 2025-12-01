@@ -6,6 +6,38 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.40.0](https://github.com/betagouv/ma-cantine/compare/v2025.39.1...v2025.40.0) (2025-12-01)
+
+
+### Nouveautés
+
+* **Secteurs:** utilise le nouveau champ secteur dans le frontend ([#5915](https://github.com/betagouv/ma-cantine/issues/5915)) ([ce9255c](https://github.com/betagouv/ma-cantine/commit/ce9255c9155681a1b767c7acf4e5a025112038ec))
+
+
+### Améliorations
+
+* **Cantines:** migrer le champ 'secteurs' d'une relation (M2M) vers un champ liste (ArrayField) [1/2] ([#5886](https://github.com/betagouv/ma-cantine/issues/5886)) ([f88bdf4](https://github.com/betagouv/ma-cantine/commit/f88bdf4c20b95782e64f8a17475f0d6992c9a8d6))
+* **Cantines:** Règles métiers: ajouter les contraintes sur les secteurs ([#5895](https://github.com/betagouv/ma-cantine/issues/5895)) ([f6f7a46](https://github.com/betagouv/ma-cantine/commit/f6f7a46a83fddd7abb961cd379cb44b6b4138452))
+* **Ressources:** ajoute 4 documents ([#5923](https://github.com/betagouv/ma-cantine/issues/5923)) ([3888d0d](https://github.com/betagouv/ma-cantine/commit/3888d0dfac95190833bb86019009d540454b5db3))
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** corrige les stats 'inconnu' suite aux changements sur les secteurs ([#5908](https://github.com/betagouv/ma-cantine/issues/5908)) ([ef0daf4](https://github.com/betagouv/ma-cantine/commit/ef0daf488d651b7369118f9da7de0cf5d11c9452))
+* **CI:** remplacer 'npm install' par 'npm ci' pour les instances déployées ([#5911](https://github.com/betagouv/ma-cantine/issues/5911)) ([3f8d4b1](https://github.com/betagouv/ma-cantine/commit/3f8d4b14eee5d2214511eb730edf1ad07576a3ed))
+* **Tests:** répare un test sur les exports open_data qui échoue régulièrement ([#5905](https://github.com/betagouv/ma-cantine/issues/5905)) ([c93747a](https://github.com/betagouv/ma-cantine/commit/c93747ac2a586814ed88fdac9764def6cf6a4f37))
+* **Tests:** s'assurer qu'il n'y a pas d'emails générés en double ([#5901](https://github.com/betagouv/ma-cantine/issues/5901)) ([ae0ddaf](https://github.com/betagouv/ma-cantine/commit/ae0ddaf81106fda3225af5d06ba5e63b03bb1138))
+
+
+### Technique
+
+* **API:** enlever l'endpoint 'canteenLocations' qui n'est pas utilisé ([#5910](https://github.com/betagouv/ma-cantine/issues/5910)) ([ad39192](https://github.com/betagouv/ma-cantine/commit/ad391924c4d9f0d16df42e70d550282bc0a3d1ad))
+* **API:** Ministères de tutelle: améliorer la documentation ([#5903](https://github.com/betagouv/ma-cantine/issues/5903)) ([4c7f804](https://github.com/betagouv/ma-cantine/commit/4c7f804a3793d5f31fdcfda18fbbfd55ee16861e))
+* **API:** Secteurs: renvoyer la liste à partir des enum (et non du M2M) ([#5902](https://github.com/betagouv/ma-cantine/issues/5902)) ([12733a8](https://github.com/betagouv/ma-cantine/commit/12733a81588f82ab2e1c9272964cf7fab333708e))
+* **Securité:** dependabot: rajouter un cooldown de 7 jours ([#5925](https://github.com/betagouv/ma-cantine/issues/5925)) ([509cdff](https://github.com/betagouv/ma-cantine/commit/509cdffdcab8ae36e9bc9a1ea0a5701a557f4754))
+* **Sécurité:** npm: utiliser le flag ignore-scripts (protection Shai-Hulud) ([#5924](https://github.com/betagouv/ma-cantine/issues/5924)) ([94c6dd1](https://github.com/betagouv/ma-cantine/commit/94c6dd1fc5e1ae90925e3751426775ab08b89ad3))
+* **Tests:** remplacer Factory.create() par Factory() ([#5916](https://github.com/betagouv/ma-cantine/issues/5916)) ([cc6968c](https://github.com/betagouv/ma-cantine/commit/cc6968c61f858f461eae48c7b6800cb964543136))
+
 ## [2025.39.1](https://github.com/betagouv/ma-cantine/compare/v2025.39.0...v2025.39.1) (2025-11-18)
 
 
