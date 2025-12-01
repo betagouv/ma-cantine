@@ -203,6 +203,12 @@ export default {
         valueFishHt: this.diagnostic.valueFishHt,
         valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
         valueProduitsDeLaMerFrance: this.diagnostic.valueProduitsDeLaMerFrance,
+        valueCharcuterieFrance: this.diagnostic.valueCharcuterieFrance,
+        valueFruitsEtLegumesFrance: this.diagnostic.valueFruitsEtLegumesFrance,
+        valueProduitsLaitiersFrance: this.diagnostic.valueProduitsLaitiersFrance,
+        valueBoulangerieFrance: this.diagnostic.valueBoulangerieFrance,
+        valueBoissonsFrance: this.diagnostic.valueBoissonsFrance,
+        valueAutresFrance: this.diagnostic.valueAutresFrance,
       }
       const tdGroups = Constants.TeledeclarationCharacteristicGroups
       const completeTdFields = tdGroups.egalim.fields
