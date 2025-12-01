@@ -193,14 +193,23 @@ export default {
         valueTotalHt: this.diagnostic.valueTotalHt,
         diagnosticType: this.diagnostic.diagnosticType || "",
         valueBioHt: this.diagnostic.valueBioHt,
+        valueBioDontCommerceEquitableHt: this.diagnostic.valueBioDontCommerceEquitableHt,
         valueSustainableHt: this.diagnostic.valueSustainableHt,
         valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
+        valueCommerceEquitableHt: this.diagnostic.valueCommerceEquitableHt,
         valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
         valueMeatPoultryHt: this.diagnostic.valueMeatPoultryHt,
         valueMeatPoultryEgalimHt: this.diagnostic.valueMeatPoultryEgalimHt,
         valueMeatPoultryFranceHt: this.diagnostic.valueMeatPoultryFranceHt,
         valueFishHt: this.diagnostic.valueFishHt,
         valueFishEgalimHt: this.diagnostic.valueFishEgalimHt,
+        valueProduitsDeLaMerFrance: this.diagnostic.valueProduitsDeLaMerFrance,
+        valueCharcuterieFrance: this.diagnostic.valueCharcuterieFrance,
+        valueFruitsEtLegumesFrance: this.diagnostic.valueFruitsEtLegumesFrance,
+        valueProduitsLaitiersFrance: this.diagnostic.valueProduitsLaitiersFrance,
+        valueBoulangerieFrance: this.diagnostic.valueBoulangerieFrance,
+        valueBoissonsFrance: this.diagnostic.valueBoissonsFrance,
+        valueAutresFrance: this.diagnostic.valueAutresFrance,
       }
       const tdGroups = Constants.TeledeclarationCharacteristicGroups
       const completeTdFields = tdGroups.egalim.fields
