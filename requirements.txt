@@ -518,7 +518,7 @@ python-dateutil==2.9.0.post0
     #   sib-api-v3-sdk
 python-dotenv==1.0.1
     # via ma-cantine
-pytz==2024.2
+pytz==2025.2
     # via
     #   l18n
     #   ma-cantine
