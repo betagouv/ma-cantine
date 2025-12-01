@@ -36,6 +36,7 @@
       <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6" class="py-2">
         <label :for="fId" :class="`fr-text ${!validFamily(fId) ? 'grey--text text--darken-1' : ''}`">
           {{ family.text }}
+          <span v-if="isOptionnalField(fId)" class="fr-hint-text mt-2">Optionnel</span>
         </label>
         <div v-if="validFamily(fId)">
           <DsfrCurrencyField
@@ -164,6 +165,11 @@ export default {
       const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
       if (isRequiredCategory && !isExceptionFields) rules.push(this.validators.required)
       return rules
+    },
+    isOptionnalField(fId) {
+      const isRequiredCategory = this.requiredCategories.includes(this.groupId)
+      const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
+      return !isRequiredCategory || isExceptionFields
     },
     diagnosticKey(family) {
       return this.camelize(`valeur_${family}_${this.characteristicId}`)
