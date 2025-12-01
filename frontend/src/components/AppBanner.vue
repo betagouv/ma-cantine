@@ -15,7 +15,7 @@ export default {
   name: "AppBanner",
   data() {
     return {
-      show: window.SHOW_INFORMATION_BANNER,
+      show: window.SHOW_BANNER,
     }
   },
 }
