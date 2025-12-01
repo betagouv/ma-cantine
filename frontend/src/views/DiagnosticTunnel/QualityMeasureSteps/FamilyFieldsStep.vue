@@ -116,6 +116,8 @@ export default {
       produitsDeLaMerTotalErrorMessage: null,
       viandesVolaillesFieldPrefix: "valeurViandesVolailles",
       produitsDeLaMerFieldPrefix: "valeurProduitsDeLaMer",
+      requiredCategories: ["bio", "egalim"],
+      exceptionFields: ["valueProduitsDeLaMerPecheDurable"],
     }
   },
   computed: {
@@ -158,8 +160,8 @@ export default {
       rules.push(this.validators.decimalPlaces(2))
       rules.push(this.validators.lteOrEmpty(payload.valeurTotale))
       // Catégorie obligatoire
-      const isRequiredCategory = ["bio", "egalim"].includes(this.groupId)
-      const isExceptionFields = ["valueProduitsDeLaMerPecheDurable"].includes(this.diagnosticKey(fId))
+      const isRequiredCategory = this.requiredCategories.includes(this.groupId)
+      const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
       if (isRequiredCategory && !isExceptionFields) rules.push(this.validators.required)
       return rules
     },
