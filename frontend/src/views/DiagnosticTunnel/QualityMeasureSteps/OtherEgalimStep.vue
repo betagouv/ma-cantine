@@ -62,7 +62,7 @@
       </v-col>
     </v-row>
 
-    <!-- Autre EGalim dont Commerce equitable -->
+    <!-- Autre EGalim dont commerce équitable -->
     <v-row class="my-0 my-md-6">
       <v-col cols="1" class="pt-0 d-flex align-top justify-end">
         <div class="input-child-icon"></div>
@@ -73,15 +73,23 @@
             <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
               mdi-cow
             </v-icon>
-            <div v-for="label in otherLabelsCommerceEquitable" :key="label.title">
-              <img
-                :src="`/static/images/quality-labels/${label.src}`"
-                :alt="label.title"
-                :title="label.title"
-                class="mr-1"
-                style="max-height: 40px;"
-              />
-            </div>
+            <img
+              v-for="label in otherLabels"
+              :key="label.title"
+              :src="`/static/images/quality-labels/${label.src}`"
+              :alt="label.title"
+              :title="label.title"
+              class="mr-1"
+              style="max-height: 40px;"
+            />
+            <span class="px-2">+</span>
+            <img
+              class="ml-2"
+              :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+              :alt="commerceEquitableLabels[0].title"
+              :title="commerceEquitableLabels[0].title"
+              style="max-height: 40px;"
+            />
           </div>
 
           <label class="ml-4 ml-md-0" for="other-commerce-equitable">
@@ -110,15 +118,23 @@
         <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
           mdi-cow
         </v-icon>
-        <div v-for="label in otherLabelsCommerceEquitable" :key="label.title">
-          <img
-            :src="`/static/images/quality-labels/${label.src}`"
-            :alt="label.title"
-            :title="label.title"
-            class="mr-1"
-            style="max-height: 40px;"
-          />
-        </div>
+        <img
+          v-for="label in otherLabels"
+          :key="label.title"
+          :src="`/static/images/quality-labels/${label.src}`"
+          :alt="label.title"
+          :title="label.title"
+          class="mr-1"
+          style="max-height: 40px;"
+        />
+        <span class="px-2">+</span>
+        <img
+          class="ml-2"
+          :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+          :alt="commerceEquitableLabels[0].title"
+          :title="commerceEquitableLabels[0].title"
+          style="max-height: 40px;"
+        />
       </v-col>
     </v-row>
 
@@ -271,16 +287,11 @@ export default {
       "Écolabel pêche durable",
       "Région Ultrapériphérique (RUP)",
     ]
-    const commerceEquitableLogo = [
-      "Haute Valeur Environnementale (HVE)",
-      "Écolabel pêche durable",
-      "Région Ultrapériphérique (RUP)",
-      "Commerce Équitable",
-    ]
+    const commerceEquitableLogos = ["Commerce Équitable"]
     return {
       totalErrorMessage: null,
       otherLabels: labels.filter((x) => otherLogos.includes(x.title)),
-      otherLabelsCommerceEquitable: labels.filter((x) => commerceEquitableLogo.includes(x.title)),
+      commerceEquitableLabels: labels.filter((x) => commerceEquitableLogos.includes(x.title)),
       valueExternalityPerformanceHtDialog: false,
       errorHelperUsed: false,
       errorHelperFields: [],
