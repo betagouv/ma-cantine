@@ -40,14 +40,10 @@
         <div v-if="validFamily(fId)">
           <DsfrCurrencyField
             :id="fId"
-            :rules="[
-              validators.nonNegativeOrEmpty,
-              validators.decimalPlaces(2),
-              validators.lteOrEmpty(payload.valeurTotale),
-            ]"
+            :rules="getValidatorsRules(fId)"
+            @blur="fieldUpdate(diagnosticKey(fId))"
             solo
             v-model.number="payload[diagnosticKey(fId)]"
-            @blur="fieldUpdate(diagnosticKey(fId))"
             class="mt-2"
             :error="fieldHasError(diagnosticKey(fId))"
             :disabled="!validFamily(fId)"
@@ -154,6 +150,18 @@ export default {
     },
   },
   methods: {
+    getValidatorsRules(fId) {
+      const rules = []
+      // Champ non applicable
+      if (!this.validFamily(fId)) return rules
+      rules.push(this.validators.nonNegativeOrEmpty)
+      rules.push(this.validators.decimalPlaces(2))
+      rules.push(this.validators.lteOrEmpty(payload.valeurTotale))
+      // Catégorie obligatoire
+      const isRequiredCategory = ["bio", "egalim"].includes(this.groupId)
+      if (isRequiredCategory) rules.push(this.validators.required)
+      return rules
+    },
     diagnosticKey(family) {
       return this.camelize(`valeur_${family}_${this.characteristicId}`)
     },
