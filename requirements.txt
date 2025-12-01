@@ -534,7 +534,7 @@ qrcode==7.4.2
     # via
     #   ma-cantine
     #   pyhanko
-redis==5.2.0
+redis==7.1.0
     # via ma-cantine
 referencing==0.35.1
     # via
