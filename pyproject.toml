@@ -126,7 +126,7 @@ dependencies = [
     "pypdf3==1.0.6",
     "pypng==0.20220715.0",
     "pytest==8.0.0",
-    "pytest-django==4.8.0",
+    "pytest-django==4.11.1",
     "python-bidi==0.4.2",
     "python-dateutil==2.9.0.post0",
     "python-dotenv==1.0.1",

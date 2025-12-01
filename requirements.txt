@@ -501,7 +501,7 @@ pytest==8.0.0
     # via
     #   ma-cantine
     #   pytest-django
-pytest-django==4.8.0
+pytest-django==4.11.1
     # via ma-cantine
 python-bidi==0.4.2
     # via
