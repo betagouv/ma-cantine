@@ -260,6 +260,13 @@ class TestPurchaseApi(APITestCase):
             characteristics=[Purchase.Characteristic.CONVERSION_BIO, Purchase.Characteristic.IGP],
             price_ht=150,
         )
+        # bio + commerce équitable
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-01",
+            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.COMMERCE_EQUITABLE],
+            price_ht=20,
+        )
         # hve x2 = 10
         PurchaseFactory.create(
             canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.HVE], price_ht=2
@@ -303,6 +310,12 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory.create(
             canteen=canteen, date="2020-01-08", characteristics=[Purchase.Characteristic.PECHE_DURABLE], price_ht=240
         )
+        PurchaseFactory.create(
+            canteen=canteen,
+            date="2020-01-15",
+            characteristics=[Purchase.Characteristic.COMMERCE_EQUITABLE],
+            price_ht=10,
+        )
         # no labels
         PurchaseFactory.create(canteen=canteen, date="2020-01-01", characteristics=[], price_ht=500)
 
@@ -317,10 +330,12 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["valueTotalHt"], 1045.0)
-        self.assertEqual(body["valueBioHt"], 200.0)
+        self.assertEqual(body["valueTotalHt"], 1075.0)
+        self.assertEqual(body["valueBioHt"], 220.0)
+        self.assertEqual(body["valueBioDontCommerceEquitableHt"], 20.0)
         self.assertEqual(body["valueSustainableHt"], 50.0)
-        self.assertEqual(body["valueEgalimOthersHt"], 250.0)
+        self.assertEqual(body["valueEgalimOthersHt"], 260.0)
+        self.assertEqual(body["valueCommerceEquitableHt"], 10.0)
         self.assertEqual(body["valueExternalityPerformanceHt"], 45.0)
 
     @authenticate
