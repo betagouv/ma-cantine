@@ -4,7 +4,7 @@
     <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
 
     <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }" role="main">
-      <AppInformationBanner />
+      <AppBanner />
       <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner && !fullscreen" />
       <v-container fluid :fill-height="!initialDataLoaded || fullscreen" :class="{ 'pa-0': fullscreen }">
         <v-progress-circular
@@ -25,7 +25,7 @@
 
 <script>
 import AppHeader from "@/components/AppHeader"
-import AppInformationBanner from "@/components/AppInformationBanner"
+import AppBanner from "@/components/AppBanner"
 import WidgetHeader from "@/components/WidgetHeader"
 import AppFooter from "@/components/AppFooter"
 import WebinaireBanner from "@/components/WebinaireBanner"
@@ -36,7 +36,7 @@ import { readCookie, largestId, bannerCookieName, hideCommunityEventsBanner } fr
 export default {
   components: {
     AppHeader,
-    AppInformationBanner,
+    AppBanner,
     WidgetHeader,
     AppFooter,
     NotificationSnackbar,

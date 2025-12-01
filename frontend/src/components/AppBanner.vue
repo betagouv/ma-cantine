@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "InformationBanner",
+  name: "AppBanner",
   data() {
     return {
       show: window.SHOW_INFORMATION_BANNER,
