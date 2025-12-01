@@ -196,7 +196,7 @@ export default {
         valueBioDontCommerceEquitableHt: this.diagnostic.valueBioDontCommerceEquitableHt,
         valueSustainableHt: this.diagnostic.valueSustainableHt,
         valueEgalimOthersHt: this.diagnostic.valueEgalimOthersHt,
-        valueCommerceEquitableHt: this.diagnostic.valueCommerceEquitableHt,
+        valueEgalimOthersDontCommerceEquitableHt: this.diagnostic.valueEgalimOthersDontCommerceEquitableHt,
         valueExternalityPerformanceHt: this.diagnostic.valueExternalityPerformanceHt,
         valueMeatPoultryHt: this.diagnostic.valueMeatPoultryHt,
         valueMeatPoultryEgalimHt: this.diagnostic.valueMeatPoultryEgalimHt,
