@@ -12,9 +12,6 @@
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <div class="d-flex" v-if="$vuetify.breakpoint.smAndDown">
-            <v-icon size="30" color="brown" aria-hidden="true" title="Fermier">
-              mdi-cow
-            </v-icon>
             <div v-for="label in otherLabels" :key="label.title">
               <img
                 :src="`/static/images/quality-labels/${label.src}`"
@@ -23,6 +20,9 @@
                 style="max-height: 30px;"
               />
             </div>
+            <v-icon size="30" color="brown" aria-hidden="true" title="Fermier">
+              mdi-cow
+            </v-icon>
           </div>
 
           <label class="ml-4 ml-md-0" for="other">
@@ -47,9 +47,6 @@
         />
       </v-col>
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
-        <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
-          mdi-cow
-        </v-icon>
         <div v-for="label in otherLabels" :key="label.title">
           <img
             :src="`/static/images/quality-labels/${label.src}`"
@@ -59,6 +56,9 @@
             style="max-height: 40px;"
           />
         </div>
+        <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
+          mdi-cow
+        </v-icon>
       </v-col>
     </v-row>
 
@@ -70,9 +70,6 @@
       <v-col cols="11" md="7" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
           <div class="d-block d-sm-flex align-center" v-if="$vuetify.breakpoint.smAndDown">
-            <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
-              mdi-cow
-            </v-icon>
             <img
               v-for="label in otherLabels"
               :key="label.title"
@@ -82,6 +79,9 @@
               class="mr-1"
               style="max-height: 40px;"
             />
+            <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
+              mdi-cow
+            </v-icon>
             <span class="px-2">+</span>
             <img
               class="ml-2"
@@ -115,9 +115,6 @@
         />
       </v-col>
       <v-col md="4" class="d-flex align-center pl-10 left-border" v-if="$vuetify.breakpoint.mdAndUp">
-        <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
-          mdi-cow
-        </v-icon>
         <img
           v-for="label in otherLabels"
           :key="label.title"
@@ -127,6 +124,9 @@
           class="mr-1"
           style="max-height: 40px;"
         />
+        <v-icon size="40" color="brown" alt="Fermier" title="Fermier">
+          mdi-cow
+        </v-icon>
         <span class="px-2">+</span>
         <img
           class="ml-2"
