@@ -159,7 +159,8 @@ export default {
       rules.push(this.validators.lteOrEmpty(payload.valeurTotale))
       // Catégorie obligatoire
       const isRequiredCategory = ["bio", "egalim"].includes(this.groupId)
-      if (isRequiredCategory) rules.push(this.validators.required)
+      const isExceptionFields = ["valueProduitsDeLaMerPecheDurable"].includes(this.diagnosticKey(fId))
+      if (isRequiredCategory && !isExceptionFields) rules.push(this.validators.required)
       return rules
     },
     diagnosticKey(family) {
