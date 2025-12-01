@@ -22,6 +22,7 @@
           @blur="checkTotal"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="hasViandesVolaillesError"
+          :rules="[validators.required, validators.decimalPlaces(2)]"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
@@ -72,6 +73,7 @@
 </template>
 
 <script>
+import validators from "@/validators"
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
 import FormErrorCallout from "@/components/FormErrorCallout"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
@@ -131,6 +133,9 @@ export default {
     }
   },
   computed: {
+    validators() {
+      return validators
+    },
     displayPurchaseHints() {
       return this.purchasesSummary && Object.values(this.purchasesSummary).some((x) => !!x)
     },
