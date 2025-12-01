@@ -85,7 +85,7 @@ class TestLoggedUserApi(APITestCase):
         self.assertEqual(body["suggestion"], "tester_12")
 
     def test_random_number(self):
-        UserFactory.create(username="anne_iversaire")
+        UserFactory(username="anne_iversaire")
         response = self.client.post(reverse("username_suggestion"), {"first_name": "Anne", "last_name": "Iversaire"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = json.loads(response.content.decode())

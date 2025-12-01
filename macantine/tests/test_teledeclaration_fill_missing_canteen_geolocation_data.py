@@ -11,7 +11,7 @@ from data.models import Teledeclaration
 class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_with_geo_data = CanteenFactory.create(
+        cls.canteen_with_geo_data = CanteenFactory(
             city_insee_code="38185",
             department="38",
             department_lib="Isère",
@@ -20,7 +20,7 @@ class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
             epci="200040715",
             epci_lib="Grenoble-Alpes-Métropole",
         )
-        cls.canteen_half_geo_data = CanteenFactory.create(
+        cls.canteen_half_geo_data = CanteenFactory(
             city_insee_code="38185",
             department="38",
             department_lib=None,
@@ -29,7 +29,7 @@ class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
             epci="200040715",
             epci_lib=None,
         )
-        cls.canteen_without_geo_data = CanteenFactory.create(
+        cls.canteen_without_geo_data = CanteenFactory(
             city_insee_code="38185",
             department=None,
             department_lib=None,
@@ -38,7 +38,7 @@ class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
             epci=None,
             epci_lib=None,
         )
-        cls.canteen_without_geo_data_old = CanteenFactory.create(
+        cls.canteen_without_geo_data_old = CanteenFactory(
             city_insee_code="38185",
             department=None,
             department_lib=None,
@@ -56,8 +56,8 @@ class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
             self.canteen_without_geo_data,
             self.canteen_without_geo_data_old,
         ]:
-            diag = DiagnosticFactory.create(canteen=canteen)
-            td = Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory.create())
+            diag = DiagnosticFactory(canteen=canteen)
+            td = Teledeclaration.create_from_diagnostic(diag, applicant=UserFactory())
             # Canteen data for 2021 & 2022 TDs did not include department and region
             if canteen == self.canteen_without_geo_data_old:
                 td_declared_data = td.declared_data.copy()

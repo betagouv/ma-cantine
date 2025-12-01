@@ -35,12 +35,10 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         Only managers of the canteen can create teledeclarations
         """
-        manager = UserFactory.create()
-        canteen = CanteenFactory.create()
+        manager = UserFactory()
+        canteen = CanteenFactory()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
 
@@ -62,8 +60,8 @@ class TestTeledeclarationCreateApi(APITestCase):
         A diagnostic with missing total_ht information cannot be used to
         create a teledeclaration
         """
-        canteen = CanteenFactory.create(central_producer_siret=None, managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
+        canteen = CanteenFactory(central_producer_siret=None, managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(
             canteen=canteen, year=2021, value_total_ht=None, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
 
@@ -77,8 +75,8 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A diagnostic with a bad year cannot be used to create a teledeclaration
         """
-        canteen = CanteenFactory.create(central_producer_siret=None, managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
+        canteen = CanteenFactory(central_producer_siret=None, managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(
             canteen=canteen, year=2019, value_total_ht=100, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
 
@@ -92,8 +90,8 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A teledeclaration can be created from a valid Diagnostic
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(
             value_externality_performance_ht=0,
             canteen=canteen,
             year=2021,
@@ -193,8 +191,8 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A teledeclaration cannot be created after the campaign
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(
             value_externality_performance_ht=0,
             canteen=canteen,
             year=2021,
@@ -211,8 +209,8 @@ class TestTeledeclarationCreateApi(APITestCase):
         A teledeclaration can be created during the correction campaign
         ONLY if a teledeclaration was already created during the campaign
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(
             value_externality_performance_ht=0,
             canteen=canteen,
             year=2024,
@@ -246,10 +244,8 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         We can only have one submitted teledeclaration per canteen per year
         """
-        canteen = CanteenFactory.create(siret="21670482500019", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        canteen = CanteenFactory(siret="21670482500019", managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         payload = {"diagnosticId": diagnostic.id}
@@ -264,22 +260,20 @@ class TestTeledeclarationCreateApi(APITestCase):
         A few canteens don't have SIRETs - make sure teledeclarations for
         different canteens with no SIRET aren't flagged as duplicates
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
         Canteen.objects.filter(id=canteen.id).update(siret="")
         canteen.refresh_from_db()
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        canteen2 = CanteenFactory.create(managers=[authenticate.user])
+        canteen2 = CanteenFactory(managers=[authenticate.user])
         Canteen.objects.filter(id=canteen2.id).update(siret="")
         canteen2.refresh_from_db()
-        diagnostic2 = DiagnosticFactory.create(canteen=canteen2, year=2021)
+        diagnostic2 = DiagnosticFactory(canteen=canteen2, year=2021)
 
         payload = {"diagnosticId": diagnostic2.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -292,8 +286,8 @@ class TestTeledeclarationCreateApi(APITestCase):
         When doing a TD with a complete diagnostic, the adequate fields must be
         present in the teledeclaration
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(
             canteen=canteen,
             year=2021,
             diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
@@ -369,14 +363,14 @@ class TestTeledeclarationCreateApi(APITestCase):
         A diagnostic without total value HT can be teledeclared if a central kitchen
         gave the details.
         """
-        central_kitchen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044")
-        canteen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044")
+        canteen = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="79300704800044",
             managers=[authenticate.user],
         )
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
             value_total_ht=100,
@@ -384,7 +378,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
-        diagnostic = DiagnosticFactory.create(
+        diagnostic = DiagnosticFactory(
             canteen=canteen,
             year=2021,
             value_total_ht=None,  # missing
@@ -406,20 +400,20 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A diagnostic from a central kitchen must contain the satellites added at that moment
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
             siret="79300704800044",
             satellite_canteens_count=3,
             managers=[authenticate.user],
         )
-        satellite_1 = CanteenFactory.create(
+        satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="79300704800044"
         )
-        satellite_2 = CanteenFactory.create(
+        satellite_2 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="79300704800044"
         )
 
-        diagnostic = DiagnosticFactory.create(
+        diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
             value_total_ht=100,
@@ -454,11 +448,11 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         A diagnostic made by a central kitchen cannot be teledeclared if the mode is null or blank
         """
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL, siret="79300704800044", managers=[authenticate.user]
         )
 
-        diagnostic = DiagnosticFactory.create(
+        diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
             value_total_ht=100,
@@ -496,7 +490,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             satellite_canteens_count=3, central_producer_siret="18704793618411"
         )
         canteen.refresh_from_db()
-        diagnostic = DiagnosticFactory.create(
+        diagnostic = DiagnosticFactory(
             canteen=canteen, year=2021, value_total_ht=100, central_kitchen_diagnostic_mode="ALL"
         )
 
@@ -551,7 +545,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic mode
         """
         central = CanteenFactory(siret="18704793618411", production_type=Canteen.ProductionType.CENTRAL_SERVING)
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central,
             year=2021,
             value_total_ht=100,
@@ -564,7 +558,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[authenticate.user],
         )
-        diagnostic_canteen_site = DiagnosticFactory.create(canteen=canteen_site, year=2021, value_total_ht=100)
+        diagnostic_canteen_site = DiagnosticFactory(canteen=canteen_site, year=2021, value_total_ht=100)
         diagnostic_canteen_site.teledeclare(applicant=authenticate.user)
         self.assertEqual(diagnostic_canteen_site.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
 
@@ -579,9 +573,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             central_producer_siret="75665621899905"
         )  # change the link
         canteen_satellite_1.refresh_from_db()
-        diagnostic_canteen_satellite_1 = DiagnosticFactory.create(
-            canteen=canteen_satellite_1, year=2021, value_total_ht=100
-        )
+        diagnostic_canteen_satellite_1 = DiagnosticFactory(canteen=canteen_satellite_1, year=2021, value_total_ht=100)
         diagnostic_canteen_satellite_1.teledeclare(applicant=authenticate.user)
         self.assertEqual(diagnostic_canteen_satellite_1.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
 
@@ -592,9 +584,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             central_producer_siret=central.siret,
             managers=[authenticate.user],
         )
-        diagnostic_canteen_satellite_2 = DiagnosticFactory.create(
-            canteen=canteen_satellite_2, year=2021, value_total_ht=100
-        )
+        diagnostic_canteen_satellite_2 = DiagnosticFactory(canteen=canteen_satellite_2, year=2021, value_total_ht=100)
         diagnostic_canteen_satellite_2.teledeclare(applicant=authenticate.user)
         self.assertEqual(
             diagnostic_canteen_satellite_2.teledeclaration_mode, Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
@@ -606,7 +596,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             production_type=Canteen.ProductionType.CENTRAL,
             managers=[authenticate.user],
         )
-        diagnostic_central_2 = DiagnosticFactory.create(
+        diagnostic_central_2 = DiagnosticFactory(
             canteen=central_2,
             year=2021,
             value_total_ht=100,
@@ -621,7 +611,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             managers=[authenticate.user],
         )
-        diagnostic_central_serving = DiagnosticFactory.create(
+        diagnostic_central_serving = DiagnosticFactory(
             canteen=central_serving,
             year=2021,
             value_total_ht=100,
@@ -633,9 +623,7 @@ class TestTeledeclarationCreateApi(APITestCase):
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
     def test_line_ministry_does_not_depend_on_sector_anymore(self):
-        sector_ministry = SectorM2MFactory.create(
-            name="Restaurants administratifs d'Etat (RA)", has_line_ministry=True
-        )
+        sector_ministry = SectorM2MFactory(name="Restaurants administratifs d'Etat (RA)", has_line_ministry=True)
         canteen = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             siret="79300704800044",
@@ -643,11 +631,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             line_ministry=None,
             managers=[authenticate.user],
         )
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen,
-            year=2021,
-            value_total_ht=100,
-        )
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, value_total_ht=100)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -692,12 +676,10 @@ class TestTeledeclarationCancel(APITestCase):
         """
         Only managers of the canteen can cancel teledeclarations
         """
-        manager = UserFactory.create()
-        canteen = CanteenFactory.create()
+        manager = UserFactory()
+        canteen = CanteenFactory()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -709,10 +691,8 @@ class TestTeledeclarationCancel(APITestCase):
         """
         A submitted teledeclaration can be cancelled
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -730,10 +710,8 @@ class TestTeledeclarationCancel(APITestCase):
         """
         A submitted teledeclaration cannot be cancelled for a previous campaign
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -748,10 +726,8 @@ class TestTeledeclarationCancel(APITestCase):
         """
         A submitted teledeclaration cannot be cancelled after the campaign
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.post(reverse("teledeclaration_cancel", kwargs={"pk": teledeclaration.id}))
@@ -765,10 +741,8 @@ class TestTeledeclarationCancel(APITestCase):
         """
         A submitted teledeclaration can be cancelled during the correction campaign
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
@@ -801,12 +775,10 @@ class TestTeledeclarationPdfApi(APITestCase):
         """
         Only managers of the canteen can get PDF documents
         """
-        manager = UserFactory.create()
-        canteen = CanteenFactory.create()
+        manager = UserFactory()
+        canteen = CanteenFactory()
         canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
@@ -818,10 +790,8 @@ class TestTeledeclarationPdfApi(APITestCase):
         """
         The user can get a justificatif in PDF for a teledeclaration
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
@@ -834,8 +804,8 @@ class TestTeledeclarationPdfApi(APITestCase):
         The user can get a justificatif in PDF for a teledeclaration
         with minimal information
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, diagnostic_type=None)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=None)
         teledeclaration = TeledeclarationFactory(
             canteen=canteen,
             diagnostic=diagnostic,
@@ -862,10 +832,8 @@ class TestTeledeclarationPdfApi(APITestCase):
         """
         A central kitchen should be able to generate a PDF
         """
-        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        canteen = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))

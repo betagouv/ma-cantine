@@ -13,7 +13,7 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Test that we can create a new vegetarian experiment for a canteen
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         payload = {
             "vegetarianMenuPercentageT0": 0.32,
@@ -34,7 +34,7 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Shouldn't be able to create a vegetarian expe if not authenticated
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
 
         payload = {
             "satisfactionGuestsT0": 5,
@@ -48,7 +48,7 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Shouldn't be able to create a vegetarian expe if not the manager of the canteen
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
 
         payload = {
             "satisfactionGuestsT0": 5,
@@ -74,8 +74,8 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Shouldn't be able to create more than one vegetarian expe for a canteen
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        vegetarian_expe = VegetarianExpeFactory.create(canteen=canteen, satisfaction_guests_t0=5)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        vegetarian_expe = VegetarianExpeFactory(canteen=canteen, satisfaction_guests_t0=5)
 
         response = self.client.post(
             reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), {"satisfactionGuestsT0": 0}
@@ -90,8 +90,8 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Test that we can get a vegetarian expe for a canteen
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        VegetarianExpeFactory.create(canteen=canteen, satisfaction_guests_t0=4)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        VegetarianExpeFactory(canteen=canteen, satisfaction_guests_t0=4)
 
         response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -102,8 +102,8 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Shouldn't be able to get a vegetarian expe if not authenticated
         """
-        canteen = CanteenFactory.create()
-        VegetarianExpeFactory.create(canteen=canteen)
+        canteen = CanteenFactory()
+        VegetarianExpeFactory(canteen=canteen)
 
         response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -113,8 +113,8 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Shouldn't be able to get a vegetarian expe if not manager of canteen
         """
-        canteen = CanteenFactory.create()
-        VegetarianExpeFactory.create(canteen=canteen)
+        canteen = CanteenFactory()
+        VegetarianExpeFactory(canteen=canteen)
 
         response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -124,7 +124,7 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Test attempting to get a vegetarian expe that doesn't exist
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -134,8 +134,8 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Test that we can update a vegetarian experiment for a canteen
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        vegetarian_expe = VegetarianExpeFactory.create(canteen=canteen, satisfaction_guests_t0=1)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        vegetarian_expe = VegetarianExpeFactory(canteen=canteen, satisfaction_guests_t0=1)
         payload = {"satisfactionGuestsT0": 3}
         response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -146,8 +146,8 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Shouldn't be able to update a vegetarian expe if not authenticated
         """
-        canteen = CanteenFactory.create()
-        vegetarian_expe = VegetarianExpeFactory.create(canteen=canteen, satisfaction_guests_t0=1)
+        canteen = CanteenFactory()
+        vegetarian_expe = VegetarianExpeFactory(canteen=canteen, satisfaction_guests_t0=1)
         payload = {"satisfactionGuestsT0": 2}
         response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -159,8 +159,8 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Shouldn't be able to update a vegetarian expe if not manager of the canteen
         """
-        canteen = CanteenFactory.create()
-        vegetarian_expe = VegetarianExpeFactory.create(canteen=canteen, satisfaction_guests_t0=1)
+        canteen = CanteenFactory()
+        vegetarian_expe = VegetarianExpeFactory(canteen=canteen, satisfaction_guests_t0=1)
         payload = {"satisfactionGuestsT0": 2}
         response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -172,7 +172,7 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Shouldn't be able to update a vegetarian expe if it doesn't exist
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
         payload = {"satisfactionGuestsT0": 2}
         response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -183,9 +183,9 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Check that cannot update canteen on a reservation expe
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        vegetarian_expe = VegetarianExpeFactory.create(canteen=canteen)
-        payload = {"canteen": CanteenFactory.create().id}
+        canteen = CanteenFactory(managers=[authenticate.user])
+        vegetarian_expe = VegetarianExpeFactory(canteen=canteen)
+        payload = {"canteen": CanteenFactory().id}
         response = self.client.patch(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         vegetarian_expe.refresh_from_db()
@@ -196,8 +196,8 @@ class TestVegetarianExpeApi(APITestCase):
         """
         Check that updates with bad data are rejected
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        vegetarian_expe = VegetarianExpeFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        vegetarian_expe = VegetarianExpeFactory(
             canteen=canteen, satisfaction_guests_t0=3, waste_vegetarian_not_served_t0=70
         )
 

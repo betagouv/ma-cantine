@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, TeledeclarationFactory, UserFactory
-from data.models import Canteen, CanteenImage, Diagnostic, Teledeclaration, Sector
+from data.models import Canteen, CanteenImage, Diagnostic, Sector, Teledeclaration
 from data.models.geo import Region
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -195,22 +195,22 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         By default, list canteens by creation date descending
         Optionally sort by name, modification date, number of meals
         """
-        CanteenFactory.create(
+        CanteenFactory(
             daily_meal_count=200,
             name="Shiso",
             creation_date=(timezone.now() - datetime.timedelta(days=10)),
         )
-        CanteenFactory.create(
+        CanteenFactory(
             daily_meal_count=100,
             name="Wasabi",
             creation_date=(timezone.now() - datetime.timedelta(days=8)),
         )
-        last_modified = CanteenFactory.create(
+        last_modified = CanteenFactory(
             daily_meal_count=300,
             name="Mochi",
             creation_date=(timezone.now() - datetime.timedelta(days=6)),
         )
-        CanteenFactory.create(
+        CanteenFactory(
             daily_meal_count=150,
             name="Umami",
             creation_date=(timezone.now() - datetime.timedelta(days=4)),
@@ -259,22 +259,22 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         """
         In meal count, "null" values should be placed first
         """
-        canteen_daily_meal_count_none = CanteenFactory.create(
+        canteen_daily_meal_count_none = CanteenFactory(
             name="Shiso",
             creation_date=(timezone.now() - datetime.timedelta(days=10)),
         )
         Canteen.objects.filter(id=canteen_daily_meal_count_none.id).update(daily_meal_count=None)
-        canteen_daily_meal_count_0 = CanteenFactory.create(
+        canteen_daily_meal_count_0 = CanteenFactory(
             name="Wasabi",
             creation_date=(timezone.now() - datetime.timedelta(days=8)),
         )
         Canteen.objects.filter(id=canteen_daily_meal_count_0.id).update(daily_meal_count=0)
-        CanteenFactory.create(
+        CanteenFactory(
             daily_meal_count=3,
             name="Mochi",
             creation_date=(timezone.now() - datetime.timedelta(days=6)),
         )
-        CanteenFactory.create(
+        CanteenFactory(
             daily_meal_count=4,
             name="Umami",
             creation_date=(timezone.now() - datetime.timedelta(days=4)),
@@ -303,42 +303,42 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
         and based on the rules for their region
         """
-        good_canteen = CanteenFactory.create(name="Shiso", region=Region.auvergne_rhone_alpes)
-        central = CanteenFactory.create(
+        good_canteen = CanteenFactory(name="Shiso", region=Region.auvergne_rhone_alpes)
+        central = CanteenFactory(
             name="Central",
             region=Region.auvergne_rhone_alpes,
             production_type=Canteen.ProductionType.CENTRAL,
             siret="22730656663081",
         )
-        CanteenFactory.create(
+        CanteenFactory(
             name="Satellite",
             region=Region.auvergne_rhone_alpes,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="22730656663081",
         )
-        medium_canteen = CanteenFactory.create(name="Wasabi", region=Region.auvergne_rhone_alpes)
-        sustainable_canteen = CanteenFactory.create(name="Umami", region=Region.auvergne_rhone_alpes)
-        bad_canteen = CanteenFactory.create(name="Mochi", region=Region.auvergne_rhone_alpes)
-        secretly_good_canteen = CanteenFactory.create(name="Secret", region=Region.auvergne_rhone_alpes)
-        guadeloupe_canteen = CanteenFactory.create(region=Region.guadeloupe, name="Guadeloupe")
-        good_canteen_with_siren = CanteenFactory.create(
+        medium_canteen = CanteenFactory(name="Wasabi", region=Region.auvergne_rhone_alpes)
+        sustainable_canteen = CanteenFactory(name="Umami", region=Region.auvergne_rhone_alpes)
+        bad_canteen = CanteenFactory(name="Mochi", region=Region.auvergne_rhone_alpes)
+        secretly_good_canteen = CanteenFactory(name="Secret", region=Region.auvergne_rhone_alpes)
+        guadeloupe_canteen = CanteenFactory(region=Region.guadeloupe, name="Guadeloupe")
+        good_canteen_with_siren = CanteenFactory(
             name="Siren",
             region=Region.auvergne_rhone_alpes,
             siret="",
             siren_unite_legale="123456789",
         )
-        good_canteen_empty_siret = CanteenFactory.create(name="Cantine avec bilan mais siret vide")
+        good_canteen_empty_siret = CanteenFactory(name="Cantine avec bilan mais siret vide")
         Canteen.objects.filter(id=good_canteen_empty_siret.id).update(siret="")
         good_canteen_empty_siret.refresh_from_db()
-        good_canteen_siret_none = CanteenFactory.create(name="Cantine avec bilan mais siret null")
+        good_canteen_siret_none = CanteenFactory(name="Cantine avec bilan mais siret null")
         Canteen.objects.filter(id=good_canteen_siret_none.id).update(siret=None)
         good_canteen_siret_none.refresh_from_db()
-        CanteenFactory.create(
+        CanteenFactory(
             name="Cantine sans bilan avec siret cuisine centrale vide",
             siret="21730065600014",
             central_producer_siret="",
         )
-        CanteenFactory.create(
+        CanteenFactory(
             name="Cantine sans bilan avec siret cuisine centrale null",
             siret="21380185500015",
             central_producer_siret=None,
@@ -346,7 +346,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         publication_year = date.today().year - 1
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=good_canteen,
             year=publication_year,
             value_total_ht=100,
@@ -355,7 +355,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=10,
             value_egalim_others_ht=10,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central,
             year=publication_year,
             value_total_ht=100,
@@ -364,7 +364,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=10,
             value_egalim_others_ht=10,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=secretly_good_canteen,
             year=publication_year,
             value_total_ht=100,
@@ -373,7 +373,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=0,
             value_egalim_others_ht=0,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=medium_canteen,
             year=publication_year,
             value_total_ht=1000,
@@ -382,7 +382,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=None,
             value_egalim_others_ht=None,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=sustainable_canteen,
             year=publication_year,
             value_total_ht=100,
@@ -391,7 +391,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=40,
             value_egalim_others_ht=20,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=bad_canteen,
             year=2019,
             value_total_ht=100,
@@ -400,7 +400,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=0,
             value_egalim_others_ht=0,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=bad_canteen,
             year=publication_year,
             value_total_ht=10,
@@ -409,7 +409,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=0,
             value_egalim_others_ht=0,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=guadeloupe_canteen,
             year=publication_year,
             value_total_ht=100,
@@ -418,7 +418,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=None,
             value_egalim_others_ht=0,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=good_canteen_with_siren,
             year=publication_year,
             value_total_ht=100,
@@ -427,7 +427,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=10,
             value_egalim_others_ht=10,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=good_canteen_empty_siret,
             year=publication_year,
             value_total_ht=100,
@@ -436,7 +436,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             value_externality_performance_ht=0,
             value_egalim_others_ht=0,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=good_canteen_siret_none,
             year=publication_year,
             value_total_ht=100,
@@ -537,11 +537,11 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         """
         The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
         """
-        school = SectorM2MFactory.create(name="School")
-        enterprise = SectorM2MFactory.create(name="Enterprise")
-        administration = SectorM2MFactory.create(name="Administration")
+        school = SectorM2MFactory(name="School")
+        enterprise = SectorM2MFactory(name="Enterprise")
+        administration = SectorM2MFactory(name="Administration")
         # unused sectors shouldn't show up as an option
-        SectorM2MFactory.create(name="Unused")
+        SectorM2MFactory(name="Unused")
         CanteenFactory(sectors_m2m=[school, enterprise], name="Shiso")
         CanteenFactory(sectors_m2m=[school], name="Wasabi")
         CanteenFactory(sectors_m2m=[school], name="Mochi")
@@ -570,15 +570,15 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
         It should not return sectors from hidden canteens
         """
-        school = SectorM2MFactory.create(name="School")
-        enterprise = SectorM2MFactory.create(name="Enterprise")
-        administration = SectorM2MFactory.create(name="Administration")
+        school = SectorM2MFactory(name="School")
+        enterprise = SectorM2MFactory(name="Enterprise")
+        administration = SectorM2MFactory(name="Administration")
         # unused sectors shouldn't show up as an option
-        unused = SectorM2MFactory.create(name="Unused")
-        CanteenFactory.create(line_ministry=None, sectors_m2m=[school, enterprise], name="Shiso")
-        CanteenFactory.create(line_ministry=None, sectors_m2m=[school, administration], name="Umami")
+        unused = SectorM2MFactory(name="Unused")
+        CanteenFactory(line_ministry=None, sectors_m2m=[school, enterprise], name="Shiso")
+        CanteenFactory(line_ministry=None, sectors_m2m=[school, administration], name="Umami")
 
-        CanteenFactory.create(line_ministry=Canteen.Ministries.ARMEE, sectors_m2m=[unused], name="Secret")
+        CanteenFactory(line_ministry=Canteen.Ministries.ARMEE, sectors_m2m=[unused], name="Secret")
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -612,7 +612,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
     def test_get_canteens_filter_production_type(self):
         site_canteen = CanteenFactory(production_type="site")
         central_cuisine = CanteenFactory(production_type="central")
-        central_serving_cuisine = CanteenFactory.create(production_type="central_serving")
+        central_serving_cuisine = CanteenFactory(production_type="central_serving")
 
         response = self.client.get(f"{reverse('published_canteens')}?production_type=central,central_serving")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -738,13 +738,12 @@ class PublishedCanteenDetailApiTest(APITestCase):
         is set. Otherwise it may be an old diagnostic that is not meant for the satellites
         """
         central_siret = "22730656663081"
-        central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
-            central_producer_siret=central_siret,
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        central_kitchen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(
+            central_producer_siret=central_siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central_kitchen,
             year=2020,
             value_total_ht=1200,
@@ -766,13 +765,12 @@ class PublishedCanteenDetailApiTest(APITestCase):
         If the central kitchen diag is set to ALL, every fields should be included.
         """
         central_siret = "22730656663081"
-        central_kitchen = CanteenFactory.create(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
-            central_producer_siret=central_siret,
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        central_kitchen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(
+            central_producer_siret=central_siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
         )
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central_kitchen,
             year=2020,
             value_total_ht=1200,
@@ -781,7 +779,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
             value_total_ht=1200,
@@ -815,9 +813,9 @@ class PublishedCanteenDetailApiTest(APITestCase):
         """
         The published endpoint should not contain the real economic data, only percentages.
         """
-        canteen = CanteenFactory.create(production_type=Canteen.ProductionType.ON_SITE)
+        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=canteen,
             year=2021,
             value_total_ht=1200,
@@ -857,12 +855,9 @@ class PublishedCanteenDetailApiTest(APITestCase):
         Even when the meat and fish totals are absent, but EGalim and France totals are present.
         """
         central_siret = "22730656663081"
-        canteen = CanteenFactory.create(
-            siret=central_siret,
-            production_type=Canteen.ProductionType.ON_SITE,
-        )
+        canteen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.ON_SITE)
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=canteen,
             year=2021,
             value_meat_poultry_ht=None,
@@ -887,14 +882,13 @@ class PublishedCanteenDetailApiTest(APITestCase):
         The published endpoint returns all diagnostic "service" data in one property,
         and the appro data in another. The latter should be filtered on the redacted years.
         """
-        canteen = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE,
-            redacted_appro_years=[2020, 2021, 2023],
+        canteen = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE, redacted_appro_years=[2020, 2021, 2023]
         )
 
-        DiagnosticFactory.create(canteen=canteen, year=2021)
-        published_appro_diag = DiagnosticFactory.create(canteen=canteen, year=2022)
-        DiagnosticFactory.create(canteen=canteen, year=2023)
+        DiagnosticFactory(canteen=canteen, year=2021)
+        published_appro_diag = DiagnosticFactory(canteen=canteen, year=2022)
+        DiagnosticFactory(canteen=canteen, year=2023)
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
         body = response.json()
@@ -918,29 +912,29 @@ class PublishedCanteenDetailApiTest(APITestCase):
         Satellites should be able to redact the appro data provided by a CC, regardless of diagostic mode,
         without impacting other satellites or the CC
         """
-        central = CanteenFactory.create(
+        central = CanteenFactory(
             siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL, redacted_appro_years=[]
         )
-        fully_redacted_satellite = CanteenFactory.create(
+        fully_redacted_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
             redacted_appro_years=[2022, 2023],
         )
-        partially_redacted_satellite = CanteenFactory.create(
+        partially_redacted_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
             redacted_appro_years=[2022],
         )
-        other_satellite = CanteenFactory.create(
+        other_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
             redacted_appro_years=[],
         )
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central, year=2022, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
         )
         self.assertEqual(fully_redacted_satellite.central_kitchen_diagnostics.count(), 2)
@@ -962,18 +956,18 @@ class PublishedCanteenDetailApiTest(APITestCase):
         """
         CCs should be able to redact the appro data without impacting their satellites
         """
-        central = CanteenFactory.create(
+        central = CanteenFactory(
             siret="96766910375238",
             production_type=Canteen.ProductionType.CENTRAL,
             redacted_appro_years=[2023],
         )
-        satellite = CanteenFactory.create(
+        satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
             redacted_appro_years=[],
         )
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
         )
 
@@ -990,20 +984,19 @@ class PublishedCanteenDetailApiTest(APITestCase):
         Satellites that have their own diagnostic for one year, and CC diagnostics for another,
         should receive the CC diagnostic where it exists
         """
-        central = CanteenFactory.create(siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central.siret,
+        central = CanteenFactory(siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
 
-        DiagnosticFactory.create(canteen=satellite, year=2021)
-        DiagnosticFactory.create(
+        DiagnosticFactory(canteen=satellite, year=2021)
+        DiagnosticFactory(
             canteen=central, year=2022, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
         )
-        DiagnosticFactory.create(canteen=satellite, year=2023)
+        DiagnosticFactory(canteen=satellite, year=2023)
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
         body = response.json()
@@ -1026,17 +1019,17 @@ class PublishedCanteenDetailApiTest(APITestCase):
         Satellites that have their own diagnostic should be able to redact their appro data
         without their CC's diagnostic appro data taking it's place
         """
-        central = CanteenFactory.create(siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory.create(
+        central = CanteenFactory(siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
             redacted_appro_years=[2023],
         )
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
         )
-        DiagnosticFactory.create(canteen=satellite, year=2023)
+        DiagnosticFactory(canteen=satellite, year=2023)
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
         body = response.json()
@@ -1046,11 +1039,11 @@ class PublishedCanteenDetailApiTest(APITestCase):
         """
         A teledeclared diagnostic cannot be redacted
         """
-        canteen = CanteenFactory.create(redacted_appro_years=[2022, 2023])
+        canteen = CanteenFactory(redacted_appro_years=[2022, 2023])
 
-        DiagnosticFactory.create(canteen=canteen, year=2022)
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2023, status=Diagnostic.DiagnosticStatus.SUBMITTED)
-        TeledeclarationFactory.create(
+        DiagnosticFactory(canteen=canteen, year=2022)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2023, status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        TeledeclarationFactory(
             diagnostic=diagnostic, status=Teledeclaration.TeledeclarationStatus.SUBMITTED, declared_data={"foo": "bar"}
         )
 
@@ -1107,9 +1100,7 @@ class TestPublishedCanteenClaimApiTest(APITestCase):
 
     @authenticate
     def test_undo_claim_canteen(self):
-        canteen = CanteenFactory.create(
-            claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user]
-        )
+        canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
 
         response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1120,8 +1111,8 @@ class TestPublishedCanteenClaimApiTest(APITestCase):
 
     @authenticate
     def test_undo_claim_canteen_fails_if_not_original_claimer(self):
-        other_user = UserFactory.create()
-        canteen = CanteenFactory.create(claimed_by=other_user, has_been_claimed=True, managers=[authenticate.user])
+        other_user = UserFactory()
+        canteen = CanteenFactory(claimed_by=other_user, has_been_claimed=True, managers=[authenticate.user])
 
         response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1168,6 +1159,9 @@ class CanteenPreviewDetailApiTest(APITestCase):
         self.assertIn("waste", body["badges"])
         self.assertIn("diversification", body["badges"])
         self.assertIn("plastic", body["badges"])
+        self.assertIn("info", body["badges"])
+        self.assertIn("approDiagnostic", body)
+        self.assertIn("percentageValueBioHt", body["approDiagnostic"])
         self.assertIn("info", body["badges"])
         self.assertIn("approDiagnostic", body)
         self.assertIn("percentageValueBioHt", body["approDiagnostic"])

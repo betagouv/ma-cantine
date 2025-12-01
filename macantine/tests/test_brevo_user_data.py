@@ -4,12 +4,7 @@ from unittest import mock
 from django.test import TestCase
 from freezegun import freeze_time
 
-from data.factories import (
-    CanteenFactory,
-    DiagnosticFactory,
-    TeledeclarationFactory,
-    UserFactory,
-)
+from data.factories import CanteenFactory, DiagnosticFactory, TeledeclarationFactory, UserFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine import tasks
 
@@ -27,7 +22,7 @@ class TestBrevoUserData(TestCase):
         TD and publication to `False` because they can't be missing them without even having
         a canteen.
         """
-        new_user = UserFactory.create()
+        new_user = UserFactory()
         tasks.update_brevo_contacts()
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
@@ -53,8 +48,8 @@ class TestBrevoUserData(TestCase):
         As soon as a user has a canteen, pending actions will follow and all paramteres
         related to the diagnostic, TD and publication will be active
         """
-        user = UserFactory.create()
-        CanteenFactory.create(managers=[user])
+        user = UserFactory()
+        CanteenFactory(managers=[user])
 
         tasks.update_brevo_contacts()
         create_contact_mock.assert_called_once()
@@ -73,11 +68,11 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_diag(self, batch_update_mock, create_contact_mock):
-        user = UserFactory.create()
-        canteen = CanteenFactory.create(managers=[user])
+        user = UserFactory()
+        canteen = CanteenFactory(managers=[user])
 
-        DiagnosticFactory.create(year=2021, canteen=canteen)
-        DiagnosticFactory.create(year=2022, canteen=canteen)
+        DiagnosticFactory(year=2021, canteen=canteen)
+        DiagnosticFactory(year=2022, canteen=canteen)
 
         tasks.update_brevo_contacts()
         batch_update_mock.assert_not_called()
@@ -97,13 +92,13 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_td(self, batch_update_mock, create_contact_mock):
-        user = UserFactory.create()
-        canteen = CanteenFactory.create(managers=[user])
+        user = UserFactory()
+        canteen = CanteenFactory(managers=[user])
 
-        diag_2021 = DiagnosticFactory.create(year=2021, canteen=canteen)
-        diag_2022 = DiagnosticFactory.create(year=2022, canteen=canteen)
+        diag_2021 = DiagnosticFactory(year=2021, canteen=canteen)
+        diag_2022 = DiagnosticFactory(year=2022, canteen=canteen)
 
-        TeledeclarationFactory.create(
+        TeledeclarationFactory(
             diagnostic=diag_2021,
             year=2021,
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
@@ -111,7 +106,7 @@ class TestBrevoUserData(TestCase):
             canteen=canteen,
             applicant=user,
         )
-        TeledeclarationFactory.create(
+        TeledeclarationFactory(
             diagnostic=diag_2022,
             year=2022,
             status=Teledeclaration.TeledeclarationStatus.CANCELLED,
@@ -137,22 +132,22 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_sat_canteen_with_cc_diag(self, batch_update_mock, create_contact_mock):
-        user = UserFactory.create()
-        central_kitchen = CanteenFactory.create(
+        user = UserFactory()
+        central_kitchen = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874", managers=[user]
         )
-        CanteenFactory.create(
+        CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central_kitchen.siret,
             managers=[user],
         )
 
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             year=2021,
             canteen=central_kitchen,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             year=2022,
             canteen=central_kitchen,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
@@ -175,28 +170,28 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_sat_canteen_with_cc_td(self, batch_update_mock, create_contact_mock):
-        user = UserFactory.create()
-        central_kitchen = CanteenFactory.create(
+        user = UserFactory()
+        central_kitchen = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874", managers=[user]
         )
-        CanteenFactory.create(
+        CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central_kitchen.siret,
             managers=[user],
         )
 
-        diag_2021 = DiagnosticFactory.create(
+        diag_2021 = DiagnosticFactory(
             year=2021,
             canteen=central_kitchen,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
-        diag_2022 = DiagnosticFactory.create(
+        diag_2022 = DiagnosticFactory(
             year=2022,
             canteen=central_kitchen,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
-        TeledeclarationFactory.create(
+        TeledeclarationFactory(
             diagnostic=diag_2021,
             year=2021,
             status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
@@ -204,7 +199,7 @@ class TestBrevoUserData(TestCase):
             canteen=central_kitchen,
             applicant=user,
         )
-        TeledeclarationFactory.create(
+        TeledeclarationFactory(
             diagnostic=diag_2022,
             year=2022,
             status=Teledeclaration.TeledeclarationStatus.CANCELLED,

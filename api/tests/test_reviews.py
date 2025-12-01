@@ -14,7 +14,7 @@ class TestReviews(APITestCase):
         Test that authenticated user can submit a review and the state of
         having a canteen/diagnostic is saved automatically.
         """
-        CanteenFactory.create(managers=[authenticate.user])
+        CanteenFactory(managers=[authenticate.user])
         payload = {
             "page": "CanteensHome",
             "rating": 5,
@@ -32,11 +32,9 @@ class TestReviews(APITestCase):
         """
         Test that user can create a second review for another page
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        ReviewFactory.create(
-            user=authenticate.user, page="CanteensHome", rating=3, hasCanteen=True, hasDiagnostic=False
-        )
-        DiagnosticFactory.create(canteen=canteen)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        ReviewFactory(user=authenticate.user, page="CanteensHome", rating=3, hasCanteen=True, hasDiagnostic=False)
+        DiagnosticFactory(canteen=canteen)
 
         payload = {
             "page": "DiagnosticsHome",
@@ -95,8 +93,8 @@ class TestReviews(APITestCase):
         """
         Test that user can get the review they've submitted for a page
         """
-        ReviewFactory.create(user=authenticate.user, hasCanteen=True, hasDiagnostic=False)
-        ReviewFactory.create(hasCanteen=False, hasDiagnostic=True)  # should not be fetched
+        ReviewFactory(user=authenticate.user, hasCanteen=True, hasDiagnostic=False)
+        ReviewFactory(hasCanteen=False, hasDiagnostic=True)  # should not be fetched
         response = self.client.get(reverse("logged_user"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()

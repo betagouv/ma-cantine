@@ -11,10 +11,10 @@ from data.models import Message
 @override_settings(CONTACT_EMAIL="contact@example.com")
 class TestMessageModel(TestCase):
     def test_send_message(self):
-        canteen = CanteenFactory.create()
-        managers = [UserFactory.create(), UserFactory.create()]
+        canteen = CanteenFactory()
+        managers = [UserFactory(), UserFactory()]
         canteen.managers.set(managers)
-        message = MessageFactory.create(destination_canteen=canteen, sender_email="test@example.com")
+        message = MessageFactory(destination_canteen=canteen, sender_email="test@example.com")
         self.assertEqual(message.status, Message.Status.PENDING)
 
         message.send()
@@ -33,15 +33,15 @@ class TestMessageModel(TestCase):
         self.assertEqual(message.status, Message.Status.SENT)
 
     def test_resend_message(self):
-        message = MessageFactory.create(status=Message.Status.SENT, sent_date=now())
+        message = MessageFactory(status=Message.Status.SENT, sent_date=now())
         self.assertRaises(Exception, message.send)
 
     def test_block_message(self):
-        message = MessageFactory.create()
+        message = MessageFactory()
         message.block()
         message.refresh_from_db()
         self.assertEqual(message.status, Message.Status.BLOCKED)
 
     def test_block_sent_message(self):
-        message = MessageFactory.create(status=Message.Status.SENT, sent_date=now())
+        message = MessageFactory(status=Message.Status.SENT, sent_date=now())
         self.assertRaises(Exception, message.block)

@@ -11,7 +11,7 @@ from data.models import Message
 @override_settings(CONTACT_EMAIL="contact@example.com")
 class TestMessageApi(APITestCase):
     def test_message_creation(self):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         payload = {
             "destinationCanteen": canteen.id,
             "senderName": "Test tester",
@@ -30,7 +30,7 @@ class TestMessageApi(APITestCase):
 
     @authenticate
     def test_message_creation_authenticated(self):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         payload = {
             "destinationCanteen": canteen.id,
             "senderEmail": "test@example.com",
@@ -40,7 +40,7 @@ class TestMessageApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_bad_email(self):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         payload = {
             "destinationCanteen": canteen.id,
             "senderEmail": "bademail",
@@ -50,7 +50,7 @@ class TestMessageApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_missing_body(self):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         payload = {
             "destinationCanteen": canteen.id,
             "senderEmail": "test@example.com",
@@ -59,7 +59,7 @@ class TestMessageApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_missing_email(self):
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         payload = {
             "destinationCanteen": canteen.id,
             "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",

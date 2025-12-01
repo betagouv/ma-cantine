@@ -14,7 +14,7 @@ class TestSignals(APITestCase):
         """
         Teledeclarations created via the website should save the corresponding authentication method
         """
-        diagnostic = DiagnosticFactory.create(year=2021)
+        diagnostic = DiagnosticFactory(year=2021)
         diagnostic.canteen.managers.add(authenticate.user)
         payload = {"diagnosticId": diagnostic.id}
 
@@ -31,7 +31,7 @@ class TestSignals(APITestCase):
         Teledeclarations cannot be created via a third party API
         """
         user, token = get_oauth2_token("canteen:write")
-        diagnostic = DiagnosticFactory.create(year=2021)
+        diagnostic = DiagnosticFactory(year=2021)
         diagnostic.canteen.managers.add(user)
 
         payload = {"diagnosticId": diagnostic.id}

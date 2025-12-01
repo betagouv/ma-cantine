@@ -7,12 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import (
-    CanteenFactory,
-    CommunityEventFactory,
-    PartnerTypeFactory,
-    VideoTutorialFactory,
-)
+from data.factories import CanteenFactory, CommunityEventFactory, PartnerTypeFactory, VideoTutorialFactory
 from data.models import Canteen
 
 
@@ -22,9 +17,9 @@ class TestInitialDataApi(APITestCase):
         The initial data request must contain data that is individually managed
         by other views. If the call isn't authenticated, "loggedUser" should be None
         """
-        partner_type = PartnerTypeFactory.create()
-        community_event = CommunityEventFactory.create(end_date=timezone.now() + datetime.timedelta(days=10))
-        video_tutorial = VideoTutorialFactory.create(published=True)
+        partner_type = PartnerTypeFactory()
+        community_event = CommunityEventFactory(end_date=timezone.now() + datetime.timedelta(days=10))
+        video_tutorial = VideoTutorialFactory(published=True)
 
         response = self.client.get(reverse("initial_data"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -62,7 +57,7 @@ class TestInitialDataApi(APITestCase):
         to thoroughly test the other keys, just making sure they are present.
         The cantine previews should also be present in this case.
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         response = self.client.get(reverse("initial_data"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -17,7 +17,7 @@ class CanteenStatusApiTest(APITestCase):
         If checking a siret of a canteen that exists and I manage, give me canteen info
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret, managers=[authenticate.user])
+        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
 
         response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -34,7 +34,7 @@ class CanteenStatusApiTest(APITestCase):
         give me minimal canteen info and an indication that the canteen can be claimed
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret)
+        canteen = CanteenFactory(siret=siret)
         canteen.managers.clear()
 
         response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
@@ -52,7 +52,7 @@ class CanteenStatusApiTest(APITestCase):
         give me minimal canteen info and an indication that the canteen can't be claimed
         """
         siret = "26566234910966"
-        canteen = CanteenFactory.create(siret=siret)
+        canteen = CanteenFactory(siret=siret)
 
         response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

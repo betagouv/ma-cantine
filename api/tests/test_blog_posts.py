@@ -11,13 +11,13 @@ class TestBlogApi(APITestCase):
         The API should only return published blog posts
         """
         published_blog_posts = [
-            BlogPostFactory.create(published=True),
-            BlogPostFactory.create(published=True),
+            BlogPostFactory(published=True),
+            BlogPostFactory(published=True),
         ]
         draft_blog_posts = [
-            BlogPostFactory.create(published=False),
-            BlogPostFactory.create(published=False),
-            BlogPostFactory.create(published=False),
+            BlogPostFactory(published=False),
+            BlogPostFactory(published=False),
+            BlogPostFactory(published=False),
         ]
         response = self.client.get(reverse("blog_posts_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -37,10 +37,10 @@ class TestBlogApi(APITestCase):
         """
         The API should return single blog posts if they are published
         """
-        tag = BlogTagFactory.create(name="Test tag")
-        published_blog_post = BlogPostFactory.create(published=True)
+        tag = BlogTagFactory(name="Test tag")
+        published_blog_post = BlogPostFactory(published=True)
         published_blog_post.tags.add(tag)
-        draft_blog_post = BlogPostFactory.create(published=False)
+        draft_blog_post = BlogPostFactory(published=False)
 
         response = self.client.get(reverse("single_blog_post", kwargs={"pk": published_blog_post.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -53,12 +53,12 @@ class TestBlogApi(APITestCase):
         """
         The API should return filtered blog posts
         """
-        tag = BlogTagFactory.create(name="Test")
-        other = BlogTagFactory.create()
-        good_post = BlogPostFactory.create(published=True)
+        tag = BlogTagFactory(name="Test")
+        other = BlogTagFactory()
+        good_post = BlogPostFactory(published=True)
         good_post.tags.add(tag)
         good_post.tags.add(other)
-        post = BlogPostFactory.create(published=True)
+        post = BlogPostFactory(published=True)
         post.tags.add(other)
 
         response = self.client.get(reverse("blog_posts_list"), {"tag": "Test"})
@@ -70,13 +70,13 @@ class TestBlogApi(APITestCase):
         """
         The API should also return names of tags that are used by published blog posts
         """
-        used_tag = BlogTagFactory.create(name="Used")
-        draft_tag = BlogTagFactory.create(name="Draft")
-        BlogTagFactory.create(name="Unused")
+        used_tag = BlogTagFactory(name="Used")
+        draft_tag = BlogTagFactory(name="Draft")
+        BlogTagFactory(name="Unused")
 
-        published_blog_post = BlogPostFactory.create(published=True)
+        published_blog_post = BlogPostFactory(published=True)
         published_blog_post.tags.add(used_tag)
-        draft_blog_post = BlogPostFactory.create(published=False)
+        draft_blog_post = BlogPostFactory(published=False)
         draft_blog_post.tags.add(draft_tag)
 
         response = self.client.get(reverse("blog_posts_list"))

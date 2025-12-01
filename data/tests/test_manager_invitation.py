@@ -12,8 +12,8 @@ class TestManagerInvitation(APITestCase):
         should be added to the list of canteen managers
         """
         pms = [
-            ManagerInvitationFactory.create(email="smith@example.com"),
-            ManagerInvitationFactory.create(email="smith@example.com"),
+            ManagerInvitationFactory(email="smith@example.com"),
+            ManagerInvitationFactory(email="smith@example.com"),
         ]
         canteens = [pms[0].canteen, pms[1].canteen]
 

@@ -16,7 +16,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         When calling this API unathenticated we expect a 403
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -42,7 +42,7 @@ class TestWasteMeasurementsApi(APITestCase):
         When calling this API on a canteen that the user doesn't manage,
         we expect a 403
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         response = self.client.post(
             reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}),
             {
@@ -59,7 +59,7 @@ class TestWasteMeasurementsApi(APITestCase):
         When calling this API on a canteen that the user manages
         we expect a waste_measurement to be created
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         payload = {
             "period_start_date": "2024-08-01",
@@ -106,7 +106,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Same start & end dates (Period of 1 day)
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         payload = {
             "period_start_date": "2024-08-01",
@@ -121,7 +121,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Period start date and period end date must be given
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         payload = {}
 
@@ -138,7 +138,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         The period end date cannot be in the future
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         payload = {
             "period_start_date": "2024-08-01",
@@ -155,7 +155,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         The period start date must be before end date
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         payload = {
             "period_start_date": "2024-08-10",
@@ -174,8 +174,8 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         A new measurement cannot have a period that overlaps with an existing measurement
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        WasteMeasurementFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
         )
 
@@ -204,7 +204,7 @@ class TestWasteMeasurementsApi(APITestCase):
         )
 
         # check a start and end date that encapsulate the periods of existing measurements
-        WasteMeasurementFactory.create(
+        WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 7, 10), period_end_date=datetime.date(2024, 7, 15)
         )
         payload = {
@@ -223,10 +223,8 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         It shouldn't matter when other canteens have created their waste measurements
         """
-        WasteMeasurementFactory.create(
-            period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
-        )
-        canteen = CanteenFactory.create(managers=[authenticate.user])
+        WasteMeasurementFactory(period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5))
+        canteen = CanteenFactory(managers=[authenticate.user])
 
         response = self.client.post(
             reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}),
@@ -241,7 +239,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Get 403 when trying to fetch waste measurements without being authenticated
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
 
         response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -251,7 +249,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Get 403 when trying to fetch waste measurements without being manager of the canteen
         """
-        canteen = CanteenFactory.create()
+        canteen = CanteenFactory()
         response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -260,14 +258,14 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Canteen managers can fetch all the waste measurements for a canteen in order of period start date descending
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        measurement_july = WasteMeasurementFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement_july = WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
         )
-        measurement_august = WasteMeasurementFactory.create(
+        measurement_august = WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
         )
-        WasteMeasurementFactory.create()  # to be filtered out
+        WasteMeasurementFactory()  # to be filtered out
 
         response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -283,7 +281,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Canteen waste measurements should contain a computed field of number of days in period
         """
-        measurement = WasteMeasurementFactory.create(
+        measurement = WasteMeasurementFactory(
             period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
         )
         measurement.canteen.managers.add(authenticate.user)
@@ -303,7 +301,7 @@ class TestWasteMeasurementsApi(APITestCase):
         yearly meal count
         """
         canteen = CanteenFactory(yearly_meal_count=1000, managers=[authenticate.user])
-        WasteMeasurementFactory.create(canteen=canteen, meal_count=10, total_mass=50)
+        WasteMeasurementFactory(canteen=canteen, meal_count=10, total_mass=50)
 
         response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
         body = response.json()
@@ -315,8 +313,8 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         If the user is not the manager of the canteen, they get a 403 when attempting to view the waste measurement
         """
-        canteen = CanteenFactory.create()
-        measurement = WasteMeasurementFactory.create(canteen=canteen)
+        canteen = CanteenFactory()
+        measurement = WasteMeasurementFactory(canteen=canteen)
 
         response = self.client.get(
             reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
@@ -328,8 +326,8 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Canteen managers can fetch the waste measurement of a canteen they manage
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        measurement = WasteMeasurementFactory.create(canteen=canteen)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement = WasteMeasurementFactory(canteen=canteen)
 
         response = self.client.get(
             reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
@@ -344,8 +342,8 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Canteen managers can edit the waste measurement of a canteen they manage
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        measurement = WasteMeasurementFactory.create(canteen=canteen, meal_count=100)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement = WasteMeasurementFactory(canteen=canteen, meal_count=100)
 
         payload = {"mealCount": 200}
         response = self.client.patch(
@@ -362,8 +360,8 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         The period end date cannot be updated to be in the future
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        measurement = WasteMeasurementFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement = WasteMeasurementFactory(
             canteen=canteen, period_start_date="2024-08-01", period_end_date="2024-08-05"
         )
 
@@ -380,8 +378,8 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         The period start date must be before end date in update
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        measurement = WasteMeasurementFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement = WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
         )
 
@@ -408,13 +406,13 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         A measurement update cannot have a period that overlaps with an existing measurement
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        WasteMeasurementFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
         )
 
         # check a start date that falls in existing period
-        measurement = WasteMeasurementFactory.create(
+        measurement = WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
         )
         payload = {"period_start_date": "2024-07-03"}
@@ -428,7 +426,7 @@ class TestWasteMeasurementsApi(APITestCase):
         )
 
         # check an end date that falls in existing period
-        measurement = WasteMeasurementFactory.create(
+        measurement = WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 6, 1), period_end_date=datetime.date(2024, 6, 5)
         )
         payload = {"period_end_date": "2024-07-03"}
@@ -460,8 +458,8 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         The period dates cannot be removed
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        measurement = WasteMeasurementFactory.create(canteen=canteen)
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement = WasteMeasurementFactory(canteen=canteen)
 
         payload = {
             "period_start_date": None,
@@ -485,8 +483,8 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Given valid dates, it it possible to update the dates of a measurement even when the new dates "overlap" the existing ones
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        measurement = WasteMeasurementFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement = WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 5, 1), period_end_date=datetime.date(2024, 5, 10)
         )
 
@@ -505,15 +503,15 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         Canteen managers can fetch all the waste measurements for a canteen in a particular time period
         """
-        canteen = CanteenFactory.create(managers=[authenticate.user])
-        measurement_july = WasteMeasurementFactory.create(
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement_july = WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
         )
-        measurement_august = WasteMeasurementFactory.create(
+        measurement_august = WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
         )
         # the following should be filtered out
-        WasteMeasurementFactory.create(
+        WasteMeasurementFactory(
             canteen=canteen, period_start_date=datetime.date(2024, 9, 1), period_end_date=datetime.date(2024, 9, 5)
         )
 

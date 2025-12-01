@@ -10,9 +10,9 @@ class TestPartnerTypeApi(APITestCase):
         """
         The API should return all partner types
         """
-        PartnerTypeFactory.create()
-        PartnerTypeFactory.create()
-        PartnerTypeFactory.create()
+        PartnerTypeFactory()
+        PartnerTypeFactory()
+        PartnerTypeFactory()
 
         response = self.client.get(reverse("partner_types_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

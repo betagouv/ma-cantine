@@ -23,7 +23,7 @@ class TestAutomaticEmails(TestCase):
         today = timezone.now()
 
         # Should send email
-        jean = UserFactory.create(
+        jean = UserFactory(
             date_joined=(today - timedelta(weeks=1)),
             email_no_canteen_first_reminder=None,
             first_name="Jean",
@@ -32,17 +32,17 @@ class TestAutomaticEmails(TestCase):
         )
 
         # Should not send email because user already has a canteen
-        anna = UserFactory.create(
+        anna = UserFactory(
             date_joined=(today - timedelta(weeks=1)),
             email_no_canteen_first_reminder=None,
             first_name="Anna",
             last_name="Logue",
         )
-        canteen_anna = CanteenFactory.create()
+        canteen_anna = CanteenFactory()
         canteen_anna.managers.add(anna)
 
         # Should not send email because account is too recent
-        sophie = UserFactory.create(
+        sophie = UserFactory(
             date_joined=(today - timedelta(days=1)),
             email_no_canteen_first_reminder=None,
             first_name="Sophie",
@@ -50,7 +50,7 @@ class TestAutomaticEmails(TestCase):
         )
 
         # Should not send email because already sent 10 minutes ago
-        fred = UserFactory.create(
+        fred = UserFactory(
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(minutes=10)),
             first_name="Fred",
@@ -84,7 +84,7 @@ class TestAutomaticEmails(TestCase):
         today = timezone.now()
 
         # Should not send email
-        jean = UserFactory.create(
+        jean = UserFactory(
             date_joined=(today - timedelta(weeks=1)),
             email_no_canteen_first_reminder=None,
             first_name="Jean",
@@ -111,7 +111,7 @@ class TestAutomaticEmails(TestCase):
         today = timezone.now()
 
         # Should not send because first reminder was only sent yesterday
-        jean = UserFactory.create(
+        jean = UserFactory(
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(days=1)),
             email_no_canteen_second_reminder=None,
@@ -120,18 +120,18 @@ class TestAutomaticEmails(TestCase):
         )
 
         # Should not send because user has a canteen
-        anna = UserFactory.create(
+        anna = UserFactory(
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(days=10)),
             email_no_canteen_second_reminder=None,
             first_name="Anna",
             last_name="Logue",
         )
-        canteen_anna = CanteenFactory.create()
+        canteen_anna = CanteenFactory()
         canteen_anna.managers.add(anna)
 
         # Should not send because she hasn't received the first reminder
-        sophie = UserFactory.create(
+        sophie = UserFactory(
             date_joined=(today - timedelta(weeks=3)),
             email_no_canteen_first_reminder=None,
             email_no_canteen_second_reminder=None,
@@ -140,7 +140,7 @@ class TestAutomaticEmails(TestCase):
         )
 
         # Should not send because it has already been sent
-        fred = UserFactory.create(
+        fred = UserFactory(
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(weeks=2)),
             email_no_canteen_second_reminder=(today - timedelta(weeks=1)),
@@ -149,7 +149,7 @@ class TestAutomaticEmails(TestCase):
         )
 
         # Should send
-        marie = UserFactory.create(
+        marie = UserFactory(
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(weeks=1)),
             email_no_canteen_second_reminder=None,
@@ -183,7 +183,7 @@ class TestAutomaticEmails(TestCase):
         """
         today = timezone.now()
 
-        marie = UserFactory.create(
+        marie = UserFactory(
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(weeks=1)),
             email_no_canteen_second_reminder=None,
@@ -205,7 +205,7 @@ class TestAutomaticEmails(TestCase):
     def test_no_template_settings(self, _):
         today = timezone.now()
         # Should send first email if template was entered
-        UserFactory.create(
+        UserFactory(
             date_joined=(today - timedelta(weeks=1)),
             email_no_canteen_first_reminder=None,
             first_name="Jean",
@@ -214,7 +214,7 @@ class TestAutomaticEmails(TestCase):
         )
 
         # Should send second email if template was entered
-        UserFactory.create(
+        UserFactory(
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(weeks=1)),
             email_no_canteen_second_reminder=None,
@@ -234,7 +234,7 @@ class TestAutomaticEmails(TestCase):
     def test_emails_should_only_be_sent_once(self, _):
         today = timezone.now()
         # Should send first email
-        UserFactory.create(
+        UserFactory(
             date_joined=(today - timedelta(weeks=1)),
             email_no_canteen_first_reminder=None,
             first_name="Jean",
@@ -243,7 +243,7 @@ class TestAutomaticEmails(TestCase):
         )
 
         # Should send second email
-        UserFactory.create(
+        UserFactory(
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(weeks=1)),
             email_no_canteen_second_reminder=None,
@@ -283,17 +283,17 @@ class TestAutomaticEmails(TestCase):
         # We create a canteen with no diagnostics managed by
         # Jean and Anna. Both should receive the email since
         # the canteen was created more than a week ago.
-        jean = UserFactory.create(
+        jean = UserFactory(
             first_name="Jean",
             last_name="Sérien",
             email="jean.serien@example.com",
         )
-        anna = UserFactory.create(
+        anna = UserFactory(
             first_name="Anna",
             last_name="Logue",
             email="anna.logue@example.com",
         )
-        canteen_no_diagnostics = CanteenFactory.create(
+        canteen_no_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[
                 anna,
@@ -305,11 +305,11 @@ class TestAutomaticEmails(TestCase):
         # We create another canteen with no diagnostics managed by
         # Sophie, but this time no email should be sent since the
         # canteen was only created three days ago.
-        sophie = UserFactory.create(
+        sophie = UserFactory(
             first_name="Sophie",
             last_name="Stiqué",
         )
-        canteen_no_diagnostics_recent = CanteenFactory.create(
+        canteen_no_diagnostics_recent = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[
                 sophie,
@@ -319,29 +319,29 @@ class TestAutomaticEmails(TestCase):
 
         # We create a canteen with diagnostics. Because of this,
         # managers should not be notified.
-        fred = UserFactory.create(
+        fred = UserFactory(
             first_name="Fred",
             last_name="Ulcorant",
         )
 
-        canteen_with_diagnostics = CanteenFactory.create(
+        canteen_with_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[
                 fred,
             ],
         )
         Canteen.objects.filter(pk=canteen_with_diagnostics.id).update(creation_date=(today - timedelta(weeks=3)))
-        DiagnosticFactory.create(canteen=canteen_with_diagnostics)
+        DiagnosticFactory(canteen=canteen_with_diagnostics)
 
         # Finally, we create a canteen with no diagnostics for which
         # an email has already been sent, so the managers should not
         # be notified again.
-        lena = UserFactory.create(
+        lena = UserFactory(
             first_name="Lena",
             last_name="Godard",
             email="lena.godard@example.com",
         )
-        canteen_no_diagnostics_contacted = CanteenFactory.create(
+        canteen_no_diagnostics_contacted = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             email_no_diagnostic_first_reminder=(today - timedelta(weeks=1)),
             managers=[
@@ -378,13 +378,13 @@ class TestAutomaticEmails(TestCase):
 
         # We create a canteen with no diagnostics managed by
         # Jean, a dev profile
-        jean = UserFactory.create(
+        jean = UserFactory(
             first_name="Jean",
             last_name="Sérien",
             email="jean.serien@example.com",
             is_dev=True,
         )
-        canteen_no_diagnostics = CanteenFactory.create(managers=[jean], production_type=Canteen.ProductionType.ON_SITE)
+        canteen_no_diagnostics = CanteenFactory(managers=[jean], production_type=Canteen.ProductionType.ON_SITE)
         Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
         tasks.no_diagnostic_first_reminder()
@@ -403,7 +403,7 @@ class TestAutomaticEmails(TestCase):
         """
         today = timezone.now()
 
-        jean = UserFactory.create(
+        jean = UserFactory(
             date_joined=(today - timedelta(weeks=1)),
             email_no_canteen_first_reminder=None,
             first_name="Jean",
@@ -427,7 +427,7 @@ class TestAutomaticEmails(TestCase):
         """
         today = timezone.now()
 
-        marie = UserFactory.create(
+        marie = UserFactory(
             date_joined=(today - timedelta(weeks=2)),
             email_no_canteen_first_reminder=(today - timedelta(weeks=1)),
             email_no_canteen_second_reminder=None,
@@ -455,18 +455,18 @@ class TestAutomaticEmails(TestCase):
         today = timezone.now()
 
         # Only Anna should receive the email since Jean has opted out
-        jean = UserFactory.create(
+        jean = UserFactory(
             first_name="Jean",
             last_name="Sérien",
             email="jean.serien@example.com",
             opt_out_reminder_emails=True,
         )
-        anna = UserFactory.create(
+        anna = UserFactory(
             first_name="Anna",
             last_name="Logue",
             email="anna.logue@example.com",
         )
-        canteen_no_diagnostics = CanteenFactory.create(
+        canteen_no_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[
                 anna,
@@ -499,23 +499,23 @@ class TestAutomaticEmails(TestCase):
 
         # We create a central kitchen canteen with a diagnostic
         # that takes care of all aspects of its satellites
-        central_kitchen = CanteenFactory.create(
+        central_kitchen = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
             siret="32441387130915",
         )
-        DiagnosticFactory.create(
+        DiagnosticFactory(
             canteen=central_kitchen,
         )
 
         # We create a satellite canteen with no diagnostics managed by
         # Jean. He should not receive the email since later
         # we will create a central kitchen that takes care of it
-        jean = UserFactory.create(
+        jean = UserFactory(
             first_name="Jean",
             last_name="Sérien",
             email="jean.serien@example.com",
         )
-        canteen_no_diagnostics = CanteenFactory.create(
+        canteen_no_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="32441387130915",
             managers=[jean],

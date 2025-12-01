@@ -161,7 +161,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         If the canteen already has city/department data, update it on import
         to be consistent with handling of name, meal count, etc
         """
-        canteen = CanteenFactory.create(
+        canteen = CanteenFactory(
             siret="32441387130915",
             city_insee_code="55555",
             city="Ma ville",
@@ -192,8 +192,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         If a canteen exists, then you should have to already be it's manager to add diagnostics.
         No canteens will be created since any error cancels out the entire file
         """
-        CanteenFactory.create(siret="21340172201787")
-        CanteenFactory.create(siret="21380185500015", managers=[authenticate.user])
+        CanteenFactory(siret="21340172201787")
+        CanteenFactory(siret="21380185500015", managers=[authenticate.user])
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
@@ -308,8 +308,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         If errors occur, discard the file and return the errors with row and message
         """
         # creating 2 canteens with same siret here to error when this situation exists IRL
-        CanteenFactory.create(siret="42111303053388")
-        canteen_with_same_siret = CanteenFactory.create()
+        CanteenFactory(siret="42111303053388")
+        canteen_with_same_siret = CanteenFactory()
         Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="42111303053388")
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
@@ -947,16 +947,16 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         # In the file, cuisine_centrale_1 has three satellites. We will create two of them and verify that a
         # third one is added after the import
-        cuisine_centrale_1 = CanteenFactory.create(
+        cuisine_centrale_1 = CanteenFactory(
             siret="29969025300230", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        satellite_1_1 = CanteenFactory.create(
+        satellite_1_1 = CanteenFactory(
             siret="38589540005962",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="29969025300230",
             managers=[authenticate.user],
         )
-        satellite_1_3 = CanteenFactory.create(
+        satellite_1_3 = CanteenFactory(
             siret="27309825823572",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="29969025300230",
@@ -965,10 +965,10 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         # In the file, cuisine_centrale_2 has two satellites. We will create a different one of them and verify that a
         # it is removed from the list of satellites after the import
-        cuisine_centrale_2 = CanteenFactory.create(
+        cuisine_centrale_2 = CanteenFactory(
             siret="96463820453707", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        satellite_to_remove = CanteenFactory.create(
+        satellite_to_remove = CanteenFactory(
             siret="44331934540185",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="96463820453707",
@@ -1064,16 +1064,16 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         # In the file, cuisine_centrale_1 has three satellites. We will create two of them and verify that a
         # third one is added after the import
-        cuisine_centrale_1 = CanteenFactory.create(
+        cuisine_centrale_1 = CanteenFactory(
             siret="29969025300230", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        satellite_1_1 = CanteenFactory.create(
+        satellite_1_1 = CanteenFactory(
             siret="38589540005962",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="29969025300230",
             managers=[authenticate.user],
         )
-        satellite_1_3 = CanteenFactory.create(
+        satellite_1_3 = CanteenFactory(
             siret="27309825823572",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="29969025300230",
@@ -1082,10 +1082,10 @@ class TestImportDiagnosticsAPI(APITestCase):
 
         # In the file, cuisine_centrale_2 has two satellites. We will create a different one of them and verify that a
         # it is removed from the list of satellites after the import
-        cuisine_centrale_2 = CanteenFactory.create(
+        cuisine_centrale_2 = CanteenFactory(
             siret="96463820453707", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
         )
-        satellite_to_remove = CanteenFactory.create(
+        satellite_to_remove = CanteenFactory(
             siret="44331934540185",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="96463820453707",
@@ -1123,8 +1123,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         If a diagnostic already exists for the canteen, update the diag and canteen
         with data in import file
         """
-        canteen = CanteenFactory.create(siret="21340172201787", name="Old name", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=1, value_bio_ht=0.2)
+        canteen = CanteenFactory(siret="21340172201787", name="Old name", managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, value_total_ht=1, value_bio_ht=0.2)
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
@@ -1144,8 +1144,8 @@ class TestImportDiagnosticsAPI(APITestCase):
         If the TD is cancelled, allow update
         """
         date_in_2022_teledeclaration_campaign = "2022-08-30"
-        canteen = CanteenFactory.create(siret="21340172201787", name="Old name", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory.create(canteen=canteen, year=2021, value_total_ht=1, value_bio_ht=0.2)
+        canteen = CanteenFactory(siret="21340172201787", name="Old name", managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, value_total_ht=1, value_bio_ht=0.2)
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -1183,7 +1183,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Attempt to auto-detect file encodings: UTF-8
         """
-        canteen = CanteenFactory.create(siret="96463820453707", name="Initial name", managers=[authenticate.user])
+        canteen = CanteenFactory(siret="96463820453707", name="Initial name", managers=[authenticate.user])
 
         with open("./api/tests/files/diagnostics/diagnostics_complete_good_encoding_utf-8.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
@@ -1201,7 +1201,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Attempt to auto-detect file encodings: UTF-16
         """
-        canteen = CanteenFactory.create(siret="96463820453707", name="Initial name", managers=[authenticate.user])
+        canteen = CanteenFactory(siret="96463820453707", name="Initial name", managers=[authenticate.user])
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_encoding_utf-16.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
@@ -1219,7 +1219,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         Attempt to auto-detect file encodings: Windows 1252
         """
-        canteen = CanteenFactory.create(siret="96463820453707", name="Initial name", managers=[authenticate.user])
+        canteen = CanteenFactory(siret="96463820453707", name="Initial name", managers=[authenticate.user])
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_encoding_iso-8859-1.csv", "rb") as diag_file:
             response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
@@ -1273,4 +1273,5 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         self.assertEqual(canteen.city_insee_code, "07293")
         self.assertEqual(canteen.postal_code, "07130")
         self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
+        self.assertEqual(canteen.department, Department.ardeche)
         self.assertEqual(canteen.department, Department.ardeche)
