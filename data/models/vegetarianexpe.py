@@ -1,7 +1,10 @@
+from decimal import Decimal
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from data.fields import ChoiceArrayField
+from data.utils import make_optional_positive_decimal_field
 
 from .canteen import Canteen
 
@@ -119,7 +122,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Pourcentage de menus végétariens servis par rapport aux autres menus",
     )
 
@@ -178,7 +181,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Parmi les plats à base de céréales, pourcentage des céréales complètes et semi-complètes",
     )
 
@@ -195,41 +198,21 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Évolution du gaspillage suite au menu végétarien quotidien",
     )
 
-    waste_vegetarian_not_served_t0 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        verbose_name="Menus végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
+    waste_vegetarian_not_served_t0 = make_optional_positive_decimal_field(
+        verbose_name="Menus végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés"
     )
-    waste_vegetarian_components_t0 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        verbose_name="Menus végétariens : Moyenne des pesées des restes des assiettes",
+    waste_vegetarian_components_t0 = make_optional_positive_decimal_field(
+        verbose_name="Menus végétariens : Moyenne des pesées des restes des assiettes"
     )
-    waste_non_vegetarian_not_served_t0 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        verbose_name="Menus non-végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
+    waste_non_vegetarian_not_served_t0 = make_optional_positive_decimal_field(
+        verbose_name="Menus non-végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés"
     )
-    waste_non_vegetarian_components_t0 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        verbose_name="Menus non-végétariens : Moyenne des pesées des restes des assiettes",
+    waste_non_vegetarian_components_t0 = make_optional_positive_decimal_field(
+        verbose_name="Menus non-végétariens : Moyenne des pesées des restes des assiettes"
     )
 
     # Waste evolution from start to date, T0 only
@@ -254,7 +237,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Évolution de la fréquentation suite au menu végétarien quotidien",
     )
 
@@ -278,7 +261,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(Decimal("0"))],
         verbose_name="Coût moyen du repas végétarien (€ / assiette)",
     )
 
@@ -287,7 +270,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(Decimal("0"))],
         verbose_name="Coût moyen du repas non-végétarien (€ / assiette)",
     )
     cost_evolution_t0 = models.CharField(
@@ -305,7 +288,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Évolution du coût en pourcentage",
     )
 
@@ -375,7 +358,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Pourcentage de menus végétariens servis par rapport aux autres menus",
     )
 
@@ -434,7 +417,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Parmi les plats à base de céréales, pourcentage des céréales complètes et semi-complètes",
     )
 
@@ -451,41 +434,21 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Évolution du gaspillage suite au menu végétarien quotidien",
     )
 
-    waste_vegetarian_not_served_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        verbose_name="Menus végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
+    waste_vegetarian_not_served_t1 = make_optional_positive_decimal_field(
+        verbose_name="Menus végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés"
     )
-    waste_vegetarian_components_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        verbose_name="Menus végétariens : Moyenne des pesées des restes des assiettes",
+    waste_vegetarian_components_t1 = make_optional_positive_decimal_field(
+        verbose_name="Menus végétariens : Moyenne des pesées des restes des assiettes"
     )
-    waste_non_vegetarian_not_served_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        verbose_name="Menus non-végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés",
+    waste_non_vegetarian_not_served_t1 = make_optional_positive_decimal_field(
+        verbose_name="Menus non-végétariens : Moyenne des pesées des excédents présentés aux convives et non servis ou non valorisés"
     )
-    waste_non_vegetarian_components_t1 = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        verbose_name="Menus non-végétariens : Moyenne des pesées des restes des assiettes",
+    waste_non_vegetarian_components_t1 = make_optional_positive_decimal_field(
+        verbose_name="Menus non-végétariens : Moyenne des pesées des restes des assiettes"
     )
 
     # Attendance
@@ -501,7 +464,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Évolution de la fréquentation suite au menu végétarien quotidien",
     )
 
@@ -523,7 +486,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(Decimal("0"))],
         verbose_name="Coût moyen du repas végétarien (€ / assiette)",
     )
     non_vegetarian_cost_t1 = models.DecimalField(
@@ -531,7 +494,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(Decimal("0"))],
         verbose_name="Coût moyen du repas non-végétarien (€ / assiette)",
     )
     cost_evolution_t1 = models.CharField(
@@ -549,7 +512,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
         verbose_name="Évolution du coût en pourcentage",
     )
 
