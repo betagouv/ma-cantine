@@ -3,7 +3,6 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.serializers.teledeclaration import TeledeclarationAnalysisSerializer
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, TeledeclarationFactory, UserFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
@@ -866,93 +865,3 @@ class TestTeledeclarationCampaignDatesApi(APITestCase):
                     self.assertEqual(body["year"], 2024)
                     self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
                     self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
-
-
-class TeledeclarationAnalysisSerializerTest(APITestCase):
-    def test_get_diagnostic_type_with_valid_data(self):
-        declared_data = {
-            "teledeclaration": {
-                "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
-            }
-        }
-        teledeclaration = Teledeclaration(declared_data=declared_data)
-        serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
-        self.assertEqual(serializer.get_diagnostic_type(teledeclaration), Diagnostic.DiagnosticType.SIMPLE)
-
-    def test_get_diagnostic_type_with_empty_string(self):
-        declared_data = {
-            "teledeclaration": {
-                "diagnostic_type": "",
-            }
-        }
-        teledeclaration = Teledeclaration(declared_data=declared_data)
-        serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
-        self.assertEqual(serializer.get_diagnostic_type(teledeclaration), Diagnostic.DiagnosticType.SIMPLE)
-
-    def test_get_diagnostic_type_with_missing_key(self):
-        declared_data = {"teledeclaration": {}}
-        teledeclaration = Teledeclaration(declared_data=declared_data)
-        serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
-        self.assertIsNone(serializer.get_diagnostic_type(teledeclaration))
-
-    def test_get_diagnostic_type_with_none(self):
-        declared_data = {
-            "teledeclaration": {
-                "diagnostic_type": None,
-            }
-        }
-        teledeclaration = Teledeclaration(declared_data=declared_data)
-        serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
-        self.assertEqual(serializer.get_diagnostic_type(teledeclaration), Diagnostic.DiagnosticType.SIMPLE)
-
-    def test_get_actions_gaspi(self):
-        all_actions = [choice for choice, _ in Diagnostic.WasteActions.choices]
-        test_cases = [
-            (None, {action: False for action in all_actions}),
-            ([], {action: False for action in all_actions}),
-            (
-                [Diagnostic.WasteActions.INSCRIPTION],
-                {action: action == Diagnostic.WasteActions.INSCRIPTION for action in all_actions},
-            ),
-            (
-                [Diagnostic.WasteActions.AWARENESS, Diagnostic.WasteActions.DISTRIBUTION],
-                {
-                    action: action in [Diagnostic.WasteActions.AWARENESS, Diagnostic.WasteActions.DISTRIBUTION]
-                    for action in all_actions
-                },
-            ),
-            (all_actions, {action: True for action in all_actions}),
-        ]
-        for actions_list, expected in test_cases:
-            teledeclaration = Teledeclaration(declared_data={"teledeclaration": {"waste_actions": actions_list}})
-            serializer = TeledeclarationAnalysisSerializer(instance=teledeclaration)
-            self.assertEqual(
-                serializer.get_action_gaspi_inscription(teledeclaration),
-                expected[Diagnostic.WasteActions.INSCRIPTION],
-                msg=f"Failed for input: {actions_list}",
-            )
-            self.assertEqual(
-                serializer.get_action_gaspi_sensibilisation(teledeclaration),
-                expected[Diagnostic.WasteActions.AWARENESS],
-                msg=f"Failed for input: {actions_list}",
-            )
-            self.assertEqual(
-                serializer.get_action_gaspi_formation(teledeclaration),
-                expected[Diagnostic.WasteActions.TRAINING],
-                msg=f"Failed for input: {actions_list}",
-            )
-            self.assertEqual(
-                serializer.get_action_gaspi_distribution(teledeclaration),
-                expected[Diagnostic.WasteActions.DISTRIBUTION],
-                msg=f"Failed for input: {actions_list}",
-            )
-            self.assertEqual(
-                serializer.get_action_gaspi_portions(teledeclaration),
-                expected[Diagnostic.WasteActions.PORTIONS],
-                msg=f"Failed for input: {actions_list}",
-            )
-            self.assertEqual(
-                serializer.get_action_gaspi_reutilisation(teledeclaration),
-                expected[Diagnostic.WasteActions.REUSE],
-                msg=f"Failed for input: {actions_list}",
-            )
