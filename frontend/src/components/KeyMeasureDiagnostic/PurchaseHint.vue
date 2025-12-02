@@ -39,7 +39,7 @@ export default {
       shortLabel: "Remplir avec",
       label: `Remplir les achats ${this.purchaseType} avec`,
       helpLabel: `Ce montant provient des achats ${this.purchaseType} que vous avez enregistrés`,
-      emptyLabel: `Vous n'avez pas renseignés d'achats ${this.purchaseType}`,
+      emptyLabel: `Vous n'avez pas renseigné d'achats ${this.purchaseType}`,
     }
   },
   props: {
