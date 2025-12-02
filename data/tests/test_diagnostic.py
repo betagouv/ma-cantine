@@ -323,16 +323,39 @@ class DiagnosticQuerySetTest(TestCase):
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.diagnostic_empty = DiagnosticFactory(canteen=CanteenFactory(), value_total_ht=None)
-        cls.diagnostic_filled = DiagnosticFactory(canteen=CanteenFactory(), value_total_ht=1000)
+        cls.diagnostic_2024_simple_empty = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, value_total_ht=None
+        )
+        cls.diagnostic_2024_simple_filled = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, value_total_ht=1000
+        )
+        cls.diagnostic_2025_simple_empty = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            value_total_ht=None,
+            value_bio_ht=None,
+        )
+        cls.diagnostic_2025_simple_filled = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            value_total_ht=1000,
+            value_bio_ht=200,
+            value_sustainable_ht=100,
+            value_egalim_others_ht=100,
+            value_meat_poultry_egalim_ht=0,
+        )
 
     def test_filled_queryset(self):
-        self.assertEqual(Diagnostic.objects.all().count(), 2)
-        self.assertEqual(Diagnostic.objects.filled().count(), 1)
+        self.assertEqual(Diagnostic.objects.all().count(), 4)
+        self.assertEqual(Diagnostic.objects.filled().count(), 2)
 
     def test_is_filled_property(self):
-        self.assertFalse(self.diagnostic_empty.is_filled)
-        self.assertTrue(self.diagnostic_filled.is_filled)
+        self.assertFalse(self.diagnostic_2024_simple_empty.is_filled)
+        self.assertTrue(self.diagnostic_2024_simple_filled.is_filled)
+        self.assertFalse(self.diagnostic_2025_simple_empty.is_filled)
+        self.assertTrue(self.diagnostic_2025_simple_filled.is_filled)
 
 
 class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
