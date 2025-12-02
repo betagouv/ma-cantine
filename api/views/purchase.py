@@ -348,7 +348,9 @@ def complete_diag_data(purchases, data):
                     | Q(characteristics__contains=[Purchase.Characteristic.STG])
                 )
             else:
-                fam_label = purchase_family.filter(Q(characteristics__contains=[Purchase.Characteristic[label]]))
+                fam_label = purchase_family.filter(
+                    Q(characteristics__contains=[Purchase.Characteristic[label.upper()]])
+                )
                 # the remaining stats should ignore already counted labels
                 purchase_family = purchase_family.exclude(
                     Q(characteristics__contains=[Purchase.Characteristic[label.upper()]])
@@ -356,10 +358,10 @@ def complete_diag_data(purchases, data):
             key = "value_" + family + "_" + label
             data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
         # outside of EGalim, products can be counted twice across characteristics
-        purchase_family = purchases.filter(family=family)
+        purchase_family = purchases.filter(family=family.upper())
         other_labels_characteristics = []
         for label in Diagnostic.APPRO_LABELS_FRANCE:
-            characteristic = Purchase.Characteristic[label]
+            characteristic = Purchase.Characteristic[label.upper()]
             fam_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
             key = "value_" + family + "_" + label
             data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0

@@ -335,7 +335,7 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(body["valueBioDontCommerceEquitableHt"], 20.0)
         self.assertEqual(body["valueSustainableHt"], 50.0)
         self.assertEqual(body["valueEgalimOthersHt"], 260.0)
-        self.assertEqual(body["valueCommerceEquitableHt"], 10.0)
+        self.assertEqual(body["valueEgalimOthersDontCommerceEquitableHt"], 10.0)
         self.assertEqual(body["valueExternalityPerformanceHt"], 45.0)
 
     @authenticate
@@ -350,44 +350,86 @@ class TestPurchaseApi(APITestCase):
         """
         canteen = CanteenFactory.create(managers=[authenticate.user])
         d = "2020-03-01"
-        # some egalim characteristics
-        bio = Purchase.Characteristic.BIO
-        aoc = Purchase.Characteristic.AOCAOP
-        stg = Purchase.Characteristic.STG
-        fairtrade = Purchase.Characteristic.COMMERCE_EQUITABLE
-        # some non-egalim characteristics
-        short_dist = Purchase.Characteristic.SHORT_DISTRIBUTION
-        local = Purchase.Characteristic.LOCAL
-        # some families
-        fruit = Purchase.Family.FRUITS_ET_LEGUMES
-        meat = Purchase.Family.VIANDES_VOLAILLES
-        other = Purchase.Family.AUTRES
 
         # test that bio trumps other labels, but doesn't stop non-EGalim labels
-        PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[bio, aoc], price_ht=120)
-        PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[bio, fairtrade], price_ht=80)
+        PurchaseFactory.create(
+            canteen=canteen,
+            date=d,
+            family=Purchase.Family.FRUITS_ET_LEGUMES,
+            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.AOCAOP],
+            price_ht=120,
+        )
+        PurchaseFactory.create(
+            canteen=canteen,
+            date=d,
+            family=Purchase.Family.FRUITS_ET_LEGUMES,
+            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.COMMERCE_EQUITABLE],
+            price_ht=80,
+        )
 
         # check that sums are separate between families
         PurchaseFactory.create(
-            canteen=canteen, date=d, family=meat, characteristics=[bio, short_dist, local], price_ht=10
+            canteen=canteen,
+            date=d,
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            characteristics=[
+                Purchase.Characteristic.BIO,
+                Purchase.Characteristic.SHORT_DISTRIBUTION,
+                Purchase.Characteristic.LOCAL,
+            ],
+            price_ht=10,
         )
 
         # check that AOC and STG are regrouped and do not count bio totals and trump some other labels
-        PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[aoc], price_ht=20)
-        PurchaseFactory.create(canteen=canteen, date=d, family=fruit, characteristics=[stg, fairtrade], price_ht=60)
+        PurchaseFactory.create(
+            canteen=canteen,
+            date=d,
+            family=Purchase.Family.FRUITS_ET_LEGUMES,
+            characteristics=[Purchase.Characteristic.AOCAOP],
+            price_ht=20,
+        )
+        PurchaseFactory.create(
+            canteen=canteen,
+            date=d,
+            family=Purchase.Family.FRUITS_ET_LEGUMES,
+            characteristics=[Purchase.Characteristic.STG, Purchase.Characteristic.COMMERCE_EQUITABLE],
+            price_ht=60,
+        )
 
         # check that can have a family with only non-EGalim labels
-        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[local], price_ht=50)
-        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[local], price_ht=50)
+        PurchaseFactory.create(
+            canteen=canteen,
+            date=d,
+            family=Purchase.Family.AUTRES,
+            characteristics=[Purchase.Characteristic.LOCAL],
+            price_ht=50,
+        )
+        PurchaseFactory.create(
+            canteen=canteen,
+            date=d,
+            family=Purchase.Family.AUTRES,
+            characteristics=[Purchase.Characteristic.LOCAL],
+            price_ht=50,
+        )
 
         # check that short distribution meat will include both this and the bio purchase which is also short dist.
-        PurchaseFactory.create(canteen=canteen, date=d, family=meat, characteristics=[short_dist], price_ht=90)
+        PurchaseFactory.create(
+            canteen=canteen,
+            date=d,
+            family=Purchase.Family.VIANDES_VOLAILLES,
+            characteristics=[Purchase.Characteristic.SHORT_DISTRIBUTION],
+            price_ht=90,
+        )
 
         # check that items with no label are included in total
-        PurchaseFactory.create(canteen=canteen, date=d, family=other, characteristics=[], price_ht=110)
+        PurchaseFactory.create(
+            canteen=canteen, date=d, family=Purchase.Family.AUTRES, characteristics=[], price_ht=110
+        )
 
         # Not in the year 2020 - smoke test for year filtering
-        PurchaseFactory.create(canteen=canteen, date="2019-01-01", characteristics=[bio], price_ht=666)
+        PurchaseFactory.create(
+            canteen=canteen, date="2019-01-01", characteristics=[Purchase.Characteristic.BIO], price_ht=666
+        )
 
         response = self.client.get(
             reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
