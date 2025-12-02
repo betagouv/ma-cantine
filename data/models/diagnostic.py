@@ -340,7 +340,7 @@ class Diagnostic(models.Model):
         "value_sustainable_ht",
         "value_externality_performance_ht",
         "value_egalim_others_ht",
-        "value_commerce_equitable_ht",
+        "value_egalim_others_dont_commerce_equitable_ht",
         "value_meat_poultry_ht",
         "value_meat_poultry_egalim_ht",
         "value_meat_poultry_france_ht",
@@ -691,7 +691,7 @@ class Diagnostic(models.Model):
     value_egalim_others_ht = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) des autres achats EGalim",
     )
-    value_commerce_equitable_ht = make_optional_positive_decimal_field(
+    value_egalim_others_dont_commerce_equitable_ht = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
     )
     value_meat_poultry_ht = make_optional_positive_decimal_field(
@@ -1373,7 +1373,7 @@ class Diagnostic(models.Model):
         self.value_sustainable_ht = self.label_group_sum("sustainable")
         self.value_externality_performance_ht = self.label_group_sum("externality_performance")
         self.value_egalim_others_ht = self.label_group_sum("egalim_others")
-        self.value_commerce_equitable_ht = self.label_sum("commerce_equitable")
+        self.value_egalim_others_dont_commerce_equitable_ht = self.label_sum("commerce_equitable")
 
         total_meat_egalim = total_meat_france = total_fish_egalim = 0
         for label in Diagnostic.APPRO_LABELS_EGALIM:

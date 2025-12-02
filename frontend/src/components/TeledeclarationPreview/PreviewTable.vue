@@ -391,7 +391,7 @@ export default {
         },
         { param: "valueEgalimOthersHt", label: "Autres achats EGalim" },
         {
-          param: "valueCommerceEquitableHt",
+          param: "valueEgalimOthersDontCommerceEquitableHt",
           label: "Dont valeur des achats Commerce équitable (hors bio)",
         },
         {

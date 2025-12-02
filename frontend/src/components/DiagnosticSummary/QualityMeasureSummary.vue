@@ -251,7 +251,7 @@ export default {
         },
         {
           text: "Dont valeur (en € HT) des achats Commerce équitable (hors bio)",
-          key: "valueCommerceEquitableHt",
+          key: "valueEgalimOthersDontCommerceEquitableHt",
         },
         {
           text:
