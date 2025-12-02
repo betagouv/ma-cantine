@@ -101,7 +101,7 @@
         </div>
         <DsfrCurrencyField
           id="other-commerce-equitable"
-          v-model.number="payload.valueCommerceEquitableHt"
+          v-model.number="payload.valueEgalimOthersDontCommerceEquitableHt"
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -109,10 +109,10 @@
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueCommerceEquitableHt"
+          v-model="payload.valueEgalimOthersDontCommerceEquitableHt"
           @autofill="updatePayload"
           purchaseType="« commerce équitable (hors bio) »"
-          :amount="purchasesSummary.valueCommerceEquitableHt"
+          :amount="purchasesSummary.valueEgalimOthersDontCommerceEquitableHt"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
       </v-col>
@@ -334,9 +334,9 @@ export default {
         this.errorHelperFields = ["valueTotalHt", "valueBioHt", "valueSustainableHt"]
       }
 
-      if (d.valueCommerceEquitableHt > d.valueEgalimOthersHt) {
+      if (d.valueEgalimOthersDontCommerceEquitableHt > d.valueEgalimOthersHt) {
         this.totalErrorMessage = `La valeur de vos achats Commerce équitable (hors bio) (${toCurrency(
-          d.valueCommerceEquitableHt
+          d.valueEgalimOthersDontCommerceEquitableHt
         )}) ne peut pas être plus élévée que la valeur des autres achats EGalim (${toCurrency(d.valueEgalimOthersHt)})`
       }
     },
