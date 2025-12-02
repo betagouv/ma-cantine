@@ -1,7 +1,8 @@
 <template>
   <v-sheet :color="backgroundColor" class="body-2 pr-3 pt-10 pb-1 mt-n9">
     <p class="mb-0 caption pl-3" v-if="!amount">
-      {{ emptyLabel }}
+      <em>Outil "Mes achats"</em>
+      : {{ emptyLabel }}
     </p>
     <p class="mb-0 caption d-flex pl-3" v-else-if="compliant">
       <v-icon small class="mr-1">mdi-check</v-icon>
@@ -38,7 +39,7 @@ export default {
       shortLabel: "Remplir avec",
       label: `Remplir les achats ${this.purchaseType} avec`,
       helpLabel: `Ce montant provient des achats ${this.purchaseType} que vous avez enregistrés`,
-      emptyLabel: `Vous n'avez pas d'achats ${this.purchaseType}`,
+      emptyLabel: `Vous n'avez pas renseignés d'achats ${this.purchaseType}`,
     }
   },
   props: {
