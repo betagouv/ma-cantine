@@ -2,6 +2,7 @@
 import { RouterView, useRoute } from "vue-router"
 import { reactive, computed, watch } from "vue"
 import AppHeader from "@/components/AppHeader.vue"
+import AppBanner from "@/components/AppBanner.vue"
 import AppFooter from "@/components/AppFooter.vue"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
 import NotificationCenter from "@/components/NotificationCenter.vue"
@@ -21,6 +22,7 @@ watch(route, (to) => {
 <template>
   <div>
     <AppHeader v-if="!layout.fullscreen" />
+    <AppBanner v-if="!layout.fullscreen" />
 
     <main :class="routerViewClass">
       <BreadcrumbsNav v-if="!layout.fullscreen" />
