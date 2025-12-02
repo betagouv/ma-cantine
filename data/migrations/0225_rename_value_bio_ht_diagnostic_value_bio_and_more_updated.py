@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
         migrations.RenameField(
             model_name="diagnostic",
             old_name="value_total_ht",
-            new_name="value_total",
+            new_name="value_totale",
         ),
         migrations.RenameField(
             model_name="historicaldiagnostic",
@@ -161,7 +161,7 @@ class Migration(migrations.Migration):
         migrations.RenameField(
             model_name="historicaldiagnostic",
             old_name="value_total_ht",
-            new_name="value_total",
+            new_name="value_totale",
         ),
         migrations.RenameField(
             model_name="historicalteledeclaration",
@@ -186,7 +186,7 @@ class Migration(migrations.Migration):
         migrations.RenameField(
             model_name="historicalteledeclaration",
             old_name="value_total_ht",
-            new_name="value_total",
+            new_name="value_totale",
         ),
         migrations.RenameField(
             model_name="teledeclaration",
@@ -211,6 +211,6 @@ class Migration(migrations.Migration):
         migrations.RenameField(
             model_name="teledeclaration",
             old_name="value_total_ht",
-            new_name="value_total",
+            new_name="value_totale",
         ),
     ]

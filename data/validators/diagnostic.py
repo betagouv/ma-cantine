@@ -18,18 +18,18 @@ def validate_year(self):
 
 def validate_approvisionment_total(self):
     errors = {}
-    if self.value_total is not None and isinstance(self.value_total, Decimal):
+    if self.value_totale is not None and isinstance(self.value_totale, Decimal):
         egalim_sum = (
             (self.value_bio or 0)
             + (self.value_siqo or 0)
             + (self.value_externalites_performance or 0)
             + (self.value_egalim_autres or 0)
         )
-        if egalim_sum > self.value_total:
+        if egalim_sum > self.value_totale:
             utils_utils.add_validation_error(
                 errors,
-                "value_total",
-                f"La somme des valeurs d'approvisionnement, {egalim_sum}, est plus que le total, {self.value_total}",
+                "value_totale",
+                f"La somme des valeurs d'approvisionnement, {egalim_sum}, est plus que le total, {self.value_totale}",
             )
     return errors
 
@@ -76,7 +76,7 @@ def validate_produits_de_la_mer_total(self):
 
 def validate_viandes_volailles_produits_de_la_mer_egalim(self):
     errors = {}
-    if self.value_total is not None and isinstance(self.value_total, Decimal):
+    if self.value_totale is not None and isinstance(self.value_totale, Decimal):
         egalim_sum = (
             (self.value_bio or 0)
             + (self.value_siqo or 0)
@@ -92,17 +92,4 @@ def validate_viandes_volailles_produits_de_la_mer_egalim(self):
                 "value_siqo",
                 f"La somme des valeurs viandes et poissons EGalim, {viandes_volailles_produits_de_la_mer_egalim_sum}, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, {egalim_sum}",
             )
-    return errors
-    return errors
-    return errors
-    return errors
-    return errors
-    return errors
-    return errors
-    return errors
-    return errors
-    return errors
-    return errors
-    return errors
-    return errors
     return errors

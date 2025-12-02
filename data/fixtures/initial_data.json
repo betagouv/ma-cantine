@@ -40,7 +40,7 @@
       "creation_date": "2025-01-01T00:00:00+00:00",
       "modification_date": "2025-01-01T00:00:00+00:00",
       "value_bio": 200,
-      "value_total": 1000
+      "value_totale": 1000
     },
     "model": "data.diagnostic",
     "pk": 1

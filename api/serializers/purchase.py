@@ -50,7 +50,7 @@ class PurchaseField(serializers.DecimalField):
 # NB: these names reflect the names in the diagnostic model
 class PurchaseSummarySerializer(serializers.Serializer):
     year = serializers.IntegerField()
-    value_total = PurchaseField()
+    value_totale = PurchaseField()
     value_bio = PurchaseField()
     value_bio_dont_commerce_equitable = PurchaseField()
     value_siqo = PurchaseField()

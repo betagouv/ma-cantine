@@ -16,7 +16,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     year = factory.Faker("year")
     diagnostic_type = fuzzy.FuzzyChoice(list(Diagnostic.DiagnosticType))
 
-    value_total = factory.Faker("random_int", min=6000, max=10000)
+    value_totale = factory.Faker("random_int", min=6000, max=10000)
     value_bio = factory.Faker("random_int", min=0, max=2000)
     value_siqo = factory.Faker("random_int", min=0, max=2000)
     value_externalites_performance = factory.Faker("random_int", min=0, max=20)
@@ -55,7 +55,7 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     year = factory.Faker("year")
     diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
-    value_total = factory.Faker("random_int", min=6000, max=10000)
+    value_totale = factory.Faker("random_int", min=6000, max=10000)
     value_viandes_volailles_bio = factory.Faker("random_int", min=0, max=20)
     value_boissons_bio = factory.Faker("random_int", min=0, max=20)
 

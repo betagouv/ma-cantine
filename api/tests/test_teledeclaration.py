@@ -4,9 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import (CanteenFactory, DiagnosticFactory,
-                            SectorM2MFactory, TeledeclarationFactory,
-                            UserFactory)
+from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, TeledeclarationFactory, UserFactory
 from data.models import Canteen, Diagnostic, Teledeclaration
 
 
@@ -63,7 +61,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         canteen = CanteenFactory(central_producer_siret=None, managers=[authenticate.user])
         diagnostic = DiagnosticFactory(
-            canteen=canteen, year=2021, value_total=None, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            canteen=canteen, year=2021, value_totale=None, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
 
         payload = {"diagnosticId": diagnostic.id}
@@ -78,7 +76,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         canteen = CanteenFactory(central_producer_siret=None, managers=[authenticate.user])
         diagnostic = DiagnosticFactory(
-            canteen=canteen, year=2019, value_total=100, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            canteen=canteen, year=2019, value_totale=100, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
 
         payload = {"diagnosticId": diagnostic.id}
@@ -131,7 +129,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             json_teledeclaration["value_siqo"],
             diagnostic.value_siqo,
         )
-        self.assertEqual(json_teledeclaration["value_total"], diagnostic.value_total)
+        self.assertEqual(json_teledeclaration["value_totale"], diagnostic.value_totale)
         self.assertEqual(
             json_teledeclaration["value_externalites_performance"], diagnostic.value_externalites_performance
         )
@@ -298,7 +296,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             canteen=canteen,
             year=2021,
             diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
-            value_total=1000,
+            value_totale=1000,
             value_siqo=None,
         )
         # Making sure we will aggregate
@@ -355,7 +353,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertIn("value_fruits_et_legumes_local", json_teledeclaration)
 
         # Checking the aggregation
-        self.assertEqual(teledeclaration.value_total, 1000)
+        self.assertEqual(teledeclaration.value_totale, 1000)
         self.assertEqual(teledeclaration.value_bio_agg, 0)
         self.assertEqual(
             teledeclaration.value_siqo_agg,
@@ -380,7 +378,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
-            value_total=100,
+            value_totale=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
@@ -388,7 +386,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=canteen,
             year=2021,
-            value_total=None,  # missing
+            value_totale=None,  # missing
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
@@ -423,7 +421,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
-            value_total=100,
+            value_totale=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
@@ -462,7 +460,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
-            value_total=100,
+            value_totale=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=None,  # missing
         )
@@ -498,7 +496,10 @@ class TestTeledeclarationCreateApi(APITestCase):
         )
         canteen.refresh_from_db()
         diagnostic = DiagnosticFactory(
-            canteen=canteen, year=2021, value_total=100, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL
+            canteen=canteen,
+            year=2021,
+            value_totale=100,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
         )
 
         payload = {"diagnosticId": diagnostic.id}
@@ -555,7 +556,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         DiagnosticFactory(
             canteen=central,
             year=2021,
-            value_total=100,
+            value_totale=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
@@ -565,7 +566,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[authenticate.user],
         )
-        diagnostic_canteen_site = DiagnosticFactory(canteen=canteen_site, year=2021, value_total=100)
+        diagnostic_canteen_site = DiagnosticFactory(canteen=canteen_site, year=2021, value_totale=100)
         diagnostic_canteen_site.teledeclare(applicant=authenticate.user)
         self.assertEqual(diagnostic_canteen_site.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
 
@@ -580,7 +581,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             central_producer_siret="75665621899905"
         )  # change the link
         canteen_satellite_1.refresh_from_db()
-        diagnostic_canteen_satellite_1 = DiagnosticFactory(canteen=canteen_satellite_1, year=2021, value_total=100)
+        diagnostic_canteen_satellite_1 = DiagnosticFactory(canteen=canteen_satellite_1, year=2021, value_totale=100)
         diagnostic_canteen_satellite_1.teledeclare(applicant=authenticate.user)
         self.assertEqual(diagnostic_canteen_satellite_1.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
 
@@ -591,7 +592,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             central_producer_siret=central.siret,
             managers=[authenticate.user],
         )
-        diagnostic_canteen_satellite_2 = DiagnosticFactory(canteen=canteen_satellite_2, year=2021, value_total=100)
+        diagnostic_canteen_satellite_2 = DiagnosticFactory(canteen=canteen_satellite_2, year=2021, value_totale=100)
         diagnostic_canteen_satellite_2.teledeclare(applicant=authenticate.user)
         self.assertEqual(
             diagnostic_canteen_satellite_2.teledeclaration_mode, Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
@@ -606,7 +607,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic_central_2 = DiagnosticFactory(
             canteen=central_2,
             year=2021,
-            value_total=100,
+            value_totale=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
         )
         diagnostic_central_2.teledeclare(applicant=authenticate.user)
@@ -621,7 +622,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic_central_serving = DiagnosticFactory(
             canteen=central_serving,
             year=2021,
-            value_total=100,
+            value_totale=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
         diagnostic_central_serving.teledeclare(applicant=authenticate.user)
@@ -638,7 +639,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             line_ministry=None,
             managers=[authenticate.user],
         )
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, value_total=100)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, value_totale=100)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -812,9 +813,7 @@ class TestTeledeclarationPdfApi(APITestCase):
         with minimal information
         """
         canteen = CanteenFactory(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(
-            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        )
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         teledeclaration = TeledeclarationFactory(
             canteen=canteen,
             diagnostic=diagnostic,

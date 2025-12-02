@@ -135,12 +135,12 @@ class CanteenActionApiTest(APITestCase):
         last_year = 2021
         DiagnosticFactory(year=last_year - 1, canteen=needs_last_year_diag)
 
-        td_diag = DiagnosticFactory(year=last_year, canteen=complete, value_total=1000)
+        td_diag = DiagnosticFactory(year=last_year, canteen=complete, value_totale=1000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
         td_diag_central_no_sectors = DiagnosticFactory(
             year=last_year,
             canteen=complete_central_no_sectors,
-            value_total=1000,
+            value_totale=1000,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
         Teledeclaration.create_from_diagnostic(td_diag_central_no_sectors, authenticate.user)
@@ -152,7 +152,7 @@ class CanteenActionApiTest(APITestCase):
         td_diag_central_with_one_sat = DiagnosticFactory(
             year=last_year,
             canteen=complete_central_with_diff_sat_count,
-            value_total=1000,
+            value_totale=1000,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
         Teledeclaration.create_from_diagnostic(td_diag_central_with_one_sat, authenticate.user)
@@ -160,28 +160,28 @@ class CanteenActionApiTest(APITestCase):
         td_diag_one_sector = DiagnosticFactory(
             year=last_year,
             canteen=complete_site_one_sector,
-            value_total=1000,
+            value_totale=1000,
         )
         Teledeclaration.create_from_diagnostic(td_diag_one_sector, authenticate.user)
 
-        DiagnosticFactory(year=last_year, canteen=needs_to_fill_diag, value_total=None)
+        DiagnosticFactory(year=last_year, canteen=needs_to_fill_diag, value_totale=None)
         # make sure the endpoint only looks at diagnostics of the year requested
-        DiagnosticFactory(year=last_year - 1, canteen=needs_to_fill_diag, value_total=1000)
+        DiagnosticFactory(year=last_year - 1, canteen=needs_to_fill_diag, value_totale=1000)
 
         DiagnosticFactory(
-            year=last_year, canteen=needs_diagnostic_mode, central_kitchen_diagnostic_mode=None, value_total=100
+            year=last_year, canteen=needs_diagnostic_mode, central_kitchen_diagnostic_mode=None, value_totale=100
         )
 
-        DiagnosticFactory(year=last_year, canteen=needs_td, value_total=100)
+        DiagnosticFactory(year=last_year, canteen=needs_td, value_totale=100)
 
-        DiagnosticFactory(year=last_year, canteen=needs_sectors, value_total=100)
+        DiagnosticFactory(year=last_year, canteen=needs_sectors, value_totale=100)
 
-        DiagnosticFactory(year=last_year, canteen=needs_daily_meal_count, value_total=100)
+        DiagnosticFactory(year=last_year, canteen=needs_daily_meal_count, value_totale=100)
 
-        DiagnosticFactory(year=last_year, canteen=too_many_sectors, value_total=100)
+        DiagnosticFactory(year=last_year, canteen=too_many_sectors, value_totale=100)
 
         # has a diagnostic but this canteen did not register any satellites
-        DiagnosticFactory(year=last_year, canteen=needs_additional_satellites, value_total=100)
+        DiagnosticFactory(year=last_year, canteen=needs_additional_satellites, value_totale=100)
 
         response = self.client.get(
             reverse("list_actionable_canteens", kwargs={"year": last_year}) + "?ordering=action,modification_date"
@@ -248,7 +248,7 @@ class CanteenActionApiTest(APITestCase):
             managers=[authenticate.user],
         )
         last_year = 2021
-        diagnostic = DiagnosticFactory(year=last_year, canteen=canteen, value_total=1000)
+        diagnostic = DiagnosticFactory(year=last_year, canteen=canteen, value_totale=1000)
 
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
@@ -335,7 +335,7 @@ class CanteenActionApiTest(APITestCase):
         diagnostic = DiagnosticFactory(
             year=2021,
             canteen=central_kitchen,
-            value_total=1000,
+            value_totale=1000,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
         )
 
@@ -343,7 +343,7 @@ class CanteenActionApiTest(APITestCase):
         DiagnosticFactory(
             year=last_year,
             canteen=satellite,
-            value_total=1200,
+            value_totale=1200,
         )
 
         # cc diagnostic not teledeclared
@@ -402,7 +402,7 @@ class CanteenActionApiTest(APITestCase):
         )
         Canteen.objects.filter(id=canteen_with_no_siret.id).update(siret=None)
         canteen_with_no_siret.refresh_from_db()
-        DiagnosticFactory(canteen=canteen_with_no_siret, year=last_year, value_total=10000)
+        DiagnosticFactory(canteen=canteen_with_no_siret, year=last_year, value_totale=10000)
         # canteen not ok with diag
         canteen_with_bad_central_siret = CanteenFactory(
             siret="59282615314394",
@@ -417,7 +417,7 @@ class CanteenActionApiTest(APITestCase):
             central_producer_siret=canteen_with_bad_central_siret.siret
         )
         canteen_with_bad_central_siret.refresh_from_db()
-        DiagnosticFactory(canteen=canteen_with_bad_central_siret, year=last_year, value_total=10000)
+        DiagnosticFactory(canteen=canteen_with_bad_central_siret, year=last_year, value_totale=10000)
         # canteen ok without diag
         CanteenFactory(
             siret="55314169703815",
@@ -475,7 +475,7 @@ class CanteenActionApiTest(APITestCase):
             managers=[authenticate.user],
         )
         last_year = 2024
-        DiagnosticFactory(canteen=complete, year=last_year, value_total=10000)
+        DiagnosticFactory(canteen=complete, year=last_year, value_totale=10000)
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -484,7 +484,7 @@ class CanteenActionApiTest(APITestCase):
         self.assertEqual(body["action"], Canteen.Actions.DID_NOT_TELEDECLARE)
 
         # last_year -1
-        DiagnosticFactory(canteen=complete, year=last_year - 1, value_total=10000)
+        DiagnosticFactory(canteen=complete, year=last_year - 1, value_totale=10000)
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year - 1}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -505,7 +505,7 @@ class CanteenActionApiTest(APITestCase):
             managers=[authenticate.user],
         )
         last_year = 2024
-        diagnostic = DiagnosticFactory(canteen=complete, year=last_year, value_total=10000)
+        diagnostic = DiagnosticFactory(canteen=complete, year=last_year, value_totale=10000)
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -560,7 +560,7 @@ class CanteenActionApiTest(APITestCase):
         )
         last_year = 2024
         for canteen in [canteen_td, canteen_did_not_td]:
-            DiagnosticFactory(canteen=canteen, year=last_year, value_total=10000)
+            DiagnosticFactory(canteen=canteen, year=last_year, value_totale=10000)
         Teledeclaration.create_from_diagnostic(
             Diagnostic.objects.get(canteen=canteen_td, year=last_year), authenticate.user
         )
@@ -580,7 +580,7 @@ class CanteenActionApiTest(APITestCase):
         self.assertEqual(body["action"], Canteen.Actions.DID_NOT_TELEDECLARE)
 
         # canteen_did_not_td (last_year + 1)
-        DiagnosticFactory(canteen=canteen, year=last_year + 1, value_total=10000)
+        DiagnosticFactory(canteen=canteen, year=last_year + 1, value_totale=10000)
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 3, "year": last_year + 1}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -624,7 +624,7 @@ class CanteenActionApiTest(APITestCase):
             managers=[authenticate.user],
         )
         last_year = 2021
-        DiagnosticFactory(year=last_year, canteen=canteen, value_total=1000)
+        DiagnosticFactory(year=last_year, canteen=canteen, value_totale=1000)
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.FILL_CANTEEN_DATA)

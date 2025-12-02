@@ -44,7 +44,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.CANCELLED)
 
     def exclude_aberrant_values(self):
-        return self.exclude(meal_price__isnull=False, meal_price__gt=20, value_total__gt=1000000)
+        return self.exclude(meal_price__isnull=False, meal_price__gt=20, value_totale__gt=1000000)
 
     def in_year(self, year):
         return self.filter(year=int(year))
@@ -112,12 +112,12 @@ class TeledeclarationQuerySet(models.QuerySet):
         Note: we use Sum/default instead of F to better manage None values.
         """
         return self.annotate(
-            bio_percent=100 * Sum("value_bio_agg", default=0) / Sum("value_total"),
+            bio_percent=100 * Sum("value_bio_agg", default=0) / Sum("value_totale"),
             value_egalim_agg=Sum("value_bio_agg", default=0)
             + Sum("value_siqo_agg", default=0)
             + Sum("value_externalites_performance_agg", default=0)
             + Sum("value_egalim_autres_agg", default=0),
-            egalim_percent=100 * F("value_egalim_agg") / Sum("value_total"),
+            egalim_percent=100 * F("value_egalim_agg") / Sum("value_totale"),
         )
 
     def egalim_objectives_reached(self):
@@ -192,7 +192,7 @@ class Teledeclaration(models.Model):
     canteen_siret = models.TextField(null=True, blank=True)
     canteen_siren_unite_legale = models.TextField(null=True, blank=True)
 
-    value_total = models.IntegerField(
+    value_totale = models.IntegerField(
         null=True, blank=True, verbose_name="Champ value total (en cas de TD détaillée, ce champ est aggrégé)"
     )
     value_bio_agg = models.IntegerField(
@@ -308,7 +308,7 @@ class Teledeclaration(models.Model):
                 }
             )
         check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
-        if check_total_value and not diagnostic.value_total:
+        if check_total_value and not diagnostic.value_totale:
             raise ValidationError("Données d'approvisionnement manquantes")
         if diagnostic.canteen.is_central_cuisine and not diagnostic.central_kitchen_diagnostic_mode:
             raise ValidationError("Question obligatoire : Quelles données sont déclarées par cette cuisine centrale ?")
@@ -360,8 +360,8 @@ class Teledeclaration(models.Model):
         if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             diagnostic.populate_simplified_diagnostic_values()
 
-        if diagnostic.value_total and canteen.yearly_meal_count:
-            meal_price = diagnostic.value_total / canteen.yearly_meal_count
+        if diagnostic.value_totale and canteen.yearly_meal_count:
+            meal_price = diagnostic.value_totale / canteen.yearly_meal_count
         else:
             meal_price = None
 
@@ -375,7 +375,7 @@ class Teledeclaration(models.Model):
             diagnostic=diagnostic,
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
-            value_total=diagnostic.value_total,
+            value_totale=diagnostic.value_totale,
             value_bio_agg=diagnostic.value_bio,
             value_siqo_agg=diagnostic.value_siqo,
             value_externalites_performance_agg=diagnostic.value_externalites_performance,
@@ -444,39 +444,5 @@ class Teledeclaration(models.Model):
         )
 
     def __str__(self):
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
         canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
         return f"Télédéclaration pour {self.year} '{canteen_name}'"

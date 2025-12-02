@@ -126,7 +126,7 @@ class TestETLAnalysisTD(TestCase):
                 "date_mocked": "2023-03-30",  # during the 2022 campai
                 "year": 2022,
                 "data": {
-                    "value_total": 100,
+                    "value_totale": 100,
                     "value_bio_agg": 0,
                     "value_externalites_performance_agg": 10,
                     "value_siqo_agg": 10,
@@ -139,7 +139,7 @@ class TestETLAnalysisTD(TestCase):
                 "date_mocked": "2023-03-30",  # during the 2022 campai
                 "year": 2022,
                 "data": {
-                    "value_total": 100,
+                    "value_totale": 100,
                     "value_bio_agg": 0,
                     "value_externalites_performance_agg": 10,
                     "value_siqo_agg": 10,
@@ -156,7 +156,7 @@ class TestETLAnalysisTD(TestCase):
                     canteen=canteen,
                     year=tc["year"],
                     diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                    value_total=tc["data"]["value_total"],
+                    value_totale=tc["data"]["value_totale"],
                     value_bio=tc["data"]["value_bio_agg"],
                     value_siqo=tc["data"]["value_siqo_agg"],
                     value_externalites_performance=tc["data"]["value_externalites_performance_agg"],
@@ -165,7 +165,7 @@ class TestETLAnalysisTD(TestCase):
                 diagnostic.teledeclare(applicant=UserFactory())
 
                 self.serializer_data = {
-                    "value_total": tc["data"]["value_total"],
+                    "value_totale": tc["data"]["value_totale"],
                     "value_bio": tc["data"]["value_bio_agg"],
                     "value_externalites_performance": tc["data"]["value_externalites_performance_agg"],
                     "value_siqo": tc["data"]["value_siqo_agg"],
@@ -286,12 +286,12 @@ class TestETLAnalysisTD(TestCase):
     def test_cout_denrees(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_ok = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
-            diagnostic = DiagnosticFactory(canteen=canteen_ok, year=2022, value_total=1000)
+            diagnostic = DiagnosticFactory(canteen=canteen_ok, year=2022, value_totale=1000)
             diagnostic.teledeclare(applicant=UserFactory())
 
             self.serializer_data = {
                 "yearly_meal_count": canteen_ok.yearly_meal_count,
-                "value_total": diagnostic.value_total,
+                "value_totale": diagnostic.value_totale,
             }
             self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
                 instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
@@ -305,12 +305,12 @@ class TestETLAnalysisTD(TestCase):
             canteen_invalid_yearly_meal_count = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
             Canteen.objects.filter(id=canteen_invalid_yearly_meal_count.id).update(yearly_meal_count=0)
             canteen_invalid_yearly_meal_count.refresh_from_db()
-            diagnostic = DiagnosticFactory(canteen=canteen_invalid_yearly_meal_count, year=2021, value_total=1000)
+            diagnostic = DiagnosticFactory(canteen=canteen_invalid_yearly_meal_count, year=2021, value_totale=1000)
             diagnostic.teledeclare(applicant=UserFactory())
 
             self.serializer_data = {
                 "yearly_meal_count": canteen_invalid_yearly_meal_count.yearly_meal_count,
-                "value_total": diagnostic.value_total,
+                "value_totale": diagnostic.value_totale,
             }
             self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
                 instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
@@ -427,7 +427,7 @@ class TestETLAnalysisTD(TestCase):
             "central_producer_siret": {2: None, 3: None, 4: None},
             "diagnostic_type": {2: None, 3: None, 4: None},
             "satellite_canteens_count": {2: None, 3: 206.0, 4: 2},
-            "value_total": {2: 100, 3: 1000, 4: 1500},
+            "value_totale": {2: 100, 3: 1000, 4: 1500},
             "value_bio": {2: None, 3: 100, 4: 0},
             "tmp_satellites": {
                 2: None,
@@ -468,11 +468,11 @@ class TestETLAnalysisTD(TestCase):
         etl.flatten_central_kitchen_td()
         self.assertEqual(len(etl.df[etl.df.canteen_id == 2]), 0)  # Central kitchen filtered out
         self.assertEqual(len(etl.df[etl.df.canteen_id == 20]), 1)  # Satellite created
-        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].value_total, 500)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].value_totale, 500)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].secteur, "Secteurs multiples")  # Appro value split
         self.assertEqual(len(etl.df[etl.df.canteen_id == 3]), 1)  # Central kitchen filtered out
-        self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_total, 500)  # Appro value split
-        self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].value_total, 500)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].value_totale, 500)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].value_totale, 500)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 31].iloc[0].yearly_meal_count, 300 / 3)
         self.assertTrue(np.isnan(etl.df[etl.df.canteen_id == 1].iloc[0].value_bio))  # Nulls are processed as nulls
         self.assertEqual(

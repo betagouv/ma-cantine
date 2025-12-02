@@ -133,7 +133,7 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
 
     def validate(self, data):
         # TODO: move these rules to the model
-        total = self.return_value(self, data, "value_total")
+        total = self.return_value(self, data, "value_totale")
         if total is not None and isinstance(total, Decimal):
             bio = self.return_value(self, data, "value_bio")
             sustainable = self.return_value(self, data, "value_siqo")
@@ -333,7 +333,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "declaration_donnees_2023",
             "declaration_donnees_2024",
             # value fields
-            "value_total",
+            "value_totale",
             "value_bio",
             "value_siqo",
             "value_externalites_performance",
@@ -483,13 +483,13 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         return utils.compute_ratio(obj.value_viandes_volailles_egalim, obj.value_viandes_volailles)
 
     def get_ratio_bio(self, obj):
-        return utils.compute_ratio(obj.value_bio_agg, obj.value_total)
+        return utils.compute_ratio(obj.value_bio_agg, obj.value_totale)
 
     def get_ratio_egalim_avec_bio(self, obj):
-        return utils.compute_ratio(obj.value_egalim_agg, obj.value_total)
+        return utils.compute_ratio(obj.value_egalim_agg, obj.value_totale)
 
     def get_ratio_egalim_sans_bio(self, obj):
-        return utils.compute_ratio(self.get_value_somme_egalim_hors_bio(obj), obj.value_total)
+        return utils.compute_ratio(self.get_value_somme_egalim_hors_bio(obj), obj.value_totale)
 
     def get_genere_par_cuisine_centrale(self, obj):
         return obj.is_teledeclared_by_cc
@@ -565,26 +565,7 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_teledeclaration_ratio_bio(self, obj):
-        return obj.value_bio_agg / obj.value_total
+        return obj.value_bio_agg / obj.value_totale
 
     def get_teledeclaration_ratio_egalim_hors_bio(self, obj):
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
-        return obj.value_egalim_hors_bio_agg / obj.value_total
+        return obj.value_egalim_hors_bio_agg / obj.value_totale

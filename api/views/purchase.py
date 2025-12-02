@@ -218,7 +218,7 @@ class CanteenPurchasesPercentageSummaryView(APIView):
             raise NotFound()
 
         data = canteen_summary_for_year(canteen, year)
-        if data["value_total"] == 0:
+        if data["value_totale"] == 0:
             raise NotFound()
 
         if is_canteen_manager:
@@ -293,7 +293,7 @@ def simple_diag_data(purchases, data):
         characteristics__contains=[Purchase.Characteristic.PERFORMANCE]
     )
 
-    data["value_total"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["value_totale"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
     bio_purchases = purchases.filter(bio_filter).distinct()
     data["value_bio"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
@@ -414,8 +414,8 @@ class DiagnosticsFromPurchasesView(APIView):
                 errors.append(f"Vous ne gérez pas la cantine : {canteen_id}")
                 continue
             values_dict = canteen_summary_for_year(canteen, year)
-            value_total = values_dict["value_total"]
-            if value_total == 0 or value_total is None:
+            value_totale = values_dict["value_totale"]
+            if value_totale == 0 or value_totale is None:
                 errors.append(f"Aucun achat trouvé pour la cantine : {canteen_id}")
                 continue
             if canteen.is_central_cuisine:
@@ -506,5 +506,4 @@ class PurchasesRestoreView(APIView):
             canteen__in=self.request.user.canteens.all(), id__in=purchase_ids
         )
         restored_count = purchases_to_restore.update(deletion_date=None)
-        return JsonResponse({"count": restored_count}, status=status.HTTP_200_OK)
         return JsonResponse({"count": restored_count}, status=status.HTTP_200_OK)

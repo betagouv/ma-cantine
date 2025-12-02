@@ -21,7 +21,7 @@ class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
             canteen=cls.canteen_with_diagnostic_cancelled,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
-            value_total=1000,
+            value_totale=1000,
         )  # filled
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
@@ -30,7 +30,7 @@ class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
             canteen=cls.canteen_with_diagnostic_submitted,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
-            value_total=1000,
+            value_totale=1000,
         )  # filled & submitted
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())

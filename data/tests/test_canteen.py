@@ -556,7 +556,7 @@ class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
             canteen=canteen_with_diagnostic_cancelled,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
-            value_total=1000,
+            value_totale=1000,
         )  # filled
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
@@ -565,7 +565,7 @@ class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
             canteen=canteen_with_diagnostic_submitted,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
-            value_total=1000,
+            value_totale=1000,
         )  # filled & submitted
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
@@ -573,7 +573,7 @@ class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
             canteen=canteen_with_diagnostic_submitted,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2023,
-            value_total=None,
+            value_totale=None,
         )  # missing data
 
     def test_annotate_with_diagnostic_for_year(self):
@@ -947,7 +947,7 @@ class CanteenModelPropertiesTest(TestCase):
             canteen=canteen_with_diagnostic_cancelled,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
-            value_total=1000,
+            value_totale=1000,
         )  # filled
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
@@ -956,7 +956,7 @@ class CanteenModelPropertiesTest(TestCase):
             canteen=canteen_with_diagnostic_submitted,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
-            value_total=1000,
+            value_totale=1000,
         )  # filled & submitted
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
@@ -986,13 +986,5 @@ class CanteenModelPropertiesTest(TestCase):
         self.assertEqual(canteen.appro_diagnostics.count(), 2)
         self.assertEqual(canteen.appro_diagnostics.first().year, 2023)
         self.assertEqual(canteen.service_diagnostics.count(), 2)
-        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
-        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
-        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
-        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
         self.assertEqual(canteen.service_diagnostics.first().year, 2023)
         self.assertEqual(canteen.latest_published_year, 2023)

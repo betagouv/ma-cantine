@@ -54,10 +54,10 @@ def diagnostic_type_simple_is_filled_query():
     """
     NOTE: changes in 2025
     """
-    before_2O25 = Q(year__lt=2025, value_total__gt=0)
+    before_2O25 = Q(year__lt=2025, value_totale__gt=0)
     after_2O25 = Q(
         year__gte=2025,
-        value_total__gt=0,
+        value_totale__gt=0,
         value_bio__isnull=False,
         value_siqo__isnull=False,
         value_egalim_autres__isnull=False,
@@ -71,7 +71,7 @@ def diagnostic_type_complete_is_filled_query():
     """
     TODO: changes in 2025?
     """
-    return diagnostic_type_complete_query() & Q(value_total__gt=0)
+    return diagnostic_type_complete_query() & Q(value_totale__gt=0)
 
 
 class DiagnosticQuerySet(models.QuerySet):
@@ -107,7 +107,7 @@ class DiagnosticQuerySet(models.QuerySet):
             canteen_yearly_meal_count=Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField())
         ).annotate(
             meal_price=Case(
-                When(canteen_yearly_meal_count__gt=0, then=F("value_total") / F("canteen_yearly_meal_count")),
+                When(canteen_yearly_meal_count__gt=0, then=F("value_totale") / F("canteen_yearly_meal_count")),
                 default=None,
             )
         )
@@ -122,7 +122,7 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         return (
             self.with_meal_price()
-            .exclude(meal_price__isnull=False, meal_price__gt=20, value_total__gt=1000000)
+            .exclude(meal_price__isnull=False, meal_price__gt=20, value_totale__gt=1000000)
             .exclude(year=2022, teledeclaration_id__in=[9656, 8037])
         )
 
@@ -179,8 +179,8 @@ class DiagnosticQuerySet(models.QuerySet):
         Note: we use Sum/default instead of F to better manage None values.
         """
         return self.annotate(
-            bio_percent=100 * Sum("value_bio_agg", default=0) / Sum("value_total"),
-            egalim_percent=100 * F("value_egalim_agg") / Sum("value_total"),
+            bio_percent=100 * Sum("value_bio_agg", default=0) / Sum("value_totale"),
+            egalim_percent=100 * F("value_egalim_agg") / Sum("value_totale"),
         )
 
     def egalim_objectives_reached(self):
@@ -368,7 +368,7 @@ class Diagnostic(models.Model):
     }
 
     SIMPLE_APPRO_FIELDS = [
-        "value_total",
+        "value_totale",
         "value_bio",
         "value_bio_dont_commerce_equitable",
         "value_siqo",
@@ -522,7 +522,7 @@ class Diagnostic(models.Model):
         field_name for field_name in APPRO_FIELDS if "bio_dont_commerce_equitable" not in field_name
     ]
 
-    COMPLETE_APPRO_FIELDS = ["value_total", "value_viandes_volailles", "value_produits_de_la_mer"] + APPRO_FIELDS
+    COMPLETE_APPRO_FIELDS = ["value_totale", "value_viandes_volailles", "value_produits_de_la_mer"] + APPRO_FIELDS
 
     WASTE_FIELDS = [
         "has_waste_diagnostic",
@@ -693,7 +693,7 @@ class Diagnostic(models.Model):
     )
 
     # Product origin
-    value_total = make_optional_positive_decimal_field(
+    value_totale = make_optional_positive_decimal_field(
         verbose_name="Valeur totale annuelle HT",
     )
     value_bio = make_optional_positive_decimal_field(
@@ -1484,7 +1484,7 @@ class Diagnostic(models.Model):
 
     @property
     def is_filled(self):
-        return self.value_total and self.value_total > 0 and (self.is_filled_simple) or (self.is_filled_complete)
+        return self.value_totale and self.value_totale > 0 and (self.is_filled_simple) or (self.is_filled_complete)
 
     @property
     def is_teledeclared(self):
@@ -1507,7 +1507,7 @@ class Diagnostic(models.Model):
 
     @property
     def appro_badge(self) -> bool | None:
-        total = self.value_total
+        total = self.value_totale
         if total:
             bio_percent = (self.value_bio or 0) / total
             egalim_sum = (

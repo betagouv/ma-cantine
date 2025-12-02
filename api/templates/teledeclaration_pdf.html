@@ -158,7 +158,7 @@
     {% if not diagnostic_type == "détaillée" %}
     <ul>
         <li>
-            <span>Valeur totale en HT des achats alimentaires</span> : {{ value_total|floatformat:2 }} €
+            <span>Valeur totale en HT des achats alimentaires</span> : {{ value_totale|floatformat:2 }} €
         </li>
         <li>
             <span>Valeur en HT des achats alimentaires en Bio</span> : {% if not value_bio is None %}{{
@@ -217,7 +217,7 @@
     <!-- COMPLETE DECLARATION -->
     <ul>
         <li>
-            <span>Valeur totale en HT des achats alimentaires</span> : {{ value_total|floatformat:2 }} €
+            <span>Valeur totale en HT des achats alimentaires</span> : {{ value_totale|floatformat:2 }} €
         </li>
         <li>
             <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
@@ -232,35 +232,35 @@
     <ul>
         <li>
             <span>Viandes et volailles Bio</span> : {% if not value_viandes_volailles_bio is None %}{{
-            value_viandes_volailles_bio|floatformat:2 }}{%else%}—{% endif %} €
+            value_viandes_volailles_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
             <span>Poissons, produits de la mer et de l'aquaculture Bio</span> : {% if not value_produits_de_la_mer_bio
-            is None %}{{ value_produits_de_la_mer_bio|floatformat:2 }}{%else%}—{% endif %} €
+            is None %}{{ value_produits_de_la_mer_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
             <span>Fruits et légumes Bio</span> : {% if not value_fruits_et_legumes_bio is None %}{{
-            value_fruits_et_legumes_bio|floatformat:2 }}{%else%}—{% endif %} €
+            value_fruits_et_legumes_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
             <span>Charcuterie Bio</span> : {% if not value_charcuterie_bio is None %}{{
-            value_charcuterie_bio|floatformat:2 }}{%else%}—{% endif %} €
+            value_charcuterie_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
             <span>Produits laitiers Bio</span> : {% if not value_produits_laitiers_bio is None %}{{
-            value_produits_laitiers_bio|floatformat:2 }}{%else%}—{% endif %} €
+            value_produits_laitiers_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
             <span>Boulangerie Bio</span> : {% if not value_boulangerie_bio is None %}{{
-            value_boulangerie_bio|floatformat:2 }}{%else%}—{% endif %} €
+            value_boulangerie_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
             <span>Boissons Bio</span> : {% if not value_boissons_bio is None %}{{ value_boissons_bio|floatformat:2
-            }}{%else%}—{% endif %} €
+            }}{% else %}—{% endif %} €
         </li>
         <li>
             <span>Autres produits Bio</span> : {% if not value_autres_bio is None %}{{ value_autres_bio|floatformat:2
-            }}{%else%}—{% endif %} €
+            }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -798,15 +798,18 @@
             <ul>
                 <li>
                     <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
-                    {% if not value_viandes_volailles is None %}{{ value_viandes_volailles|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_viandes_volailles is None %}{{ value_viandes_volailles|floatformat:2 }}{% else %}—{%
+                    endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées EGalim</span> :
-                    {% if not value_viandes_volailles_egalim is None %}{{ value_viandes_volailles_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_viandes_volailles_egalim is None %}{{ value_viandes_volailles_egalim|floatformat:2
+                    }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées origine France</span> :
-                    {% if not value_viandes_volailles_france is None %}{{ value_viandes_volailles_france|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_viandes_volailles_france is None %}{{ value_viandes_volailles_france|floatformat:2
+                    }}{% else %}—{% endif %} €
                 </li>
             </ul>
             {% endif %}
@@ -820,11 +823,13 @@
             <ul>
                 <li>
                     <span>Valeur totale en HT des achats en poissons, produits de la mer et de l'aquaculture</span> :
-                    {% if not value_produits_de_la_mer is None %}{{ value_produits_de_la_mer|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_produits_de_la_mer is None %}{{ value_produits_de_la_mer|floatformat:2 }}{% else
+                    %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT des achats en poissons, produits de la mer et de l'aquaculture EGalim</span> :
-                    {% if not value_produits_de_la_mer_egalim is None %}{{ value_produits_de_la_mer_egalim|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_produits_de_la_mer_egalim is None %}{{ value_produits_de_la_mer_egalim|floatformat:2
+                    }}{% else %}—{% endif %} €
                 </li>
             </ul>
             {% else %}
@@ -835,38 +840,49 @@
                 </li>
                 <li>
                     <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
-                    {% if not value_viandes_volailles is None %}{{ value_viandes_volailles|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_viandes_volailles is None %}{{ value_viandes_volailles|floatformat:2 }}{% else %}—{%
+                    endif %} €
                 </li>
                 <li>
                     <span>Valeur totale en HT des achats en poissons, produits de la mer et de l'aquaculture</span> :
-                    {% if not value_produits_de_la_mer is None %}{{ value_produits_de_la_mer|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_produits_de_la_mer is None %}{{ value_produits_de_la_mer|floatformat:2 }}{% else
+                    %}—{% endif %} €
                 </li>
             </ul>
             <p>Achats Bio</p>
             <ul>
                 <li>
-                    <span>Viandes et volailles Bio</span> : {% if not value_viandes_volailles_bio is None %}{{ value_viandes_volailles_bio|floatformat:2 }}{%else%}—{% endif %} €
+                    <span>Viandes et volailles Bio</span> : {% if not value_viandes_volailles_bio is None %}{{
+                    value_viandes_volailles_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Poissons, produits de la mer et de l'aquaculture Bio</span> : {% if not value_produits_de_la_mer_bio is None %}{{ value_produits_de_la_mer_bio|floatformat:2 }}{%else%}—{% endif %} €
+                    <span>Poissons, produits de la mer et de l'aquaculture Bio</span> : {% if not
+                    value_produits_de_la_mer_bio is None %}{{ value_produits_de_la_mer_bio|floatformat:2 }}{% else %}—{%
+                    endif %} €
                 </li>
                 <li>
-                    <span>Fruits et légumes Bio</span> : {% if not value_fruits_et_legumes_bio is None %}{{ value_fruits_et_legumes_bio|floatformat:2 }}{%else%}—{% endif %} €
+                    <span>Fruits et légumes Bio</span> : {% if not value_fruits_et_legumes_bio is None %}{{
+                    value_fruits_et_legumes_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Charcuterie Bio</span> : {% if not value_charcuterie_bio is None %}{{ value_charcuterie_bio|floatformat:2 }}{%else%}—{% endif %} €
+                    <span>Charcuterie Bio</span> : {% if not value_charcuterie_bio is None %}{{
+                    value_charcuterie_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Produits laitiers Bio</span> : {% if not value_produits_laitiers_bio is None %}{{ value_produits_laitiers_bio|floatformat:2 }}{%else%}—{% endif %} €
+                    <span>Produits laitiers Bio</span> : {% if not value_produits_laitiers_bio is None %}{{
+                    value_produits_laitiers_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Boulangerie Bio</span> : {% if not value_boulangerie_bio is None %}{{ value_boulangerie_bio|floatformat:2 }}{%else%}—{% endif %} €
+                    <span>Boulangerie Bio</span> : {% if not value_boulangerie_bio is None %}{{
+                    value_boulangerie_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Boissons Bio</span> : {% if not value_boissons_bio is None %}{{ value_boissons_bio|floatformat:2 }}{%else%}—{% endif %} €
+                    <span>Boissons Bio</span> : {% if not value_boissons_bio is None %}{{
+                    value_boissons_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Autres produits Bio</span> : {% if not value_autres_bio is None %}{{ value_autres_bio|floatformat:2 }}{%else%}—{% endif %} €
+                    <span>Autres produits Bio</span> : {% if not value_autres_bio is None %}{{
+                    value_autres_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
             <p>

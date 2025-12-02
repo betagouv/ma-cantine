@@ -47,7 +47,7 @@ class TeledeclarationQuerySetTest(TestCase):
                 year=year_data,
                 creation_date=date_in_teledeclaration_campaign,
                 canteen=canteen,
-                value_total=1000.00,
+                value_totale=1000.00,
                 value_bio=200.00,
             )
             diagnostic_last_year = DiagnosticFactory(
@@ -55,7 +55,7 @@ class TeledeclarationQuerySetTest(TestCase):
                 year=year_data - 1,
                 creation_date=date_in_last_teledeclaration_campaign,
                 canteen=canteen,
-                value_total=1000.00,
+                value_totale=1000.00,
                 value_bio=200.00,
             )
             setattr(cls, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
@@ -72,7 +72,7 @@ class TeledeclarationQuerySetTest(TestCase):
             year=year_data,
             creation_date=now().replace(month=7, day=1),
             canteen=cls.valid_canteen_4,
-            value_total=1000.00,
+            value_totale=1000.00,
             value_bio=200.00,
             value_siqo=100.00,
             value_externalites_performance=100.00,
@@ -95,7 +95,7 @@ class TeledeclarationQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.invalid_canteen,
-            value_total=1000.00,
+            value_totale=1000.00,
             value_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
@@ -108,7 +108,7 @@ class TeledeclarationQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.deleted_canteen,
-            value_total=1000.00,
+            value_totale=1000.00,
             value_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
@@ -120,7 +120,7 @@ class TeledeclarationQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.valid_canteen_sat,
-            value_total=None,
+            value_totale=None,
             value_bio=None,
         )
         with freeze_time(date_in_teledeclaration_campaign):
@@ -173,7 +173,7 @@ class TeledeclarationQuerySetTest(TestCase):
 
         self.assertEqual(
             td_with_meal_price.meal_price,
-            td_with_meal_price.value_total / canteen_with_meal_price.yearly_meal_count,
+            td_with_meal_price.value_totale / canteen_with_meal_price.yearly_meal_count,
         )
         self.assertIsNone(td_without_meal_price.meal_price)
         self.assertIsNone(td_without_appro.meal_price)
