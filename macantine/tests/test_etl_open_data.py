@@ -9,7 +9,7 @@ from freezegun import freeze_time
 
 from common.api.datagouv import update_dataset_resources
 from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen, Sector, SectorM2M
+from data.models import Canteen, Sector, SectorM2M, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 
 
@@ -57,17 +57,25 @@ class TestETLOpenData(TestCase):
             declaration_donnees_2022=True,
         )
         with freeze_time("2023-05-14"):  # during the 2022 campaign
-            diagnostic = DiagnosticFactory(canteen=cls.canteen, year=2022, diagnostic_type=None)
-            diagnostic_2 = DiagnosticFactory(canteen=cls.canteen_2, year=2022, diagnostic_type=None)
+            diagnostic = DiagnosticFactory(
+                canteen=cls.canteen, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
+            diagnostic_2 = DiagnosticFactory(
+                canteen=cls.canteen_2, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
             diagnostic_2.teledeclare(cls.user_manager)
         with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
             diagnostic.teledeclare(cls.user_manager)
         with freeze_time("2024-04-01"):  # during the 2023 campaign
-            diagnostic = DiagnosticFactory(canteen=cls.canteen, year=2023, diagnostic_type=None)
+            diagnostic = DiagnosticFactory(
+                canteen=cls.canteen, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
             diagnostic.teledeclare(cls.user_manager)
             diagnostic.cancel()  # will not appear in the exports
         with freeze_time("2025-04-20"):  # after the 2024 campaign
-            diagnostic = DiagnosticFactory(canteen=cls.canteen, year=2024, diagnostic_type=None)
+            diagnostic = DiagnosticFactory(
+                canteen=cls.canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
             diagnostic.teledeclare(cls.user_manager)
 
         cls.canteen_central_without_manager = CanteenFactory(
@@ -289,7 +297,5 @@ class TestETLOpenData(TestCase):
             self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
 
             # Cleaning files
-            for file_extension in ["csv", "parquet", "xslx"]:
-                default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")
             for file_extension in ["csv", "parquet", "xslx"]:
                 default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")

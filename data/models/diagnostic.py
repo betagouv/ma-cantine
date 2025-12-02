@@ -42,9 +42,43 @@ def in_correction_campaign_query(year):
     )
 
 
+def diagnostic_type_simple_query():
+    return Q(diagnostic_type="SIMPLE")
+
+
+def diagnostic_type_complete_query():
+    return Q(diagnostic_type="COMPLETE")
+
+
+def diagnostic_type_simple_is_filled_query():
+    """
+    NOTE: changes in 2025
+    """
+    before_2O25 = Q(year__lt=2025, value_total_ht__gt=0)
+    after_2O25 = Q(
+        year__gte=2025,
+        value_total_ht__gt=0,
+        value_bio_ht__isnull=False,
+        value_sustainable_ht__isnull=False,
+        value_egalim_others_ht__isnull=False,
+        value_meat_poultry_ht__isnull=False,
+        value_meat_poultry_egalim_ht__isnull=False,
+    )
+    return diagnostic_type_simple_query() & (before_2O25 | after_2O25)
+
+
+def diagnostic_type_complete_is_filled_query():
+    """
+    TODO: changes in 2025?
+    """
+    return diagnostic_type_complete_query() & Q(value_total_ht__gt=0)
+
+
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
-        return self.filter(value_total_ht__gt=0)
+        return self.filter(diagnostic_type__isnull=False).filter(
+            diagnostic_type_simple_is_filled_query() | diagnostic_type_complete_is_filled_query()
+        )
 
     def teledeclared(self):
         return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
@@ -1439,8 +1473,25 @@ class Diagnostic(models.Model):
         return sum
 
     @property
+    def is_filled_simple(self):
+        if int(self.year) >= 2025:
+            return (
+                self.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE
+                and self.value_bio_ht is not None
+                and self.value_sustainable_ht is not None
+                and self.value_egalim_others_ht is not None
+                and self.value_meat_poultry_ht is not None
+                and self.value_meat_poultry_egalim_ht is not None
+            )
+        return self.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE
+
+    @property
+    def is_filled_complete(self):
+        return self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE
+
+    @property
     def is_filled(self):
-        return self.value_total_ht > 0 if self.value_total_ht else False
+        return self.value_total_ht and self.value_total_ht > 0 and (self.is_filled_simple) or (self.is_filled_complete)
 
     @property
     def is_teledeclared(self):
