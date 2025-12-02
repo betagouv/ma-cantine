@@ -52,8 +52,10 @@ class PurchaseSummarySerializer(serializers.Serializer):
     year = serializers.IntegerField()
     value_total_ht = PurchaseField()
     value_bio_ht = PurchaseField()
+    value_bio_dont_commerce_equitable_ht = PurchaseField()
     value_sustainable_ht = PurchaseField()
     value_egalim_others_ht = PurchaseField()
+    value_egalim_others_dont_commerce_equitable_ht = PurchaseField()
     value_externality_performance_ht = PurchaseField()
     # meat and fish aggregates
     value_meat_poultry_ht = PurchaseField()

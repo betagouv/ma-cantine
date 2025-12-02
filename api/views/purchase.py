@@ -265,42 +265,15 @@ def canteen_summary(canteen):
     return data
 
 
-# the order of EGALIM_LABELS is significant - determines which labels trump others when aggregating purchases
-DIAGNOSTIC_EGALIM_LABELS = [
-    "BIO",
-    "LABEL_ROUGE",
-    "AOCAOP_IGP_STG",
-    "HVE",
-    "PECHE_DURABLE",
-    "RUP",
-    "COMMERCE_EQUITABLE",
-    "FERMIER",
-    "EXTERNALITES",
-    "PERFORMANCE",
-]
-PURCHASE_EGALIM_LABELS = [
-    "BIO",
-    "LABEL_ROUGE",
-    "AOCAOP",
-    "IGP",
-    "STG",
-    "HVE",
-    "PECHE_DURABLE",
-    "RUP",
-    "COMMERCE_EQUITABLE",
-    "FERMIER",
-    "EXTERNALITES",
-    "PERFORMANCE",
-    "EQUIVALENTS",
-]
-
-
 def simple_diag_data(purchases, data):
     # TODO: is CONVERSION_BIO used?
     bio_filter = Q(characteristics__contains=[Purchase.Characteristic.BIO]) | Q(
         characteristics__contains=[Purchase.Characteristic.CONVERSION_BIO]
     )
-    siqo_filter = (
+    bio_commerce_equitable_filter = bio_filter & Q(
+        characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]
+    )
+    sustainable_filter = (
         Q(characteristics__contains=[Purchase.Characteristic.LABEL_ROUGE])
         | Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
         | Q(characteristics__contains=[Purchase.Characteristic.IGP])
@@ -313,50 +286,56 @@ def simple_diag_data(purchases, data):
         | Q(characteristics__contains=[Purchase.Characteristic.FERMIER])
         | Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE])
     )
+    egalim_others_commerce_equitable_filter = egalim_others_filter & Q(
+        characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]
+    )
     externalities_performance_filter = Q(characteristics__contains=[Purchase.Characteristic.EXTERNALITES]) | Q(
         characteristics__contains=[Purchase.Characteristic.PERFORMANCE]
     )
 
     data["value_total_ht"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+
     bio_purchases = purchases.filter(bio_filter).distinct()
     data["value_bio_ht"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["value_bio_dont_commerce_equitable_ht"] = (
+        bio_purchases.filter(bio_commerce_equitable_filter).aggregate(total=Sum("price_ht"))["total"] or 0
+    )
 
     # the remaining stats should ignore any bio products
     purchases_no_bio = purchases.exclude(bio_filter)
-    siqo_purchases = purchases_no_bio.filter(siqo_filter).distinct()
-    data["value_sustainable_ht"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    sustainable_purchases = purchases_no_bio.filter(sustainable_filter).distinct()
+    data["value_sustainable_ht"] = sustainable_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
-    # the remaining stats should ignore any SIQO products
-    purchases_no_siqo = purchases_no_bio.exclude(siqo_filter)
-    egalim_others_purchases = purchases_no_siqo.filter(egalim_others_filter).distinct()
+    # the remaining stats should also ignore any sustainable (SIQO) products
+    purchases_no_bio_no_sustainable = purchases_no_bio.exclude(sustainable_filter)
+    egalim_others_purchases = purchases_no_bio_no_sustainable.filter(egalim_others_filter).distinct()
     data["value_egalim_others_ht"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["value_egalim_others_dont_commerce_equitable_ht"] = (
+        egalim_others_purchases.filter(egalim_others_commerce_equitable_filter).aggregate(total=Sum("price_ht"))[
+            "total"
+        ]
+        or 0
+    )
 
-    # the remaining stats should ignore any "other EGalim" products
-    purchases_no_other = purchases_no_siqo.exclude(egalim_others_filter)
-    externalities_performance_purchases = purchases_no_other.filter(externalities_performance_filter).distinct()
+    # the remaining stats should also ignore any "other EGalim" products
+    purchases_no_bio_sustainable_no_egalim_others = purchases_no_bio_no_sustainable.exclude(egalim_others_filter)
+    externalities_performance_purchases = purchases_no_bio_sustainable_no_egalim_others.filter(
+        externalities_performance_filter
+    ).distinct()
     data["value_externality_performance_ht"] = (
         externalities_performance_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
     )
 
 
 def complete_diag_data(purchases, data):
-    # summary for detailed teledeclaration totals, by family and label
-    families = [
-        "VIANDES_VOLAILLES",
-        "PRODUITS_DE_LA_MER",
-        "FRUITS_ET_LEGUMES",
-        "CHARCUTERIE",
-        "PRODUITS_LAITIERS",
-        "BOULANGERIE",
-        "BOISSONS",
-        "AUTRES",
-    ]
-    other_labels = ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"]
-
-    for family in families:
-        purchase_family = purchases.filter(family=family)
-        for label in DIAGNOSTIC_EGALIM_LABELS:
-            if label == "AOCAOP_IGP_STG":
+    """
+    summary for detailed teledeclaration totals, by family and label
+    Note: the order of Diagnostic.APPRO_LABELS_EGALIM is significant - determines which labels trump others when aggregating purchases
+    """
+    for family in Diagnostic.APPRO_FAMILIES:
+        purchase_family = purchases.filter(family=family.upper())
+        for label in Diagnostic.APPRO_LABELS_EGALIM:
+            if label.upper() == "AOCAOP_IGP_STG":
                 fam_label = purchase_family.filter(
                     Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
                     | Q(characteristics__contains=[Purchase.Characteristic.IGP])
@@ -369,52 +348,48 @@ def complete_diag_data(purchases, data):
                     | Q(characteristics__contains=[Purchase.Characteristic.STG])
                 )
             else:
-                fam_label = purchase_family.filter(Q(characteristics__contains=[Purchase.Characteristic[label]]))
+                fam_label = purchase_family.filter(
+                    Q(characteristics__contains=[Purchase.Characteristic[label.upper()]])
+                )
                 # the remaining stats should ignore already counted labels
                 purchase_family = purchase_family.exclude(
-                    Q(characteristics__contains=[Purchase.Characteristic[label]])
+                    Q(characteristics__contains=[Purchase.Characteristic[label.upper()]])
                 )
-            key = "value_" + family.lower() + "_" + label.lower()
+            key = "value_" + family + "_" + label
             data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
         # outside of EGalim, products can be counted twice across characteristics
-        purchase_family = purchases.filter(family=family)
+        purchase_family = purchases.filter(family=family.upper())
         other_labels_characteristics = []
-        for label in other_labels:
-            characteristic = Purchase.Characteristic[label]
+        for label in Diagnostic.APPRO_LABELS_FRANCE:
+            characteristic = Purchase.Characteristic[label.upper()]
             fam_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
-            key = "value_" + family.lower() + "_" + label.lower()
+            key = "value_" + family + "_" + label
             data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
             other_labels_characteristics.append(characteristic)
         # Non-EGalim totals: contains no labels or only one or more of other_labels
         non_egalim_purchases = purchase_family.filter(
             Q(characteristics__contained_by=(other_labels_characteristics + [""])) | Q(characteristics__len=0)
         ).distinct()
-        key = "value_" + family.lower() + "_non_egalim"
+        key = "value_" + family + "_non_egalim"
         data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
 
 def misc_totals(purchases, data):
-    meat_poultry_purchases = purchases.filter(
-        family=Purchase.Family.VIANDES_VOLAILLES,
-    )
+    # meat_poultry
+    meat_poultry_purchases = purchases.filter(family=Purchase.Family.VIANDES_VOLAILLES)
     data["value_meat_poultry_ht"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-
-    meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=PURCHASE_EGALIM_LABELS)
+    meat_poultry_egalim = meat_poultry_purchases.filter(
+        characteristics__overlap=[label.upper() for label in Diagnostic.APPRO_LABELS_EGALIM]
+    )
     data["value_meat_poultry_egalim_ht"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
-
-    meat_poultry_france = meat_poultry_purchases.filter(
-        characteristics__contains=[
-            "FRANCE",
-        ]
-    )
+    meat_poultry_france = meat_poultry_purchases.filter(characteristics__contains=[Purchase.Characteristic.FRANCE])
     data["value_meat_poultry_france_ht"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"] or 0
-
-    fish_purchases = purchases.filter(
-        family=Purchase.Family.PRODUITS_DE_LA_MER,
-    )
+    # fish
+    fish_purchases = purchases.filter(family=Purchase.Family.PRODUITS_DE_LA_MER)
     data["value_fish_ht"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-
-    fish_egalim = fish_purchases.filter(characteristics__overlap=PURCHASE_EGALIM_LABELS)
+    fish_egalim = fish_purchases.filter(
+        characteristics__overlap=[label.upper() for label in Diagnostic.APPRO_LABELS_EGALIM]
+    )
     data["value_fish_egalim_ht"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
 
 
