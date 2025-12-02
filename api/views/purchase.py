@@ -307,8 +307,8 @@ def simple_diag_data(purchases, data):
     data["value_sustainable_ht"] = sustainable_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
     # the remaining stats should also ignore any sustainable (SIQO) products
-    purchases_no_bio_sustainable = purchases_no_bio.exclude(sustainable_filter)
-    egalim_others_purchases = purchases_no_bio_sustainable.filter(egalim_others_filter).distinct()
+    purchases_no_bio_no_sustainable = purchases_no_bio.exclude(sustainable_filter)
+    egalim_others_purchases = purchases_no_bio_no_sustainable.filter(egalim_others_filter).distinct()
     data["value_egalim_others_ht"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
     data["value_egalim_others_dont_commerce_equitable_ht"] = (
         egalim_others_purchases.filter(egalim_others_commerce_equitable_filter).aggregate(total=Sum("price_ht"))[
@@ -318,8 +318,8 @@ def simple_diag_data(purchases, data):
     )
 
     # the remaining stats should also ignore any "other EGalim" products
-    purchases_no_bio_sustainable_egalim_others = purchases_no_bio_sustainable.exclude(egalim_others_filter)
-    externalities_performance_purchases = purchases_no_bio_sustainable_egalim_others.filter(
+    purchases_no_bio_sustainable_no_egalim_others = purchases_no_bio_no_sustainable.exclude(egalim_others_filter)
+    externalities_performance_purchases = purchases_no_bio_sustainable_no_egalim_others.filter(
         externalities_performance_filter
     ).distinct()
     data["value_externality_performance_ht"] = (
