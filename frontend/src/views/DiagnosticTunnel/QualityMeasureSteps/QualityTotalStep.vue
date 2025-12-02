@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="mb-16" v-if="displayPurchaseHints && purchasesSummary.valueTotalHt > 0">
+    <div class="mb-16" v-if="displayPurchaseHints && purchasesSummary.valueTotale > 0">
       <DsfrCallout icon="$money-euro-box-fill">
         <div>
           <p>
             Vous avez renseigné un total de
-            <span class="font-weight-bold">{{ toCurrency(purchasesSummary.valueTotalHt) }}</span>
+            <span class="font-weight-bold">{{ toCurrency(purchasesSummary.valueTotale) }}</span>
             d'achats en {{ diagnostic.year }}. Voulez-vous compléter votre bilan avec les montants de ces achats ?
           </p>
           <v-btn outlined color="primary" @click="autofillWithPurchases">Compléter avec mes achats</v-btn>
@@ -14,7 +14,7 @@
     </div>
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <DsfrCurrencyField
-      v-model.number="payload.valueTotalHt"
+      v-model.number="payload.valueTotale"
       :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
       validate-on-blur
       @blur="updatePayload"
@@ -24,10 +24,10 @@
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
-      v-model="payload.valueTotalHt"
+      v-model="payload.valueTotale"
       @autofill="onPurchaseAutofill"
       purchaseType=""
-      :amount="purchasesSummary.valueTotalHt"
+      :amount="purchasesSummary.valueTotale"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
     <ErrorHelper
@@ -117,7 +117,7 @@ export default {
     erroringFields() {
       const fields = []
       if (this.totalError)
-        fields.push(...["valueBioHt", "valueSustainableHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"])
+        fields.push(...["valueBio", "valueSiqo", "valueEgalimAutres", "valueExternalitesPerformance"])
       if (this.totalViandesVolaillesError) fields.push("valueViandesVolailles")
       if (this.totalProduitsDeLaMerError) fields.push("valueProduitsDeLaMer")
       if (this.totalFamiliesError) fields.push(...["valueViandesVolailles", "valueProduitsDeLaMer"])
@@ -131,7 +131,7 @@ export default {
     },
     toCurrency,
     checkTotal() {
-      if (this.payload.valueTotalHt < 0) {
+      if (this.payload.valueTotale < 0) {
         return // this error is handled by vuetify validation
       }
 
@@ -142,7 +142,7 @@ export default {
 
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
-      const total = d.valueTotalHt
+      const total = d.valueTotale
       const totalMeatPoultry = d.valueViandesVolailles
       const totalFish = d.valueProduitsDeLaMer
       const totalFamilies = totalMeatPoultry + totalFish
@@ -150,9 +150,7 @@ export default {
       if (sumEgalim > total) {
         this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(sumEgalim || 0)}`
         if (!this.diagnostic.diagnosticType || this.diagnostic.diagnosticType === "SIMPLE") {
-          this.errorHelperFields.push(
-            ...["valueBioHt", "valueSustainableHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"]
-          )
+          this.errorHelperFields.push(...["valueBio", "valueSiqo", "valueEgalimAutres", "valueExternalitesPerformance"])
         }
       }
       if (totalFamilies > total) {
@@ -177,7 +175,7 @@ export default {
     },
     sumAllEgalim() {
       const d = this.payload
-      const egalimValues = [d.valueBioHt, d.valueSustainableHt, d.valueExternalityPerformanceHt, d.valueEgalimOthersHt]
+      const egalimValues = [d.valueBio, d.valueSiqo, d.valueExternalitesPerformance, d.valueEgalimAutres]
       let total = 0
       egalimValues.forEach((val) => {
         total += parseFloat(val) || 0

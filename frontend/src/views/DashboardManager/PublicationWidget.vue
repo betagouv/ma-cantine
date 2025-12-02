@@ -82,7 +82,7 @@ export default {
       return formatDate(date.toISOString())
     },
     hasPublicationData() {
-      return !!this.diagnostic?.valueTotalHt
+      return !!this.diagnostic?.valueTotale
     },
   },
   methods: {

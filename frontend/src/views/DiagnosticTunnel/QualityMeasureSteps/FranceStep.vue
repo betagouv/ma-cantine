@@ -263,7 +263,7 @@ export default {
     return {
       totalErrorMessage: null,
       errorHelperUsed: false,
-      errorHelperFields: ["valueTotalHt"],
+      errorHelperFields: ["valueTotale"],
     }
   },
   computed: {
@@ -293,11 +293,11 @@ export default {
 
       const d = this.payload
       const sumFrance = this.sumAllFrance()
-      const total = d.valueTotalHt
+      const total = d.valueTotale
 
       if (sumFrance > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
-          d.valueTotalHt
+          d.valueTotale
         )}) doit être plus élévé que la somme des valeurs origine France (${toCurrency(sumFrance || 0)})`
       }
     },

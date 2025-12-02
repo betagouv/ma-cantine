@@ -75,7 +75,7 @@ export default {
       return this.lastPurchaseAddDate ? timeAgo(this.lastPurchaseAddDate, true) : null
     },
     hasPurchases() {
-      return !!this.purchasesSummary?.valueTotalHt
+      return !!this.purchasesSummary?.valueTotale
     },
   },
   methods: {

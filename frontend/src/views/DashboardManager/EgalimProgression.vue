@@ -210,7 +210,7 @@ export default {
       return null
     },
     approDiagnostic() {
-      if (this.isCurrentYear && this.purchasesSummary && this.purchasesSummary.valueTotalHt !== 0) {
+      if (this.isCurrentYear && this.purchasesSummary && this.purchasesSummary.valueTotale !== 0) {
         return this.purchasesSummary
       }
       return this.centralDiagnostic || this.canteenDiagnostic

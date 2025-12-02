@@ -40,27 +40,27 @@ const MEAT = "viandes et volailles"
 
 const SIMPLE_FIELDS = [
   {
-    name: "valueTotalHt",
+    name: "valueTotale",
     label: "La valeur totale (en € HT) de mes achats alimentaires",
     purchaseType: "totaux",
   },
   {
-    name: "valueBioHt",
+    name: "valueBio",
     label: "La valeur (en € HT) de mes achats Bio ou en conversion Bio",
     purchaseType: "bio",
   },
   {
-    name: "valueSustainableHt",
+    name: "valueSiqo",
     label: "La valeur (en € HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
     purchaseType: "SIQO",
   },
   {
-    name: "valueEgalimOthersHt",
+    name: "valueEgalimAutres",
     label: "La valeur (en € HT) des autres achats EGalim",
     purchaseType: "« autre EGalim »",
   },
   {
-    name: "valueExternalityPerformanceHt",
+    name: "valueExternalitesPerformance",
     label:
       "Critères d'achat : La valeur (en € HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale.",
     purchaseType: "« critères d'achat »",

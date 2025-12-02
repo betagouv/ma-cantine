@@ -66,11 +66,11 @@
       </div>
       <div v-if="summary">
         <v-row class="mb-2">
-          <v-col cols="12" sm="6" md="4" v-if="summary.valueTotalHt">
+          <v-col cols="12" sm="6" md="4" v-if="summary.valueTotale">
             <v-card class="fill-height text-center py-4 d-flex flex-column justify-center" outlined>
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">
-                  {{ toCurrency(summary.valueTotalHt) }}
+                  {{ toCurrency(summary.valueTotale) }}
                 </span>
                 <span class="caption">
                   total HT
@@ -78,7 +78,7 @@
               </p>
             </v-card>
           </v-col>
-          <v-col col="8" sm="6" v-if="summary.valueTotalHt && (showMealCountField || !mealCost)">
+          <v-col col="8" sm="6" v-if="summary.valueTotale && (showMealCountField || !mealCost)">
             <v-card class="fill-height text-center pa-4 d-flex flex-column justify-center" outlined>
               <v-form ref="mealCountForm" @submit.prevent>
                 <label for="yearly-meals" class="body-2 d-block mb-2 text-left">
@@ -235,17 +235,17 @@ export default {
       })
     },
     bioPercent() {
-      return this.summary && getPercentage(this.summary.valueBioHt, this.summary.valueTotalHt)
+      return this.summary && getPercentage(this.summary.valueBio, this.summary.valueTotale)
     },
     sustainablePercent() {
-      return this.summary && getPercentage(getSustainableTotal(this.summary), this.summary.valueTotalHt)
+      return this.summary && getPercentage(getSustainableTotal(this.summary), this.summary.valueTotale)
     },
     yearlyMealCount() {
       return this.vizCanteen?.yearlyMealCount
     },
     mealCost() {
       if (!this.summary || !this.yearlyMealCount) return
-      return this.summary.valueTotalHt / this.yearlyMealCount
+      return this.summary.valueTotale / this.yearlyMealCount
     },
     isCentralCanteen() {
       return ["central", "central_serving"].includes(this.vizCanteen?.productionType)
@@ -301,7 +301,7 @@ export default {
       return [
         {
           name: "Total de mes achats HT",
-          data: Object.values(this.yearlySummary).map((s) => s.valueTotalHt),
+          data: Object.values(this.yearlySummary).map((s) => s.valueTotale),
         },
       ]
     },

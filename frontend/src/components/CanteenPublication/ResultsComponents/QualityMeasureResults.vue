@@ -225,7 +225,7 @@ export default {
       return applicableDiagnosticRules(this.canteen, yearMaybe)
     },
     hasPercentages() {
-      return !!this.diagnosticForYear && "percentageValueTotalHt" in this.diagnosticForYear
+      return !!this.diagnosticForYear && "percentageValueTotale" in this.diagnosticForYear
     },
     viandesVolaillesEgalimPercentage() {
       return this.hasPercentages

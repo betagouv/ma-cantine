@@ -225,7 +225,7 @@ export default {
       totalFields: [
         {
           text: "Total (en € HT) de mes achats alimentaires",
-          key: "valueTotalHt",
+          key: "valueTotale",
         },
         {
           text: "Total (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
@@ -239,28 +239,28 @@ export default {
       egalimFields: [
         {
           text: "Total (en € HT) de mes achats Bio ou en conversion Bio",
-          key: "valueBioHt",
+          key: "valueBio",
         },
         {
           text: "Dont valeur (en € HT) de mes achats Bio et Commerce équitable",
-          key: "valueBioDontCommerceEquitableHt",
+          key: "valueBioDontCommerceEquitable",
         },
         {
           text: "Total (en € HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
-          key: "valueSustainableHt",
+          key: "valueSiqo",
         },
         {
           text: "Total (en € HT) des autres achats EGalim",
-          key: "valueEgalimOthersHt",
+          key: "valueEgalimAutres",
         },
         {
           text: "Dont valeur (en € HT) des achats Commerce équitable (hors bio)",
-          key: "valueEgalimOthersDontCommerceEquitableHt",
+          key: "valueEgalimAutresDontCommerceEquitable",
         },
         {
           text:
             "Total (en € HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
-          key: "valueExternalityPerformanceHt",
+          key: "valueExternalitesPerformance",
         },
       ],
       familyFields: [

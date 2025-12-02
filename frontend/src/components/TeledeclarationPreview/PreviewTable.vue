@@ -164,7 +164,7 @@ export default {
       if (!this.showApproItems) return []
       if (this.diagnostic.diagnosticType === "COMPLETE") {
         return [
-          { param: "valueTotalHt", label: "Mes achats alimentaires total" },
+          { param: "valueTotale", label: "Mes achats alimentaires total" },
           {
             param: "valueViandesVolailles",
             label: "Mes achats en viandes et volailles fraiches ou surgelées total",
@@ -380,21 +380,21 @@ export default {
         ]
       }
       return [
-        { param: "valueTotalHt", label: "Mes achats alimentaires total" },
-        { param: "valueBioHt", label: "Mes achats Bio ou en conversion Bio" },
+        { param: "valueTotale", label: "Mes achats alimentaires total" },
+        { param: "valueBio", label: "Mes achats Bio ou en conversion Bio" },
         {
-          param: "valueBioDontCommerceEquitableHt",
+          param: "valueBioDontCommerceEquitable",
           label: "Dont valeur de mes achats Bio et Commerce équitable",
         },
-        { param: "valueSustainableHt", label: "Mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)" },
+        { param: "valueSiqo", label: "Mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)" },
         {
-          param: "valueExternalityPerformanceHt",
+          param: "valueExternalitesPerformance",
           label:
             "Mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
         },
-        { param: "valueEgalimOthersHt", label: "Autres achats EGalim" },
+        { param: "valueEgalimAutres", label: "Autres achats EGalim" },
         {
-          param: "valueEgalimOthersDontCommerceEquitableHt",
+          param: "valueEgalimAutresDontCommerceEquitable",
           label: "Dont valeur des achats Commerce équitable (hors bio)",
         },
         {

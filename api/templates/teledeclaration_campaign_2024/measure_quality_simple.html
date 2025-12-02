@@ -13,8 +13,8 @@
     </li>
     <li>
         <span>Dont valeur en € HT de mes achats Bio et Commerce équitable</span> :
-        {% if not value_bio_dont_commerce_equitableHt is None %}
-            {{ value_bio_dont_commerce_equitableHt|floatformat:2 }}
+        {% if not value_bio_dont_commerce_equitable is None %}
+            {{ value_bio_dont_commerce_equitable|floatformat:2 }}
         {% else %}
             —
         {% endif %}
