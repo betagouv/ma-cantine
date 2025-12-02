@@ -26,7 +26,7 @@
       v-if="displayPurchaseHints"
       v-model="payload.valueTotalHt"
       @autofill="onPurchaseAutofill"
-      purchaseType="totaux"
+      purchaseType=""
       :amount="purchasesSummary.valueTotalHt"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
