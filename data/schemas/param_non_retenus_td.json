@@ -32,7 +32,7 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_fish_ht",
+    "name": "teledeclaration.value_produits_de_la_mer",
     "type": "number"
   },
   {
@@ -172,7 +172,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_meat_poultry_ht",
+    "name": "teledeclaration.value_viandes_volailles",
     "type": "number"
   },
   {
@@ -632,7 +632,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fish_egalim_ht",
+    "name": "teledeclaration.value_produits_de_la_mer_egalim",
     "type": "number"
   },
   {
@@ -644,11 +644,11 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_meat_poultry_egalim_ht",
+    "name": "teledeclaration.value_viandes_volailles_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_meat_poultry_france_ht",
+    "name": "teledeclaration.value_viandes_volailles_france",
     "type": "number"
   },
   {

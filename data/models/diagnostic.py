@@ -380,14 +380,6 @@ class Diagnostic(models.Model):
         "value_viandes_volailles_france",
         "value_produits_de_la_mer",
         "value_produits_de_la_mer_egalim",
-        # "value_viandes_volailles_france",  # déjà présent au-dessus
-        # "value_produits_de_la_mer_france",  # déjà présent au-dessus
-        # "value_fruits_et_legumes_france",
-        # "value_charcuterie_france",
-        # "value_produits_laitiers_france",
-        # "value_boulangerie_france",
-        # "value_boissons_france",
-        # "value_autres_france",
     ]
     # TODO: clean up when updating the imports
     SIMPLE_APPRO_FIELDS_FOR_IMPORT = [

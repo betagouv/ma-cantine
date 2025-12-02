@@ -641,5 +641,3 @@ class CanteenActionApiTest(APITestCase):
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
-        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
-        self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)

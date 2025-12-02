@@ -1279,4 +1279,3 @@ class TestPublicPurchasesSummaryApi(APITestCase):
             {"year": 2024, "ignoreRedaction": "true"},
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

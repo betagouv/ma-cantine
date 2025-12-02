@@ -809,15 +809,10 @@ class TestTeledeclarationPdfApi(APITestCase):
         The user can get a justificatif in PDF for a teledeclaration
         with minimal information
         """
-<<<<<<< HEAD
-        canteen = CanteenFactory(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=None)
-=======
         canteen = CanteenFactory.create(managers=[authenticate.user])
         diagnostic = DiagnosticFactory.create(
             canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
->>>>>>> d2a31a4bf (refactor(Télédéclaration): renommer les champs meat & fish en viandes_volailles et produits_de_la_mer. Enlever _ht)
         teledeclaration = TeledeclarationFactory(
             canteen=canteen,
             diagnostic=diagnostic,

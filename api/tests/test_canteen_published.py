@@ -1167,6 +1167,3 @@ class CanteenPreviewDetailApiTest(APITestCase):
         self.assertIn("info", body["badges"])
         self.assertIn("approDiagnostic", body)
         self.assertIn("percentageValueBioHt", body["approDiagnostic"])
-        self.assertIn("info", body["badges"])
-        self.assertIn("approDiagnostic", body)
-        self.assertIn("percentageValueBioHt", body["approDiagnostic"])
