@@ -508,7 +508,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
             except ValueError:
                 raise ValidationError({"year": f"La valeur « {row[self.year_idx]} » doit être un nombre entier."})
             mandatory_fields = [
-                "value_total_ht",
+                "value_total",
             ]
             appro_fields_length = len(row) - self.total_value_idx
             value_fields = Diagnostic.SIMPLE_APPRO_FIELDS_FOR_IMPORT[:appro_fields_length]
@@ -559,9 +559,9 @@ class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
         value_idx = self.year_idx + 1
         # total value is required, handle this case separately to the remaining values which are optional
         try:
-            values_dict["value_total_ht"] = Decimal(row[value_idx].strip().replace(",", "."))
+            values_dict["value_total"] = Decimal(row[value_idx].strip().replace(",", "."))
         except InvalidOperation:
-            raise ValidationError({"value_total_ht": "Ce champ ne peut pas être vide."})
+            raise ValidationError({"value_total": "Ce champ ne peut pas être vide."})
         for value in ["value_viandes_volailles", "value_produits_de_la_mer"] + Diagnostic.APPRO_FIELDS_FOR_IMPORT:
             try:
                 value_idx = value_idx + 1

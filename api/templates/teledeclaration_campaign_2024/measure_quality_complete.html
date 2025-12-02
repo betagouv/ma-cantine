@@ -1,6 +1,6 @@
 <ul>
     <li>
-        <span>Valeur totale en HT des achats alimentaires</span> : {{ value_total_ht|floatformat:2 }} €
+        <span>Valeur totale en HT des achats alimentaires</span> : {{ value_total|floatformat:2 }} €
     </li>
     <li>
         <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
@@ -8,7 +8,7 @@
         {% if not value_viandes_volailles is None %}
             {{ value_viandes_volailles|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
@@ -18,25 +18,25 @@
         {% if not value_produits_de_la_mer is None %}
             {{ value_produits_de_la_mer|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
 </ul>
 {% for label, family_values in complete_appro.items %}
-    <p>Achats {{ label }}</p>
-    <ul>
-        {% for family, family_label_value in family_values.items %}
-            <li>
-                <span>{{ family }} {{ label }}</span> :
+<p>Achats {{ label }}</p>
+<ul>
+    {% for family, family_label_value in family_values.items %}
+    <li>
+        <span>{{ family }} {{ label }}</span> :
 
-                {% if not family_label_value is None %}
-                    {{ family_label_value|floatformat:2 }}
-                {% else %}
-                    —
-                {% endif %}
-                €
-            </li>
-        {% endfor %}
-    </ul>
+        {% if not family_label_value is None %}
+        {{ family_label_value|floatformat:2 }}
+        {% else %}
+        —
+        {% endif %}
+        €
+    </li>
+    {% endfor %}
+</ul>
 {% endfor %}

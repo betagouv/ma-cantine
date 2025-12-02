@@ -218,7 +218,7 @@ class CanteenPurchasesPercentageSummaryView(APIView):
             raise NotFound()
 
         data = canteen_summary_for_year(canteen, year)
-        if data["value_total_ht"] == 0:
+        if data["value_total"] == 0:
             raise NotFound()
 
         if is_canteen_manager:
@@ -273,56 +273,56 @@ def simple_diag_data(purchases, data):
     bio_commerce_equitable_filter = bio_filter & Q(
         characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]
     )
-    sustainable_filter = (
+    siqo_filter = (
         Q(characteristics__contains=[Purchase.Characteristic.LABEL_ROUGE])
         | Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
         | Q(characteristics__contains=[Purchase.Characteristic.IGP])
         | Q(characteristics__contains=[Purchase.Characteristic.STG])
     )
-    egalim_others_filter = (
+    egalim_autres_filter = (
         Q(characteristics__contains=[Purchase.Characteristic.HVE])
         | Q(characteristics__contains=[Purchase.Characteristic.PECHE_DURABLE])
         | Q(characteristics__contains=[Purchase.Characteristic.RUP])
         | Q(characteristics__contains=[Purchase.Characteristic.FERMIER])
         | Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE])
     )
-    egalim_others_commerce_equitable_filter = egalim_others_filter & Q(
+    egalim_autres_commerce_equitable_filter = egalim_autres_filter & Q(
         characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]
     )
     externalities_performance_filter = Q(characteristics__contains=[Purchase.Characteristic.EXTERNALITES]) | Q(
         characteristics__contains=[Purchase.Characteristic.PERFORMANCE]
     )
 
-    data["value_total_ht"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["value_total"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
     bio_purchases = purchases.filter(bio_filter).distinct()
-    data["value_bio_ht"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-    data["value_bio_dont_commerce_equitable_ht"] = (
+    data["value_bio"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["value_bio_dont_commerce_equitable"] = (
         bio_purchases.filter(bio_commerce_equitable_filter).aggregate(total=Sum("price_ht"))["total"] or 0
     )
 
     # the remaining stats should ignore any bio products
     purchases_no_bio = purchases.exclude(bio_filter)
-    sustainable_purchases = purchases_no_bio.filter(sustainable_filter).distinct()
-    data["value_sustainable_ht"] = sustainable_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    siqo_purchases = purchases_no_bio.filter(siqo_filter).distinct()
+    data["value_siqo"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
     # the remaining stats should also ignore any sustainable (SIQO) products
-    purchases_no_bio_no_sustainable = purchases_no_bio.exclude(sustainable_filter)
-    egalim_others_purchases = purchases_no_bio_no_sustainable.filter(egalim_others_filter).distinct()
-    data["value_egalim_others_ht"] = egalim_others_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-    data["value_egalim_others_dont_commerce_equitable_ht"] = (
-        egalim_others_purchases.filter(egalim_others_commerce_equitable_filter).aggregate(total=Sum("price_ht"))[
+    purchases_no_bio_no_siqo = purchases_no_bio.exclude(siqo_filter)
+    egalim_autres_purchases = purchases_no_bio_no_siqo.filter(egalim_autres_filter).distinct()
+    data["value_egalim_autres"] = egalim_autres_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["value_egalim_autres_dont_commerce_equitable"] = (
+        egalim_autres_purchases.filter(egalim_autres_commerce_equitable_filter).aggregate(total=Sum("price_ht"))[
             "total"
         ]
         or 0
     )
 
     # the remaining stats should also ignore any "other EGalim" products
-    purchases_no_bio_sustainable_no_egalim_others = purchases_no_bio_no_sustainable.exclude(egalim_others_filter)
-    externalities_performance_purchases = purchases_no_bio_sustainable_no_egalim_others.filter(
+    purchases_no_bio_siqo_no_egalim_autres = purchases_no_bio_no_siqo.exclude(egalim_autres_filter)
+    externalities_performance_purchases = purchases_no_bio_siqo_no_egalim_autres.filter(
         externalities_performance_filter
     ).distinct()
-    data["value_externality_performance_ht"] = (
+    data["value_externalites_performance"] = (
         externalities_performance_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
     )
 
@@ -414,8 +414,8 @@ class DiagnosticsFromPurchasesView(APIView):
                 errors.append(f"Vous ne gérez pas la cantine : {canteen_id}")
                 continue
             values_dict = canteen_summary_for_year(canteen, year)
-            total_ht = values_dict["value_total_ht"]
-            if total_ht == 0 or total_ht is None:
+            value_total = values_dict["value_total"]
+            if value_total == 0 or value_total is None:
                 errors.append(f"Aucun achat trouvé pour la cantine : {canteen_id}")
                 continue
             if canteen.is_central_cuisine:
@@ -506,4 +506,5 @@ class PurchasesRestoreView(APIView):
             canteen__in=self.request.user.canteens.all(), id__in=purchase_ids
         )
         restored_count = purchases_to_restore.update(deletion_date=None)
+        return JsonResponse({"count": restored_count}, status=status.HTTP_200_OK)
         return JsonResponse({"count": restored_count}, status=status.HTTP_200_OK)

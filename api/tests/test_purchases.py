@@ -261,7 +261,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=150,
         )
         # bio + commerce équitable
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date="2020-01-01",
             characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.COMMERCE_EQUITABLE],
@@ -304,7 +304,7 @@ class TestPurchaseApi(APITestCase):
         PurchaseFactory(
             canteen=canteen, date="2020-01-08", characteristics=[Purchase.Characteristic.PECHE_DURABLE], price_ht=240
         )
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date="2020-01-15",
             characteristics=[Purchase.Characteristic.COMMERCE_EQUITABLE],
@@ -324,13 +324,13 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["valueTotalHt"], 1075.0)
-        self.assertEqual(body["valueBioHt"], 220.0)
-        self.assertEqual(body["valueBioDontCommerceEquitableHt"], 20.0)
-        self.assertEqual(body["valueSustainableHt"], 50.0)
-        self.assertEqual(body["valueEgalimOthersHt"], 260.0)
-        self.assertEqual(body["valueEgalimOthersDontCommerceEquitableHt"], 10.0)
-        self.assertEqual(body["valueExternalityPerformanceHt"], 45.0)
+        self.assertEqual(body["valueTotal"], 1075.0)
+        self.assertEqual(body["valueBio"], 220.0)
+        self.assertEqual(body["valueBioDontCommerceEquitable"], 20.0)
+        self.assertEqual(body["valueSiqo"], 50.0)
+        self.assertEqual(body["valueEgalimAutres"], 260.0)
+        self.assertEqual(body["valueEgalimOthersDontCommerceEquitable"], 10.0)
+        self.assertEqual(body["valueExternalitesPerformance"], 45.0)
 
     @authenticate
     def test_complex_purchase_total_summary(self):
@@ -346,14 +346,14 @@ class TestPurchaseApi(APITestCase):
         d = "2020-03-01"
 
         # test that bio trumps other labels, but doesn't stop non-EGalim labels
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date=d,
             family=Purchase.Family.FRUITS_ET_LEGUMES,
             characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.AOCAOP],
             price_ht=120,
         )
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date=d,
             family=Purchase.Family.FRUITS_ET_LEGUMES,
@@ -362,7 +362,7 @@ class TestPurchaseApi(APITestCase):
         )
 
         # check that sums are separate between families
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date=d,
             family=Purchase.Family.VIANDES_VOLAILLES,
@@ -375,14 +375,14 @@ class TestPurchaseApi(APITestCase):
         )
 
         # check that AOC and STG are regrouped and do not count bio totals and trump some other labels
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date=d,
             family=Purchase.Family.FRUITS_ET_LEGUMES,
             characteristics=[Purchase.Characteristic.AOCAOP],
             price_ht=20,
         )
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date=d,
             family=Purchase.Family.FRUITS_ET_LEGUMES,
@@ -391,14 +391,14 @@ class TestPurchaseApi(APITestCase):
         )
 
         # check that can have a family with only non-EGalim labels
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date=d,
             family=Purchase.Family.AUTRES,
             characteristics=[Purchase.Characteristic.LOCAL],
             price_ht=50,
         )
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date=d,
             family=Purchase.Family.AUTRES,
@@ -407,7 +407,7 @@ class TestPurchaseApi(APITestCase):
         )
 
         # check that short distribution meat will include both this and the bio purchase which is also short dist.
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen,
             date=d,
             family=Purchase.Family.VIANDES_VOLAILLES,
@@ -416,12 +416,10 @@ class TestPurchaseApi(APITestCase):
         )
 
         # check that items with no label are included in total
-        PurchaseFactory.create(
-            canteen=canteen, date=d, family=Purchase.Family.AUTRES, characteristics=[], price_ht=110
-        )
+        PurchaseFactory(canteen=canteen, date=d, family=Purchase.Family.AUTRES, characteristics=[], price_ht=110)
 
         # Not in the year 2020 - smoke test for year filtering
-        PurchaseFactory.create(
+        PurchaseFactory(
             canteen=canteen, date="2019-01-01", characteristics=[Purchase.Characteristic.BIO], price_ht=666
         )
 
@@ -430,7 +428,7 @@ class TestPurchaseApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["valueTotalHt"], 590.0)
+        self.assertEqual(body["valueTotal"], 590.0)
         self.assertEqual(body["valueFruitsEtLegumesBio"], 200.0)
         self.assertEqual(body["valueViandesVolaillesBio"], 10.0)
         self.assertEqual(body["valueFruitsEtLegumesAocaopIgpStg"], 80.0)
@@ -440,7 +438,7 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(body["valueViandesVolaillesLocal"], 10.0)
         self.assertEqual(body["valueAutresNonEgalim"], 210.0)
         self.assertEqual(body["valueViandesVolaillesNonEgalim"], 90.0)
-        self.assertEqual(body["valueExternalityPerformanceHt"], 0.0)
+        self.assertEqual(body["valueExternalitesPerformance"], 0.0)
 
     def test_purchase_summary_unauthenticated(self):
         canteen = CanteenFactory()
@@ -629,10 +627,10 @@ class TestPurchaseApi(APITestCase):
         self.assertIn("results", body)
         self.assertEqual(len(body["results"]), 2)
         self.assertEqual(body["results"][0]["year"], 2020)
-        self.assertEqual(body["results"][0]["valueTotalHt"], 150)
-        self.assertIn("valueBioHt", body["results"][0])
+        self.assertEqual(body["results"][0]["valueTotal"], 150)
+        self.assertIn("valueBio", body["results"][0])
         self.assertEqual(body["results"][1]["year"], 2021)
-        self.assertEqual(body["results"][1]["valueTotalHt"], 450)
+        self.assertEqual(body["results"][1]["valueTotal"], 450)
 
     @authenticate
     def test_delete_purchase(self):
@@ -1013,8 +1011,8 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(len(results), 2)
         diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
         self.assertIn(diag_site.id, results)
-        self.assertEqual(diag_site.value_total_ht, 200)
-        # TODO: would be nice to test the aggregation for a simple value (e.g. value_sustainable_ht)
+        self.assertEqual(diag_site.value_total, 200)
+        # TODO: would be nice to test the aggregation for a simple value (e.g. value_siqo)
         self.assertEqual(diag_site.value_boissons_aocaop_igp_stg, 50)
         self.assertEqual(diag_site.value_boulangerie_non_egalim, 150)
         self.assertEqual(diag_site.value_autres_aocaop_igp_stg, 0)
@@ -1022,7 +1020,7 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(diag_site.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
         diag_cc = Diagnostic.objects.get(year=year, canteen=central_kitchen)
         self.assertIn(diag_cc.id, results)
-        self.assertEqual(diag_cc.value_total_ht, 20)
+        self.assertEqual(diag_cc.value_total, 20)
         self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")
 
     def test_unauthorised_create_diagnostics_from_purchases(self):
@@ -1158,10 +1156,10 @@ class TestPublicPurchasesSummaryApi(APITestCase):
 
         # total 2024: 100
         # total 2024 bio: 10
-        self.assertEqual(body["percentageValueBioHt"], 0.1)
-        self.assertEqual(body["percentageValueSustainableHt"], 0.1)
-        self.assertEqual(body["percentageValueExternalityPerformanceHt"], 0.1)
-        self.assertEqual(body["percentageValueEgalimOthersHt"], 0.1)
+        self.assertEqual(body["percentageValueBio"], 0.1)
+        self.assertEqual(body["percentageValueSiqo"], 0.1)
+        self.assertEqual(body["percentageValueExternalitesPerformance"], 0.1)
+        self.assertEqual(body["percentageValueEgalimAutres"], 0.1)
         # total 2024 viandes volailles: 40
         # total 2024 viandes volailles egalim: 30
         # total 2024 viandes volailles france: 20

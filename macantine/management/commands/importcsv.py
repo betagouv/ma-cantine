@@ -68,18 +68,18 @@ class Command(BaseCommand):
                 daily_meal_count = None
 
             try:
-                bio_and_sustainable_percentage = int(row[14]) if row[14] else None
+                bio_and_siqo_percentage = int(row[14]) if row[14] else None
             except Exception:
-                bio_and_sustainable_percentage = None
+                bio_and_siqo_percentage = None
 
             try:
                 bio_percentage = int(row[15]) if row[15] else None
             except Exception:
                 bio_percentage = None
 
-            sustainable_percentage = None
-            if bio_and_sustainable_percentage and bio_percentage:
-                sustainable_percentage = bio_and_sustainable_percentage - bio_percentage
+            siqo_percentage = None
+            if bio_and_siqo_percentage and bio_percentage:
+                siqo_percentage = bio_and_siqo_percentage - bio_percentage
 
             if row[17] == "Oui":
                 management_type = Canteen.ManagementType.DIRECT
@@ -99,10 +99,10 @@ class Command(BaseCommand):
                     )
                     canteen.save()
                     diagnostic = None
-                    if bio_percentage or sustainable_percentage:
+                    if bio_percentage or siqo_percentage:
                         diagnostic = Diagnostic(
-                            value_bio_ht=bio_percentage,
-                            value_sustainable_ht=sustainable_percentage,
+                            value_bio=bio_percentage,
+                            value_siqo=siqo_percentage,
                             canteen=canteen,
                             year=2021,
                         )

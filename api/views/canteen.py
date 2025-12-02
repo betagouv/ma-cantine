@@ -16,12 +16,7 @@ from django_filters import rest_framework as django_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import (
-    ListAPIView,
-    ListCreateAPIView,
-    RetrieveAPIView,
-    RetrieveUpdateDestroyAPIView,
-)
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -39,6 +34,7 @@ from api.serializers import (
     CanteenActionsLightSerializer,
     CanteenActionsSerializer,
     CanteenAnalysisSerializer,
+    CanteenMinistriesSerializer,
     CanteenOpenDataSerializer,
     CanteenPreviewSerializer,
     CanteenStatusSerializer,
@@ -50,18 +46,14 @@ from api.serializers import (
     PublicCanteenPreviewSerializer,
     PublicCanteenSerializer,
     SatelliteCanteenSerializer,
-    CanteenMinistriesSerializer,
 )
 from api.views.utils import camelize, update_change_reason_with_auth
 from common.api.adresse import fetch_geo_data_from_code
-from common.api.recherche_entreprises import (
-    fetch_geo_data_from_siren,
-    fetch_geo_data_from_siret,
-)
+from common.api.recherche_entreprises import fetch_geo_data_from_siren, fetch_geo_data_from_siret
 from common.utils import send_mail
-from data.models import Canteen, Diagnostic, ManagerInvitation, SectorM2M, Sector
-from data.utils import has_charfield_missing_query
+from data.models import Canteen, Diagnostic, ManagerInvitation, Sector, SectorM2M
 from data.models.creation_source import CreationSource
+from data.utils import has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -214,7 +206,7 @@ def filter_by_diagnostic_params(queryset, query_params):
         qs_diag = Diagnostic.objects.filled().in_year(publication_year)
         if param_bio_rate or appro_badge_requested:
             qs_diag = qs_diag.annotate(
-                bio_percent=100 * Cast(Sum("value_bio_ht", default=0) / Sum("value_total_ht"), FloatField())
+                bio_percent=100 * Cast(Sum("value_bio", default=0) / Sum("value_total"), FloatField())
             )
             if param_bio_rate:
                 qs_diag = qs_diag.filter(bio_percent__gte=100 * float(param_bio_rate))
@@ -223,12 +215,12 @@ def filter_by_diagnostic_params(queryset, query_params):
                 egalim_percent=100
                 * Cast(
                     (
-                        Sum("value_bio_ht", default=0)
-                        + Sum("value_sustainable_ht", default=0)
-                        + Sum("value_externality_performance_ht", default=0)
-                        + Sum("value_egalim_others_ht", default=0)
+                        Sum("value_bio", default=0)
+                        + Sum("value_siqo", default=0)
+                        + Sum("value_externalites_performance", default=0)
+                        + Sum("value_egalim_autres", default=0)
                     )
-                    / Sum("value_total_ht"),
+                    / Sum("value_total"),
                     FloatField(),
                 )
             )

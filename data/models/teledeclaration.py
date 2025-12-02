@@ -11,11 +11,7 @@ from simple_history.models import HistoricalRecords
 
 from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnostic
 from data.utils import CustomJSONEncoder
-from macantine.utils import (
-    CAMPAIGN_DATES,
-    EGALIM_OBJECTIVES,
-    is_in_teledeclaration_or_correction,
-)
+from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES, is_in_teledeclaration_or_correction
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +44,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.CANCELLED)
 
     def exclude_aberrant_values(self):
-        return self.exclude(meal_price__isnull=False, meal_price__gt=20, value_total_ht__gt=1000000)
+        return self.exclude(meal_price__isnull=False, meal_price__gt=20, value_total__gt=1000000)
 
     def in_year(self, year):
         return self.filter(year=int(year))
@@ -95,7 +91,7 @@ class TeledeclarationQuerySet(models.QuerySet):
             return (
                 self.submitted_for_year(year)
                 .exclude(teledeclaration_mode="SATELLITE_WITHOUT_APPRO")
-                .filter(value_bio_ht_agg__isnull=False)
+                .filter(value_bio_agg__isnull=False)
                 .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
                 .exclude_aberrant_values()  # Chaîne de traitement n°8
             )
@@ -116,12 +112,12 @@ class TeledeclarationQuerySet(models.QuerySet):
         Note: we use Sum/default instead of F to better manage None values.
         """
         return self.annotate(
-            bio_percent=100 * Sum("value_bio_ht_agg", default=0) / Sum("value_total_ht"),
-            value_egalim_ht_agg=Sum("value_bio_ht_agg", default=0)
-            + Sum("value_sustainable_ht_agg", default=0)
-            + Sum("value_externality_performance_ht_agg", default=0)
-            + Sum("value_egalim_others_ht_agg", default=0),
-            egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht"),
+            bio_percent=100 * Sum("value_bio_agg", default=0) / Sum("value_total"),
+            value_egalim_agg=Sum("value_bio_agg", default=0)
+            + Sum("value_siqo_agg", default=0)
+            + Sum("value_externalites_performance_agg", default=0)
+            + Sum("value_egalim_autres_agg", default=0),
+            egalim_percent=100 * F("value_egalim_agg") / Sum("value_total"),
         )
 
     def egalim_objectives_reached(self):
@@ -196,21 +192,21 @@ class Teledeclaration(models.Model):
     canteen_siret = models.TextField(null=True, blank=True)
     canteen_siren_unite_legale = models.TextField(null=True, blank=True)
 
-    value_total_ht = models.IntegerField(
+    value_total = models.IntegerField(
         null=True, blank=True, verbose_name="Champ value total (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_bio_ht_agg = models.IntegerField(
+    value_bio_agg = models.IntegerField(
         null=True, blank=True, verbose_name="Champ value bio (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_sustainable_ht_agg = models.IntegerField(
+    value_siqo_agg = models.IntegerField(
         null=True, blank=True, verbose_name="Champ value Egalim (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_externality_performance_ht_agg = models.IntegerField(
+    value_externalites_performance_agg = models.IntegerField(
         null=True,
         blank=True,
         verbose_name="Champ externalité/performance (en cas de TD détaillée, ce champ est aggrégé)",
     )
-    value_egalim_others_ht_agg = models.IntegerField(
+    value_egalim_autres_agg = models.IntegerField(
         null=True, blank=True, verbose_name="Champ Autres Egalim (en cas de TD détaillée, ce champ est aggrégé)"
     )
     yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="Nombre de repas servis par an")
@@ -312,7 +308,7 @@ class Teledeclaration(models.Model):
                 }
             )
         check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
-        if check_total_value and not diagnostic.value_total_ht:
+        if check_total_value and not diagnostic.value_total:
             raise ValidationError("Données d'approvisionnement manquantes")
         if diagnostic.canteen.is_central_cuisine and not diagnostic.central_kitchen_diagnostic_mode:
             raise ValidationError("Question obligatoire : Quelles données sont déclarées par cette cuisine centrale ?")
@@ -329,7 +325,7 @@ class Teledeclaration(models.Model):
         # Version 12 - New Diagnostic service_type field (and stop filling vegetarian_menu_type)
         # Version 11 - Requires diagnostic mode to be defined for central production types (in validate_diagnostic)
         # Version 10 - Add department and region fields
-        # Version 9 - removes legacy fields: value_pat_ht, value_label_hve, value_label_rouge, value_label_aoc_igp and value_pat_ht
+        # Version 9 - removes legacy fields: value_pat, value_label_hve, value_label_rouge, value_label_aoc_igp and value_pat
 
         teledeclaration_mode = None
         serialized_diagnostic = None
@@ -340,10 +336,7 @@ class Teledeclaration(models.Model):
         serializer = Teledeclaration._get_diagnostic_serializer(diagnostic)
         serialized_diagnostic = serializer(diagnostic).data
 
-        from api.serializers import (
-            CanteenTeledeclarationSerializer,
-            SatelliteTeledeclarationSerializer,
-        )
+        from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 
         serialized_canteen = CanteenTeledeclarationSerializer(canteen).data
 
@@ -367,8 +360,8 @@ class Teledeclaration(models.Model):
         if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             diagnostic.populate_simplified_diagnostic_values()
 
-        if diagnostic.value_total_ht and canteen.yearly_meal_count:
-            meal_price = diagnostic.value_total_ht / canteen.yearly_meal_count
+        if diagnostic.value_total and canteen.yearly_meal_count:
+            meal_price = diagnostic.value_total / canteen.yearly_meal_count
         else:
             meal_price = None
 
@@ -382,11 +375,11 @@ class Teledeclaration(models.Model):
             diagnostic=diagnostic,
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
-            value_total_ht=diagnostic.value_total_ht,
-            value_bio_ht_agg=diagnostic.value_bio_ht,
-            value_sustainable_ht_agg=diagnostic.value_sustainable_ht,
-            value_externality_performance_ht_agg=diagnostic.value_externality_performance_ht,
-            value_egalim_others_ht_agg=diagnostic.value_egalim_others_ht,
+            value_total=diagnostic.value_total,
+            value_bio_agg=diagnostic.value_bio,
+            value_siqo_agg=diagnostic.value_siqo,
+            value_externalites_performance_agg=diagnostic.value_externalites_performance,
+            value_egalim_autres_agg=diagnostic.value_egalim_autres,
             yearly_meal_count=canteen.yearly_meal_count,
             meal_price=meal_price,
         )
@@ -451,5 +444,39 @@ class Teledeclaration(models.Model):
         )
 
     def __str__(self):
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
         canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
         return f"Télédéclaration pour {self.year} '{canteen_name}'"

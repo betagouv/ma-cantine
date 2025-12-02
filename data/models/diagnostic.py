@@ -54,13 +54,13 @@ def diagnostic_type_simple_is_filled_query():
     """
     NOTE: changes in 2025
     """
-    before_2O25 = Q(year__lt=2025, value_total_ht__gt=0)
+    before_2O25 = Q(year__lt=2025, value_total__gt=0)
     after_2O25 = Q(
         year__gte=2025,
-        value_total_ht__gt=0,
-        value_bio_ht__isnull=False,
-        value_sustainable_ht__isnull=False,
-        value_egalim_others_ht__isnull=False,
+        value_total__gt=0,
+        value_bio__isnull=False,
+        value_siqo__isnull=False,
+        value_egalim_autres__isnull=False,
         value_viandes_volailles__isnull=False,
         value_viandes_volailles_egalim__isnull=False,
     )
@@ -71,7 +71,7 @@ def diagnostic_type_complete_is_filled_query():
     """
     TODO: changes in 2025?
     """
-    return diagnostic_type_complete_query() & Q(value_total_ht__gt=0)
+    return diagnostic_type_complete_query() & Q(value_total__gt=0)
 
 
 class DiagnosticQuerySet(models.QuerySet):
@@ -107,7 +107,7 @@ class DiagnosticQuerySet(models.QuerySet):
             canteen_yearly_meal_count=Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField())
         ).annotate(
             meal_price=Case(
-                When(canteen_yearly_meal_count__gt=0, then=F("value_total_ht") / F("canteen_yearly_meal_count")),
+                When(canteen_yearly_meal_count__gt=0, then=F("value_total") / F("canteen_yearly_meal_count")),
                 default=None,
             )
         )
@@ -122,7 +122,7 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         return (
             self.with_meal_price()
-            .exclude(meal_price__isnull=False, meal_price__gt=20, value_total_ht__gt=1000000)
+            .exclude(meal_price__isnull=False, meal_price__gt=20, value_total__gt=1000000)
             .exclude(year=2022, teledeclaration_id__in=[9656, 8037])
         )
 
@@ -158,7 +158,7 @@ class DiagnosticQuerySet(models.QuerySet):
             return (
                 self.teledeclared_for_year(year)
                 .exclude(teledeclaration_mode="SATELLITE_WITHOUT_APPRO")
-                .filter(value_bio_ht_agg__isnull=False)  # Chaîne de traitement n°5
+                .filter(value_bio_agg__isnull=False)  # Chaîne de traitement n°5
                 .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
                 .exclude_aberrant_values()  # Chaîne de traitement n°8
             )
@@ -179,8 +179,8 @@ class DiagnosticQuerySet(models.QuerySet):
         Note: we use Sum/default instead of F to better manage None values.
         """
         return self.annotate(
-            bio_percent=100 * Sum("value_bio_ht_agg", default=0) / Sum("value_total_ht"),
-            egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht"),
+            bio_percent=100 * Sum("value_bio_agg", default=0) / Sum("value_total"),
+            egalim_percent=100 * F("value_egalim_agg") / Sum("value_total"),
         )
 
     def egalim_objectives_reached(self):
@@ -358,23 +358,23 @@ class Diagnostic(models.Model):
     APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
     APPRO_LABELS_GROUPS_MAPPING = {
         "bio": ["bio"],
-        "sustainable": ["label_rouge", "aocaop_igp_stg"],
-        "externality_performance": ["externalites", "performance"],
-        "egalim_others": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
+        "siqo": ["label_rouge", "aocaop_igp_stg"],
+        "externalites_performance": ["externalites", "performance"],
+        "egalim_autres": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
     }
     APPRO_LABELS_GROUPS_GROUPS_MAPPING = {
-        "egalim_hors_bio": ["sustainable", "externality_performance", "egalim_others"],
-        "egalim": ["bio", "sustainable", "externality_performance", "egalim_others"],
+        "egalim_hors_bio": ["siqo", "externalites_performance", "egalim_autres"],
+        "egalim": ["bio", "siqo", "externalites_performance", "egalim_autres"],
     }
 
     SIMPLE_APPRO_FIELDS = [
-        "value_total_ht",  # value_total
-        "value_bio_ht",  # value_bio
-        "value_bio_dont_commerce_equitable_ht",  # value_bio_dont_commerce_equitable
-        "value_sustainable_ht",  # value_siqo
-        "value_externality_performance_ht",  # value_externalites_performance
-        "value_egalim_others_ht",  # value_egalim_autres
-        "value_egalim_others_dont_commerce_equitable_ht",  # value_egalim_autres_dont_commerce_equitable
+        "value_total",
+        "value_bio",
+        "value_bio_dont_commerce_equitable",
+        "value_siqo",
+        "value_externalites_performance",
+        "value_egalim_autres",
+        "value_egalim_autres_dont_commerce_equitable",
         "value_viandes_volailles",
         "value_viandes_volailles_egalim",
         "value_viandes_volailles_france",
@@ -387,12 +387,12 @@ class Diagnostic(models.Model):
     ]
 
     AGGREGATED_APPRO_FIELDS = [
-        "value_bio_ht_agg",
-        "value_sustainable_ht_agg",
-        "value_externality_performance_ht_agg",
-        "value_egalim_others_ht_agg",
-        # "value_egalim_hors_bio_ht_agg",
-        # "value_egalim_ht_agg",
+        "value_bio_agg",
+        "value_siqo_agg",
+        "value_externalites_performance_agg",
+        "value_egalim_autres_agg",
+        # "value_egalim_hors_bio_agg",
+        # "value_egalim_agg",
     ]
 
     APPRO_FIELDS = [
@@ -522,7 +522,7 @@ class Diagnostic(models.Model):
         field_name for field_name in APPRO_FIELDS if "bio_dont_commerce_equitable" not in field_name
     ]
 
-    COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_viandes_volailles", "value_produits_de_la_mer"] + APPRO_FIELDS
+    COMPLETE_APPRO_FIELDS = ["value_total", "value_viandes_volailles", "value_produits_de_la_mer"] + APPRO_FIELDS
 
     WASTE_FIELDS = [
         "has_waste_diagnostic",
@@ -693,31 +693,31 @@ class Diagnostic(models.Model):
     )
 
     # Product origin
-    value_total_ht = make_optional_positive_decimal_field(
+    value_total = make_optional_positive_decimal_field(
         verbose_name="Valeur totale annuelle HT",
     )
-    value_bio_ht = make_optional_positive_decimal_field(
+    value_bio = make_optional_positive_decimal_field(
         verbose_name="Bio - Valeur annuelle HT",
     )
-    value_bio_dont_commerce_equitable_ht = make_optional_positive_decimal_field(
+    value_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Bio dont commerce équitable - Valeur annuelle HT",
     )
-    value_fair_trade_ht = make_optional_positive_decimal_field(  # legacy
+    value_fair_trade = make_optional_positive_decimal_field(  # legacy
         verbose_name="Commerce équitable - Valeur annuelle HT",
     )
-    value_sustainable_ht = make_optional_positive_decimal_field(
+    value_siqo = make_optional_positive_decimal_field(
         verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT",
     )
-    value_pat_ht = make_optional_positive_decimal_field(  # legacy
+    value_pat = make_optional_positive_decimal_field(  # legacy
         verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
     )
-    value_externality_performance_ht = make_optional_positive_decimal_field(
+    value_externalites_performance = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
     )
-    value_egalim_others_ht = make_optional_positive_decimal_field(
+    value_egalim_autres = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) des autres achats EGalim",
     )
-    value_egalim_others_dont_commerce_equitable_ht = make_optional_positive_decimal_field(
+    value_egalim_autres_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
     )
     value_viandes_volailles = make_optional_positive_decimal_field(
@@ -940,22 +940,22 @@ class Diagnostic(models.Model):
     )
 
     # aggregated values
-    value_bio_ht_agg = make_optional_positive_decimal_field(
+    value_bio_agg = make_optional_positive_decimal_field(
         verbose_name="Bio - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_sustainable_ht_agg = make_optional_positive_decimal_field(
+    value_siqo_agg = make_optional_positive_decimal_field(
         verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_externality_performance_ht_agg = make_optional_positive_decimal_field(
+    value_externalites_performance_agg = make_optional_positive_decimal_field(
         verbose_name="Externalité/performance - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)",
     )
-    value_egalim_others_ht_agg = make_optional_positive_decimal_field(
+    value_egalim_autres_agg = make_optional_positive_decimal_field(
         verbose_name="Autres achats EGalim - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_egalim_hors_bio_ht_agg = make_optional_positive_decimal_field(
+    value_egalim_hors_bio_agg = make_optional_positive_decimal_field(
         verbose_name="EGalim (Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_egalim_ht_agg = make_optional_positive_decimal_field(
+    value_egalim_agg = make_optional_positive_decimal_field(
         verbose_name="EGalim (Bio + Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
 
@@ -1394,12 +1394,12 @@ class Diagnostic(models.Model):
         return super().clean()
 
     def populate_simplified_diagnostic_values(self):
-        self.value_bio_ht = self.label_group_sum("bio")
-        self.value_bio_dont_commerce_equitable_ht = self.label_sum("bio_dont_commerce_equitable")
-        self.value_sustainable_ht = self.label_group_sum("sustainable")
-        self.value_externality_performance_ht = self.label_group_sum("externality_performance")
-        self.value_egalim_others_ht = self.label_group_sum("egalim_others")
-        self.value_egalim_others_dont_commerce_equitable_ht = self.label_sum("commerce_equitable")
+        self.value_bio = self.label_group_sum("bio")
+        self.value_bio_dont_commerce_equitable = self.label_sum("bio_dont_commerce_equitable")
+        self.value_siqo = self.label_group_sum("siqo")
+        self.value_externalites_performance = self.label_group_sum("externalites_performance")
+        self.value_egalim_autres = self.label_group_sum("egalim_autres")
+        self.value_egalim_autres_dont_commerce_equitable = self.label_sum("commerce_equitable")
 
         total_meat_egalim = total_fish_egalim = 0
         for label in Diagnostic.APPRO_LABELS_EGALIM:
@@ -1420,13 +1420,13 @@ class Diagnostic(models.Model):
         self.value_produits_de_la_mer_egalim = total_fish_egalim
 
     def populate_aggregated_values(self):
-        self.value_bio_ht_agg = self.label_group_sum("bio")
-        self.value_sustainable_ht_agg = self.label_group_sum("sustainable")
-        self.value_externality_performance_ht_agg = self.label_group_sum("externality_performance")
-        self.value_egalim_others_ht_agg = self.label_group_sum("egalim_others")
+        self.value_bio_agg = self.label_group_sum("bio")
+        self.value_siqo_agg = self.label_group_sum("siqo")
+        self.value_externalites_performance_agg = self.label_group_sum("externalites_performance")
+        self.value_egalim_autres_agg = self.label_group_sum("egalim_autres")
         # group_group
-        self.value_egalim_hors_bio_ht_agg = self.label_group_group_sum("egalim_hors_bio")
-        self.value_egalim_ht_agg = self.label_group_group_sum("egalim")
+        self.value_egalim_hors_bio_agg = self.label_group_group_sum("egalim_hors_bio")
+        self.value_egalim_agg = self.label_group_group_sum("egalim")
 
     def label_sum(self, label: str):
         sum = 0
@@ -1444,7 +1444,7 @@ class Diagnostic(models.Model):
             return sum_int_with_potential_null(
                 [self.label_sum(label) for label in Diagnostic.APPRO_LABELS_GROUPS_MAPPING[label_group]]
             )
-        return getattr(self, f"value_{label_group}_ht")
+        return getattr(self, f"value_{label_group}")
 
     def label_group_group_sum(self, label_group_group: str):
         return sum_int_with_potential_null(
@@ -1470,9 +1470,9 @@ class Diagnostic(models.Model):
         if int(self.year) >= 2025:
             return (
                 self.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE
-                and self.value_bio_ht is not None
-                and self.value_sustainable_ht is not None
-                and self.value_egalim_others_ht is not None
+                and self.value_bio is not None
+                and self.value_siqo is not None
+                and self.value_egalim_autres is not None
                 and self.value_viandes_volailles is not None
                 and self.value_viandes_volailles_egalim is not None
             )
@@ -1484,7 +1484,7 @@ class Diagnostic(models.Model):
 
     @property
     def is_filled(self):
-        return self.value_total_ht and self.value_total_ht > 0 and (self.is_filled_simple) or (self.is_filled_complete)
+        return self.value_total and self.value_total > 0 and (self.is_filled_simple) or (self.is_filled_complete)
 
     @property
     def is_teledeclared(self):
@@ -1507,14 +1507,14 @@ class Diagnostic(models.Model):
 
     @property
     def appro_badge(self) -> bool | None:
-        total = self.value_total_ht
+        total = self.value_total
         if total:
-            bio_percent = (self.value_bio_ht or 0) / total
+            bio_percent = (self.value_bio or 0) / total
             egalim_sum = (
-                (self.value_bio_ht or 0)
-                + (self.value_sustainable_ht or 0)
-                + (self.value_externality_performance_ht or 0)
-                + (self.value_egalim_others_ht or 0)
+                (self.value_bio or 0)
+                + (self.value_siqo or 0)
+                + (self.value_externalites_performance or 0)
+                + (self.value_egalim_autres or 0)
             )
             egalim_percent = egalim_sum / total
 

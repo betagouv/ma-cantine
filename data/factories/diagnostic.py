@@ -16,12 +16,12 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     year = factory.Faker("year")
     diagnostic_type = fuzzy.FuzzyChoice(list(Diagnostic.DiagnosticType))
 
-    value_bio_ht = factory.Faker("random_int", min=0, max=2000)
-    value_sustainable_ht = factory.Faker("random_int", min=0, max=2000)
-    value_total_ht = factory.Faker("random_int", min=6000, max=10000)
+    value_total = factory.Faker("random_int", min=6000, max=10000)
+    value_bio = factory.Faker("random_int", min=0, max=2000)
+    value_siqo = factory.Faker("random_int", min=0, max=2000)
+    value_externalites_performance = factory.Faker("random_int", min=0, max=20)
+    value_egalim_autres = factory.Faker("random_int", min=0, max=20)
 
-    value_externality_performance_ht = factory.Faker("random_int", min=0, max=20)
-    value_egalim_others_ht = factory.Faker("random_int", min=0, max=20)
     value_viandes_volailles = factory.Faker("random_int", min=0, max=20)
     value_viandes_volailles_egalim = factory.Faker("random_int", min=0, max=20)
     value_viandes_volailles_france = factory.Faker("random_int", min=0, max=20)
@@ -55,11 +55,11 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     year = factory.Faker("year")
     diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
-    value_total_ht = factory.Faker("random_int", min=6000, max=10000)
+    value_total = factory.Faker("random_int", min=6000, max=10000)
     value_viandes_volailles_bio = factory.Faker("random_int", min=0, max=20)
     value_boissons_bio = factory.Faker("random_int", min=0, max=20)
 
-    value_egalim_others_ht = factory.Faker("random_int", min=0, max=20)
+    value_egalim_autres = factory.Faker("random_int", min=0, max=20)
     value_viandes_volailles = factory.Faker("random_int", min=0, max=20)
     value_viandes_volailles_egalim = factory.Faker("random_int", min=0, max=20)
     value_viandes_volailles_france = factory.Faker("random_int", min=0, max=20)

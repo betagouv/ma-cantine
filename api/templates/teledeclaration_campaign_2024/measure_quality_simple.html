@@ -1,58 +1,59 @@
 <ul>
     <li>
-        <span>Valeur totale en HT des achats alimentaires</span> : {{ value_total_ht|floatformat:2 }} €
+        <span>Valeur totale en HT des achats alimentaires</span> : {{ value_total|floatformat:2 }} €
     </li>
     <li>
         <span>Valeur en HT des achats alimentaires en Bio</span> :
-        {% if not value_bio_ht is None %}
-            {{ value_bio_ht|floatformat:2 }}
+        {% if not value_bio is None %}
+        {{ value_bio|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
         <span>Dont valeur en € HT de mes achats Bio et Commerce équitable</span> :
         {% if not value_bio_dont_commerce_equitableHt is None %}
-            {{ value_bio_dont_commerce_equitableHt|floatformat:2 }}
+        {{ value_bio_dont_commerce_equitableHt|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
         <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)</span> :
-        {% if not value_sustainable_ht is None %}
-            {{ value_sustainable_ht|floatformat:2 }}
+        {% if not value_siqo is None %}
+        {{ value_siqo|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
         <span>Valeur en HT de mes autres achats EGalim</span> :
-        {% if not value_egalim_others_ht is None %}
-            {{ value_egalim_others_ht|floatformat:2 }}
+        {% if not value_egalim_autres is None %}
+        {{ value_egalim_autres|floatformat:2 }}
         {% else %}
-            —
-        {% endif %}
-        €
-    </li>
-     <li>
-        <span>Dont valeur en € HT des achats Commerce équitable (hors bio)</span> :
-        {% if not value_egalim_others_dont_commerce_equitable_ht is None %}
-            {{ value_egalim_others_dont_commerce_equitable_ht|floatformat:2 }}
-        {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
     <li>
-        <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale</span> :
-        {% if not value_externality_performance_ht is None %}
-            {{ value_externality_performance_ht|floatformat:2 }}
+        <span>Dont valeur en € HT des achats Commerce équitable (hors bio)</span> :
+        {% if not value_egalim_autres_dont_commerce_equitable is None %}
+        {{ value_egalim_autres_dont_commerce_equitable|floatformat:2 }}
         {% else %}
-            —
+        —
+        {% endif %}
+        €
+    </li>
+    <li>
+        <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou leurs
+            performances en matière environnementale</span> :
+        {% if not value_externalites_performance is None %}
+        {{ value_externalites_performance|floatformat:2 }}
+        {% else %}
+        —
         {% endif %}
         €
     </li>
@@ -64,7 +65,7 @@
         {% if not value_viandes_volailles is None %}
             {{ value_viandes_volailles|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
@@ -73,7 +74,7 @@
         {% if not value_viandes_volailles_egalim is None %}
             {{ value_viandes_volailles_egalim|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
@@ -82,7 +83,7 @@
         {% if not value_viandes_volailles_france is None %}
             {{ value_viandes_volailles_france|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
@@ -94,7 +95,7 @@
         {% if not value_produits_de_la_mer is None %}
             {{ value_produits_de_la_mer|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
@@ -103,7 +104,7 @@
         {% if not value_produits_de_la_mer_egalim is None %}
             {{ value_produits_de_la_mer_egalim|floatformat:2 }}
         {% else %}
-            —
+        —
         {% endif %}
         €
     </li>
