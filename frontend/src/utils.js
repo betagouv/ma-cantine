@@ -241,21 +241,23 @@ export const getApproPercentages = (diagnostic) => {
   // two cases: 1) raw data in diagnostic; 2) only percentages in diagnostic
   const valueTotal = diagnostic.percentageValueTotalHt || diagnostic.valueTotalHt
   const valueBio = diagnostic.percentageValueBioHt || diagnostic.valueBioHt
-  const valueMeatPoultryTotal = diagnostic.valueMeatPoultryHt || 1
-  const valueMeatPoultryEgalim = diagnostic.percentageValueMeatPoultryEgalimHt || diagnostic.valueMeatPoultryEgalimHt
-  const valueMeatPoultryFrance = diagnostic.percentageValueMeatPoultryFranceHt || diagnostic.valueMeatPoultryFranceHt
-  const valueFishTotal = diagnostic.valueFishHt || 1
-  const valueFishEgalim = diagnostic.percentageValueFishEgalimHt || diagnostic.valueFishEgalimHt
-
+  const valueViandesVolaillesTotal = diagnostic.valueViandesVolailles || 1
+  const valueViandesVolaillesEgalim =
+    diagnostic.percentageValueViandesVolaillesEgalim || diagnostic.valueViandesVolaillesEgalim
+  const valueViandesVolaillesFrance =
+    diagnostic.percentageValueViandesVolaillesFrance || diagnostic.valueViandesVolaillesFrance
+  const valueProduitsDeLaMerTotal = diagnostic.valueProduitsDeLaMer || 1
+  const valueProduitsDeLaMerEgalim =
+    diagnostic.percentageValueProduitsDeLaMerEgalim || diagnostic.valueProduitsDeLaMerEgalim
   const allSustainable = getSustainableTotal(diagnostic)
   const allEgalim = (valueBio || 0) + (allSustainable || 0)
   return {
     bio: getPercentage(valueBio, valueTotal),
     allSustainable: getPercentage(allSustainable, valueTotal),
     egalim: getPercentage(allEgalim, valueTotal),
-    meatPoultryEgalim: getPercentage(valueMeatPoultryEgalim, valueMeatPoultryTotal),
-    meatPoultryFrance: getPercentage(valueMeatPoultryFrance, valueMeatPoultryTotal),
-    fishEgalim: getPercentage(valueFishEgalim, valueFishTotal),
+    viandesVolaillesEgalim: getPercentage(valueViandesVolaillesEgalim, valueViandesVolaillesTotal),
+    viandesVolaillesFrance: getPercentage(valueViandesVolaillesFrance, valueViandesVolaillesTotal),
+    produitsDeLaMerEgalim: getPercentage(valueProduitsDeLaMerEgalim, valueProduitsDeLaMerTotal),
   }
 }
 
@@ -300,8 +302,8 @@ export const applicableDiagnosticRules = (canteen, year) => {
     qualityThreshold,
     hasQualityException,
     regionForQualityException: hasQualityException && canteen.region,
-    meatPoultryEgalimThreshold: year >= 2024 ? 60 : null,
-    fishEgalimThreshold: year >= 2024 ? 60 : null,
+    viandesVolaillesEgalimThreshold: year >= 2024 ? 60 : null,
+    produitsDeLaMerEgalimThreshold: year >= 2024 ? 60 : null,
   }
 }
 

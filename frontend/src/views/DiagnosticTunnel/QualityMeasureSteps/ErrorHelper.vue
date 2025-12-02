@@ -66,27 +66,27 @@ const SIMPLE_FIELDS = [
     purchaseType: "« critères d'achat »",
   },
   {
-    name: "valueMeatPoultryHt",
+    name: "valueViandesVolailles",
     label: "La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
     purchaseType: "totaux viandes et volailles",
   },
   {
-    name: "valueMeatPoultryEgalimHt",
+    name: "valueViandesVolaillesEgalim",
     label: "La valeur (en € HT) de mes achats EGalim en viandes et volailles fraiches ou surgelées",
     purchaseType: "viandes et volailles EGalim",
   },
   {
-    name: "valueMeatPoultryFranceHt",
+    name: "valueViandesVolaillesFrance",
     label: "La valeur (en € HT) de mes achats origine France en viandes et volailles fraiches ou surgelées",
     purchaseType: "viandes et volailles origine France",
   },
   {
-    name: "valueFishHt",
+    name: "valueProduitsDeLaMer",
     label: "La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
     purchaseType: "totaux de poissons, produits de la mer et de l'aquaculture",
   },
   {
-    name: "valueFishEgalimHt",
+    name: "valueProduitsDeLaMerEgalim",
     label: "La valeur (en € HT) de mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
     purchaseType: "poissons, produits de la mer et de l'aquaculture EGalim",
   },
@@ -135,29 +135,29 @@ export default {
       return this.errorFields.indexOf(fieldName) > -1
     },
     completeTdFields() {
-      const fishField = "valueProduitsDeLaMer"
-      const meatField = "valueViandesVolailles"
+      const produitsDeLaMerField = "valueProduitsDeLaMer"
+      const viandesVolaillesField = "valueViandesVolailles"
       const tdGroups = Constants.TeledeclarationCharacteristicGroups
-      const meatFields = []
-      const fishFields = []
+      const viandesVolaillesFields = []
+      const produitsDeLaMerFields = []
       for (let groupIdx in tdGroups) {
         const group = tdGroups[groupIdx]
         for (let idx in group.fields) {
           const field = group.fields[idx]
           let family = "Inconnu"
           let characteristic = "Inconnu"
-          if (field.startsWith(fishField)) {
+          if (field.startsWith(produitsDeLaMerField)) {
             family = FISH
-            characteristic = getCharacteristicFromField(field, fishField, group).text
-            fishFields.push({
+            characteristic = getCharacteristicFromField(field, produitsDeLaMerField, group).text
+            produitsDeLaMerFields.push({
               name: field,
               label: capitalise(`${family} : ${characteristic}`),
               purchaseType: `${family} « ${characteristic} »`,
             })
-          } else if (field.startsWith(meatField)) {
+          } else if (field.startsWith(viandesVolaillesField)) {
             family = MEAT
-            characteristic = getCharacteristicFromField(field, meatField, group).text
-            meatFields.push({
+            characteristic = getCharacteristicFromField(field, viandesVolaillesField, group).text
+            viandesVolaillesFields.push({
               name: field,
               label: capitalise(`${family} : ${characteristic}`),
               purchaseType: `${family} « ${characteristic} »`,
@@ -165,7 +165,7 @@ export default {
           }
         }
       }
-      return meatFields.concat(fishFields)
+      return viandesVolaillesFields.concat(produitsDeLaMerFields)
     },
   },
 }
