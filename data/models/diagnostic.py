@@ -60,10 +60,9 @@ def diagnostic_type_simple_is_filled_query():
         value_total_ht__gt=0,
         value_bio_ht__isnull=False,
         value_sustainable_ht__isnull=False,
-        # value_externality_performance_ht__isnull=False,
         value_egalim_others_ht__isnull=False,
-        # value_meat_poultry_ht__isnull=False,
-        # value_fish_ht__isnull=False,
+        value_meat_poultry_ht__isnull=False,
+        value_meat_poultry_egalim_ht__isnull=False,
     )
     return diagnostic_type_simple_query() & (before_2O25 | after_2O25)
 
@@ -1480,11 +1479,9 @@ class Diagnostic(models.Model):
                 self.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE
                 and self.value_bio_ht is not None
                 and self.value_sustainable_ht is not None
-                # and self.value_externality_performance_ht is not None
                 and self.value_egalim_others_ht is not None
+                and self.value_meat_poultry_ht is not None
                 and self.value_meat_poultry_egalim_ht is not None
-                # and self.value_meat_poultry_france_ht is not None
-                # and self.value_fish_egalim_ht is not None
             )
         return self.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE
 

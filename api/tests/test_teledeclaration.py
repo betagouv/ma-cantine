@@ -846,8 +846,8 @@ class TestTeledeclarationCampaignDatesApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(len(body), 4)
-        self.assertEqual(body[-1]["year"], 2024)
+        self.assertEqual(len(body), 5)
+        self.assertEqual(body[-1]["year"], 2025)
 
     def test_campaign_dates_retrieve(self):
         for date_freeze in [

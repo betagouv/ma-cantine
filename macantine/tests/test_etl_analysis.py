@@ -95,14 +95,22 @@ class TestETLAnalysisTD(TestCase):
         canteen_without_siret.refresh_from_db()
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            diagnostic = DiagnosticFactory(canteen=canteen, year=2022, diagnostic_type=None, teledeclaration_id=1)
+            diagnostic = DiagnosticFactory(
+                canteen=canteen, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, teledeclaration_id=1
+            )
             diagnostic.teledeclare(applicant=applicant)
             diagnostic_canteen_deleted = DiagnosticFactory(
-                canteen=canteen_deleted, year=2022, diagnostic_type=None, teledeclaration_id=2
+                canteen=canteen_deleted,
+                year=2022,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                teledeclaration_id=2,
             )
             diagnostic_canteen_deleted.teledeclare(applicant=applicant)
             diagnostic_canteen_without_siret = DiagnosticFactory(
-                canteen=canteen_without_siret, year=2022, diagnostic_type=None, teledeclaration_id=3
+                canteen=canteen_without_siret,
+                year=2022,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                teledeclaration_id=3,
             )
             diagnostic_canteen_without_siret.teledeclare(applicant=applicant)
 
