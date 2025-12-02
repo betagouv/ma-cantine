@@ -22,11 +22,11 @@ VALID_DIAGNOSTIC = {
     "value_sustainable_ht": 100,
     "value_externality_performance_ht": 100,
     "value_egalim_others_ht": 100,
-    "value_meat_poultry_ht": 100,
-    "value_meat_poultry_egalim_ht": 50,
-    "value_meat_poultry_france_ht": 20,
-    "value_fish_ht": 80,
-    "value_fish_egalim_ht": 40,
+    "value_viandes_volailles": 100,
+    "value_viandes_volailles_egalim": 50,
+    "value_viandes_volailles_france": 20,
+    "value_produits_de_la_mer": 80,
+    "value_produits_de_la_mer_egalim": 40,
 }
 
 
@@ -95,34 +95,36 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(value_total_ht=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    def test_diagnostic_value_meat_poultry_ht_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT = VALID_DIAGNOSTIC.copy()
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT.pop("value_meat_poultry_ht")
-        # should be >= value_meat_poultry_egalim_ht
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT["value_meat_poultry_egalim_ht"], 50)
+    def test_diagnostic_value_viandes_volailles_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES.pop("value_viandes_volailles")
+        # should be >= value_viandes_volailles_egalim
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES["value_viandes_volailles_egalim"], 50)
         for VALUE_NOT_OK in [-100, 0, 49]:
-            with self.subTest(value_meat_poultry_ht=VALUE_NOT_OK):
+            with self.subTest(value_viandes_volailles=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    value_meat_poultry_ht=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT
+                    value_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
-        # should be >= value_meat_poultry_france_ht
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT["value_meat_poultry_france_ht"], 20)
+        # should be >= value_viandes_volailles_france
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES["value_viandes_volailles_france"], 20)
         for VALUE_NOT_OK in [-100, 0, 19]:
-            with self.subTest(value_meat_poultry_ht=VALUE_NOT_OK):
+            with self.subTest(value_viandes_volailles=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    value_meat_poultry_ht=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_MEAT_POULTRY_HT
+                    value_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    def test_diagnostic_value_fish_ht_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_FISH_HT = VALID_DIAGNOSTIC.copy()
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_FISH_HT.pop("value_fish_ht")
-        # should be >= value_fish_egalim_ht
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_FISH_HT["value_fish_egalim_ht"], 40)
+    def test_diagnostic_value_produits_de_la_mer_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALUE_PRODUITS_DE_LA_MER.pop("value_produits_de_la_mer")
+        # should be >= value_produits_de_la_mer_egalim
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_PRODUITS_DE_LA_MER["value_produits_de_la_mer_egalim"], 40)
         for VALUE_NOT_OK in [-100, 0, 39]:
-            with self.subTest(value_fish_ht=VALUE_NOT_OK):
-                diagnostic = DiagnosticFactory(value_fish_ht=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_FISH_HT)
+            with self.subTest(value_produits_de_la_mer=VALUE_NOT_OK):
+                diagnostic = DiagnosticFactory(
+                    value_produits_de_la_mer=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_PRODUITS_DE_LA_MER
+                )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
 
@@ -344,7 +346,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             value_bio_ht=200,
             value_sustainable_ht=100,
             value_egalim_others_ht=100,
-            value_meat_poultry_egalim_ht=0,
+            value_viandes_volailles_egalim=0,
         )
 
     def test_filled_queryset(self):

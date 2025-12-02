@@ -61,8 +61,8 @@ def diagnostic_type_simple_is_filled_query():
         value_bio_ht__isnull=False,
         value_sustainable_ht__isnull=False,
         value_egalim_others_ht__isnull=False,
-        value_meat_poultry_ht__isnull=False,
-        value_meat_poultry_egalim_ht__isnull=False,
+        value_viandes_volailles__isnull=False,
+        value_viandes_volailles_egalim__isnull=False,
     )
     return diagnostic_type_simple_query() & (before_2O25 | after_2O25)
 
@@ -368,20 +368,20 @@ class Diagnostic(models.Model):
     }
 
     SIMPLE_APPRO_FIELDS = [
-        "value_total_ht",
-        "value_bio_ht",
-        "value_bio_dont_commerce_equitable_ht",
-        "value_sustainable_ht",
-        "value_externality_performance_ht",
-        "value_egalim_others_ht",
-        "value_egalim_others_dont_commerce_equitable_ht",
-        "value_meat_poultry_ht",
-        "value_meat_poultry_egalim_ht",
-        "value_meat_poultry_france_ht",
-        "value_fish_ht",
-        "value_fish_egalim_ht",
-        # "value_viandes_volailles_france",
-        # "value_produits_de_la_mer_france",
+        "value_total_ht",  # value_total
+        "value_bio_ht",  # value_bio
+        "value_bio_dont_commerce_equitable_ht",  # value_bio_dont_commerce_equitable
+        "value_sustainable_ht",  # value_siqo
+        "value_externality_performance_ht",  # value_externalites_performance
+        "value_egalim_others_ht",  # value_egalim_autres
+        "value_egalim_others_dont_commerce_equitable_ht",  # value_egalim_autres_dont_commerce_equitable
+        "value_viandes_volailles",
+        "value_viandes_volailles_egalim",
+        "value_viandes_volailles_france",
+        "value_produits_de_la_mer",
+        "value_produits_de_la_mer_egalim",
+        # "value_viandes_volailles_france",  # déjà présent au-dessus
+        # "value_produits_de_la_mer_france",  # déjà présent au-dessus
         # "value_fruits_et_legumes_france",
         # "value_charcuterie_france",
         # "value_produits_laitiers_france",
@@ -530,7 +530,7 @@ class Diagnostic(models.Model):
         field_name for field_name in APPRO_FIELDS if "bio_dont_commerce_equitable" not in field_name
     ]
 
-    COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_meat_poultry_ht", "value_fish_ht"] + APPRO_FIELDS
+    COMPLETE_APPRO_FIELDS = ["value_total_ht", "value_viandes_volailles", "value_produits_de_la_mer"] + APPRO_FIELDS
 
     WASTE_FIELDS = [
         "has_waste_diagnostic",
@@ -728,19 +728,19 @@ class Diagnostic(models.Model):
     value_egalim_others_dont_commerce_equitable_ht = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
     )
-    value_meat_poultry_ht = make_optional_positive_decimal_field(
+    value_viandes_volailles = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
     )
-    value_meat_poultry_egalim_ht = make_optional_positive_decimal_field(
+    value_viandes_volailles_egalim = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim",
     )
-    value_meat_poultry_france_ht = make_optional_positive_decimal_field(
+    value_viandes_volailles_france = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées origine France",
     )
-    value_fish_ht = make_optional_positive_decimal_field(
+    value_produits_de_la_mer = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) poissons et produits aquatiques",
     )
-    value_fish_egalim_ht = make_optional_positive_decimal_field(
+    value_produits_de_la_mer_egalim = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) poissons et produits aquatiques EGalim",
     )
 
@@ -1392,9 +1392,9 @@ class Diagnostic(models.Model):
         validation_errors = utils_utils.merge_validation_errors(
             diagnostic_validators.validate_year(self),
             diagnostic_validators.validate_approvisionment_total(self),
-            diagnostic_validators.validate_meat_total(self),
-            diagnostic_validators.validate_fish_total(self),
-            diagnostic_validators.validate_meat_fish_egalim(self),
+            diagnostic_validators.validate_viandes_volailles_total(self),
+            diagnostic_validators.validate_produits_de_la_mer_total(self),
+            diagnostic_validators.validate_viandes_volailles_produits_de_la_mer_egalim(self),
         )
         if validation_errors:
             raise ValidationError(validation_errors)
@@ -1409,7 +1409,7 @@ class Diagnostic(models.Model):
         self.value_egalim_others_ht = self.label_group_sum("egalim_others")
         self.value_egalim_others_dont_commerce_equitable_ht = self.label_sum("commerce_equitable")
 
-        total_meat_egalim = total_meat_france = total_fish_egalim = 0
+        total_meat_egalim = total_fish_egalim = 0
         for label in Diagnostic.APPRO_LABELS_EGALIM:
             family = "viandes_volailles"
             # need to do or 0 and not give a default value because the value can be explicitly set to None
@@ -1418,13 +1418,14 @@ class Diagnostic(models.Model):
             family = "produits_de_la_mer"
             total_fish_egalim = total_fish_egalim + (getattr(self, f"value_{family}_{label}") or 0)
 
-        for label in Diagnostic.APPRO_LABELS_FRANCE:
-            family = "viandes_volailles"
-            total_meat_france = total_meat_france + (getattr(self, f"value_{family}_{label}") or 0)
+        # NOTE: stop populating france from APPRO_LABELS_FRANCE
+        # for label in Diagnostic.APPRO_LABELS_FRANCE:
+        #     family = "viandes_volailles"
+        #     total_meat_france = total_meat_france + (getattr(self, f"value_{family}_{label}") or 0)
 
-        self.value_meat_poultry_egalim_ht = total_meat_egalim
-        self.value_meat_poultry_france_ht = total_meat_france
-        self.value_fish_egalim_ht = total_fish_egalim
+        self.value_viandes_volailles_egalim = total_meat_egalim
+        # self.value_viandes_volailles_france = total_meat_france
+        self.value_produits_de_la_mer_egalim = total_fish_egalim
 
     def populate_aggregated_values(self):
         self.value_bio_ht_agg = self.label_group_sum("bio")
@@ -1480,8 +1481,8 @@ class Diagnostic(models.Model):
                 and self.value_bio_ht is not None
                 and self.value_sustainable_ht is not None
                 and self.value_egalim_others_ht is not None
-                and self.value_meat_poultry_ht is not None
-                and self.value_meat_poultry_egalim_ht is not None
+                and self.value_viandes_volailles is not None
+                and self.value_viandes_volailles_egalim is not None
             )
         return self.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE
 

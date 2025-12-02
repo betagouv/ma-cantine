@@ -134,11 +134,17 @@ class TestTeledeclarationCreateApi(APITestCase):
             json_teledeclaration["value_externality_performance_ht"], diagnostic.value_externality_performance_ht
         )
         self.assertEqual(json_teledeclaration["value_egalim_others_ht"], diagnostic.value_egalim_others_ht)
-        self.assertEqual(json_teledeclaration["value_meat_poultry_ht"], diagnostic.value_meat_poultry_ht)
-        self.assertEqual(json_teledeclaration["value_meat_poultry_egalim_ht"], diagnostic.value_meat_poultry_egalim_ht)
-        self.assertEqual(json_teledeclaration["value_meat_poultry_france_ht"], diagnostic.value_meat_poultry_france_ht)
-        self.assertEqual(json_teledeclaration["value_fish_ht"], diagnostic.value_fish_ht)
-        self.assertEqual(json_teledeclaration["value_fish_egalim_ht"], diagnostic.value_fish_egalim_ht)
+        self.assertEqual(json_teledeclaration["value_viandes_volailles"], diagnostic.value_viandes_volailles)
+        self.assertEqual(
+            json_teledeclaration["value_viandes_volailles_egalim"], diagnostic.value_viandes_volailles_egalim
+        )
+        self.assertEqual(
+            json_teledeclaration["value_viandes_volailles_france"], diagnostic.value_viandes_volailles_france
+        )
+        self.assertEqual(json_teledeclaration["value_produits_de_la_mer"], diagnostic.value_produits_de_la_mer)
+        self.assertEqual(
+            json_teledeclaration["value_produits_de_la_mer_egalim"], diagnostic.value_produits_de_la_mer_egalim
+        )
         self.assertEqual(
             json_teledeclaration["has_waste_diagnostic"],
             diagnostic.has_waste_diagnostic,
@@ -381,7 +387,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             canteen=canteen,
             year=2021,
             value_total_ht=None,  # missing
-            diagnostic_type=None,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
         payload = {"diagnosticId": diagnostic.id}
@@ -803,8 +809,15 @@ class TestTeledeclarationPdfApi(APITestCase):
         The user can get a justificatif in PDF for a teledeclaration
         with minimal information
         """
+<<<<<<< HEAD
         canteen = CanteenFactory(managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=None)
+=======
+        canteen = CanteenFactory.create(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory.create(
+            canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+>>>>>>> d2a31a4bf (refactor(Télédéclaration): renommer les champs meat & fish en viandes_volailles et produits_de_la_mer. Enlever _ht)
         teledeclaration = TeledeclarationFactory(
             canteen=canteen,
             diagnostic=diagnostic,

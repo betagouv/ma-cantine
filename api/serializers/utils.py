@@ -5,24 +5,29 @@ from data.models.sector import SectorM2M
 def appro_to_percentages(representation, instance, remove_values=True):
     # first do the percentages relative to meat and fish totals
     # not removing these totals so that can then calculate the percent of those compared to global total
-    meat_total = representation.get("value_meat_poultry_ht")
+    meat_total = representation.get("value_viandes_volailles")
     if meat_total:
-        field = "value_meat_poultry_egalim_ht"
+        field = "value_viandes_volailles_egalim"
         value = representation.get(field)
         if value is not None:
             representation[f"percentage_{field}"] = value / meat_total
-        field = "value_meat_poultry_france_ht"
+        field = "value_viandes_volailles_france"
         value = representation.get(field)
         if value is not None:
             representation[f"percentage_{field}"] = value / meat_total
 
-    fish_total = representation.get("value_fish_ht")
+    fish_total = representation.get("value_produits_de_la_mer")
     if fish_total:
-        field = "value_fish_egalim_ht"
+        field = "value_produits_de_la_mer_egalim"
+        value = representation.get(field)
+        if value is not None:
+            representation[f"percentage_{field}"] = value / fish_total
+        field = "value_produits_de_la_mer_france"
         value = representation.get(field)
         if value is not None:
             representation[f"percentage_{field}"] = value / fish_total
 
+    # NOTE: on va écraser les pourcentages viande/poisson france car ils vont être recalculés...
     appro_fields = [
         "value_total_ht",
         "value_bio_ht",
@@ -42,9 +47,10 @@ def appro_to_percentages(representation, instance, remove_values=True):
     representation["percentage_value_total_ht"] = 1
     if remove_values:
         representation.pop("value_total_ht", None)
-        representation.pop("value_meat_poultry_egalim_ht", None)
-        representation.pop("value_meat_poultry_france_ht", None)
-        representation.pop("value_fish_egalim_ht", None)
+        representation.pop("value_viandes_volailles_egalim", None)
+        representation.pop("value_viandes_volailles_france", None)
+        representation.pop("value_produits_de_la_mer_egalim", None)
+        representation.pop("value_produits_de_la_mer_france", None)
 
     return representation
 

@@ -22,11 +22,11 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
 
     value_externality_performance_ht = factory.Faker("random_int", min=0, max=20)
     value_egalim_others_ht = factory.Faker("random_int", min=0, max=20)
-    value_meat_poultry_ht = factory.Faker("random_int", min=0, max=20)
-    value_meat_poultry_egalim_ht = factory.Faker("random_int", min=0, max=20)
-    value_meat_poultry_france_ht = factory.Faker("random_int", min=0, max=20)
-    value_fish_ht = factory.Faker("random_int", min=0, max=20)
-    value_fish_egalim_ht = factory.Faker("random_int", min=0, max=20)
+    value_viandes_volailles = factory.Faker("random_int", min=0, max=20)
+    value_viandes_volailles_egalim = factory.Faker("random_int", min=0, max=20)
+    value_viandes_volailles_france = factory.Faker("random_int", min=0, max=20)
+    value_produits_de_la_mer = factory.Faker("random_int", min=0, max=20)
+    value_produits_de_la_mer_egalim = factory.Faker("random_int", min=0, max=20)
 
     has_waste_diagnostic = factory.Faker("boolean")
     has_waste_plan = factory.Faker("boolean")
@@ -60,11 +60,11 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     value_boissons_bio = factory.Faker("random_int", min=0, max=20)
 
     value_egalim_others_ht = factory.Faker("random_int", min=0, max=20)
-    value_meat_poultry_ht = factory.Faker("random_int", min=0, max=20)
-    value_meat_poultry_egalim_ht = factory.Faker("random_int", min=0, max=20)
-    value_meat_poultry_france_ht = factory.Faker("random_int", min=0, max=20)
-    value_fish_ht = factory.Faker("random_int", min=0, max=20)
-    value_fish_egalim_ht = factory.Faker("random_int", min=0, max=20)
+    value_viandes_volailles = factory.Faker("random_int", min=0, max=20)
+    value_viandes_volailles_egalim = factory.Faker("random_int", min=0, max=20)
+    value_viandes_volailles_france = factory.Faker("random_int", min=0, max=20)
+    value_produits_de_la_mer = factory.Faker("random_int", min=0, max=20)
+    value_produits_de_la_mer_egalim = factory.Faker("random_int", min=0, max=20)
 
     has_waste_diagnostic = factory.Faker("boolean")
     has_waste_plan = factory.Faker("boolean")

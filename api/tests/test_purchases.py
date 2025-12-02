@@ -520,9 +520,9 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["valueMeatPoultryHt"], 155.0)
-        self.assertEqual(body["valueMeatPoultryEgalimHt"], 120.0)
-        self.assertEqual(body["valueMeatPoultryFranceHt"], 65.0)
+        self.assertEqual(body["valueViandesVolailles"], 155.0)
+        self.assertEqual(body["valueViandesVolaillesEgalim"], 120.0)
+        self.assertEqual(body["valueViandesVolaillesFrance"], 65.0)
 
     @authenticate
     def test_purchase_fish_totals(self):
@@ -591,8 +591,8 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         body = response.json()
-        self.assertEqual(body["valueFishHt"], 160.0)
-        self.assertEqual(body["valueFishEgalimHt"], 125.0)
+        self.assertEqual(body["valueProduitsDeLaMer"], 160.0)
+        self.assertEqual(body["valueProduitsDeLaMerEgalim"], 125.0)
 
     @authenticate
     def test_purchase_not_authorized(self):
@@ -1156,14 +1156,22 @@ class TestPublicPurchasesSummaryApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
+        # total 2024: 100
+        # total 2024 bio: 10
         self.assertEqual(body["percentageValueBioHt"], 0.1)
         self.assertEqual(body["percentageValueSustainableHt"], 0.1)
         self.assertEqual(body["percentageValueExternalityPerformanceHt"], 0.1)
         self.assertEqual(body["percentageValueEgalimOthersHt"], 0.1)
-        # 30 HT, meat total is 40.
-        self.assertEqual(body["percentageValueMeatPoultryEgalimHt"], 0.75)
-        self.assertEqual(body["percentageValueMeatPoultryFranceHt"], 0.5)
-        self.assertEqual(body["percentageValueFishEgalimHt"], 0.5)
+        # total 2024 viandes volailles: 40
+        # total 2024 viandes volailles egalim: 30
+        # total 2024 viandes volailles france: 20
+        self.assertEqual(body["percentageValueViandesVolaillesEgalim"], 0.75)
+        self.assertEqual(body["percentageValueViandesVolaillesFrance"], 0.5)
+        # total 2024 produits de la mer: 20
+        # total 2024 produits de la mer egalim: 10
+        # total 2024 produits de la mer france: 10
+        self.assertEqual(body["percentageValueProduitsDeLaMerEgalim"], 0.5)
+        self.assertEqual(body["percentageValueProduitsDeLaMerFrance"], 0.5)
 
     def test_cannot_get_redacted_purchases_summary(self):
         """
