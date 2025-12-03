@@ -248,14 +248,14 @@ class TestDiagnosticsApi(APITestCase):
             "valeur_boulangerie_france": 10,
             "valeur_boissons_france": 10,
             "valeur_autres_france": 10,
-            "valeur_viandes_volailles_short_distribution": 10,
-            "valeur_produits_de_la_mer_short_distribution": 10,
-            "valeur_fruits_et_legumes_short_distribution": 10,
-            "valeur_charcuterie_short_distribution": 10,
-            "valeur_produits_laitiers_short_distribution": 10,
-            "valeur_boulangerie_short_distribution": 10,
-            "valeur_boissons_short_distribution": 10,
-            "valeur_autres_short_distribution": 10,
+            "valeur_viandes_volailles_circuit_court": 10,
+            "valeur_produits_de_la_mer_circuit_court": 10,
+            "valeur_fruits_et_legumes_circuit_court": 10,
+            "valeur_charcuterie_circuit_court": 10,
+            "valeur_produits_laitiers_circuit_court": 10,
+            "valeur_boulangerie_circuit_court": 10,
+            "valeur_boissons_circuit_court": 10,
+            "valeur_autres_circuit_court": 10,
             "valeur_viandes_volailles_local": 10,
             "valeur_produits_de_la_mer_local": 10,
             "valeur_fruits_et_legumes_local": 10,
@@ -299,7 +299,7 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.label_sum("externalites"), 80)
         self.assertEqual(diagnostic.label_sum("performance"), 80)
         self.assertEqual(diagnostic.label_sum("france"), 80)
-        self.assertEqual(diagnostic.label_sum("short_distribution"), 80)
+        self.assertEqual(diagnostic.label_sum("circuit_court"), 80)
         self.assertEqual(diagnostic.label_sum("local"), 80)
         self.assertEqual(diagnostic.family_sum("viandes_volailles"), 110)
         self.assertEqual(diagnostic.family_sum("produits_de_la_mer"), 110)

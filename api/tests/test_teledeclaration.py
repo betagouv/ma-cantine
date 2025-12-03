@@ -349,7 +349,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertIn("valeur_fruits_et_legumes_performance", json_teledeclaration)
         self.assertIn("valeur_fruits_et_legumes_non_egalim", json_teledeclaration)
         self.assertIn("valeur_fruits_et_legumes_france", json_teledeclaration)
-        self.assertIn("valeur_fruits_et_legumes_short_distribution", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_circuit_court", json_teledeclaration)
         self.assertIn("valeur_fruits_et_legumes_local", json_teledeclaration)
 
         # Checking the aggregation
@@ -872,6 +872,10 @@ class TestTeledeclarationCampaignDatesApi(APITestCase):
 
                     body = response.json()
                     self.assertEqual(body["year"], 2024)
+                    self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
+                    self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
+                    self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
+                    self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
                     self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
                     self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
                     self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])

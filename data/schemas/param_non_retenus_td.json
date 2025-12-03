@@ -428,7 +428,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.valeur_autres_short_distribution",
+    "name": "teledeclaration.valeur_autres_circuit_court",
     "type": "number"
   },
   {
@@ -472,7 +472,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.valeur_boissons_short_distribution",
+    "name": "teledeclaration.valeur_boissons_circuit_court",
     "type": "number"
   },
   {
@@ -520,7 +520,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.valeur_boulangerie_short_distribution",
+    "name": "teledeclaration.valeur_boulangerie_circuit_court",
     "type": "number"
   },
   {
@@ -528,7 +528,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.valeur_charcuterie_short_distribution",
+    "name": "teledeclaration.valeur_charcuterie_circuit_court",
     "type": "number"
   },
   {
@@ -592,7 +592,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.valeur_fruits_et_legumes_short_distribution",
+    "name": "teledeclaration.valeur_fruits_et_legumes_circuit_court",
     "type": "number"
   },
   {
@@ -600,7 +600,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.valeur_produits_laitiers_short_distribution",
+    "name": "teledeclaration.valeur_produits_laitiers_circuit_court",
     "type": "number"
   },
   {
@@ -608,7 +608,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.valeur_viandes_volailles_short_distribution",
+    "name": "teledeclaration.valeur_viandes_volailles_circuit_court",
     "type": "number"
   },
   {
@@ -616,7 +616,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.valeur_produits_de_la_mer_short_distribution",
+    "name": "teledeclaration.valeur_produits_de_la_mer_circuit_court",
     "type": "number"
   },
   {

@@ -352,7 +352,7 @@ class Diagnostic(models.Model):
     ]
     APPRO_LABELS_FRANCE = [
         "france",
-        "short_distribution",
+        "circuit_court",
         "local",
     ]
     APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
@@ -500,14 +500,14 @@ class Diagnostic(models.Model):
         "valeur_boulangerie_france",
         "valeur_boissons_france",
         "valeur_autres_france",
-        "valeur_viandes_volailles_short_distribution",
-        "valeur_produits_de_la_mer_short_distribution",
-        "valeur_fruits_et_legumes_short_distribution",
-        "valeur_charcuterie_short_distribution",
-        "valeur_produits_laitiers_short_distribution",
-        "valeur_boulangerie_short_distribution",
-        "valeur_boissons_short_distribution",
-        "valeur_autres_short_distribution",
+        "valeur_viandes_volailles_circuit_court",
+        "valeur_produits_de_la_mer_circuit_court",
+        "valeur_fruits_et_legumes_circuit_court",
+        "valeur_charcuterie_circuit_court",
+        "valeur_produits_laitiers_circuit_court",
+        "valeur_boulangerie_circuit_court",
+        "valeur_boissons_circuit_court",
+        "valeur_autres_circuit_court",
         "valeur_viandes_volailles_local",
         "valeur_produits_de_la_mer_local",
         "valeur_fruits_et_legumes_local",
@@ -1272,28 +1272,28 @@ class Diagnostic(models.Model):
     valeur_autres_france = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Provenance France",
     )
-    valeur_viandes_volailles_short_distribution = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Circuit-court",
     )
-    valeur_produits_de_la_mer_short_distribution = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Circuit-court",
     )
-    valeur_fruits_et_legumes_short_distribution = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Circuit-court",
     )
-    valeur_charcuterie_short_distribution = make_optional_positive_decimal_field(
+    valeur_charcuterie_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Circuit-court",
     )
-    valeur_produits_laitiers_short_distribution = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_circuit_court = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Circuit-court",
     )
-    valeur_boulangerie_short_distribution = make_optional_positive_decimal_field(
+    valeur_boulangerie_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Circuit-court",
     )
-    valeur_boissons_short_distribution = make_optional_positive_decimal_field(
+    valeur_boissons_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Boissons, Circuit-court",
     )
-    valeur_autres_short_distribution = make_optional_positive_decimal_field(
+    valeur_autres_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Circuit-court",
     )
     valeur_viandes_volailles_local = make_optional_positive_decimal_field(

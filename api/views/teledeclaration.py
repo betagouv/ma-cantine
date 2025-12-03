@@ -411,7 +411,7 @@ class TeledeclarationPdfView(APIView):
             "performance": "Performance environnementale",
             "non_egalim": "non-EGalim",
             "france": "origine France",
-            "short_distribution": "circuit-court",
+            "circuit_court": "circuit-court",
             "local": "« local »",
         }
         family_variable_to_display = {

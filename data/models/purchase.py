@@ -62,7 +62,7 @@ class Purchase(SoftDeletionModel):
         PERFORMANCE = "PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"
         EQUIVALENTS = "EQUIVALENTS", "Produits équivalents"  # not used anymore
         FRANCE = "FRANCE", "Provenance France"
-        SHORT_DISTRIBUTION = "SHORT_DISTRIBUTION", "Circuit-court"
+        CIRCUIT_COURT = "CIRCUIT_COURT", "Circuit-court"
         LOCAL = "LOCAL", "Produit local"
 
     class Local(models.TextChoices):

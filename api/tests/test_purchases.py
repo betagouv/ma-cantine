@@ -368,7 +368,7 @@ class TestPurchaseApi(APITestCase):
             family=Purchase.Family.VIANDES_VOLAILLES,
             characteristics=[
                 Purchase.Characteristic.BIO,
-                Purchase.Characteristic.SHORT_DISTRIBUTION,
+                Purchase.Characteristic.CIRCUIT_COURT,
                 Purchase.Characteristic.LOCAL,
             ],
             price_ht=10,
@@ -411,7 +411,7 @@ class TestPurchaseApi(APITestCase):
             canteen=canteen,
             date=d,
             family=Purchase.Family.VIANDES_VOLAILLES,
-            characteristics=[Purchase.Characteristic.SHORT_DISTRIBUTION],
+            characteristics=[Purchase.Characteristic.CIRCUIT_COURT],
             price_ht=90,
         )
 
@@ -1114,7 +1114,7 @@ class TestPublicPurchasesSummaryApi(APITestCase):
             family=Purchase.Family.PRODUITS_DE_LA_MER,
             price_ht=10,
         )
-        # meat france (local and short_distribution not included?)
+        # meat france (local and circuit_court not included?)
         PurchaseFactory(
             canteen=canteen,
             date="2024-12-31",
@@ -1276,4 +1276,8 @@ class TestPublicPurchasesSummaryApi(APITestCase):
             reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
             {"year": 2024, "ignoreRedaction": "true"},
         )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

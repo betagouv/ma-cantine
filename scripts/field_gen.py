@@ -17,7 +17,7 @@ labels = [
     ),
     ("PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"),
     ("FRANCE", "Provenance France"),
-    ("SHORT_DISTRIBUTION", "Circuit-court"),
+    ("CIRCUIT_COURT", "Circuit-court"),
     ("LOCAL", "Produit local"),
 ]
 families = [
