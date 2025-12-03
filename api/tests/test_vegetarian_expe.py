@@ -7,7 +7,53 @@ from data.factories import CanteenFactory, VegetarianExpeFactory
 from data.models import VegetarianExpe
 
 
-class TestVegetarianExpeApi(APITestCase):
+class VegetarianExpeListApiTest(APITestCase):
+    @authenticate
+    def test_get_vegetarian_expe(self):
+        """
+        Test that we can get a vegetarian expe for a canteen
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        VegetarianExpeFactory(canteen=canteen, satisfaction_guests_t0=4)
+
+        response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["satisfactionGuestsT0"], 4)
+
+    def test_cannot_get_vegetarian_expe_unauthenticated(self):
+        """
+        Shouldn't be able to get a vegetarian expe if not authenticated
+        """
+        canteen = CanteenFactory()
+        VegetarianExpeFactory(canteen=canteen)
+
+        response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_vegetarian_expe_not_manager(self):
+        """
+        Shouldn't be able to get a vegetarian expe if not manager of canteen
+        """
+        canteen = CanteenFactory()
+        VegetarianExpeFactory(canteen=canteen)
+
+        response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_nonexistant_vegetarian_expe(self):
+        """
+        Test attempting to get a vegetarian expe that doesn't exist
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+
+        response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class VegetarianExpeCreateApiTest(APITestCase):
     @authenticate
     def test_create_vegetarian_expe(self):
         """
@@ -85,50 +131,8 @@ class TestVegetarianExpeApi(APITestCase):
         self.assertEqual(vegetarian_expe.satisfaction_guests_t0, 5)
         self.assertEqual(VegetarianExpe.objects.count(), 1)
 
-    @authenticate
-    def test_get_vegetarian_expe(self):
-        """
-        Test that we can get a vegetarian expe for a canteen
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        VegetarianExpeFactory(canteen=canteen, satisfaction_guests_t0=4)
 
-        response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["satisfactionGuestsT0"], 4)
-
-    def test_cannot_get_vegetarian_expe_unauthenticated(self):
-        """
-        Shouldn't be able to get a vegetarian expe if not authenticated
-        """
-        canteen = CanteenFactory()
-        VegetarianExpeFactory(canteen=canteen)
-
-        response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_cannot_get_vegetarian_expe_not_manager(self):
-        """
-        Shouldn't be able to get a vegetarian expe if not manager of canteen
-        """
-        canteen = CanteenFactory()
-        VegetarianExpeFactory(canteen=canteen)
-
-        response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_get_nonexistant_vegetarian_expe(self):
-        """
-        Test attempting to get a vegetarian expe that doesn't exist
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-
-        response = self.client.get(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
+class VegetarianExpeUpdateApiTest(APITestCase):
     @authenticate
     def test_update_vegetarian_expe(self):
         """
@@ -216,3 +220,15 @@ class TestVegetarianExpeApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         vegetarian_expe.refresh_from_db()
         self.assertEqual(vegetarian_expe.waste_vegetarian_not_served_t0, 70)
+
+
+class VegetarianExpeDeleteApiTest(APITestCase):
+    @authenticate
+    def test_cannot_delete_vegetarian_expe(self):
+        """
+        Test that we can delete a vegetarian experiment for a canteen
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        VegetarianExpeFactory(canteen=canteen)
+        response = self.client.delete(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

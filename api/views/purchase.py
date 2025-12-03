@@ -152,11 +152,9 @@ class PurchaseListCreateView(ListCreateAPIView):
 
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    http_method_names = ["get", "patch", "delete"]  # disable "put"
     model = Purchase
     serializer_class = PurchaseSerializer
-
-    def put(self, request, *args, **kwargs):
-        return JsonResponse({"error": "Only PATCH request supported in this resource"}, status=405)
 
     def get_queryset(self):
         return Purchase.objects.filter(canteen__in=self.request.user.canteens.all())

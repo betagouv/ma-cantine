@@ -1,9 +1,7 @@
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
-from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
@@ -81,10 +79,6 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
 )
 class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
+    http_method_names = ["get", "patch"]  # disable "put"
     queryset = WasteMeasurement.objects.all()
     serializer_class = WasteMeasurementSerializer
-
-    def put(self, request, *args, **kwargs):
-        return JsonResponse(
-            {"error": "Only PATCH request supported in this resource"}, status=status.HTTP_405_METHOD_NOT_ALLOWED
-        )

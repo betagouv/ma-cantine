@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 class VegetarianExpeView(CreateModelMixin, RetrieveUpdateAPIView):
-    model = VegetarianExpe
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    http_method_names = ["get", "post", "patch"]  # disable "put"
     serializer_class = VegetarianExpeSerializer
     queryset = VegetarianExpe.objects.all()
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
 
     def get_object(self):
         queryset = self.get_queryset()
