@@ -43,7 +43,7 @@
             :rules="[
               validators.nonNegativeOrEmpty,
               validators.decimalPlaces(2),
-              validators.lteOrEmpty(payload.valueTotale),
+              validators.lteOrEmpty(payload.valeurTotale),
             ]"
             solo
             v-model.number="payload[diagnosticKey(fId)]"
@@ -118,8 +118,8 @@ export default {
       errorOnLoad: false,
       viandesVolaillesTotalErrorMessage: null,
       produitsDeLaMerTotalErrorMessage: null,
-      viandesVolaillesFieldPrefix: "valueViandesVolailles",
-      produitsDeLaMerFieldPrefix: "valueProduitsDeLaMer",
+      viandesVolaillesFieldPrefix: "valeurViandesVolailles",
+      produitsDeLaMerFieldPrefix: "valeurProduitsDeLaMer",
     }
   },
   computed: {
@@ -155,7 +155,7 @@ export default {
   },
   methods: {
     diagnosticKey(family) {
-      return this.camelize(`value_${family}_${this.characteristicId}`)
+      return this.camelize(`valeur_${family}_${this.characteristicId}`)
     },
     camelize(underscoredString) {
       const stringArray = underscoredString.split("_")
@@ -168,17 +168,17 @@ export default {
     populateSimplifiedDiagnostic() {
       if (this.hasError) return
       const { bioTotal, siqoTotal, externalitesPerformanceTotal, egalimAutresTotal } = approTotals(this.payload)
-      this.payload.valueBio = bioTotal
-      this.payload.valueSiqo = siqoTotal
-      this.payload.valueExternalitesPerformance = externalitesPerformanceTotal
-      this.payload.valueEgalimAutres = egalimAutresTotal
+      this.payload.valeurBio = bioTotal
+      this.payload.valeurSiqo = siqoTotal
+      this.payload.valeurExternalitesPerformance = externalitesPerformanceTotal
+      this.payload.valeurEgalimAutres = egalimAutresTotal
 
       const { viandesVolaillesEgalim, viandesVolaillesFrance } = this.viandesVolaillesTotals()
-      this.payload.valueViandesVolaillesEgalim = viandesVolaillesEgalim
-      this.payload.valueViandesVolaillesFrance = viandesVolaillesFrance
+      this.payload.valeurViandesVolaillesEgalim = viandesVolaillesEgalim
+      this.payload.valeurViandesVolaillesFrance = viandesVolaillesFrance
 
       const { produitsDeLaMerEgalim } = this.produitsDeLaMerTotals()
-      this.payload.valueProduitsDeLaMerEgalim = produitsDeLaMerEgalim
+      this.payload.valeurProduitsDeLaMerEgalim = produitsDeLaMerEgalim
     },
     viandesVolaillesTotals() {
       const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
@@ -256,7 +256,7 @@ export default {
 
       const groups = Constants.TeledeclarationCharacteristicGroups
       const sumFields = groups.egalim.fields.concat(groups.nonEgalim.fields)
-      const declaredTotal = +this.payload.valueTotale
+      const declaredTotal = +this.payload.valeurTotale
       const fieldTotal = this.sum(sumFields)
       if (fieldTotal > declaredTotal) {
         this.fieldTotalErrorMessage = this.errorMessage(fieldTotal, declaredTotal, 1)
@@ -277,7 +277,7 @@ export default {
 
         const viandesVolaillesFieldName = this.viandesVolaillesFieldPrefix + outsideLawSuffix
         const viandesVolaillesOutsideLaw = this.payload[viandesVolaillesFieldName]
-        const viandesVolaillesTotal = this.payload.valueViandesVolailles
+        const viandesVolaillesTotal = this.payload.valeurViandesVolailles
         if (viandesVolaillesOutsideLaw > viandesVolaillesTotal) {
           const message = this.errorMessage(
             viandesVolaillesOutsideLaw,
@@ -291,7 +291,7 @@ export default {
 
         const produitsDeLaMerFieldName = this.produitsDeLaMerFieldPrefix + outsideLawSuffix
         const produitsDeLaMerOutsideLaw = this.payload[produitsDeLaMerFieldName]
-        const produitsDeLaMerTotal = this.payload.valueProduitsDeLaMer
+        const produitsDeLaMerTotal = this.payload.valeurProduitsDeLaMer
         if (produitsDeLaMerOutsideLaw > produitsDeLaMerTotal) {
           const message = this.errorMessage(
             produitsDeLaMerOutsideLaw,
@@ -306,8 +306,8 @@ export default {
 
       // check meat and fish totals
       const { viandesVolaillesEgalim } = this.viandesVolaillesTotals()
-      const sumMeat = viandesVolaillesEgalim + (this.payload.valueViandesVolaillesNonEgalim || 0)
-      const totalMeat = this.payload.valueViandesVolailles
+      const sumMeat = viandesVolaillesEgalim + (this.payload.valeurViandesVolaillesNonEgalim || 0)
+      const totalMeat = this.payload.valeurViandesVolailles
       if (sumMeat > totalMeat) {
         this.viandesVolaillesTotalErrorMessage = this.errorMessage(
           sumMeat,
@@ -317,8 +317,8 @@ export default {
         )
       }
       const { produitsDeLaMerEgalim } = this.produitsDeLaMerTotals()
-      const sumFish = produitsDeLaMerEgalim + (this.payload.valueProduitsDeLaMerNonEgalim || 0)
-      const totalFish = this.payload.valueProduitsDeLaMer
+      const sumFish = produitsDeLaMerEgalim + (this.payload.valeurProduitsDeLaMerNonEgalim || 0)
+      const totalFish = this.payload.valeurProduitsDeLaMer
       if (sumFish > totalFish) {
         this.produitsDeLaMerTotalErrorMessage = this.errorMessage(
           sumFish,
@@ -337,9 +337,9 @@ export default {
       const outsideLaw = Constants.TeledeclarationCharacteristicGroups.outsideLaw
       const fields = outsideLaw.fields.filter((field) => field.endsWith(fieldSuffix))
       const total = this.sum(fields)
-      if (total > this.payload.valueTotale) {
+      if (total > this.payload.valeurTotale) {
         const char = getCharacteristicFromFieldSuffix(fieldSuffix, outsideLaw)
-        return this.errorMessage(total, this.payload.valueTotale, 1, undefined, char.text)
+        return this.errorMessage(total, this.payload.valeurTotale, 1, undefined, char.text)
       }
     },
     fieldUpdate(fieldName) {

@@ -225,86 +225,86 @@ export default {
       totalFields: [
         {
           text: "Total (en € HT) de mes achats alimentaires",
-          key: "valueTotale",
+          key: "valeurTotale",
         },
         {
           text: "Total (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
-          key: "valueViandesVolailles",
+          key: "valeurViandesVolailles",
         },
         {
           text: "Total (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
-          key: "valueProduitsDeLaMer",
+          key: "valeurProduitsDeLaMer",
         },
       ],
       egalimFields: [
         {
           text: "Total (en € HT) de mes achats Bio ou en conversion Bio",
-          key: "valueBio",
+          key: "valeurBio",
         },
         {
           text: "Dont valeur (en € HT) de mes achats Bio et Commerce équitable",
-          key: "valueBioDontCommerceEquitable",
+          key: "valeurBioDontCommerceEquitable",
         },
         {
           text: "Total (en € HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
-          key: "valueSiqo",
+          key: "valeurSiqo",
         },
         {
           text: "Total (en € HT) des autres achats EGalim",
-          key: "valueEgalimAutres",
+          key: "valeurEgalimAutres",
         },
         {
           text: "Dont valeur (en € HT) des achats Commerce équitable (hors bio)",
-          key: "valueEgalimAutresDontCommerceEquitable",
+          key: "valeurEgalimAutresDontCommerceEquitable",
         },
         {
           text:
             "Total (en € HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale",
-          key: "valueExternalitesPerformance",
+          key: "valeurExternalitesPerformance",
         },
       ],
       familyFields: [
         {
           text: "Total (en € HT) de mes achats EGalim en viandes et volailles",
-          key: "valueViandesVolaillesEgalim",
+          key: "valeurViandesVolaillesEgalim",
         },
         {
           text: "Total (en € HT) de mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
-          key: "valueProduitsDeLaMerEgalim",
+          key: "valeurProduitsDeLaMerEgalim",
         },
       ],
       franceFields: [
         {
           text: "Total (en € HT) de mes achats origine France - Viandes et volailles",
-          key: "valueViandesVolaillesFrance",
+          key: "valeurViandesVolaillesFrance",
         },
         {
           text: "Total (en € HT) de mes achats origine France - Poissons, produits de la mer et de l'aquaculture",
-          key: "valueProduitsDeLaMerFrance",
+          key: "valeurProduitsDeLaMerFrance",
         },
         {
           text: "Total (en € HT) de mes achats origine France - Charcuterie",
-          key: "valueCharcuterieFrance",
+          key: "valeurCharcuterieFrance",
         },
         {
           text: "Total (en € HT) de mes achats origine France - Fruits et légumes frais et surgelés",
-          key: "valueFruitsEtLegumesFrance",
+          key: "valeurFruitsEtLegumesFrance",
         },
         {
           text: "Total (en € HT) de mes achats origine France - BOF (Produits laitiers, beurre et œufs)",
-          key: "valueProduitsLaitiersFrance",
+          key: "valeurProduitsLaitiersFrance",
         },
         {
           text: "Total (en € HT) de mes achats origine France - Boulangerie / Pâtisserie fraîches",
-          key: "valueBoulangerieFrance",
+          key: "valeurBoulangerieFrance",
         },
         {
           text: "Total (en € HT) de mes achats origine France - Boissons",
-          key: "valueBoissonsFrance",
+          key: "valeurBoissonsFrance",
         },
         {
           text: "Total (en € HT) de mes achats origine France - Autres produits frais, surgelés et d’épicerie",
-          key: "valueAutresFrance",
+          key: "valeurAutresFrance",
         },
       ],
     }

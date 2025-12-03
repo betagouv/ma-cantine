@@ -40,53 +40,53 @@ const MEAT = "viandes et volailles"
 
 const SIMPLE_FIELDS = [
   {
-    name: "valueTotale",
+    name: "valeurTotale",
     label: "La valeur totale (en € HT) de mes achats alimentaires",
     purchaseType: "totaux",
   },
   {
-    name: "valueBio",
+    name: "valeurBio",
     label: "La valeur (en € HT) de mes achats Bio ou en conversion Bio",
     purchaseType: "bio",
   },
   {
-    name: "valueSiqo",
+    name: "valeurSiqo",
     label: "La valeur (en € HT) de mes achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
     purchaseType: "SIQO",
   },
   {
-    name: "valueEgalimAutres",
+    name: "valeurEgalimAutres",
     label: "La valeur (en € HT) des autres achats EGalim",
     purchaseType: "« autre EGalim »",
   },
   {
-    name: "valueExternalitesPerformance",
+    name: "valeurExternalitesPerformance",
     label:
       "Critères d'achat : La valeur (en € HT) de mes achats prenant en compte les coûts imputés aux externalités environnementales ou acquis sur la base de leurs performances en matière environnementale.",
     purchaseType: "« critères d'achat »",
   },
   {
-    name: "valueViandesVolailles",
+    name: "valeurViandesVolailles",
     label: "La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
     purchaseType: "totaux viandes et volailles",
   },
   {
-    name: "valueViandesVolaillesEgalim",
+    name: "valeurViandesVolaillesEgalim",
     label: "La valeur (en € HT) de mes achats EGalim en viandes et volailles fraiches ou surgelées",
     purchaseType: "viandes et volailles EGalim",
   },
   {
-    name: "valueViandesVolaillesFrance",
+    name: "valeurViandesVolaillesFrance",
     label: "La valeur (en € HT) de mes achats origine France en viandes et volailles fraiches ou surgelées",
     purchaseType: "viandes et volailles origine France",
   },
   {
-    name: "valueProduitsDeLaMer",
+    name: "valeurProduitsDeLaMer",
     label: "La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
     purchaseType: "totaux de poissons, produits de la mer et de l'aquaculture",
   },
   {
-    name: "valueProduitsDeLaMerEgalim",
+    name: "valeurProduitsDeLaMerEgalim",
     label: "La valeur (en € HT) de mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
     purchaseType: "poissons, produits de la mer et de l'aquaculture EGalim",
   },
@@ -135,8 +135,8 @@ export default {
       return this.errorFields.indexOf(fieldName) > -1
     },
     completeTdFields() {
-      const produitsDeLaMerField = "valueProduitsDeLaMer"
-      const viandesVolaillesField = "valueViandesVolailles"
+      const produitsDeLaMerField = "valeurProduitsDeLaMer"
+      const viandesVolaillesField = "valeurViandesVolailles"
       const tdGroups = Constants.TeledeclarationCharacteristicGroups
       const viandesVolaillesFields = []
       const produitsDeLaMerFields = []

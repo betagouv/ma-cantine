@@ -35,7 +35,7 @@ families = [(f[0].lower(), f[1]) for f in families]
 fields = []
 for label in labels:
     for family in families:
-        fields.append({"fieldname": f"value_{family[0]}_{label[0]}", "description": f"{label[1]} : {family[1]}"})
+        fields.append({"fieldname": f"valeur_{family[0]}_{label[0]}", "description": f"{label[1]} : {family[1]}"})
 
 print(f"# will generate {len(fields)} fields")
 for f in fields:

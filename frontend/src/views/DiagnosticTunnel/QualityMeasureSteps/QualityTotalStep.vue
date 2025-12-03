@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="mb-16" v-if="displayPurchaseHints && purchasesSummary.valueTotale > 0">
+    <div class="mb-16" v-if="displayPurchaseHints && purchasesSummary.valeurTotale > 0">
       <DsfrCallout icon="$money-euro-box-fill">
         <div>
           <p>
             Vous avez renseigné un total de
-            <span class="font-weight-bold">{{ toCurrency(purchasesSummary.valueTotale) }}</span>
+            <span class="font-weight-bold">{{ toCurrency(purchasesSummary.valeurTotale) }}</span>
             d'achats en {{ diagnostic.year }}. Voulez-vous compléter votre bilan avec les montants de ces achats ?
           </p>
           <v-btn outlined color="primary" @click="autofillWithPurchases">Compléter avec mes achats</v-btn>
@@ -14,7 +14,7 @@
     </div>
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <DsfrCurrencyField
-      v-model.number="payload.valueTotale"
+      v-model.number="payload.valeurTotale"
       :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
       validate-on-blur
       @blur="updatePayload"
@@ -24,10 +24,10 @@
     />
     <PurchaseHint
       v-if="displayPurchaseHints"
-      v-model="payload.valueTotale"
+      v-model="payload.valeurTotale"
       @autofill="onPurchaseAutofill"
       purchaseType=""
-      :amount="purchasesSummary.valueTotale"
+      :amount="purchasesSummary.valeurTotale"
       :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
     />
     <ErrorHelper
@@ -117,10 +117,10 @@ export default {
     erroringFields() {
       const fields = []
       if (this.totalError)
-        fields.push(...["valueBio", "valueSiqo", "valueEgalimAutres", "valueExternalitesPerformance"])
-      if (this.totalViandesVolaillesError) fields.push("valueViandesVolailles")
-      if (this.totalProduitsDeLaMerError) fields.push("valueProduitsDeLaMer")
-      if (this.totalFamiliesError) fields.push(...["valueViandesVolailles", "valueProduitsDeLaMer"])
+        fields.push(...["valeurBio", "valeurSiqo", "valeurEgalimAutres", "valeurExternalitesPerformance"])
+      if (this.totalViandesVolaillesError) fields.push("valeurViandesVolailles")
+      if (this.totalProduitsDeLaMerError) fields.push("valeurProduitsDeLaMer")
+      if (this.totalFamiliesError) fields.push(...["valeurViandesVolailles", "valeurProduitsDeLaMer"])
       return fields
     },
   },
@@ -131,7 +131,7 @@ export default {
     },
     toCurrency,
     checkTotal() {
-      if (this.payload.valueTotale < 0) {
+      if (this.payload.valeurTotale < 0) {
         return // this error is handled by vuetify validation
       }
 
@@ -142,40 +142,42 @@ export default {
 
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
-      const total = d.valueTotale
-      const totalMeatPoultry = d.valueViandesVolailles
-      const totalFish = d.valueProduitsDeLaMer
+      const total = d.valeurTotale
+      const totalMeatPoultry = d.valeurViandesVolailles
+      const totalFish = d.valeurProduitsDeLaMer
       const totalFamilies = totalMeatPoultry + totalFish
 
       if (sumEgalim > total) {
         this.totalErrorMessage = `${DEFAULT_TOTAL_ERROR}, actuellement ${toCurrency(sumEgalim || 0)}`
         if (!this.diagnostic.diagnosticType || this.diagnostic.diagnosticType === "SIMPLE") {
-          this.errorHelperFields.push(...["valueBio", "valueSiqo", "valueEgalimAutres", "valueExternalitesPerformance"])
+          this.errorHelperFields.push(
+            ...["valeurBio", "valeurSiqo", "valeurEgalimAutres", "valeurExternalitesPerformance"]
+          )
         }
       }
       if (totalFamilies > total) {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
-        this.errorHelperFields.push(...["valueViandesVolailles", "valueProduitsDeLaMer"])
+        this.errorHelperFields.push(...["valeurViandesVolailles", "valeurProduitsDeLaMer"])
       } else {
         if (totalMeatPoultry > total) {
           this.viandesVolaillesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
             totalMeatPoultry
           )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
-          this.errorHelperFields.push("valueViandesVolailles")
+          this.errorHelperFields.push("valeurViandesVolailles")
         }
         if (totalFish > total) {
           this.produitsDeLaMerErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
             totalFish
           )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
-          this.errorHelperFields.push("valueProduitsDeLaMer")
+          this.errorHelperFields.push("valeurProduitsDeLaMer")
         }
       }
     },
     sumAllEgalim() {
       const d = this.payload
-      const egalimValues = [d.valueBio, d.valueSiqo, d.valueExternalitesPerformance, d.valueEgalimAutres]
+      const egalimValues = [d.valeurBio, d.valeurSiqo, d.valeurExternalitesPerformance, d.valeurEgalimAutres]
       let total = 0
       egalimValues.forEach((val) => {
         total += parseFloat(val) || 0
