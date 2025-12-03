@@ -6,6 +6,47 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.41.0](https://github.com/betagouv/ma-cantine/compare/v2025.40.0...v2025.41.0) (2025-12-03)
+
+
+### Nouveautés
+
+* **Bandeau information:** ajout d'un bandeau d'information pour communiquer globalement sur le site ([#5791](https://github.com/betagouv/ma-cantine/issues/5791)) ([51daa3b](https://github.com/betagouv/ma-cantine/commit/51daa3b0d8fe759a7e3128d631ffcead98d4c1e1))
+* **Télédéclaration:** affiche les nouveaux champs dans les informations du bilan à télédéclarer ([#5922](https://github.com/betagouv/ma-cantine/issues/5922)) ([ae1a865](https://github.com/betagouv/ma-cantine/commit/ae1a86537a0c1bd876ad3849ea0cfdade16277e8))
+* **Télédéclaration:** ajout de l'étape "origine France" dans le tunnel ([#5898](https://github.com/betagouv/ma-cantine/issues/5898)) ([6fd56ef](https://github.com/betagouv/ma-cantine/commit/6fd56ef724504d84dfc383474aa6d84d99da4113))
+* **Télédéclaration:** ajout des champs "Dont commerce équitable" (tunnel simplifiée) ([#5921](https://github.com/betagouv/ma-cantine/issues/5921)) ([b0da757](https://github.com/betagouv/ma-cantine/commit/b0da7570cc72210d77802c0d4bdf32d9fb5fad13))
+* **Télédéclaration:** ajout du champ "produits de la mer et de l’aquaculture origine France" ([#5919](https://github.com/betagouv/ma-cantine/issues/5919)) ([be4caae](https://github.com/betagouv/ma-cantine/commit/be4caae317bb990ce0f4c2a9bd2a334b422d6b88))
+* **Télédéclaration:** des champs deviennent obligatoires ([#5897](https://github.com/betagouv/ma-cantine/issues/5897)) ([68a1a4e](https://github.com/betagouv/ma-cantine/commit/68a1a4e45856800b7fc57525d9836d871fc83144))
+
+
+### Améliorations
+
+* **Diagnostic:** créer les nouveaux champs 'dont commerce équitable' (bilans simplifiés et détaillés) ([#5907](https://github.com/betagouv/ma-cantine/issues/5907)) ([039321b](https://github.com/betagouv/ma-cantine/commit/039321b07ac130ab1dd7701c91eff3119eb579c8))
+* **Télédéclaration:** ajouter les dates de campagne 2026 dans le code ([#5913](https://github.com/betagouv/ma-cantine/issues/5913)) ([9e5eb15](https://github.com/betagouv/ma-cantine/commit/9e5eb157a8b9dbac4444eb8e730b6dd884c3d205))
+* **Télédéclaration:** homogénéisation du vocabulaire (origine France et Produits de la mer) ([#5920](https://github.com/betagouv/ma-cantine/issues/5920)) ([2185f38](https://github.com/betagouv/ma-cantine/commit/2185f38bbfc3cf40f8348f67f4f37ccdc859bfa7))
+* **Télédéclaration:** met à jour les descriptions des champs (origine france, qq descriptions) ([#5900](https://github.com/betagouv/ma-cantine/issues/5900)) ([5580e21](https://github.com/betagouv/ma-cantine/commit/5580e21f833c84a9fb6670b2cf27d17c528d013d))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** maj des actions suite aux changements sur les champs obligatoires ([#5952](https://github.com/betagouv/ma-cantine/issues/5952)) ([528f8b7](https://github.com/betagouv/ma-cantine/commit/528f8b7014c7c0cc6e0938fe02b8b64dd3f72cfa))
+* **Télédéclaration:** mise à jour des terminologies suite au recettage de la télédéclaration simplifiée ([#5957](https://github.com/betagouv/ma-cantine/issues/5957)) ([37a8ea4](https://github.com/betagouv/ma-cantine/commit/37a8ea4551cb0ac03daf1cf5d7e6f337efa50891))
+* **Télédéclaration:** renommer le champ value_egalim_others_dont_commerce_equitable_ht ([#5951](https://github.com/betagouv/ma-cantine/issues/5951)) ([e96e396](https://github.com/betagouv/ma-cantine/commit/e96e39624feb2ae9f464cf69d57c5d10122bbca4))
+* **Télédéclaration:** répare un test suite au changement vers 'provenance France' ([#5955](https://github.com/betagouv/ma-cantine/issues/5955)) ([1a46800](https://github.com/betagouv/ma-cantine/commit/1a468009a88593b91cbfb15c35d86709770611c6))
+* **Télédéclarations:** réparer les tests avant MEP ([#5961](https://github.com/betagouv/ma-cantine/issues/5961)) ([8812bd0](https://github.com/betagouv/ma-cantine/commit/8812bd01e514c90bcd05923255414683da55b0fc))
+* **Télédéclarations:** Tunnel simplifié: répare le pré-remplissage à partir des achats ([#5950](https://github.com/betagouv/ma-cantine/issues/5950)) ([ee40c81](https://github.com/betagouv/ma-cantine/commit/ee40c81d52a6e9f9f6189f94d21d408c7cdc522d))
+* **Télédéclaration:** Tunnel simplifié: corrige la sauvegarde des nouvelles valeurs ([#5949](https://github.com/betagouv/ma-cantine/issues/5949)) ([b70787d](https://github.com/betagouv/ma-cantine/commit/b70787d82fc0443c3774a1c66fb14374ade1d909))
+
+
+### Technique
+
+* **Diagnostic:** clean du modèle avant d'ajouter les nouveaux champs ([#5906](https://github.com/betagouv/ma-cantine/issues/5906)) ([865da2e](https://github.com/betagouv/ma-cantine/commit/865da2e268bfb6f6b69f89e2c43b5cd5369d0f5f))
+* **Télédéclaration:** API: supprime les serializers plus utilisés ([#5958](https://github.com/betagouv/ma-cantine/issues/5958)) ([09ffda7](https://github.com/betagouv/ma-cantine/commit/09ffda7a4971ffaf7fdeb16379ec5af125c0f80a))
+* **Télédéclaration:** clarifier les champs (1/3): meat & fish deviennent viandes_volailles et produits_de_la_mer. Enlever _ht ([#5953](https://github.com/betagouv/ma-cantine/issues/5953)) ([329f56c](https://github.com/betagouv/ma-cantine/commit/329f56c6a2a48e849bc71b82f7e21a468d20e5c3))
+* **Télédéclaration:** clarifier les champs (2/3): renommer les autres champs en français. Enlever _ht ([#5956](https://github.com/betagouv/ma-cantine/issues/5956)) ([62f15b6](https://github.com/betagouv/ma-cantine/commit/62f15b67e5bd3ca7a33bac09fd07a5daec198a06))
+* **Télédéclaration:** clarifier les champs (3/3): renommer 'value' en 'valeur' ([#5959](https://github.com/betagouv/ma-cantine/issues/5959)) ([49f7558](https://github.com/betagouv/ma-cantine/commit/49f755829990de4ee239475b32e9d09e9b5eaf3c))
+* **Tests:** enlever les warning min_value ou max_value 'should be a Decimal instance' ([#5917](https://github.com/betagouv/ma-cantine/issues/5917)) ([2421667](https://github.com/betagouv/ma-cantine/commit/2421667df1d02df3434d33db319cf22c0f1a2f61))
+
 ## [2025.40.0](https://github.com/betagouv/ma-cantine/compare/v2025.39.1...v2025.40.0) (2025-12-01)
 
 
