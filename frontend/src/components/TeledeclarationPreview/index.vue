@@ -174,7 +174,7 @@ export default {
     },
     costPerMeal() {
       if (!this.showApproItems || !this.canteenForTD.yearlyMealCount) return
-      return Number(this.diagnosticForTD.valueTotale / this.canteenForTD.yearlyMealCount).toFixed(2)
+      return Number(this.diagnosticForTD.valeurTotale / this.canteenForTD.yearlyMealCount).toFixed(2)
     },
     isCentralCuisine() {
       // cannot use this.canteen.isCentralCuisine because that field may not be updated with latest canteen changes

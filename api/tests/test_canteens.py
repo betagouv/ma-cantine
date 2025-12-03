@@ -180,9 +180,9 @@ class CanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=user_canteen,
             year=2021,
-            value_totale=1200,
-            value_bio=600,
-            value_siqo=300,
+            valeur_totale=1200,
+            valeur_bio=600,
+            valeur_siqo=300,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
@@ -192,9 +192,9 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(len(body.get("diagnostics")), 1)
         serialized_diag = body.get("diagnostics")[0]
 
-        self.assertEqual(serialized_diag["valueTotale"], 1200)
-        self.assertEqual(serialized_diag["valueBio"], 600)
-        self.assertEqual(serialized_diag["valueSiqo"], 300)
+        self.assertEqual(serialized_diag["valeurTotale"], 1200)
+        self.assertEqual(serialized_diag["valeurBio"], 600)
+        self.assertEqual(serialized_diag["valeurSiqo"], 300)
 
     @authenticate
     def test_get_single_user_canteen_unauthorized(self):
@@ -283,9 +283,9 @@ class CanteenDetailApiTest(APITestCase):
             canteen=user_canteen,
             year=2023,
             # test appro badge as true
-            value_totale=100,
-            value_bio=20,
-            value_siqo=30,
+            valeur_totale=100,
+            valeur_bio=20,
+            valeur_siqo=30,
             # test plastic badge as false
             tunnel_plastic="something",
             cooking_plastic_substituted=False,
@@ -318,9 +318,9 @@ class CanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=satellite,
             year=2021,
-            value_totale=100,
-            value_bio=0,
-            value_siqo=30,
+            valeur_totale=100,
+            valeur_bio=0,
+            valeur_siqo=30,
         )
         DiagnosticFactory(
             canteen=central,

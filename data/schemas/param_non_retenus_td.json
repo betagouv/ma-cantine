@@ -32,7 +32,7 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer",
+    "name": "teledeclaration.valeur_produits_de_la_mer",
     "type": "number"
   },
   {
@@ -48,7 +48,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_totale",
+    "name": "teledeclaration.valeur_totale",
     "type": "number"
   },
   {
@@ -64,15 +64,15 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_autres_bio",
+    "name": "teledeclaration.valeur_autres_bio",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_autres_hve",
+    "name": "teledeclaration.valeur_autres_hve",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_autres_rup",
+    "name": "teledeclaration.valeur_autres_rup",
     "type": "number"
   },
   {
@@ -104,23 +104,23 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_autres_local",
+    "name": "teledeclaration.valeur_autres_local",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_bio",
+    "name": "teledeclaration.valeur_boissons_bio",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_hve",
+    "name": "teledeclaration.valeur_boissons_hve",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_rup",
+    "name": "teledeclaration.valeur_boissons_rup",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_autres_france",
+    "name": "teledeclaration.valeur_autres_france",
     "type": "number"
   },
   {
@@ -132,11 +132,11 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_autres_fermier",
+    "name": "teledeclaration.valeur_autres_fermier",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_local",
+    "name": "teledeclaration.valeur_boissons_local",
     "type": "number"
   },
   {
@@ -144,35 +144,35 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_boissons_france",
+    "name": "teledeclaration.valeur_boissons_france",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_bio",
+    "name": "teledeclaration.valeur_boulangerie_bio",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_hve",
+    "name": "teledeclaration.valeur_boulangerie_hve",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_rup",
+    "name": "teledeclaration.valeur_boulangerie_rup",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_bio",
+    "name": "teledeclaration.valeur_charcuterie_bio",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_hve",
+    "name": "teledeclaration.valeur_charcuterie_hve",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_rup",
+    "name": "teledeclaration.valeur_charcuterie_rup",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles",
+    "name": "teledeclaration.valeur_viandes_volailles",
     "type": "number"
   },
   {
@@ -188,7 +188,7 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_boissons_fermier",
+    "name": "teledeclaration.valeur_boissons_fermier",
     "type": "number"
   },
   {
@@ -196,15 +196,15 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_autres_non_egalim",
+    "name": "teledeclaration.valeur_autres_non_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_local",
+    "name": "teledeclaration.valeur_boulangerie_local",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_local",
+    "name": "teledeclaration.valeur_charcuterie_local",
     "type": "number"
   },
   {
@@ -212,19 +212,19 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_autres_label_rouge",
+    "name": "teledeclaration.valeur_autres_label_rouge",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_autres_performance",
+    "name": "teledeclaration.valeur_autres_performance",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_france",
+    "name": "teledeclaration.valeur_boulangerie_france",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_france",
+    "name": "teledeclaration.valeur_charcuterie_france",
     "type": "number"
   },
   {
@@ -236,31 +236,31 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_autres_externalites",
+    "name": "teledeclaration.valeur_autres_externalites",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_non_egalim",
+    "name": "teledeclaration.valeur_boissons_non_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_fermier",
+    "name": "teledeclaration.valeur_boulangerie_fermier",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_fermier",
+    "name": "teledeclaration.valeur_charcuterie_fermier",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_autres_peche_durable",
+    "name": "teledeclaration.valeur_autres_peche_durable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_label_rouge",
+    "name": "teledeclaration.valeur_boissons_label_rouge",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_performance",
+    "name": "teledeclaration.valeur_boissons_performance",
     "type": "number"
   },
   {
@@ -280,47 +280,47 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_autres_aocaop_igp_stg",
+    "name": "teledeclaration.valeur_autres_aocaop_igp_stg",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_externalites",
+    "name": "teledeclaration.valeur_boissons_externalites",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_bio",
+    "name": "teledeclaration.valeur_fruits_et_legumes_bio",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_hve",
+    "name": "teledeclaration.valeur_fruits_et_legumes_hve",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_rup",
+    "name": "teledeclaration.valeur_fruits_et_legumes_rup",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_bio",
+    "name": "teledeclaration.valeur_produits_laitiers_bio",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_hve",
+    "name": "teledeclaration.valeur_produits_laitiers_hve",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_rup",
+    "name": "teledeclaration.valeur_produits_laitiers_rup",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_bio",
+    "name": "teledeclaration.valeur_viandes_volailles_bio",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_hve",
+    "name": "teledeclaration.valeur_viandes_volailles_hve",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_rup",
+    "name": "teledeclaration.valeur_viandes_volailles_rup",
     "type": "number"
   },
   {
@@ -332,27 +332,27 @@
     "type": "array"
   },
   {
-    "name": "teledeclaration.value_boissons_peche_durable",
+    "name": "teledeclaration.valeur_boissons_peche_durable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_non_egalim",
+    "name": "teledeclaration.valeur_boulangerie_non_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_non_egalim",
+    "name": "teledeclaration.valeur_charcuterie_non_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_bio",
+    "name": "teledeclaration.valeur_produits_de_la_mer_bio",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_hve",
+    "name": "teledeclaration.valeur_produits_de_la_mer_hve",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_rup",
+    "name": "teledeclaration.valeur_produits_de_la_mer_rup",
     "type": "number"
   },
   {
@@ -364,59 +364,59 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_boissons_aocaop_igp_stg",
+    "name": "teledeclaration.valeur_boissons_aocaop_igp_stg",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_label_rouge",
+    "name": "teledeclaration.valeur_boulangerie_label_rouge",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_performance",
+    "name": "teledeclaration.valeur_boulangerie_performance",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_label_rouge",
+    "name": "teledeclaration.valeur_charcuterie_label_rouge",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_performance",
+    "name": "teledeclaration.valeur_charcuterie_performance",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_local",
+    "name": "teledeclaration.valeur_fruits_et_legumes_local",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_local",
+    "name": "teledeclaration.valeur_produits_laitiers_local",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_local",
+    "name": "teledeclaration.valeur_viandes_volailles_local",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_externalites",
+    "name": "teledeclaration.valeur_boulangerie_externalites",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_externalites",
+    "name": "teledeclaration.valeur_charcuterie_externalites",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_france",
+    "name": "teledeclaration.valeur_fruits_et_legumes_france",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_local",
+    "name": "teledeclaration.valeur_produits_de_la_mer_local",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_france",
+    "name": "teledeclaration.valeur_produits_laitiers_france",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_france",
+    "name": "teledeclaration.valeur_viandes_volailles_france",
     "type": "number"
   },
   {
@@ -424,199 +424,199 @@
     "type": "string"
   },
   {
-    "name": "teledeclaration.value_autres_commerce_equitable",
+    "name": "teledeclaration.valeur_autres_commerce_equitable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_autres_short_distribution",
+    "name": "teledeclaration.valeur_autres_short_distribution",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_peche_durable",
+    "name": "teledeclaration.valeur_boulangerie_peche_durable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_peche_durable",
+    "name": "teledeclaration.valeur_charcuterie_peche_durable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_fermier",
+    "name": "teledeclaration.valeur_fruits_et_legumes_fermier",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_france",
+    "name": "teledeclaration.valeur_produits_de_la_mer_france",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_fermier",
+    "name": "teledeclaration.valeur_produits_laitiers_fermier",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_fermier",
+    "name": "teledeclaration.valeur_viandes_volailles_fermier",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_aocaop_igp_stg",
+    "name": "teledeclaration.valeur_boulangerie_aocaop_igp_stg",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_aocaop_igp_stg",
+    "name": "teledeclaration.valeur_charcuterie_aocaop_igp_stg",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_fermier",
+    "name": "teledeclaration.valeur_produits_de_la_mer_fermier",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_commerce_equitable",
+    "name": "teledeclaration.valeur_boissons_commerce_equitable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boissons_short_distribution",
+    "name": "teledeclaration.valeur_boissons_short_distribution",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_non_egalim",
+    "name": "teledeclaration.valeur_fruits_et_legumes_non_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_non_egalim",
+    "name": "teledeclaration.valeur_produits_laitiers_non_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_non_egalim",
+    "name": "teledeclaration.valeur_viandes_volailles_non_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_label_rouge",
+    "name": "teledeclaration.valeur_fruits_et_legumes_label_rouge",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_performance",
+    "name": "teledeclaration.valeur_fruits_et_legumes_performance",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_non_egalim",
+    "name": "teledeclaration.valeur_produits_de_la_mer_non_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_label_rouge",
+    "name": "teledeclaration.valeur_produits_laitiers_label_rouge",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_performance",
+    "name": "teledeclaration.valeur_produits_laitiers_performance",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_label_rouge",
+    "name": "teledeclaration.valeur_viandes_volailles_label_rouge",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_performance",
+    "name": "teledeclaration.valeur_viandes_volailles_performance",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_commerce_equitable",
+    "name": "teledeclaration.valeur_boulangerie_commerce_equitable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_boulangerie_short_distribution",
+    "name": "teledeclaration.valeur_boulangerie_short_distribution",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_commerce_equitable",
+    "name": "teledeclaration.valeur_charcuterie_commerce_equitable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_charcuterie_short_distribution",
+    "name": "teledeclaration.valeur_charcuterie_short_distribution",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_externalites",
+    "name": "teledeclaration.valeur_fruits_et_legumes_externalites",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_label_rouge",
+    "name": "teledeclaration.valeur_produits_de_la_mer_label_rouge",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_performance",
+    "name": "teledeclaration.valeur_produits_de_la_mer_performance",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_externalites",
+    "name": "teledeclaration.valeur_produits_laitiers_externalites",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_externalites",
+    "name": "teledeclaration.valeur_viandes_volailles_externalites",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_peche_durable",
+    "name": "teledeclaration.valeur_fruits_et_legumes_peche_durable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_externalites",
+    "name": "teledeclaration.valeur_produits_de_la_mer_externalites",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_peche_durable",
+    "name": "teledeclaration.valeur_produits_laitiers_peche_durable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_peche_durable",
+    "name": "teledeclaration.valeur_viandes_volailles_peche_durable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_aocaop_igp_stg",
+    "name": "teledeclaration.valeur_fruits_et_legumes_aocaop_igp_stg",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_peche_durable",
+    "name": "teledeclaration.valeur_produits_de_la_mer_peche_durable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_aocaop_igp_stg",
+    "name": "teledeclaration.valeur_produits_laitiers_aocaop_igp_stg",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_aocaop_igp_stg",
+    "name": "teledeclaration.valeur_viandes_volailles_aocaop_igp_stg",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_aocaop_igp_stg",
+    "name": "teledeclaration.valeur_produits_de_la_mer_aocaop_igp_stg",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_commerce_equitable",
+    "name": "teledeclaration.valeur_fruits_et_legumes_commerce_equitable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_fruits_et_legumes_short_distribution",
+    "name": "teledeclaration.valeur_fruits_et_legumes_short_distribution",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_commerce_equitable",
+    "name": "teledeclaration.valeur_produits_laitiers_commerce_equitable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_laitiers_short_distribution",
+    "name": "teledeclaration.valeur_produits_laitiers_short_distribution",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_commerce_equitable",
+    "name": "teledeclaration.valeur_viandes_volailles_commerce_equitable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_short_distribution",
+    "name": "teledeclaration.valeur_viandes_volailles_short_distribution",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_commerce_equitable",
+    "name": "teledeclaration.valeur_produits_de_la_mer_commerce_equitable",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_short_distribution",
+    "name": "teledeclaration.valeur_produits_de_la_mer_short_distribution",
     "type": "number"
   },
   {
@@ -628,31 +628,31 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_bio",
+    "name": "teledeclaration.valeur_bio",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_produits_de_la_mer_egalim",
+    "name": "teledeclaration.valeur_produits_de_la_mer_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_siqo",
+    "name": "teledeclaration.valeur_siqo",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_egalim_autres",
+    "name": "teledeclaration.valeur_egalim_autres",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_egalim",
+    "name": "teledeclaration.valeur_viandes_volailles_egalim",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_viandes_volailles_france",
+    "name": "teledeclaration.valeur_viandes_volailles_france",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_externalites_performance",
+    "name": "teledeclaration.valeur_externalites_performance",
     "type": "number"
   }
 ]

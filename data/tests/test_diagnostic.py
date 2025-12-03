@@ -17,16 +17,16 @@ date_in_last_teledeclaration_campaign = "2024-02-01"
 VALID_DIAGNOSTIC = {
     "year": year_data,
     "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
-    "value_totale": 1000,
-    "value_bio": 200,
-    "value_siqo": 100,
-    "value_externalites_performance": 100,
-    "value_egalim_autres": 100,
-    "value_viandes_volailles": 100,
-    "value_viandes_volailles_egalim": 50,
-    "value_viandes_volailles_france": 20,
-    "value_produits_de_la_mer": 80,
-    "value_produits_de_la_mer_egalim": 40,
+    "valeur_totale": 1000,
+    "valeur_bio": 200,
+    "valeur_siqo": 100,
+    "valeur_externalites_performance": 100,
+    "valeur_egalim_autres": 100,
+    "valeur_viandes_volailles": 100,
+    "valeur_viandes_volailles_egalim": 50,
+    "valeur_viandes_volailles_france": 20,
+    "valeur_produits_de_la_mer": 80,
+    "valeur_produits_de_la_mer_egalim": 40,
 }
 
 
@@ -44,20 +44,20 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(year=TUPLE_OK[0], **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 diagnostic.full_clean()
                 self.assertEqual(diagnostic.year, TUPLE_OK[1])
-        for VALUE_NOT_OK in ["", "abcd"]:
-            with self.subTest(year=VALUE_NOT_OK):
+        for valeur_NOT_OK in ["", "abcd"]:
+            with self.subTest(year=valeur_NOT_OK):
                 self.assertRaises(
-                    ValueError, Diagnostic.objects.create, year=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR
+                    ValueError, Diagnostic.objects.create, year=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR
                 )
         # should be in a specific range
-        for VALUE_NOT_OK in [1991]:
-            with self.subTest(year=VALUE_NOT_OK):
-                diagnostic = DiagnosticFactory(year=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+        for valeur_NOT_OK in [1991]:
+            with self.subTest(year=valeur_NOT_OK):
+                diagnostic = DiagnosticFactory(year=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    def test_diagnostic_value_totale_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT = VALID_DIAGNOSTIC.copy()
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT.pop("value_totale")
+    def test_diagnostic_valeur_totale_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT.pop("valeur_totale")
         # should be a number (or None)
         for TUPLE_OK in [
             (1000, 1000),
@@ -65,65 +65,65 @@ class DiagnosticModelSaveTest(TransactionTestCase):
             (Decimal("1234.56"), Decimal("1234.56")),
             (None, None),
         ]:
-            with self.subTest(value_totale=TUPLE_OK[0]):
-                diagnostic = DiagnosticFactory(value_totale=TUPLE_OK[0], **VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT)
+            with self.subTest(valeur_totale=TUPLE_OK[0]):
+                diagnostic = DiagnosticFactory(valeur_totale=TUPLE_OK[0], **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT)
                 diagnostic.full_clean()
-                self.assertEqual(diagnostic.value_totale, TUPLE_OK[1])
-        for VALUE_NOT_OK in ["", "abcd"]:  # Decimal("1234.567")
-            with self.subTest(value_totale=VALUE_NOT_OK):
+                self.assertEqual(diagnostic.valeur_totale, TUPLE_OK[1])
+        for valeur_NOT_OK in ["", "abcd"]:  # Decimal("1234.567")
+            with self.subTest(valeur_totale=valeur_NOT_OK):
                 self.assertRaises(
                     (ValueError, ValidationError),
                     Diagnostic.objects.create,
-                    value_totale=VALUE_NOT_OK,
-                    **VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT,
+                    valeur_totale=valeur_NOT_OK,
+                    **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT,
                 )
         # should be > the sum of other fields
         self.assertEqual(
             sum(
-                VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT[k]
+                VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT[k]
                 for k in [
-                    "value_bio",
-                    "value_siqo",
-                    "value_externalites_performance",
-                    "value_egalim_autres",
+                    "valeur_bio",
+                    "valeur_siqo",
+                    "valeur_externalites_performance",
+                    "valeur_egalim_autres",
                 ]
             ),
             500,
         )
-        for VALUE_NOT_OK in [-100, 0, 100]:
-            with self.subTest(value_totale=VALUE_NOT_OK):
-                diagnostic = DiagnosticFactory(value_totale=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_TOTAL_HT)
+        for valeur_NOT_OK in [-100, 0, 100]:
+            with self.subTest(valeur_totale=valeur_NOT_OK):
+                diagnostic = DiagnosticFactory(valeur_totale=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    def test_diagnostic_value_viandes_volailles_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES = VALID_DIAGNOSTIC.copy()
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES.pop("value_viandes_volailles")
-        # should be >= value_viandes_volailles_egalim
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES["value_viandes_volailles_egalim"], 50)
-        for VALUE_NOT_OK in [-100, 0, 49]:
-            with self.subTest(value_viandes_volailles=VALUE_NOT_OK):
+    def test_diagnostic_valeur_viandes_volailles_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
+        # should be >= valeur_viandes_volailles_egalim
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES["valeur_viandes_volailles_egalim"], 50)
+        for valeur_NOT_OK in [-100, 0, 49]:
+            with self.subTest(valeur_viandes_volailles=valeur_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    value_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES
+                    valeur_viandes_volailles=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
-        # should be >= value_viandes_volailles_france
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES["value_viandes_volailles_france"], 20)
-        for VALUE_NOT_OK in [-100, 0, 19]:
-            with self.subTest(value_viandes_volailles=VALUE_NOT_OK):
+        # should be >= valeur_viandes_volailles_france
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES["valeur_viandes_volailles_france"], 20)
+        for valeur_NOT_OK in [-100, 0, 19]:
+            with self.subTest(valeur_viandes_volailles=valeur_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    value_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_VIANDES_VOLAILLES
+                    valeur_viandes_volailles=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    def test_diagnostic_value_produits_de_la_mer_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC.copy()
-        VALID_DIAGNOSTIC_WITHOUT_VALUE_PRODUITS_DE_LA_MER.pop("value_produits_de_la_mer")
-        # should be >= value_produits_de_la_mer_egalim
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALUE_PRODUITS_DE_LA_MER["value_produits_de_la_mer_egalim"], 40)
-        for VALUE_NOT_OK in [-100, 0, 39]:
-            with self.subTest(value_produits_de_la_mer=VALUE_NOT_OK):
+    def test_diagnostic_valeur_produits_de_la_mer_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER.pop("valeur_produits_de_la_mer")
+        # should be >= valeur_produits_de_la_mer_egalim
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER["valeur_produits_de_la_mer_egalim"], 40)
+        for valeur_NOT_OK in [-100, 0, 39]:
+            with self.subTest(valeur_produits_de_la_mer=valeur_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    value_produits_de_la_mer=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALUE_PRODUITS_DE_LA_MER
+                    valeur_produits_de_la_mer=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
@@ -150,7 +150,7 @@ class DiagnosticQuerySetTest(TestCase):
         Canteen.objects.filter(id=cls.canteen_missing_siret.id).update(siret="")  # siret missing
         cls.canteen_missing_siret.refresh_from_db()
         cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
-        cls.canteen_value_totale_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
+        cls.canteen_valeur_totale_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
         cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=1000)
         cls.canteen_deleted = CanteenFactory(
             siret="21730065600014",
@@ -174,11 +174,11 @@ class DiagnosticQuerySetTest(TestCase):
                 year=year_data,
                 creation_date=date_in_teledeclaration_campaign,
                 canteen=canteen,
-                value_totale=1000.00,
-                value_bio=200.00,
-                value_siqo=100.00,
-                value_externalites_performance=100.00,
-                value_egalim_autres=100.00,
+                valeur_totale=1000.00,
+                valeur_bio=200.00,
+                valeur_siqo=100.00,
+                valeur_externalites_performance=100.00,
+                valeur_egalim_autres=100.00,
             )
             with freeze_time(date_in_teledeclaration_campaign):
                 diagnostic.teledeclare(applicant=UserFactory())
@@ -187,8 +187,8 @@ class DiagnosticQuerySetTest(TestCase):
                 year=year_data - 1,
                 creation_date=date_in_last_teledeclaration_campaign,
                 canteen=canteen,
-                value_totale=1000.00,
-                value_bio=200.00,
+                valeur_totale=1000.00,
+                valeur_bio=200.00,
             )
             with freeze_time(date_in_last_teledeclaration_campaign):
                 diagnostic_last_year.teledeclare(applicant=UserFactory())
@@ -199,8 +199,8 @@ class DiagnosticQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.canteen_missing_siret,
-            value_totale=1000.00,
-            value_bio=200.00,
+            valeur_totale=1000.00,
+            valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory())
@@ -210,30 +210,30 @@ class DiagnosticQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.canteen_meal_price_aberrant,
-            value_totale=1000000.00,  # meal_price > 20
-            value_bio=200.00,
+            valeur_totale=1000000.00,  # meal_price > 20
+            valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_meal_price_aberrant.teledeclare(applicant=UserFactory())
 
-        cls.diagnostic_canteen_value_totale_aberrant = DiagnosticFactory(
+        cls.diagnostic_canteen_valeur_totale_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
-            canteen=cls.canteen_value_totale_aberrant,
-            value_totale=1000001.00,  # aberrant but meal_price < 20
-            value_bio=200.00,
+            canteen=cls.canteen_valeur_totale_aberrant,
+            valeur_totale=1000001.00,  # aberrant but meal_price < 20
+            valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_value_totale_aberrant.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_valeur_totale_aberrant.teledeclare(applicant=UserFactory())
 
         cls.diagnostic_canteen_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.canteen_aberrant,
-            value_totale=1000001.00,  # aberrant AND meal_price > 20
-            value_bio=200.00,
+            valeur_totale=1000001.00,  # aberrant AND meal_price > 20
+            valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_aberrant.teledeclare(applicant=UserFactory())
@@ -243,8 +243,8 @@ class DiagnosticQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.canteen_deleted,
-            value_totale=1000.00,
-            value_bio=200.00,
+            valeur_totale=1000.00,
+            valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_deleted.teledeclare(applicant=UserFactory())
@@ -326,27 +326,27 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.diagnostic_2024_simple_empty = DiagnosticFactory(
-            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, value_totale=None
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=None
         )
         cls.diagnostic_2024_simple_filled = DiagnosticFactory(
-            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, value_totale=1000
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
         )
         cls.diagnostic_2025_simple_empty = DiagnosticFactory(
             year=2025,
             canteen=CanteenFactory(),
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            value_totale=None,
-            value_bio=None,
+            valeur_totale=None,
+            valeur_bio=None,
         )
         cls.diagnostic_2025_simple_filled = DiagnosticFactory(
             year=2025,
             canteen=CanteenFactory(),
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            value_totale=1000,
-            value_bio=200,
-            value_siqo=100,
-            value_egalim_autres=100,
-            value_viandes_volailles_egalim=0,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_egalim_autres=100,
+            valeur_viandes_volailles_egalim=0,
         )
 
     def test_filled_queryset(self):
@@ -363,10 +363,10 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
 class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.diagnostic_empty_draft = DiagnosticFactory(canteen=CanteenFactory(), value_totale=None)
-        cls.diagnostic_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), value_totale=1000)
+        cls.diagnostic_empty_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=None)
+        cls.diagnostic_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=1000)
         cls.diagnostic_filled_submitted = DiagnosticFactory(
-            canteen=CanteenFactory(), value_totale=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED
+            canteen=CanteenFactory(), valeur_totale=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED
         )
 
     def test_teledeclared_queryset(self):
@@ -393,8 +393,8 @@ class DiagnosticModelTest(TestCase):
             year=year_data,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-            value_totale=1000,
-            value_bio=200,
+            valeur_totale=1000,
+            valeur_bio=200,
         )
 
     def test_delete_canteen(self):
@@ -432,7 +432,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
             year=year_data,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-            value_totale=0,
+            valeur_totale=0,
         )
 
     @freeze_time(date_in_last_teledeclaration_campaign)
@@ -442,7 +442,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_not_filled(self):
-        self.assertEqual(self.diagnostic.value_totale, 0)
+        self.assertEqual(self.diagnostic.valeur_totale, 0)
         with self.assertRaises(ValidationError):
             self.diagnostic.teledeclare(applicant=self.user)
 
@@ -458,11 +458,11 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertIsNone(self.diagnostic.teledeclaration_version)
         self.assertIsNone(self.diagnostic.teledeclaration_id)
         # fill the diagnostic
-        self.diagnostic.value_totale = 1000
-        self.diagnostic.value_bio = 200
-        self.diagnostic.value_siqo = 100
-        self.diagnostic.value_externalites_performance = 100
-        self.diagnostic.value_egalim_autres = 100
+        self.diagnostic.valeur_totale = 1000
+        self.diagnostic.valeur_bio = 200
+        self.diagnostic.valeur_siqo = 100
+        self.diagnostic.valeur_externalites_performance = 100
+        self.diagnostic.valeur_egalim_autres = 100
         self.diagnostic.save()
         # teledeclare
         self.diagnostic.teledeclare(applicant=self.user)
@@ -474,12 +474,12 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic.satellites_snapshot[0]["id"], self.canteen_sat.id)
         self.assertIsNotNone(self.diagnostic.applicant_snapshot)
         self.assertEqual(self.diagnostic.applicant_snapshot["email"], self.user.email)
-        self.assertEqual(self.diagnostic.value_bio_agg, 200)
-        self.assertEqual(self.diagnostic.value_siqo_agg, 100)
-        self.assertEqual(self.diagnostic.value_externalites_performance_agg, 100)
-        self.assertEqual(self.diagnostic.value_egalim_autres_agg, 100)
-        self.assertEqual(self.diagnostic.value_egalim_hors_bio_agg, 300)
-        self.assertEqual(self.diagnostic.value_egalim_agg, 500)
+        self.assertEqual(self.diagnostic.valeur_bio_agg, 200)
+        self.assertEqual(self.diagnostic.valeur_siqo_agg, 100)
+        self.assertEqual(self.diagnostic.valeur_externalites_performance_agg, 100)
+        self.assertEqual(self.diagnostic.valeur_egalim_autres_agg, 100)
+        self.assertEqual(self.diagnostic.valeur_egalim_hors_bio_agg, 300)
+        self.assertEqual(self.diagnostic.valeur_egalim_agg, 500)
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         self.assertEqual(self.diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
@@ -503,7 +503,7 @@ class DiagnosticModelCancelMethodTest(TestCase):
             year=year_data,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-            value_totale=1000,
+            valeur_totale=1000,
         )
 
     @freeze_time(date_in_last_teledeclaration_campaign)

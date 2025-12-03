@@ -101,8 +101,8 @@ class Command(BaseCommand):
                     diagnostic = None
                     if bio_percentage or siqo_percentage:
                         diagnostic = Diagnostic(
-                            value_bio=bio_percentage,
-                            value_siqo=siqo_percentage,
+                            valeur_bio=bio_percentage,
+                            valeur_siqo=siqo_percentage,
                             canteen=canteen,
                             year=2021,
                         )

@@ -8,9 +8,9 @@
       :rules="[
         validators.nonNegativeOrEmpty,
         validators.decimalPlaces(2),
-        validators.gteSum([diagnostic.valueBio, diagnostic.valueSiqo], totalErrorMessage),
+        validators.gteSum([diagnostic.valeurBio, diagnostic.valeurSiqo], totalErrorMessage),
       ]"
-      v-model.number="diagnostic.valueTotale"
+      v-model.number="diagnostic.valeurTotale"
       :readonly="readonly"
       :disabled="readonly"
       :messages="totalError ? [totalErrorMessage] : undefined"
@@ -22,7 +22,7 @@
     <DsfrCurrencyField
       :id="'bio-' + diagnostic.year"
       :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      v-model.number="diagnostic.valueBio"
+      v-model.number="diagnostic.valeurBio"
       :readonly="readonly"
       :disabled="readonly"
       @blur="checkTotal"
@@ -34,7 +34,7 @@
     <DsfrCurrencyField
       :id="'sustainable-' + diagnostic.year"
       :rules="[validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-      v-model.number="diagnostic.valueSiqo"
+      v-model.number="diagnostic.valeurSiqo"
       :readonly="readonly"
       :disabled="readonly"
       @blur="checkTotal"
@@ -74,9 +74,9 @@ export default {
   methods: {
     checkTotal() {
       const result = validators.gteSum(
-        [this.diagnostic.valueBio, this.diagnostic.valueSiqo],
+        [this.diagnostic.valeurBio, this.diagnostic.valeurSiqo],
         this.totalErrorMessage
-      )(this.diagnostic.valueTotale)
+      )(this.diagnostic.valeurTotale)
       this.totalError = result !== true
     },
   },

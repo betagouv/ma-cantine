@@ -12,23 +12,23 @@
               mdi-food-drumstick
             </v-icon>
           </div>
-          <label class="fr-text ml-4" :for="valueViandesVolailles + '' + diagnostic.year">
+          <label class="fr-text ml-4" :for="valeurViandesVolailles + '' + diagnostic.year">
             La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées
           </label>
         </div>
         <DsfrCurrencyField
-          :id="valueViandesVolailles + '' + diagnostic.year"
-          v-model.number="payload.valueViandesVolailles"
+          :id="valeurViandesVolailles + '' + diagnostic.year"
+          v-model.number="payload.valeurViandesVolailles"
           @blur="checkTotal"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="hasViandesVolaillesError"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueViandesVolailles"
+          v-model="payload.valeurViandesVolailles"
           @autofill="checkTotal"
           purchaseType="totaux viandes et volailles"
-          :amount="purchasesSummary.valueViandesVolailles"
+          :amount="purchasesSummary.valeurViandesVolailles"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
         <!-- Poissons -->
@@ -38,23 +38,23 @@
               mdi-fish
             </v-icon>
           </div>
-          <label class="fr-text ml-4" :for="valueProduitsDeLaMer + '' + diagnostic.year">
+          <label class="fr-text ml-4" :for="valeurProduitsDeLaMer + '' + diagnostic.year">
             La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture
           </label>
         </div>
         <DsfrCurrencyField
-          :id="valueProduitsDeLaMer + '' + diagnostic.year"
-          v-model.number="payload.valueProduitsDeLaMer"
+          :id="valeurProduitsDeLaMer + '' + diagnostic.year"
+          v-model.number="payload.valeurProduitsDeLaMer"
           :error="hasProduitsDeLaMerError"
           @blur="checkTotal"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueProduitsDeLaMer"
+          v-model="payload.valeurProduitsDeLaMer"
           @autofill="checkTotal"
           purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
-          :amount="purchasesSummary.valueProduitsDeLaMer"
+          :amount="purchasesSummary.valeurProduitsDeLaMer"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
       </v-col>
@@ -102,21 +102,21 @@ export default {
     const produitsDeLaMerLawFields = []
     const lawFields = tdGroups.egalim.fields.concat(tdGroups.nonEgalim.fields)
     lawFields.forEach((field) => {
-      if (field.startsWith("valueViandesVolailles")) viandesVolaillesLawFields.push(field)
-      else if (field.startsWith("valueProduitsDeLaMer")) produitsDeLaMerLawFields.push(field)
+      if (field.startsWith("valeurViandesVolailles")) viandesVolaillesLawFields.push(field)
+      else if (field.startsWith("valeurProduitsDeLaMer")) produitsDeLaMerLawFields.push(field)
     })
     const viandesVolaillesOutsideLawFields = []
     const produitsDeLaMerOutsideLawFields = []
     const outsideLawFields = [...tdGroups.outsideLaw.fields]
     outsideLawFields.forEach((field) => {
-      if (field.startsWith("valueViandesVolailles")) viandesVolaillesOutsideLawFields.push(field)
-      else if (field.startsWith("valueProduitsDeLaMer")) produitsDeLaMerOutsideLawFields.push(field)
+      if (field.startsWith("valeurViandesVolailles")) viandesVolaillesOutsideLawFields.push(field)
+      else if (field.startsWith("valeurProduitsDeLaMer")) produitsDeLaMerOutsideLawFields.push(field)
     })
 
     return {
       errorHelperFields: [],
       errorHelperUsed: false,
-      totalField: "valueTotale",
+      totalField: "valeurTotale",
       viandesVolaillesLawFields,
       viandesVolaillesOutsideLawFields,
       produitsDeLaMerLawFields,
@@ -173,33 +173,33 @@ export default {
     viandesVolaillesTotalErrorMessage() {
       if (!this.viandesVolaillesTotalError) return null
       return `Le total des achats viandes et volailles (${toCurrency(
-        this.payload.valueViandesVolailles
-      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valueTotale)})`
+        this.payload.valeurViandesVolailles
+      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valeurTotale)})`
     },
     produitsDeLaMerTotalErrorMessage() {
       if (!this.produitsDeLaMerTotalError) return null
       return `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
-        this.payload.valueProduitsDeLaMer
-      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valueTotale)})`
+        this.payload.valeurProduitsDeLaMer
+      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valeurTotale)})`
     },
     combinedTotalErrorMessage() {
       if (!this.combinedTotalError) return null
-      const totalFamilies = (this.payload.valueViandesVolailles || 0) + (this.payload.valueProduitsDeLaMer || 0)
+      const totalFamilies = (this.payload.valeurViandesVolailles || 0) + (this.payload.valeurProduitsDeLaMer || 0)
       return `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
         totalFamilies
-      )}) ne doit pas dépasser le total de tous les achats (${toCurrency(this.payload.valueTotale)})`
+      )}) ne doit pas dépasser le total de tous les achats (${toCurrency(this.payload.valeurTotale)})`
     },
     viandesVolaillesLawSubtotalErrorMessage() {
       if (!this.viandesVolaillesLawSubtotalError) return null
       const byLabel = this.sum(this.viandesVolaillesLawFields)
       return `Le total des achats viandes et volailles (${toCurrency(
-        this.payload.valueViandesVolailles
+        this.payload.valeurViandesVolailles
       )}) doit être supérieur à la somme des valeurs par label (${toCurrency(byLabel)})`
     },
     viandesVolaillesOutsideLawSubtotalErrorMessages() {
-      const fieldPrefix = "valueViandesVolailles"
+      const fieldPrefix = "valeurViandesVolailles"
       const outsideLawGroup = Constants.TeledeclarationCharacteristicGroups.outsideLaw
-      const totalField = this.payload.valueViandesVolailles
+      const totalField = this.payload.valeurViandesVolailles
       return this.viandesVolaillesOutsideLawSubtotalErrors.map((field) => {
         const characteristic = getCharacteristicFromField(field, fieldPrefix, outsideLawGroup)
         return `Le total des achats viandes et volailles (${toCurrency(
@@ -213,13 +213,13 @@ export default {
       if (!this.produitsDeLaMerLawSubtotalError) return null
       const byLabel = this.sum(this.produitsDeLaMerLawFields)
       return `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
-        this.payload.valueProduitsDeLaMer
+        this.payload.valeurProduitsDeLaMer
       )}) doit être supérieur à la somme des valeurs par label (${toCurrency(byLabel)})`
     },
     produitsDeLaMerOutsideLawSubtotalErrorMessages() {
-      const fieldPrefix = "valueProduitsDeLaMer"
+      const fieldPrefix = "valeurProduitsDeLaMer"
       const outsideLawGroup = Constants.TeledeclarationCharacteristicGroups.outsideLaw
-      const totalField = this.payload.valueProduitsDeLaMer
+      const totalField = this.payload.valeurProduitsDeLaMer
       return this.produitsDeLaMerOutsideLawSubtotalErrors.map((field) => {
         const characteristic = getCharacteristicFromField(field, fieldPrefix, outsideLawGroup)
         return `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
@@ -238,9 +238,9 @@ export default {
       this.combinedTotalError = false
 
       const d = this.payload
-      const total = d.valueTotale
-      const viandesVolaillesTotal = d.valueViandesVolailles
-      const produitsDeLaMerTotal = d.valueProduitsDeLaMer
+      const total = d.valeurTotale
+      const viandesVolaillesTotal = d.valeurViandesVolailles
+      const produitsDeLaMerTotal = d.valeurProduitsDeLaMer
 
       if (
         !this.viandesVolaillesTotalError &&
@@ -258,8 +258,8 @@ export default {
       this[`${family}OutsideLawSubtotalError`] = false
 
       const d = this.payload
-      const total = d.valueTotale
-      const familyTotal = family === "viandesVolailles" ? d.valueViandesVolailles : d.valueProduitsDeLaMer
+      const total = d.valeurTotale
+      const familyTotal = family === "viandesVolailles" ? d.valeurViandesVolailles : d.valeurProduitsDeLaMer
       if (!familyTotal) return
 
       if (familyTotal > total) {

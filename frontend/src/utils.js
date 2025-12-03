@@ -227,9 +227,9 @@ export const hasApproGraphData = (diagnostic) => {
 
 export const getSustainableTotal = (diagnostic) => {
   const sustainableSum =
-    (diagnostic.valueSiqo || 0) +
-    (diagnostic.valueExternalitesPerformance || 0) +
-    (diagnostic.valueEgalimAutres || 0) +
+    (diagnostic.valeurSiqo || 0) +
+    (diagnostic.valeurExternalitesPerformance || 0) +
+    (diagnostic.valeurEgalimAutres || 0) +
     (diagnostic.percentageValueSiqo || 0) +
     (diagnostic.percentageValueExternalitesPerformance || 0) +
     (diagnostic.percentageValueEgalimAutres || 0)
@@ -239,25 +239,25 @@ export const getSustainableTotal = (diagnostic) => {
 // returns a dict of integers (null/0-100) for the appro %
 export const getApproPercentages = (diagnostic) => {
   // two cases: 1) raw data in diagnostic; 2) only percentages in diagnostic
-  const valueTotal = diagnostic.percentageValueTotale || diagnostic.valueTotale
-  const valueBio = diagnostic.percentageValueBio || diagnostic.valueBio
-  const valueViandesVolaillesTotal = diagnostic.valueViandesVolailles || 1
-  const valueViandesVolaillesEgalim =
-    diagnostic.percentageValueViandesVolaillesEgalim || diagnostic.valueViandesVolaillesEgalim
-  const valueViandesVolaillesFrance =
-    diagnostic.percentageValueViandesVolaillesFrance || diagnostic.valueViandesVolaillesFrance
-  const valueProduitsDeLaMerTotal = diagnostic.valueProduitsDeLaMer || 1
-  const valueProduitsDeLaMerEgalim =
-    diagnostic.percentageValueProduitsDeLaMerEgalim || diagnostic.valueProduitsDeLaMerEgalim
+  const valeurTotal = diagnostic.percentageValueTotale || diagnostic.valeurTotale
+  const valeurBio = diagnostic.percentageValueBio || diagnostic.valeurBio
+  const valeurViandesVolaillesTotal = diagnostic.valeurViandesVolailles || 1
+  const valeurViandesVolaillesEgalim =
+    diagnostic.percentageValueViandesVolaillesEgalim || diagnostic.valeurViandesVolaillesEgalim
+  const valeurViandesVolaillesFrance =
+    diagnostic.percentageValueViandesVolaillesFrance || diagnostic.valeurViandesVolaillesFrance
+  const valeurProduitsDeLaMerTotal = diagnostic.valeurProduitsDeLaMer || 1
+  const valeurProduitsDeLaMerEgalim =
+    diagnostic.percentageValueProduitsDeLaMerEgalim || diagnostic.valeurProduitsDeLaMerEgalim
   const allSustainable = getSustainableTotal(diagnostic)
-  const allEgalim = (valueBio || 0) + (allSustainable || 0)
+  const allEgalim = (valeurBio || 0) + (allSustainable || 0)
   return {
-    bio: getPercentage(valueBio, valueTotal),
-    allSustainable: getPercentage(allSustainable, valueTotal),
-    egalim: getPercentage(allEgalim, valueTotal),
-    viandesVolaillesEgalim: getPercentage(valueViandesVolaillesEgalim, valueViandesVolaillesTotal),
-    viandesVolaillesFrance: getPercentage(valueViandesVolaillesFrance, valueViandesVolaillesTotal),
-    produitsDeLaMerEgalim: getPercentage(valueProduitsDeLaMerEgalim, valueProduitsDeLaMerTotal),
+    bio: getPercentage(valeurBio, valeurTotal),
+    allSustainable: getPercentage(allSustainable, valeurTotal),
+    egalim: getPercentage(allEgalim, valeurTotal),
+    viandesVolaillesEgalim: getPercentage(valeurViandesVolaillesEgalim, valeurViandesVolaillesTotal),
+    viandesVolaillesFrance: getPercentage(valeurViandesVolaillesFrance, valeurViandesVolaillesTotal),
+    produitsDeLaMerEgalim: getPercentage(valeurProduitsDeLaMerEgalim, valeurProduitsDeLaMerTotal),
   }
 }
 
@@ -460,10 +460,10 @@ export const toCurrency = (value) => {
 }
 
 export const approTotals = (diagnostic) => {
-  let bioTotal = diagnostic.valueBio
-  let siqoTotal = diagnostic.valueSiqo
-  let externalitesPerformanceTotal = diagnostic.valueExternalitesPerformance
-  let egalimAutresTotal = diagnostic.valueEgalimAutres
+  let bioTotal = diagnostic.valeurBio
+  let siqoTotal = diagnostic.valeurSiqo
+  let externalitesPerformanceTotal = diagnostic.valeurExternalitesPerformance
+  let egalimAutresTotal = diagnostic.valeurEgalimAutres
   const usesExtendedDiagnostic = diagnostic.diagnosticType === "COMPLETE"
   if (usesExtendedDiagnostic) {
     bioTotal = 0
@@ -476,8 +476,8 @@ export const approTotals = (diagnostic) => {
       if (value) {
         if (field.endsWith("Bio")) {
           bioTotal += value
+          // TODO: manage Ht
         } else if (!field.startsWith("valueLabel") && !field.endsWith("Ht")) {
-          // TODO: manage
           if (field.endsWith("LabelRouge") || field.endsWith("AocaopIgpStg")) {
             siqoTotal += value
           } else if (field.endsWith("Performance") || field.endsWith("Externalites")) {
@@ -502,7 +502,7 @@ export const approTotals = (diagnostic) => {
 }
 
 export const approSummary = (diagnostic) => {
-  if (diagnostic.valueTotale > 0) {
+  if (diagnostic.valeurTotale > 0) {
     const { bioTotal, siqoTotal, externalitesPerformanceTotal, egalimAutresTotal } = approTotals(diagnostic)
     let qualityTotal
     if (siqoTotal || externalitesPerformanceTotal || egalimAutresTotal) {
@@ -510,10 +510,10 @@ export const approSummary = (diagnostic) => {
     }
     let summary = []
     if (hasValue(bioTotal)) {
-      summary.push(`${getPercentage(bioTotal, diagnostic.valueTotale)} % bio`)
+      summary.push(`${getPercentage(bioTotal, diagnostic.valeurTotale)} % bio`)
     }
     if (hasValue(qualityTotal)) {
-      summary.push(`${getPercentage(qualityTotal, diagnostic.valueTotale)} % de qualité et durable`)
+      summary.push(`${getPercentage(qualityTotal, diagnostic.valeurTotale)} % de qualité et durable`)
     }
     return summary.join(", ")
   }

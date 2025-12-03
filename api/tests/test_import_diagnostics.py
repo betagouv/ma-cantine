@@ -63,16 +63,16 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
         diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
         self.assertEqual(diagnostic.year, 2021)
-        self.assertEqual(diagnostic.value_totale, 1000)
-        self.assertEqual(diagnostic.value_bio, 500)
-        self.assertEqual(diagnostic.value_siqo, Decimal("100.1"))
-        self.assertEqual(diagnostic.value_externalites_performance, 10)
-        self.assertEqual(diagnostic.value_egalim_autres, 20)
-        self.assertEqual(diagnostic.value_viandes_volailles, 30)
-        self.assertEqual(diagnostic.value_viandes_volailles_egalim, 1)
-        self.assertEqual(diagnostic.value_viandes_volailles_france, 2)
-        self.assertEqual(diagnostic.value_produits_de_la_mer, 4)
-        self.assertEqual(diagnostic.value_produits_de_la_mer_egalim, 3)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(diagnostic.valeur_bio, 500)
+        self.assertEqual(diagnostic.valeur_siqo, Decimal("100.1"))
+        self.assertEqual(diagnostic.valeur_externalites_performance, 10)
+        self.assertEqual(diagnostic.valeur_egalim_autres, 20)
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 30)
+        self.assertEqual(diagnostic.valeur_viandes_volailles_egalim, 1)
+        self.assertEqual(diagnostic.valeur_viandes_volailles_france, 2)
+        self.assertEqual(diagnostic.valeur_produits_de_la_mer, 4)
+        self.assertEqual(diagnostic.valeur_produits_de_la_mer_egalim, 3)
         self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic.creation_source, CreationSource.IMPORT)
         self.assertIn("seconds", body)
@@ -590,9 +590,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(body["count"], 2)
         finished_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2021)
         self.assertEqual(finished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
-        self.assertEqual(finished_diag.value_totale, 10500)
-        self.assertEqual(finished_diag.value_viandes_volailles, 800)
-        self.assertEqual(finished_diag.value_produits_de_la_mer, 900)
+        self.assertEqual(finished_diag.valeur_totale, 10500)
+        self.assertEqual(finished_diag.valeur_viandes_volailles, 800)
+        self.assertEqual(finished_diag.valeur_produits_de_la_mer, 900)
         self.assertEqual(finished_diag.label_sum("bio"), 80)
         self.assertEqual(finished_diag.label_sum("label_rouge"), 90)
         self.assertEqual(finished_diag.label_sum("aocaop_igp_stg"), 100)
@@ -616,19 +616,19 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(finished_diag.family_sum("boissons"), 110)
         self.assertEqual(finished_diag.family_sum("autres"), 660)
         # auto-calculated simplified fields
-        self.assertEqual(finished_diag.value_bio, 80)
-        self.assertEqual(finished_diag.value_siqo, 190)
-        self.assertEqual(finished_diag.value_externalites_performance, 330)
-        self.assertEqual(finished_diag.value_egalim_autres, 650)
-        self.assertEqual(finished_diag.value_viandes_volailles_egalim, 100)
-        self.assertEqual(finished_diag.value_produits_de_la_mer_egalim, 100)
+        self.assertEqual(finished_diag.valeur_bio, 80)
+        self.assertEqual(finished_diag.valeur_siqo, 190)
+        self.assertEqual(finished_diag.valeur_externalites_performance, 330)
+        self.assertEqual(finished_diag.valeur_egalim_autres, 650)
+        self.assertEqual(finished_diag.valeur_viandes_volailles_egalim, 100)
+        self.assertEqual(finished_diag.valeur_produits_de_la_mer_egalim, 100)
 
         unfinished_diag = Diagnostic.objects.get(canteen__siret="29969025300230", year=2022)
         self.assertEqual(unfinished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
-        self.assertEqual(unfinished_diag.value_totale, 30300)  # picked a field at random to smoke test
-        self.assertEqual(unfinished_diag.value_viandes_volailles, None)
-        self.assertEqual(unfinished_diag.value_produits_de_la_mer, 10)
-        self.assertEqual(unfinished_diag.value_autres_label_rouge, None)  # picked a field at random to smoke test
+        self.assertEqual(unfinished_diag.valeur_totale, 30300)  # picked a field at random to smoke test
+        self.assertEqual(unfinished_diag.valeur_viandes_volailles, None)
+        self.assertEqual(unfinished_diag.valeur_produits_de_la_mer, 10)
+        self.assertEqual(unfinished_diag.valeur_autres_label_rouge, None)  # picked a field at random to smoke test
 
     @authenticate
     def test_complete_diagnostic_error_collection(self, mock):
@@ -815,9 +815,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 1)
         diagnostic = Diagnostic.objects.first()
 
-        self.assertEqual(diagnostic.value_totale, 1000)
-        self.assertIsNone(diagnostic.value_bio)
-        self.assertEqual(diagnostic.value_siqo, 0)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertIsNone(diagnostic.valeur_bio)
+        self.assertEqual(diagnostic.valeur_siqo, 0)
 
     @authenticate
     def test_mandatory_total_simplified(self, mock):
@@ -895,9 +895,9 @@ class TestImportDiagnosticsAPI(APITestCase):
         finished_diag.central_kitchen_diagnostic_mode = Diagnostic.CentralKitchenDiagnosticMode.APPRO
 
         self.assertEqual(finished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
-        self.assertEqual(finished_diag.value_totale, 10500)
-        self.assertEqual(finished_diag.value_viandes_volailles, 800)
-        self.assertEqual(finished_diag.value_produits_de_la_mer, 900)
+        self.assertEqual(finished_diag.valeur_totale, 10500)
+        self.assertEqual(finished_diag.valeur_viandes_volailles, 800)
+        self.assertEqual(finished_diag.valeur_produits_de_la_mer, 900)
         self.assertEqual(finished_diag.label_sum("bio"), 80)
         self.assertEqual(finished_diag.label_sum("label_rouge"), 90)
         self.assertEqual(finished_diag.label_sum("aocaop_igp_stg"), 100)
@@ -921,21 +921,21 @@ class TestImportDiagnosticsAPI(APITestCase):
         self.assertEqual(finished_diag.family_sum("boissons"), 110)
         self.assertEqual(finished_diag.family_sum("autres"), 660)
         # auto-calculated simplified fields
-        self.assertEqual(finished_diag.value_bio, 80)
-        self.assertEqual(finished_diag.value_siqo, 190)
-        self.assertEqual(finished_diag.value_externalites_performance, 330)
-        self.assertEqual(finished_diag.value_egalim_autres, 650)
-        self.assertEqual(finished_diag.value_viandes_volailles_egalim, 100)
-        self.assertEqual(finished_diag.value_produits_de_la_mer_egalim, 100)
+        self.assertEqual(finished_diag.valeur_bio, 80)
+        self.assertEqual(finished_diag.valeur_siqo, 190)
+        self.assertEqual(finished_diag.valeur_externalites_performance, 330)
+        self.assertEqual(finished_diag.valeur_egalim_autres, 650)
+        self.assertEqual(finished_diag.valeur_viandes_volailles_egalim, 100)
+        self.assertEqual(finished_diag.valeur_produits_de_la_mer_egalim, 100)
 
         unfinished_diag = Diagnostic.objects.get(canteen__siret="96463820453707", year=2022)
         unfinished_diag.central_kitchen_diagnostic_mode = Diagnostic.CentralKitchenDiagnosticMode.APPRO
 
         self.assertEqual(unfinished_diag.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
-        self.assertEqual(unfinished_diag.value_totale, 30300)
-        self.assertEqual(unfinished_diag.value_viandes_volailles, None)
-        self.assertEqual(unfinished_diag.value_produits_de_la_mer, 10)
-        self.assertEqual(unfinished_diag.value_autres_label_rouge, None)
+        self.assertEqual(unfinished_diag.valeur_totale, 30300)
+        self.assertEqual(unfinished_diag.valeur_viandes_volailles, None)
+        self.assertEqual(unfinished_diag.valeur_produits_de_la_mer, 10)
+        self.assertEqual(unfinished_diag.valeur_autres_label_rouge, None)
 
     @authenticate
     def test_success_cuisine_centrale_complete_update_satellites(self, mock):
@@ -1040,19 +1040,19 @@ class TestImportDiagnosticsAPI(APITestCase):
         cc1_diag.central_kitchen_diagnostic_mode = Diagnostic.CentralKitchenDiagnosticMode.APPRO
 
         self.assertEqual(cc1_diag.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
-        self.assertEqual(cc1_diag.value_totale, 10500)
-        self.assertEqual(cc1_diag.value_bio, 500)
-        self.assertEqual(cc1_diag.value_siqo, Decimal("100.10"))
-        self.assertEqual(cc1_diag.value_viandes_volailles, 0)
-        self.assertEqual(cc1_diag.value_produits_de_la_mer, 0)
+        self.assertEqual(cc1_diag.valeur_totale, 10500)
+        self.assertEqual(cc1_diag.valeur_bio, 500)
+        self.assertEqual(cc1_diag.valeur_siqo, Decimal("100.10"))
+        self.assertEqual(cc1_diag.valeur_viandes_volailles, 0)
+        self.assertEqual(cc1_diag.valeur_produits_de_la_mer, 0)
 
         cc2_diag = Diagnostic.objects.get(canteen__siret="96463820453707", year=2022)
         cc2_diag.central_kitchen_diagnostic_mode = Diagnostic.CentralKitchenDiagnosticMode.APPRO
 
         self.assertEqual(cc2_diag.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
-        self.assertEqual(cc2_diag.value_totale, 30300)
-        self.assertEqual(cc2_diag.value_viandes_volailles, 6000)
-        self.assertEqual(cc2_diag.value_produits_de_la_mer, 3000)
+        self.assertEqual(cc2_diag.valeur_totale, 30300)
+        self.assertEqual(cc2_diag.valeur_viandes_volailles, 6000)
+        self.assertEqual(cc2_diag.valeur_produits_de_la_mer, 3000)
 
     @authenticate
     def test_success_cuisine_centrale_simple_update_satellites(self, mock):
@@ -1122,7 +1122,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         with data in import file
         """
         canteen = CanteenFactory(siret="21340172201787", name="Old name", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, value_totale=1, value_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, valeur_totale=1, valeur_bio=0.2)
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
@@ -1133,7 +1133,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         canteen.refresh_from_db()
         self.assertEqual(canteen.name, "A canteen")
         diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.value_totale, 1000)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
 
     @authenticate
     def test_update_diagnostic_conditional_on_teledeclaration_status(self, mock):
@@ -1143,7 +1143,7 @@ class TestImportDiagnosticsAPI(APITestCase):
         """
         date_in_2022_teledeclaration_campaign = "2022-08-30"
         canteen = CanteenFactory(siret="21340172201787", name="Old name", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, value_totale=1, value_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, valeur_totale=1, valeur_bio=0.2)
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -1161,7 +1161,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             canteen.refresh_from_db()
             self.assertEqual(canteen.name, "Old name")
             diagnostic.refresh_from_db()
-            self.assertEqual(diagnostic.value_totale, 1)
+            self.assertEqual(diagnostic.valeur_totale, 1)
 
             # now test cancelled TD
             diagnostic.cancel()
@@ -1174,7 +1174,7 @@ class TestImportDiagnosticsAPI(APITestCase):
             canteen.refresh_from_db()
             self.assertEqual(canteen.name, "A canteen")
             diagnostic.refresh_from_db()
-            self.assertEqual(diagnostic.value_totale, 1000)
+            self.assertEqual(diagnostic.valeur_totale, 1000)
 
     @authenticate
     def test_encoding_autodetect_utf_8(self, mock):
@@ -1271,4 +1271,6 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         self.assertEqual(canteen.city_insee_code, "07293")
         self.assertEqual(canteen.postal_code, "07130")
         self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
+        self.assertEqual(canteen.department, Department.ardeche)
+        self.assertEqual(canteen.department, Department.ardeche)
         self.assertEqual(canteen.department, Department.ardeche)

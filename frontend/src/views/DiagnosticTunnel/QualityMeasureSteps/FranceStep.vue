@@ -7,24 +7,24 @@
         <div>
           <div class="d-block d-sm-flex align-center">
             <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
-            <label for="valueViandesVolaillesFrance">
+            <label for="valeurViandesVolaillesFrance">
               Total (en € HT) de mes achats origine France - Viandes et volailles
               <span class="fr-hint-text mt-2">Optionnel</span>
             </label>
           </div>
           <DsfrCurrencyField
-            id="valueViandesVolaillesFrance"
-            v-model.number="payload.valueViandesVolaillesFrance"
+            id="valeurViandesVolaillesFrance"
+            v-model.number="payload.valeurViandesVolaillesFrance"
             @blur="updatePayload"
             :error="totalFranceViandesVolaillesError"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           />
           <PurchaseHint
             v-if="displayPurchaseHints"
-            v-model="payload.valueViandesVolaillesFrance"
+            v-model="payload.valeurViandesVolaillesFrance"
             @autofill="updatePayload"
             purchaseType="« viandes et volailles origine France »"
-            :amount="purchasesSummary.valueViandesVolaillesFrance"
+            :amount="purchasesSummary.valeurViandesVolaillesFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
@@ -33,39 +33,39 @@
         <div class="mt-4">
           <div class="d-block d-sm-flex align-center">
             <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
-            <label for="valueProduitsDeLaMerFrance">
+            <label for="valeurProduitsDeLaMerFrance">
               Total (en € HT) de mes achats origine France - Poissons, produits de la mer et de l'aquaculture
               <span class="fr-hint-text mt-2">Optionnel</span>
             </label>
           </div>
           <DsfrCurrencyField
-            id="valueProduitsDeLaMerFrance"
-            v-model.number="payload.valueProduitsDeLaMerFrance"
+            id="valeurProduitsDeLaMerFrance"
+            v-model.number="payload.valeurProduitsDeLaMerFrance"
             :error="produitsDeLaMerError"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           />
           <PurchaseHint
             v-if="displayPurchaseHints"
-            v-model="payload.valueProduitsDeLaMerFrance"
+            v-model="payload.valeurProduitsDeLaMerFrance"
             @autofill="updatePayload"
             purchaseType="« poissons, produits de la mer et de l'aquaculture origine France »"
-            :amount="purchasesSummary.valueProduitsDeLaMerFrance"
+            :amount="purchasesSummary.valeurProduitsDeLaMerFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
 
         <!-- Charcuterie -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="valueCharcuterieFrance">
+          <label class="ml-4 ml-md-0" for="valeurCharcuterieFrance">
             Total (en € HT) de mes achats origine France - Charcuterie
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="valueCharcuterieFrance"
-            v-model.number="payload.valueCharcuterieFrance"
+            id="valeurCharcuterieFrance"
+            v-model.number="payload.valeurCharcuterieFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -73,25 +73,25 @@
           />
           <PurchaseHint
             v-if="displayPurchaseHints"
-            v-model="payload.valueCharcuterieFrance"
+            v-model="payload.valeurCharcuterieFrance"
             @autofill="updatePayload"
             purchaseType="« charcuterie origine France »"
-            :amount="purchasesSummary.valueCharcuterieFrance"
+            :amount="purchasesSummary.valeurCharcuterieFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
 
         <!-- FruitsEtLegumes -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="valueFruitsEtLegumesFrance">
+          <label class="ml-4 ml-md-0" for="valeurFruitsEtLegumesFrance">
             Total (en € HT) de mes achats origine France - Fruits et légumes frais et surgelés
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="valueFruitsEtLegumesFrance"
-            v-model.number="payload.valueFruitsEtLegumesFrance"
+            id="valeurFruitsEtLegumesFrance"
+            v-model.number="payload.valeurFruitsEtLegumesFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -99,25 +99,25 @@
           />
           <PurchaseHint
             v-if="displayPurchaseHints"
-            v-model="payload.valueFruitsEtLegumesFrance"
+            v-model="payload.valeurFruitsEtLegumesFrance"
             @autofill="updatePayload"
             purchaseType="« fruits et légumes frais et surgelés origine France origine France »"
-            :amount="purchasesSummary.valueFruitsEtLegumesFrance"
+            :amount="purchasesSummary.valeurFruitsEtLegumesFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
 
         <!-- BOF (Produits laitiers, beurre et œufs) -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="valueProduitsLaitiersFrance">
+          <label class="ml-4 ml-md-0" for="valeurProduitsLaitiersFrance">
             Total (en € HT) de mes achats origine France - BOF (Produits laitiers, beurre et œufs)
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="valueProduitsLaitiersFrance"
-            v-model.number="payload.valueProduitsLaitiersFrance"
+            id="valeurProduitsLaitiersFrance"
+            v-model.number="payload.valeurProduitsLaitiersFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -125,25 +125,25 @@
           />
           <PurchaseHint
             v-if="displayPurchaseHints"
-            v-model="payload.valueProduitsLaitiersFrance"
+            v-model="payload.valeurProduitsLaitiersFrance"
             @autofill="updatePayload"
             purchaseType="« BOF (Produits laitiers, beurre et œufs) origine France »"
-            :amount="purchasesSummary.valueProduitsLaitiersFrance"
+            :amount="purchasesSummary.valeurProduitsLaitiersFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
 
         <!-- Boulangerie / Pâtisserie fraîches -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="valueBoulangerieFrance">
+          <label class="ml-4 ml-md-0" for="valeurBoulangerieFrance">
             Total (en € HT) de mes achats origine France - Boulangerie / Pâtisserie fraîches
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="valueBoulangerieFrance"
-            v-model.number="payload.valueBoulangerieFrance"
+            id="valeurBoulangerieFrance"
+            v-model.number="payload.valeurBoulangerieFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -151,25 +151,25 @@
           />
           <PurchaseHint
             v-if="displayPurchaseHints"
-            v-model="payload.valueBoulangerieFrance"
+            v-model="payload.valeurBoulangerieFrance"
             @autofill="updatePayload"
             purchaseType="« boulangerie / pâtisserie fraîches origine France »"
-            :amount="purchasesSummary.valueBoulangerieFrance"
+            :amount="purchasesSummary.valeurBoulangerieFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
 
         <!-- Boissons -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="valueBoissonsFrance">
+          <label class="ml-4 ml-md-0" for="valeurBoissonsFrance">
             Total (en € HT) de mes achats origine France - Boissons
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="valueBoissonsFrance"
-            v-model.number="payload.valueBoissonsFrance"
+            id="valeurBoissonsFrance"
+            v-model.number="payload.valeurBoissonsFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -177,25 +177,25 @@
           />
           <PurchaseHint
             v-if="displayPurchaseHints"
-            v-model="payload.valueBoissonsFrance"
+            v-model="payload.valeurBoissonsFrance"
             @autofill="updatePayload"
             purchaseType="« boissons origine France »"
-            :amount="purchasesSummary.valueBoissonsFrance"
+            :amount="purchasesSummary.valeurBoissonsFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
 
         <!-- Autres produits frais, surgelés et d’épicerie -->
         <div class="mt-4">
-          <label class="ml-4 ml-md-0" for="valueAutresFrance">
+          <label class="ml-4 ml-md-0" for="valeurAutresFrance">
             Total (en € HT) de mes achats origine France - Autres produits frais, surgelés et d’épicerie
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
           </label>
           <DsfrCurrencyField
-            id="valueAutresFrance"
-            v-model.number="payload.valueAutresFrance"
+            id="valeurAutresFrance"
+            v-model.number="payload.valeurAutresFrance"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             :error="totalError"
@@ -203,10 +203,10 @@
           />
           <PurchaseHint
             v-if="displayPurchaseHints"
-            v-model="payload.valueAutresFrance"
+            v-model="payload.valeurAutresFrance"
             @autofill="updatePayload"
             purchaseType="« autres produits frais, surgelés et d’épicerie origine France »"
-            :amount="purchasesSummary.valueAutresFrance"
+            :amount="purchasesSummary.valeurAutresFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
@@ -263,7 +263,7 @@ export default {
     return {
       totalErrorMessage: null,
       errorHelperUsed: false,
-      errorHelperFields: ["valueTotale"],
+      errorHelperFields: ["valeurTotale"],
     }
   },
   computed: {
@@ -293,25 +293,25 @@ export default {
 
       const d = this.payload
       const sumFrance = this.sumAllFrance()
-      const total = d.valueTotale
+      const total = d.valeurTotale
 
       if (sumFrance > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
-          d.valueTotale
+          d.valeurTotale
         )}) doit être plus élévé que la somme des valeurs origine France (${toCurrency(sumFrance || 0)})`
       }
     },
     sumAllFrance() {
       const d = this.payload
       const franceValues = [
-        d.valueViandesVolaillesFrance,
-        d.valueCharcuterieFrance,
-        d.valueFruitsLegumesFrance,
-        d.valueBoeufFrance,
-        d.valueBoulangerieFrance,
-        d.valueBoissonsFrance,
-        d.valueAutresFrance,
-        d.valueProduitsDeLaMerFrance,
+        d.valeurViandesVolaillesFrance,
+        d.valeurCharcuterieFrance,
+        d.valeurFruitsLegumesFrance,
+        d.valeurBoeufFrance,
+        d.valeurBoulangerieFrance,
+        d.valeurBoissonsFrance,
+        d.valeurAutresFrance,
+        d.valeurProduitsDeLaMerFrance,
       ]
       let total = 0
       franceValues.forEach((val) => {

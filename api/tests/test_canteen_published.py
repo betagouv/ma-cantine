@@ -349,101 +349,101 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=good_canteen,
             year=publication_year,
-            value_totale=100,
-            value_bio=30,
-            value_siqo=10,
-            value_externalites_performance=10,
-            value_egalim_autres=10,
+            valeur_totale=100,
+            valeur_bio=30,
+            valeur_siqo=10,
+            valeur_externalites_performance=10,
+            valeur_egalim_autres=10,
         )
         DiagnosticFactory(
             canteen=central,
             year=publication_year,
-            value_totale=100,
-            value_bio=30,
-            value_siqo=10,
-            value_externalites_performance=10,
-            value_egalim_autres=10,
+            valeur_totale=100,
+            valeur_bio=30,
+            valeur_siqo=10,
+            valeur_externalites_performance=10,
+            valeur_egalim_autres=10,
         )
         DiagnosticFactory(
             canteen=secretly_good_canteen,
             year=publication_year,
-            value_totale=100,
-            value_bio=30,
-            value_siqo=30,
-            value_externalites_performance=0,
-            value_egalim_autres=0,
+            valeur_totale=100,
+            valeur_bio=30,
+            valeur_siqo=30,
+            valeur_externalites_performance=0,
+            valeur_egalim_autres=0,
         )
         DiagnosticFactory(
             canteen=medium_canteen,
             year=publication_year,
-            value_totale=1000,
-            value_bio=150,
-            value_siqo=350,
-            value_externalites_performance=None,
-            value_egalim_autres=None,
+            valeur_totale=1000,
+            valeur_bio=150,
+            valeur_siqo=350,
+            valeur_externalites_performance=None,
+            valeur_egalim_autres=None,
         )
         DiagnosticFactory(
             canteen=siqo_canteen,
             year=publication_year,
-            value_totale=100,
-            value_bio=None,
-            value_siqo=None,
-            value_externalites_performance=40,
-            value_egalim_autres=20,
+            valeur_totale=100,
+            valeur_bio=None,
+            valeur_siqo=None,
+            valeur_externalites_performance=40,
+            valeur_egalim_autres=20,
         )
         DiagnosticFactory(
             canteen=bad_canteen,
             year=2019,
-            value_totale=100,
-            value_bio=30,
-            value_siqo=30,
-            value_externalites_performance=0,
-            value_egalim_autres=0,
+            valeur_totale=100,
+            valeur_bio=30,
+            valeur_siqo=30,
+            valeur_externalites_performance=0,
+            valeur_egalim_autres=0,
         )
         DiagnosticFactory(
             canteen=bad_canteen,
             year=publication_year,
-            value_totale=10,
-            value_bio=0,
-            value_siqo=0,
-            value_externalites_performance=0,
-            value_egalim_autres=0,
+            valeur_totale=10,
+            valeur_bio=0,
+            valeur_siqo=0,
+            valeur_externalites_performance=0,
+            valeur_egalim_autres=0,
         )
         DiagnosticFactory(
             canteen=guadeloupe_canteen,
             year=publication_year,
-            value_totale=100,
-            value_bio=5,
-            value_siqo=15,
-            value_externalites_performance=None,
-            value_egalim_autres=0,
+            valeur_totale=100,
+            valeur_bio=5,
+            valeur_siqo=15,
+            valeur_externalites_performance=None,
+            valeur_egalim_autres=0,
         )
         DiagnosticFactory(
             canteen=good_canteen_with_siren,
             year=publication_year,
-            value_totale=100,
-            value_bio=30,
-            value_siqo=10,
-            value_externalites_performance=10,
-            value_egalim_autres=10,
+            valeur_totale=100,
+            valeur_bio=30,
+            valeur_siqo=10,
+            valeur_externalites_performance=10,
+            valeur_egalim_autres=10,
         )
         DiagnosticFactory(
             canteen=good_canteen_empty_siret,
             year=publication_year,
-            value_totale=100,
-            value_bio=1,
-            value_siqo=0,
-            value_externalites_performance=0,
-            value_egalim_autres=0,
+            valeur_totale=100,
+            valeur_bio=1,
+            valeur_siqo=0,
+            valeur_externalites_performance=0,
+            valeur_egalim_autres=0,
         )
         DiagnosticFactory(
             canteen=good_canteen_siret_none,
             year=publication_year,
-            value_totale=100,
-            value_bio=1,
-            value_siqo=0,
-            value_externalites_performance=0,
-            value_egalim_autres=0,
+            valeur_totale=100,
+            valeur_bio=1,
+            valeur_siqo=0,
+            valeur_externalites_performance=0,
+            valeur_egalim_autres=0,
         )
 
         self.assertEqual(Canteen.objects.count(), 13)
@@ -684,8 +684,8 @@ class PublishedCanteenDetailApiTest(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2020,
-            value_totale=1200,
-            value_bio=600,
+            valeur_totale=1200,
+            valeur_bio=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
@@ -700,8 +700,8 @@ class PublishedCanteenDetailApiTest(APITestCase):
 
         serialized_diagnostic = body.get("approDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
-        self.assertEqual(serialized_diagnostic["percentageValueTotale"], 1)
-        self.assertEqual(serialized_diagnostic["percentageValueBio"], 0.5)
+        self.assertEqual(serialized_diagnostic["percentageValeurTotale"], 1)
+        self.assertEqual(serialized_diagnostic["percentageValeurBio"], 0.5)
 
     def test_satellite_published_without_bio(self):
         central_siret = "22730656663081"
@@ -714,8 +714,8 @@ class PublishedCanteenDetailApiTest(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2020,
-            value_totale=1200,
-            value_bio=None,
+            valeur_totale=1200,
+            valeur_bio=None,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
@@ -729,8 +729,8 @@ class PublishedCanteenDetailApiTest(APITestCase):
 
         serialized_diagnostic = body.get("approDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
-        self.assertEqual(serialized_diagnostic["percentageValueTotale"], 1)
-        self.assertNotIn("percentageValueBio", serialized_diagnostic)
+        self.assertEqual(serialized_diagnostic["percentageValeurTotale"], 1)
+        self.assertNotIn("percentageValeurBio", serialized_diagnostic)
 
     def test_satellite_published_no_type(self):
         """
@@ -746,8 +746,8 @@ class PublishedCanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=central_kitchen,
             year=2020,
-            value_totale=1200,
-            value_bio=600,
+            valeur_totale=1200,
+            valeur_bio=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=None,
         )
@@ -773,8 +773,8 @@ class PublishedCanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=central_kitchen,
             year=2020,
-            value_totale=1200,
-            value_bio=600,
+            valeur_totale=1200,
+            valeur_bio=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
@@ -782,12 +782,12 @@ class PublishedCanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
-            value_totale=1200,
-            value_bio=600,
+            valeur_totale=1200,
+            valeur_bio=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-            value_produits_de_la_mer=100,
-            value_produits_de_la_mer_egalim=80,
+            valeur_produits_de_la_mer=100,
+            valeur_produits_de_la_mer_egalim=80,
         )
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
@@ -801,15 +801,15 @@ class PublishedCanteenDetailApiTest(APITestCase):
         appro_diag_2021 = next(filter(lambda x: x["year"] == 2021, appro_diagnostics))
         service_diag_2021 = body.get("serviceDiagnostics")[0]
 
-        self.assertIn("percentageValueTotale", appro_diag_2020)
+        self.assertIn("percentageValeurTotale", appro_diag_2020)
         self.assertNotIn("hasWasteDiagnostic", appro_diag_2020)
 
-        self.assertIn("percentageValueTotale", appro_diag_2021)
+        self.assertIn("percentageValeurTotale", appro_diag_2021)
         self.assertIn("hasWasteDiagnostic", service_diag_2021)
-        self.assertNotIn("valueViandesVolaillesEgalim", appro_diag_2021)
-        # self.assertIn("percentageValueViandesVolaillesEgalim", appro_diag_2021)
-        self.assertNotIn("valueProduitsDeLaMerEgalim", appro_diag_2021)
-        self.assertIn("percentageValueProduitsDeLaMerEgalim", appro_diag_2021)
+        self.assertNotIn("valeurViandesVolaillesEgalim", appro_diag_2021)
+        # self.assertIn("percentageValeurViandesVolaillesEgalim", appro_diag_2021)
+        self.assertNotIn("valeurProduitsDeLaMerEgalim", appro_diag_2021)
+        self.assertIn("percentageValeurProduitsDeLaMerEgalim", appro_diag_2021)
 
     def test_percentage_values(self):
         """
@@ -820,13 +820,13 @@ class PublishedCanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=canteen,
             year=2021,
-            value_totale=1200,
-            value_bio=600,
-            value_siqo=300,
-            value_viandes_volailles=200,
-            value_viandes_volailles_egalim=100,
-            value_produits_de_la_mer=10,
-            value_produits_de_la_mer_egalim=8,
+            valeur_totale=1200,
+            valeur_bio=600,
+            valeur_siqo=300,
+            valeur_viandes_volailles=200,
+            valeur_viandes_volailles_egalim=100,
+            valeur_produits_de_la_mer=10,
+            valeur_produits_de_la_mer_egalim=8,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
@@ -837,19 +837,19 @@ class PublishedCanteenDetailApiTest(APITestCase):
         self.assertEqual(len(body.get("approDiagnostics")), 1)
         serialized_diag = body.get("approDiagnostics")[0]
 
-        self.assertEqual(serialized_diag["percentageValueTotale"], 1)
-        self.assertEqual(serialized_diag["percentageValueBio"], 0.5)
-        self.assertEqual(serialized_diag["percentageValueSiqo"], 0.25)
+        self.assertEqual(serialized_diag["percentageValeurTotale"], 1)
+        self.assertEqual(serialized_diag["percentageValeurBio"], 0.5)
+        self.assertEqual(serialized_diag["percentageValeurSiqo"], 0.25)
         # the following is a percentage of the meat total, not global total
-        self.assertEqual(serialized_diag["percentageValueViandesVolaillesEgalim"], 0.5)
-        self.assertEqual(serialized_diag["percentageValueProduitsDeLaMerEgalim"], 0.8)
+        self.assertEqual(serialized_diag["percentageValeurViandesVolaillesEgalim"], 0.5)
+        self.assertEqual(serialized_diag["percentageValeurProduitsDeLaMerEgalim"], 0.8)
         # ensure the raw values are not included in the diagnostic
-        self.assertNotIn("valueTotale", serialized_diag)
-        self.assertNotIn("valueBio", serialized_diag)
-        self.assertNotIn("valueV", serialized_diag)
-        self.assertNotIn("valueViandesVolaillesEgalim", serialized_diag)
-        self.assertNotIn("valueProduitsDeLaMer", serialized_diag)
-        self.assertNotIn("valueProduitsDeLaMerEgalim", serialized_diag)
+        self.assertNotIn("valeurTotale", serialized_diag)
+        self.assertNotIn("valeurBio", serialized_diag)
+        self.assertNotIn("valeurViandesVolailles", serialized_diag)
+        self.assertNotIn("valeurViandesVolaillesEgalim", serialized_diag)
+        self.assertNotIn("valeurProduitsDeLaMer", serialized_diag)
+        self.assertNotIn("valeurProduitsDeLaMerEgalim", serialized_diag)
 
     def test_remove_raw_values_when_missing_totals(self):
         """
@@ -862,11 +862,11 @@ class PublishedCanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=canteen,
             year=2021,
-            value_viandes_volailles=None,
-            value_viandes_volailles_egalim=100,
-            value_viandes_volailles_france=100,
-            value_produits_de_la_mer=None,
-            value_produits_de_la_mer_egalim=100,
+            valeur_viandes_volailles=None,
+            valeur_viandes_volailles_egalim=100,
+            valeur_viandes_volailles_france=100,
+            valeur_produits_de_la_mer=None,
+            valeur_produits_de_la_mer_egalim=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
@@ -875,12 +875,12 @@ class PublishedCanteenDetailApiTest(APITestCase):
 
         serialized_diag = body.get("approDiagnostics")[0]
 
-        # self.assertIn("percentageValueViandesVolaillesEgalim", serialized_diag)
-        self.assertIn("percentageValueViandesVolaillesFrance", serialized_diag)
-        # self.assertIn("percentageValueProduitsDeLaMerEgalim", serialized_diag)
-        self.assertNotIn("valueViandesVolaillesEgalim", serialized_diag)
-        self.assertNotIn("valueViandesVolaillesFrance", serialized_diag)
-        self.assertNotIn("valueProduitsDeLaMerEgalim", serialized_diag)
+        # self.assertIn("percentageValeurViandesVolaillesEgalim", serialized_diag)
+        self.assertIn("percentageValeurViandesVolaillesFrance", serialized_diag)
+        # self.assertIn("percentageValeurProduitsDeLaMerEgalim", serialized_diag)
+        self.assertNotIn("valeurViandesVolaillesEgalim", serialized_diag)
+        self.assertNotIn("valeurViandesVolaillesFrance", serialized_diag)
+        self.assertNotIn("valeurProduitsDeLaMerEgalim", serialized_diag)
 
     def test_return_published_diagnostics(self):
         """
@@ -905,12 +905,12 @@ class PublishedCanteenDetailApiTest(APITestCase):
         serialized_appro_diags = body.get("approDiagnostics")
 
         for diag in serialized_diags:
-            self.assertNotIn("percentageValueTotale", diag)
-            self.assertNotIn("valueTotale", diag)
+            self.assertNotIn("percentageValeurTotale", diag)
+            self.assertNotIn("valeurTotale", diag)
 
         self.assertEqual(serialized_appro_diags[0]["id"], published_appro_diag.id)
-        self.assertIn("percentageValueTotale", serialized_appro_diags[0])
-        self.assertNotIn("valueTotale", serialized_appro_diags[0])
+        self.assertIn("percentageValeurTotale", serialized_appro_diags[0])
+        self.assertNotIn("valeurTotale", serialized_appro_diags[0])
 
     def test_satellites_can_redact_cc_appro_data(self):
         """
@@ -1166,4 +1166,4 @@ class CanteenPreviewDetailApiTest(APITestCase):
         self.assertIn("plastic", body["badges"])
         self.assertIn("info", body["badges"])
         self.assertIn("approDiagnostic", body)
-        self.assertIn("percentageValueBio", body["approDiagnostic"])
+        self.assertIn("percentageValeurBio", body["approDiagnostic"])

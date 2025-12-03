@@ -206,7 +206,7 @@ def filter_by_diagnostic_params(queryset, query_params):
         qs_diag = Diagnostic.objects.filled().in_year(publication_year)
         if param_bio_rate or appro_badge_requested:
             qs_diag = qs_diag.annotate(
-                bio_percent=100 * Cast(Sum("value_bio", default=0) / Sum("value_totale"), FloatField())
+                bio_percent=100 * Cast(Sum("valeur_bio", default=0) / Sum("valeur_totale"), FloatField())
             )
             if param_bio_rate:
                 qs_diag = qs_diag.filter(bio_percent__gte=100 * float(param_bio_rate))
@@ -215,12 +215,12 @@ def filter_by_diagnostic_params(queryset, query_params):
                 egalim_percent=100
                 * Cast(
                     (
-                        Sum("value_bio", default=0)
-                        + Sum("value_siqo", default=0)
-                        + Sum("value_externalites_performance", default=0)
-                        + Sum("value_egalim_autres", default=0)
+                        Sum("valeur_bio", default=0)
+                        + Sum("valeur_siqo", default=0)
+                        + Sum("valeur_externalites_performance", default=0)
+                        + Sum("valeur_egalim_autres", default=0)
                     )
-                    / Sum("value_totale"),
+                    / Sum("valeur_totale"),
                     FloatField(),
                 )
             )

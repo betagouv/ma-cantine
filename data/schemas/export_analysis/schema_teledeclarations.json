@@ -153,59 +153,59 @@
       "type": "string"
     },
     {
-      "name": "value_totale",
+      "name": "valeur_totale",
       "type": "float"
     },
     {
-      "name": "value_bio",
+      "name": "valeur_bio",
       "type": "float"
     },
     {
-      "name": "value_somme_egalim_avec_bio",
+      "name": "valeur_somme_egalim_avec_bio",
       "type": "float"
     },
     {
-      "name": "value_somme_egalim_hors_bio",
+      "name": "valeur_somme_egalim_hors_bio",
       "type": "float"
     },
     {
-      "name": "value_siqo",
+      "name": "valeur_siqo",
       "type": "float"
     },
     {
-      "name": "value_externalites_performance",
+      "name": "valeur_externalites_performance",
       "type": "float"
     },
     {
-      "name": "value_egalim_autres",
+      "name": "valeur_egalim_autres",
       "type": "float"
     },
     {
-      "name": "value_viandes_volailles",
+      "name": "valeur_viandes_volailles",
       "type": "float"
     },
     {
-      "name": "value_produits_de_la_mer",
+      "name": "valeur_produits_de_la_mer",
       "type": "float"
     },
     {
-      "name": "value_viandes_volailles_egalim",
+      "name": "valeur_viandes_volailles_egalim",
       "type": "float"
     },
     {
-      "name": "value_produits_de_la_mer_egalim",
+      "name": "valeur_produits_de_la_mer_egalim",
       "type": "float"
     },
     {
-      "name": "value_viandes_volailles_france",
+      "name": "valeur_viandes_volailles_france",
       "type": "float"
     },
     {
-      "name": "value_viandes_volailles_produits_de_la_mer",
+      "name": "valeur_viandes_volailles_produits_de_la_mer",
       "type": "float"
     },
     {
-      "name": "value_viandes_volailles_produits_de_la_mer_egalim",
+      "name": "valeur_viandes_volailles_produits_de_la_mer_egalim",
       "type": "float"
     },
     {

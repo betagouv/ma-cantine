@@ -231,22 +231,25 @@ export default {
       return this.hasPercentages
         ? toPercentage(this.diagnosticForYear.percentageValueViandesVolaillesEgalim)
         : getPercentage(
-            this.diagnosticForYear.valueViandesVolaillesEgalim,
-            this.diagnosticForYear.valueViandesVolailles
+            this.diagnosticForYear.valeurViandesVolaillesEgalim,
+            this.diagnosticForYear.valeurViandesVolailles
           )
     },
     viandesVolaillesFrancePercentage() {
       return this.hasPercentages
         ? toPercentage(this.diagnosticForYear.percentageValueViandesVolaillesFrance)
         : getPercentage(
-            this.diagnosticForYear.valueViandesVolaillesFrance,
-            this.diagnosticForYear.valueViandesVolailles
+            this.diagnosticForYear.valeurViandesVolaillesFrance,
+            this.diagnosticForYear.valeurViandesVolailles
           )
     },
     produitsDeLaMerEgalimPercentage() {
       return this.hasPercentages
         ? toPercentage(this.diagnosticForYear.percentageValueProduitsDeLaMerEgalim)
-        : getPercentage(this.diagnosticForYear.valueProduitsDeLaMerEgalim, this.diagnosticForYear.valueProduitsDeLaMer)
+        : getPercentage(
+            this.diagnosticForYear.valeurProduitsDeLaMerEgalim,
+            this.diagnosticForYear.valeurProduitsDeLaMer
+          )
     },
     graphDiagnostics() {
       if (!this.approData || this.approData.length === 0) return null

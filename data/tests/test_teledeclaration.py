@@ -47,16 +47,16 @@ class TeledeclarationQuerySetTest(TestCase):
                 year=year_data,
                 creation_date=date_in_teledeclaration_campaign,
                 canteen=canteen,
-                value_totale=1000.00,
-                value_bio=200.00,
+                valeur_totale=1000.00,
+                valeur_bio=200.00,
             )
             diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data - 1,
                 creation_date=date_in_last_teledeclaration_campaign,
                 canteen=canteen,
-                value_totale=1000.00,
-                value_bio=200.00,
+                valeur_totale=1000.00,
+                valeur_bio=200.00,
             )
             setattr(cls, f"valid_canteen_diagnostic_{index + 1}", diagnostic)
             with freeze_time(date_in_teledeclaration_campaign):
@@ -72,11 +72,11 @@ class TeledeclarationQuerySetTest(TestCase):
             year=year_data,
             creation_date=now().replace(month=7, day=1),
             canteen=cls.valid_canteen_4,
-            value_totale=1000.00,
-            value_bio=200.00,
-            value_siqo=100.00,
-            value_externalites_performance=100.00,
-            value_egalim_autres=100.00,
+            valeur_totale=1000.00,
+            valeur_bio=200.00,
+            valeur_siqo=100.00,
+            valeur_externalites_performance=100.00,
+            valeur_egalim_autres=100.00,
         )
         user_correction_campaign = UserFactory()
         cls.valid_correction_td = Teledeclaration.create_from_diagnostic(
@@ -95,8 +95,8 @@ class TeledeclarationQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.invalid_canteen,
-            value_totale=1000.00,
-            value_bio=200.00,
+            valeur_totale=1000.00,
+            valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.invalid_canteen_td = Teledeclaration.create_from_diagnostic(
@@ -108,8 +108,8 @@ class TeledeclarationQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.deleted_canteen,
-            value_totale=1000.00,
-            value_bio=200.00,
+            valeur_totale=1000.00,
+            valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.deleted_canteen_td = Teledeclaration.create_from_diagnostic(
@@ -120,8 +120,8 @@ class TeledeclarationQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.valid_canteen_sat,
-            value_totale=None,
-            value_bio=None,
+            valeur_totale=None,
+            valeur_bio=None,
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.canteen_sat_td = Teledeclaration.create_from_diagnostic(
