@@ -48,7 +48,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_total_ht",
+    "name": "teledeclaration.value_totale",
     "type": "number"
   },
   {
@@ -628,7 +628,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_bio_ht",
+    "name": "teledeclaration.value_bio",
     "type": "number"
   },
   {
@@ -636,11 +636,11 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_sustainable_ht",
+    "name": "teledeclaration.value_siqo",
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_egalim_others_ht",
+    "name": "teledeclaration.value_egalim_autres",
     "type": "number"
   },
   {
@@ -652,7 +652,7 @@
     "type": "number"
   },
   {
-    "name": "teledeclaration.value_externality_performance_ht",
+    "name": "teledeclaration.value_externalites_performance",
     "type": "number"
   }
 ]

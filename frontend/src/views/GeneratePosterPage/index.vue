@@ -163,7 +163,7 @@
               répresentent`
               "
               id="total"
-              v-model.number="form.diagnostic.valueTotalHt"
+              v-model.number="form.diagnostic.valueTotale"
               :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
               placeholder="15000"
               suffix="euros HT"
@@ -176,7 +176,7 @@
             Sur ce total,
             <DsfrTextField
               id="bio"
-              v-model.number="form.diagnostic.valueBioHt"
+              v-model.number="form.diagnostic.valueBio"
               :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
               placeholder="3000"
               suffix="euros HT"
@@ -189,7 +189,7 @@
             ,
             <DsfrTextField
               id="sustainable"
-              v-model.number="form.diagnostic.valueSustainableHt"
+              v-model.number="form.diagnostic.valueSiqo"
               :rules="[validators.greaterThanZero, validators.decimalPlaces(2)]"
               placeholder="2000"
               suffix="euros HT"

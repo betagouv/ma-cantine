@@ -11,11 +11,7 @@ from simple_history.models import HistoricalRecords
 
 from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnostic
 from data.utils import CustomJSONEncoder
-from macantine.utils import (
-    CAMPAIGN_DATES,
-    EGALIM_OBJECTIVES,
-    is_in_teledeclaration_or_correction,
-)
+from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES, is_in_teledeclaration_or_correction
 
 logger = logging.getLogger(__name__)
 
@@ -312,7 +308,7 @@ class Teledeclaration(models.Model):
                 }
             )
         check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
-        if check_total_value and not diagnostic.value_total_ht:
+        if check_total_value and not diagnostic.value_totale:
             raise ValidationError("Données d'approvisionnement manquantes")
         if diagnostic.canteen.is_central_cuisine and not diagnostic.central_kitchen_diagnostic_mode:
             raise ValidationError("Question obligatoire : Quelles données sont déclarées par cette cuisine centrale ?")
@@ -329,7 +325,7 @@ class Teledeclaration(models.Model):
         # Version 12 - New Diagnostic service_type field (and stop filling vegetarian_menu_type)
         # Version 11 - Requires diagnostic mode to be defined for central production types (in validate_diagnostic)
         # Version 10 - Add department and region fields
-        # Version 9 - removes legacy fields: value_pat_ht, value_label_hve, value_label_rouge, value_label_aoc_igp and value_pat_ht
+        # Version 9 - removes legacy fields: value_pat, value_label_hve, value_label_rouge, value_label_aoc_igp and value_pat
 
         teledeclaration_mode = None
         serialized_diagnostic = None
@@ -340,10 +336,7 @@ class Teledeclaration(models.Model):
         serializer = Teledeclaration._get_diagnostic_serializer(diagnostic)
         serialized_diagnostic = serializer(diagnostic).data
 
-        from api.serializers import (
-            CanteenTeledeclarationSerializer,
-            SatelliteTeledeclarationSerializer,
-        )
+        from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 
         serialized_canteen = CanteenTeledeclarationSerializer(canteen).data
 
@@ -367,8 +360,8 @@ class Teledeclaration(models.Model):
         if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             diagnostic.populate_simplified_diagnostic_values()
 
-        if diagnostic.value_total_ht and canteen.yearly_meal_count:
-            meal_price = diagnostic.value_total_ht / canteen.yearly_meal_count
+        if diagnostic.value_totale and canteen.yearly_meal_count:
+            meal_price = diagnostic.value_totale / canteen.yearly_meal_count
         else:
             meal_price = None
 
@@ -382,11 +375,11 @@ class Teledeclaration(models.Model):
             diagnostic=diagnostic,
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
-            value_total_ht=diagnostic.value_total_ht,
-            value_bio_ht_agg=diagnostic.value_bio_ht,
-            value_sustainable_ht_agg=diagnostic.value_sustainable_ht,
-            value_externality_performance_ht_agg=diagnostic.value_externality_performance_ht,
-            value_egalim_others_ht_agg=diagnostic.value_egalim_others_ht,
+            value_total_ht=diagnostic.value_totale,
+            value_bio_ht_agg=diagnostic.value_bio,
+            value_sustainable_ht_agg=diagnostic.value_siqo,
+            value_externality_performance_ht_agg=diagnostic.value_externalites_performance,
+            value_egalim_others_ht_agg=diagnostic.value_egalim_autres,
             yearly_meal_count=canteen.yearly_meal_count,
             meal_price=meal_price,
         )

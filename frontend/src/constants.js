@@ -8,9 +8,9 @@ export default Object.freeze({
   DefaultDiagnostics: {
     id: null,
     year: null,
-    valueBioHt: null,
-    valueSustainableHt: null,
-    valueTotalHt: null,
+    valueBio: null,
+    valueSiqo: null,
+    valueTotale: null,
     hasWasteDiagnostic: null,
     hasWastePlan: null,
     wasteActions: [],

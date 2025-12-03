@@ -116,7 +116,7 @@ export default {
     return {
       errorHelperFields: [],
       errorHelperUsed: false,
-      totalField: "valueTotalHt",
+      totalField: "valueTotale",
       viandesVolaillesLawFields,
       viandesVolaillesOutsideLawFields,
       produitsDeLaMerLawFields,
@@ -174,20 +174,20 @@ export default {
       if (!this.viandesVolaillesTotalError) return null
       return `Le total des achats viandes et volailles (${toCurrency(
         this.payload.valueViandesVolailles
-      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valueTotalHt)})`
+      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valueTotale)})`
     },
     produitsDeLaMerTotalErrorMessage() {
       if (!this.produitsDeLaMerTotalError) return null
       return `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
         this.payload.valueProduitsDeLaMer
-      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valueTotalHt)})`
+      )}) ne peut pas excéder le total des achats (${toCurrency(this.payload.valueTotale)})`
     },
     combinedTotalErrorMessage() {
       if (!this.combinedTotalError) return null
       const totalFamilies = (this.payload.valueViandesVolailles || 0) + (this.payload.valueProduitsDeLaMer || 0)
       return `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
         totalFamilies
-      )}) ne doit pas dépasser le total de tous les achats (${toCurrency(this.payload.valueTotalHt)})`
+      )}) ne doit pas dépasser le total de tous les achats (${toCurrency(this.payload.valueTotale)})`
     },
     viandesVolaillesLawSubtotalErrorMessage() {
       if (!this.viandesVolaillesLawSubtotalError) return null
@@ -238,7 +238,7 @@ export default {
       this.combinedTotalError = false
 
       const d = this.payload
-      const total = d.valueTotalHt
+      const total = d.valueTotale
       const viandesVolaillesTotal = d.valueViandesVolailles
       const produitsDeLaMerTotal = d.valueProduitsDeLaMer
 
@@ -258,7 +258,7 @@ export default {
       this[`${family}OutsideLawSubtotalError`] = false
 
       const d = this.payload
-      const total = d.valueTotalHt
+      const total = d.valueTotale
       const familyTotal = family === "viandesVolailles" ? d.valueViandesVolailles : d.valueProduitsDeLaMer
       if (!familyTotal) return
 

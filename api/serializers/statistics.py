@@ -41,11 +41,11 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
     # aggregate
     agg = teledeclarations.aggregate(
         Count("id"),
-        Sum("value_bio_ht_agg", default=0),
-        Sum("value_total_ht", default=0),
-        Sum("value_sustainable_ht_agg", default=0),
-        Sum("value_externality_performance_ht_agg", default=0),
-        Sum("value_egalim_others_ht_agg", default=0),
+        Sum("value_bio_agg", default=0),
+        Sum("value_totale", default=0),
+        Sum("value_siqo_agg", default=0),
+        Sum("value_externalites_performance_agg", default=0),
+        Sum("value_egalim_autres_agg", default=0),
         Sum("value_viandes_volailles", default=0),
         Sum("value_viandes_volailles_egalim", default=0),
         Sum("value_viandes_volailles_france", default=0),
@@ -55,16 +55,16 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
     # count
     data["teledeclarations_count"] = agg["id__count"]
     # percent of bio, sustainable & egalim (bio + sustainable)
-    if agg["value_total_ht__sum"] > 0:
-        data["bio_percent"] = round(100 * agg["value_bio_ht_agg__sum"] / agg["value_total_ht__sum"])
+    if agg["value_totale__sum"] > 0:
+        data["bio_percent"] = round(100 * agg["value_bio_agg__sum"] / agg["value_totale__sum"])
         data["sustainable_percent"] = round(
             100
             * (
-                agg["value_sustainable_ht_agg__sum"]
-                + agg["value_externality_performance_ht_agg__sum"]
-                + agg["value_egalim_others_ht_agg__sum"]
+                agg["value_siqo_agg__sum"]
+                + agg["value_externalites_performance_agg__sum"]
+                + agg["value_egalim_autres_agg__sum"]
             )
-            / agg["value_total_ht__sum"]
+            / agg["value_totale__sum"]
         )
     else:
         data["bio_percent"] = 0

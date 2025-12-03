@@ -19,7 +19,7 @@
         </div>
         <DsfrCurrencyField
           id="bio"
-          v-model.number="payload.valueBioHt"
+          v-model.number="payload.valueBio"
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -27,9 +27,9 @@
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueBioHt"
+          v-model="payload.valueBio"
           purchaseType="bio"
-          :amount="purchasesSummary.valueBioHt"
+          :amount="purchasesSummary.valueBio"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           @autofill="updatePayload"
         />
@@ -66,7 +66,7 @@
         </div>
         <DsfrCurrencyField
           id="bio-commerce-equitable"
-          v-model.number="payload.valueBioDontCommerceEquitableHt"
+          v-model.number="payload.valueBioDontCommerceEquitable"
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -74,9 +74,9 @@
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueBioDontCommerceEquitableHt"
+          v-model="payload.valueBioDontCommerceEquitable"
           purchaseType="Bio et Commerce équitable"
-          :amount="purchasesSummary.valueBioDontCommerceEquitableHt"
+          :amount="purchasesSummary.valueBioDontCommerceEquitable"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           @autofill="updatePayload"
         />
@@ -115,7 +115,7 @@
         </div>
         <DsfrCurrencyField
           id="siqo"
-          v-model.number="payload.valueSustainableHt"
+          v-model.number="payload.valueSiqo"
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -123,9 +123,9 @@
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueSustainableHt"
+          v-model="payload.valueSiqo"
           purchaseType="SIQO"
-          :amount="purchasesSummary.valueSustainableHt"
+          :amount="purchasesSummary.valueSiqo"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           @autofill="updatePayload"
         />
@@ -220,26 +220,26 @@ export default {
 
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
-      const total = d.valueTotalHt
+      const total = d.valueTotale
 
       if (sumEgalim > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
-          d.valueTotalHt
+          d.valueTotale
         )}) doit être plus élévé que la somme des valeurs EGalim (${toCurrency(sumEgalim || 0)})`
-        this.errorHelperFields = ["valueTotalHt", "valueEgalimOthersHt", "valueExternalityPerformanceHt"]
+        this.errorHelperFields = ["valueTotale", "valueEgalimAutres", "valueExternalitesPerformance"]
       }
 
-      if (d.valueBioDontCommerceEquitableHt > d.valueBioHt) {
+      if (d.valueBioDontCommerceEquitableHt > d.valueBio) {
         this.totalErrorMessage = `La valeur de vos achats Bio et Commerce équitable (${toCurrency(
           d.valueBioDontCommerceEquitableHt
         )}) ne peut pas être plus élévée que la valeur de vos achats Bio ou en conversion Bio (${toCurrency(
-          d.valueBioHt
+          d.valueBio
         )})`
       }
     },
     sumAllEgalim() {
       const d = this.payload
-      const egalimValues = [d.valueBioHt, d.valueSustainableHt, d.valueExternalityPerformanceHt, d.valueEgalimOthersHt]
+      const egalimValues = [d.valueBio, d.valueSiqo, d.valueExternalitesPerformance, d.valueEgalimAutres]
       let total = 0
       egalimValues.forEach((val) => {
         total += parseFloat(val) || 0

@@ -43,7 +43,7 @@
             :rules="[
               validators.nonNegativeOrEmpty,
               validators.decimalPlaces(2),
-              validators.lteOrEmpty(payload.valueTotalHt),
+              validators.lteOrEmpty(payload.valueTotale),
             ]"
             solo
             v-model.number="payload[diagnosticKey(fId)]"
@@ -167,11 +167,11 @@ export default {
     },
     populateSimplifiedDiagnostic() {
       if (this.hasError) return
-      const { bioTotal, siqoTotal, perfExtTotal, egalimOthersTotal } = approTotals(this.payload)
-      this.payload.valueBioHt = bioTotal
-      this.payload.valueSustainableHt = siqoTotal
-      this.payload.valueExternalityPerformanceHt = perfExtTotal
-      this.payload.valueEgalimOthersHt = egalimOthersTotal
+      const { bioTotal, siqoTotal, externalitesPerformanceTotal, egalimAutresTotal } = approTotals(this.payload)
+      this.payload.valueBio = bioTotal
+      this.payload.valueSiqo = siqoTotal
+      this.payload.valueExternalitesPerformance = externalitesPerformanceTotal
+      this.payload.valueEgalimAutres = egalimAutresTotal
 
       const { viandesVolaillesEgalim, viandesVolaillesFrance } = this.viandesVolaillesTotals()
       this.payload.valueViandesVolaillesEgalim = viandesVolaillesEgalim
@@ -256,7 +256,7 @@ export default {
 
       const groups = Constants.TeledeclarationCharacteristicGroups
       const sumFields = groups.egalim.fields.concat(groups.nonEgalim.fields)
-      const declaredTotal = +this.payload.valueTotalHt
+      const declaredTotal = +this.payload.valueTotale
       const fieldTotal = this.sum(sumFields)
       if (fieldTotal > declaredTotal) {
         this.fieldTotalErrorMessage = this.errorMessage(fieldTotal, declaredTotal, 1)
@@ -337,9 +337,9 @@ export default {
       const outsideLaw = Constants.TeledeclarationCharacteristicGroups.outsideLaw
       const fields = outsideLaw.fields.filter((field) => field.endsWith(fieldSuffix))
       const total = this.sum(fields)
-      if (total > this.payload.valueTotalHt) {
+      if (total > this.payload.valueTotale) {
         const char = getCharacteristicFromFieldSuffix(fieldSuffix, outsideLaw)
-        return this.errorMessage(total, this.payload.valueTotalHt, 1, undefined, char.text)
+        return this.errorMessage(total, this.payload.valueTotale, 1, undefined, char.text)
       }
     },
     fieldUpdate(fieldName) {

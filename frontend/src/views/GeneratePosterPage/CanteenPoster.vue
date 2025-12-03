@@ -154,7 +154,7 @@ export default {
   computed: {
     showPreviousDiagnostic() {
       if (!this.previousDiagnostic) return false
-      return !!this.previousDiagnostic.valueTotalHt
+      return !!this.previousDiagnostic.valueTotale
     },
     canteenUrl() {
       const baseUrl = window.location.toString().replace(window.location.pathname, "")
@@ -168,34 +168,31 @@ export default {
       return this.diagnostic.year || lastYear()
     },
     bioPercent() {
-      if (this.diagnostic.percentageValueTotalHt)
-        return getPercentage(this.diagnostic.percentageValueBioHt, this.diagnostic.percentageValueTotalHt)
-      return getPercentage(this.diagnostic.valueBioHt, this.diagnostic.valueTotalHt)
+      if (this.diagnostic.percentageValueTotale)
+        return getPercentage(this.diagnostic.percentageValueBio, this.diagnostic.percentageValueTotale)
+      return getPercentage(this.diagnostic.valueBio, this.diagnostic.valueTotale)
     },
     sustainablePercent() {
-      if (this.diagnostic.percentageValueTotalHt)
-        return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.percentageValueTotalHt)
-      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotalHt)
+      if (this.diagnostic.percentageValueTotale)
+        return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.percentageValueTotale)
+      return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valueTotale)
     },
     previousBioPercent() {
-      if (this.diagnostic.percentageValueTotalHt)
-        return getPercentage(
-          this.previousDiagnostic.percentageValueBioHt,
-          this.previousDiagnostic.percentageValueTotalHt
-        )
-      return getPercentage(this.previousDiagnostic.valueBioHt, this.previousDiagnostic.valueTotalHt)
+      if (this.diagnostic.percentageValueTotale)
+        return getPercentage(this.previousDiagnostic.percentageValueBio, this.previousDiagnostic.percentageValueTotale)
+      return getPercentage(this.previousDiagnostic.valueBio, this.previousDiagnostic.valueTotale)
     },
     previousSustainablePercent() {
-      if (this.diagnostic.percentageValueTotalHt)
+      if (this.diagnostic.percentageValueTotale)
         return getPercentage(
           getSustainableTotal(this.previousDiagnostic),
-          this.previousDiagnostic.percentageValueTotalHt
+          this.previousDiagnostic.percentageValueTotale
         )
-      return getPercentage(getSustainableTotal(this.previousDiagnostic), this.previousDiagnostic.valueTotalHt)
+      return getPercentage(getSustainableTotal(this.previousDiagnostic), this.previousDiagnostic.valueTotale)
     },
     hasCurrentYearData() {
       if (!this.diagnostic) return false
-      return !!this.diagnostic.valueTotalHt || !!this.diagnostic.percentageValueTotalHt
+      return !!this.diagnostic.valueTotale || !!this.diagnostic.percentageValueTotale
     },
     earnedBadges() {
       if (!this.canteen.badges) return [] // for non-connected view

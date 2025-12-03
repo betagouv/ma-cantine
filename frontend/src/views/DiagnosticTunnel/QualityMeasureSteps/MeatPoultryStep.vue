@@ -175,8 +175,8 @@ export default {
     },
     erroringFields() {
       const fields = []
-      if (this.totalViandesVolaillesError) fields.push("valueTotalHt")
-      if (this.totalFamiliesError) fields.push(...["valueTotalHt", "valueProduitsDeLaMer"])
+      if (this.totalViandesVolaillesError) fields.push("valueTotale")
+      if (this.totalFamiliesError) fields.push(...["valueTotale", "valueProduitsDeLaMer"])
       return fields
     },
   },
@@ -192,7 +192,7 @@ export default {
       this.totalFranceViandesVolaillesErrorMessage = null
 
       const d = this.payload
-      const total = d.valueTotalHt
+      const total = d.valueTotale
       const totalMeatPoultry = d.valueViandesVolailles
       const totalFish = d.valueProduitsDeLaMer
       const totalFamilies = totalMeatPoultry + totalFish
@@ -202,12 +202,12 @@ export default {
         this.totalViandesVolaillesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
           totalMeatPoultry
         )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
-        this.errorHelperFields.push("valueTotalHt")
+        this.errorHelperFields.push("valueTotale")
       } else if (totalFamilies > total) {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
-        this.errorHelperFields.push(...["valueTotalHt", "valueProduitsDeLaMer"])
+        this.errorHelperFields.push(...["valueTotale", "valueProduitsDeLaMer"])
       } else if (sumMeat > totalMeatPoultry) {
         this.totalFamiliesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
           totalFish

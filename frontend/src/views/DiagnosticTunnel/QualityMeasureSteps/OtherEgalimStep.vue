@@ -25,13 +25,13 @@
             </v-icon>
           </div>
 
-          <label class="ml-4 ml-md-0" for="other">
+          <label class="ml-4 ml-md-0" for="valueEgalimAutres">
             La valeur (en € HT) des autres achats EGalim
           </label>
         </div>
         <DsfrCurrencyField
-          id="other"
-          v-model.number="payload.valueEgalimOthersHt"
+          id="valueEgalimAutres"
+          v-model.number="payload.valueEgalimAutres"
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -39,10 +39,10 @@
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueEgalimOthersHt"
+          v-model="payload.valueEgalimAutres"
           @autofill="updatePayload"
           purchaseType="« autre EGalim »"
-          :amount="purchasesSummary.valueEgalimOthersHt"
+          :amount="purchasesSummary.valueEgalimAutres"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
       </v-col>
@@ -94,14 +94,14 @@
             />
           </div>
 
-          <label class="ml-4 ml-md-0" for="other-commerce-equitable">
+          <label class="ml-4 ml-md-0" for="valueEgalimAutresDontCommerceEquitable">
             Dont valeur (en € HT) des achats Commerce équitable (hors bio)
             <span class="fr-hint-text my-2">Optionnel</span>
           </label>
         </div>
         <DsfrCurrencyField
-          id="other-commerce-equitable"
-          v-model.number="payload.valueEgalimOthersDontCommerceEquitableHt"
+          id="valueEgalimAutresDontCommerceEquitable"
+          v-model.number="payload.valueEgalimAutresDontCommerceEquitable"
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
@@ -109,10 +109,10 @@
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueEgalimOthersDontCommerceEquitableHt"
+          v-model="payload.valueEgalimAutresDontCommerceEquitable"
           @autofill="updatePayload"
           purchaseType="« commerce équitable (hors bio) »"
-          :amount="purchasesSummary.valueEgalimOthersDontCommerceEquitableHt"
+          :amount="purchasesSummary.valueEgalimAutresDontCommerceEquitable"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
       </v-col>
@@ -154,12 +154,12 @@
               mdi-chart-line
             </v-icon>
           </div>
-          <label class="ml-4 ml-md-0" for="ext-perf">
+          <label class="ml-4 ml-md-0" for="valueExternalitesPerformanceDialog">
             Critères d'achat : La valeur (en € HT) mes achats réalisés selon des modalités de sélection prenant en
             compte les coûts imputés aux externalités environnementales ou prenant en compte les performances
             environnementales et d’approvisionnements directs
             <br />
-            <v-dialog v-model="valueExternalityPerformanceHtDialog" max-width="600">
+            <v-dialog v-model="valueExternalitesPerformanceDialog" max-width="600">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn color="primary" outlined small v-bind="attrs" v-on="on">
                   <v-icon small class="mr-2">$information-line</v-icon>
@@ -182,7 +182,7 @@
                     </h1>
                   </v-card-title>
                   <v-spacer></v-spacer>
-                  <v-btn color="primary" outlined @click="valueExternalityPerformanceHtDialog = false">
+                  <v-btn color="primary" outlined @click="valueExternalitesPerformanceDialog = false">
                     Fermer
                   </v-btn>
                 </div>
@@ -222,18 +222,18 @@
           </label>
         </div>
         <DsfrCurrencyField
-          id="ext-perf"
-          v-model.number="payload.valueExternalityPerformanceHt"
+          id="valueExternalitesPerformance"
+          v-model.number="payload.valueExternalitesPerformance"
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="totalError"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="diagnostic.valueExternalityPerformanceHt"
+          v-model="diagnostic.valueExternalitesPerformance"
           @autofill="updatePayload"
           purchaseType="« critères d'achat »"
-          :amount="purchasesSummary.valueExternalityPerformanceHt"
+          :amount="purchasesSummary.valueExternalitesPerformance"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
       </v-col>
@@ -296,7 +296,7 @@ export default {
       totalErrorMessage: null,
       otherLabels: labels.filter((x) => otherLogos.includes(x.title)),
       commerceEquitableLabels: labels.filter((x) => commerceEquitableLogos.includes(x.title)),
-      valueExternalityPerformanceHtDialog: false,
+      valueExternalitesPerformanceDialog: false,
       errorHelperUsed: false,
       errorHelperFields: [],
     }
@@ -325,24 +325,24 @@ export default {
 
       const d = this.payload
       const sumEgalim = this.sumAllEgalim()
-      const total = d.valueTotalHt
+      const total = d.valueTotale
 
       if (sumEgalim > total) {
         this.totalErrorMessage = `Le total de vos achats alimentaires (${toCurrency(
-          d.valueTotalHt
+          d.valueTotale
         )}) doit être plus élévé que la somme des valeurs EGalim (${toCurrency(sumEgalim || 0)})`
-        this.errorHelperFields = ["valueTotalHt", "valueBioHt", "valueSustainableHt"]
+        this.errorHelperFields = ["valueTotale", "valueBio", "valueSiqo"]
       }
 
-      if (d.valueEgalimOthersDontCommerceEquitableHt > d.valueEgalimOthersHt) {
+      if (d.valueEgalimAutresDontCommerceEquitable > d.valueEgalimAutres) {
         this.totalErrorMessage = `La valeur de vos achats Commerce équitable (hors bio) (${toCurrency(
-          d.valueEgalimOthersDontCommerceEquitableHt
-        )}) ne peut pas être plus élévée que la valeur des autres achats EGalim (${toCurrency(d.valueEgalimOthersHt)})`
+          d.valueEgalimAutresDontCommerceEquitable
+        )}) ne peut pas être plus élévée que la valeur des autres achats EGalim (${toCurrency(d.valueEgalimAutres)})`
       }
     },
     sumAllEgalim() {
       const d = this.payload
-      const egalimValues = [d.valueBioHt, d.valueSustainableHt, d.valueExternalityPerformanceHt, d.valueEgalimOthersHt]
+      const egalimValues = [d.valueBio, d.valueSiqo, d.valueExternalitesPerformance, d.valueEgalimAutres]
       let total = 0
       egalimValues.forEach((val) => {
         total += parseFloat(val) || 0

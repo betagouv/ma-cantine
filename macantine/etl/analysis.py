@@ -33,8 +33,8 @@ def aggregate_col(df, categ, sub_categ):
     Aggregating into a new column all the values of a category for complete TD
     """
     check_column_matches_substring(df, sub_categ)
-    regex_pattern = rf"^(?!value_{categ}_ht$).*(" + "|".join(sub_categ) + ")"
-    df[f"teledeclaration.value_{categ}_ht"] = df.filter(regex=regex_pattern).sum(
+    regex_pattern = rf"^(?!value_{categ}$).*(" + "|".join(sub_categ) + ")"
+    df[f"teledeclaration.value_{categ}"] = df.filter(regex=regex_pattern).sum(
         axis=1, numeric_only=True, skipna=True, min_count=1
     )
     return df

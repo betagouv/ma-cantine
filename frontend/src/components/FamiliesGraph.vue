@@ -155,7 +155,7 @@ export default {
       return colors[baseColor][modifier]
     },
     getValuesForCharacteristic(characteristicId) {
-      const usesPercentages = "percentageValueTotalHt" in this.diagnostic
+      const usesPercentages = "percentageValueTotale" in this.diagnostic
       const baseFields = {
         VIANDES_VOLAILLES: usesPercentages ? "percentageValueViandesVolailles" : "valueViandesVolailles",
         CHARCUTERIE: usesPercentages ? "percentageValueCharcuterie" : "valueCharcuterie",

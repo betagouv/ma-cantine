@@ -3,10 +3,7 @@ from decimal import Decimal, InvalidOperation
 
 from rest_framework import serializers
 
-from api.serializers.utils import (
-    extract_category_from_dict_sectors,
-    extract_sector_from_dict_sectors,
-)
+from api.serializers.utils import extract_category_from_dict_sectors, extract_sector_from_dict_sectors
 from data.models import Diagnostic
 from data.models.geo import Department, Region
 from macantine.etl import utils
@@ -136,12 +133,12 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
 
     def validate(self, data):
         # TODO: move these rules to the model
-        total = self.return_value(self, data, "value_total_ht")
+        total = self.return_value(self, data, "value_totale")
         if total is not None and isinstance(total, Decimal):
-            bio = self.return_value(self, data, "value_bio_ht")
-            sustainable = self.return_value(self, data, "value_sustainable_ht")
-            externality_performance = self.return_value(self, data, "value_externality_performance_ht")
-            egalim_others = self.return_value(self, data, "value_egalim_others_ht")
+            bio = self.return_value(self, data, "value_bio")
+            sustainable = self.return_value(self, data, "value_siqo")
+            externality_performance = self.return_value(self, data, "value_externalites_performance")
+            egalim_others = self.return_value(self, data, "value_egalim_autres")
             value_sum = (bio or 0) + (sustainable or 0) + (externality_performance or 0) + (egalim_others or 0)
             if value_sum > total:
                 raise serializers.ValidationError(
@@ -266,14 +263,14 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     declaration_donnees_2023 = serializers.SerializerMethodField()
     declaration_donnees_2024 = serializers.SerializerMethodField()
 
-    value_bio_ht = serializers.FloatField(source="value_bio_ht_agg", read_only=True)
-    value_sustainable_ht = serializers.FloatField(source="value_sustainable_ht_agg", read_only=True)
-    value_externality_performance_ht = serializers.FloatField(
-        source="value_externality_performance_ht_agg", read_only=True
+    value_bio = serializers.FloatField(source="value_bio_agg", read_only=True)
+    value_siqo = serializers.FloatField(source="value_siqo_agg", read_only=True)
+    value_externalites_performance = serializers.FloatField(
+        source="value_externalites_performance_agg", read_only=True
     )
-    value_egalim_others_ht = serializers.FloatField(source="value_egalim_others_ht_agg", read_only=True)
-    value_somme_egalim_avec_bio_ht = serializers.FloatField(source="value_egalim_ht_agg", read_only=True)
-    value_somme_egalim_hors_bio_ht = serializers.SerializerMethodField()
+    value_egalim_autres = serializers.FloatField(source="value_egalim_autres_agg", read_only=True)
+    value_somme_egalim_avec_bio = serializers.FloatField(source="value_egalim_agg", read_only=True)
+    value_somme_egalim_hors_bio = serializers.SerializerMethodField()
     value_viandes_volailles_produits_de_la_mer = serializers.SerializerMethodField()
     value_viandes_volailles_produits_de_la_mer_egalim = serializers.SerializerMethodField()
     ratio_produits_de_la_mer_egalim = serializers.SerializerMethodField()
@@ -336,18 +333,18 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "declaration_donnees_2023",
             "declaration_donnees_2024",
             # value fields
-            "value_total_ht",
-            "value_bio_ht",
-            "value_sustainable_ht",
-            "value_externality_performance_ht",
-            "value_egalim_others_ht",
+            "value_totale",
+            "value_bio",
+            "value_siqo",
+            "value_externalites_performance",
+            "value_egalim_autres",
             "value_viandes_volailles",
             "value_viandes_volailles_france",
             "value_viandes_volailles_egalim",
             "value_produits_de_la_mer",
             "value_produits_de_la_mer_egalim",
-            "value_somme_egalim_avec_bio_ht",
-            "value_somme_egalim_hors_bio_ht",
+            "value_somme_egalim_avec_bio",
+            "value_somme_egalim_hors_bio",
             "value_viandes_volailles_produits_de_la_mer",
             "value_viandes_volailles_produits_de_la_mer_egalim",
             "service_type",
@@ -446,12 +443,12 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     def get_declaration_donnees_2024(self, obj):
         return obj.canteen.declaration_donnees_2024
 
-    def get_value_somme_egalim_hors_bio_ht(self, obj):
+    def get_value_somme_egalim_hors_bio(self, obj):
         return utils.sum_int_and_none(
             [
-                obj.value_sustainable_ht_agg,
-                obj.value_externality_performance_ht_agg,
-                obj.value_egalim_others_ht_agg,
+                obj.value_siqo_agg,
+                obj.value_externalites_performance_agg,
+                obj.value_egalim_autres_agg,
             ]
         )
 
@@ -486,13 +483,13 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         return utils.compute_ratio(obj.value_viandes_volailles_egalim, obj.value_viandes_volailles)
 
     def get_ratio_bio(self, obj):
-        return utils.compute_ratio(obj.value_bio_ht_agg, obj.value_total_ht)
+        return utils.compute_ratio(obj.value_bio_agg, obj.value_totale)
 
     def get_ratio_egalim_avec_bio(self, obj):
-        return utils.compute_ratio(obj.value_egalim_ht_agg, obj.value_total_ht)
+        return utils.compute_ratio(obj.value_egalim_agg, obj.value_totale)
 
     def get_ratio_egalim_sans_bio(self, obj):
-        return utils.compute_ratio(self.get_value_somme_egalim_hors_bio_ht(obj), obj.value_total_ht)
+        return utils.compute_ratio(self.get_value_somme_egalim_hors_bio(obj), obj.value_totale)
 
     def get_genere_par_cuisine_centrale(self, obj):
         return obj.is_teledeclared_by_cc
@@ -568,7 +565,7 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_teledeclaration_ratio_bio(self, obj):
-        return obj.value_bio_ht_agg / obj.value_total_ht
+        return obj.value_bio_agg / obj.value_totale
 
     def get_teledeclaration_ratio_egalim_hors_bio(self, obj):
-        return obj.value_egalim_hors_bio_ht_agg / obj.value_total_ht
+        return obj.value_egalim_hors_bio_agg / obj.value_totale

@@ -153,31 +153,31 @@
       "type": "string"
     },
     {
-      "name": "value_total_ht",
+      "name": "value_totale",
       "type": "float"
     },
     {
-      "name": "value_bio_ht",
+      "name": "value_bio",
       "type": "float"
     },
     {
-      "name": "value_somme_egalim_avec_bio_ht",
+      "name": "value_somme_egalim_avec_bio",
       "type": "float"
     },
     {
-      "name": "value_somme_egalim_hors_bio_ht",
+      "name": "value_somme_egalim_hors_bio",
       "type": "float"
     },
     {
-      "name": "value_sustainable_ht",
+      "name": "value_siqo",
       "type": "float"
     },
     {
-      "name": "value_externality_performance_ht",
+      "name": "value_externalites_performance",
       "type": "float"
     },
     {
-      "name": "value_egalim_others_ht",
+      "name": "value_egalim_autres",
       "type": "float"
     },
     {

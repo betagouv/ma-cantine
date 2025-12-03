@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Diagnostic, SectorCategory, Sector
+from data.models import Canteen, Diagnostic, Sector, SectorCategory
 
 year_data = 2023
 date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
@@ -33,11 +33,11 @@ class CanteenStatsApiTest(APITestCase):
                 canteen=cls.canteen_1,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data,
-                value_total_ht=100,
-                value_bio_ht=20,
-                value_sustainable_ht=30,
-                value_externality_performance_ht=None,
-                value_egalim_others_ht=None,
+                value_totale=100,
+                value_bio=20,
+                value_siqo=30,
+                value_externalites_performance=None,
+                value_egalim_autres=None,
                 has_waste_diagnostic=False,
                 waste_actions=[],
                 vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.DAILY,
@@ -61,11 +61,11 @@ class CanteenStatsApiTest(APITestCase):
                 canteen=cls.canteen_2,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data,
-                value_total_ht=1000,
-                value_bio_ht=400,
-                value_sustainable_ht=500,
-                value_externality_performance_ht=0,
-                value_egalim_others_ht=0,
+                value_totale=1000,
+                value_bio=400,
+                value_siqo=500,
+                value_externalites_performance=0,
+                value_egalim_autres=0,
                 has_waste_diagnostic=True,
                 waste_actions=["action1", "action2"],
                 has_donation_agreement=True,
@@ -93,11 +93,11 @@ class CanteenStatsApiTest(APITestCase):
                 canteen=cls.canteen_3,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data,
-                value_total_ht=100,
-                value_bio_ht=100,
-                value_sustainable_ht=0,
-                value_externality_performance_ht=0,
-                value_egalim_others_ht=0,
+                value_totale=100,
+                value_bio=100,
+                value_siqo=0,
+                value_externalites_performance=0,
+                value_egalim_autres=0,
                 cooking_plastic_substituted=True,
                 serving_plastic_substituted=True,
                 plastic_bottles_substituted=True,
@@ -208,11 +208,11 @@ class CanteenStatsApiTest(APITestCase):
                 canteen=canteen,
                 year=past_year,
                 creation_date=date_in_2022_teledeclaration_campaign,
-                value_total_ht=100,
-                value_bio_ht=20,
-                value_sustainable_ht=15,
-                value_externality_performance_ht=15,
-                value_egalim_others_ht=15,
+                value_totale=100,
+                value_bio=20,
+                value_siqo=15,
+                value_externalites_performance=15,
+                value_egalim_autres=15,
                 value_viandes_volailles=200,
                 value_viandes_volailles_egalim=100,
                 value_viandes_volailles_france=50,
@@ -250,11 +250,11 @@ class CanteenStatsApiTest(APITestCase):
                 canteen=canteen,
                 year=past_year,
                 creation_date=date_in_2022_teledeclaration_campaign,
-                value_total_ht=100,
-                value_viandes_volailles_bio=20,  # value_bio_ht
-                value_produits_de_la_mer_label_rouge=15,  # value_sustainable_ht
-                value_fruits_et_legumes_externalites=15,  # value_externality_performance_ht
-                value_charcuterie_hve=15,  # value_egalim_others_ht
+                value_totale=100,
+                value_viandes_volailles_bio=20,  # value_bio
+                value_produits_de_la_mer_label_rouge=15,  # value_siqo
+                value_fruits_et_legumes_externalites=15,  # value_externalites_performance
+                value_charcuterie_hve=15,  # value_egalim_autres
                 value_viandes_volailles=200,
                 value_viandes_volailles_egalim=100,
                 value_viandes_volailles_france=50,
