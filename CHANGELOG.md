@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.41.1](https://github.com/betagouv/ma-cantine/compare/v2025.41.0...v2025.41.1) (2025-12-03)
+
+
+### Améliorations
+
+* **Evaluation Gaspillage:** API: les rendre visible dans le swagger et permettre aux éditeurs de les créer & modifier ([#5962](https://github.com/betagouv/ma-cantine/issues/5962)) ([0fdb8ae](https://github.com/betagouv/ma-cantine/commit/0fdb8ae202ce100c24221361185eb502c380536b))
+
+
+### Technique
+
+* **deps:** bump django from 5.1.14 to 5.1.15 ([#5964](https://github.com/betagouv/ma-cantine/issues/5964)) ([73f3b2a](https://github.com/betagouv/ma-cantine/commit/73f3b2a9bebd9c8572859b85db00ea589a2a7aed))
+* **Télédéclaration:** renomme 'short_distribution' en 'circuit_court' ([#5965](https://github.com/betagouv/ma-cantine/issues/5965)) ([b787b2a](https://github.com/betagouv/ma-cantine/commit/b787b2adabdbd8354e51035ba46779bfe610fbdf))
+
 ## [2025.41.0](https://github.com/betagouv/ma-cantine/compare/v2025.40.0...v2025.41.0) (2025-12-03)
 
 
