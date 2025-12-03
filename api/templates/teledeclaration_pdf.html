@@ -126,9 +126,7 @@
 
     {% if teledeclaration_mode == "SATELLITE_WITHOUT_APPRO" %}
     <p>
-        Les données d'approvisionnement ont été déclarées par la cuisine centrale{% if central_kitchen_name %} « {{
-        central_kitchen_name }} »{% endif %}{% if central_kitchen_siret %} (SIRET : {{ central_kitchen_siret }}){% endif
-        %}.
+        Les données d'approvisionnement ont été déclarées par la cuisine centrale{% if central_kitchen_name %} « {{ central_kitchen_name }} »{% endif %}{% if central_kitchen_siret %} (SIRET : {{ central_kitchen_siret }}){% endif %}.
     </p>
     {% elif teledeclaration_mode == "CENTRAL_ALL" %}
     <p>
@@ -161,22 +159,21 @@
             <span>Valeur totale en HT des achats alimentaires</span> : {{ value_total_ht|floatformat:2 }} €
         </li>
         <li>
-            <span>Valeur en HT des achats alimentaires en Bio</span> : {% if not valeur_bio is None %}{{
-            valeur_bio|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Valeur en HT des achats alimentaires en Bio</span> :
+            {% if not valeur_bio is None %}{{ valeur_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)</span> : {% if not
-            valeur_siqo is None %}{{ valeur_siqo|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)</span> :
+            {% if not valeur_siqo is None %}{{ valeur_siqo|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Valeur en HT de mes autres achats EGalim</span> : {% if not valeur_egalim_autres is None %}{{
-            valeur_egalim_autres|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Valeur en HT de mes autres achats EGalim</span> :
+            {% if not valeur_egalim_autres is None %}{{ valeur_egalim_autres|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
             <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou
                 leurs performances en matière environnementale</span> :
-            {% if not valeur_externalites_performance is None %}{{ valeur_externalites_performance|floatformat:2 }}{%
-            else %}—{% endif %} €
+            {% if not valeur_externalites_performance is None %}{{ valeur_externalites_performance|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
 
@@ -190,13 +187,11 @@
         </li>
         <li>
             <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées EGalim</span> :
-            {% if not valeur_meat_poultry_egalim_ht is None %}{{ valeur_meat_poultry_egalim_ht|floatformat:2 }}{% else
-            %}—{% endif %} €
+            {% if not valeur_meat_poultry_egalim_ht is None %}{{ valeur_meat_poultry_egalim_ht|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
             <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées origine France</span> :
-            {% if not valeur_meat_poultry_france_ht is None %}{{ valeur_meat_poultry_france_ht|floatformat:2 }}{% else
-            %}—{% endif %} €
+            {% if not valeur_meat_poultry_france_ht is None %}{{ valeur_meat_poultry_france_ht|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
 
@@ -231,36 +226,36 @@
     <p>Achats Bio</p>
     <ul>
         <li>
-            <span>Viandes et volailles Bio</span> : {% if not valeur_viandes_volailles_bio is None %}{{
-            valeur_viandes_volailles_bio|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles Bio</span> :
+            {% if not valeur_viandes_volailles_bio is None %}{{ valeur_viandes_volailles_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture Bio</span> : {% if not valeur_produits_de_la_mer_bio
-            is None %}{{ valeur_produits_de_la_mer_bio|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture Bio</span> :
+            {% if not valeur_produits_de_la_mer_bio is None %}{{ valeur_produits_de_la_mer_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes Bio</span> : {% if not valeur_fruits_et_legumes_bio is None %}{{
-            valeur_fruits_et_legumes_bio|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes Bio</span> :
+            {% if not valeur_fruits_et_legumes_bio is None %}{{ valeur_fruits_et_legumes_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie Bio</span> : {% if not valeur_charcuterie_bio is None %}{{
-            valeur_charcuterie_bio|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie Bio</span> :
+            {% if not valeur_charcuterie_bio is None %}{{ valeur_charcuterie_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers Bio</span> : {% if not valeur_produits_laitiers_bio is None %}{{
-            valeur_produits_laitiers_bio|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers Bio</span> :
+            {% if not valeur_produits_laitiers_bio is None %}{{ valeur_produits_laitiers_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie Bio</span> : {% if not valeur_boulangerie_bio is None %}{{
-            valeur_boulangerie_bio|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie Bio</span> :
+            {% if not valeur_boulangerie_bio is None %}{{ valeur_boulangerie_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons Bio</span> : {% if not valeur_boissons_bio is None %}{{ valeur_boissons_bio|floatformat:2
-            }}{% else %}—{% endif %} €
+            <span>Boissons Bio</span> :
+            {% if not valeur_boissons_bio is None %}{{ valeur_boissons_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits Bio</span> : {% if not valeur_autres_bio is None %}{{ valeur_autres_bio|floatformat:2
-            }}{% else %}—{% endif %} €
+            <span>Autres produits Bio</span> :
+            {% if not valeur_autres_bio is None %}{{ valeur_autres_bio|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -268,37 +263,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles Label Rouge</span> : {% if not valeur_viandes_volailles_label_rouge is None%}{{
-            valeur_viandes_volailles_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles Label Rouge</span> :
+            {% if not valeur_viandes_volailles_label_rouge is None %}{{ valeur_viandes_volailles_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture Label Rouge</span> : {% if not
-            valeur_produits_de_la_mer_label_rouge is None%}{{ valeur_produits_de_la_mer_label_rouge|floatformat:2 }}{%
-            else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture Label Rouge</span> :
+            {% if not valeur_produits_de_la_mer_label_rouge is None %}{{ valeur_produits_de_la_mer_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes Label Rouge</span> : {% if not valeur_fruits_et_legumes_label_rouge is None%}{{
-            valeur_fruits_et_legumes_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes Label Rouge</span> :
+            {% if not valeur_fruits_et_legumes_label_rouge is None %}{{ valeur_fruits_et_legumes_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie Label Rouge</span> : {% if not valeur_charcuterie_label_rouge is None%}{{
-            valeur_charcuterie_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie Label Rouge</span> :
+            {% if not valeur_charcuterie_label_rouge is None %}{{ valeur_charcuterie_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers Label Rouge</span> : {% if not valeur_produits_laitiers_label_rouge is None%}{{
-            valeur_produits_laitiers_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers Label Rouge</span> :
+            {% if not valeur_produits_laitiers_label_rouge is None %}{{ valeur_produits_laitiers_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie Label Rouge</span> : {% if not valeur_boulangerie_label_rouge is None%}{{
-            valeur_boulangerie_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie Label Rouge</span> :
+            {% if not valeur_boulangerie_label_rouge is None %}{{ valeur_boulangerie_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons Label Rouge</span> : {% if not valeur_boissons_label_rouge is None%}{{
-            valeur_boissons_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons Label Rouge</span> :
+            {% if not valeur_boissons_label_rouge is None %}{{ valeur_boissons_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits Label Rouge</span> : {% if not valeur_autres_label_rouge is None%}{{
-            valeur_autres_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits Label Rouge</span> :
+            {% if not valeur_autres_label_rouge is None %}{{ valeur_autres_label_rouge|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -306,37 +300,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles AOC/AOP, IGP ou STG</span> : {% if not valeur_viandes_volailles_aocaop_igp_stg is
-            None %}{{ valeur_viandes_volailles_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles AOC/AOP, IGP ou STG</span> :
+            {% if not valeur_viandes_volailles_aocaop_igp_stg is None %}{{ valeur_viandes_volailles_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture AOC/AOP, IGP ou STG</span> : {% if not
-            valeur_produits_de_la_mer_aocaop_igp_stg is None %}{{ valeur_produits_de_la_mer_aocaop_igp_stg|floatformat:2
-            }}{% else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture AOC/AOP, IGP ou STG</span> :
+            {% if not valeur_produits_de_la_mer_aocaop_igp_stg is None %}{{ valeur_produits_de_la_mer_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes AOC/AOP, IGP ou STG</span> : {% if not valeur_fruits_et_legumes_aocaop_igp_stg is
-            None %}{{ valeur_fruits_et_legumes_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes AOC/AOP, IGP ou STG</span> :
+            {% if not valeur_fruits_et_legumes_aocaop_igp_stg is None %}{{ valeur_fruits_et_legumes_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie AOC/AOP, IGP ou STG</span> : {% if not valeur_charcuterie_aocaop_igp_stg is None %}{{
-            valeur_charcuterie_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie AOC/AOP, IGP ou STG</span> :
+            {% if not valeur_charcuterie_aocaop_igp_stg is None %}{{ valeur_charcuterie_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers AOC/AOP, IGP ou STG</span> : {% if not valeur_produits_laitiers_aocaop_igp_stg is
-            None %}{{ valeur_produits_laitiers_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers AOC/AOP, IGP ou STG</span> :
+            {% if not valeur_produits_laitiers_aocaop_igp_stg is None %}{{ valeur_produits_laitiers_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie AOC/AOP, IGP ou STG</span> : {% if not valeur_boulangerie_aocaop_igp_stg is None %}{{
-            valeur_boulangerie_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie AOC/AOP, IGP ou STG</span> :
+            {% if not valeur_boulangerie_aocaop_igp_stg is None %}{{ valeur_boulangerie_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons AOC/AOP, IGP ou STG</span> : {% if not valeur_boissons_aocaop_igp_stg is None %}{{
-            valeur_boissons_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons AOC/AOP, IGP ou STG</span> :
+            {% if not valeur_boissons_aocaop_igp_stg is None %}{{ valeur_boissons_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits AOC/AOP, IGP ou STG</span> : {% if not valeur_autres_aocaop_igp_stg is None %}{{
-            valeur_autres_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits AOC/AOP, IGP ou STG</span> :
+            {% if not valeur_autres_aocaop_igp_stg is None %}{{ valeur_autres_aocaop_igp_stg|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -344,40 +337,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles Certification Environnementale de Niveau 2 ou HVE</span> : {% if not
-            valeur_viandes_volailles_hve is None %}{{ valeur_viandes_volailles_hve|floatformat:2 }}{% else %}—{% endif %}
-            €
+            <span>Viandes et volailles Certification Environnementale de Niveau 2 ou HVE</span> :
+            {% if not valeur_viandes_volailles_hve is None %}{{ valeur_viandes_volailles_hve|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture Certification Environnementale de Niveau 2 ou
-                HVE</span> : {% if not valeur_produits_de_la_mer_hve is None %}{{
-            valeur_produits_de_la_mer_hve|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture Certification Environnementale de Niveau 2 ou HVE</span> :
+            {% if not valeur_produits_de_la_mer_hve is None %}{{ valeur_produits_de_la_mer_hve|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes Certification Environnementale de Niveau 2 ou HVE</span> : {% if not
-            valeur_fruits_et_legumes_hve is None %}{{ valeur_fruits_et_legumes_hve|floatformat:2 }}{% else %}—{% endif %}
-            €
+            <span>Fruits et légumes Certification Environnementale de Niveau 2 ou HVE</span> :
+            {% if not valeur_fruits_et_legumes_hve is None %}{{ valeur_fruits_et_legumes_hve|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie Certification Environnementale de Niveau 2 ou HVE</span> : {% if not valeur_charcuterie_hve
-            is None %}{{ valeur_charcuterie_hve|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie Certification Environnementale de Niveau 2 ou HVE</span> :
+            {% if not valeur_charcuterie_hve is None %}{{ valeur_charcuterie_hve|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers Certification Environnementale de Niveau 2 ou HVE</span> : {% if not
-            valeur_produits_laitiers_hve is None %}{{ valeur_produits_laitiers_hve|floatformat:2 }}{% else %}—{% endif %}
-            €
+            <span>Produits laitiers Certification Environnementale de Niveau 2 ou HVE</span> :
+            {% if not valeur_produits_laitiers_hve is None %}{{ valeur_produits_laitiers_hve|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie Certification Environnementale de Niveau 2 ou HVE</span> : {% if not valeur_boulangerie_hve
-            is None %}{{ valeur_boulangerie_hve|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie Certification Environnementale de Niveau 2 ou HVE</span> :
+            {% if not valeur_boulangerie_hve is None %}{{ valeur_boulangerie_hve|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons Certification Environnementale de Niveau 2 ou HVE</span> : {% if not valeur_boissons_hve is
-            None %}{{ valeur_boissons_hve|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons Certification Environnementale de Niveau 2 ou HVE</span> :
+            {% if not valeur_boissons_hve is None %}{{ valeur_boissons_hve|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits Certification Environnementale de Niveau 2 ou HVE</span> : {% if not valeur_autres_hve
-            is None %}{{ valeur_autres_hve|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits Certification Environnementale de Niveau 2 ou HVE</span> :
+            {% if not valeur_autres_hve is None %}{{ valeur_autres_hve|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -385,37 +374,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles pêche durable</span> : {% if not valeur_viandes_volailles_peche_durable is None
-            %}{{ valeur_viandes_volailles_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles pêche durable</span> :
+            {% if not valeur_viandes_volailles_peche_durable is None %}{{ valeur_viandes_volailles_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture pêche durable</span> : {% if not
-            valeur_produits_de_la_mer_peche_durable is None %}{{ valeur_produits_de_la_mer_peche_durable|floatformat:2
-            }}{% else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture pêche durable</span> :
+            {% if not valeur_produits_de_la_mer_peche_durable is None %}{{ valeur_produits_de_la_mer_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes pêche durable</span> : {% if not valeur_fruits_et_legumes_peche_durable is None %}{{
-            valeur_fruits_et_legumes_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes pêche durable</span> :
+            {% if not valeur_fruits_et_legumes_peche_durable is None %}{{ valeur_fruits_et_legumes_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie pêche durable</span> : {% if not valeur_charcuterie_peche_durable is None %}{{
-            valeur_charcuterie_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie pêche durable</span> :
+            {% if not valeur_charcuterie_peche_durable is None %}{{ valeur_charcuterie_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers pêche durable</span> : {% if not valeur_produits_laitiers_peche_durable is None %}{{
-            valeur_produits_laitiers_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers pêche durable</span> :
+            {% if not valeur_produits_laitiers_peche_durable is None %}{{ valeur_produits_laitiers_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie pêche durable</span> : {% if not valeur_boulangerie_peche_durable is None %}{{
-            valeur_boulangerie_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie pêche durable</span> :
+            {% if not valeur_boulangerie_peche_durable is None %}{{ valeur_boulangerie_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons pêche durable</span> : {% if not valeur_boissons_peche_durable is None %}{{
-            valeur_boissons_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons pêche durable</span> :
+            {% if not valeur_boissons_peche_durable is None %}{{ valeur_boissons_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits pêche durable</span> : {% if not valeur_autres_peche_durable is None %}{{
-            valeur_autres_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits pêche durable</span> :
+            {% if not valeur_autres_peche_durable is None %}{{ valeur_autres_peche_durable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -423,36 +411,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles RUP</span> : {% if not valeur_viandes_volailles_rup is None %}{{
-            valeur_viandes_volailles_rup|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles RUP</span> :
+            {% if not valeur_viandes_volailles_rup is None %}{{ valeur_viandes_volailles_rup|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture RUP</span> : {% if not valeur_produits_de_la_mer_rup
-            is None %}{{ valeur_produits_de_la_mer_rup|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture RUP</span> :
+            {% if not valeur_produits_de_la_mer_rup is None %}{{ valeur_produits_de_la_mer_rup|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes RUP</span> : {% if not valeur_fruits_et_legumes_rup is None %}{{
-            valeur_fruits_et_legumes_rup|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes RUP</span> :
+            {% if not valeur_fruits_et_legumes_rup is None %}{{ valeur_fruits_et_legumes_rup|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie RUP</span> : {% if not valeur_charcuterie_rup is None %}{{
-            valeur_charcuterie_rup|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie RUP</span> :
+            {% if not valeur_charcuterie_rup is None %}{{ valeur_charcuterie_rup|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers RUP</span> : {% if not valeur_produits_laitiers_rup is None %}{{
-            valeur_produits_laitiers_rup|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers RUP</span> :
+            {% if not valeur_produits_laitiers_rup is None %}{{ valeur_produits_laitiers_rup|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie RUP</span> : {% if not valeur_boulangerie_rup is None %}{{
-            valeur_boulangerie_rup|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie RUP</span> :
+            {% if not valeur_boulangerie_rup is None %}{{ valeur_boulangerie_rup|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons RUP</span> : {% if not valeur_boissons_rup is None %}{{ valeur_boissons_rup|floatformat:2 }}{%
-            else %}—{% endif %} €
+            <span>Boissons RUP</span> :
+            {% if not valeur_boissons_rup is None %}{{ valeur_boissons_rup|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits RUP</span> : {% if not valeur_autres_rup is None %}{{ valeur_autres_rup|floatformat:2
-            }}{% else %}—{% endif %} €
+            <span>Autres produits RUP</span> :
+            {% if not valeur_autres_rup is None %}{{ valeur_autres_rup|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -460,37 +448,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles Commerce Équitable</span> : {% if not valeur_viandes_volailles_commerce_equitable
-            is None %}{{ valeur_viandes_volailles_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles Commerce Équitable</span> :
+            {% if not valeur_viandes_volailles_commerce_equitable is None %}{{ valeur_viandes_volailles_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture Commerce Équitable</span> : {% if not
-            valeur_produits_de_la_mer_commerce_equitable is None %}{{
-            valeur_produits_de_la_mer_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture Commerce Équitable</span> :
+            {% if not valeur_produits_de_la_mer_commerce_equitable is None %}{{ valeur_produits_de_la_mer_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes Commerce Équitable</span> : {% if not valeur_fruits_et_legumes_commerce_equitable is
-            None %}{{ valeur_fruits_et_legumes_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes Commerce Équitable</span> :
+            {% if not valeur_fruits_et_legumes_commerce_equitable is None %}{{ valeur_fruits_et_legumes_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie Commerce Équitable</span> : {% if not valeur_charcuterie_commerce_equitable is None %}{{
-            valeur_charcuterie_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie Commerce Équitable</span> :
+            {% if not valeur_charcuterie_commerce_equitable is None %}{{ valeur_charcuterie_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers Commerce Équitable</span> : {% if not valeur_produits_laitiers_commerce_equitable is
-            None %}{{ valeur_produits_laitiers_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers Commerce Équitable</span> :
+            {% if not valeur_produits_laitiers_commerce_equitable is None %}{{ valeur_produits_laitiers_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie Commerce Équitable</span> : {% if not valeur_boulangerie_commerce_equitable is None %}{{
-            valeur_boulangerie_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie Commerce Équitable</span> :
+            {% if not valeur_boulangerie_commerce_equitable is None %}{{ valeur_boulangerie_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons Commerce Équitable</span> : {% if not valeur_boissons_commerce_equitable is None %}{{
-            valeur_boissons_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons Commerce Équitable</span> :
+            {% if not valeur_boissons_commerce_equitable is None %}{{ valeur_boissons_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits Commerce Équitable</span> : {% if not valeur_autres_commerce_equitable is None %}{{
-            valeur_autres_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits Commerce Équitable</span> :
+            {% if not valeur_autres_commerce_equitable is None %}{{ valeur_autres_commerce_equitable|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -498,37 +485,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles Fermier</span> : {% if not valeur_viandes_volailles_fermier is None %}{{
-            valeur_viandes_volailles_fermier|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles Fermier</span> :
+            {% if not valeur_viandes_volailles_fermier is None %}{{ valeur_viandes_volailles_fermier|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture Fermier</span> : {% if not
-            valeur_produits_de_la_mer_fermier is None %}{{ valeur_produits_de_la_mer_fermier|floatformat:2 }}{% else %}—{%
-            endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture Fermier</span> :
+            {% if not valeur_produits_de_la_mer_fermier is None %}{{ valeur_produits_de_la_mer_fermier|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes Fermier</span> : {% if not valeur_fruits_et_legumes_fermier is None %}{{
-            valeur_fruits_et_legumes_fermier|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes Fermier</span> :
+            {% if not valeur_fruits_et_legumes_fermier is None %}{{ valeur_fruits_et_legumes_fermier|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie Fermier</span> : {% if not valeur_charcuterie_fermier is None %}{{
-            valeur_charcuterie_fermier|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie Fermier</span> :
+            {% if not valeur_charcuterie_fermier is None %}{{ valeur_charcuterie_fermier|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers Fermier</span> : {% if not valeur_produits_laitiers_fermier is None %}{{
-            valeur_produits_laitiers_fermier|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers Fermier</span> :
+            {% if not valeur_produits_laitiers_fermier is None %}{{ valeur_produits_laitiers_fermier|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie Fermier</span> : {% if not valeur_boulangerie_fermier is None %}{{
-            valeur_boulangerie_fermier|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie Fermier</span> :
+            {% if not valeur_boulangerie_fermier is None %}{{ valeur_boulangerie_fermier|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons Fermier</span> : {% if not valeur_boissons_fermier is None %}{{
-            valeur_boissons_fermier|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons Fermier</span> :
+            {% if not valeur_boissons_fermier is None %}{{ valeur_boissons_fermier|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits Fermier</span> : {% if not valeur_autres_fermier is None %}{{
-            valeur_autres_fermier|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits Fermier</span> :
+            {% if not valeur_autres_fermier is None %}{{ valeur_autres_fermier|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -536,40 +522,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles externalités environnementales</span> : {% if not
-            valeur_viandes_volailles_externalites is None %}{{ valeur_viandes_volailles_externalites|floatformat:2 }}{%
-            else %}—{% endif %} €
+            <span>Viandes et volailles externalités environnementales</span> :
+            {% if not valeur_viandes_volailles_externalites is None %}{{ valeur_viandes_volailles_externalites|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture externalités environnementales</span> : {% if not
-            valeur_produits_de_la_mer_externalites is None %}{{ valeur_produits_de_la_mer_externalites|floatformat:2 }}{%
-            else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture externalités environnementales</span> :
+            {% if not valeur_produits_de_la_mer_externalites is None %}{{ valeur_produits_de_la_mer_externalites|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes externalités environnementales</span> : {% if not
-            valeur_fruits_et_legumes_externalites is None %}{{ valeur_fruits_et_legumes_externalites|floatformat:2 }}{%
-            else %}—{% endif %} €
+            <span>Fruits et légumes externalités environnementales</span> :
+            {% if not valeur_fruits_et_legumes_externalites is None %}{{ valeur_fruits_et_legumes_externalites|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie externalités environnementales</span> : {% if not valeur_charcuterie_externalites is None
-            %}{{ valeur_charcuterie_externalites|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie externalités environnementales</span> :
+            {% if not valeur_charcuterie_externalites is None %}{{ valeur_charcuterie_externalites|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers externalités environnementales</span> : {% if not
-            valeur_produits_laitiers_externalites is None %}{{ valeur_produits_laitiers_externalites|floatformat:2 }}{%
-            else %}—{% endif %} €
+            <span>Produits laitiers externalités environnementales</span> :
+            {% if not valeur_produits_laitiers_externalites is None %}{{ valeur_produits_laitiers_externalites|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie externalités environnementales</span> : {% if not valeur_boulangerie_externalites is None
-            %}{{ valeur_boulangerie_externalites|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie externalités environnementales</span> :
+            {% if not valeur_boulangerie_externalites is None %}{{ valeur_boulangerie_externalites|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons externalités environnementales</span> : {% if not valeur_boissons_externalites is None %}{{
-            valeur_boissons_externalites|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons externalités environnementales</span> :
+            {% if not valeur_boissons_externalites is None %}{{ valeur_boissons_externalites|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits externalités environnementales</span> : {% if not valeur_autres_externalites is None
-            %}{{ valeur_autres_externalites|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits externalités environnementales</span> :
+            {% if not valeur_autres_externalites is None %}{{ valeur_autres_externalites|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -577,38 +559,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles performance environnementale</span> : {% if not
-            valeur_viandes_volailles_performance is None %}{{ valeur_viandes_volailles_performance|floatformat:2 }}{% else
-            %}—{% endif %} €
+            <span>Viandes et volailles performance environnementale</span> :
+            {% if not valeur_viandes_volailles_performance is None %}{{ valeur_viandes_volailles_performance|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture performance environnementale</span> : {% if not
-            valeur_produits_de_la_mer_performance is None %}{{ valeur_produits_de_la_mer_performance|floatformat:2 }}{%
-            else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture performance environnementale</span> :
+            {% if not valeur_produits_de_la_mer_performance is None %}{{ valeur_produits_de_la_mer_performance|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes performance environnementale</span> : {% if not valeur_fruits_et_legumes_performance
-            is None %}{{ valeur_fruits_et_legumes_performance|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes performance environnementale</span> :
+            {% if not valeur_fruits_et_legumes_performance is None %}{{ valeur_fruits_et_legumes_performance|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie performance environnementale</span> : {% if not valeur_charcuterie_performance is None %}{{
-            valeur_charcuterie_performance|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie performance environnementale</span> :
+            {% if not valeur_charcuterie_performance is None %}{{ valeur_charcuterie_performance|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers performance environnementale</span> : {% if not valeur_produits_laitiers_performance
-            is None %}{{ valeur_produits_laitiers_performance|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers performance environnementale</span> :
+            {% if not valeur_produits_laitiers_performance is None %}{{ valeur_produits_laitiers_performance|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie performance environnementale</span> : {% if not valeur_boulangerie_performance is None %}{{
-            valeur_boulangerie_performance|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie performance environnementale</span> :
+            {% if not valeur_boulangerie_performance is None %}{{ valeur_boulangerie_performance|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons performance environnementale</span> : {% if not valeur_boissons_performance is None %}{{
-            valeur_boissons_performance|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons performance environnementale</span> :
+            {% if not valeur_boissons_performance is None %}{{ valeur_boissons_performance|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits performance environnementale</span> : {% if not valeur_autres_performance is None %}{{
-            valeur_autres_performance|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits performance environnementale</span> :
+            {% if not valeur_autres_performance is None %}{{ valeur_autres_performance|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -616,37 +596,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles non-EGalim</span> : {% if not valeur_viandes_volailles_non_egalim is None %}{{
-            valeur_viandes_volailles_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles non-EGalim</span> :
+            {% if not valeur_viandes_volailles_non_egalim is None %}{{ valeur_viandes_volailles_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture non-EGalim</span> : {% if not
-            valeur_produits_de_la_mer_non_egalim is None %}{{ valeur_produits_de_la_mer_non_egalim|floatformat:2 }}{% else
-            %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture non-EGalim</span> :
+            {% if not valeur_produits_de_la_mer_non_egalim is None %}{{ valeur_produits_de_la_mer_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes non-EGalim</span> : {% if not valeur_fruits_et_legumes_non_egalim is None %}{{
-            valeur_fruits_et_legumes_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes non-EGalim</span> :
+            {% if not valeur_fruits_et_legumes_non_egalim is None %}{{ valeur_fruits_et_legumes_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie non-EGalim</span> : {% if not valeur_charcuterie_non_egalim is None %}{{
-            valeur_charcuterie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie non-EGalim</span> :
+            {% if not valeur_charcuterie_non_egalim is None %}{{ valeur_charcuterie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers non-EGalim</span> : {% if not valeur_produits_laitiers_non_egalim is None %}{{
-            valeur_produits_laitiers_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers non-EGalim</span> :
+            {% if not valeur_produits_laitiers_non_egalim is None %}{{ valeur_produits_laitiers_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie non-EGalim</span> : {% if not valeur_boulangerie_non_egalim is None %}{{
-            valeur_boulangerie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie non-EGalim</span> :
+            {% if not valeur_boulangerie_non_egalim is None %}{{ valeur_boulangerie_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons non-EGalim</span> : {% if not valeur_boissons_non_egalim is None %}{{
-            valeur_boissons_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons non-EGalim</span> :
+            {% if not valeur_boissons_non_egalim is None %}{{ valeur_boissons_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits non-EGalim</span> : {% if not valeur_autres_non_egalim is None %}{{
-            valeur_autres_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits non-EGalim</span> :
+            {% if not valeur_autres_non_egalim is None %}{{ valeur_autres_non_egalim|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -654,37 +633,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles origine France</span> : {% if not valeur_viandes_volailles_france is None %}{{
-            valeur_viandes_volailles_france|floatformat:2}}{% else %}—{% endif %} €
+            <span>Viandes et volailles origine France</span> :
+            {% if not valeur_viandes_volailles_france is None %}{{ valeur_viandes_volailles_france|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture origine France</span> : {% if not
-            valeur_produits_de_la_mer_france is None %}{{ valeur_produits_de_la_mer_france|floatformat:2}}{% else %}—{%
-            endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture origine France</span> :
+            {% if not valeur_produits_de_la_mer_france is None %}{{ valeur_produits_de_la_mer_france|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes origine France</span> : {% if not valeur_fruits_et_legumes_france is None %}{{
-            valeur_fruits_et_legumes_france|floatformat:2}}{% else %}—{% endif %} €
+            <span>Fruits et légumes origine France</span> :
+            {% if not valeur_fruits_et_legumes_france is None %}{{ valeur_fruits_et_legumes_france|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie origine France</span> : {% if not valeur_charcuterie_france is None %}{{
-            valeur_charcuterie_france|floatformat:2}}{% else %}—{% endif %} €
+            <span>Charcuterie origine France</span> :
+            {% if not valeur_charcuterie_france is None %}{{ valeur_charcuterie_france|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers origine France</span> : {% if not valeur_produits_laitiers_france is None %}{{
-            valeur_produits_laitiers_france|floatformat:2}}{% else %}—{% endif %} €
+            <span>Produits laitiers origine France</span> :
+            {% if not valeur_produits_laitiers_france is None %}{{ valeur_produits_laitiers_france|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie origine France</span> : {% if not valeur_boulangerie_france is None %}{{
-            valeur_boulangerie_france|floatformat:2}}{% else %}—{% endif %} €
+            <span>Boulangerie origine France</span> :
+            {% if not valeur_boulangerie_france is None %}{{ valeur_boulangerie_france|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons origine France</span> : {% if not valeur_boissons_france is None %}{{
-            valeur_boissons_france|floatformat:2}}{% else %}—{% endif %} €
+            <span>Boissons origine France</span> :
+            {% if not valeur_boissons_france is None %}{{ valeur_boissons_france|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits origine France</span> : {% if not valeur_autres_france is None %}{{
-            valeur_autres_france|floatformat:2}}{% else %}—{% endif %} €
+            <span>Autres produits origine France</span> :
+            {% if not valeur_autres_france is None %}{{ valeur_autres_france|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -692,37 +670,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles circuit-court</span> : {% if not valeur_viandes_volailles_short_distribution is
-            None %}{{ valeur_viandes_volailles_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles circuit-court</span> :
+            {% if not valeur_viandes_volailles_short_distribution is None %}{{ valeur_viandes_volailles_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture circuit-court</span> : {% if not
-            valeur_produits_de_la_mer_short_distribution is None %}{{
-            valeur_produits_de_la_mer_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture circuit-court</span> :
+            {% if not valeur_produits_de_la_mer_short_distribution is None %}{{ valeur_produits_de_la_mer_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes circuit-court</span> : {% if not valeur_fruits_et_legumes_short_distribution is None
-            %}{{ valeur_fruits_et_legumes_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes circuit-court</span> :
+            {% if not valeur_fruits_et_legumes_short_distribution is None %}{{ valeur_fruits_et_legumes_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie circuit-court</span> : {% if not valeur_charcuterie_short_distribution is None %}{{
-            valeur_charcuterie_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie circuit-court</span> :
+            {% if not valeur_charcuterie_short_distribution is None %}{{ valeur_charcuterie_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers circuit-court</span> : {% if not valeur_produits_laitiers_short_distribution is None
-            %}{{ valeur_produits_laitiers_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers circuit-court</span> :
+            {% if not valeur_produits_laitiers_short_distribution is None %}{{ valeur_produits_laitiers_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie circuit-court</span> : {% if not valeur_boulangerie_short_distribution is None %}{{
-            valeur_boulangerie_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie circuit-court</span> :
+            {% if not valeur_boulangerie_short_distribution is None %}{{ valeur_boulangerie_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons circuit-court</span> : {% if not valeur_boissons_short_distribution is None %}{{
-            valeur_boissons_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons circuit-court</span> :
+            {% if not valeur_boissons_short_distribution is None %}{{ valeur_boissons_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits circuit-court</span> : {% if not valeur_autres_short_distribution is None %}{{
-            valeur_autres_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits circuit-court</span> :
+            {% if not valeur_autres_short_distribution is None %}{{ valeur_autres_short_distribution|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     <p>
@@ -730,37 +707,36 @@
     </p>
     <ul>
         <li>
-            <span>Viandes et volailles « local »</span> : {% if not valeur_viandes_volailles_local is None %}{{
-            valeur_viandes_volailles_local|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Viandes et volailles « local »</span> :
+            {% if not valeur_viandes_volailles_local is None %}{{ valeur_viandes_volailles_local|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Poissons, produits de la mer et de l'aquaculture « local »</span> : {% if not
-            valeur_produits_de_la_mer_local is None %}{{ valeur_produits_de_la_mer_local|floatformat:2 }}{% else %}—{%
-            endif %} €
+            <span>Poissons, produits de la mer et de l'aquaculture « local »</span> :
+            {% if not valeur_produits_de_la_mer_local is None %}{{ valeur_produits_de_la_mer_local|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Fruits et légumes « local »</span> : {% if not valeur_fruits_et_legumes_local is None %}{{
-            valeur_fruits_et_legumes_local|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Fruits et légumes « local »</span> :
+            {% if not valeur_fruits_et_legumes_local is None %}{{ valeur_fruits_et_legumes_local|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Charcuterie « local »</span> : {% if not valeur_charcuterie_local is None %}{{
-            valeur_charcuterie_local|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Charcuterie « local »</span> :
+            {% if not valeur_charcuterie_local is None %}{{ valeur_charcuterie_local|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Produits laitiers « local »</span> : {% if not valeur_produits_laitiers_local is None %}{{
-            valeur_produits_laitiers_local|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Produits laitiers « local »</span> :
+            {% if not valeur_produits_laitiers_local is None %}{{ valeur_produits_laitiers_local|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boulangerie « local »</span> : {% if not valeur_boulangerie_local is None %}{{
-            valeur_boulangerie_local|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boulangerie « local »</span> :
+            {% if not valeur_boulangerie_local is None %}{{ valeur_boulangerie_local|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Boissons « local »</span> : {% if not valeur_boissons_local is None %}{{
-            valeur_boissons_local|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Boissons « local »</span> :
+            {% if not valeur_boissons_local is None %}{{ valeur_boissons_local|floatformat:2 }}{% else %}—{% endif %} €
         </li>
         <li>
-            <span>Autres produits « local »</span> : {% if not valeur_autres_local is None %}{{
-            valeur_autres_local|floatformat:2 }}{% else %}—{% endif %} €
+            <span>Autres produits « local »</span> :
+            {% if not valeur_autres_local is None %}{{ valeur_autres_local|floatformat:2 }}{% else %}—{% endif %} €
         </li>
     </ul>
     {% endif %}
@@ -798,18 +774,15 @@
             <ul>
                 <li>
                     <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
-                    {% if not valeur_viandes_volailles is None %}{{ valeur_viandes_volailles|floatformat:2 }}{% else %}—{%
-                    endif %} €
+                    {% if not valeur_viandes_volailles is None %}{{ valeur_viandes_volailles|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées EGalim</span> :
-                    {% if not valeur_viandes_volailles_egalim is None %}{{ valeur_viandes_volailles_egalim|floatformat:2
-                    }}{% else %}—{% endif %} €
+                    {% if not valeur_viandes_volailles_egalim is None %}{{ valeur_viandes_volailles_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées origine France</span> :
-                    {% if not valeur_viandes_volailles_france is None %}{{ valeur_viandes_volailles_france|floatformat:2
-                    }}{% else %}—{% endif %} €
+                    {% if not valeur_viandes_volailles_france is None %}{{ valeur_viandes_volailles_france|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
             {% endif %}
@@ -823,13 +796,11 @@
             <ul>
                 <li>
                     <span>Valeur totale en HT des achats en poissons, produits de la mer et de l'aquaculture</span> :
-                    {% if not valeur_produits_de_la_mer is None %}{{ valeur_produits_de_la_mer|floatformat:2 }}{% else
-                    %}—{% endif %} €
+                    {% if not valeur_produits_de_la_mer is None %}{{ valeur_produits_de_la_mer|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT des achats en poissons, produits de la mer et de l'aquaculture EGalim</span> :
-                    {% if not valeur_produits_de_la_mer_egalim is None %}{{ valeur_produits_de_la_mer_egalim|floatformat:2
-                    }}{% else %}—{% endif %} €
+                    {% if not valeur_produits_de_la_mer_egalim is None %}{{ valeur_produits_de_la_mer_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
             {% else %}
@@ -840,49 +811,46 @@
                 </li>
                 <li>
                     <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
-                    {% if not valeur_viandes_volailles is None %}{{ valeur_viandes_volailles|floatformat:2 }}{% else %}—{%
-                    endif %} €
+                    {% if not valeur_viandes_volailles is None %}{{ valeur_viandes_volailles|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur totale en HT des achats en poissons, produits de la mer et de l'aquaculture</span> :
-                    {% if not valeur_produits_de_la_mer is None %}{{ valeur_produits_de_la_mer|floatformat:2 }}{% else
-                    %}—{% endif %} €
+                    {% if not valeur_produits_de_la_mer is None %}{{ valeur_produits_de_la_mer|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
             <p>Achats Bio</p>
             <ul>
                 <li>
-                    <span>Viandes et volailles Bio</span> : {% if not valeur_viandes_volailles_bio is None %}{{
-                    valeur_viandes_volailles_bio|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Viandes et volailles Bio</span> :
+                    {% if not valeur_viandes_volailles_bio is None %}{{ valeur_viandes_volailles_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Poissons, produits de la mer et de l'aquaculture Bio</span> : {% if not
-                    valeur_produits_de_la_mer_bio is None %}{{ valeur_produits_de_la_mer_bio|floatformat:2 }}{% else %}—{%
-                    endif %} €
+                    <span>Poissons, produits de la mer et de l'aquaculture Bio</span> :
+                    {% if not valeur_produits_de_la_mer_bio is None %}{{ valeur_produits_de_la_mer_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Fruits et légumes Bio</span> : {% if not valeur_fruits_et_legumes_bio is None %}{{
-                    valeur_fruits_et_legumes_bio|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Fruits et légumes Bio</span> :
+                    {% if not valeur_fruits_et_legumes_bio is None %}{{ valeur_fruits_et_legumes_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Charcuterie Bio</span> : {% if not valeur_charcuterie_bio is None %}{{
-                    valeur_charcuterie_bio|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Charcuterie Bio</span> :
+                    {% if not valeur_charcuterie_bio is None %}{{ valeur_charcuterie_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Produits laitiers Bio</span> : {% if not valeur_produits_laitiers_bio is None %}{{
-                    valeur_produits_laitiers_bio|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Produits laitiers Bio</span> :
+                    {% if not valeur_produits_laitiers_bio is None %}{{ valeur_produits_laitiers_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Boulangerie Bio</span> : {% if not valeur_boulangerie_bio is None %}{{
-                    valeur_boulangerie_bio|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Boulangerie Bio</span> :
+                    {% if not valeur_boulangerie_bio is None %}{{ valeur_boulangerie_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Boissons Bio</span> : {% if not valeur_boissons_bio is None %}{{
-                    valeur_boissons_bio|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Boissons Bio</span> :
+                    {% if not valeur_boissons_bio is None %}{{ valeur_boissons_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
-                    <span>Autres produits Bio</span> : {% if not valeur_autres_bio is None %}{{
-                    valeur_autres_bio|floatformat:2 }}{% else %}—{% endif %} €
+                    <span>Autres produits Bio</span> :
+                    {% if not valeur_autres_bio is None %}{{ valeur_autres_bio|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
             <p>
