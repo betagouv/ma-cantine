@@ -21,8 +21,3 @@ from .videotutorial import VideoTutorial  # noqa: F401
 from .importfailure import ImportFailureAdmin  # noqa: F401
 from .wasteaction import WasteActionAdmin  # noqa: F401
 from .resourceaction import ResourceActionAdmin  # noqa: F401
-
-from django.contrib import admin
-from django.contrib.auth.models import Group
-
-admin.site.unregister(Group)
