@@ -9,7 +9,6 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from api.permissions import (
-    IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManager,
     IsLinkedCanteenManager,
@@ -74,8 +73,14 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
         update_change_reason_with_auth(self, measurement)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Modifier une évaluation du gaspillage alimentaire existante.",
+        description="",
+    )
+)
 class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
     queryset = WasteMeasurement.objects.all()
     serializer_class = WasteMeasurementSerializer
 

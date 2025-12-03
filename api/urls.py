@@ -109,12 +109,12 @@ urlpatterns = {
     path(
         "canteens/<int:canteen_pk>/wasteMeasurements/",
         CanteenWasteMeasurementsView.as_view(),
-        name="canteen_waste_measurements",
+        name="canteen_waste_measurements_list",
     ),
     path(
         "canteens/<int:canteen_pk>/wasteMeasurements/<int:pk>",
         CanteenWasteMeasurementView.as_view(),
-        name="canteen_waste_measurement",
+        name="canteen_waste_measurement_detail",
     ),
     path(
         "canteens/<int:canteen_pk>/satellites/",
