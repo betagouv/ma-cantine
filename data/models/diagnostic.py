@@ -54,15 +54,15 @@ def diagnostic_type_simple_is_filled_query():
     """
     NOTE: changes in 2025
     """
-    before_2O25 = Q(year__lt=2025, value_totale__gt=0)
+    before_2O25 = Q(year__lt=2025, valeur_totale__gt=0)
     after_2O25 = Q(
         year__gte=2025,
-        value_totale__gt=0,
-        value_bio__isnull=False,
-        value_siqo__isnull=False,
-        value_egalim_autres__isnull=False,
-        value_viandes_volailles__isnull=False,
-        value_viandes_volailles_egalim__isnull=False,
+        valeur_totale__gt=0,
+        valeur_bio__isnull=False,
+        valeur_siqo__isnull=False,
+        valeur_egalim_autres__isnull=False,
+        valeur_viandes_volailles__isnull=False,
+        valeur_viandes_volailles_egalim__isnull=False,
     )
     return diagnostic_type_simple_query() & (before_2O25 | after_2O25)
 
@@ -71,7 +71,7 @@ def diagnostic_type_complete_is_filled_query():
     """
     TODO: changes in 2025?
     """
-    return diagnostic_type_complete_query() & Q(value_totale__gt=0)
+    return diagnostic_type_complete_query() & Q(valeur_totale__gt=0)
 
 
 class DiagnosticQuerySet(models.QuerySet):
@@ -107,7 +107,7 @@ class DiagnosticQuerySet(models.QuerySet):
             canteen_yearly_meal_count=Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField())
         ).annotate(
             meal_price=Case(
-                When(canteen_yearly_meal_count__gt=0, then=F("value_totale") / F("canteen_yearly_meal_count")),
+                When(canteen_yearly_meal_count__gt=0, then=F("valeur_totale") / F("canteen_yearly_meal_count")),
                 default=None,
             )
         )
@@ -122,7 +122,7 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         return (
             self.with_meal_price()
-            .exclude(meal_price__isnull=False, meal_price__gt=20, value_totale__gt=1000000)
+            .exclude(meal_price__isnull=False, meal_price__gt=20, valeur_totale__gt=1000000)
             .exclude(year=2022, teledeclaration_id__in=[9656, 8037])
         )
 
@@ -158,7 +158,7 @@ class DiagnosticQuerySet(models.QuerySet):
             return (
                 self.teledeclared_for_year(year)
                 .exclude(teledeclaration_mode="SATELLITE_WITHOUT_APPRO")
-                .filter(value_bio_agg__isnull=False)  # Chaîne de traitement n°5
+                .filter(valeur_bio_agg__isnull=False)  # Chaîne de traitement n°5
                 .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
                 .exclude_aberrant_values()  # Chaîne de traitement n°8
             )
@@ -179,8 +179,8 @@ class DiagnosticQuerySet(models.QuerySet):
         Note: we use Sum/default instead of F to better manage None values.
         """
         return self.annotate(
-            bio_percent=100 * Sum("value_bio_agg", default=0) / Sum("value_totale"),
-            egalim_percent=100 * F("value_egalim_agg") / Sum("value_totale"),
+            bio_percent=100 * Sum("valeur_bio_agg", default=0) / Sum("valeur_totale"),
+            egalim_percent=100 * F("valeur_egalim_agg") / Sum("valeur_totale"),
         )
 
     def egalim_objectives_reached(self):
@@ -368,18 +368,18 @@ class Diagnostic(models.Model):
     }
 
     SIMPLE_APPRO_FIELDS = [
-        "value_totale",
-        "value_bio",
-        "value_bio_dont_commerce_equitable",
-        "value_siqo",
-        "value_externalites_performance",
-        "value_egalim_autres",
-        "value_egalim_autres_dont_commerce_equitable",
-        "value_viandes_volailles",
-        "value_viandes_volailles_egalim",
-        "value_viandes_volailles_france",
-        "value_produits_de_la_mer",
-        "value_produits_de_la_mer_egalim",
+        "valeur_totale",
+        "valeur_bio",
+        "valeur_bio_dont_commerce_equitable",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
+        "valeur_egalim_autres_dont_commerce_equitable",
+        "valeur_viandes_volailles",
+        "valeur_viandes_volailles_egalim",
+        "valeur_viandes_volailles_france",
+        "valeur_produits_de_la_mer",
+        "valeur_produits_de_la_mer_egalim",
     ]
     # TODO: clean up when updating the imports
     SIMPLE_APPRO_FIELDS_FOR_IMPORT = [
@@ -387,142 +387,142 @@ class Diagnostic(models.Model):
     ]
 
     AGGREGATED_APPRO_FIELDS = [
-        "value_bio_agg",
-        "value_siqo_agg",
-        "value_externalites_performance_agg",
-        "value_egalim_autres_agg",
-        # "value_egalim_hors_bio_agg",
-        # "value_egalim_agg",
+        "valeur_bio_agg",
+        "valeur_siqo_agg",
+        "valeur_externalites_performance_agg",
+        "valeur_egalim_autres_agg",
+        # "valeur_egalim_hors_bio_agg",
+        # "valeur_egalim_agg",
     ]
 
     APPRO_FIELDS = [
-        "value_viandes_volailles_bio",
-        "value_viandes_volailles_bio_dont_commerce_equitable",
-        "value_produits_de_la_mer_bio",
-        "value_produits_de_la_mer_bio_dont_commerce_equitable",
-        "value_fruits_et_legumes_bio",
-        "value_fruits_et_legumes_bio_dont_commerce_equitable",
-        "value_charcuterie_bio",
-        "value_charcuterie_bio_dont_commerce_equitable",
-        "value_produits_laitiers_bio",
-        "value_produits_laitiers_bio_dont_commerce_equitable",
-        "value_boulangerie_bio",
-        "value_boulangerie_bio_dont_commerce_equitable",
-        "value_boissons_bio",
-        "value_boissons_bio_dont_commerce_equitable",
-        "value_autres_bio",
-        "value_autres_bio_dont_commerce_equitable",
-        "value_viandes_volailles_label_rouge",
-        "value_produits_de_la_mer_label_rouge",
-        "value_fruits_et_legumes_label_rouge",
-        "value_charcuterie_label_rouge",
-        "value_produits_laitiers_label_rouge",
-        "value_boulangerie_label_rouge",
-        "value_boissons_label_rouge",
-        "value_autres_label_rouge",
-        "value_viandes_volailles_aocaop_igp_stg",
-        "value_produits_de_la_mer_aocaop_igp_stg",
-        "value_fruits_et_legumes_aocaop_igp_stg",
-        "value_charcuterie_aocaop_igp_stg",
-        "value_produits_laitiers_aocaop_igp_stg",
-        "value_boulangerie_aocaop_igp_stg",
-        "value_boissons_aocaop_igp_stg",
-        "value_autres_aocaop_igp_stg",
-        "value_viandes_volailles_hve",
-        "value_produits_de_la_mer_hve",
-        "value_fruits_et_legumes_hve",
-        "value_charcuterie_hve",
-        "value_produits_laitiers_hve",
-        "value_boulangerie_hve",
-        "value_boissons_hve",
-        "value_autres_hve",
-        "value_viandes_volailles_peche_durable",
-        "value_produits_de_la_mer_peche_durable",
-        "value_fruits_et_legumes_peche_durable",
-        "value_charcuterie_peche_durable",
-        "value_produits_laitiers_peche_durable",
-        "value_boulangerie_peche_durable",
-        "value_boissons_peche_durable",
-        "value_autres_peche_durable",
-        "value_viandes_volailles_rup",
-        "value_produits_de_la_mer_rup",
-        "value_fruits_et_legumes_rup",
-        "value_charcuterie_rup",
-        "value_produits_laitiers_rup",
-        "value_boulangerie_rup",
-        "value_boissons_rup",
-        "value_autres_rup",
-        "value_viandes_volailles_commerce_equitable",
-        "value_produits_de_la_mer_commerce_equitable",
-        "value_fruits_et_legumes_commerce_equitable",
-        "value_charcuterie_commerce_equitable",
-        "value_produits_laitiers_commerce_equitable",
-        "value_boulangerie_commerce_equitable",
-        "value_boissons_commerce_equitable",
-        "value_autres_commerce_equitable",
-        "value_viandes_volailles_fermier",
-        "value_produits_de_la_mer_fermier",
-        "value_fruits_et_legumes_fermier",
-        "value_charcuterie_fermier",
-        "value_produits_laitiers_fermier",
-        "value_boulangerie_fermier",
-        "value_boissons_fermier",
-        "value_autres_fermier",
-        "value_viandes_volailles_externalites",
-        "value_produits_de_la_mer_externalites",
-        "value_fruits_et_legumes_externalites",
-        "value_charcuterie_externalites",
-        "value_produits_laitiers_externalites",
-        "value_boulangerie_externalites",
-        "value_boissons_externalites",
-        "value_autres_externalites",
-        "value_viandes_volailles_performance",
-        "value_produits_de_la_mer_performance",
-        "value_fruits_et_legumes_performance",
-        "value_charcuterie_performance",
-        "value_produits_laitiers_performance",
-        "value_boulangerie_performance",
-        "value_boissons_performance",
-        "value_autres_performance",
-        "value_viandes_volailles_non_egalim",
-        "value_produits_de_la_mer_non_egalim",
-        "value_fruits_et_legumes_non_egalim",
-        "value_charcuterie_non_egalim",
-        "value_produits_laitiers_non_egalim",
-        "value_boulangerie_non_egalim",
-        "value_boissons_non_egalim",
-        "value_autres_non_egalim",
-        "value_viandes_volailles_france",
-        "value_produits_de_la_mer_france",
-        "value_fruits_et_legumes_france",
-        "value_charcuterie_france",
-        "value_produits_laitiers_france",
-        "value_boulangerie_france",
-        "value_boissons_france",
-        "value_autres_france",
-        "value_viandes_volailles_short_distribution",
-        "value_produits_de_la_mer_short_distribution",
-        "value_fruits_et_legumes_short_distribution",
-        "value_charcuterie_short_distribution",
-        "value_produits_laitiers_short_distribution",
-        "value_boulangerie_short_distribution",
-        "value_boissons_short_distribution",
-        "value_autres_short_distribution",
-        "value_viandes_volailles_local",
-        "value_produits_de_la_mer_local",
-        "value_fruits_et_legumes_local",
-        "value_charcuterie_local",
-        "value_produits_laitiers_local",
-        "value_boulangerie_local",
-        "value_boissons_local",
-        "value_autres_local",
+        "valeur_viandes_volailles_bio",
+        "valeur_viandes_volailles_bio_dont_commerce_equitable",
+        "valeur_produits_de_la_mer_bio",
+        "valeur_produits_de_la_mer_bio_dont_commerce_equitable",
+        "valeur_fruits_et_legumes_bio",
+        "valeur_fruits_et_legumes_bio_dont_commerce_equitable",
+        "valeur_charcuterie_bio",
+        "valeur_charcuterie_bio_dont_commerce_equitable",
+        "valeur_produits_laitiers_bio",
+        "valeur_produits_laitiers_bio_dont_commerce_equitable",
+        "valeur_boulangerie_bio",
+        "valeur_boulangerie_bio_dont_commerce_equitable",
+        "valeur_boissons_bio",
+        "valeur_boissons_bio_dont_commerce_equitable",
+        "valeur_autres_bio",
+        "valeur_autres_bio_dont_commerce_equitable",
+        "valeur_viandes_volailles_label_rouge",
+        "valeur_produits_de_la_mer_label_rouge",
+        "valeur_fruits_et_legumes_label_rouge",
+        "valeur_charcuterie_label_rouge",
+        "valeur_produits_laitiers_label_rouge",
+        "valeur_boulangerie_label_rouge",
+        "valeur_boissons_label_rouge",
+        "valeur_autres_label_rouge",
+        "valeur_viandes_volailles_aocaop_igp_stg",
+        "valeur_produits_de_la_mer_aocaop_igp_stg",
+        "valeur_fruits_et_legumes_aocaop_igp_stg",
+        "valeur_charcuterie_aocaop_igp_stg",
+        "valeur_produits_laitiers_aocaop_igp_stg",
+        "valeur_boulangerie_aocaop_igp_stg",
+        "valeur_boissons_aocaop_igp_stg",
+        "valeur_autres_aocaop_igp_stg",
+        "valeur_viandes_volailles_hve",
+        "valeur_produits_de_la_mer_hve",
+        "valeur_fruits_et_legumes_hve",
+        "valeur_charcuterie_hve",
+        "valeur_produits_laitiers_hve",
+        "valeur_boulangerie_hve",
+        "valeur_boissons_hve",
+        "valeur_autres_hve",
+        "valeur_viandes_volailles_peche_durable",
+        "valeur_produits_de_la_mer_peche_durable",
+        "valeur_fruits_et_legumes_peche_durable",
+        "valeur_charcuterie_peche_durable",
+        "valeur_produits_laitiers_peche_durable",
+        "valeur_boulangerie_peche_durable",
+        "valeur_boissons_peche_durable",
+        "valeur_autres_peche_durable",
+        "valeur_viandes_volailles_rup",
+        "valeur_produits_de_la_mer_rup",
+        "valeur_fruits_et_legumes_rup",
+        "valeur_charcuterie_rup",
+        "valeur_produits_laitiers_rup",
+        "valeur_boulangerie_rup",
+        "valeur_boissons_rup",
+        "valeur_autres_rup",
+        "valeur_viandes_volailles_commerce_equitable",
+        "valeur_produits_de_la_mer_commerce_equitable",
+        "valeur_fruits_et_legumes_commerce_equitable",
+        "valeur_charcuterie_commerce_equitable",
+        "valeur_produits_laitiers_commerce_equitable",
+        "valeur_boulangerie_commerce_equitable",
+        "valeur_boissons_commerce_equitable",
+        "valeur_autres_commerce_equitable",
+        "valeur_viandes_volailles_fermier",
+        "valeur_produits_de_la_mer_fermier",
+        "valeur_fruits_et_legumes_fermier",
+        "valeur_charcuterie_fermier",
+        "valeur_produits_laitiers_fermier",
+        "valeur_boulangerie_fermier",
+        "valeur_boissons_fermier",
+        "valeur_autres_fermier",
+        "valeur_viandes_volailles_externalites",
+        "valeur_produits_de_la_mer_externalites",
+        "valeur_fruits_et_legumes_externalites",
+        "valeur_charcuterie_externalites",
+        "valeur_produits_laitiers_externalites",
+        "valeur_boulangerie_externalites",
+        "valeur_boissons_externalites",
+        "valeur_autres_externalites",
+        "valeur_viandes_volailles_performance",
+        "valeur_produits_de_la_mer_performance",
+        "valeur_fruits_et_legumes_performance",
+        "valeur_charcuterie_performance",
+        "valeur_produits_laitiers_performance",
+        "valeur_boulangerie_performance",
+        "valeur_boissons_performance",
+        "valeur_autres_performance",
+        "valeur_viandes_volailles_non_egalim",
+        "valeur_produits_de_la_mer_non_egalim",
+        "valeur_fruits_et_legumes_non_egalim",
+        "valeur_charcuterie_non_egalim",
+        "valeur_produits_laitiers_non_egalim",
+        "valeur_boulangerie_non_egalim",
+        "valeur_boissons_non_egalim",
+        "valeur_autres_non_egalim",
+        "valeur_viandes_volailles_france",
+        "valeur_produits_de_la_mer_france",
+        "valeur_fruits_et_legumes_france",
+        "valeur_charcuterie_france",
+        "valeur_produits_laitiers_france",
+        "valeur_boulangerie_france",
+        "valeur_boissons_france",
+        "valeur_autres_france",
+        "valeur_viandes_volailles_short_distribution",
+        "valeur_produits_de_la_mer_short_distribution",
+        "valeur_fruits_et_legumes_short_distribution",
+        "valeur_charcuterie_short_distribution",
+        "valeur_produits_laitiers_short_distribution",
+        "valeur_boulangerie_short_distribution",
+        "valeur_boissons_short_distribution",
+        "valeur_autres_short_distribution",
+        "valeur_viandes_volailles_local",
+        "valeur_produits_de_la_mer_local",
+        "valeur_fruits_et_legumes_local",
+        "valeur_charcuterie_local",
+        "valeur_produits_laitiers_local",
+        "valeur_boulangerie_local",
+        "valeur_boissons_local",
+        "valeur_autres_local",
     ]
     # TODO: clean up when updating the imports
     APPRO_FIELDS_FOR_IMPORT = [
         field_name for field_name in APPRO_FIELDS if "bio_dont_commerce_equitable" not in field_name
     ]
 
-    COMPLETE_APPRO_FIELDS = ["value_totale", "value_viandes_volailles", "value_produits_de_la_mer"] + APPRO_FIELDS
+    COMPLETE_APPRO_FIELDS = ["valeur_totale", "valeur_viandes_volailles", "valeur_produits_de_la_mer"] + APPRO_FIELDS
 
     WASTE_FIELDS = [
         "has_waste_diagnostic",
@@ -693,56 +693,56 @@ class Diagnostic(models.Model):
     )
 
     # Product origin
-    value_totale = make_optional_positive_decimal_field(
+    valeur_totale = make_optional_positive_decimal_field(
         verbose_name="Valeur totale annuelle HT",
     )
-    value_bio = make_optional_positive_decimal_field(
+    valeur_bio = make_optional_positive_decimal_field(
         verbose_name="Bio - Valeur annuelle HT",
     )
-    value_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Bio dont commerce équitable - Valeur annuelle HT",
     )
-    value_fair_trade = make_optional_positive_decimal_field(  # legacy
+    valeur_fair_trade = make_optional_positive_decimal_field(  # legacy
         verbose_name="Commerce équitable - Valeur annuelle HT",
     )
-    value_siqo = make_optional_positive_decimal_field(
+    valeur_siqo = make_optional_positive_decimal_field(
         verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT",
     )
-    value_pat = make_optional_positive_decimal_field(  # legacy
+    valeur_pat = make_optional_positive_decimal_field(  # legacy
         verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
     )
-    value_externalites_performance = make_optional_positive_decimal_field(
+    valeur_externalites_performance = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
     )
-    value_egalim_autres = make_optional_positive_decimal_field(
+    valeur_egalim_autres = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) des autres achats EGalim",
     )
-    value_egalim_autres_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_egalim_autres_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
     )
-    value_viandes_volailles = make_optional_positive_decimal_field(
+    valeur_viandes_volailles = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
     )
-    value_viandes_volailles_egalim = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_egalim = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim",
     )
-    value_viandes_volailles_france = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_france = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées origine France",
     )
-    value_produits_de_la_mer = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) poissons et produits aquatiques",
     )
-    value_produits_de_la_mer_egalim = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_egalim = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) poissons et produits aquatiques EGalim",
     )
 
-    value_label_rouge = make_optional_positive_decimal_field(
+    valeur_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Valeur label rouge",
     )
-    value_label_aoc_igp = make_optional_positive_decimal_field(
+    valeur_label_aoc_igp = make_optional_positive_decimal_field(
         verbose_name="Valeur label AOC/AOP/IGP",
     )
-    value_label_hve = make_optional_positive_decimal_field(
+    valeur_label_hve = make_optional_positive_decimal_field(
         verbose_name="Valeur label HVE",
     )
 
@@ -940,384 +940,384 @@ class Diagnostic(models.Model):
     )
 
     # aggregated values
-    value_bio_agg = make_optional_positive_decimal_field(
+    valeur_bio_agg = make_optional_positive_decimal_field(
         verbose_name="Bio - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_siqo_agg = make_optional_positive_decimal_field(
+    valeur_siqo_agg = make_optional_positive_decimal_field(
         verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_externalites_performance_agg = make_optional_positive_decimal_field(
+    valeur_externalites_performance_agg = make_optional_positive_decimal_field(
         verbose_name="Externalité/performance - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)",
     )
-    value_egalim_autres_agg = make_optional_positive_decimal_field(
+    valeur_egalim_autres_agg = make_optional_positive_decimal_field(
         verbose_name="Autres achats EGalim - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_egalim_hors_bio_agg = make_optional_positive_decimal_field(
+    valeur_egalim_hors_bio_agg = make_optional_positive_decimal_field(
         verbose_name="EGalim (Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_egalim_agg = make_optional_positive_decimal_field(
+    valeur_egalim_agg = make_optional_positive_decimal_field(
         verbose_name="EGalim (Bio + Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
 
     # detailed values
-    value_viandes_volailles_bio = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_bio = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Bio",
     )
-    value_viandes_volailles_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Bio dont commerce équitable",
     )
-    value_produits_de_la_mer_bio = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_bio = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Bio",
     )
-    value_produits_de_la_mer_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Produits aquatiques frais et surgelés, Bio dont commerce équitable",
     )
-    value_fruits_et_legumes_bio = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_bio = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Bio",
     )
-    value_fruits_et_legumes_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Bio dont commerce équitable",
     )
-    value_charcuterie_bio = make_optional_positive_decimal_field(
+    valeur_charcuterie_bio = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Bio",
     )
-    value_charcuterie_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_charcuterie_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Bio dont commerce équitable",
     )
-    value_produits_laitiers_bio = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_bio = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Bio",
     )
-    value_produits_laitiers_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Bio dont commerce équitable",
     )
-    value_boulangerie_bio = make_optional_positive_decimal_field(
+    valeur_boulangerie_bio = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Bio",
     )
-    value_boulangerie_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_boulangerie_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Bio dont commerce équitable",
     )
-    value_boissons_bio = make_optional_positive_decimal_field(
+    valeur_boissons_bio = make_optional_positive_decimal_field(
         verbose_name="Boissons, Bio",
     )
-    value_boissons_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_boissons_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Boissons, Bio dont commerce équitable",
     )
-    value_autres_bio = make_optional_positive_decimal_field(
+    valeur_autres_bio = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Bio",
     )
-    value_autres_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_autres_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Bio dont commerce équitable",
     )
-    value_viandes_volailles_label_rouge = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Label rouge",
     )
-    value_produits_de_la_mer_label_rouge = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Label rouge",
     )
-    value_fruits_et_legumes_label_rouge = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Label rouge",
     )
-    value_charcuterie_label_rouge = make_optional_positive_decimal_field(
+    valeur_charcuterie_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Label rouge",
     )
-    value_produits_laitiers_label_rouge = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_label_rouge = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Label rouge",
     )
-    value_boulangerie_label_rouge = make_optional_positive_decimal_field(
+    valeur_boulangerie_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Label rouge",
     )
-    value_boissons_label_rouge = make_optional_positive_decimal_field(
+    valeur_boissons_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Boissons, Label rouge",
     )
-    value_autres_label_rouge = make_optional_positive_decimal_field(
+    valeur_autres_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Label rouge",
     )
-    value_viandes_volailles_aocaop_igp_stg = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
     )
-    value_produits_de_la_mer_aocaop_igp_stg = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, AOC / AOP / IGP / STG",
     )
-    value_fruits_et_legumes_aocaop_igp_stg = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
     )
-    value_charcuterie_aocaop_igp_stg = make_optional_positive_decimal_field(
+    valeur_charcuterie_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, AOC / AOP / IGP / STG",
     )
-    value_produits_laitiers_aocaop_igp_stg = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG",
     )
-    value_boulangerie_aocaop_igp_stg = make_optional_positive_decimal_field(
+    valeur_boulangerie_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, AOC / AOP / IGP / STG",
     )
-    value_boissons_aocaop_igp_stg = make_optional_positive_decimal_field(
+    valeur_boissons_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="Boissons, AOC / AOP / IGP / STG",
     )
-    value_autres_aocaop_igp_stg = make_optional_positive_decimal_field(
+    valeur_autres_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, AOC / AOP / IGP / STG",
     )
-    value_viandes_volailles_hve = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_hve = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Haute valeur environnementale",
     )
-    value_produits_de_la_mer_hve = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_hve = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Haute valeur environnementale",
     )
-    value_fruits_et_legumes_hve = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_hve = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Haute valeur environnementale",
     )
-    value_charcuterie_hve = make_optional_positive_decimal_field(
+    valeur_charcuterie_hve = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Haute valeur environnementale",
     )
-    value_produits_laitiers_hve = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_hve = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Haute valeur environnementale",
     )
-    value_boulangerie_hve = make_optional_positive_decimal_field(
+    valeur_boulangerie_hve = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Haute valeur environnementale",
     )
-    value_boissons_hve = make_optional_positive_decimal_field(
+    valeur_boissons_hve = make_optional_positive_decimal_field(
         verbose_name="Boissons, Haute valeur environnementale",
     )
-    value_autres_hve = make_optional_positive_decimal_field(
+    valeur_autres_hve = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Haute valeur environnementale",
     )
-    value_viandes_volailles_peche_durable = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Pêche durable",
     )
-    value_produits_de_la_mer_peche_durable = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Pêche durable",
     )
-    value_fruits_et_legumes_peche_durable = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Pêche durable",
     )
-    value_charcuterie_peche_durable = make_optional_positive_decimal_field(
+    valeur_charcuterie_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Pêche durable",
     )
-    value_produits_laitiers_peche_durable = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_peche_durable = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Pêche durable",
     )
-    value_boulangerie_peche_durable = make_optional_positive_decimal_field(
+    valeur_boulangerie_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Pêche durable",
     )
-    value_boissons_peche_durable = make_optional_positive_decimal_field(
+    valeur_boissons_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Boissons, Pêche durable",
     )
-    value_autres_peche_durable = make_optional_positive_decimal_field(
+    valeur_autres_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Pêche durable",
     )
-    value_viandes_volailles_rup = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_rup = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Région ultrapériphérique",
     )
-    value_produits_de_la_mer_rup = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_rup = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Région ultrapériphérique",
     )
-    value_fruits_et_legumes_rup = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_rup = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Région ultrapériphérique",
     )
-    value_charcuterie_rup = make_optional_positive_decimal_field(
+    valeur_charcuterie_rup = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Région ultrapériphérique",
     )
-    value_produits_laitiers_rup = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_rup = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Région ultrapériphérique",
     )
-    value_boulangerie_rup = make_optional_positive_decimal_field(
+    valeur_boulangerie_rup = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Région ultrapériphérique",
     )
-    value_boissons_rup = make_optional_positive_decimal_field(
+    valeur_boissons_rup = make_optional_positive_decimal_field(
         verbose_name="Boissons, Région ultrapériphérique",
     )
-    value_autres_rup = make_optional_positive_decimal_field(
+    valeur_autres_rup = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique",
     )
-    value_viandes_volailles_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Commerce équitable",
     )
-    value_produits_de_la_mer_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Commerce équitable",
     )
-    value_fruits_et_legumes_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Commerce équitable",
     )
-    value_charcuterie_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_charcuterie_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Commerce équitable",
     )
-    value_produits_laitiers_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Commerce équitable",
     )
-    value_boulangerie_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_boulangerie_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Commerce équitable",
     )
-    value_boissons_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_boissons_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Boissons, Commerce équitable",
     )
-    value_autres_commerce_equitable = make_optional_positive_decimal_field(
+    valeur_autres_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Commerce équitable",
     )
-    value_viandes_volailles_fermier = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_fermier = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Fermier",
     )
-    value_produits_de_la_mer_fermier = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_fermier = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Fermier",
     )
-    value_fruits_et_legumes_fermier = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_fermier = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Fermier",
     )
-    value_charcuterie_fermier = make_optional_positive_decimal_field(
+    valeur_charcuterie_fermier = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Fermier",
     )
-    value_produits_laitiers_fermier = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_fermier = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Fermier",
     )
-    value_boulangerie_fermier = make_optional_positive_decimal_field(
+    valeur_boulangerie_fermier = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Fermier",
     )
-    value_boissons_fermier = make_optional_positive_decimal_field(
+    valeur_boissons_fermier = make_optional_positive_decimal_field(
         verbose_name="Boissons, Fermier",
     )
-    value_autres_fermier = make_optional_positive_decimal_field(
+    valeur_autres_fermier = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Fermier",
     )
-    value_viandes_volailles_externalites = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_externalites = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
-    value_produits_de_la_mer_externalites = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_externalites = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
-    value_fruits_et_legumes_externalites = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_externalites = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
-    value_charcuterie_externalites = make_optional_positive_decimal_field(
+    valeur_charcuterie_externalites = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
-    value_produits_laitiers_externalites = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_externalites = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
-    value_boulangerie_externalites = make_optional_positive_decimal_field(
+    valeur_boulangerie_externalites = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
-    value_boissons_externalites = make_optional_positive_decimal_field(
+    valeur_boissons_externalites = make_optional_positive_decimal_field(
         verbose_name="Boissons, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
-    value_autres_externalites = make_optional_positive_decimal_field(
+    valeur_autres_externalites = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
-    value_viandes_volailles_performance = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_performance = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
     )
-    value_produits_de_la_mer_performance = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_performance = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Produits acquis sur la base de leurs performances en matière environnementale",
     )
-    value_fruits_et_legumes_performance = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_performance = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
     )
-    value_charcuterie_performance = make_optional_positive_decimal_field(
+    valeur_charcuterie_performance = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Produits acquis sur la base de leurs performances en matière environnementale",
     )
-    value_produits_laitiers_performance = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_performance = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Produits acquis sur la base de leurs performances en matière environnementale",
     )
-    value_boulangerie_performance = make_optional_positive_decimal_field(
+    valeur_boulangerie_performance = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
     )
-    value_boissons_performance = make_optional_positive_decimal_field(
+    valeur_boissons_performance = make_optional_positive_decimal_field(
         verbose_name="Boissons, Produits acquis sur la base de leurs performances en matière environnementale",
     )
-    value_autres_performance = make_optional_positive_decimal_field(
+    valeur_autres_performance = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
     )
-    value_viandes_volailles_non_egalim = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, non-EGalim.",
     )
-    value_produits_de_la_mer_non_egalim = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, non-EGalim.",
     )
-    value_fruits_et_legumes_non_egalim = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, non-EGalim.",
     )
-    value_charcuterie_non_egalim = make_optional_positive_decimal_field(
+    valeur_charcuterie_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, non-EGalim.",
     )
-    value_produits_laitiers_non_egalim = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_non_egalim = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), non-EGalim.",
     )
-    value_boulangerie_non_egalim = make_optional_positive_decimal_field(
+    valeur_boulangerie_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, non-EGalim.",
     )
-    value_boissons_non_egalim = make_optional_positive_decimal_field(
+    valeur_boissons_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Boissons, non-EGalim.",
     )
-    value_autres_non_egalim = make_optional_positive_decimal_field(
+    valeur_autres_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, non-EGalim.",
     )
-    value_viandes_volailles_france = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_france = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Provenance France",
     )
-    value_produits_de_la_mer_france = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_france = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Provenance France",
     )
-    value_fruits_et_legumes_france = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_france = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Provenance France",
     )
-    value_charcuterie_france = make_optional_positive_decimal_field(
+    valeur_charcuterie_france = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Provenance France",
     )
-    value_produits_laitiers_france = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_france = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Provenance France",
     )
-    value_boulangerie_france = make_optional_positive_decimal_field(
+    valeur_boulangerie_france = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Provenance France",
     )
-    value_boissons_france = make_optional_positive_decimal_field(
+    valeur_boissons_france = make_optional_positive_decimal_field(
         verbose_name="Boissons, Provenance France",
     )
-    value_autres_france = make_optional_positive_decimal_field(
+    valeur_autres_france = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Provenance France",
     )
-    value_viandes_volailles_short_distribution = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_short_distribution = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Circuit-court",
     )
-    value_produits_de_la_mer_short_distribution = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_short_distribution = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Circuit-court",
     )
-    value_fruits_et_legumes_short_distribution = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_short_distribution = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Circuit-court",
     )
-    value_charcuterie_short_distribution = make_optional_positive_decimal_field(
+    valeur_charcuterie_short_distribution = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Circuit-court",
     )
-    value_produits_laitiers_short_distribution = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_short_distribution = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Circuit-court",
     )
-    value_boulangerie_short_distribution = make_optional_positive_decimal_field(
+    valeur_boulangerie_short_distribution = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Circuit-court",
     )
-    value_boissons_short_distribution = make_optional_positive_decimal_field(
+    valeur_boissons_short_distribution = make_optional_positive_decimal_field(
         verbose_name="Boissons, Circuit-court",
     )
-    value_autres_short_distribution = make_optional_positive_decimal_field(
+    valeur_autres_short_distribution = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Circuit-court",
     )
-    value_viandes_volailles_local = make_optional_positive_decimal_field(
+    valeur_viandes_volailles_local = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Produit local",
     )
-    value_produits_de_la_mer_local = make_optional_positive_decimal_field(
+    valeur_produits_de_la_mer_local = make_optional_positive_decimal_field(
         verbose_name="Poissons, produits de la mer et de l'aquaculture, Produit local",
     )
-    value_fruits_et_legumes_local = make_optional_positive_decimal_field(
+    valeur_fruits_et_legumes_local = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Produit local",
     )
-    value_charcuterie_local = make_optional_positive_decimal_field(
+    valeur_charcuterie_local = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Produit local",
     )
-    value_produits_laitiers_local = make_optional_positive_decimal_field(
+    valeur_produits_laitiers_local = make_optional_positive_decimal_field(
         verbose_name="BOF (Produits laitiers, beurre et œufs), Produit local",
     )
-    value_boulangerie_local = make_optional_positive_decimal_field(
+    valeur_boulangerie_local = make_optional_positive_decimal_field(
         verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Produit local",
     )
-    value_boissons_local = make_optional_positive_decimal_field(
+    valeur_boissons_local = make_optional_positive_decimal_field(
         verbose_name="Boissons, Produit local",
     )
-    value_autres_local = make_optional_positive_decimal_field(
+    valeur_autres_local = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d’épicerie, Produit local",
     )
 
@@ -1394,45 +1394,45 @@ class Diagnostic(models.Model):
         return super().clean()
 
     def populate_simplified_diagnostic_values(self):
-        self.value_bio = self.label_group_sum("bio")
-        self.value_bio_dont_commerce_equitable = self.label_sum("bio_dont_commerce_equitable")
-        self.value_siqo = self.label_group_sum("siqo")
-        self.value_externalites_performance = self.label_group_sum("externalites_performance")
-        self.value_egalim_autres = self.label_group_sum("egalim_autres")
-        self.value_egalim_autres_dont_commerce_equitable = self.label_sum("commerce_equitable")
+        self.valeur_bio = self.label_group_sum("bio")
+        self.valeur_bio_dont_commerce_equitable = self.label_sum("bio_dont_commerce_equitable")
+        self.valeur_siqo = self.label_group_sum("siqo")
+        self.valeur_externalites_performance = self.label_group_sum("externalites_performance")
+        self.valeur_egalim_autres = self.label_group_sum("egalim_autres")
+        self.valeur_egalim_autres_dont_commerce_equitable = self.label_sum("commerce_equitable")
 
         total_meat_egalim = total_fish_egalim = 0
         for label in Diagnostic.APPRO_LABELS_EGALIM:
             family = "viandes_volailles"
             # need to do or 0 and not give a default value because the value can be explicitly set to None
-            total_meat_egalim = total_meat_egalim + (getattr(self, f"value_{family}_{label}") or 0)
+            total_meat_egalim = total_meat_egalim + (getattr(self, f"valeur_{family}_{label}") or 0)
 
             family = "produits_de_la_mer"
-            total_fish_egalim = total_fish_egalim + (getattr(self, f"value_{family}_{label}") or 0)
+            total_fish_egalim = total_fish_egalim + (getattr(self, f"valeur_{family}_{label}") or 0)
 
         # NOTE: stop populating france from APPRO_LABELS_FRANCE
         # for label in Diagnostic.APPRO_LABELS_FRANCE:
         #     family = "viandes_volailles"
-        #     total_meat_france = total_meat_france + (getattr(self, f"value_{family}_{label}") or 0)
+        #     total_meat_france = total_meat_france + (getattr(self, f"valeur_{family}_{label}") or 0)
 
-        self.value_viandes_volailles_egalim = total_meat_egalim
-        # self.value_viandes_volailles_france = total_meat_france
-        self.value_produits_de_la_mer_egalim = total_fish_egalim
+        self.valeur_viandes_volailles_egalim = total_meat_egalim
+        # self.valeur_viandes_volailles_france = total_meat_france
+        self.valeur_produits_de_la_mer_egalim = total_fish_egalim
 
     def populate_aggregated_values(self):
-        self.value_bio_agg = self.label_group_sum("bio")
-        self.value_siqo_agg = self.label_group_sum("siqo")
-        self.value_externalites_performance_agg = self.label_group_sum("externalites_performance")
-        self.value_egalim_autres_agg = self.label_group_sum("egalim_autres")
+        self.valeur_bio_agg = self.label_group_sum("bio")
+        self.valeur_siqo_agg = self.label_group_sum("siqo")
+        self.valeur_externalites_performance_agg = self.label_group_sum("externalites_performance")
+        self.valeur_egalim_autres_agg = self.label_group_sum("egalim_autres")
         # group_group
-        self.value_egalim_hors_bio_agg = self.label_group_group_sum("egalim_hors_bio")
-        self.value_egalim_agg = self.label_group_group_sum("egalim")
+        self.valeur_egalim_hors_bio_agg = self.label_group_group_sum("egalim_hors_bio")
+        self.valeur_egalim_agg = self.label_group_group_sum("egalim")
 
     def label_sum(self, label: str):
         sum = 0
         is_null = True
         for family in Diagnostic.APPRO_FAMILIES:
-            value = getattr(self, f"value_{family}_{label}")
+            value = getattr(self, f"valeur_{family}_{label}")
             if value is not None:
                 is_null = False
                 sum = sum + value
@@ -1444,7 +1444,7 @@ class Diagnostic(models.Model):
             return sum_int_with_potential_null(
                 [self.label_sum(label) for label in Diagnostic.APPRO_LABELS_GROUPS_MAPPING[label_group]]
             )
-        return getattr(self, f"value_{label_group}")
+        return getattr(self, f"valeur_{label_group}")
 
     def label_group_group_sum(self, label_group_group: str):
         return sum_int_with_potential_null(
@@ -1460,7 +1460,7 @@ class Diagnostic(models.Model):
         """
         sum = 0
         for label in Diagnostic.APPRO_LABELS:
-            value = getattr(self, f"value_{family}_{label}")
+            value = getattr(self, f"valeur_{family}_{label}")
             if value:
                 sum = sum + value
         return sum
@@ -1470,11 +1470,11 @@ class Diagnostic(models.Model):
         if int(self.year) >= 2025:
             return (
                 self.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE
-                and self.value_bio is not None
-                and self.value_siqo is not None
-                and self.value_egalim_autres is not None
-                and self.value_viandes_volailles is not None
-                and self.value_viandes_volailles_egalim is not None
+                and self.valeur_bio is not None
+                and self.valeur_siqo is not None
+                and self.valeur_egalim_autres is not None
+                and self.valeur_viandes_volailles is not None
+                and self.valeur_viandes_volailles_egalim is not None
             )
         return self.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE
 
@@ -1484,7 +1484,7 @@ class Diagnostic(models.Model):
 
     @property
     def is_filled(self):
-        return self.value_totale and self.value_totale > 0 and (self.is_filled_simple) or (self.is_filled_complete)
+        return self.valeur_totale and self.valeur_totale > 0 and (self.is_filled_simple) or (self.is_filled_complete)
 
     @property
     def is_teledeclared(self):
@@ -1507,14 +1507,14 @@ class Diagnostic(models.Model):
 
     @property
     def appro_badge(self) -> bool | None:
-        total = self.value_totale
+        total = self.valeur_totale
         if total:
-            bio_percent = (self.value_bio or 0) / total
+            bio_percent = (self.valeur_bio or 0) / total
             egalim_sum = (
-                (self.value_bio or 0)
-                + (self.value_siqo or 0)
-                + (self.value_externalites_performance or 0)
-                + (self.value_egalim_autres or 0)
+                (self.valeur_bio or 0)
+                + (self.valeur_siqo or 0)
+                + (self.valeur_externalites_performance or 0)
+                + (self.valeur_egalim_autres or 0)
             )
             egalim_percent = egalim_sum / total
 

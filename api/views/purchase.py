@@ -218,7 +218,7 @@ class CanteenPurchasesPercentageSummaryView(APIView):
             raise NotFound()
 
         data = canteen_summary_for_year(canteen, year)
-        if data["value_totale"] == 0:
+        if data["valeur_totale"] == 0:
             raise NotFound()
 
         if is_canteen_manager:
@@ -293,24 +293,24 @@ def simple_diag_data(purchases, data):
         characteristics__contains=[Purchase.Characteristic.PERFORMANCE]
     )
 
-    data["value_totale"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["valeur_totale"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
     bio_purchases = purchases.filter(bio_filter).distinct()
-    data["value_bio"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-    data["value_bio_dont_commerce_equitable"] = (
+    data["valeur_bio"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["valeur_bio_dont_commerce_equitable"] = (
         bio_purchases.filter(bio_commerce_equitable_filter).aggregate(total=Sum("price_ht"))["total"] or 0
     )
 
     # the remaining stats should ignore any bio products
     purchases_no_bio = purchases.exclude(bio_filter)
     siqo_purchases = purchases_no_bio.filter(siqo_filter).distinct()
-    data["value_siqo"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["valeur_siqo"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
     # the remaining stats should also ignore any sustainable (SIQO) products
     purchases_no_bio_no_siqo = purchases_no_bio.exclude(siqo_filter)
     egalim_autres_purchases = purchases_no_bio_no_siqo.filter(egalim_autres_filter).distinct()
-    data["value_egalim_autres"] = egalim_autres_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-    data["value_egalim_autres_dont_commerce_equitable"] = (
+    data["valeur_egalim_autres"] = egalim_autres_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["valeur_egalim_autres_dont_commerce_equitable"] = (
         egalim_autres_purchases.filter(egalim_autres_commerce_equitable_filter).aggregate(total=Sum("price_ht"))[
             "total"
         ]
@@ -322,7 +322,7 @@ def simple_diag_data(purchases, data):
     externalities_performance_purchases = purchases_no_bio_siqo_no_egalim_autres.filter(
         externalities_performance_filter
     ).distinct()
-    data["value_externalites_performance"] = (
+    data["valeur_externalites_performance"] = (
         externalities_performance_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
     )
 
@@ -355,7 +355,7 @@ def complete_diag_data(purchases, data):
                 purchase_family = purchase_family.exclude(
                     Q(characteristics__contains=[Purchase.Characteristic[label.upper()]])
                 )
-            key = "value_" + family + "_" + label
+            key = "valeur_" + family + "_" + label
             data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
         # outside of EGalim, products can be counted twice across characteristics
         purchase_family = purchases.filter(family=family.upper())
@@ -363,34 +363,34 @@ def complete_diag_data(purchases, data):
         for label in Diagnostic.APPRO_LABELS_FRANCE:
             characteristic = Purchase.Characteristic[label.upper()]
             fam_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
-            key = "value_" + family + "_" + label
+            key = "valeur_" + family + "_" + label
             data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
             other_labels_characteristics.append(characteristic)
         # Non-EGalim totals: contains no labels or only one or more of other_labels
         non_egalim_purchases = purchase_family.filter(
             Q(characteristics__contained_by=(other_labels_characteristics + [""])) | Q(characteristics__len=0)
         ).distinct()
-        key = "value_" + family + "_non_egalim"
+        key = "valeur_" + family + "_non_egalim"
         data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
 
 def misc_totals(purchases, data):
     # meat_poultry
     meat_poultry_purchases = purchases.filter(family=Purchase.Family.VIANDES_VOLAILLES)
-    data["value_viandes_volailles"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["valeur_viandes_volailles"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
     meat_poultry_egalim = meat_poultry_purchases.filter(
         characteristics__overlap=[label.upper() for label in Diagnostic.APPRO_LABELS_EGALIM]
     )
-    data["value_viandes_volailles_egalim"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["valeur_viandes_volailles_egalim"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
     meat_poultry_france = meat_poultry_purchases.filter(characteristics__contains=[Purchase.Characteristic.FRANCE])
-    data["value_viandes_volailles_france"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["valeur_viandes_volailles_france"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"] or 0
     # fish
     fish_purchases = purchases.filter(family=Purchase.Family.PRODUITS_DE_LA_MER)
-    data["value_produits_de_la_mer"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["valeur_produits_de_la_mer"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
     fish_egalim = fish_purchases.filter(
         characteristics__overlap=[label.upper() for label in Diagnostic.APPRO_LABELS_EGALIM]
     )
-    data["value_produits_de_la_mer_egalim"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
+    data["valeur_produits_de_la_mer_egalim"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
 
 
 class DiagnosticsFromPurchasesView(APIView):
@@ -414,8 +414,8 @@ class DiagnosticsFromPurchasesView(APIView):
                 errors.append(f"Vous ne gérez pas la cantine : {canteen_id}")
                 continue
             values_dict = canteen_summary_for_year(canteen, year)
-            value_totale = values_dict["value_totale"]
-            if value_totale == 0 or value_totale is None:
+            valeur_totale = values_dict["valeur_totale"]
+            if valeur_totale == 0 or valeur_totale is None:
                 errors.append(f"Aucun achat trouvé pour la cantine : {canteen_id}")
                 continue
             if canteen.is_central_cuisine:

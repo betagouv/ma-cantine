@@ -308,7 +308,7 @@ class Teledeclaration(models.Model):
                 }
             )
         check_total_value = not Teledeclaration.should_use_central_kitchen_appro(diagnostic)
-        if check_total_value and not diagnostic.value_totale:
+        if check_total_value and not diagnostic.valeur_totale:
             raise ValidationError("Données d'approvisionnement manquantes")
         if diagnostic.canteen.is_central_cuisine and not diagnostic.central_kitchen_diagnostic_mode:
             raise ValidationError("Question obligatoire : Quelles données sont déclarées par cette cuisine centrale ?")
@@ -360,8 +360,8 @@ class Teledeclaration(models.Model):
         if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             diagnostic.populate_simplified_diagnostic_values()
 
-        if diagnostic.value_totale and canteen.yearly_meal_count:
-            meal_price = diagnostic.value_totale / canteen.yearly_meal_count
+        if diagnostic.valeur_totale and canteen.yearly_meal_count:
+            meal_price = diagnostic.valeur_totale / canteen.yearly_meal_count
         else:
             meal_price = None
 
@@ -375,11 +375,11 @@ class Teledeclaration(models.Model):
             diagnostic=diagnostic,
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
-            value_total_ht=diagnostic.value_totale,
-            value_bio_ht_agg=diagnostic.value_bio,
-            value_sustainable_ht_agg=diagnostic.value_siqo,
-            value_externality_performance_ht_agg=diagnostic.value_externalites_performance,
-            value_egalim_others_ht_agg=diagnostic.value_egalim_autres,
+            value_total_ht=diagnostic.valeur_totale,
+            value_bio_ht_agg=diagnostic.valeur_bio,
+            value_sustainable_ht_agg=diagnostic.valeur_siqo,
+            value_externality_performance_ht_agg=diagnostic.valeur_externalites_performance,
+            value_egalim_others_ht_agg=diagnostic.valeur_egalim_autres,
             yearly_meal_count=canteen.yearly_meal_count,
             meal_price=meal_price,
         )
@@ -444,5 +444,9 @@ class Teledeclaration(models.Model):
         )
 
     def __str__(self):
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
         canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
         return f"Télédéclaration pour {self.year} '{canteen_name}'"

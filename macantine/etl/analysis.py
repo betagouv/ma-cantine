@@ -33,8 +33,8 @@ def aggregate_col(df, categ, sub_categ):
     Aggregating into a new column all the values of a category for complete TD
     """
     check_column_matches_substring(df, sub_categ)
-    regex_pattern = rf"^(?!value_{categ}$).*(" + "|".join(sub_categ) + ")"
-    df[f"teledeclaration.value_{categ}"] = df.filter(regex=regex_pattern).sum(
+    regex_pattern = rf"^(?!valeur_{categ}$).*(" + "|".join(sub_categ) + ")"
+    df[f"teledeclaration.valeur_{categ}"] = df.filter(regex=regex_pattern).sum(
         axis=1, numeric_only=True, skipna=True, min_count=1
     )
     return df
@@ -167,7 +167,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         """
         Divide numerical values of a central kitchen to split into satellites
         """
-        appro_columns = [col_appro for col_appro in self.columns if "value" in col_appro]
+        appro_columns = [col_appro for col_appro in self.columns if "valeur" in col_appro]
         for col in appro_columns + ["yearly_meal_count"]:
             if col in row and row[col] not in (None, "nan") and nbre_satellites:
                 row[col] = row[col] / nbre_satellites

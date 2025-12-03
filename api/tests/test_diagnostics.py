@@ -114,9 +114,9 @@ class TestDiagnosticsApi(APITestCase):
         payload = {
             "year": 2020,
             "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
-            "value_bio": 1000,
-            "value_siqo": 3000,
-            "value_totale": 10000,
+            "valeur_bio": 1000,
+            "valeur_siqo": 3000,
+            "valeur_totale": 10000,
             "has_waste_diagnostic": True,
             "has_waste_plan": False,
             "waste_actions": ["INSCRIPTION", "AWARENESS"],
@@ -152,118 +152,118 @@ class TestDiagnosticsApi(APITestCase):
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
             # detailed value fields
-            "value_viandes_volailles_bio": 10,
-            "value_produits_de_la_mer_bio": 10,
-            "value_fruits_et_legumes_bio": 10,
-            "value_charcuterie_bio": 10,
-            "value_produits_laitiers_bio": 10,
-            "value_boulangerie_bio": 10,
-            "value_boissons_bio": 10,
-            "value_autres_bio": 10,
-            "value_viandes_volailles_label_rouge": 10,
-            "value_produits_de_la_mer_label_rouge": 10,
-            "value_fruits_et_legumes_label_rouge": 10,
-            "value_charcuterie_label_rouge": 10,
-            "value_produits_laitiers_label_rouge": 10,
-            "value_boulangerie_label_rouge": 10,
-            "value_boissons_label_rouge": 10,
-            "value_autres_label_rouge": 10,
-            "value_viandes_volailles_aocaop_igp_stg": 10,
-            "value_produits_de_la_mer_aocaop_igp_stg": 10,
-            "value_fruits_et_legumes_aocaop_igp_stg": 10,
-            "value_charcuterie_aocaop_igp_stg": 10,
-            "value_produits_laitiers_aocaop_igp_stg": 10,
-            "value_boulangerie_aocaop_igp_stg": 10,
-            "value_boissons_aocaop_igp_stg": 10,
-            "value_autres_aocaop_igp_stg": 10,
-            "value_viandes_volailles_hve": 10,
-            "value_produits_de_la_mer_hve": 10,
-            "value_fruits_et_legumes_hve": 10,
-            "value_charcuterie_hve": 10,
-            "value_produits_laitiers_hve": 10,
-            "value_boulangerie_hve": 10,
-            "value_boissons_hve": 10,
-            "value_autres_hve": 10,
-            "value_viandes_volailles_peche_durable": 10,
-            "value_produits_de_la_mer_peche_durable": 10,
-            "value_fruits_et_legumes_peche_durable": 10,
-            "value_charcuterie_peche_durable": 10,
-            "value_produits_laitiers_peche_durable": 10,
-            "value_boulangerie_peche_durable": 10,
-            "value_boissons_peche_durable": 10,
-            "value_autres_peche_durable": 10,
-            "value_viandes_volailles_rup": 10,
-            "value_produits_de_la_mer_rup": 10,
-            "value_fruits_et_legumes_rup": 10,
-            "value_charcuterie_rup": 10,
-            "value_produits_laitiers_rup": 10,
-            "value_boulangerie_rup": 10,
-            "value_boissons_rup": 10,
-            "value_autres_rup": 10,
-            "value_viandes_volailles_commerce_equitable": 10,
-            "value_produits_de_la_mer_commerce_equitable": 10,
-            "value_fruits_et_legumes_commerce_equitable": 10,
-            "value_charcuterie_commerce_equitable": 10,
-            "value_produits_laitiers_commerce_equitable": 10,
-            "value_boulangerie_commerce_equitable": 10,
-            "value_boissons_commerce_equitable": 10,
-            "value_autres_commerce_equitable": 10,
-            "value_viandes_volailles_fermier": 10,
-            "value_produits_de_la_mer_fermier": 10,
-            "value_fruits_et_legumes_fermier": 10,
-            "value_charcuterie_fermier": 10,
-            "value_produits_laitiers_fermier": 10,
-            "value_boulangerie_fermier": 10,
-            "value_boissons_fermier": 10,
-            "value_autres_fermier": 10,
-            "value_viandes_volailles_externalites": 10,
-            "value_produits_de_la_mer_externalites": 10,
-            "value_fruits_et_legumes_externalites": 10,
-            "value_charcuterie_externalites": 10,
-            "value_produits_laitiers_externalites": 10,
-            "value_boulangerie_externalites": 10,
-            "value_boissons_externalites": 10,
-            "value_autres_externalites": 10,
-            "value_viandes_volailles_performance": 10,
-            "value_produits_de_la_mer_performance": 10,
-            "value_fruits_et_legumes_performance": 10,
-            "value_charcuterie_performance": 10,
-            "value_produits_laitiers_performance": 10,
-            "value_boulangerie_performance": 10,
-            "value_boissons_performance": 10,
-            "value_autres_performance": 10,
-            "value_viandes_volailles_non_egalim": 10,
-            "value_produits_de_la_mer_non_egalim": 10,
-            "value_fruits_et_legumes_non_egalim": 10,
-            "value_charcuterie_non_egalim": 10,
-            "value_produits_laitiers_non_egalim": 10,
-            "value_boulangerie_non_egalim": 10,
-            "value_boissons_non_egalim": 10,
-            "value_autres_non_egalim": 10,
-            "value_viandes_volailles_france": 10,
-            "value_produits_de_la_mer_france": 10,
-            "value_fruits_et_legumes_france": 10,
-            "value_charcuterie_france": 10,
-            "value_produits_laitiers_france": 10,
-            "value_boulangerie_france": 10,
-            "value_boissons_france": 10,
-            "value_autres_france": 10,
-            "value_viandes_volailles_short_distribution": 10,
-            "value_produits_de_la_mer_short_distribution": 10,
-            "value_fruits_et_legumes_short_distribution": 10,
-            "value_charcuterie_short_distribution": 10,
-            "value_produits_laitiers_short_distribution": 10,
-            "value_boulangerie_short_distribution": 10,
-            "value_boissons_short_distribution": 10,
-            "value_autres_short_distribution": 10,
-            "value_viandes_volailles_local": 10,
-            "value_produits_de_la_mer_local": 10,
-            "value_fruits_et_legumes_local": 10,
-            "value_charcuterie_local": 10,
-            "value_produits_laitiers_local": 10,
-            "value_boulangerie_local": 10,
-            "value_boissons_local": 10,
-            "value_autres_local": 10,
+            "valeur_viandes_volailles_bio": 10,
+            "valeur_produits_de_la_mer_bio": 10,
+            "valeur_fruits_et_legumes_bio": 10,
+            "valeur_charcuterie_bio": 10,
+            "valeur_produits_laitiers_bio": 10,
+            "valeur_boulangerie_bio": 10,
+            "valeur_boissons_bio": 10,
+            "valeur_autres_bio": 10,
+            "valeur_viandes_volailles_label_rouge": 10,
+            "valeur_produits_de_la_mer_label_rouge": 10,
+            "valeur_fruits_et_legumes_label_rouge": 10,
+            "valeur_charcuterie_label_rouge": 10,
+            "valeur_produits_laitiers_label_rouge": 10,
+            "valeur_boulangerie_label_rouge": 10,
+            "valeur_boissons_label_rouge": 10,
+            "valeur_autres_label_rouge": 10,
+            "valeur_viandes_volailles_aocaop_igp_stg": 10,
+            "valeur_produits_de_la_mer_aocaop_igp_stg": 10,
+            "valeur_fruits_et_legumes_aocaop_igp_stg": 10,
+            "valeur_charcuterie_aocaop_igp_stg": 10,
+            "valeur_produits_laitiers_aocaop_igp_stg": 10,
+            "valeur_boulangerie_aocaop_igp_stg": 10,
+            "valeur_boissons_aocaop_igp_stg": 10,
+            "valeur_autres_aocaop_igp_stg": 10,
+            "valeur_viandes_volailles_hve": 10,
+            "valeur_produits_de_la_mer_hve": 10,
+            "valeur_fruits_et_legumes_hve": 10,
+            "valeur_charcuterie_hve": 10,
+            "valeur_produits_laitiers_hve": 10,
+            "valeur_boulangerie_hve": 10,
+            "valeur_boissons_hve": 10,
+            "valeur_autres_hve": 10,
+            "valeur_viandes_volailles_peche_durable": 10,
+            "valeur_produits_de_la_mer_peche_durable": 10,
+            "valeur_fruits_et_legumes_peche_durable": 10,
+            "valeur_charcuterie_peche_durable": 10,
+            "valeur_produits_laitiers_peche_durable": 10,
+            "valeur_boulangerie_peche_durable": 10,
+            "valeur_boissons_peche_durable": 10,
+            "valeur_autres_peche_durable": 10,
+            "valeur_viandes_volailles_rup": 10,
+            "valeur_produits_de_la_mer_rup": 10,
+            "valeur_fruits_et_legumes_rup": 10,
+            "valeur_charcuterie_rup": 10,
+            "valeur_produits_laitiers_rup": 10,
+            "valeur_boulangerie_rup": 10,
+            "valeur_boissons_rup": 10,
+            "valeur_autres_rup": 10,
+            "valeur_viandes_volailles_commerce_equitable": 10,
+            "valeur_produits_de_la_mer_commerce_equitable": 10,
+            "valeur_fruits_et_legumes_commerce_equitable": 10,
+            "valeur_charcuterie_commerce_equitable": 10,
+            "valeur_produits_laitiers_commerce_equitable": 10,
+            "valeur_boulangerie_commerce_equitable": 10,
+            "valeur_boissons_commerce_equitable": 10,
+            "valeur_autres_commerce_equitable": 10,
+            "valeur_viandes_volailles_fermier": 10,
+            "valeur_produits_de_la_mer_fermier": 10,
+            "valeur_fruits_et_legumes_fermier": 10,
+            "valeur_charcuterie_fermier": 10,
+            "valeur_produits_laitiers_fermier": 10,
+            "valeur_boulangerie_fermier": 10,
+            "valeur_boissons_fermier": 10,
+            "valeur_autres_fermier": 10,
+            "valeur_viandes_volailles_externalites": 10,
+            "valeur_produits_de_la_mer_externalites": 10,
+            "valeur_fruits_et_legumes_externalites": 10,
+            "valeur_charcuterie_externalites": 10,
+            "valeur_produits_laitiers_externalites": 10,
+            "valeur_boulangerie_externalites": 10,
+            "valeur_boissons_externalites": 10,
+            "valeur_autres_externalites": 10,
+            "valeur_viandes_volailles_performance": 10,
+            "valeur_produits_de_la_mer_performance": 10,
+            "valeur_fruits_et_legumes_performance": 10,
+            "valeur_charcuterie_performance": 10,
+            "valeur_produits_laitiers_performance": 10,
+            "valeur_boulangerie_performance": 10,
+            "valeur_boissons_performance": 10,
+            "valeur_autres_performance": 10,
+            "valeur_viandes_volailles_non_egalim": 10,
+            "valeur_produits_de_la_mer_non_egalim": 10,
+            "valeur_fruits_et_legumes_non_egalim": 10,
+            "valeur_charcuterie_non_egalim": 10,
+            "valeur_produits_laitiers_non_egalim": 10,
+            "valeur_boulangerie_non_egalim": 10,
+            "valeur_boissons_non_egalim": 10,
+            "valeur_autres_non_egalim": 10,
+            "valeur_viandes_volailles_france": 10,
+            "valeur_produits_de_la_mer_france": 10,
+            "valeur_fruits_et_legumes_france": 10,
+            "valeur_charcuterie_france": 10,
+            "valeur_produits_laitiers_france": 10,
+            "valeur_boulangerie_france": 10,
+            "valeur_boissons_france": 10,
+            "valeur_autres_france": 10,
+            "valeur_viandes_volailles_short_distribution": 10,
+            "valeur_produits_de_la_mer_short_distribution": 10,
+            "valeur_fruits_et_legumes_short_distribution": 10,
+            "valeur_charcuterie_short_distribution": 10,
+            "valeur_produits_laitiers_short_distribution": 10,
+            "valeur_boulangerie_short_distribution": 10,
+            "valeur_boissons_short_distribution": 10,
+            "valeur_autres_short_distribution": 10,
+            "valeur_viandes_volailles_local": 10,
+            "valeur_produits_de_la_mer_local": 10,
+            "valeur_fruits_et_legumes_local": 10,
+            "valeur_charcuterie_local": 10,
+            "valeur_produits_laitiers_local": 10,
+            "valeur_boulangerie_local": 10,
+            "valeur_boissons_local": 10,
+            "valeur_autres_local": 10,
             # end of detailed value fields
         }
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
@@ -318,12 +318,12 @@ class TestDiagnosticsApi(APITestCase):
         """
         canteen = CanteenFactory(managers=[authenticate.user])
 
-        payload = {"year": 2020, "value_bio": 10}
+        payload = {"year": 2020, "valeur_bio": 10}
         self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
 
         try:
             with transaction.atomic():
-                payload = {"year": 2020, "value_bio": 1000}
+                payload = {"year": 2020, "valeur_bio": 1000}
                 response = self.client.post(
                     reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}),
                     payload,
@@ -333,7 +333,7 @@ class TestDiagnosticsApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
-        self.assertEqual(diagnostic.value_bio, 10)
+        self.assertEqual(diagnostic.valeur_bio, 10)
 
     @authenticate
     def test_create_diagnostic_bad_total(self):
@@ -344,10 +344,10 @@ class TestDiagnosticsApi(APITestCase):
 
         payload = {
             "year": 2020,
-            "value_bio": 1000,
-            "value_siqo": 1000,
-            "value_egalim_autres": 1000,
-            "value_totale": 2000,
+            "valeur_bio": 1000,
+            "valeur_siqo": 1000,
+            "valeur_egalim_autres": 1000,
+            "valeur_totale": 2000,
         }
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
 
@@ -451,10 +451,10 @@ class TestDiagnosticsApi(APITestCase):
         """
         Do not save edits to a diagnostic which make the sum of the values > total
         """
-        diagnostic = DiagnosticFactory(year=2019, value_totale=10, value_bio=5, value_siqo=2)
+        diagnostic = DiagnosticFactory(year=2019, valeur_totale=10, valeur_bio=5, valeur_siqo=2)
         diagnostic.canteen.managers.add(authenticate.user)
 
-        payload = {"value_siqo": 999}
+        payload = {"valeur_siqo": 999}
         response = self.client.patch(
             reverse(
                 "diagnostic_edition",
@@ -465,7 +465,7 @@ class TestDiagnosticsApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.value_siqo, 2)
+        self.assertEqual(diagnostic.valeur_siqo, 2)
 
     @authenticate
     def test_edit_submitted_diagnostic(self):
@@ -539,7 +539,7 @@ class TestDiagnosticsApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        DiagnosticFactory(canteen=canteen_with_incomplete_diag, year=last_year, value_totale=None)
+        DiagnosticFactory(canteen=canteen_with_incomplete_diag, year=last_year, valeur_totale=None)
         canteen_with_complete_diag = CanteenFactory(
             siret="21010034300016",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -548,7 +548,7 @@ class TestDiagnosticsApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        complete_diag = DiagnosticFactory(canteen=canteen_with_complete_diag, year=last_year, value_totale=10000)
+        complete_diag = DiagnosticFactory(canteen=canteen_with_complete_diag, year=last_year, valeur_totale=10000)
 
         # siret needs to be filled for the diag to be teledeclarable
         canteen_with_incomplete_data = CanteenFactory(
@@ -561,7 +561,7 @@ class TestDiagnosticsApi(APITestCase):
         )
         Canteen.objects.filter(id=canteen_with_incomplete_data.id).update(siret=None)
         canteen_with_incomplete_data.refresh_from_db()
-        DiagnosticFactory(canteen=canteen_with_incomplete_data, year=last_year, value_totale=10000)
+        DiagnosticFactory(canteen=canteen_with_incomplete_data, year=last_year, valeur_totale=10000)
 
         canteen_without_line_ministry = CanteenFactory(
             siret="31285246765507",
@@ -573,10 +573,10 @@ class TestDiagnosticsApi(APITestCase):
             line_ministry=None,
             managers=[authenticate.user],
         )
-        DiagnosticFactory(canteen=canteen_without_line_ministry, year=last_year, value_totale=10000)
+        DiagnosticFactory(canteen=canteen_without_line_ministry, year=last_year, valeur_totale=10000)
 
         # to verify we are returning the correct diag for the canteen, create another diag for a different year
-        DiagnosticFactory(canteen=canteen_with_complete_diag, year=last_year - 1, value_totale=10000)
+        DiagnosticFactory(canteen=canteen_with_complete_diag, year=last_year - 1, valeur_totale=10000)
         canteen_with_td = CanteenFactory(
             siret="55476895458384",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -585,7 +585,7 @@ class TestDiagnosticsApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        td_diag = DiagnosticFactory(canteen=canteen_with_td, year=last_year, value_totale=2000)
+        td_diag = DiagnosticFactory(canteen=canteen_with_td, year=last_year, valeur_totale=2000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
         response = self.client.get(reverse("diagnostics_to_teledeclare", kwargs={"year": last_year}))
@@ -625,7 +625,7 @@ class TestDiagnosticsApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        DiagnosticFactory(canteen=canteen_with_diag, year=last_year, value_totale=1000)
+        DiagnosticFactory(canteen=canteen_with_diag, year=last_year, valeur_totale=1000)
 
         # Canteen with diag teledeclared
         canteen_with_td = CanteenFactory(
@@ -637,7 +637,7 @@ class TestDiagnosticsApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        diag_to_teledeclare = DiagnosticFactory(canteen=canteen_with_td, year=last_year, value_totale=10000)
+        diag_to_teledeclare = DiagnosticFactory(canteen=canteen_with_td, year=last_year, valeur_totale=10000)
         Teledeclaration.create_from_diagnostic(diag_to_teledeclare, authenticate.user)
 
         # Canteen with teledeclaration edited
@@ -650,7 +650,7 @@ class TestDiagnosticsApi(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        diag_cancelled = DiagnosticFactory(canteen=canteen_with_correction, year=last_year, value_totale=10000)
+        diag_cancelled = DiagnosticFactory(canteen=canteen_with_correction, year=last_year, valeur_totale=10000)
         teledeclaration_cancelled = Teledeclaration.create_from_diagnostic(diag_cancelled, authenticate.user)
         teledeclaration_cancelled.cancel()
 

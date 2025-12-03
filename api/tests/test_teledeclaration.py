@@ -61,7 +61,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         canteen = CanteenFactory(central_producer_siret=None, managers=[authenticate.user])
         diagnostic = DiagnosticFactory(
-            canteen=canteen, year=2021, value_totale=None, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            canteen=canteen, year=2021, valeur_totale=None, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
 
         payload = {"diagnosticId": diagnostic.id}
@@ -76,7 +76,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         canteen = CanteenFactory(central_producer_siret=None, managers=[authenticate.user])
         diagnostic = DiagnosticFactory(
-            canteen=canteen, year=2019, value_totale=100, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            canteen=canteen, year=2019, valeur_totale=100, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
 
         payload = {"diagnosticId": diagnostic.id}
@@ -91,11 +91,11 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         canteen = CanteenFactory(managers=[authenticate.user])
         diagnostic = DiagnosticFactory(
-            value_externalites_performance=0,
+            valeur_externalites_performance=0,
             canteen=canteen,
             year=2021,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            value_bio=20,
+            valeur_bio=20,
         )
 
         payload = {"diagnosticId": diagnostic.id}
@@ -124,26 +124,26 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertEqual(json_canteen["city_insee_code"], canteen.city_insee_code)
 
         json_teledeclaration = declared_data["teledeclaration"]
-        self.assertEqual(json_teledeclaration["value_bio"], diagnostic.value_bio)
+        self.assertEqual(json_teledeclaration["valeur_bio"], diagnostic.valeur_bio)
         self.assertEqual(
-            json_teledeclaration["value_siqo"],
-            diagnostic.value_siqo,
+            json_teledeclaration["valeur_siqo"],
+            diagnostic.valeur_siqo,
         )
-        self.assertEqual(json_teledeclaration["value_totale"], diagnostic.value_totale)
+        self.assertEqual(json_teledeclaration["valeur_totale"], diagnostic.valeur_totale)
         self.assertEqual(
-            json_teledeclaration["value_externalites_performance"], diagnostic.value_externalites_performance
+            json_teledeclaration["valeur_externalites_performance"], diagnostic.valeur_externalites_performance
         )
-        self.assertEqual(json_teledeclaration["value_egalim_autres"], diagnostic.value_egalim_autres)
-        self.assertEqual(json_teledeclaration["value_viandes_volailles"], diagnostic.value_viandes_volailles)
+        self.assertEqual(json_teledeclaration["valeur_egalim_autres"], diagnostic.valeur_egalim_autres)
+        self.assertEqual(json_teledeclaration["valeur_viandes_volailles"], diagnostic.valeur_viandes_volailles)
         self.assertEqual(
-            json_teledeclaration["value_viandes_volailles_egalim"], diagnostic.value_viandes_volailles_egalim
+            json_teledeclaration["valeur_viandes_volailles_egalim"], diagnostic.valeur_viandes_volailles_egalim
         )
         self.assertEqual(
-            json_teledeclaration["value_viandes_volailles_france"], diagnostic.value_viandes_volailles_france
+            json_teledeclaration["valeur_viandes_volailles_france"], diagnostic.valeur_viandes_volailles_france
         )
-        self.assertEqual(json_teledeclaration["value_produits_de_la_mer"], diagnostic.value_produits_de_la_mer)
+        self.assertEqual(json_teledeclaration["valeur_produits_de_la_mer"], diagnostic.valeur_produits_de_la_mer)
         self.assertEqual(
-            json_teledeclaration["value_produits_de_la_mer_egalim"], diagnostic.value_produits_de_la_mer_egalim
+            json_teledeclaration["valeur_produits_de_la_mer_egalim"], diagnostic.valeur_produits_de_la_mer_egalim
         )
         self.assertEqual(
             json_teledeclaration["has_waste_diagnostic"],
@@ -188,7 +188,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             diagnostic.communicates_on_food_quality,
         )
         # Test the aggregated values, as it is a SIMPLE diag, the value should match directly the non agg ones
-        self.assertEqual(teledeclaration.value_bio_ht_agg, diagnostic.value_bio)
+        self.assertEqual(teledeclaration.value_bio_ht_agg, diagnostic.valeur_bio)
 
     @freeze_time("2022-12-25")  # after the 2021 campaign
     @authenticate
@@ -198,7 +198,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         canteen = CanteenFactory(managers=[authenticate.user])
         diagnostic = DiagnosticFactory(
-            value_externalites_performance=0,
+            valeur_externalites_performance=0,
             canteen=canteen,
             year=2021,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -216,7 +216,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         """
         canteen = CanteenFactory(managers=[authenticate.user])
         diagnostic = DiagnosticFactory(
-            value_externalites_performance=0,
+            valeur_externalites_performance=0,
             canteen=canteen,
             year=2024,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -296,13 +296,13 @@ class TestTeledeclarationCreateApi(APITestCase):
             canteen=canteen,
             year=2021,
             diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
-            value_totale=1000,
-            value_siqo=None,
+            valeur_totale=1000,
+            valeur_siqo=None,
         )
         # Making sure we will aggregate
-        diagnostic.value_siqo = None
-        diagnostic.value_boissons_label_rouge = 10
-        diagnostic.value_boulangerie_aocaop_igp_stg = 10
+        diagnostic.valeur_siqo = None
+        diagnostic.valeur_boissons_label_rouge = 10
+        diagnostic.valeur_boulangerie_aocaop_igp_stg = 10
         diagnostic.save()
         payload = {"diagnosticId": diagnostic.id}
 
@@ -333,32 +333,32 @@ class TestTeledeclarationCreateApi(APITestCase):
         json_teledeclaration = declared_data["teledeclaration"]
 
         # Fields pertaining to the simplified declaration should not be present
-        self.assertNotIn("value_bio", json_teledeclaration)
-        self.assertNotIn("value_siqo", json_teledeclaration)
+        self.assertNotIn("valeur_bio", json_teledeclaration)
+        self.assertNotIn("valeur_siqo", json_teledeclaration)
 
         # Fields pertaining to the complete declaration should be in the payload
-        self.assertIn("value_fruits_et_legumes_bio", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_label_rouge", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_aocaop_igp_stg", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_hve", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_peche_durable", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_rup", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_fermier", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_externalites", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_commerce_equitable", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_performance", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_non_egalim", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_france", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_short_distribution", json_teledeclaration)
-        self.assertIn("value_fruits_et_legumes_local", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_bio", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_label_rouge", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_aocaop_igp_stg", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_hve", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_peche_durable", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_rup", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_fermier", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_externalites", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_commerce_equitable", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_performance", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_non_egalim", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_france", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_short_distribution", json_teledeclaration)
+        self.assertIn("valeur_fruits_et_legumes_local", json_teledeclaration)
 
         # Checking the aggregation
         self.assertEqual(teledeclaration.value_total_ht, 1000)
         self.assertEqual(teledeclaration.value_bio_ht_agg, 0)
         self.assertEqual(
             teledeclaration.value_sustainable_ht_agg,
-            json_teledeclaration["value_boissons_label_rouge"]
-            + json_teledeclaration["value_boulangerie_aocaop_igp_stg"],
+            json_teledeclaration["valeur_boissons_label_rouge"]
+            + json_teledeclaration["valeur_boulangerie_aocaop_igp_stg"],
         )
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
@@ -378,7 +378,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
-            value_totale=100,
+            valeur_totale=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
@@ -386,7 +386,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=canteen,
             year=2021,
-            value_totale=None,  # missing
+            valeur_totale=None,  # missing
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
@@ -421,7 +421,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
-            value_totale=100,
+            valeur_totale=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
@@ -460,7 +460,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=central_kitchen,
             year=2021,
-            value_totale=100,
+            valeur_totale=100,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=None,  # missing
         )
@@ -498,7 +498,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=canteen,
             year=2021,
-            value_totale=100,
+            valeur_totale=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
         )
 
@@ -556,7 +556,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         DiagnosticFactory(
             canteen=central,
             year=2021,
-            value_totale=100,
+            valeur_totale=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
@@ -566,7 +566,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[authenticate.user],
         )
-        diagnostic_canteen_site = DiagnosticFactory(canteen=canteen_site, year=2021, value_totale=100)
+        diagnostic_canteen_site = DiagnosticFactory(canteen=canteen_site, year=2021, valeur_totale=100)
         diagnostic_canteen_site.teledeclare(applicant=authenticate.user)
         self.assertEqual(diagnostic_canteen_site.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
 
@@ -581,7 +581,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             central_producer_siret="75665621899905"
         )  # change the link
         canteen_satellite_1.refresh_from_db()
-        diagnostic_canteen_satellite_1 = DiagnosticFactory(canteen=canteen_satellite_1, year=2021, value_totale=100)
+        diagnostic_canteen_satellite_1 = DiagnosticFactory(canteen=canteen_satellite_1, year=2021, valeur_totale=100)
         diagnostic_canteen_satellite_1.teledeclare(applicant=authenticate.user)
         self.assertEqual(diagnostic_canteen_satellite_1.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
 
@@ -592,7 +592,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             central_producer_siret=central.siret,
             managers=[authenticate.user],
         )
-        diagnostic_canteen_satellite_2 = DiagnosticFactory(canteen=canteen_satellite_2, year=2021, value_totale=100)
+        diagnostic_canteen_satellite_2 = DiagnosticFactory(canteen=canteen_satellite_2, year=2021, valeur_totale=100)
         diagnostic_canteen_satellite_2.teledeclare(applicant=authenticate.user)
         self.assertEqual(
             diagnostic_canteen_satellite_2.teledeclaration_mode, Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
@@ -607,7 +607,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic_central_2 = DiagnosticFactory(
             canteen=central_2,
             year=2021,
-            value_totale=100,
+            valeur_totale=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
         )
         diagnostic_central_2.teledeclare(applicant=authenticate.user)
@@ -622,7 +622,7 @@ class TestTeledeclarationCreateApi(APITestCase):
         diagnostic_central_serving = DiagnosticFactory(
             canteen=central_serving,
             year=2021,
-            value_totale=100,
+            valeur_totale=100,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
         diagnostic_central_serving.teledeclare(applicant=authenticate.user)
@@ -639,7 +639,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             line_ministry=None,
             managers=[authenticate.user],
         )
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, value_totale=100)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, valeur_totale=100)
 
         payload = {"diagnosticId": diagnostic.id}
         response = self.client.post(reverse("teledeclaration_create"), payload)
@@ -872,5 +872,9 @@ class TestTeledeclarationCampaignDatesApi(APITestCase):
 
                     body = response.json()
                     self.assertEqual(body["year"], 2024)
+                    self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
+                    self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
+                    self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
+                    self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
                     self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
                     self.assertEqual(body["inCorrection"], date_freeze["in_correction"])

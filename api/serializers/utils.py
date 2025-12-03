@@ -5,37 +5,37 @@ from data.models.sector import SectorM2M
 def appro_to_percentages(representation, instance, remove_values=True):
     # first do the percentages relative to meat and fish totals
     # not removing these totals so that can then calculate the percent of those compared to global total
-    meat_total = representation.get("value_viandes_volailles")
+    meat_total = representation.get("valeur_viandes_volailles")
     if meat_total:
-        field = "value_viandes_volailles_egalim"
+        field = "valeur_viandes_volailles_egalim"
         value = representation.get(field)
         if value is not None:
             representation[f"percentage_{field}"] = value / meat_total
-        field = "value_viandes_volailles_france"
+        field = "valeur_viandes_volailles_france"
         value = representation.get(field)
         if value is not None:
             representation[f"percentage_{field}"] = value / meat_total
 
-    fish_total = representation.get("value_produits_de_la_mer")
+    fish_total = representation.get("valeur_produits_de_la_mer")
     if fish_total:
-        field = "value_produits_de_la_mer_egalim"
+        field = "valeur_produits_de_la_mer_egalim"
         value = representation.get(field)
         if value is not None:
             representation[f"percentage_{field}"] = value / fish_total
-        field = "value_produits_de_la_mer_france"
+        field = "valeur_produits_de_la_mer_france"
         value = representation.get(field)
         if value is not None:
             representation[f"percentage_{field}"] = value / fish_total
 
     # NOTE: on va écraser les pourcentages viande/poisson france car ils vont être recalculés...
     appro_fields = [
-        "value_totale",
-        "value_bio",
-        "value_siqo",
-        "value_externalites_performance",
-        "value_egalim_autres",
+        "valeur_totale",
+        "valeur_bio",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
     ] + Diagnostic.COMPLETE_APPRO_FIELDS  # meat and fish totals included in COMPLETE
-    total = representation.get("value_totale")
+    total = representation.get("valeur_totale")
 
     for field in appro_fields:
         new_field_name = f"percentage_{field}"
@@ -44,13 +44,13 @@ def appro_to_percentages(representation, instance, remove_values=True):
         if remove_values:
             representation.pop(field, None)
 
-    representation["percentage_value_totale"] = 1
+    representation["percentage_valeur_totale"] = 1
     if remove_values:
-        representation.pop("value_totale", None)
-        representation.pop("value_viandes_volailles_egalim", None)
-        representation.pop("value_viandes_volailles_france", None)
-        representation.pop("value_produits_de_la_mer_egalim", None)
-        representation.pop("value_produits_de_la_mer_france", None)
+        representation.pop("valeur_totale", None)
+        representation.pop("valeur_viandes_volailles_egalim", None)
+        representation.pop("valeur_viandes_volailles_france", None)
+        representation.pop("valeur_produits_de_la_mer_egalim", None)
+        representation.pop("valeur_produits_de_la_mer_france", None)
 
     return representation
 

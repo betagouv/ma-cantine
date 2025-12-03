@@ -41,59 +41,59 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
     # aggregate
     agg = teledeclarations.aggregate(
         Count("id"),
-        Sum("value_bio_agg", default=0),
-        Sum("value_totale", default=0),
-        Sum("value_siqo_agg", default=0),
-        Sum("value_externalites_performance_agg", default=0),
-        Sum("value_egalim_autres_agg", default=0),
-        Sum("value_viandes_volailles", default=0),
-        Sum("value_viandes_volailles_egalim", default=0),
-        Sum("value_viandes_volailles_france", default=0),
-        Sum("value_produits_de_la_mer", default=0),
-        Sum("value_produits_de_la_mer_egalim", default=0),
+        Sum("valeur_bio_agg", default=0),
+        Sum("valeur_totale", default=0),
+        Sum("valeur_siqo_agg", default=0),
+        Sum("valeur_externalites_performance_agg", default=0),
+        Sum("valeur_egalim_autres_agg", default=0),
+        Sum("valeur_viandes_volailles", default=0),
+        Sum("valeur_viandes_volailles_egalim", default=0),
+        Sum("valeur_viandes_volailles_france", default=0),
+        Sum("valeur_produits_de_la_mer", default=0),
+        Sum("valeur_produits_de_la_mer_egalim", default=0),
     )
     # count
     data["teledeclarations_count"] = agg["id__count"]
     # percent of bio, sustainable & egalim (bio + sustainable)
-    if agg["value_totale__sum"] > 0:
-        data["bio_percent"] = round(100 * agg["value_bio_agg__sum"] / agg["value_totale__sum"])
+    if agg["valeur_totale__sum"] > 0:
+        data["bio_percent"] = round(100 * agg["valeur_bio_agg__sum"] / agg["valeur_totale__sum"])
         data["sustainable_percent"] = round(
             100
             * (
-                agg["value_siqo_agg__sum"]
-                + agg["value_externalites_performance_agg__sum"]
-                + agg["value_egalim_autres_agg__sum"]
+                agg["valeur_siqo_agg__sum"]
+                + agg["valeur_externalites_performance_agg__sum"]
+                + agg["valeur_egalim_autres_agg__sum"]
             )
-            / agg["value_totale__sum"]
+            / agg["valeur_totale__sum"]
         )
     else:
         data["bio_percent"] = 0
         data["sustainable_percent"] = 0
     data["egalim_percent"] = data["bio_percent"] + data["sustainable_percent"]  # same denominator
     # percent of meat egalim & france
-    if agg["value_viandes_volailles__sum"] > 0:
+    if agg["valeur_viandes_volailles__sum"] > 0:
         data["viandes_volailles_egalim_percent"] = round(
-            100 * agg["value_viandes_volailles_egalim__sum"] / agg["value_viandes_volailles__sum"]
+            100 * agg["valeur_viandes_volailles_egalim__sum"] / agg["valeur_viandes_volailles__sum"]
         )
         data["viandes_volailles_france_percent"] = round(
-            100 * agg["value_viandes_volailles_france__sum"] / agg["value_viandes_volailles__sum"]
+            100 * agg["valeur_viandes_volailles_france__sum"] / agg["valeur_viandes_volailles__sum"]
         )
     else:
         data["viandes_volailles_egalim_percent"] = 0
         data["viandes_volailles_france_percent"] = 0
     # percent of fish egalim
-    if agg["value_produits_de_la_mer__sum"] > 0:
+    if agg["valeur_produits_de_la_mer__sum"] > 0:
         data["produits_de_la_mer_egalim_percent"] = round(
-            100 * agg["value_produits_de_la_mer_egalim__sum"] / agg["value_produits_de_la_mer__sum"]
+            100 * agg["valeur_produits_de_la_mer_egalim__sum"] / agg["valeur_produits_de_la_mer__sum"]
         )
     else:
         data["produits_de_la_mer_egalim_percent"] = 0
     # percent of meat+fish egalim
-    if (agg["value_viandes_volailles__sum"] + agg["value_produits_de_la_mer__sum"]) > 0:
+    if (agg["valeur_viandes_volailles__sum"] + agg["valeur_produits_de_la_mer__sum"]) > 0:
         data["viandes_volailles_produits_de_la_mer_egalim_percent"] = round(
             100
-            * (agg["value_viandes_volailles_egalim__sum"] + agg["value_produits_de_la_mer_egalim__sum"])
-            / (agg["value_viandes_volailles__sum"] + agg["value_produits_de_la_mer__sum"])
+            * (agg["valeur_viandes_volailles_egalim__sum"] + agg["valeur_produits_de_la_mer_egalim__sum"])
+            / (agg["valeur_viandes_volailles__sum"] + agg["valeur_produits_de_la_mer__sum"])
         )
     else:
         data["viandes_volailles_produits_de_la_mer_egalim_percent"] = 0
