@@ -406,7 +406,7 @@ class TestPurchaseApi(APITestCase):
             price_ht=50,
         )
 
-        # check that short distribution meat will include both this and the bio purchase which is also short dist.
+        # check that circuit_court meat will include both this and the bio purchase which is also short dist.
         PurchaseFactory(
             canteen=canteen,
             date=d,
@@ -434,7 +434,7 @@ class TestPurchaseApi(APITestCase):
         self.assertEqual(body["valeurFruitsEtLegumesAocaopIgpStg"], 80.0)
         self.assertEqual(body["valeurFruitsEtLegumesCommerceEquitable"], 0.0)
         self.assertEqual(body["valeurAutresLocal"], 100.0)
-        self.assertEqual(body["valeurViandesVolaillesShortDistribution"], 100.0)
+        self.assertEqual(body["valeurViandesVolaillesCircuitCourt"], 100.0)
         self.assertEqual(body["valeurViandesVolaillesLocal"], 10.0)
         self.assertEqual(body["valeurAutresNonEgalim"], 210.0)
         self.assertEqual(body["valeurViandesVolaillesNonEgalim"], 90.0)
@@ -1276,6 +1276,8 @@ class TestPublicPurchasesSummaryApi(APITestCase):
             reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
             {"year": 2024, "ignoreRedaction": "true"},
         )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
