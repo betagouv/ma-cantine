@@ -14,8 +14,23 @@ date_in_teledeclaration_campaign = "2025-03-30"
 date_in_correction_campaign = "2025-04-20"
 date_in_last_teledeclaration_campaign = "2024-02-01"
 
-VALID_DIAGNOSTIC = {
-    "year": year_data,
+VALID_DIAGNOSTIC_SIMPLE_2024 = {
+    "year": 2024,
+    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
+    "valeur_totale": 1000,
+    "valeur_bio": None,
+    "valeur_siqo": None,
+    "valeur_externalites_performance": None,
+    "valeur_egalim_autres": None,
+    "valeur_viandes_volailles": None,
+    "valeur_viandes_volailles_egalim": None,
+    "valeur_viandes_volailles_france": None,
+    "valeur_produits_de_la_mer": None,
+    "valeur_produits_de_la_mer_egalim": None,
+}
+
+VALID_DIAGNOSTIC_SIMPLE_2025 = {
+    "year": 2025,
     "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
     "valeur_totale": 1000,
     "valeur_bio": 200,
@@ -31,52 +46,122 @@ VALID_DIAGNOSTIC = {
 
 
 class DiagnosticModelSaveTest(TransactionTestCase):
-    def test_diagnostic_year_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC.copy()
+    def test_year_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
-        # should be a year (or None)
-        for TUPLE_OK in [
-            (2024, 2024),
-            ("2023", 2023),
-            (None, None),
-        ]:
-            with self.subTest(year=TUPLE_OK[0]):
-                diagnostic = DiagnosticFactory(year=TUPLE_OK[0], **VALID_DIAGNOSTIC_WITHOUT_YEAR)
-                diagnostic.full_clean()
-                self.assertEqual(diagnostic.year, TUPLE_OK[1])
-        for valeur_NOT_OK in ["", "abcd"]:
-            with self.subTest(year=valeur_NOT_OK):
+        # on save
+        for VALUE_OK_ON_SAVE in [None, -2000, 0, 1991, 2024, "2023"]:
+            with self.subTest(year=VALUE_OK_ON_SAVE):
+                diagnostic = DiagnosticFactory(year=VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+                self.assertEqual(diagnostic.year, VALUE_OK_ON_SAVE)
+        for VALUE_NOT_OK_ON_SAVE in ["", "  ", "abcd"]:
+            with self.subTest(year=VALUE_NOT_OK_ON_SAVE):
                 self.assertRaises(
-                    ValueError, Diagnostic.objects.create, year=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR
+                    ValueError, Diagnostic.objects.create, year=VALUE_NOT_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR
                 )
-        # should be in a specific range
-        for valeur_NOT_OK in [1991]:
-            with self.subTest(year=valeur_NOT_OK):
-                diagnostic = DiagnosticFactory(year=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+        # on full_clean
+        for TUPLE_OK_ON_FULL_CLEAN in [(2024, 2024), ("2023", 2023)]:
+            with self.subTest(year=TUPLE_OK_ON_FULL_CLEAN[0]):
+                diagnostic = DiagnosticFactory(year=TUPLE_OK_ON_FULL_CLEAN[0], **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+                diagnostic.full_clean()
+                self.assertEqual(diagnostic.year, TUPLE_OK_ON_FULL_CLEAN[1])
+        for VALUE_NOT_OK_ON_FULL_CLEAN in [None, 1991]:
+            with self.subTest(year=VALUE_NOT_OK_ON_FULL_CLEAN):
+                diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    def test_diagnostic_valeur_totale_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT = VALID_DIAGNOSTIC.copy()
-        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT.pop("valeur_totale")
-        # should be a number (or None)
-        for TUPLE_OK in [
-            (1000, 1000),
-            ("2000", 2000),
-            (Decimal("1234.56"), Decimal("1234.56")),
-            (None, None),
-        ]:
-            with self.subTest(valeur_totale=TUPLE_OK[0]):
-                diagnostic = DiagnosticFactory(valeur_totale=TUPLE_OK[0], **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT)
-                diagnostic.full_clean()
-                self.assertEqual(diagnostic.valeur_totale, TUPLE_OK[1])
-        for valeur_NOT_OK in ["", "abcd"]:  # Decimal("1234.567")
-            with self.subTest(valeur_totale=valeur_NOT_OK):
+    def test_diagnostic_type_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_TYPE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_TYPE.pop("diagnostic_type")
+        # on save
+        for VALUE_OK_ON_SAVE in [None, "", "  ", "invalid", 123, *Diagnostic.DiagnosticType.values]:
+            with self.subTest(diagnostic_type=VALUE_OK_ON_SAVE):
+                diagnostic = DiagnosticFactory(diagnostic_type=VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_TYPE)
+                self.assertEqual(diagnostic.diagnostic_type, VALUE_OK_ON_SAVE)
+        for VALUE_NOT_OK_ON_SAVE in []:
+            with self.subTest(diagnostic_type=VALUE_NOT_OK_ON_SAVE):
                 self.assertRaises(
                     (ValueError, ValidationError),
-                    Diagnostic.objects.create,
-                    valeur_totale=valeur_NOT_OK,
-                    **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT,
+                    DiagnosticFactory,
+                    diagnostic_type=VALUE_NOT_OK_ON_SAVE,
+                    **VALID_DIAGNOSTIC_WITHOUT_TYPE,
                 )
+        # on full_clean
+        for VALUE_OK_ON_FULL_CLEAN in [*Diagnostic.DiagnosticType.values]:
+            with self.subTest(diagnostic_type=VALUE_OK_ON_FULL_CLEAN):
+                diagnostic = DiagnosticFactory(diagnostic_type=VALUE_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_TYPE)
+                diagnostic.full_clean()
+                self.assertEqual(diagnostic.diagnostic_type, VALUE_OK_ON_FULL_CLEAN)
+        for VALUE_NOT_OK_ON_FULL_CLEAN in [None, "", 123, "invalid"]:
+            with self.subTest(diagnostic_type=VALUE_NOT_OK_ON_FULL_CLEAN):
+                diagnostic = DiagnosticFactory(
+                    diagnostic_type=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_TYPE
+                )
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_appro_fields_required_before_2024_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2024.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
+        # on full_clean
+        diagnostic = DiagnosticFactory(valeur_totale=None, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+        diagnostic.full_clean()
+
+    def test_diagnostic_simple_appro_fields_required_after_2025_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
+        # on full_clean (simple & valeur_totale)
+        diagnostic = DiagnosticFactory(valeur_totale=None, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        diagnostic.full_clean()
+
+    def test_diagnostic_complete_appro_fields_required_after_2025_validation(self):
+        VALID_DIAGNOSTIC_COMPLETE_2025 = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_COMPLETE_2025["diagnostic_type"] = Diagnostic.DiagnosticType.COMPLETE
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_COMPLETE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
+        # on full_clean (complete & valeur_totale)
+        diagnostic = DiagnosticFactory(valeur_totale=None, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
+        diagnostic.full_clean()
+
+    def test_diagnostic_valeur_totale_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
+        # on save
+        for VALEUR_TOTALE_VALUE_OK_ON_SAVE in [None, -1000, 0, 1000, Decimal("1234.56")]:
+            with self.subTest(valeur_totale=VALEUR_TOTALE_VALUE_OK_ON_SAVE):
+                diagnostic = DiagnosticFactory(
+                    valeur_totale=VALEUR_TOTALE_VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE
+                )
+                self.assertEqual(diagnostic.valeur_totale, VALEUR_TOTALE_VALUE_OK_ON_SAVE)
+        for VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE in ["", "  ", "invalid"]:
+            with self.subTest(valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE):
+                self.assertRaises(
+                    (ValueError, ValidationError),
+                    DiagnosticFactory,
+                    valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE,
+                    **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE,
+                )
+        # on full_clean
+        for VALEUR_TOTALE_VALUE_OK_ON_FULL_CLEAN in [1000, Decimal("1234.56")]:
+            diagnostic = DiagnosticFactory(
+                valeur_totale=VALEUR_TOTALE_VALUE_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE
+            )
+            diagnostic.full_clean()
+        for VALEUR_TOTALE_VALUE_NOT_OK_ON_FULL_CLEAN in [None, -1000, 0]:
+            with self.subTest(valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_FULL_CLEAN):
+                diagnostic = DiagnosticFactory(
+                    valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE
+                )
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_valeur_totale_extra_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT.pop("valeur_totale")
         # should be > the sum of other fields
         self.assertEqual(
             sum(
@@ -90,40 +175,40 @@ class DiagnosticModelSaveTest(TransactionTestCase):
             ),
             500,
         )
-        for valeur_NOT_OK in [-100, 0, 100]:
-            with self.subTest(valeur_totale=valeur_NOT_OK):
-                diagnostic = DiagnosticFactory(valeur_totale=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT)
+        for VALUE_NOT_OK in [-100, 0, 100]:
+            with self.subTest(valeur_totale=VALUE_NOT_OK):
+                diagnostic = DiagnosticFactory(valeur_totale=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_valeur_viandes_volailles_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
         # should be >= valeur_viandes_volailles_egalim
         self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES["valeur_viandes_volailles_egalim"], 50)
-        for valeur_NOT_OK in [-100, 0, 49]:
-            with self.subTest(valeur_viandes_volailles=valeur_NOT_OK):
+        for VALUE_NOT_OK in [-100, 0, 49]:
+            with self.subTest(valeur_viandes_volailles=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    valeur_viandes_volailles=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
+                    valeur_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
         # should be >= valeur_viandes_volailles_france
         self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES["valeur_viandes_volailles_france"], 20)
-        for valeur_NOT_OK in [-100, 0, 19]:
-            with self.subTest(valeur_viandes_volailles=valeur_NOT_OK):
+        for VALUE_NOT_OK in [-100, 0, 19]:
+            with self.subTest(valeur_viandes_volailles=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    valeur_viandes_volailles=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
+                    valeur_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_valeur_produits_de_la_mer_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC.copy()
+        VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER.pop("valeur_produits_de_la_mer")
         # should be >= valeur_produits_de_la_mer_egalim
         self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER["valeur_produits_de_la_mer_egalim"], 40)
-        for valeur_NOT_OK in [-100, 0, 39]:
-            with self.subTest(valeur_produits_de_la_mer=valeur_NOT_OK):
+        for VALUE_NOT_OK in [-100, 0, 39]:
+            with self.subTest(valeur_produits_de_la_mer=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    valeur_produits_de_la_mer=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER
+                    valeur_produits_de_la_mer=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
