@@ -188,7 +188,7 @@ class TestTeledeclarationCreateApi(APITestCase):
             diagnostic.communicates_on_food_quality,
         )
         # Test the aggregated values, as it is a SIMPLE diag, the value should match directly the non agg ones
-        self.assertEqual(teledeclaration.value_bio_agg, diagnostic.value_bio)
+        self.assertEqual(teledeclaration.value_bio_ht_agg, diagnostic.value_bio)
 
     @freeze_time("2022-12-25")  # after the 2021 campaign
     @authenticate
@@ -353,10 +353,10 @@ class TestTeledeclarationCreateApi(APITestCase):
         self.assertIn("value_fruits_et_legumes_local", json_teledeclaration)
 
         # Checking the aggregation
-        self.assertEqual(teledeclaration.value_totale, 1000)
-        self.assertEqual(teledeclaration.value_bio_agg, 0)
+        self.assertEqual(teledeclaration.value_total_ht, 1000)
+        self.assertEqual(teledeclaration.value_bio_ht_agg, 0)
         self.assertEqual(
-            teledeclaration.value_siqo_agg,
+            teledeclaration.value_sustainable_ht_agg,
             json_teledeclaration["value_boissons_label_rouge"]
             + json_teledeclaration["value_boulangerie_aocaop_igp_stg"],
         )

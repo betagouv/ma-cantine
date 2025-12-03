@@ -44,7 +44,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         return self.filter(status=Teledeclaration.TeledeclarationStatus.CANCELLED)
 
     def exclude_aberrant_values(self):
-        return self.exclude(meal_price__isnull=False, meal_price__gt=20, value_totale__gt=1000000)
+        return self.exclude(meal_price__isnull=False, meal_price__gt=20, value_total_ht__gt=1000000)
 
     def in_year(self, year):
         return self.filter(year=int(year))
@@ -91,7 +91,7 @@ class TeledeclarationQuerySet(models.QuerySet):
             return (
                 self.submitted_for_year(year)
                 .exclude(teledeclaration_mode="SATELLITE_WITHOUT_APPRO")
-                .filter(value_bio_agg__isnull=False)
+                .filter(value_bio_ht_agg__isnull=False)
                 .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
                 .exclude_aberrant_values()  # Chaîne de traitement n°8
             )
@@ -112,12 +112,12 @@ class TeledeclarationQuerySet(models.QuerySet):
         Note: we use Sum/default instead of F to better manage None values.
         """
         return self.annotate(
-            bio_percent=100 * Sum("value_bio_agg", default=0) / Sum("value_totale"),
-            value_egalim_agg=Sum("value_bio_agg", default=0)
-            + Sum("value_siqo_agg", default=0)
-            + Sum("value_externalites_performance_agg", default=0)
-            + Sum("value_egalim_autres_agg", default=0),
-            egalim_percent=100 * F("value_egalim_agg") / Sum("value_totale"),
+            bio_percent=100 * Sum("value_bio_ht_agg", default=0) / Sum("value_total_ht"),
+            value_egalim_ht_agg=Sum("value_bio_ht_agg", default=0)
+            + Sum("value_sustainable_ht_agg", default=0)
+            + Sum("value_externality_performance_ht_agg", default=0)
+            + Sum("value_egalim_others_ht_agg", default=0),
+            egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht"),
         )
 
     def egalim_objectives_reached(self):
@@ -192,21 +192,21 @@ class Teledeclaration(models.Model):
     canteen_siret = models.TextField(null=True, blank=True)
     canteen_siren_unite_legale = models.TextField(null=True, blank=True)
 
-    value_totale = models.IntegerField(
+    value_total_ht = models.IntegerField(
         null=True, blank=True, verbose_name="Champ value total (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_bio_agg = models.IntegerField(
+    value_bio_ht_agg = models.IntegerField(
         null=True, blank=True, verbose_name="Champ value bio (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_siqo_agg = models.IntegerField(
+    value_sustainable_ht_agg = models.IntegerField(
         null=True, blank=True, verbose_name="Champ value Egalim (en cas de TD détaillée, ce champ est aggrégé)"
     )
-    value_externalites_performance_agg = models.IntegerField(
+    value_externality_performance_ht_agg = models.IntegerField(
         null=True,
         blank=True,
         verbose_name="Champ externalité/performance (en cas de TD détaillée, ce champ est aggrégé)",
     )
-    value_egalim_autres_agg = models.IntegerField(
+    value_egalim_others_ht_agg = models.IntegerField(
         null=True, blank=True, verbose_name="Champ Autres Egalim (en cas de TD détaillée, ce champ est aggrégé)"
     )
     yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="Nombre de repas servis par an")
@@ -375,11 +375,11 @@ class Teledeclaration(models.Model):
             diagnostic=diagnostic,
             declared_data=json_fields,
             teledeclaration_mode=teledeclaration_mode,
-            value_totale=diagnostic.value_totale,
-            value_bio_agg=diagnostic.value_bio,
-            value_siqo_agg=diagnostic.value_siqo,
-            value_externalites_performance_agg=diagnostic.value_externalites_performance,
-            value_egalim_autres_agg=diagnostic.value_egalim_autres,
+            value_total_ht=diagnostic.value_totale,
+            value_bio_ht_agg=diagnostic.value_bio,
+            value_sustainable_ht_agg=diagnostic.value_siqo,
+            value_externality_performance_ht_agg=diagnostic.value_externalites_performance,
+            value_egalim_others_ht_agg=diagnostic.value_egalim_autres,
             yearly_meal_count=canteen.yearly_meal_count,
             meal_price=meal_price,
         )

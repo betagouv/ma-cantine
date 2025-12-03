@@ -173,7 +173,7 @@ class TeledeclarationQuerySetTest(TestCase):
 
         self.assertEqual(
             td_with_meal_price.meal_price,
-            td_with_meal_price.value_totale / canteen_with_meal_price.yearly_meal_count,
+            td_with_meal_price.value_total_ht / canteen_with_meal_price.yearly_meal_count,
         )
         self.assertIsNone(td_without_meal_price.meal_price)
         self.assertIsNone(td_without_appro.meal_price)
