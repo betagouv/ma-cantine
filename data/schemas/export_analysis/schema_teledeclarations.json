@@ -181,39 +181,39 @@
       "type": "float"
     },
     {
-      "name": "value_meat_poultry_ht",
+      "name": "value_viandes_volailles",
       "type": "float"
     },
     {
-      "name": "value_fish_ht",
+      "name": "value_produits_de_la_mer",
       "type": "float"
     },
     {
-      "name": "value_meat_poultry_egalim_ht",
+      "name": "value_viandes_volailles_egalim",
       "type": "float"
     },
     {
-      "name": "value_fish_egalim_ht",
+      "name": "value_produits_de_la_mer_egalim",
       "type": "float"
     },
     {
-      "name": "value_meat_poultry_france_ht",
+      "name": "value_viandes_volailles_france",
       "type": "float"
     },
     {
-      "name": "value_meat_and_fish_ht",
+      "name": "value_viandes_volailles_produits_de_la_mer",
       "type": "float"
     },
     {
-      "name": "value_meat_and_fish_egalim_ht",
+      "name": "value_viandes_volailles_produits_de_la_mer_egalim",
       "type": "float"
     },
     {
-      "name": "ratio_egalim_fish",
+      "name": "ratio_produits_de_la_mer_egalim",
       "type": "float"
     },
     {
-      "name": "ratio_egalim_meat_poultry",
+      "name": "ratio_viandes_volailles_egalim",
       "type": "float"
     },
     {

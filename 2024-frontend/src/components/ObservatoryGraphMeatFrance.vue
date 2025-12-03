@@ -5,10 +5,10 @@ import stringsService from "@/services/strings"
 import GraphBase from "@/components/GraphBase.vue"
 import GraphGauge from "@/components/GraphGauge.vue"
 
-const props = defineProps(["meatFrancePercent"])
+const props = defineProps(["viandesVolaillesFrancePercent"])
 const storeFilters = useStoreFilters()
 const title = "Viandes d'origine France"
-const stats = reactive([props.meatFrancePercent])
+const stats = reactive([props.viandesVolaillesFrancePercent])
 const description = computed(() => {
   const filters = storeFilters.getSelectionLabels()
   const percent = stringsService.prettyPercent(stats[0])

@@ -274,10 +274,10 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     value_egalim_others_ht = serializers.FloatField(source="value_egalim_others_ht_agg", read_only=True)
     value_somme_egalim_avec_bio_ht = serializers.FloatField(source="value_egalim_ht_agg", read_only=True)
     value_somme_egalim_hors_bio_ht = serializers.SerializerMethodField()
-    value_meat_and_fish_ht = serializers.SerializerMethodField()
-    value_meat_and_fish_egalim_ht = serializers.SerializerMethodField()
-    ratio_egalim_fish = serializers.SerializerMethodField()
-    ratio_egalim_meat_poultry = serializers.SerializerMethodField()
+    value_viandes_volailles_produits_de_la_mer = serializers.SerializerMethodField()
+    value_viandes_volailles_produits_de_la_mer_egalim = serializers.SerializerMethodField()
+    ratio_produits_de_la_mer_egalim = serializers.SerializerMethodField()
+    ratio_viandes_volailles_egalim = serializers.SerializerMethodField()
     ratio_bio = serializers.SerializerMethodField()
     ratio_egalim_avec_bio = serializers.SerializerMethodField()
     ratio_egalim_sans_bio = serializers.SerializerMethodField()
@@ -341,15 +341,15 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "value_sustainable_ht",
             "value_externality_performance_ht",
             "value_egalim_others_ht",
-            "value_meat_poultry_ht",
-            "value_meat_poultry_france_ht",
-            "value_meat_poultry_egalim_ht",
-            "value_fish_ht",
-            "value_fish_egalim_ht",
+            "value_viandes_volailles",
+            "value_viandes_volailles_france",
+            "value_viandes_volailles_egalim",
+            "value_produits_de_la_mer",
+            "value_produits_de_la_mer_egalim",
             "value_somme_egalim_avec_bio_ht",
             "value_somme_egalim_hors_bio_ht",
-            "value_meat_and_fish_ht",
-            "value_meat_and_fish_egalim_ht",
+            "value_viandes_volailles_produits_de_la_mer",
+            "value_viandes_volailles_produits_de_la_mer_egalim",
             "service_type",
             "vegetarian_weekly_recurrence",
             "vegetarian_menu_type",
@@ -361,8 +361,8 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "action_gaspi_distribution",
             "action_gaspi_portions",
             "action_gaspi_reutilisation",
-            "ratio_egalim_fish",
-            "ratio_egalim_meat_poultry",
+            "ratio_produits_de_la_mer_egalim",
+            "ratio_viandes_volailles_egalim",
             "ratio_bio",
             "ratio_egalim_avec_bio",
             "ratio_egalim_sans_bio",
@@ -455,11 +455,11 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             ]
         )
 
-    def get_value_meat_and_fish_ht(self, obj):
-        return utils.sum_int_and_none([obj.value_meat_poultry_ht, obj.value_fish_ht])
+    def get_value_viandes_volailles_produits_de_la_mer(self, obj):
+        return utils.sum_int_and_none([obj.value_viandes_volailles, obj.value_produits_de_la_mer])
 
-    def get_value_meat_and_fish_egalim_ht(self, obj):
-        return utils.sum_int_and_none([obj.value_meat_poultry_egalim_ht, obj.value_fish_egalim_ht])
+    def get_value_viandes_volailles_produits_de_la_mer_egalim(self, obj):
+        return utils.sum_int_and_none([obj.value_viandes_volailles_egalim, obj.value_produits_de_la_mer_egalim])
 
     def get_action_gaspi_inscription(self, obj):
         return obj.waste_actions and (Diagnostic.WasteActions.INSCRIPTION in obj.waste_actions)
@@ -479,11 +479,11 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     def get_action_gaspi_reutilisation(self, obj):
         return obj.waste_actions and (Diagnostic.WasteActions.REUSE in obj.waste_actions)
 
-    def get_ratio_egalim_fish(self, obj):
-        return utils.compute_ratio(obj.value_fish_egalim_ht, obj.value_fish_ht)
+    def get_ratio_produits_de_la_mer_egalim(self, obj):
+        return utils.compute_ratio(obj.value_produits_de_la_mer_egalim, obj.value_produits_de_la_mer)
 
-    def get_ratio_egalim_meat_poultry(self, obj):
-        return utils.compute_ratio(obj.value_meat_poultry_egalim_ht, obj.value_meat_poultry_ht)
+    def get_ratio_viandes_volailles_egalim(self, obj):
+        return utils.compute_ratio(obj.value_viandes_volailles_egalim, obj.value_viandes_volailles)
 
     def get_ratio_bio(self, obj):
         return utils.compute_ratio(obj.value_bio_ht_agg, obj.value_total_ht)

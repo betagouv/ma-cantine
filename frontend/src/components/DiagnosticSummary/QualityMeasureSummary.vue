@@ -50,20 +50,22 @@
           <v-col class="py-0">
             <p class="mb-0">
               <v-icon :small="$vuetify.breakpoint.xs" class="mr-1 mr-sm-2" color="#00A95F">$award-line</v-icon>
-              <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.meatPoultryEgalim) }}</span>
+              <span class="font-weight-bold percentage">
+                {{ percentageDisplay(percentages.viandesVolaillesEgalim) }}
+              </span>
               de viandes et volailles EGalim
             </p>
           </v-col>
-          <v-col class="py-0" v-if="applicableRules.meatPoultryEgalimThreshold" cols="12" sm="4" md="3">
+          <v-col class="py-0" v-if="applicableRules.viandesVolaillesEgalimThreshold" cols="12" sm="4" md="3">
             <p class="mb-0 grey--text text-darken-1">
-              <i>objectif : {{ applicableRules.meatPoultryEgalimThreshold }} %</i>
+              <i>objectif : {{ applicableRules.viandesVolaillesEgalimThreshold }} %</i>
             </p>
           </v-col>
         </v-row>
         <v-row class="py-2 px-3">
           <p class="mb-0">
             <v-icon :small="$vuetify.breakpoint.xs" class="mr-1 mr-sm-2" color="#00A95F">$france-line</v-icon>
-            <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.meatPoultryFrance) }}</span>
+            <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.viandesVolaillesFrance) }}</span>
             de viandes et volailles origine France
           </p>
         </v-row>
@@ -71,13 +73,15 @@
           <v-col class="py-0">
             <p class="mb-0">
               <v-icon :small="$vuetify.breakpoint.xs" class="mr-1 mr-sm-2" color="#00A95F">$anchor-line</v-icon>
-              <span class="font-weight-bold percentage">{{ percentageDisplay(percentages.fishEgalim) }}</span>
+              <span class="font-weight-bold percentage">
+                {{ percentageDisplay(percentages.produitsDeLaMerEgalim) }}
+              </span>
               de produits de la mer et aquaculture EGalim
             </p>
           </v-col>
-          <v-col class="py-0" v-if="applicableRules.fishEgalimThreshold" cols="12" sm="4" md="3">
+          <v-col class="py-0" v-if="applicableRules.produitsDeLaMerEgalimThreshold" cols="12" sm="4" md="3">
             <p class="mb-0 grey--text text-darken-1">
-              <i>objectif : {{ applicableRules.fishEgalimThreshold }} %</i>
+              <i>objectif : {{ applicableRules.produitsDeLaMerEgalimThreshold }} %</i>
             </p>
           </v-col>
         </v-row>
@@ -225,11 +229,11 @@ export default {
         },
         {
           text: "Total (en € HT) de mes achats en viandes et volailles fraiches ou surgelées",
-          key: "valueMeatPoultryHt",
+          key: "valueViandesVolailles",
         },
         {
           text: "Total (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture",
-          key: "valueFishHt",
+          key: "valueProduitsDeLaMer",
         },
       ],
       egalimFields: [
@@ -262,17 +266,17 @@ export default {
       familyFields: [
         {
           text: "Total (en € HT) de mes achats EGalim en viandes et volailles",
-          key: "valueMeatPoultryEgalimHt",
+          key: "valueViandesVolaillesEgalim",
         },
         {
           text: "Total (en € HT) de mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
-          key: "valueFishEgalimHt",
+          key: "valueProduitsDeLaMerEgalim",
         },
       ],
       franceFields: [
         {
           text: "Total (en € HT) de mes achats origine France - Viandes et volailles",
-          key: "valueMeatPoultryFranceHt",
+          key: "valueViandesVolaillesFrance",
         },
         {
           text: "Total (en € HT) de mes achats origine France - Poissons, produits de la mer et de l'aquaculture",

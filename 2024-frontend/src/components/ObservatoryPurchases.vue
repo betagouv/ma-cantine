@@ -36,10 +36,12 @@ const approBadge = "/static/images/badges/appro.svg"
         />
       </li>
       <li class="fr-mb-8w">
-        <ObservatoryGraphMeatFishEgalim :meatFishEgalimPercent="stats.meatFishEgalimPercent" />
+        <ObservatoryGraphMeatFishEgalim
+          :viandesVolaillesProduitsDeLaMerEgalimPercent="stats.viandesVolaillesProduitsDeLaMerEgalimPercent"
+        />
       </li>
       <li>
-        <ObservatoryGraphMeatFrance :meatFrancePercent="stats.meatFrancePercent" />
+        <ObservatoryGraphMeatFrance :viandesVolaillesFrancePercent="stats.viandesVolaillesFrancePercent" />
       </li>
     </ol>
   </div>

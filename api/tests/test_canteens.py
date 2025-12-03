@@ -779,6 +779,3 @@ class CanteenDeleteApiTest(APITestCase):
 
         # Model was only soft-deleted but remains in the DB
         self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
-        self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
-        self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
-        self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)

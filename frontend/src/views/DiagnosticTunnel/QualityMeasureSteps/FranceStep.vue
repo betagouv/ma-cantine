@@ -3,45 +3,45 @@
     <FormErrorCallout v-if="totalError" :errorMessages="[totalErrorMessage]" />
     <v-row class="my-0 my-md-6">
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
-        <!-- Viande -->
+        <!-- ViandesVolailles -->
         <div>
           <div class="d-block d-sm-flex align-center">
             <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
-            <label for="meat-poultry-france">
+            <label for="valueViandesVolaillesFrance">
               Total (en € HT) de mes achats origine France - Viandes et volailles
               <span class="fr-hint-text mt-2">Optionnel</span>
             </label>
           </div>
           <DsfrCurrencyField
-            id="meat-poultry-france"
-            v-model.number="payload.valueMeatPoultryFranceHt"
+            id="valueViandesVolaillesFrance"
+            v-model.number="payload.valueViandesVolaillesFrance"
             @blur="updatePayload"
-            :error="totalFranceMeatPoultryError"
+            :error="totalFranceViandesVolaillesError"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           />
           <PurchaseHint
             v-if="displayPurchaseHints"
-            v-model="payload.valueMeatPoultryFranceHt"
+            v-model="payload.valueViandesVolaillesFrance"
             @autofill="updatePayload"
             purchaseType="« viandes et volailles origine France »"
-            :amount="purchasesSummary.valueMeatPoultryFranceHt"
+            :amount="purchasesSummary.valueViandesVolaillesFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />
         </div>
 
-        <!-- Poissons -->
+        <!-- produitsDeLaMer -->
         <div class="mt-4">
           <div class="d-block d-sm-flex align-center">
             <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
-            <label for="fish-france">
+            <label for="valueProduitsDeLaMerFrance">
               Total (en € HT) de mes achats origine France - Poissons, produits de la mer et de l'aquaculture
               <span class="fr-hint-text mt-2">Optionnel</span>
             </label>
           </div>
           <DsfrCurrencyField
-            id="fish-france"
+            id="valueProduitsDeLaMerFrance"
             v-model.number="payload.valueProduitsDeLaMerFrance"
-            :error="fishError"
+            :error="produitsDeLaMerError"
             @blur="updatePayload"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           />
@@ -81,7 +81,7 @@
           />
         </div>
 
-        <!-- Fruits et légumes frais et surgelés -->
+        <!-- FruitsEtLegumes -->
         <div class="mt-4">
           <label class="ml-4 ml-md-0" for="valueFruitsEtLegumesFrance">
             Total (en € HT) de mes achats origine France - Fruits et légumes frais et surgelés
@@ -304,7 +304,7 @@ export default {
     sumAllFrance() {
       const d = this.payload
       const franceValues = [
-        d.valueMeatPoultryFranceHt,
+        d.valueViandesVolaillesFrance,
         d.valueCharcuterieFrance,
         d.valueFruitsLegumesFrance,
         d.valueBoeufFrance,

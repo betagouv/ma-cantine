@@ -213,11 +213,11 @@ class CanteenStatsApiTest(APITestCase):
                 value_sustainable_ht=15,
                 value_externality_performance_ht=15,
                 value_egalim_others_ht=15,
-                value_meat_poultry_ht=200,
-                value_meat_poultry_egalim_ht=100,
-                value_meat_poultry_france_ht=50,
-                value_fish_ht=10,
-                value_fish_egalim_ht=8,
+                value_viandes_volailles=200,
+                value_viandes_volailles_egalim=100,
+                value_viandes_volailles_france=50,
+                value_produits_de_la_mer=10,
+                value_produits_de_la_mer_egalim=8,
             )
             canteen_diagnostic.teledeclare(applicant=UserFactory())
 
@@ -229,9 +229,9 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)  # 15 + 15 + 15
         self.assertEqual(body["egalimPercent"], 65)  # 20 + 45
-        self.assertEqual(body["meatEgalimPercent"], 50)
-        self.assertEqual(body["meatFrancePercent"], 25)
-        self.assertEqual(body["fishEgalimPercent"], 80)
+        self.assertEqual(body["viandesVolaillesEgalimPercent"], 50)
+        self.assertEqual(body["viandesVolaillesFrancePercent"], 25)
+        self.assertEqual(body["produitsDeLaMerEgalimPercent"], 80)
         self.assertEqual(body["approPercent"], 100)
 
     def test_stats_diagnostic_complete(self):
@@ -255,11 +255,11 @@ class CanteenStatsApiTest(APITestCase):
                 value_produits_de_la_mer_label_rouge=15,  # value_sustainable_ht
                 value_fruits_et_legumes_externalites=15,  # value_externality_performance_ht
                 value_charcuterie_hve=15,  # value_egalim_others_ht
-                value_meat_poultry_ht=200,
-                value_meat_poultry_egalim_ht=100,
-                value_meat_poultry_france_ht=50,
-                value_fish_ht=10,
-                value_fish_egalim_ht=8,
+                value_viandes_volailles=200,
+                value_viandes_volailles_egalim=100,
+                value_viandes_volailles_france=50,
+                value_produits_de_la_mer=10,
+                value_produits_de_la_mer_egalim=8,
             )
             canteen_diagnostic.teledeclare(applicant=UserFactory())
 
@@ -271,10 +271,10 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(body["bioPercent"], 20)
         self.assertEqual(body["sustainablePercent"], 45)  # 15 + 15 + 15 (same denominator)
         self.assertEqual(body["egalimPercent"], 65)  # 20 + 45 (same denominator)
-        self.assertEqual(body["meatEgalimPercent"], 50)
-        self.assertEqual(body["meatFrancePercent"], 25)
-        self.assertEqual(body["fishEgalimPercent"], 80)
-        self.assertEqual(body["meatFishEgalimPercent"], 51)
+        self.assertEqual(body["viandesVolaillesEgalimPercent"], 50)
+        self.assertEqual(body["viandesVolaillesFrancePercent"], 25)
+        self.assertEqual(body["produitsDeLaMerEgalimPercent"], 80)
+        self.assertEqual(body["viandesVolaillesProduitsDeLaMerEgalimPercent"], 51)
         self.assertEqual(body["approPercent"], 100)
 
     def test_filter_out_armee(self):

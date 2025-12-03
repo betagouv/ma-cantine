@@ -58,11 +58,10 @@ class PurchaseSummarySerializer(serializers.Serializer):
     value_egalim_others_dont_commerce_equitable_ht = PurchaseField()
     value_externality_performance_ht = PurchaseField()
     # meat and fish aggregates
-    value_meat_poultry_ht = PurchaseField()
-    value_meat_poultry_egalim_ht = PurchaseField()
-    value_meat_poultry_france_ht = PurchaseField()
-    value_fish_ht = PurchaseField()
-    value_fish_egalim_ht = PurchaseField()
+    value_viandes_volailles = PurchaseField()
+    value_viandes_volailles_egalim = PurchaseField()
+    value_produits_de_la_mer = PurchaseField()
+    value_produits_de_la_mer_egalim = PurchaseField()
     # complex: by family and label
     value_viandes_volailles_bio = PurchaseField()
     value_produits_de_la_mer_bio = PurchaseField()

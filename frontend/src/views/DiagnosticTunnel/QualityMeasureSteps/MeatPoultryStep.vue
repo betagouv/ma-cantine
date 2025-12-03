@@ -3,12 +3,12 @@
     <FormErrorCallout v-if="hasError" :errorMessages="errorMessages" />
     <v-row>
       <v-col cols="12" md="4">
-        <label for="meat-poultry">
+        <label for="valueViandesVolailles">
           Total (en € HT) de mes achats en viandes et volailles fraiches ou surgelées
         </label>
         <DsfrCurrencyField
-          id="meat-poultry"
-          v-model.number="payload.valueMeatPoultryHt"
+          id="valueViandesVolailles"
+          v-model.number="payload.valueViandesVolailles"
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
           :error="hasError"
@@ -16,10 +16,10 @@
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueMeatPoultryHt"
+          v-model="payload.valueViandesVolailles"
           @autofill="updatePayload"
           purchaseType="totaux viandes et volailles"
-          :amount="purchasesSummary.valueMeatPoultryHt"
+          :amount="purchasesSummary.valueViandesVolailles"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
       </v-col>
@@ -32,27 +32,27 @@
             </div>
           </v-col>
           <v-col cols="12" md="6">
-            <!-- Viande et volailles EGalim -->
+            <!-- viandesVolailles EGalim -->
             <div class="d-block d-sm-flex align-center">
               <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$award-line</v-icon>
-              <label for="meat-poultry-egalim">
+              <label for="valueViandesVolaillesEgalim">
                 Total (en € HT) de mes achats EGalim en viandes et volailles
               </label>
             </div>
             <DsfrCurrencyField
-              id="meat-poultry-egalim"
-              v-model.number="payload.valueMeatPoultryEgalimHt"
+              id="valueViandesVolaillesEgalim"
+              v-model.number="payload.valueViandesVolaillesEgalim"
               @blur="updatePayload"
-              :error="totalEgalimMeatPoultryError"
+              :error="totalEgalimViandesVolaillesError"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
               :rules="[validators.required, validators.decimalPlaces(2)]"
             />
             <PurchaseHint
               v-if="displayPurchaseHints"
-              v-model="payload.valueMeatPoultryEgalimHt"
+              v-model="payload.valueViandesVolaillesEgalim"
               @autofill="updatePayload"
               purchaseType="viandes et volailles EGalim"
-              :amount="purchasesSummary.valueMeatPoultryEgalimHt"
+              :amount="purchasesSummary.valueViandesVolaillesEgalim"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
           </v-col>
@@ -65,27 +65,27 @@
             </div>
           </v-col>
           <v-col cols="12" md="6">
-            <!-- Viande et volailles provenance FRANCE -->
+            <!-- viandesVolailles France -->
             <div class="d-block d-sm-flex align-center">
               <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
-              <label for="meat-poultry-france">
+              <label for="valueViandesVolaillesFrance">
                 Total (en € HT) de mes achats origine France en viandes et volailles
                 <span class="fr-hint-text mt-2">Optionnel</span>
               </label>
             </div>
             <DsfrCurrencyField
-              id="meat-poultry-france"
-              v-model.number="payload.valueMeatPoultryFranceHt"
+              id="valueViandesVolaillesFrance"
+              v-model.number="payload.valueViandesVolaillesFrance"
               @blur="updatePayload"
-              :error="totalFranceMeatPoultryError"
+              :error="totalFranceViandesVolaillesError"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             />
             <PurchaseHint
               v-if="displayPurchaseHints"
-              v-model="payload.valueMeatPoultryFranceHt"
+              v-model="payload.valueViandesVolaillesFrance"
               @autofill="updatePayload"
               purchaseType="viandes et volailles origine France"
-              :amount="purchasesSummary.valueMeatPoultryFranceHt"
+              :amount="purchasesSummary.valueViandesVolaillesFrance"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
           </v-col>
@@ -130,9 +130,9 @@ export default {
   },
   data() {
     return {
-      totalMeatPoultryErrorMessage: null,
-      totalEgalimMeatPoultryErrorMessage: null,
-      totalFranceMeatPoultryErrorMessage: null,
+      totalViandesVolaillesErrorMessage: null,
+      totalEgalimViandesVolaillesErrorMessage: null,
+      totalFranceViandesVolaillesErrorMessage: null,
       totalFamiliesErrorMessage: null,
       errorHelperUsed: false,
       errorHelperFields: [],
@@ -145,38 +145,38 @@ export default {
     displayPurchaseHints() {
       return !!this.purchasesSummary
     },
-    totalMeatPoultryError() {
-      return !!this.totalMeatPoultryErrorMessage
+    totalViandesVolaillesError() {
+      return !!this.totalViandesVolaillesErrorMessage
     },
-    totalEgalimMeatPoultryError() {
-      return !!this.totalEgalimMeatPoultryErrorMessage
+    totalEgalimViandesVolaillesError() {
+      return !!this.totalEgalimViandesVolaillesErrorMessage
     },
-    totalFranceMeatPoultryError() {
-      return !!this.totalFranceMeatPoultryErrorMessage
+    totalFranceViandesVolaillesError() {
+      return !!this.totalFranceViandesVolaillesErrorMessage
     },
     totalFamiliesError() {
       return !!this.totalFamiliesErrorMessage
     },
     hasError() {
       return [
-        this.totalMeatPoultryError,
-        this.totalEgalimMeatPoultryError,
-        this.totalFranceMeatPoultryError,
+        this.totalViandesVolaillesError,
+        this.totalEgalimViandesVolaillesError,
+        this.totalFranceViandesVolaillesError,
         this.totalFamiliesError,
       ].some((x) => !!x)
     },
     errorMessages() {
       return [
-        this.totalMeatPoultryErrorMessage,
+        this.totalViandesVolaillesErrorMessage,
         this.totalFamiliesErrorMessage,
-        this.totalEgalimMeatPoultryErrorMessage,
-        this.totalFranceMeatPoultryErrorMessage,
+        this.totalEgalimViandesVolaillesErrorMessage,
+        this.totalFranceViandesVolaillesErrorMessage,
       ].filter((x) => !!x)
     },
     erroringFields() {
       const fields = []
-      if (this.totalMeatPoultryError) fields.push("valueTotalHt")
-      if (this.totalFamiliesError) fields.push(...["valueTotalHt", "valueFishHt"])
+      if (this.totalViandesVolaillesError) fields.push("valueTotalHt")
+      if (this.totalFamiliesError) fields.push(...["valueTotalHt", "valueProduitsDeLaMer"])
       return fields
     },
   },
@@ -186,20 +186,20 @@ export default {
       if (!this.hasError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
-      this.totalMeatPoultryErrorMessage = null
+      this.totalViandesVolaillesErrorMessage = null
       this.totalFamiliesErrorMessage = null
-      this.totalEgalimMeatPoultryErrorMessage = null
-      this.totalFranceMeatPoultryErrorMessage = null
+      this.totalEgalimViandesVolaillesErrorMessage = null
+      this.totalFranceViandesVolaillesErrorMessage = null
 
       const d = this.payload
       const total = d.valueTotalHt
-      const totalMeatPoultry = d.valueMeatPoultryHt
-      const totalFish = d.valueFishHt
+      const totalMeatPoultry = d.valueViandesVolailles
+      const totalFish = d.valueProduitsDeLaMer
       const totalFamilies = totalMeatPoultry + totalFish
-      const sumMeat = d.valueMeatPoultryEgalimHt + d.valueMeatPoultryFranceHt
+      const sumMeat = d.valueViandesVolaillesEgalim + d.valueViandesVolaillesFrance
 
       if (totalMeatPoultry > total) {
-        this.totalMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+        this.totalViandesVolaillesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
           totalMeatPoultry
         )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
         this.errorHelperFields.push("valueTotalHt")
@@ -207,21 +207,21 @@ export default {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
-        this.errorHelperFields.push(...["valueTotalHt", "valueFishHt"])
+        this.errorHelperFields.push(...["valueTotalHt", "valueProduitsDeLaMer"])
       } else if (sumMeat > totalMeatPoultry) {
         this.totalFamiliesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
           totalFish
         )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumMeat)})`
       } else {
-        if (d.valueMeatPoultryEgalimHt > totalMeatPoultry) {
-          this.totalEgalimMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+        if (d.valueViandesVolaillesEgalim > totalMeatPoultry) {
+          this.totalEgalimViandesVolaillesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
             totalMeatPoultry
-          )}) doit être supérieur au champ EGalim (${toCurrency(d.valueMeatPoultryEgalimHt)})`
+          )}) doit être supérieur au champ EGalim (${toCurrency(d.valueViandesVolaillesEgalim)})`
         }
-        if (d.valueMeatPoultryFranceHt > totalMeatPoultry) {
-          this.totalFranceMeatPoultryErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
+        if (d.valueViandesVolaillesFrance > totalMeatPoultry) {
+          this.totalFranceViandesVolaillesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
             totalMeatPoultry
-          )}) doit être supérieur au champ origine France (${toCurrency(d.valueMeatPoultryFranceHt)})`
+          )}) doit être supérieur au champ origine France (${toCurrency(d.valueViandesVolaillesFrance)})`
         }
       }
     },

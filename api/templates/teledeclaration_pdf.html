@@ -162,15 +162,15 @@
             <ul>
                 <li>
                     <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
-                    {% if not value_meat_poultry_ht is None %}{{ value_meat_poultry_ht|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_viandes_volailles is None %}{{ value_viandes_volailles|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées EGalim</span> :
-                    {% if not value_meat_poultry_egalim_ht is None %}{{ value_meat_poultry_egalim_ht|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_viandes_volailles_egalim is None %}{{ value_viandes_volailles_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées origine France</span> :
-                    {% if not value_meat_poultry_france_ht is None %}{{ value_meat_poultry_france_ht|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_viandes_volailles_france is None %}{{ value_viandes_volailles_france|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
 
@@ -180,11 +180,11 @@
             <ul>
                 <li>
                     <span>Valeur totale en HT des achats en poissons, produits de la mer et de l'aquaculture</span> :
-                    {% if not value_fish_ht is None %}{{ value_fish_ht|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_produits_de_la_mer is None %}{{ value_produits_de_la_mer|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur en HT des achats en poissons, produits de la mer et de l'aquaculture EGalim</span> :
-                    {% if not value_fish_egalim_ht is None %}{{ value_fish_egalim_ht|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_produits_de_la_mer_egalim is None %}{{ value_produits_de_la_mer_egalim|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
             {% else %}
@@ -195,11 +195,11 @@
                 </li>
                 <li>
                     <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
-                    {% if not value_meat_poultry_ht is None %}{{ value_meat_poultry_ht|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_viandes_volailles is None %}{{ value_viandes_volailles|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
                 <li>
                     <span>Valeur totale en HT des achats en poissons, produits de la mer et de l'aquaculture</span> :
-                    {% if not value_fish_ht is None %}{{ value_fish_ht|floatformat:2 }}{% else %}—{% endif %} €
+                    {% if not value_produits_de_la_mer is None %}{{ value_produits_de_la_mer|floatformat:2 }}{% else %}—{% endif %} €
                 </li>
             </ul>
             <p>Achats Bio</p>

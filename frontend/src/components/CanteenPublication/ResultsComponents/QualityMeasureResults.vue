@@ -90,22 +90,26 @@
             <v-col cols="12" sm="4" class="pa-4">
               <v-icon large class="grey--text text--darken-3 mb-2">$award-line</v-icon>
               <p class="mb-0">
-                <span class="font-weight-bold percentage">{{ percentageDisplay(meatEgalimPercentage) }}</span>
+                <span class="font-weight-bold percentage">
+                  {{ percentageDisplay(viandesVolaillesEgalimPercentage) }}
+                </span>
                 de viandes et volailles
                 <br />
                 EGalim
               </p>
               <p
-                v-if="applicableRules.meatPoultryEgalimThreshold"
+                v-if="applicableRules.viandesVolaillesEgalimThreshold"
                 class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
               >
-                <i>objectif : {{ applicableRules.meatPoultryEgalimThreshold }} %</i>
+                <i>objectif : {{ applicableRules.viandesVolaillesEgalimThreshold }} %</i>
               </p>
             </v-col>
             <v-col cols="12" sm="4" class="pa-4">
               <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
               <p class="mb-0">
-                <span class="font-weight-bold percentage">{{ percentageDisplay(meatFrancePercentage) }}</span>
+                <span class="font-weight-bold percentage">
+                  {{ percentageDisplay(viandesVolaillesFrancePercentage) }}
+                </span>
                 de viandes et volailles
                 <br />
                 origine France
@@ -114,13 +118,18 @@
             <v-col cols="12" sm="4" class="pa-4">
               <v-icon large class="grey--text text--darken-3 mb-2">$anchor-line</v-icon>
               <p class="mb-0">
-                <span class="font-weight-bold percentage">{{ percentageDisplay(fishEgalimPercentage) }}</span>
+                <span class="font-weight-bold percentage">
+                  {{ percentageDisplay(produitsDeLaMerEgalimPercentage) }}
+                </span>
                 de produits de la mer
                 <br />
                 et aquaculture EGalim
               </p>
-              <p v-if="applicableRules.fishEgalimThreshold" class="mt-1 mb-0 fr-text-sm grey--text text--darken-1">
-                <i>objectif : {{ applicableRules.fishEgalimThreshold }} %</i>
+              <p
+                v-if="applicableRules.produitsDeLaMerEgalimThreshold"
+                class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
+              >
+                <i>objectif : {{ applicableRules.produitsDeLaMerEgalimThreshold }} %</i>
               </p>
             </v-col>
           </v-row>
@@ -218,20 +227,26 @@ export default {
     hasPercentages() {
       return !!this.diagnosticForYear && "percentageValueTotalHt" in this.diagnosticForYear
     },
-    meatEgalimPercentage() {
+    viandesVolaillesEgalimPercentage() {
       return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValueMeatPoultryEgalimHt)
-        : getPercentage(this.diagnosticForYear.valueMeatPoultryEgalimHt, this.diagnosticForYear.valueMeatPoultryHt)
+        ? toPercentage(this.diagnosticForYear.percentageValueViandesVolaillesEgalim)
+        : getPercentage(
+            this.diagnosticForYear.valueViandesVolaillesEgalim,
+            this.diagnosticForYear.valueViandesVolailles
+          )
     },
-    meatFrancePercentage() {
+    viandesVolaillesFrancePercentage() {
       return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValueMeatPoultryFranceHt)
-        : getPercentage(this.diagnosticForYear.valueMeatPoultryFranceHt, this.diagnosticForYear.valueMeatPoultryHt)
+        ? toPercentage(this.diagnosticForYear.percentageValueViandesVolaillesFrance)
+        : getPercentage(
+            this.diagnosticForYear.valueViandesVolaillesFrance,
+            this.diagnosticForYear.valueViandesVolailles
+          )
     },
-    fishEgalimPercentage() {
+    produitsDeLaMerEgalimPercentage() {
       return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValueFishEgalimHt)
-        : getPercentage(this.diagnosticForYear.valueFishEgalimHt, this.diagnosticForYear.valueFishHt)
+        ? toPercentage(this.diagnosticForYear.percentageValueProduitsDeLaMerEgalim)
+        : getPercentage(this.diagnosticForYear.valueProduitsDeLaMerEgalim, this.diagnosticForYear.valueProduitsDeLaMer)
     },
     graphDiagnostics() {
       if (!this.approData || this.approData.length === 0) return null
@@ -244,9 +259,9 @@ export default {
     },
     hasFamilyDetail() {
       return (
-        this.isTruthyOrZero(this.meatEgalimPercentage) ||
-        this.isTruthyOrZero(this.meatFrancePercentage) ||
-        this.isTruthyOrZero(this.fishEgalimPercentage)
+        this.isTruthyOrZero(this.viandesVolaillesEgalimPercentage) ||
+        this.isTruthyOrZero(this.viandesVolaillesFrancePercentage) ||
+        this.isTruthyOrZero(this.produitsDeLaMerEgalimPercentage)
       )
     },
     usesCentralKitchenDiagnostics() {

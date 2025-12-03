@@ -128,7 +128,13 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         ),
         (
             "Valeurs détaillés",
-            {"fields": Diagnostic.APPRO_FIELDS},
+            {
+                "fields": [
+                    field_name
+                    for field_name in Diagnostic.APPRO_FIELDS
+                    if field_name not in Diagnostic.SIMPLE_APPRO_FIELDS
+                ]
+            },
         ),
         (
             "Télédéclaration",

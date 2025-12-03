@@ -46,11 +46,11 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
         Sum("value_sustainable_ht_agg", default=0),
         Sum("value_externality_performance_ht_agg", default=0),
         Sum("value_egalim_others_ht_agg", default=0),
-        Sum("value_meat_poultry_ht", default=0),
-        Sum("value_meat_poultry_egalim_ht", default=0),
-        Sum("value_meat_poultry_france_ht", default=0),
-        Sum("value_fish_ht", default=0),
-        Sum("value_fish_egalim_ht", default=0),
+        Sum("value_viandes_volailles", default=0),
+        Sum("value_viandes_volailles_egalim", default=0),
+        Sum("value_viandes_volailles_france", default=0),
+        Sum("value_produits_de_la_mer", default=0),
+        Sum("value_produits_de_la_mer_egalim", default=0),
     )
     # count
     data["teledeclarations_count"] = agg["id__count"]
@@ -71,30 +71,32 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
         data["sustainable_percent"] = 0
     data["egalim_percent"] = data["bio_percent"] + data["sustainable_percent"]  # same denominator
     # percent of meat egalim & france
-    if agg["value_meat_poultry_ht__sum"] > 0:
-        data["meat_egalim_percent"] = round(
-            100 * agg["value_meat_poultry_egalim_ht__sum"] / agg["value_meat_poultry_ht__sum"]
+    if agg["value_viandes_volailles__sum"] > 0:
+        data["viandes_volailles_egalim_percent"] = round(
+            100 * agg["value_viandes_volailles_egalim__sum"] / agg["value_viandes_volailles__sum"]
         )
-        data["meat_france_percent"] = round(
-            100 * agg["value_meat_poultry_france_ht__sum"] / agg["value_meat_poultry_ht__sum"]
+        data["viandes_volailles_france_percent"] = round(
+            100 * agg["value_viandes_volailles_france__sum"] / agg["value_viandes_volailles__sum"]
         )
     else:
-        data["meat_egalim_percent"] = 0
-        data["meat_france_percent"] = 0
+        data["viandes_volailles_egalim_percent"] = 0
+        data["viandes_volailles_france_percent"] = 0
     # percent of fish egalim
-    if agg["value_fish_ht__sum"] > 0:
-        data["fish_egalim_percent"] = round(100 * agg["value_fish_egalim_ht__sum"] / agg["value_fish_ht__sum"])
-    else:
-        data["fish_egalim_percent"] = 0
-    # percent of meat+fish egalim
-    if (agg["value_meat_poultry_ht__sum"] + agg["value_fish_ht__sum"]) > 0:
-        data["meat_fish_egalim_percent"] = round(
-            100
-            * (agg["value_meat_poultry_egalim_ht__sum"] + agg["value_fish_egalim_ht__sum"])
-            / (agg["value_meat_poultry_ht__sum"] + agg["value_fish_ht__sum"])
+    if agg["value_produits_de_la_mer__sum"] > 0:
+        data["produits_de_la_mer_egalim_percent"] = round(
+            100 * agg["value_produits_de_la_mer_egalim__sum"] / agg["value_produits_de_la_mer__sum"]
         )
     else:
-        data["meat_fish_egalim_percent"] = 0
+        data["produits_de_la_mer_egalim_percent"] = 0
+    # percent of meat+fish egalim
+    if (agg["value_viandes_volailles__sum"] + agg["value_produits_de_la_mer__sum"]) > 0:
+        data["viandes_volailles_produits_de_la_mer_egalim_percent"] = round(
+            100
+            * (agg["value_viandes_volailles_egalim__sum"] + agg["value_produits_de_la_mer_egalim__sum"])
+            / (agg["value_viandes_volailles__sum"] + agg["value_produits_de_la_mer__sum"])
+        )
+    else:
+        data["viandes_volailles_produits_de_la_mer_egalim_percent"] = 0
     # percent of appro
     badge_querysets = badges_for_queryset(teledeclarations)
     data["appro_percent"] = (
@@ -111,10 +113,10 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         "bio_percent",
         "sustainable_percent",
         "egalim_percent",
-        "meat_egalim_percent",
-        "meat_france_percent",
-        "fish_egalim_percent",
-        "meat_fish_egalim_percent",
+        "viandes_volailles_egalim_percent",
+        "viandes_volailles_france_percent",
+        "produits_de_la_mer_egalim_percent",
+        "viandes_volailles_produits_de_la_mer_egalim_percent",
         "appro_percent",
     ]
     FIELDS_TO_HIDE_IF_CAMPAIGN_NOT_FOUND = ["teledeclarations_count"] + FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED
@@ -132,10 +134,10 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         label="Part des achats durables (hors bio) dans les achats alimentaires de l'année"
     )
     egalim_percent = serializers.IntegerField(label="Part des achats EGalim dans les achats alimentaires de l'année")
-    meat_egalim_percent = serializers.IntegerField()
-    meat_france_percent = serializers.IntegerField()
-    fish_egalim_percent = serializers.IntegerField()
-    meat_fish_egalim_percent = serializers.IntegerField()
+    viandes_volailles_egalim_percent = serializers.IntegerField()
+    viandes_volailles_france_percent = serializers.IntegerField()
+    produits_de_la_mer_egalim_percent = serializers.IntegerField()
+    viandes_volailles_produits_de_la_mer_egalim_percent = serializers.IntegerField()
     appro_percent = serializers.IntegerField()
     # notes
     notes = serializers.DictField()

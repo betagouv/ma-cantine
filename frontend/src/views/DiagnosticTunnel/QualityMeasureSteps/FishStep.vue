@@ -4,23 +4,23 @@
     <v-row>
       <v-col cols="12" md="4">
         <!-- Fish -->
-        <label for="fish">
+        <label for="valueProduitsDeLaMer">
           Total (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture
           <span class="fr-hint-text mt-2">Optionnel</span>
         </label>
         <DsfrCurrencyField
-          id="fish"
-          v-model.number="payload.valueFishHt"
+          id="valueProduitsDeLaMer"
+          v-model.number="payload.valueProduitsDeLaMer"
           :error="hasError"
           @blur="updatePayload"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
         />
         <PurchaseHint
           v-if="displayPurchaseHints"
-          v-model="payload.valueFishHt"
+          v-model="payload.valueProduitsDeLaMer"
           @autofill="updatePayload"
           purchaseType="totaux de poissons, produits de la mer et de l'aquaculture"
-          :amount="purchasesSummary.valueFishHt"
+          :amount="purchasesSummary.valueProduitsDeLaMer"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
         />
       </v-col>
@@ -33,27 +33,27 @@
             </div>
           </v-col>
           <v-col cols="12" md="6">
-            <!-- Fish EGalim -->
+            <!-- produitsDeLaMer EGalim -->
             <div class="d-block d-sm-flex align-center">
               <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$award-line</v-icon>
-              <label for="fish-egalim">
+              <label for="valueProduitsDeLaMerEgalim">
                 Total (en € HT) de mes achats EGalim en poissons, produits de la mer et de l'aquaculture
                 <span class="fr-hint-text mt-2">Optionnel</span>
               </label>
             </div>
             <DsfrCurrencyField
-              id="fish-egalim"
-              v-model.number="payload.valueFishEgalimHt"
-              :error="fishError"
+              id="valueProduitsDeLaMerEgalim"
+              v-model.number="payload.valueProduitsDeLaMerEgalim"
+              :error="produitsDeLaMerError"
               @blur="updatePayload"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             />
             <PurchaseHint
               v-if="displayPurchaseHints"
-              v-model="payload.valueFishEgalimHt"
+              v-model="payload.valueProduitsDeLaMerEgalim"
               @autofill="updatePayload"
               purchaseType="poissons, produits de la mer et de l'aquaculture EGalim"
-              :amount="purchasesSummary.valueFishEgalimHt"
+              :amount="purchasesSummary.valueProduitsDeLaMerEgalim"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
             />
           </v-col>
@@ -66,18 +66,18 @@
             </div>
           </v-col>
           <v-col cols="12" md="6">
-            <!-- Fish France -->
+            <!-- produitsDeLaMer France -->
             <div class="d-block d-sm-flex align-center">
               <v-icon v-if="$vuetify.breakpoint.smAndDown" size="30" color="#4d4db2" class="mr-2">$france-line</v-icon>
-              <label for="fish-france">
+              <label for="valueProduitsDeLaMerFrance">
                 Total (en € HT) de mes achats origine France en poissons, produits de la mer et de l'aquaculture
                 <span class="fr-hint-text mt-2">Optionnel</span>
               </label>
             </div>
             <DsfrCurrencyField
-              id="fish-france"
+              id="valueProduitsDeLaMerFrance"
               v-model.number="payload.valueProduitsDeLaMerFrance"
-              :error="fishError"
+              :error="produitsDeLaMerError"
               @blur="updatePayload"
               :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
             />
@@ -130,8 +130,8 @@ export default {
   },
   data() {
     return {
-      fishTotalErrorMessage: null,
-      fishErrorMessage: null,
+      produitsDeLaMerTotalErrorMessage: null,
+      produitsDeLaMerErrorMessage: null,
       totalFamiliesErrorMessage: null,
       errorHelperUsed: false,
       errorHelperFields: [],
@@ -141,25 +141,29 @@ export default {
     displayPurchaseHints() {
       return !!this.purchasesSummary
     },
-    fishError() {
-      return !!this.fishErrorMessage
+    produitsDeLaMerError() {
+      return !!this.produitsDeLaMerErrorMessage
     },
-    totalFishError() {
-      return !!this.fishTotalErrorMessage
+    totalProduitsDeLaMerError() {
+      return !!this.produitsDeLaMerTotalErrorMessage
     },
     totalFamiliesError() {
       return !!this.totalFamiliesErrorMessage
     },
     hasError() {
-      return [this.totalFishError, this.fishError, this.totalFamiliesError].some((x) => !!x)
+      return [this.totalProduitsDeLaMerError, this.produitsDeLaMerError, this.totalFamiliesError].some((x) => !!x)
     },
     errorMessages() {
-      return [this.fishTotalErrorMessage, this.fishErrorMessage, this.totalFamiliesErrorMessage].filter((x) => !!x)
+      return [
+        this.produitsDeLaMerTotalErrorMessage,
+        this.produitsDeLaMerErrorMessage,
+        this.totalFamiliesErrorMessage,
+      ].filter((x) => !!x)
     },
     erroringFields() {
       const fields = []
-      if (this.totalFishError) fields.push("valueTotalHt")
-      if (this.totalFamiliesError) fields.push(...["valueTotalHt", "valueMeatPoultryHt"])
+      if (this.totalProduitsDeLaMerError) fields.push("valueTotalHt")
+      if (this.totalFamiliesError) fields.push(...["valueTotalHt", "valueViandesVolailles"])
       return fields
     },
   },
@@ -169,19 +173,19 @@ export default {
       if (!this.hasError) this.$emit("update-payload", { payload: this.payload })
     },
     checkTotal() {
-      this.fishTotalErrorMessage = null
-      this.fishErrorMessage = null
+      this.produitsDeLaMerTotalErrorMessage = null
+      this.produitsDeLaMerErrorMessage = null
       this.totalFamiliesErrorMessage = null
 
       const d = this.payload
-      const sumFish = d.valueFishEgalimHt + d.valueProduitsDeLaMerFrance
+      const sumFish = d.valueProduitsDeLaMerEgalim + d.valueProduitsDeLaMerFrance
       const total = d.valueTotalHt
-      const totalFish = d.valueFishHt
-      const totalMeatPoultry = d.valueMeatPoultryHt
+      const totalFish = d.valueProduitsDeLaMer
+      const totalMeatPoultry = d.valueViandesVolailles
       const totalFamilies = totalMeatPoultry + totalFish
 
       if (totalFish > total) {
-        this.fishTotalErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+        this.produitsDeLaMerTotalErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
           totalFish
         )}) ne peut pas excéder le total des achats (${toCurrency(total)})`
         this.errorHelperFields.push("valueTotalHt")
@@ -189,10 +193,10 @@ export default {
         this.totalFamiliesErrorMessage = `Les totaux des achats « viandes et volailles » et « poissons, produits de la mer et de l'aquaculture » ensemble (${toCurrency(
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
-        this.errorHelperFields.push(...["valueTotalHt", "valueMeatPoultryHt"])
+        this.errorHelperFields.push(...["valueTotalHt", "valueViandesVolailles"])
       }
       if (sumFish > totalFish) {
-        this.fishErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+        this.produitsDeLaMerErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
           totalFish
         )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumFish)})`
       }

@@ -166,10 +166,13 @@ export default {
         return [
           { param: "valueTotalHt", label: "Mes achats alimentaires total" },
           {
-            param: "valueMeatPoultryHt",
+            param: "valueViandesVolailles",
             label: "Mes achats en viandes et volailles fraiches ou surgelées total",
           },
-          { param: "valueFishHt", label: "Mes achats en poissons, produits de la mer et de l'aquaculture total" },
+          {
+            param: "valueProduitsDeLaMer",
+            label: "Mes achats en poissons, produits de la mer et de l'aquaculture total",
+          },
           { param: "valueViandesVolaillesBio", label: "Mes achats viandes et volailles Bio" },
           {
             param: "valueProduitsDeLaMerBio",
@@ -395,21 +398,24 @@ export default {
           label: "Dont valeur des achats Commerce équitable (hors bio)",
         },
         {
-          param: "valueMeatPoultryHt",
+          param: "valueViandesVolailles",
           label: "Mes achats en viandes et volailles fraiches ou surgelées total",
         },
         {
-          param: "valueMeatPoultryEgalimHt",
+          param: "valueViandesVolaillesEgalim",
           label: "Mes achats EGalim en viandes et volailles fraiches ou surgelées",
         },
-        { param: "valueFishHt", label: "Mes achats en poissons, produits de la mer et de l'aquaculture total" },
         {
-          param: "valueFishEgalimHt",
+          param: "valueProduitsDeLaMer",
+          label: "Mes achats en poissons, produits de la mer et de l'aquaculture total",
+        },
+        {
+          param: "valueProduitsDeLaMerEgalim",
           label: "Mes achats EGalim en poissons, produits de la mer et de l'aquaculture",
         },
         {
           label: "Mes achats origine France en viandes et volailles",
-          param: "valueMeatPoultryFranceHt",
+          param: "valueViandesVolaillesFrance",
         },
         {
           label: "Mes achats origine France en poissons, produits de la mer et de l'aquaculture",
