@@ -263,7 +263,7 @@ export default {
       }
       const outsideLawSuffix = {
         FRANCE: "France",
-        SHORT_DISTRIBUTION: "ShortDistribution",
+        CIRCUIT_COURT: "CircuitCourt",
         LOCAL: "Local",
       }[this.characteristicId]
 

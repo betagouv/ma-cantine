@@ -139,7 +139,7 @@ export default Object.freeze({
       longText: "Produits acquis sur la base de leurs performances en matière environnementale",
     },
     FRANCE: { text: "Provenance France" },
-    SHORT_DISTRIBUTION: { text: "Circuit-court" },
+    CIRCUIT_COURT: { text: "Circuit-court" },
     LOCAL: { text: "Local" },
   },
   TeledeclarationCharacteristics: {
@@ -177,7 +177,7 @@ export default Object.freeze({
     },
     NON_EGALIM: { text: "Non-EGalim", color: "blue-grey lighten-2" },
     FRANCE: { text: "Provenance France", additional: true },
-    SHORT_DISTRIBUTION: { text: "Circuit-court", additional: true },
+    CIRCUIT_COURT: { text: "Circuit-court", additional: true },
     LOCAL: { text: "Local", additional: true },
   },
   LocalDefinitions: {
@@ -302,7 +302,7 @@ export default Object.freeze({
     outsideLaw: {
       text:
         "Ici, vous pouvez affecter le produit dans plusieurs caractéristiques. Par exemple, un produit à la fois biologique et local pourra être comptabilisé dans les deux champs 'bio' et 'local'.",
-      characteristics: ["FRANCE", "SHORT_DISTRIBUTION", "LOCAL"],
+      characteristics: ["FRANCE", "CIRCUIT_COURT", "LOCAL"],
       fields: [
         "valeurViandesVolaillesFrance",
         "valeurProduitsDeLaMerFrance",
@@ -312,14 +312,14 @@ export default Object.freeze({
         "valeurBoulangerieFrance",
         "valeurBoissonsFrance",
         "valeurAutresFrance",
-        "valeurViandesVolaillesShortDistribution",
-        "valeurProduitsDeLaMerShortDistribution",
-        "valeurFruitsEtLegumesShortDistribution",
-        "valeurCharcuterieShortDistribution",
-        "valeurProduitsLaitiersShortDistribution",
-        "valeurBoulangerieShortDistribution",
-        "valeurBoissonsShortDistribution",
-        "valeurAutresShortDistribution",
+        "valeurViandesVolaillesCircuitCourt",
+        "valeurProduitsDeLaMerCircuitCourt",
+        "valeurFruitsEtLegumesCircuitCourt",
+        "valeurCharcuterieCircuitCourt",
+        "valeurProduitsLaitiersCircuitCourt",
+        "valeurBoulangerieCircuitCourt",
+        "valeurBoissonsCircuitCourt",
+        "valeurAutresCircuitCourt",
         "valeurViandesVolaillesLocal",
         "valeurProduitsDeLaMerLocal",
         "valeurFruitsEtLegumesLocal",
@@ -472,7 +472,7 @@ export default Object.freeze({
       icon: "$france-line",
       color: "indigo",
     },
-    SHORT_DISTRIBUTION: {
+    CIRCUIT_COURT: {
       icon: "mdi-chart-timeline-variant",
       color: "pink",
     },
