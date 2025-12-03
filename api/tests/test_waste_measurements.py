@@ -6,18 +6,193 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import authenticate
+from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, WasteMeasurementFactory
 from data.models import Canteen, WasteMeasurement
 
 
-class TestWasteMeasurementsApi(APITestCase):
+class WasteMeasurementsListApiTest(APITestCase):
+    def test_unauthenticated_get_waste_measurements(self):
+        """
+        Get 403 when trying to fetch waste measurements without being authenticated
+        """
+        canteen = CanteenFactory()
+
+        response = self.client.get(reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_waste_measurements_forbidden_canteen(self):
+        """
+        Get 403 when trying to fetch waste measurements without being manager of the canteen
+        """
+        canteen = CanteenFactory()
+        response = self.client.get(reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_waste_measurements(self):
+        """
+        Canteen managers can fetch all the waste measurements for a canteen in order of period start date descending
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement_july = WasteMeasurementFactory(
+            canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
+        )
+        measurement_august = WasteMeasurementFactory(
+            canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
+        )
+        WasteMeasurementFactory()  # to be filtered out
+
+        response = self.client.get(reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+
+        self.assertEqual(len(body), 2)
+        self.assertEqual(body[0]["id"], measurement_august.id)
+        self.assertEqual(body[1]["id"], measurement_july.id)
+
+    def test_get_waste_measurements_via_oauth2(self):
+        """
+        Canteen managers can fetch all the waste measurements for a canteen they manage via oauth2 token
+        """
+        user, token = get_oauth2_token("waste_measurements:read")
+        canteen = CanteenFactory(managers=[user])
+        measurement_july = WasteMeasurementFactory(
+            canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
+        )
+        measurement_august = WasteMeasurementFactory(
+            canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
+        )
+        WasteMeasurementFactory()  # to be filtered out
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+
+        self.assertEqual(len(body), 2)
+        self.assertEqual(body[0]["id"], measurement_august.id)
+        self.assertEqual(body[1]["id"], measurement_july.id)
+
+    @authenticate
+    def test_get_period_day_count(self):
+        """
+        Canteen waste measurements should contain a computed field of number of days in period
+        """
+        measurement = WasteMeasurementFactory(
+            period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
+        )
+        measurement.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": measurement.canteen.id})
+        )
+        body = response.json()
+
+        self.assertEqual(body[0]["daysInPeriod"], 5)
+
+    @authenticate
+    def test_get_estimated_total_waste_for_year(self):
+        """
+        Canteen waste measurements should contain a computed field of total waste for the year in kg
+        This is done by taking dividing the total mass by period meal count and multiplying by canteen's
+        yearly meal count
+        """
+        canteen = CanteenFactory(yearly_meal_count=1000, managers=[authenticate.user])
+        WasteMeasurementFactory(canteen=canteen, meal_count=10, total_mass=50)
+
+        response = self.client.get(reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}))
+        body = response.json()
+
+        self.assertEqual(body[0]["totalYearlyWasteEstimation"], 5000)
+
+    @authenticate
+    def test_get_waste_measurements_for_period(self):
+        """
+        Canteen managers can fetch all the waste measurements for a canteen in a particular time period
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement_july = WasteMeasurementFactory(
+            canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
+        )
+        measurement_august = WasteMeasurementFactory(
+            canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
+        )
+        # the following should be filtered out
+        WasteMeasurementFactory(
+            canteen=canteen, period_start_date=datetime.date(2024, 9, 1), period_end_date=datetime.date(2024, 9, 5)
+        )
+
+        query = "?period_start_date_after=2024-07-01&period_end_date_before=2024-09-01"
+        path = reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id})
+        response = self.client.get(path + query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+
+        self.assertEqual(len(body), 2)
+        self.assertEqual(body[0]["id"], measurement_august.id)
+        self.assertEqual(body[1]["id"], measurement_july.id)
+
+
+class WasteMeasurementsDetailApiTest(APITestCase):
+    @authenticate
+    def test_cannot_get_waste_measurement_not_manager(self):
+        """
+        If the user is not the manager of the canteen, they get a 403 when attempting to view the waste measurement
+        """
+        canteen = CanteenFactory()
+        measurement = WasteMeasurementFactory(canteen=canteen)
+
+        response = self.client.get(
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_waste_measurement(self):
+        """
+        Canteen managers can fetch the waste measurement of a canteen they manage
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        measurement = WasteMeasurementFactory(canteen=canteen)
+
+        response = self.client.get(
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertIn("periodStartDate", body)
+
+    def test_get_waste_measurement_via_oauth2(self):
+        """
+        Canteen managers can fetch the waste measurement of a canteen they manage via oauth2 token
+        """
+        user, token = get_oauth2_token("waste_measurements:read")
+        canteen = CanteenFactory(managers=[user])
+        measurement = WasteMeasurementFactory(canteen=canteen)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertIn("periodStartDate", body)
+
+
+class WasteMeasurementsCreateApiTest(APITestCase):
     def test_unauthenticated_create_waste_measurement_call(self):
         """
         When calling this API unathenticated we expect a 403
         """
         canteen = CanteenFactory()
-        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), {})
+        response = self.client.post(reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}), {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -27,7 +202,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         self.assertIsNone(Canteen.objects.filter(id=999).first())
         response = self.client.post(
-            reverse("canteen_waste_measurements", kwargs={"canteen_pk": 999}),
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": 999}),
             {
                 "period_start_date": "2024-08-01",
                 "period_end_date": "2024-08-10",
@@ -44,7 +219,7 @@ class TestWasteMeasurementsApi(APITestCase):
         """
         canteen = CanteenFactory()
         response = self.client.post(
-            reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}),
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}),
             {
                 "period_start_date": "2024-08-01",
                 "period_end_date": "2024-08-10",
@@ -78,7 +253,9 @@ class TestWasteMeasurementsApi(APITestCase):
             "leftovers_total_mass": 30.3,
         }
 
-        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}), payload
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         waste_measurement = WasteMeasurement.objects.get(canteen__id=canteen.id)
@@ -101,6 +278,34 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(waste_measurement.leftovers_edible_mass, None)
         self.assertEqual(waste_measurement.leftovers_inedible_mass, None)
 
+    def test_create_waste_measurement_via_oauth2(self):
+        user, token = get_oauth2_token("waste_measurements:create")
+        canteen = CanteenFactory(managers=[user])
+
+        payload = {
+            "period_start_date": "2024-08-01",
+            "period_end_date": "2024-08-10",
+            "meal_count": 500,
+            "total_mass": 100,
+            "is_sorted_by_source": True,
+            "preparation_total_mass": 20,
+            "preparation_is_sorted": True,
+            "preparation_edible_mass": 15,
+            "preparation_inedible_mass": 5,
+            "unserved_total_mass": 50,
+            "unserved_is_sorted": False,
+            "unserved_edible_mass": "",
+            "unserved_inedible_mass": "",
+            "leftovers_total_mass": 30.3,
+        }
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.post(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}),
+            payload,
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
     @authenticate
     def test_create_waste_measurement_single_day(self):
         """
@@ -113,7 +318,9 @@ class TestWasteMeasurementsApi(APITestCase):
             "period_end_date": "2024-08-01",
         }
 
-        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}), payload
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @authenticate
@@ -125,7 +332,9 @@ class TestWasteMeasurementsApi(APITestCase):
 
         payload = {}
 
-        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}), payload
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         body = response.json()
@@ -145,7 +354,9 @@ class TestWasteMeasurementsApi(APITestCase):
             "period_end_date": "2024-08-20",
         }
 
-        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}), payload
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         self.assertEqual(response.json()["periodEndDate"][0], "La date ne peut pas être dans le futur")
@@ -162,7 +373,9 @@ class TestWasteMeasurementsApi(APITestCase):
             "period_end_date": "2024-08-01",
         }
 
-        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}), payload
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         self.assertEqual(
@@ -184,7 +397,9 @@ class TestWasteMeasurementsApi(APITestCase):
             "period_start_date": "2024-07-03",
             "period_end_date": "2024-08-01",
         }
-        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}), payload
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["_All__"][0],
@@ -196,7 +411,9 @@ class TestWasteMeasurementsApi(APITestCase):
             "period_start_date": "2024-06-10",
             "period_end_date": "2024-07-03",
         }
-        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}), payload
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["_All__"][0],
@@ -211,7 +428,9 @@ class TestWasteMeasurementsApi(APITestCase):
             "period_start_date": "2024-06-30",
             "period_end_date": "2024-07-16",
         }
-        response = self.client.post(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}), payload
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["_All__"][0],
@@ -227,7 +446,7 @@ class TestWasteMeasurementsApi(APITestCase):
         canteen = CanteenFactory(managers=[authenticate.user])
 
         response = self.client.post(
-            reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}),
+            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": canteen.id}),
             {
                 "period_start_date": "2024-07-01",
                 "period_end_date": "2024-07-05",
@@ -235,108 +454,8 @@ class TestWasteMeasurementsApi(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_unauthenticated_get_waste_measurements(self):
-        """
-        Get 403 when trying to fetch waste measurements without being authenticated
-        """
-        canteen = CanteenFactory()
 
-        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_get_waste_measurements_forbidden_canteen(self):
-        """
-        Get 403 when trying to fetch waste measurements without being manager of the canteen
-        """
-        canteen = CanteenFactory()
-        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_get_waste_measurements(self):
-        """
-        Canteen managers can fetch all the waste measurements for a canteen in order of period start date descending
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        measurement_july = WasteMeasurementFactory(
-            canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
-        )
-        measurement_august = WasteMeasurementFactory(
-            canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
-        )
-        WasteMeasurementFactory()  # to be filtered out
-
-        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-
-        self.assertEqual(len(body), 2)
-        self.assertEqual(body[0]["id"], measurement_august.id)
-        self.assertEqual(body[1]["id"], measurement_july.id)
-
-    @authenticate
-    def test_get_period_day_count(self):
-        """
-        Canteen waste measurements should contain a computed field of number of days in period
-        """
-        measurement = WasteMeasurementFactory(
-            period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
-        )
-        measurement.canteen.managers.add(authenticate.user)
-
-        response = self.client.get(
-            reverse("canteen_waste_measurements", kwargs={"canteen_pk": measurement.canteen.id})
-        )
-        body = response.json()
-
-        self.assertEqual(body[0]["daysInPeriod"], 5)
-
-    @authenticate
-    def test_get_estimated_total_waste_for_year(self):
-        """
-        Canteen waste measurements should contain a computed field of total waste for the year in kg
-        This is done by taking dividing the total mass by period meal count and multiplying by canteen's
-        yearly meal count
-        """
-        canteen = CanteenFactory(yearly_meal_count=1000, managers=[authenticate.user])
-        WasteMeasurementFactory(canteen=canteen, meal_count=10, total_mass=50)
-
-        response = self.client.get(reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id}))
-        body = response.json()
-
-        self.assertEqual(body[0]["totalYearlyWasteEstimation"], 5000)
-
-    @authenticate
-    def test_cannot_get_waste_measurement_not_manager(self):
-        """
-        If the user is not the manager of the canteen, they get a 403 when attempting to view the waste measurement
-        """
-        canteen = CanteenFactory()
-        measurement = WasteMeasurementFactory(canteen=canteen)
-
-        response = self.client.get(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
-        )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_get_waste_measurement(self):
-        """
-        Canteen managers can fetch the waste measurement of a canteen they manage
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        measurement = WasteMeasurementFactory(canteen=canteen)
-
-        response = self.client.get(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-        self.assertIn("periodStartDate", body)
-
+class WasteMeasurementsUpdateApiTest(APITestCase):
     @authenticate
     def test_update_waste_measurement(self):
         """
@@ -347,7 +466,28 @@ class TestWasteMeasurementsApi(APITestCase):
 
         payload = {"mealCount": 200}
         response = self.client.patch(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            payload,
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        body = response.json()
+        self.assertEqual(body["mealCount"], 200)
+
+    def test_update_waste_measurement_via_oauth2(self):
+        """
+        Canteen managers can edit the waste measurement of a canteen they manage via oauth2 token
+        """
+        user, token = get_oauth2_token("waste_measurements:write")
+        canteen = CanteenFactory(managers=[user])
+        measurement = WasteMeasurementFactory(canteen=canteen, meal_count=100)
+
+        payload = {"mealCount": 200}
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.patch(
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            payload,
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -367,7 +507,8 @@ class TestWasteMeasurementsApi(APITestCase):
 
         payload = {"period_end_date": "2024-08-20"}
         response = self.client.patch(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            payload,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -386,7 +527,8 @@ class TestWasteMeasurementsApi(APITestCase):
         # change start_date to after end_date
         payload = {"period_start_date": "2024-08-10"}
         response = self.client.patch(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            payload,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -396,7 +538,8 @@ class TestWasteMeasurementsApi(APITestCase):
         # change end_date to before start_date
         payload = {"period_end_date": "2024-07-31"}
         response = self.client.patch(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            payload,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["periodEndDate"][0], "La date de fin ne peut pas être avant la date de début")
@@ -417,7 +560,8 @@ class TestWasteMeasurementsApi(APITestCase):
         )
         payload = {"period_start_date": "2024-07-03"}
         response = self.client.patch(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            payload,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -431,7 +575,8 @@ class TestWasteMeasurementsApi(APITestCase):
         )
         payload = {"period_end_date": "2024-07-03"}
         response = self.client.patch(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            payload,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -445,7 +590,8 @@ class TestWasteMeasurementsApi(APITestCase):
             "period_end_date": "2024-08-10",
         }
         response = self.client.patch(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            payload,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -466,7 +612,7 @@ class TestWasteMeasurementsApi(APITestCase):
             "period_end_date": "",
         }
         response = self.client.patch(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
             payload,
             format="json",
         )
@@ -490,7 +636,8 @@ class TestWasteMeasurementsApi(APITestCase):
 
         payload = {"period_start_date": "2024-04-01", "period_end_date": "2024-07-01"}
         response = self.client.patch(
-            reverse("canteen_waste_measurement", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}), payload
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id}),
+            payload,
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -498,30 +645,16 @@ class TestWasteMeasurementsApi(APITestCase):
         self.assertEqual(measurement.period_start_date, datetime.date(2024, 4, 1))
         self.assertEqual(measurement.period_end_date, datetime.date(2024, 7, 1))
 
+
+class WasteMeasurementsDeleteApiTest(APITestCase):
     @authenticate
-    def test_get_waste_measurements_for_period(self):
+    def test_cannot_delete_waste_measurement(self):
         """
-        Canteen managers can fetch all the waste measurements for a canteen in a particular time period
+        Canteen managers cannot delete waste measurements
         """
         canteen = CanteenFactory(managers=[authenticate.user])
-        measurement_july = WasteMeasurementFactory(
-            canteen=canteen, period_start_date=datetime.date(2024, 7, 1), period_end_date=datetime.date(2024, 7, 5)
+        measurement = WasteMeasurementFactory(canteen=canteen)
+        response = self.client.delete(
+            reverse("canteen_waste_measurement_detail", kwargs={"pk": measurement.id, "canteen_pk": canteen.id})
         )
-        measurement_august = WasteMeasurementFactory(
-            canteen=canteen, period_start_date=datetime.date(2024, 8, 1), period_end_date=datetime.date(2024, 8, 5)
-        )
-        # the following should be filtered out
-        WasteMeasurementFactory(
-            canteen=canteen, period_start_date=datetime.date(2024, 9, 1), period_end_date=datetime.date(2024, 9, 5)
-        )
-
-        query = "?period_start_date_after=2024-07-01&period_end_date_before=2024-09-01"
-        path = reverse("canteen_waste_measurements", kwargs={"canteen_pk": canteen.id})
-        response = self.client.get(path + query)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        body = response.json()
-
-        self.assertEqual(len(body), 2)
-        self.assertEqual(body[0]["id"], measurement_august.id)
-        self.assertEqual(body[1]["id"], measurement_july.id)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -7,7 +7,12 @@ from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
-from api.permissions import IsAuthenticated, IsCanteenManager, IsLinkedCanteenManager
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from api.permissions import (
+    IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManager,
+    IsLinkedCanteenManager,
+)
 from api.serializers import WasteMeasurementSerializer
 from api.views.utils import update_change_reason_with_auth
 from data.models import Canteen, WasteMeasurement
@@ -27,8 +32,14 @@ class WasteMeasurementFilterSet(django_filters.FilterSet):
         )
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Créer une nouvelle évaluation du gaspillage alimentaire.",
+        description="Une évaluation doit être rattachée à une cantine.",
+    )
+)
 class CanteenWasteMeasurementsView(ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     model = WasteMeasurement
     serializer_class = WasteMeasurementSerializer
     filter_backends = [
@@ -62,8 +73,14 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
         update_change_reason_with_auth(self, measurement)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Modifier une évaluation du gaspillage alimentaire existante.",
+        description="",
+    )
+)
 class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
     queryset = WasteMeasurement.objects.all()
     serializer_class = WasteMeasurementSerializer
 
