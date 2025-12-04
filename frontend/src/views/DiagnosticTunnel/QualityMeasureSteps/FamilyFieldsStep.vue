@@ -45,6 +45,7 @@
             @blur="fieldUpdate(diagnosticKey(fId))"
             solo
             v-model.number="payload[diagnosticKey(fId)]"
+            validate
             class="mt-2"
             :error="fieldHasError(diagnosticKey(fId))"
             :disabled="!validFamily(fId)"
@@ -397,13 +398,20 @@ export default {
     validFamily(id) {
       return this.possibleFamilies.indexOf(id) > -1
     },
+    // triggerCheckInput() {
+    //   const inputs = this.$refs["inputsContainer"].querySelectorAll('input')
+    //   const firstInput = inputs[0]
+    //   firstInput.focus()
+    // }
   },
   mounted() {
     this.checkTotal()
+    // this.triggerCheckInput()
   },
   watch: {
     $route() {
       this.checkTotal()
+      // this.triggerCheckInput()
     },
   },
 }

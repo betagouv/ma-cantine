@@ -3,7 +3,8 @@
     hide-details="auto"
     min="0"
     :rules="$attrs.rules || [validators.nonNegativeOrEmpty, validators.decimalPlaces(2)]"
-    validate-on-blur
+    :validate-on-blur="$attrs.validateOnBlur"
+    :validate="$attrs.validate"
     :placeholder="$attrs.placeholder || 'Je ne sais pas'"
     suffix="€ HT"
     v-bind="$attrs"
