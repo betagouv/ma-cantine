@@ -12,12 +12,12 @@
               mdi-food-drumstick
             </v-icon>
           </div>
-          <label class="fr-text ml-4" :for="valeurViandesVolailles + '' + diagnostic.year">
+          <label class="fr-text ml-4" :for="'valeurViandesVolailles' + diagnostic.year">
             La valeur totale (en € HT) de mes achats en viandes et volailles fraiches ou surgelées
           </label>
         </div>
         <DsfrCurrencyField
-          :id="valeurViandesVolailles + '' + diagnostic.year"
+          :id="'valeurViandesVolailles' + diagnostic.year"
           v-model.number="payload.valeurViandesVolailles"
           @blur="checkTotal"
           :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field mt-2' : 'mt-2'"
@@ -38,12 +38,12 @@
               mdi-fish
             </v-icon>
           </div>
-          <label class="fr-text ml-4" :for="valeurProduitsDeLaMer + '' + diagnostic.year">
+          <label class="fr-text ml-4" :for="'valeurProduitsDeLaMer' + diagnostic.year">
             La valeur totale (en € HT) de mes achats en poissons, produits de la mer et de l'aquaculture
           </label>
         </div>
         <DsfrCurrencyField
-          :id="valeurProduitsDeLaMer + '' + diagnostic.year"
+          :id="'valeurProduitsDeLaMer' + diagnostic.year"
           v-model.number="payload.valeurProduitsDeLaMer"
           :error="hasProduitsDeLaMerError"
           @blur="checkTotal"
