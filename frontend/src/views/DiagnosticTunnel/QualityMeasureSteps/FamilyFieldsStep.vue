@@ -159,7 +159,7 @@ export default {
       if (!this.validFamily(fId)) return rules
       rules.push(this.validators.nonNegativeOrEmpty)
       rules.push(this.validators.decimalPlaces(2))
-      rules.push(this.validators.lteOrEmpty(payload.valeurTotale))
+      rules.push(this.validators.lteOrEmpty(this.payload.valeurTotale))
       // Catégorie obligatoire
       const isRequiredCategory = this.requiredCategories.includes(this.groupId)
       const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
