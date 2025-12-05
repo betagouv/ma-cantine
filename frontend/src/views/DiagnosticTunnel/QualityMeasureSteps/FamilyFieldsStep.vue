@@ -69,7 +69,7 @@
               </label>
               <DsfrCurrencyField
                 :id="`${fId}_DONT_COMMERCE_EQUITABLE`"
-                :rules="[validators.decimalPlaces(2)]"
+                :rules="[validators.decimalPlaces(2), validators.lteOrEmpty(payload[diagnosticKey(fId)])]"
                 @blur="fieldUpdate(diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE'))"
                 v-model.number="payload[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
                 validate-on-blur
