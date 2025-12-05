@@ -121,7 +121,7 @@
             :value="diagnostic[field.key]"
           />
         </div>
-        <div class="my-8 mb-0">
+        <div v-if="!isDetailedDiagnostic" class="my-8 mb-0">
           <QualityDiagnosticValue
             v-for="(field, idx) in franceFields"
             :key="`family-${idx}`"
