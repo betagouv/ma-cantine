@@ -229,9 +229,9 @@ export default {
         this.errorHelperFields = ["valeurTotale", "valeurEgalimAutres", "valeurExternalitesPerformance"]
       }
 
-      if (d.valeurBioDontCommerceEquitableHt > d.valeurBio) {
+      if (d.valeurBioDontCommerceEquitable > d.valeurBio) {
         this.totalErrorMessage = `La valeur de vos achats Bio et Commerce équitable (${toCurrency(
-          d.valeurBioDontCommerceEquitableHt
+          d.valeurBioDontCommerceEquitable
         )}) ne peut pas être plus élévée que la valeur de vos achats Bio ou en conversion Bio (${toCurrency(
           d.valeurBio
         )})`
