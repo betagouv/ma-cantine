@@ -6,6 +6,39 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.42.0](https://github.com/betagouv/ma-cantine/compare/v2025.41.1...v2025.42.0) (2025-12-05)
+
+
+### Nouveautés
+
+* **Ressources:** ajout de l'infographie de l'ademe sur le gaspillage ([#5970](https://github.com/betagouv/ma-cantine/issues/5970)) ([53aac73](https://github.com/betagouv/ma-cantine/commit/53aac732809526764e9730896d8d8c8127458540))
+* **Télédéclaration:** afficher les nouveaux champs de la TD détaillée hors-tunnel ([#5973](https://github.com/betagouv/ma-cantine/issues/5973)) ([6018b0c](https://github.com/betagouv/ma-cantine/commit/6018b0c3ba68e20fdb583db49c7b00fc61db2e9d))
+* **Télédéclaration:** ajoute le remplissage automatique à partir des achats pour les catégories bio + commerce équitable ([#5980](https://github.com/betagouv/ma-cantine/issues/5980)) ([46f6e01](https://github.com/betagouv/ma-cantine/commit/46f6e01a39927d6de60c9c53ee025c4994d4c19f))
+* **Télédéclaration:** ajoute les champs du commerce équitable dans l'étape bio ([#5972](https://github.com/betagouv/ma-cantine/issues/5972)) ([3537161](https://github.com/betagouv/ma-cantine/commit/353716120e604bff3f6e24b70fc35cddc4d020af))
+* **Télédéclaration:** rend obligatoire des champs de la TD détaillée ([#5969](https://github.com/betagouv/ma-cantine/issues/5969)) ([de76751](https://github.com/betagouv/ma-cantine/commit/de7675167eb85ca18b7fff793ba943eacbba2459))
+
+
+### Améliorations
+
+* **Admin:** ré-afficher la gestion des groupes d'utilisateurs ([#5967](https://github.com/betagouv/ma-cantine/issues/5967)) ([9dc4a26](https://github.com/betagouv/ma-cantine/commit/9dc4a26bb823dc28dc79207537a277101d591631))
+* **Télédéclaration:** au remplissage automatique depuis les achats autorise les valeurs vides pour les champs non obligatoires ([#5975](https://github.com/betagouv/ma-cantine/issues/5975)) ([0c5f718](https://github.com/betagouv/ma-cantine/commit/0c5f71812edc95e2b9c71908b88223ca4f49a4a7))
+* **Télédéclaration:** mise à jour des terminologies ([#5974](https://github.com/betagouv/ma-cantine/issues/5974)) ([71321f0](https://github.com/betagouv/ma-cantine/commit/71321f098102eb15341b30e010c882c0d04f9723))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** ajoute les nouveaux champs dans les totaux provenant des achats ([#5976](https://github.com/betagouv/ma-cantine/issues/5976)) ([3866fdd](https://github.com/betagouv/ma-cantine/commit/3866fddc84feccfca9d5dedadd69e9f8f0151bc2))
+* **Télédéclaration:** corrige l'erreur de variable inconnue ([#5968](https://github.com/betagouv/ma-cantine/issues/5968)) ([d20adf5](https://github.com/betagouv/ma-cantine/commit/d20adf595d918a1cfdb672ea37b18571b42166f3))
+* **Télédéclaration:** rend obligatoire l'étape 'choix du mode de saisie' (simplifiée ou détaillée) ([#5978](https://github.com/betagouv/ma-cantine/issues/5978)) ([4bbcb98](https://github.com/betagouv/ma-cantine/commit/4bbcb989f7de77ab34ef705f1bd1e3bab02737ea))
+
+
+### Technique
+
+* **Achats:** réorganise les tests (list / get / create / update / delete) ([#5977](https://github.com/betagouv/ma-cantine/issues/5977)) ([79215b7](https://github.com/betagouv/ma-cantine/commit/79215b7b14cb45aa6fdfea889c0548a986adb3ba))
+* **API:** enlever les camelize et JSONResponse inutiles ([#5909](https://github.com/betagouv/ma-cantine/issues/5909)) ([d4f79d1](https://github.com/betagouv/ma-cantine/commit/d4f79d14c6b22f37c4a436709e76279a7f698df7))
+* **API:** généraliser l'usage de PATCH (au lieu de PUT) pour la modification ([#5966](https://github.com/betagouv/ma-cantine/issues/5966)) ([9eefdca](https://github.com/betagouv/ma-cantine/commit/9eefdca59a370dcda304725150c36bc9eaa694c9))
+* **Diagnostics:** réorgnise les tests (create / update) ([#5979](https://github.com/betagouv/ma-cantine/issues/5979)) ([ccd8451](https://github.com/betagouv/ma-cantine/commit/ccd8451bf489cad1dea2be431177db732f208c1f))
+
 ## [2025.41.1](https://github.com/betagouv/ma-cantine/compare/v2025.41.0...v2025.41.1) (2025-12-03)
 
 
