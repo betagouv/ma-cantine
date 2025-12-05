@@ -50,6 +50,7 @@ import FormErrorCallout from "@/components/FormErrorCallout"
 import DsfrCallout from "@/components/DsfrCallout"
 import { toCurrency } from "@/utils"
 import validators from "@/validators"
+import Constants from "@/constants"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 
@@ -193,7 +194,8 @@ export default {
       this.$nextTick(this.$refs.totalField.validate)
     },
     autofillWithPurchases() {
-      Object.assign(this.payload, { diagnosticType: "COMPLETE" }, this.purchasesSummary)
+      const purchasesWithEmptyValue = this.replaceOptionnalValueWithEmpty(this.purchasesSummary)
+      Object.assign(this.payload, { diagnosticType: "COMPLETE" }, purchasesWithEmptyValue)
       this.$emit("tunnel-autofill", {
         payload: this.payload,
         message: {
@@ -201,6 +203,20 @@ export default {
           message: "Vos achats on été rapportés dans votre bilan.",
         },
       })
+    },
+    replaceOptionnalValueWithEmpty(purchases) {
+      const nonEgalimFields = Constants.TeledeclarationCharacteristicGroups.nonEgalim.fields
+      const outsideLawFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
+      const optionnalFields = [...nonEgalimFields, ...outsideLawFields, "valueProduitsDeLaMerPecheDurable"]
+      const purchasesKeys = Object.keys(purchases)
+      const purchasesWithEmptyValue = {}
+      purchasesKeys.map((key) => {
+        const isOptionnal = optionnalFields.includes(key)
+        const isEmpty = purchases[key] === 0
+        const value = isOptionnal && isEmpty ? null : purchases[key]
+        purchasesWithEmptyValue[key] = value
+      })
+      return purchasesWithEmptyValue
     },
   },
   mounted() {
