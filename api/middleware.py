@@ -14,7 +14,7 @@ def custom_exception_handler(exc: Exception, context: View):
     response = exception_handler(exc, context)
 
     if isinstance(exc, exceptions.ValidationError):
-        data = exc.message_dict
+        data = exc.message_dict if hasattr(exc, "message_dict") else {"detail": exc.messages}
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
     return response

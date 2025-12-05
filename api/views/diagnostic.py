@@ -4,15 +4,11 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
-from django.http import (
-    HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseServerError,
-)
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django_filters import rest_framework as django_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 
@@ -32,8 +28,8 @@ from api.serializers import (
 from api.views.utils import update_change_reason_with_auth
 from common.utils import file_import, send_mail
 from data.models import Canteen, Teledeclaration
-from data.models.diagnostic import Diagnostic
 from data.models.creation_source import CreationSource
+from data.models.diagnostic import Diagnostic
 from macantine.utils import CAMPAIGN_DATES, is_in_correction
 
 logger = logging.getLogger(__name__)
@@ -178,6 +174,22 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
         # Possible to have this method in the model
         canteens_filled = [canteen for canteen in canteens if canteen.is_filled]
         return canteens_filled
+
+
+class DiagnosticTeledeclareView(APIView):
+    permission_classes = [IsLinkedCanteenManager]
+    required_scopes = ["canteen"]
+
+    def post(self, request, *args, **kwargs):
+        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
+        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
+            raise PermissionDenied()
+        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+
+        # if ValidationError, it will be raised (and handled by custom_exception_handler)
+        diagnostic.teledeclare(request.user)
+
+        return HttpResponse(status=200)
 
 
 class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
