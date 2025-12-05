@@ -134,6 +134,15 @@
             Catégories EGalim par famille de produit
           </h6>
           <FamiliesGraph :diagnostic="diagnostic" :height="$vuetify.breakpoint.xs ? '440px' : '380px'" />
+          <h6 class="font-weight-bold fr-text grey--text text--darken-3 mt-4">
+            Détail par famille de produit pour la catégorie "Bio dont Commerce équitable"
+          </h6>
+          <QualityDiagnosticValue
+            v-for="(field, idx) in bioDontCommerceEquitableFields"
+            :key="`family-${idx}`"
+            :text="field.text"
+            :value="diagnostic[field.key]"
+          />
         </div>
         <v-btn
           v-if="hasActiveTeledeclaration"
@@ -305,6 +314,44 @@ export default {
         {
           text: "Total (en € HT) de mes achats origine France - Autres produits frais, surgelés et d’épicerie",
           key: "valeurAutresFrance",
+        },
+      ],
+      bioDontCommerceEquitableFields: [
+        {
+          text:
+            "Total (en € HT) de mes achats Viandes et volailles fraîches et surgelées dont Bio et Commerce équitable",
+          key: "valeurViandesVolaillesBioDontCommerceEquitable",
+        },
+        {
+          text:
+            "Total (en € HT) de mes achats Produits de la mer et aquaculture frais et surgelés dont Bio et Commerce équitable",
+          key: "valeurProduitsDeLaMerBioDontCommerceEquitable",
+        },
+        {
+          text: "Total (en € HT) de mes achats Fruits et légumes frais et surgelés dont Bio et Commerce équitable",
+          key: "valeurFruitsEtLegumesBioDontCommerceEquitable",
+        },
+        {
+          text: "Total (en € HT) de mes achats Charcuterie dont Bio et Commerce équitable",
+          key: "valeurCharcuterieBioDontCommerceEquitable",
+        },
+        {
+          text: "Total (en € HT) de mes achats BOF (Produits laitiers, beurre et œufs) dont Bio et Commerce équitable",
+          key: "valeurProduitsLaitiersBioDontCommerceEquitable",
+        },
+        {
+          text:
+            "Total (en € HT) de mes achats Boulangerie / Pâtisserie fraîches et surgelées dont Bio et Commerce équitable",
+          key: "valeurBoulangerieBioDontCommerceEquitable",
+        },
+        {
+          text: "Total (en € HT) de mes achats Boissons dont Bio et Commerce équitable",
+          key: "valeurBoissonsBioDontCommerceEquitable",
+        },
+        {
+          text:
+            "Total (en € HT) de mes achats Autres produits frais, surgelés et d’épicerie dont Bio et Commerce équitable",
+          key: "valeurAutresBioDontCommerceEquitable",
         },
       ],
     }
