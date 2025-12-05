@@ -58,6 +58,36 @@
             :amount="purchasesSummary[diagnosticKey(fId)]"
             @autofill="fieldUpdate(diagnosticKey(fId))"
           />
+          <v-row v-if="characteristicId === 'BIO'" class="my-0 my-md-6">
+            <v-col cols="1" class="pt-0 d-flex align-top justify-end">
+              <div class="input-child-icon"></div>
+            </v-col>
+            <v-col cols="11">
+              <label class="ml-4 ml-md-0" for="valeurBioDontCommerceEquitable">
+                Dont Bio et Commerce équitable
+                <span class="fr-hint-text my-2">Optionnel</span>
+              </label>
+              <DsfrCurrencyField
+                :id="`${fId}_DONT_COMMERCE_EQUITABLE`"
+                :rules="[validators.decimalPlaces(2), validators.lteOrEmpty(payload[diagnosticKey(fId)])]"
+                @blur="fieldUpdate(diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE'))"
+                v-model.number="payload[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
+                validate-on-blur
+                class="mt-2"
+                :error="fieldHasError(diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE'))"
+              />
+              <!--
+                Wait for fields to be ready in purchases serializer
+                <PurchaseHint
+                  v-if="displayPurchaseHints && validFamily(fId)"
+                  v-model="payload[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
+                  :purchaseType="family.shortText + ' dont commerce équitable pour cette caractéristique'"
+                  :amount="purchasesSummary[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
+                  @autofill="fieldUpdate(diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE'))"
+                />
+              -->
+            </v-col>
+          </v-row>
         </div>
         <p v-else class="fr-text-sm grey--text text--darken-1 mt-2">
           Non applicable
@@ -172,8 +202,10 @@ export default {
       const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
       return !isRequiredCategory || isExceptionFields
     },
-    diagnosticKey(family) {
-      return this.camelize(`valeur_${family}_${this.characteristicId}`)
+    diagnosticKey(family, extra) {
+      let keyName = `valeur_${family}_${this.characteristicId}`
+      if (extra) keyName += extra.toLowerCase()
+      return this.camelize(keyName)
     },
     camelize(underscoredString) {
       const stringArray = underscoredString.split("_")
@@ -199,7 +231,9 @@ export default {
       this.payload.valeurProduitsDeLaMerEgalim = produitsDeLaMerEgalim
     },
     viandesVolaillesTotals() {
-      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields.filter(
+        (name) => name.indexOf("BioDontCommerceEquitable") === -1
+      )
       const outsideLawFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
       const allFields = egalimFields.concat(outsideLawFields)
 
@@ -223,7 +257,9 @@ export default {
     produitsDeLaMerTotals() {
       let produitsDeLaMerEgalim = 0
 
-      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields.filter(
+        (name) => name.indexOf("BioDontCommerceEquitable") === -1
+      )
 
       egalimFields.forEach((field) => {
         const isProduitsDeLaMer = field.startsWith(this.produitsDeLaMerFieldPrefix)
@@ -273,7 +309,10 @@ export default {
       this.outsideLawErrorMessages = []
 
       const groups = Constants.TeledeclarationCharacteristicGroups
-      const sumFields = groups.egalim.fields.concat(groups.nonEgalim.fields)
+      const groupsWithoutCommerceEquitable = groups.egalim.fields.filter(
+        (name) => name.indexOf("BioDontCommerceEquitable") === -1
+      )
+      const sumFields = groupsWithoutCommerceEquitable.concat(groups.nonEgalim.fields)
       const declaredTotal = +this.payload.valeurTotale
       const fieldTotal = this.sum(sumFields)
       if (fieldTotal > declaredTotal) {
@@ -409,3 +448,7 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+@import "../../../scss/common.scss";
+</style>
