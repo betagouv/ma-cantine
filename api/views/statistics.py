@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from api.serializers import CanteenStatisticsSerializer
 from api.views.utils import camelize
@@ -103,7 +104,7 @@ class CanteenStatisticsView(APIView):
             if not cache.get(cache_key):
                 cache.set(cache_key, camelize(serializer.data), timeout=CACHE_TIMEOUT)
 
-        return JsonResponse(camelize(serializer.data), status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def _extract_query_filters(self, request):
         """

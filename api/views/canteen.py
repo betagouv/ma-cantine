@@ -426,7 +426,7 @@ class CanteenStatusBySiretView(APIView):
             postcode = response.get("postalCode", None)
             if city and postcode:
                 response = fetch_geo_data_from_code(response)
-        return JsonResponse(response, status=status.HTTP_200_OK)
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class CanteenStatusBySirenView(APIView):
@@ -439,7 +439,7 @@ class CanteenStatusBySirenView(APIView):
         if not response:
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         response["canteens"] = get_cantine_list_from_siren_unite_legale(siren, request)
-        return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
+        return Response(response, status=status.HTTP_200_OK, safe=False)
 
 
 def get_cantine_from_siret(siret, request):
@@ -447,18 +447,13 @@ def get_cantine_from_siret(siret, request):
         canteens = Canteen.objects.filter(siret=siret)
         if canteens.exists():
             canteen = canteens.first()
-            return camelize(CanteenStatusSerializer(canteen, context={"request": request}).data)
+            return CanteenStatusSerializer(canteen, context={"request": request}).data
 
 
 def get_cantine_list_from_siren_unite_legale(siren, request):
     if siren:
         canteens = Canteen.objects.filter(siren_unite_legale=siren).order_by("name")
-        return camelize(CanteenStatusSerializer(canteens, many=True, context={"request": request}).data)
-
-
-def _respond_with_team(canteen):
-    data = ManagingTeamSerializer(canteen).data
-    return JsonResponse(camelize(data), status=status.HTTP_200_OK)
+        return Response(CanteenStatusSerializer(canteens, many=True, context={"request": request}).data)
 
 
 class AddManagerView(APIView):
@@ -471,7 +466,7 @@ class AddManagerView(APIView):
             canteen_id = request.data.get("canteen_id")
             canteen = request.user.canteens.get(id=canteen_id)
             AddManagerView.add_manager_to_canteen(email, canteen)
-            return _respond_with_team(canteen)
+            return Response(ManagingTeamSerializer(canteen).data, status=status.HTTP_200_OK)
         except ValidationError as e:
             logger.warning(f"Attempt to add manager with invalid email {email}:\n{e}")
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
@@ -480,7 +475,7 @@ class AddManagerView(APIView):
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
         except IntegrityError as e:
             logger.warning(f"Attempt to add existing manager with email {email} to canteen {canteen_id}:\n{e}")
-            return _respond_with_team(canteen)
+            return Response(ManagingTeamSerializer(canteen).data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.exception(f"Exception occurred while inviting a manager to canteen:\n{e}")
             return JsonResponse(
@@ -583,7 +578,7 @@ class RemoveManagerView(APIView):
                     invitation.delete()
                 except ManagerInvitation.DoesNotExist:
                     pass
-            return _respond_with_team(canteen)
+            return Response(ManagingTeamSerializer(canteen).data, status=status.HTTP_200_OK)
         except ValidationError as e:
             logger.warning(f"Attempt to remove manager with invalid email {email}:\n{e}")
             return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
@@ -700,7 +695,7 @@ class ClaimCanteenView(APIView):
         canteen.claimed_by = self.request.user
         canteen.has_been_claimed = True
         canteen.save()
-        return JsonResponse(camelize(MinimalCanteenSerializer(canteen).data), status=status.HTTP_200_OK)
+        return Response(MinimalCanteenSerializer(canteen).data, status=status.HTTP_200_OK)
 
 
 class UndoClaimCanteenView(APIView):
@@ -782,9 +777,8 @@ class SatelliteListCreateView(ListCreateAPIView):
             if created or satellite.managers.count() == 0:
                 for manager in canteen.managers.all():
                     satellite.managers.add(manager)
-            serialized_canteen = FullCanteenSerializer(satellite).data
             return_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
-            return JsonResponse(camelize(serialized_canteen), status=return_status)
+            return Response(FullCanteenSerializer(satellite).data, status=return_status)
         except SectorM2M.DoesNotExist:
             raise BadRequest()
 
@@ -805,17 +799,14 @@ class UnlinkSatelliteView(APIView):
         try:
             satellite = Canteen.objects.get(pk=satellite_pk)
         except Canteen.DoesNotExist:
-            serialized_canteen = FullCanteenSerializer(central_kitchen).data
-            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+            return Response(FullCanteenSerializer(central_kitchen).data, status=status.HTTP_200_OK)
 
         if satellite.central_producer_siret != central_kitchen.siret:
-            serialized_canteen = FullCanteenSerializer(central_kitchen).data
-            return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+            return Response(FullCanteenSerializer(central_kitchen).data, status=status.HTTP_200_OK)
 
         satellite.central_producer_siret = None
         satellite.save()
-        serialized_canteen = FullCanteenSerializer(central_kitchen).data
-        return JsonResponse(camelize(serialized_canteen), status=status.HTTP_200_OK)
+        return Response(FullCanteenSerializer(central_kitchen).data, status=status.HTTP_200_OK)
 
 
 class ActionableCanteensListView(ListAPIView):
