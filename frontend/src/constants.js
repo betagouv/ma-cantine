@@ -144,7 +144,7 @@ export default Object.freeze({
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
-    BIO: { text: "Bio", color: "green" },
+    BIO: { text: "Bio et Bio + Commerce équitable", color: "green" },
     LABEL_ROUGE: { text: "Label rouge", color: "red lighten-1" },
     AOCAOP_IGP_STG: {
       text: "AOC / AOP / IGP / STG",
