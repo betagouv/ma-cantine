@@ -175,15 +175,44 @@ export default {
           },
           { param: "valeurViandesVolaillesBio", label: "Mes achats viandes et volailles Bio" },
           {
+            param: "valeurViandesVolaillesBioDontCommerceEquitable",
+            label: "Mes achats viandes et volailles dont Bio et Commerce équitable",
+          },
+          {
             param: "valeurProduitsDeLaMerBio",
             label: "Mes achats poissons, produits de la mer et de l'aquaculture Bio",
           },
+          {
+            param: "valeurProduitsDeLaMerBioDontCommerceEquitable",
+            label: "Mes achats poissons, produits de la mer et de l'aquaculture dont Bio et Commerce équitable",
+          },
           { param: "valeurFruitsEtLegumesBio", label: "Mes achats fruits et legumes Bio" },
+          {
+            param: "valeurFruitsEtLegumesBioDontCommerceEquitable",
+            label: "Mes achats fruits et legumes dont Bio et Commerce équitable",
+          },
           { param: "valeurCharcuterieBio", label: "Mes achats charcuterie Bio" },
+          {
+            param: "valeurCharcuterieBioDontCommerceEquitable",
+            label: "Mes achats charcuterie dont Bio et Commerce équitable",
+          },
           { param: "valeurProduitsLaitiersBio", label: "Mes achats produits laitiers Bio" },
+          {
+            param: "valeurProduitsLaitiersBioDontCommerceEquitable",
+            label: "Mes achats produits laitiers dont Bio et Commerce équitable",
+          },
           { param: "valeurBoulangerieBio", label: "Mes achats boulangerie Bio" },
+          {
+            param: "valeurBoulangerieBioDontCommerceEquitable",
+            label: "Mes achats boulangerie dont Bio et Commerce équitable",
+          },
           { param: "valeurBoissonsBio", label: "Mes achats boissons Bio" },
+          {
+            param: "valeurBoissonsBioDontCommerceEquitable",
+            label: "Mes achats boissons dont Bio et Commerce équitable",
+          },
           { param: "valeurAutresBio", label: "Mes autres achats Bio" },
+          { param: "valeurAutresBioDontCommerceEquitable", label: "Mes autres achats dont Bio et Commerce équitable" },
           { param: "valeurViandesVolaillesLabelRouge", label: "Mes achats viandes et volailles Label Rouge" },
           {
             param: "valeurProduitsDeLaMerLabelRouge",
@@ -294,21 +323,21 @@ export default {
           { param: "valeurAutresExternalites", label: "Mes autres achats Externalités Environnementales" },
           {
             param: "valeurViandesVolaillesCommerceEquitable",
-            label: "Mes achats viandes et volailles Commerce Équitable",
+            label: "Mes achats viandes et volailles Commerce équitable",
           },
           {
             param: "valeurProduitsDeLaMerCommerceEquitable",
-            label: "Mes achats poissons, produits de la mer et de l'aquaculture Commerce Équitable",
+            label: "Mes achats poissons, produits de la mer et de l'aquaculture Commerce équitable",
           },
-          { param: "valeurFruitsEtLegumesCommerceEquitable", label: "Mes achats fruits et legumes Commerce Équitable" },
-          { param: "valeurCharcuterieCommerceEquitable", label: "Mes achats charcuterie Commerce Équitable" },
+          { param: "valeurFruitsEtLegumesCommerceEquitable", label: "Mes achats fruits et legumes Commerce équitable" },
+          { param: "valeurCharcuterieCommerceEquitable", label: "Mes achats charcuterie Commerce équitable" },
           {
             param: "valeurProduitsLaitiersCommerceEquitable",
-            label: "Mes achats produits laitiers Commerce Équitable",
+            label: "Mes achats produits laitiers Commerce équitable",
           },
-          { param: "valeurBoulangerieCommerceEquitable", label: "Mes achats boulangerie Commerce Équitable" },
-          { param: "valeurBoissonsCommerceEquitable", label: "Mes achats boissons Commerce Équitable" },
-          { param: "valeurAutresCommerceEquitable", label: "Mes autres achats Commerce Équitable" },
+          { param: "valeurBoulangerieCommerceEquitable", label: "Mes achats boulangerie Commerce équitable" },
+          { param: "valeurBoissonsCommerceEquitable", label: "Mes achats boissons Commerce équitable" },
+          { param: "valeurAutresCommerceEquitable", label: "Mes autres achats Commerce équitable" },
           {
             param: "valeurViandesVolaillesPerformance",
             label: "Mes achats viandes et volailles Performance Environnementale",
