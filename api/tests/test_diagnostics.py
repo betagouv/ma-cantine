@@ -14,7 +14,7 @@ from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.models.creation_source import CreationSource
 
 
-class TestDiagnosticsApi(APITestCase):
+class DiagnosticCreateApiTest(APITestCase):
     def test_unauthenticated_create_diagnostic_call(self):
         """
         When calling this API unathenticated we expect a 403
@@ -72,6 +72,16 @@ class TestDiagnosticsApi(APITestCase):
         canteen = CanteenFactory(managers=[authenticate.user])
 
         payload = {"year": 2020}
+        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_minimal_diagnostic_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        canteen = CanteenFactory(managers=[user])
+
+        payload = {"year": 2020}
+        self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -310,6 +320,28 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(diagnostic.family_sum("boissons"), 110)
         self.assertEqual(diagnostic.family_sum("autres"), 110)
 
+    # Tests for unit conversion for total_leftovers. This is because the field was first
+    # made in ton but then it was decided that it is best for the users to work in kg
+    # for consistency.
+    @authenticate
+    def test_total_leftovers_conversion_create_diagnostic(self):
+        """
+        On CREATE, total_leftovers should be converted from kg to ton
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+
+        payload = {
+            "year": 2020,
+            "total_leftovers": 1234.56,
+        }
+        response = self.client.post(
+            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
+        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
+
     @authenticate
     def test_create_duplicate_diagnostic(self):
         """
@@ -353,6 +385,8 @@ class TestDiagnosticsApi(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+
+class DiagnosticUpdateApiTest(APITestCase):
     @authenticate
     def test_edit_diagnostic_unauthorized(self):
         """
@@ -364,7 +398,7 @@ class TestDiagnosticsApi(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_edition",
+                "diagnostic_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -373,6 +407,25 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.year, 2019)
+
+    @authenticate
+    def test_cannot_update_diagnostic_with_put(self):
+        """
+        A user cannot update the data from a diagnostic object with PUT
+        """
+        diagnostic = DiagnosticFactory(year=2019)
+        diagnostic.canteen.managers.add(authenticate.user)
+
+        payload = {"year": 2020}
+        response = self.client.put(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @authenticate
     def test_edit_diagnostic(self):
@@ -385,7 +438,7 @@ class TestDiagnosticsApi(APITestCase):
         payload = {"year": 2020}
         response = self.client.patch(
             reverse(
-                "diagnostic_edition",
+                "diagnostic_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -404,7 +457,7 @@ class TestDiagnosticsApi(APITestCase):
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.patch(
             reverse(
-                "diagnostic_edition",
+                "diagnostic_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -433,7 +486,7 @@ class TestDiagnosticsApi(APITestCase):
         }
         response = self.client.patch(
             reverse(
-                "diagnostic_edition",
+                "diagnostic_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -457,7 +510,7 @@ class TestDiagnosticsApi(APITestCase):
         payload = {"valeur_siqo": 999}
         response = self.client.patch(
             reverse(
-                "diagnostic_edition",
+                "diagnostic_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -466,6 +519,101 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.valeur_siqo, 2)
+
+    @authenticate
+    def test_total_leftovers_conversion_update_diagnostic(self):
+        """
+        On UPDATE, total_leftovers should be converted from kg to ton
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
+
+        payload = {
+            "total_leftovers": 6666.66,
+        }
+        response = self.client.patch(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.total_leftovers, Decimal("6.66666"))
+
+    @authenticate
+    def test_total_leftovers_conversion_update_diagnostic_no_conversion(self):
+        """
+        On UPDATE, total_leftovers should be converted from kg to ton
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
+
+        payload = {
+            "bread_leftovers": 100,
+        }
+        response = self.client.patch(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
+        self.assertEqual(diagnostic.bread_leftovers, Decimal("100"))
+
+    @authenticate
+    def test_total_leftovers_conversion_update_diagnostic_bad_values(self):
+        """
+        Should return reasonable error if the given value of total leftovers fails validation
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
+
+        payload = {
+            "total_leftovers": 6666.666,
+        }
+        response = self.client.patch(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        errors = response.json()
+        self.assertEqual(
+            errors["totalLeftovers"][0], "Assurez-vous qu'il n'y a pas plus de 2 chiffres après la virgule."
+        )
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
+
+        payload = {
+            "total_leftovers": "this shouldn't be a string",
+        }
+        response = self.client.patch(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        errors = response.json()
+        self.assertEqual(errors["totalLeftovers"][0], "Assurez-vous que cette valeur est un chiffre décimal.")
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
     @authenticate
     def test_edit_submitted_diagnostic(self):
@@ -481,7 +629,7 @@ class TestDiagnosticsApi(APITestCase):
         payload = {"year": 2020}
         response = self.client.patch(
             reverse(
-                "diagnostic_edition",
+                "diagnostic_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -506,7 +654,7 @@ class TestDiagnosticsApi(APITestCase):
         payload = {"year": 2020}
         response = self.client.patch(
             reverse(
-                "diagnostic_edition",
+                "diagnostic_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -516,6 +664,23 @@ class TestDiagnosticsApi(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.year, 2020)
 
+
+class DiagnosticDeleteApiTest(APITestCase):
+    @authenticate
+    def test_delete_diagnostic_not_allowed(self):
+        diagnostic = DiagnosticFactory(year=2019)
+        diagnostic.canteen.managers.add(authenticate.user)
+
+        response = self.client.delete(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class DiagnosticToTeledeclareApiTest(APITestCase):
     @freeze_time("2022-08-30")  # during the 2021 campaign  # but this endpoint doesn't seem to check
     @authenticate
     def test_get_diagnostics_to_td(self):
@@ -661,134 +826,3 @@ class TestDiagnosticsApi(APITestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["id"], diag_cancelled.id)
         self.assertEqual(results[0]["canteenId"], canteen_with_correction.id)
-
-    # Tests for unit conversion for total_leftovers. This is because the field was first
-    # made in ton but then it was decided that it is best for the users to work in kg
-    # for consistency.
-    @authenticate
-    def test_total_leftovers_conversion_create_diagnostic(self):
-        """
-        On CREATE, total_leftovers should be converted from kg to ton
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-
-        payload = {
-            "year": 2020,
-            "total_leftovers": 1234.56,
-        }
-        response = self.client.post(
-            reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload, format="json"
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
-        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
-
-    @authenticate
-    def test_total_leftovers_conversion_update_diagnostic(self):
-        """
-        On UPDATE, total_leftovers should be converted from kg to ton
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
-
-        payload = {
-            "total_leftovers": 6666.66,
-        }
-        response = self.client.patch(
-            reverse(
-                "diagnostic_edition",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
-            ),
-            payload,
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.total_leftovers, Decimal("6.66666"))
-
-    @authenticate
-    def test_total_leftovers_conversion_update_diagnostic_no_conversion(self):
-        """
-        On UPDATE, total_leftovers should be converted from kg to ton
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
-
-        payload = {
-            "bread_leftovers": 100,
-        }
-        response = self.client.patch(
-            reverse(
-                "diagnostic_edition",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
-            ),
-            payload,
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
-        self.assertEqual(diagnostic.bread_leftovers, Decimal("100"))
-
-    @authenticate
-    def test_total_leftovers_conversion_update_diagnostic_bad_values(self):
-        """
-        Should return reasonable error if the given value of total leftovers fails validation
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
-
-        payload = {
-            "total_leftovers": 6666.666,
-        }
-        response = self.client.patch(
-            reverse(
-                "diagnostic_edition",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
-            ),
-            payload,
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        errors = response.json()
-        self.assertEqual(
-            errors["totalLeftovers"][0], "Assurez-vous qu'il n'y a pas plus de 2 chiffres après la virgule."
-        )
-        diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
-
-        payload = {
-            "total_leftovers": "this shouldn't be a string",
-        }
-        response = self.client.patch(
-            reverse(
-                "diagnostic_edition",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
-            ),
-            payload,
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        errors = response.json()
-        self.assertEqual(errors["totalLeftovers"][0], "Assurez-vous que cette valeur est un chiffre décimal.")
-        diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
-
-    @authenticate
-    def test_total_leftovers_conversion_get_diagnostic(self):
-        """
-        On GET, total_leftovers should be converted from ton to kg
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
-        body = response.json()
-
-        self.assertEqual(len(body.get("diagnostics")), 1)
-        serialized_diag = body.get("diagnostics")[0]
-        self.assertEqual(serialized_diag["totalLeftovers"], 1234.56)

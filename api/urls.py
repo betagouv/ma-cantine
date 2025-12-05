@@ -104,7 +104,7 @@ urlpatterns = {
     path(
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>",
         DiagnosticUpdateView.as_view(),
-        name="diagnostic_edition",
+        name="diagnostic_update",
     ),
     path(
         "canteens/<int:canteen_pk>/wasteMeasurements/",
