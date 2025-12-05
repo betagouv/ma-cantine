@@ -1,5 +1,6 @@
 import base64
 import os
+from decimal import Decimal
 
 from django.urls import reverse
 from freezegun import freeze_time
@@ -179,11 +180,12 @@ class CanteenDetailApiTest(APITestCase):
 
         DiagnosticFactory(
             canteen=user_canteen,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2021,
             valeur_totale=1200,
             valeur_bio=600,
             valeur_siqo=300,
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            total_leftovers=Decimal("1.23456"),
         )
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
@@ -195,6 +197,8 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(serialized_diag["valeurTotale"], 1200)
         self.assertEqual(serialized_diag["valeurBio"], 600)
         self.assertEqual(serialized_diag["valeurSiqo"], 300)
+        # total_leftovers should be converted from ton to kg
+        self.assertEqual(serialized_diag["totalLeftovers"], 1234.56)
 
     @authenticate
     def test_get_single_user_canteen_unauthorized(self):
