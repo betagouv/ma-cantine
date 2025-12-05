@@ -103,7 +103,9 @@ export default {
 
     const viandesVolaillesLawFields = []
     const produitsDeLaMerLawFields = []
-    const lawFields = tdGroups.egalim.fields.concat(tdGroups.nonEgalim.fields)
+    const lawFields = tdGroups.egalim.fields
+      .filter((name) => name.indexOf("BioDontCommerceEquitable") === -1)
+      .concat(tdGroups.nonEgalim.fields)
     lawFields.forEach((field) => {
       if (field.startsWith("valeurViandesVolailles")) viandesVolaillesLawFields.push(field)
       else if (field.startsWith("valeurProduitsDeLaMer")) produitsDeLaMerLawFields.push(field)
