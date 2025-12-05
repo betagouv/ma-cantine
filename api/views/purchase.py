@@ -334,7 +334,7 @@ def complete_diag_data(purchases, data):
         purchase_family = purchases.filter(family=family.upper())
         for label in Diagnostic.APPRO_LABELS_EGALIM:
             if label.upper() == "AOCAOP_IGP_STG":
-                fam_label = purchase_family.filter(
+                purchase_family_label = purchase_family.filter(
                     Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
                     | Q(characteristics__contains=[Purchase.Characteristic.IGP])
                     | Q(characteristics__contains=[Purchase.Characteristic.STG])
@@ -344,27 +344,35 @@ def complete_diag_data(purchases, data):
                     Q(characteristics__contains=[Purchase.Characteristic.AOCAOP])
                     | Q(characteristics__contains=[Purchase.Characteristic.IGP])
                     | Q(characteristics__contains=[Purchase.Characteristic.STG])
-                )
+                ).distinct()
             else:
-                fam_label = purchase_family.filter(
+                purchase_family_label = purchase_family.filter(
                     Q(characteristics__contains=[Purchase.Characteristic[label.upper()]])
-                )
+                ).distinct()
                 # the remaining stats should ignore already counted labels
                 purchase_family = purchase_family.exclude(
                     Q(characteristics__contains=[Purchase.Characteristic[label.upper()]])
-                )
+                ).distinct()
             key = "valeur_" + family + "_" + label
-            data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
-        # outside of EGalim, products can be counted twice across characteristics
+            data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+        # special case of bio_dont_commerce_equitable (products can be counted twice across characteristics)
+        purchase_family = purchases.filter(family=family.upper())
+        purchase_family_label = purchase_family.filter(
+            Q(characteristics__contains=[Purchase.Characteristic.BIO])
+            & Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE])
+        )
+        key = "valeur_" + family + "_" + "bio_dont_commerce_equitable"
+        data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+        # outside of EGalim (products can be counted twice across characteristics)
         purchase_family = purchases.filter(family=family.upper())
         other_labels_characteristics = []
         for label in Diagnostic.APPRO_LABELS_FRANCE:
             characteristic = Purchase.Characteristic[label.upper()]
-            fam_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
+            purchase_family_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
             key = "valeur_" + family + "_" + label
-            data[key] = fam_label.aggregate(total=Sum("price_ht"))["total"] or 0
+            data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
             other_labels_characteristics.append(characteristic)
-        # Non-EGalim totals: contains no labels or only one or more of other_labels
+        # Non-EGalim totals (contains no labels or only one or more of other_labels)
         non_egalim_purchases = purchase_family.filter(
             Q(characteristics__contained_by=(other_labels_characteristics + [""])) | Q(characteristics__len=0)
         ).distinct()
