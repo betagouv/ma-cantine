@@ -153,7 +153,7 @@ export default Object.freeze({
     },
     PECHE_DURABLE: { text: "Écolabel pêche durable", color: "blue" },
     RUP: { text: "RUP", longText: "Région ultrapériphérique (RUP)", color: "brown" },
-    COMMERCE_EQUITABLE: { text: "Commerce équitable", color: "lime darken-2" },
+    COMMERCE_EQUITABLE: { text: "Commerce équitable (hors bio)", color: "lime darken-2" },
     HVE: {
       text: "Certification environnementale de niveau 2 ou HVE",
       longText: "Certification environnementale de niveau 2 ou HVE",

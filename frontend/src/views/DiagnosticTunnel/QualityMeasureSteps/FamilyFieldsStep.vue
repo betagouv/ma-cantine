@@ -217,8 +217,15 @@ export default {
     },
     populateSimplifiedDiagnostic() {
       if (this.hasError) return
-      const { bioTotal, siqoTotal, externalitesPerformanceTotal, egalimAutresTotal } = approTotals(this.payload)
+      const {
+        bioTotal,
+        bioDontCommerceEquitableTotal,
+        siqoTotal,
+        externalitesPerformanceTotal,
+        egalimAutresTotal,
+      } = approTotals(this.payload)
       this.payload.valeurBio = bioTotal
+      this.payload.valeurBioDontCommerceEquitable = bioDontCommerceEquitableTotal
       this.payload.valeurSiqo = siqoTotal
       this.payload.valeurExternalitesPerformance = externalitesPerformanceTotal
       this.payload.valeurEgalimAutres = egalimAutresTotal

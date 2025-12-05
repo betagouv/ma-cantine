@@ -193,7 +193,7 @@ export default {
         valeurTotale: this.diagnostic.valeurTotale,
         diagnosticType: this.diagnostic.diagnosticType || "",
         valeurBio: this.diagnostic.valeurBio,
-        valeurBioDontCommerceEquitableHt: this.diagnostic.valeurBioDontCommerceEquitable,
+        valeurBioDontCommerceEquitable: this.diagnostic.valeurBioDontCommerceEquitable,
         valeurSiqo: this.diagnostic.valeurSiqo,
         valeurEgalimAutres: this.diagnostic.valeurEgalimAutres,
         valeurEgalimAutresDontCommerceEquitable: this.diagnostic.valeurEgalimAutresDontCommerceEquitable,

@@ -461,12 +461,14 @@ export const toCurrency = (value) => {
 
 export const approTotals = (diagnostic) => {
   let bioTotal = diagnostic.valeurBio
+  let bioDontCommerceEquitableTotal = diagnostic.valeurBioDontCommerceEquitable
   let siqoTotal = diagnostic.valeurSiqo
   let externalitesPerformanceTotal = diagnostic.valeurExternalitesPerformance
   let egalimAutresTotal = diagnostic.valeurEgalimAutres
   const usesExtendedDiagnostic = diagnostic.diagnosticType === "COMPLETE"
   if (usesExtendedDiagnostic) {
     bioTotal = 0
+    bioDontCommerceEquitableTotal = 0
     siqoTotal = 0
     externalitesPerformanceTotal = 0
     egalimAutresTotal = 0
@@ -477,6 +479,8 @@ export const approTotals = (diagnostic) => {
         if (field.endsWith("Bio")) {
           bioTotal += value
           // TODO: manage Ht
+        } else if (field.endsWith("DontCommerceEquitable")) {
+          bioDontCommerceEquitableTotal += value
         } else if (!field.startsWith("valueLabel") && !field.endsWith("Ht")) {
           if (field.endsWith("LabelRouge") || field.endsWith("AocaopIgpStg")) {
             siqoTotal += value
@@ -489,12 +493,14 @@ export const approTotals = (diagnostic) => {
       }
     })
     bioTotal = +bioTotal.toFixed(2)
+    bioDontCommerceEquitableTotal = +bioDontCommerceEquitableTotal.toFixed(2)
     siqoTotal = +siqoTotal.toFixed(2)
     externalitesPerformanceTotal = +externalitesPerformanceTotal.toFixed(2)
     egalimAutresTotal = +egalimAutresTotal.toFixed(2)
   }
   return {
     bioTotal,
+    bioDontCommerceEquitableTotal,
     siqoTotal,
     externalitesPerformanceTotal,
     egalimAutresTotal,
