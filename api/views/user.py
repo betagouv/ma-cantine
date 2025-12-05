@@ -66,14 +66,11 @@ class LoggedUserView(RetrieveAPIView):
 
 
 class UpdateUserView(UpdateAPIView):
-    model = get_user_model()
-    serializer_class = LoggedUserSerializer
     permission_classes = [IsAuthenticated, IsProfileOwner]
     required_scopes = ["user"]
+    http_method_names = ["patch"]  # disable "put"
     queryset = get_user_model().objects.all()
-
-    def put(self, request, *args, **kwargs):
-        return JsonResponse({"error": "Only PATCH request supported in this resource"}, status=405)
+    serializer_class = LoggedUserSerializer
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)

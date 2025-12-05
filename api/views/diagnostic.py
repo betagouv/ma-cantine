@@ -8,7 +8,6 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseServerError,
-    JsonResponse,
 )
 from django_filters import rest_framework as django_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -85,17 +84,11 @@ class DiagnosticCreateView(CreateAPIView):
     ),
 )
 class DiagnosticUpdateView(UpdateAPIView):
-    permission_classes = [
-        IsAuthenticatedOrTokenHasResourceScope,
-        IsLinkedCanteenManager,
-    ]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
     required_scopes = ["canteen"]
-    model = Diagnostic
-    serializer_class = ManagerDiagnosticSerializer
+    http_method_names = ["patch"]  # disable "put"
     queryset = Diagnostic.objects.all()
-
-    def put(self, request, *args, **kwargs):
-        return JsonResponse({"error": "Only PATCH request supported in this resource"}, status=405)
+    serializer_class = ManagerDiagnosticSerializer
 
     def perform_update(self, serializer):
         if self.get_object().is_teledeclared:

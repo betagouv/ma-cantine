@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 class ReservationExpeView(CreateModelMixin, RetrieveUpdateAPIView):
-    model = ReservationExpe
-    serializer_class = ReservationExpeSerializer
-    queryset = ReservationExpe.objects.all()
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    http_method_names = ["get", "post", "patch"]  # disable "put"
+    queryset = ReservationExpe.objects.all()
+    serializer_class = ReservationExpeSerializer
 
     def get_object(self):
         queryset = self.get_queryset()

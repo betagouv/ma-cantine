@@ -7,7 +7,53 @@ from data.factories import CanteenFactory, ReservationExpeFactory
 from data.models import ReservationExpe
 
 
-class TestReservationExpeApi(APITestCase):
+class ReservationExpeListApiTest(APITestCase):
+    @authenticate
+    def test_get_reservation_expe(self):
+        """
+        Test that we can get a reservation experiment for a canteen
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        ReservationExpeFactory(canteen=canteen, leader_email="test@example.com")
+
+        response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["leaderEmail"], "test@example.com")
+
+    def test_cannot_get_reservation_expe_unauthenticated(self):
+        """
+        Shouldn't be able to get a reservation expe if not authenticated
+        """
+        canteen = CanteenFactory()
+        ReservationExpeFactory(canteen=canteen)
+
+        response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_reservation_expe_not_manager(self):
+        """
+        Shouldn't be able to get a reservation expe if not manager of canteen
+        """
+        canteen = CanteenFactory()
+        ReservationExpeFactory(canteen=canteen)
+
+        response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_nonexistant_reservation_expe(self):
+        """
+        Test attempting to get a reservation expe that doesn't exist
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+
+        response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class ReservationExpeCreateApiTest(APITestCase):
     @authenticate
     def test_create_reservation_expe(self):
         """
@@ -85,50 +131,8 @@ class TestReservationExpeApi(APITestCase):
         self.assertEqual(reservation_expe.satisfaction, 5)
         self.assertEqual(ReservationExpe.objects.count(), 1)
 
-    @authenticate
-    def test_get_reservation_expe(self):
-        """
-        Test that we can get a reservation experiment for a canteen
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        ReservationExpeFactory(canteen=canteen, leader_email="test@example.com")
 
-        response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["leaderEmail"], "test@example.com")
-
-    def test_cannot_get_reservation_expe_unauthenticated(self):
-        """
-        Shouldn't be able to get a reservation expe if not authenticated
-        """
-        canteen = CanteenFactory()
-        ReservationExpeFactory(canteen=canteen)
-
-        response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_cannot_get_reservation_expe_not_manager(self):
-        """
-        Shouldn't be able to get a reservation expe if not manager of canteen
-        """
-        canteen = CanteenFactory()
-        ReservationExpeFactory(canteen=canteen)
-
-        response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_get_nonexistant_reservation_expe(self):
-        """
-        Test attempting to get a reservation expe that doesn't exist
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-
-        response = self.client.get(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
+class ReservationExpeUpdateApiTest(APITestCase):
     @authenticate
     def test_update_reservation_expe(self):
         """
@@ -215,3 +219,15 @@ class TestReservationExpeApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         reservation_expe.refresh_from_db()
         self.assertEqual(reservation_expe.avg_weight_not_served_t2, 70)
+
+
+class ReservationExpeDeleteApiTest(APITestCase):
+    @authenticate
+    def test_cannot_delete_reservation_expe(self):
+        """
+        Check that deletion is not allowed
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        ReservationExpeFactory(canteen=canteen)
+        response = self.client.delete(reverse("canteen_reservation_expe", kwargs={"canteen_pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
