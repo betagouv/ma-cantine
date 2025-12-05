@@ -160,12 +160,12 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_valeur_totale_extra_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
-        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT.pop("valeur_totale")
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT.pop("valeur_totale")
         # should be > the sum of other fields
         self.assertEqual(
             sum(
-                VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT[k]
+                VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT[k]
                 for k in [
                     "valeur_bio",
                     "valeur_siqo",
@@ -177,40 +177,74 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         )
         for VALUE_NOT_OK in [-100, 0, 100]:
             with self.subTest(valeur_totale=VALUE_NOT_OK):
-                diagnostic = DiagnosticFactory(valeur_totale=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT)
+                diagnostic = DiagnosticFactory(valeur_totale=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_valeur_viandes_volailles_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
-        VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
         # should be >= valeur_viandes_volailles_egalim
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES["valeur_viandes_volailles_egalim"], 50)
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES["valeur_viandes_volailles_egalim"], 50)
         for VALUE_NOT_OK in [-100, 0, 49]:
             with self.subTest(valeur_viandes_volailles=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    valeur_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
+                    valeur_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
         # should be >= valeur_viandes_volailles_france
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES["valeur_viandes_volailles_france"], 20)
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES["valeur_viandes_volailles_france"], 20)
         for VALUE_NOT_OK in [-100, 0, 19]:
             with self.subTest(valeur_viandes_volailles=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    valeur_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
+                    valeur_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_valeur_produits_de_la_mer_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
-        VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER.pop("valeur_produits_de_la_mer")
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER.pop("valeur_produits_de_la_mer")
         # should be >= valeur_produits_de_la_mer_egalim
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER["valeur_produits_de_la_mer_egalim"], 40)
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER["valeur_produits_de_la_mer_egalim"], 40)
         for VALUE_NOT_OK in [-100, 0, 39]:
             with self.subTest(valeur_produits_de_la_mer=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    valeur_produits_de_la_mer=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER
+                    valeur_produits_de_la_mer=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
+
+
+class Diagnostic2024ModelSaveTest(TransactionTestCase):
+    def test_diagnostic_simple_2024(self):
+        # valid
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+        diagnostic.full_clean()
+        VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_BIO = {**VALID_DIAGNOSTIC_SIMPLE_2024, "valeur_bio": None}
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_BIO)
+        diagnostic.full_clean()
+        # not valid
+        VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE = {**VALID_DIAGNOSTIC_SIMPLE_2024, "valeur_totale": None}
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_complete_2024(self):
+        pass
+
+
+class Diagnostic2025ModelSaveTest(TransactionTestCase):
+    def test_diagnostic_simple_2025(self):
+        # valid
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        diagnostic.full_clean()
+        # not valid
+        VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_BIO = {**VALID_DIAGNOSTIC_SIMPLE_2025, "valeur_bio": None}
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_BIO)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_TOTALE = {**VALID_DIAGNOSTIC_SIMPLE_2025, "valeur_totale": None}
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_complete_2025(self):
+        pass
 
 
 class DiagnosticQuerySetTest(TestCase):
