@@ -231,7 +231,9 @@ export default {
       this.payload.valeurProduitsDeLaMerEgalim = produitsDeLaMerEgalim
     },
     viandesVolaillesTotals() {
-      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields.filter(
+        (name) => name.indexOf("BioDontCommerceEquitable") === -1
+      )
       const outsideLawFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
       const allFields = egalimFields.concat(outsideLawFields)
 
@@ -255,7 +257,9 @@ export default {
     produitsDeLaMerTotals() {
       let produitsDeLaMerEgalim = 0
 
-      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields
+      const egalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields.filter(
+        (name) => name.indexOf("BioDontCommerceEquitable") === -1
+      )
 
       egalimFields.forEach((field) => {
         const isProduitsDeLaMer = field.startsWith(this.produitsDeLaMerFieldPrefix)
@@ -305,7 +309,10 @@ export default {
       this.outsideLawErrorMessages = []
 
       const groups = Constants.TeledeclarationCharacteristicGroups
-      const sumFields = groups.egalim.fields.concat(groups.nonEgalim.fields)
+      const groupsWithoutCommerceEquitable = groups.egalim.fields.filter(
+        (name) => name.indexOf("BioDontCommerceEquitable") === -1
+      )
+      const sumFields = groupsWithoutCommerceEquitable.concat(groups.nonEgalim.fields)
       const declaredTotal = +this.payload.valeurTotale
       const fieldTotal = this.sum(sumFields)
       if (fieldTotal > declaredTotal) {
