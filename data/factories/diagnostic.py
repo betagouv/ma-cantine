@@ -20,13 +20,9 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     valeur_totale = factory.Faker("random_int", min=6000, max=10000)
     valeur_bio = factory.Faker("random_int", min=0, max=2000)
     valeur_siqo = factory.Faker("random_int", min=0, max=2000)
-    # valeur_externalites_performance = factory.Faker("random_int", min=0, max=20)
     valeur_egalim_autres = factory.Faker("random_int", min=0, max=20)
     valeur_viandes_volailles = factory.Faker("random_int", min=0, max=20)
     valeur_viandes_volailles_egalim = factory.Faker("random_int", min=0, max=20)
-    # valeur_viandes_volailles_france = factory.Faker("random_int", min=0, max=20)
-    # valeur_produits_de_la_mer = factory.Faker("random_int", min=0, max=20)
-    # valeur_produits_de_la_mer_egalim = factory.Faker("random_int", min=0, max=20)
 
     has_waste_diagnostic = factory.Faker("boolean")
     has_waste_plan = factory.Faker("boolean")

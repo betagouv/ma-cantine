@@ -218,16 +218,23 @@ class Diagnostic2024ModelSaveTest(TransactionTestCase):
         # valid
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
         diagnostic.full_clean()
+        # valid (valeur_bio is optional)
         VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_BIO = {**VALID_DIAGNOSTIC_SIMPLE_2024, "valeur_bio": None}
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_BIO)
         diagnostic.full_clean()
-        # not valid
+        # not valid (valeur_totale is required)
         VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE = {**VALID_DIAGNOSTIC_SIMPLE_2024, "valeur_totale": None}
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE)
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_complete_2024(self):
-        pass
+        # valid
+        VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE = {
+            **VALID_DIAGNOSTIC_SIMPLE_2024,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
+        }
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE)
+        diagnostic.full_clean()
 
 
 class Diagnostic2025ModelSaveTest(TransactionTestCase):
@@ -235,16 +242,30 @@ class Diagnostic2025ModelSaveTest(TransactionTestCase):
         # valid
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
         diagnostic.full_clean()
-        # not valid
+        # not valid (valeur_bio is required)
         VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_BIO = {**VALID_DIAGNOSTIC_SIMPLE_2025, "valeur_bio": None}
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_BIO)
         self.assertRaises(ValidationError, diagnostic.full_clean)
+        # not valid (valeur_totale is required)
         VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_TOTALE = {**VALID_DIAGNOSTIC_SIMPLE_2025, "valeur_totale": None}
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_TOTALE)
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_complete_2025(self):
-        pass
+        # valid (because DiagnosticFactory sets default values)
+        VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE = {
+            **VALID_DIAGNOSTIC_SIMPLE_2025,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
+        }
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE)
+        diagnostic.full_clean()
+        # not valid (valeur_produits_de_la_mer is required)
+        diagnostic = DiagnosticFactory(
+            **VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE
+        )  # sets a value for valeur_produits_de_la_mer
+        diagnostic.valeur_produits_de_la_mer = None
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
 
 
 class DiagnosticQuerySetTest(TestCase):
@@ -444,13 +465,19 @@ class DiagnosticQuerySetTest(TestCase):
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.diagnostic_2024_simple_empty = DiagnosticFactory(
+        cls.diagnostic_2024_simple_not_filled = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=None
         )
         cls.diagnostic_2024_simple_filled = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
         )
-        cls.diagnostic_2025_simple_empty = DiagnosticFactory(
+        cls.diagnostic_2024_complete_not_filled = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, valeur_totale=None
+        )
+        cls.diagnostic_2024_complete_filled = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, valeur_totale=1000
+        )
+        cls.diagnostic_2025_simple_not_filled = DiagnosticFactory(
             year=2025,
             canteen=CanteenFactory(),
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -465,24 +492,64 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             valeur_bio=200,
             valeur_siqo=100,
             valeur_egalim_autres=100,
+            valeur_viandes_volailles=100,
             valeur_viandes_volailles_egalim=0,
+        )
+        cls.diagnostic_2025_complete_not_filled = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_egalim_autres=100,
+            valeur_viandes_volailles=100,
+            valeur_viandes_volailles_egalim=0,
+        )
+        cls.diagnostic_2025_complete_not_filled.valeur_produits_de_la_mer = None
+        cls.diagnostic_2025_complete_not_filled.save()
+        cls.diagnostic_2025_complete_filled = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_egalim_autres=100,
+            valeur_viandes_volailles=100,
+            valeur_viandes_volailles_egalim=0,
+            # rest will be filled by DiagnosticFactory defaults
         )
 
     def test_filled_queryset(self):
-        self.assertEqual(Diagnostic.objects.all().count(), 4)
-        self.assertEqual(Diagnostic.objects.filled().count(), 2)
+        self.assertEqual(Diagnostic.objects.all().count(), 8)
+        self.assertEqual(Diagnostic.objects.filled().count(), 4)
 
     def test_is_filled_property(self):
-        self.assertFalse(self.diagnostic_2024_simple_empty.is_filled)
-        self.assertTrue(self.diagnostic_2024_simple_filled.is_filled)
-        self.assertFalse(self.diagnostic_2025_simple_empty.is_filled)
-        self.assertTrue(self.diagnostic_2025_simple_filled.is_filled)
+        # filled
+        for diagnostic in [
+            self.diagnostic_2024_simple_filled,
+            self.diagnostic_2024_complete_filled,
+            self.diagnostic_2025_simple_filled,
+            self.diagnostic_2025_complete_filled,
+        ]:
+            with self.subTest(diagnostic=diagnostic):
+                self.assertTrue(diagnostic.is_filled)
+        # not filled
+        for diagnostic in [
+            self.diagnostic_2024_simple_not_filled,
+            self.diagnostic_2024_complete_not_filled,
+            self.diagnostic_2025_simple_not_filled,
+            self.diagnostic_2025_complete_not_filled,
+        ]:
+            with self.subTest(diagnostic=diagnostic):
+                self.assertFalse(diagnostic.is_filled)
 
 
 class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.diagnostic_empty_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=None)
+        cls.diagnostic_not_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=None)
         cls.diagnostic_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=1000)
         cls.diagnostic_filled_submitted = DiagnosticFactory(
             canteen=CanteenFactory(), valeur_totale=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED
@@ -493,7 +560,7 @@ class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
         self.assertEqual(Diagnostic.objects.teledeclared().count(), 1)
 
     def test_is_teledeclared_property(self):
-        self.assertFalse(self.diagnostic_empty_draft.is_teledeclared)
+        self.assertFalse(self.diagnostic_not_filled_draft.is_teledeclared)
         self.assertFalse(self.diagnostic_filled_draft.is_teledeclared)
         self.assertTrue(self.diagnostic_filled_submitted.is_teledeclared)
 
