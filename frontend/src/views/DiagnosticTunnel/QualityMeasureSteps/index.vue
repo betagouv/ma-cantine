@@ -172,8 +172,11 @@ export default {
       this.$set(this, "payload", e.payload)
     },
     updatePayload() {
+      let formIsValid = this.formIsValid
+      // Special rule for "Mode de saisie" step
+      if (!this.payload["diagnosticType"] && this.stepUrlSlug === "mode-de-saisie") formIsValid = false
       const payloadToSend = getObjectDiff(this.originalValues, this.payload)
-      this.$emit("update-payload", { payload: payloadToSend, formIsValid: this.formIsValid })
+      this.$emit("update-payload", { payload: payloadToSend, formIsValid: formIsValid })
     },
     onTunnelAutofill(e) {
       this.$set(this, "payload", e.payload)
