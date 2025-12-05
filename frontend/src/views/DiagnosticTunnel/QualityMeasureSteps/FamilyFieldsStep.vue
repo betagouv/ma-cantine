@@ -76,13 +76,16 @@
                 class="mt-2"
                 :error="fieldHasError(diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE'))"
               />
-              <PurchaseHint
-                v-if="displayPurchaseHints && validFamily(fId, '_DONT_COMMERCE_EQUITABLE')"
-                v-model="payload[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
-                :purchaseType="family.shortText + ' dont commerce équitable pour cette caractéristique'"
-                :amount="purchasesSummary[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
-                @autofill="fieldUpdate(diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE'))"
-              />
+              <!--
+                Wait for fields to be ready in purchases serializer
+                <PurchaseHint
+                  v-if="displayPurchaseHints && validFamily(fId)"
+                  v-model="payload[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
+                  :purchaseType="family.shortText + ' dont commerce équitable pour cette caractéristique'"
+                  :amount="purchasesSummary[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
+                  @autofill="fieldUpdate(diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE'))"
+                />
+              -->
             </v-col>
           </v-row>
         </div>
