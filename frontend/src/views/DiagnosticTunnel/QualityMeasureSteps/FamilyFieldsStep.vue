@@ -36,18 +36,16 @@
       <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6" class="py-2">
         <label :for="fId" :class="`fr-text ${!validFamily(fId) ? 'grey--text text--darken-1' : ''}`">
           {{ family.text }}
+          <span v-if="isOptionnalField(fId)" class="fr-hint-text mt-2">Optionnel</span>
         </label>
         <div v-if="validFamily(fId)">
           <DsfrCurrencyField
             :id="fId"
-            :rules="[
-              validators.nonNegativeOrEmpty,
-              validators.decimalPlaces(2),
-              validators.lteOrEmpty(payload.valeurTotale),
-            ]"
+            :rules="getValidatorsRules(fId)"
+            @blur="fieldUpdate(diagnosticKey(fId))"
             solo
             v-model.number="payload[diagnosticKey(fId)]"
-            @blur="fieldUpdate(diagnosticKey(fId))"
+            validate
             class="mt-2"
             :error="fieldHasError(diagnosticKey(fId))"
             :disabled="!validFamily(fId)"
@@ -120,6 +118,8 @@ export default {
       produitsDeLaMerTotalErrorMessage: null,
       viandesVolaillesFieldPrefix: "valeurViandesVolailles",
       produitsDeLaMerFieldPrefix: "valeurProduitsDeLaMer",
+      requiredCategories: ["bio", "egalim"],
+      exceptionFields: ["valueProduitsDeLaMerPecheDurable"],
     }
   },
   computed: {
@@ -154,6 +154,24 @@ export default {
     },
   },
   methods: {
+    getValidatorsRules(fId) {
+      const rules = []
+      // Champ non applicable
+      if (!this.validFamily(fId)) return rules
+      rules.push(this.validators.nonNegativeOrEmpty)
+      rules.push(this.validators.decimalPlaces(2))
+      rules.push(this.validators.lteOrEmpty(this.payload.valeurTotale))
+      // Catégorie obligatoire
+      const isRequiredCategory = this.requiredCategories.includes(this.groupId)
+      const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
+      if (isRequiredCategory && !isExceptionFields) rules.push(this.validators.required)
+      return rules
+    },
+    isOptionnalField(fId) {
+      const isRequiredCategory = this.requiredCategories.includes(this.groupId)
+      const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
+      return !isRequiredCategory || isExceptionFields
+    },
     diagnosticKey(family) {
       return this.camelize(`valeur_${family}_${this.characteristicId}`)
     },
