@@ -138,13 +138,13 @@ export default Object.freeze({
       text: "Performance environnementale",
       longText: "Produits acquis sur la base de leurs performances en matière environnementale",
     },
-    FRANCE: { text: "Provenance France" },
+    FRANCE: { text: "Origine France" },
     CIRCUIT_COURT: { text: "Circuit-court" },
     LOCAL: { text: "Local" },
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
-    BIO: { text: "Bio", color: "green" },
+    BIO: { text: "Bio et Bio + Commerce équitable", color: "green" },
     LABEL_ROUGE: { text: "Label rouge", color: "red lighten-1" },
     AOCAOP_IGP_STG: {
       text: "AOC / AOP / IGP / STG",
@@ -176,7 +176,7 @@ export default Object.freeze({
       color: "pink",
     },
     NON_EGALIM: { text: "Non-EGalim", color: "blue-grey lighten-2" },
-    FRANCE: { text: "Provenance France", additional: true },
+    FRANCE: { text: "Origine France", additional: true },
     CIRCUIT_COURT: { text: "Circuit-court", additional: true },
     LOCAL: { text: "Local", additional: true },
   },
