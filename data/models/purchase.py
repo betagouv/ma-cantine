@@ -1,13 +1,15 @@
 from datetime import date
 from decimal import Decimal
 
+from django.core.validators import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 
 from data.fields import ChoiceArrayField
+from data.models import Canteen
 from data.models.creation_source import CreationSource
-
-from .canteen import Canteen
+from common.utils import utils as utils_utils
+from data.validators import purchase as purchase_validators
 from .softdeletionmodel import SoftDeletionModel
 
 
@@ -112,6 +114,13 @@ class Purchase(SoftDeletionModel):
         null=True,
         verbose_name="Source de création de l'achat",
     )
+
+    def clean(self, *args, **kwargs):
+        validation_errors = utils_utils.merge_validation_errors(
+            purchase_validators.validate_purchase_local_definition(self),
+        )
+        if validation_errors:
+            raise ValidationError(validation_errors)
 
     def save(self, **kwargs):
         """

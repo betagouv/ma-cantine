@@ -51,13 +51,18 @@ class CanteenModelSaveTest(TransactionTestCase):
             + [([key], [key]) for key in Purchase.Characteristic.values]
             + [
                 (
-                    [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL],
-                    [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL],
+                    [Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
+                    [Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
                 )
             ]
         ):
             with self.subTest(characteristics=TUPLE_OK[0]):
-                purchase = PurchaseFactory(characteristics=TUPLE_OK[0])
+                purchase = PurchaseFactory(
+                    characteristics=TUPLE_OK[0],
+                    local_definition=Purchase.Local.AUTRE
+                    if TUPLE_OK[0] and Purchase.Characteristic.LOCAL in TUPLE_OK[0]
+                    else None,
+                )
                 self.assertEqual(purchase.characteristics, TUPLE_OK[1])
         for VALUE_NOT_OK in [["  "], [123], ["invalid"], ["123"]]:
             with self.subTest(characteristics=VALUE_NOT_OK):
@@ -66,15 +71,36 @@ class CanteenModelSaveTest(TransactionTestCase):
     def test_purchase_local_definition_validation(self):
         """
         - field is optional
-        - must be one of the choices if provided
+        - must be one of the choices if provided (only if characteristics includes "LOCAL")
         """
-        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Purchase.Local.values)]:
-            with self.subTest(local_definition=TUPLE_OK[0]):
-                purchase = PurchaseFactory(local_definition=TUPLE_OK[0])
+        # characteristics includes "LOCAL"
+        for TUPLE_OK in [*((key, key) for key in Purchase.Local.values)]:
+            with self.subTest(local_definition=TUPLE_OK[0], characteristics=[Purchase.Characteristic.LOCAL]):
+                purchase = PurchaseFactory(
+                    local_definition=TUPLE_OK[0], characteristics=[Purchase.Characteristic.LOCAL]
+                )
                 self.assertEqual(purchase.local_definition, TUPLE_OK[1])
         for VALUE_NOT_OK in ["  ", 123, "invalid", "123"]:
             with self.subTest(local_definition=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, PurchaseFactory, local_definition=VALUE_NOT_OK)
+        # characteristics does not include "LOCAL"
+        for TUPLE_OK in [(None, None), ("", "")]:
+            with self.subTest(local_definition=TUPLE_OK[0], characteristics=[]):
+                purchase = PurchaseFactory(local_definition=TUPLE_OK[0], characteristics=[])
+                self.assertEqual(purchase.local_definition, TUPLE_OK[1])
+            with self.subTest(local_definition=TUPLE_OK[0], characteristics=[Purchase.Characteristic.BIO]):
+                purchase = PurchaseFactory(local_definition=TUPLE_OK[0], characteristics=[Purchase.Characteristic.BIO])
+                self.assertEqual(purchase.local_definition, TUPLE_OK[1])
+        for VALUE_NOT_OK in [key for key in Purchase.Local.values]:
+            with self.subTest(local_definition=VALUE_NOT_OK, characteristics=[]):
+                self.assertRaises(ValidationError, PurchaseFactory, local_definition=VALUE_NOT_OK, characteristics=[])
+            with self.subTest(local_definition=VALUE_NOT_OK, characteristics=[Purchase.Characteristic.BIO]):
+                self.assertRaises(
+                    ValidationError,
+                    PurchaseFactory,
+                    local_definition=VALUE_NOT_OK,
+                    characteristics=[Purchase.Characteristic.BIO],
+                )
 
     def test_purchase_price_ht_validation(self):
         """
