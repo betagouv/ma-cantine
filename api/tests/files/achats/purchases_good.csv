@@ -1,3 +1,5 @@
 siret,description,fournisseur,date,prix_ht,famille_produits,caracteristiques,definition_local
-21010034300016,"Pommes, rouges",Le bon traiteur ,2022-05-02,90.11, PRODUITS_LAITIERS ,"BIO, LOCAL", DEPARTMENT
-21010034300016,"Pommes, vertes",Le bon traiteur ,2022-05-03,910.11, PRODUITS_LAITIERS ,"BIO, LOCAL", DEPARTMENT
+21010034300016,"Pommes, rouges, local",Le bon traiteur ,2022-05-02,90.11, PRODUITS_LAITIERS ,"BIO, LOCAL", DEPARTMENT
+21010034300016,"Pommes, vertes 1",Le bon traiteur ,2022-05-03,910.11, PRODUITS_LAITIERS,,
+21010034300016,"Pommes, vertes 2",Le bon traiteur ,2022-05-03,910.11,,BIO ,
+21010034300016,"Pommes, vertes 3",Le bon traiteur ,2022-05-03,910.11,,,

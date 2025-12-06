@@ -82,7 +82,7 @@ class Purchase(SoftDeletionModel):
     provider = models.TextField(null=True, blank=True, verbose_name="fournisseur")
     category = models.CharField(
         max_length=255, choices=PurchaseCategory.choices, null=True, blank=True, verbose_name="catégorie"
-    )
+    )  # not used anymore ?
     family = models.CharField(
         max_length=255, choices=Family.choices, null=True, blank=True, verbose_name="famille de produits"
     )
