@@ -113,6 +113,13 @@ class Purchase(SoftDeletionModel):
         verbose_name="Source de création de l'achat",
     )
 
+    def save(self, **kwargs):
+        """
+        - full_clean(): run validations (with extra validations in clean())
+        """
+        self.full_clean()
+        super().save(**kwargs)
+
     @property
     def readable_family(self):
         if not self.family:

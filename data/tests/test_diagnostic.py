@@ -54,7 +54,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
             with self.subTest(year=VALUE_OK_ON_SAVE):
                 diagnostic = DiagnosticFactory(year=VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertEqual(diagnostic.year, VALUE_OK_ON_SAVE)
-        for VALUE_NOT_OK_ON_SAVE in ["", "  ", "abcd"]:
+        for VALUE_NOT_OK_ON_SAVE in ["", "  ", "invalid"]:
             with self.subTest(year=VALUE_NOT_OK_ON_SAVE):
                 self.assertRaises(
                     ValueError, Diagnostic.objects.create, year=VALUE_NOT_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR
