@@ -33,22 +33,21 @@ const saveCanteen = (props) => {
   if (form.hasSiret === "no-siret") delete form.siret
   canteenService
     .updateCanteen(form, canteenId)
-    .then((response) => {
-      const hasRedirect = route.query['redirection'].length > 1
-      if(!response.id) store.notifyServerError()
-      else if (response.id && hasRedirect) router.push(route.query['redirection'])
-      else goToCanteenPage(response)
+    .then((canteen) => {
+      if(canteen.id) goToCanteenPage(canteen)
+      else store.notifyServerError()
   })
     .catch((e) => store.notifyServerError(e))
 }
 
-/* After canteen is saved */
+/* Page redirection */
 const goToCanteenPage = (canteen) => {
-  const canteenUrl = urlService.getCanteenUrl(canteen)
-  router.replace({
+  const canteenPage = {
     name: "GestionnaireCantineGerer",
-    params: { canteenUrlComponent: canteenUrl },
-  })
+    params: { canteenUrlComponent: urlService.getCanteenUrl(canteen) },
+  }
+  const redirectPage = route.query['redirection']
+  router.replace(redirectPage || canteenPage)
 }
 
 </script>
