@@ -50,15 +50,9 @@
         La fourchette en restauration collective est comprise entre 0,50 € et 20 €.
         <br />
         Le nombre de repas annuels renseigné est incorrect ?
-        <router-link
-          :to="{
-            name: 'GestionnaireCantineModifier',
-            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-            query: { redirection: $router.currentRoute.path },
-          }"
-        >
+        <button class="text-decoration-underline fr-link" @click="modifyYearlyMealCount">
           Cliquez-ici pour le modifier.
-        </router-link>
+        </button>
       </p>
       <p v-if="mealPriceError" class="color-warning">
         <v-icon class="color-warning">$error-warning-line</v-icon>
@@ -167,6 +161,16 @@ export default {
     },
   },
   methods: {
+    modifyYearlyMealCount() {
+      this.$emit("save-diagnostic-and-go-to-page", {
+        payload: this.payload,
+        nextPage: {
+          name: "GestionnaireCantineModifier",
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
+          query: { redirection: this.$router.currentRoute.path },
+        },
+      })
+    },
     updatePayload() {
       this.checkTotal()
       if (!this.hasError) this.$emit("update-payload", { payload: this.payload })

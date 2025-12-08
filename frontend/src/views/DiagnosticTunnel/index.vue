@@ -53,6 +53,7 @@
           :diagnostic="diagnostic"
           :stepUrlSlug="stepUrlSlug"
           v-on:update-payload="updatePayload"
+          v-on:save-diagnostic-and-go-to-page="saveDiagnosticAndGoToPage"
           v-on:tunnel-autofill="onTunnelAutofill"
           v-on:update-steps="updateSteps"
         />
@@ -244,6 +245,10 @@ export default {
       this.$set(this, "payload", payload)
       this.formIsValid = formIsValid
     },
+    saveDiagnosticAndGoToPage({ payload, nextPage }) {
+      this.$set(this, "payload", payload)
+      this.saveDiagnostic(nextPage)
+    },
     fetchCanteen() {
       const id = this.canteenId
       return this.$store.dispatch("fetchCanteen", { id }).then((canteen) => {
@@ -257,7 +262,7 @@ export default {
     validateForm() {
       this.formIsValid = true
     },
-    saveDiagnostic() {
+    saveDiagnostic(nextPage) {
       if (!this.canteen || !this.diagnostic) return Promise.reject()
       this.updateProgress()
       return this.$store
@@ -270,6 +275,7 @@ export default {
           // if the save is successful, make sure we are showing the up to date data
           Object.assign(this.diagnostic, response)
           this.bypassLeaveWarning = true
+          if (nextPage) this.$router.push(nextPage)
         })
         .catch((e) => {
           if (e.jsonPromise) return e.jsonPromise.then(this.showBackendErrorMessage).then(() => Promise.reject())
