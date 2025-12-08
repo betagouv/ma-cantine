@@ -47,7 +47,7 @@
         </strong>
       </p>
       <p>
-        La fourchette en restauration collective est comprise entre 0,50€ et 20€.
+        La fourchette en restauration collective est comprise entre 0,50 € et 20 €.
         <br />
         Le nombre de repas annuels renseigné est incorrect ?
         <router-link
