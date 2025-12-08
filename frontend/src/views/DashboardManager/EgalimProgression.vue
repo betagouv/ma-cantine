@@ -283,12 +283,12 @@ export default {
     submitTeledeclaration() {
       return this.$store
         .dispatch("submitTeledeclaration", { diagnosticId: this.canteenDiagnostic.id, canteenId: this.canteen.id })
-        .then((diagnostic) => {
+        .then(() => {
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
-          this.replaceDiagnostic(diagnostic)
+          this.$emit("update-canteen")
           window.scrollTo(0, 0)
         })
         .catch((e) => {

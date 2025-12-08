@@ -21,7 +21,7 @@
 
     <div>
       <div class="mt-4">
-        <EgalimProgression :canteen="canteen" />
+        <EgalimProgression :canteen="canteen" @update-canteen="updateCanteen()" />
       </div>
 
       <div>
@@ -116,6 +116,10 @@ export default {
     },
   },
   methods: {
+    updateCanteen() {
+      this.canteen = null
+      this.fetchCanteenIfNeeded()
+    },
     fetchCanteenIfNeeded() {
       if (this.canteen?.id === this.canteenId) return
       const id = this.canteenId
