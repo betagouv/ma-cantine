@@ -158,25 +158,15 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             pk=OuterRef("diagnostic_for_year"),
             central_kitchen_diagnostic_mode__isnull=False,
         ).exclude(central_kitchen_diagnostic_mode="")
+        diagnostics_teledeclared = diagnostics.submitted()
         return self.annotate(
             diagnostic_for_year=Subquery(diagnostics.values("id")[:1]),
             has_diagnostic_filled_for_year=Exists(Subquery(diagnostics_filled)),
             diagnostic_for_year_cc_mode=Subquery(
                 diagnostic_for_year_with_cc_mode.values("central_kitchen_diagnostic_mode")[:1]
             ),
+            has_diagnostic_teledeclared_for_year=Exists(Subquery(diagnostics_teledeclared)),
         )
-
-    def annotate_with_td_for_year(self, year):
-        from data.models import Teledeclaration
-
-        self = self.annotate_with_central_kitchen_id()
-
-        tds = Teledeclaration.objects.filter(
-            Q(canteen=OuterRef("pk")) | Q(canteen=OuterRef("central_kitchen_id")),
-            year=year,
-        )
-        tds_submitted = tds.submitted()
-        return self.annotate(has_td=Exists(Subquery(tds)), has_td_submitted=Exists(Subquery(tds_submitted)))
 
     def annotate_with_requires_line_ministry(self):
         """
@@ -246,11 +236,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         # prep add satellites action
         self = self.annotate_with_satellites_in_db_count()
         self = self.annotate_with_central_kitchen_id()
-        # prep add diag actions
+        # prep add diag & TD actions
         self = self.annotate_with_purchases_for_year(year)
         self = self.annotate_with_diagnostic_for_year(year)
-        # prep TD action
-        self = self.annotate_with_td_for_year(year)
         # annotate with action
         conditions = [
             When(
@@ -259,12 +247,18 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             ),
             When(
                 is_satellite_query()
-                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td_submitted=False),
+                & Q(
+                    diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                    has_diagnostic_teledeclared_for_year=False,
+                ),
                 then=Value(Canteen.Actions.NOTHING_SATELLITE),
             ),
             When(
                 is_satellite_query()
-                & Q(diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL, has_td_submitted=True),
+                & Q(
+                    diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                    has_diagnostic_teledeclared_for_year=True,
+                ),
                 then=Value(Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED),
             ),
             When(
@@ -281,12 +275,19 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         ]
         if is_in_correction():
             conditions.append(
-                When(Q(has_td=True) & Q(has_td_submitted=False), then=Value(Canteen.Actions.TELEDECLARE))
+                When(
+                    Q(has_td=True) & Q(has_diagnostic_teledeclared_for_year=False),
+                    then=Value(Canteen.Actions.TELEDECLARE),
+                )
             )
         if is_in_teledeclaration():
-            conditions.append(When(has_td_submitted=False, then=Value(Canteen.Actions.TELEDECLARE)))
+            conditions.append(
+                When(has_diagnostic_teledeclared_for_year=False, then=Value(Canteen.Actions.TELEDECLARE))
+            )
         else:
-            conditions.append(When(has_td_submitted=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE)))
+            conditions.append(
+                When(has_diagnostic_teledeclared_for_year=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE))
+            )
         return self.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
 
 
@@ -328,9 +329,6 @@ class CanteenManager(SoftDeletionManager):
 
     def annotate_with_diagnostic_for_year(self, year):
         return self.get_queryset().annotate_with_diagnostic_for_year(year)
-
-    def annotate_with_td_for_year(self, year):
-        return self.get_queryset().annotate_with_td_for_year(year)
 
     def annotate_with_requires_line_ministry(self):
         return self.get_queryset().annotate_with_requires_line_ministry()
