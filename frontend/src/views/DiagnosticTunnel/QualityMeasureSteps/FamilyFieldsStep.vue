@@ -192,6 +192,17 @@ export default {
       const isRequiredCategory = this.requiredCategories.includes(this.groupId)
       const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
       if (isRequiredCategory && !isExceptionFields) rules.push(this.validators.required)
+      // Sous-catégories origine France : groupId : "valeurAutresCircuitCourt" "valeurAutresLocal"
+      const franceSubcategoryGroupIDd = ["CIRCUIT_COURT", "LOCAL"]
+      if (franceSubcategoryGroupIDd.includes(this.characteristicId)) {
+        const franceKeyName = this.camelize(`valeur_${fId}_france`)
+        rules.push(
+          this.validators.lteOrEmpty(
+            this.payload[franceKeyName],
+            "€ le total renseigné dans cette catégorie pour les achats origine France"
+          )
+        )
+      }
       return rules
     },
     isOptionnalField(fId) {
