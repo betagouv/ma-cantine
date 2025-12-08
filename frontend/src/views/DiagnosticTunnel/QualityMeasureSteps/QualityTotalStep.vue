@@ -103,7 +103,7 @@ export default {
   },
   computed: {
     displayMealPrice() {
-      return this.payload.valeurTotale !== null && this.canteen.yearlyMealCount !== null
+      return this.payload.valeurTotale && this.payload.valeurTotale !== null && this.canteen.yearlyMealCount !== null
     },
     mealPrice() {
       return Number(this.payload.valeurTotale / this.canteen.yearlyMealCount).toFixed(2)
