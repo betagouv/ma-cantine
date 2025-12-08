@@ -50,6 +50,7 @@
             Votre bilan a été télédéclaré
             <b>{{ timeAgo(diagnostic.teledeclarationDate, true) }}.</b>
           </p>
+          <!-- TODO : remove hardcoded year once endpoint is available -->
           <DownloadLink
             :href="`/api/v1/canteens/${canteen.id}/diagnostics/${diagnostic.id}/teledeclaration/pdf`"
             label="Télécharger le justificatif"
