@@ -48,8 +48,10 @@
         <div v-if="hasActiveTeledeclaration">
           <p>
             Votre bilan a été télédéclaré
-            <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
+            <!--TODO FIX <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>-->
           </p>
+          <!--
+            TODO FIX
           <DownloadLink
             :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
             label="Télécharger le justificatif"
@@ -57,6 +59,7 @@
             target="_blank"
             class="mr-4"
           />
+          -->
           <p v-if="inTeledeclarationCampaign || inCorrectionCampaign">
             En cas d'erreur, vous pouvez modifier vos données
             <span v-if="campaignEndDate">
@@ -279,7 +282,7 @@ import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
-import DownloadLink from "@/components/DownloadLink"
+// import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
 import DataInfoBadge from "@/components/DataInfoBadge"
@@ -305,7 +308,7 @@ export default {
     ProgressTab,
     DsfrTabsVue,
     DsfrNativeSelect,
-    DownloadLink,
+    // DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
     DataInfoBadge,
