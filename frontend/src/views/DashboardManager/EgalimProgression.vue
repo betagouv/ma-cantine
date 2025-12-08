@@ -291,7 +291,7 @@ export default {
     },
     submitTeledeclaration() {
       return this.$store
-        .dispatch("submitTeledeclaration", { id: this.canteenDiagnostic.id })
+        .dispatch("submitTeledeclaration", { diagdiagnosticId: this.canteenDiagnostic.id, canteenId: this.canteen.id })
         .then((diagnostic) => {
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
