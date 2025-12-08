@@ -139,8 +139,8 @@ export default Object.freeze({
       longText: "Produits acquis sur la base de leurs performances en matière environnementale",
     },
     FRANCE: { text: "Origine France" },
-    CIRCUIT_COURT: { text: "Circuit-court" },
-    LOCAL: { text: "Local" },
+    CIRCUIT_COURT: { text: "Origine France : dont circuit-court" },
+    LOCAL: { text: "Origine France : dont local" },
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
@@ -177,8 +177,8 @@ export default Object.freeze({
     },
     NON_EGALIM: { text: "Non-EGalim", color: "blue-grey lighten-2" },
     FRANCE: { text: "Origine France", additional: true },
-    CIRCUIT_COURT: { text: "Circuit-court", additional: true },
-    LOCAL: { text: "Local", additional: true },
+    CIRCUIT_COURT: { text: "Origine France : dont circuit-court", additional: true },
+    LOCAL: { text: "Origine France : dont local", additional: true },
   },
   LocalDefinitions: {
     AUTOUR_SERVICE: { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
