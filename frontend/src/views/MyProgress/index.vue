@@ -528,13 +528,14 @@ export default {
     submitTeledeclaration() {
       return this.$store
         .dispatch("submitTeledeclaration", { diagnosticId: this.diagnostic.id, canteenId: this.canteen.id })
-        .then((diagnostic) => {
+        .then(() => {
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
+          this.fetchCanteen()
           this.fetchCanteenAction()
-          this.updateFromServer(diagnostic)
+          this.assignDiagnostic()
           window.scrollTo(0, 0)
         })
         .catch((e) => {
@@ -551,12 +552,13 @@ export default {
           canteenId: this.canteen.id,
           diagnosticId: this.diagnostic.id,
         })
-        .then((diagnostic) => {
+        .then(() => {
           this.$store.dispatch("notify", {
             title: "Votre télédéclaration a bien été annulée",
           })
+          this.fetchCanteen()
           this.fetchCanteenAction()
-          this.updateFromServer(diagnostic)
+          this.assignDiagnostic()
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         .finally(() => (this.cancelDialog = false))
