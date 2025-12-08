@@ -34,9 +34,11 @@ const saveCanteen = (props) => {
   canteenService
     .updateCanteen(form, canteenId)
     .then((response) => {
-      if (response.id) goToCanteenPage(response)
-      else store.notifyServerError()
-    })
+      const hasRedirect = route.query['redirection'].length > 1
+      if(!response.id) store.notifyServerError()
+      else if (response.id && hasRedirect) router.push(route.query['redirection'])
+      else goToCanteenPage(response)
+  })
     .catch((e) => store.notifyServerError(e))
 }
 
@@ -48,6 +50,7 @@ const goToCanteenPage = (canteen) => {
     params: { canteenUrlComponent: canteenUrl },
   })
 }
+
 </script>
 
 <template>

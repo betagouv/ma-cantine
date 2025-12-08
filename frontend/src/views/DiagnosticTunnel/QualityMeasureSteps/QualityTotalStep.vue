@@ -54,6 +54,7 @@
           :to="{
             name: 'GestionnaireCantineModifier',
             params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+            query: { redirection: $router.currentRoute.path },
           }"
         >
           Cliquez-ici pour le modifier.
