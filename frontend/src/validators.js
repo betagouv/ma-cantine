@@ -66,7 +66,7 @@ export default {
   lteOrEmpty(max, additonnalHelpText) {
     return (input) => {
       if (!input || input <= max) return true
-      return `Le nombre saisi ne peut pas dépasser ${max}${additonnalHelpText}`
+      return `Le nombre saisi ne peut pas dépasser ${max}${additonnalHelpText || ""}`
     }
   },
   urlOrEmpty(input) {
