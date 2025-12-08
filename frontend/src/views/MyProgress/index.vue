@@ -48,7 +48,7 @@
         <div v-if="hasActiveTeledeclaration">
           <p>
             Votre bilan a été télédéclaré
-            <b>{{ timeAgo(diagnostic.modificationDate, true) }}.</b>
+            <b>{{ timeAgo(diagnostic.teledeclarationDate, true) }}.</b>
           </p>
           <!--
           TODO : WAIT FOR ENDPOINT TO BE READY
