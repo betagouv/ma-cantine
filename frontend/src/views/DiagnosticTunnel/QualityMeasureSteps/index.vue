@@ -20,6 +20,7 @@
         v-else-if="step.characteristicId"
         :is="step.componentName"
         :diagnostic="diagnostic"
+        :canteen="canteen"
         :payload="payload"
         :purchasesSummary="purchasesSummary"
         :characteristicId="step.characteristicId"

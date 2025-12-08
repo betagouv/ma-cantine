@@ -39,11 +39,23 @@
       @field-update="errorUpdate"
       :purchasesSummary="purchasesSummary"
     />
+    <DsfrHighlight v-if="displayMealPrice" class="mt-8 ml-0">
+      <p>
+        <strong>{{ mealPrice }}€</strong>
+      </p>
+      <p>
+        Coût repas estimé (€HT/nombre de repas annuel) : {{ payload.valeurTotale }} €HT /
+        {{ canteen.yearlyMealCount }} repas annuel
+        <br />
+        La fourchette en restauration collective est comprise entre 0,50€ et 20€.
+      </p>
+    </DsfrHighlight>
   </div>
 </template>
 
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
+import DsfrHighlight from "@/components/DsfrHighlight"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
 import FormErrorCallout from "@/components/FormErrorCallout"
@@ -56,7 +68,7 @@ const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs p
 
 export default {
   name: "QualityTotalStep",
-  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout, DsfrCallout },
+  components: { DsfrCurrencyField, DsfrHighlight, PurchaseHint, ErrorHelper, FormErrorCallout, DsfrCallout },
   props: {
     diagnostic: {
       type: Object,
@@ -67,6 +79,9 @@ export default {
       required: true,
     },
     purchasesSummary: {
+      type: Object,
+    },
+    canteen: {
       type: Object,
     },
   },
@@ -81,6 +96,14 @@ export default {
     }
   },
   computed: {
+    displayMealPrice() {
+      return this.payload.valeurTotale !== null && this.canteen.yearlyMealCount !== null
+    },
+    mealPrice() {
+      const result = this.payload.valeurTotale / this.canteen.yearlyMealCount
+      const roundedResult = Math.round(result * 100) / 100
+      return roundedResult
+    },
     validators() {
       return validators
     },
