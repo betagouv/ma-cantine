@@ -158,7 +158,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             pk=OuterRef("diagnostic_for_year"),
             central_kitchen_diagnostic_mode__isnull=False,
         ).exclude(central_kitchen_diagnostic_mode="")
-        diagnostics_teledeclared = diagnostics.submitted()
+        diagnostics_teledeclared = diagnostics.teledeclared()
         return self.annotate(
             diagnostic_for_year=Subquery(diagnostics.values("id")[:1]),
             has_diagnostic_filled_for_year=Exists(Subquery(diagnostics_filled)),
@@ -274,9 +274,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if is_in_correction():
+            # TODO: figure out a way to detect that the canteen has indeed teledeclared during the teledeclaration campaign
             conditions.append(
                 When(
-                    Q(has_td=True) & Q(has_diagnostic_teledeclared_for_year=False),
+                    Q(has_diagnostic_teledeclared_for_year=False),
                     then=Value(Canteen.Actions.TELEDECLARE),
                 )
             )
