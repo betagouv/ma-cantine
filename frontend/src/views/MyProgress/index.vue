@@ -380,7 +380,7 @@ export default {
       return this.inCorrectionCampaign && correctionActions.includes(this.canteenAction)
     },
     hasActiveTeledeclaration() {
-      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      return this.diagnostic?.isTeledeclared
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
