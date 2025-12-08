@@ -49,6 +49,10 @@
         <br />
         La fourchette en restauration collective est comprise entre 0,50€ et 20€.
       </p>
+      <p v-if="mealPriceError" class="color-warning">
+        <v-icon class="color-warning">$error-warning-line</v-icon>
+        Attention, donnée potentiellement aberrante : le coût estimé semble incohérent
+      </p>
     </DsfrHighlight>
   </div>
 </template>
@@ -93,6 +97,8 @@ export default {
       totalFamiliesErrorMessage: null,
       errorHelperUsed: false,
       errorHelperFields: [],
+      minCostPerMealExpected: 0.5,
+      maxCostPerMealExpected: 20,
     }
   },
   computed: {
@@ -101,6 +107,11 @@ export default {
     },
     mealPrice() {
       return Number(this.payload.valeurTotale / this.canteen.yearlyMealCount).toFixed(2)
+    },
+    mealPriceError() {
+      console.log("min", this.mealPrice < this.minCostPerMealExpected)
+      console.log("max", this.mealPrice > this.maxCostPerMealExpected)
+      return this.mealPrice < this.minCostPerMealExpected || this.mealPrice > this.maxCostPerMealExpected
     },
     validators() {
       return validators
@@ -245,3 +256,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.color-warning {
+  color: #fc5d00 !important;
+}
+</style>
