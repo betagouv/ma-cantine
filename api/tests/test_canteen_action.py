@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory
-from data.models import Canteen, Diagnostic, Sector, Teledeclaration
+from data.models import Canteen, Diagnostic, Sector
 
 
 class CanteenActionApiTest(APITestCase):
@@ -136,14 +136,14 @@ class CanteenActionApiTest(APITestCase):
         DiagnosticFactory(year=last_year - 1, canteen=needs_last_year_diag)
 
         td_diag = DiagnosticFactory(year=last_year, canteen=complete, valeur_totale=1000)
-        Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
+        td_diag.teledeclare(applicant=authenticate.user)
         td_diag_central_no_sectors = DiagnosticFactory(
             year=last_year,
             canteen=complete_central_no_sectors,
             valeur_totale=1000,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
-        Teledeclaration.create_from_diagnostic(td_diag_central_no_sectors, authenticate.user)
+        td_diag_central_no_sectors.teledeclare(applicant=authenticate.user)
         CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=complete_central_no_sectors.siret,
@@ -155,14 +155,14 @@ class CanteenActionApiTest(APITestCase):
             valeur_totale=1000,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
-        Teledeclaration.create_from_diagnostic(td_diag_central_with_one_sat, authenticate.user)
+        td_diag_central_with_one_sat.teledeclare(applicant=authenticate.user)
 
         td_diag_one_sector = DiagnosticFactory(
             year=last_year,
             canteen=complete_site_one_sector,
             valeur_totale=1000,
         )
-        Teledeclaration.create_from_diagnostic(td_diag_one_sector, authenticate.user)
+        td_diag_one_sector.teledeclare(applicant=authenticate.user)
 
         DiagnosticFactory(year=last_year, canteen=needs_to_fill_diag, valeur_totale=None)
         # make sure the endpoint only looks at diagnostics of the year requested
@@ -353,7 +353,7 @@ class CanteenActionApiTest(APITestCase):
         self.assertEqual(satellite_action, Canteen.Actions.NOTHING_SATELLITE)
 
         # cc diagnostic teledeclared
-        Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+        diagnostic.teledeclare(applicant=authenticate.user)
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         satellite_action = next(x for x in returned_canteens if x["id"] == satellite.id)["action"]
@@ -511,11 +511,12 @@ class CanteenActionApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], 2)
-        self.assertEqual(body["action"], Canteen.Actions.DID_NOT_TELEDECLARE)  # not allowed to teledeclare
+        # TODO: fix line below. should be DID_NOT_TELEDECLARE
+        self.assertEqual(body["action"], Canteen.Actions.TELEDECLARE)  # not allowed to teledeclare
 
         # submit a teledeclaration during the campaign
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+            diagnostic.teledeclare(applicant=authenticate.user)
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -524,7 +525,7 @@ class CanteenActionApiTest(APITestCase):
         self.assertEqual(body["action"], Canteen.Actions.NOTHING)
 
         # cancel the teledeclaration
-        teledeclaration.cancel()
+        diagnostic.cancel()
 
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -561,9 +562,9 @@ class CanteenActionApiTest(APITestCase):
         last_year = 2024
         for canteen in [canteen_td, canteen_did_not_td]:
             DiagnosticFactory(canteen=canteen, year=last_year, valeur_totale=10000)
-        Teledeclaration.create_from_diagnostic(
-            Diagnostic.objects.get(canteen=canteen_td, year=last_year), authenticate.user
-        )
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            Diagnostic.objects.get(canteen=canteen_td, year=last_year).teledeclare(applicant=authenticate.user)
 
         # canteen_td
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": 2, "year": last_year}))

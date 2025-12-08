@@ -550,31 +550,30 @@ class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         CanteenFactory()
+        canteen_with_diagnostic_teledeclared = CanteenFactory()
         canteen_with_diagnostic_cancelled = CanteenFactory()
-        canteen_with_diagnostic_submitted = CanteenFactory()
-        diagnostic_filled = DiagnosticFactory(
+        cls.diagnostic_filled_teledeclared = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_teledeclared,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2024,
+            valeur_totale=1000,
+        )
+        cls.diagnostic_filled_cancelled = DiagnosticFactory(
             canteen=canteen_with_diagnostic_cancelled,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2024,
             valeur_totale=1000,
-        )  # filled
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
-            td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
-            td_to_cancel.cancel()
-        diagnostic_filled_and_submitted = DiagnosticFactory(
-            canteen=canteen_with_diagnostic_submitted,
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            year=2024,
-            valeur_totale=1000,
-        )  # filled & submitted
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
-            Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
-        DiagnosticFactory(
-            canteen=canteen_with_diagnostic_submitted,
+        )
+        cls.diagnostic_not_filled = DiagnosticFactory(
+            canteen=canteen_with_diagnostic_teledeclared,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2023,
             valeur_totale=None,
         )  # missing data
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            cls.diagnostic_filled_teledeclared.teledeclare(applicant=UserFactory())
+            cls.diagnostic_filled_cancelled.teledeclare(applicant=UserFactory())
+            cls.diagnostic_filled_cancelled.cancel()
 
     def test_annotate_with_diagnostic_for_year(self):
         self.assertEqual(Canteen.objects.count(), 3)
@@ -611,17 +610,25 @@ class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
             0,
         )
         # TODO: diagnostic_for_year_cc_mode
-
-    def test_annotate_with_td_for_year(self):
-        self.assertEqual(Canteen.objects.count(), 3)
-        # has_td
-        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2024).filter(has_td=True).count(), 2)
-        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2023).filter(has_td=True).count(), 0)
-        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2022).filter(has_td=True).count(), 0)
-        # has_td_submitted
-        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2024).filter(has_td_submitted=True).count(), 1)
-        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2023).filter(has_td_submitted=True).count(), 0)
-        self.assertEqual(Canteen.objects.annotate_with_td_for_year(2022).filter(has_td_submitted=True).count(), 0)
+        # has_diagnostic_teledeclared_for_year
+        self.assertEqual(
+            Canteen.objects.annotate_with_diagnostic_for_year(2024)
+            .filter(has_diagnostic_teledeclared_for_year=True)
+            .count(),
+            1,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_diagnostic_for_year(2023)
+            .filter(has_diagnostic_teledeclared_for_year=True)
+            .count(),
+            0,
+        )
+        self.assertEqual(
+            Canteen.objects.annotate_with_diagnostic_for_year(2022)
+            .filter(has_diagnostic_teledeclared_for_year=True)
+            .count(),
+            0,
+        )
 
 
 class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
