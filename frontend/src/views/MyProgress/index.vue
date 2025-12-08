@@ -343,6 +343,14 @@ export default {
   computed: {
     tabHeaders() {
       const tabHeaders = []
+      tabHeaders.push({
+        urlSlug: this.establishmentId,
+        text: "Établissement",
+        title: "Établissement",
+        icon: "$building-fill",
+        id: "etablissement",
+        to: { params: { measure: this.establishmentId } },
+      })
       for (let i = 0; i < keyMeasures.length; i++) {
         const measure = keyMeasures[i]
         const item = {
@@ -355,14 +363,7 @@ export default {
         }
         tabHeaders.push(item)
       }
-      tabHeaders.push({
-        urlSlug: this.establishmentId,
-        text: "Établissement",
-        title: "Établissement",
-        icon: "$building-fill",
-        id: "etablissement",
-        to: { params: { measure: this.establishmentId } },
-      })
+
       return tabHeaders
     },
     mobileSelectItems() {

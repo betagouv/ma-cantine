@@ -39,11 +39,37 @@
       @field-update="errorUpdate"
       :purchasesSummary="purchasesSummary"
     />
+    <DsfrHighlight v-if="displayMealPrice" class="mt-8 ml-0">
+      <p>
+        <strong>
+          Coût repas estimé {{ mealPrice }}€ = {{ payload.valeurTotale }} €HT / {{ canteen.yearlyMealCount }} repas
+          annuel
+        </strong>
+      </p>
+      <p>
+        La fourchette en restauration collective est comprise entre 0,50 € et 20 €.
+        <br />
+        Le nombre de repas annuels renseigné est incorrect ?
+        <router-link
+          :to="{
+            name: 'GestionnaireCantineModifier',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+        >
+          Cliquez-ici pour le modifier.
+        </router-link>
+      </p>
+      <p v-if="mealPriceError" class="color-warning">
+        <v-icon class="color-warning">$error-warning-line</v-icon>
+        Attention, donnée potentiellement aberrante : le coût estimé semble incohérent
+      </p>
+    </DsfrHighlight>
   </div>
 </template>
 
 <script>
 import DsfrCurrencyField from "@/components/DsfrCurrencyField"
+import DsfrHighlight from "@/components/DsfrHighlight"
 import PurchaseHint from "@/components/KeyMeasureDiagnostic/PurchaseHint"
 import ErrorHelper from "./ErrorHelper"
 import FormErrorCallout from "@/components/FormErrorCallout"
@@ -56,7 +82,7 @@ const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs p
 
 export default {
   name: "QualityTotalStep",
-  components: { DsfrCurrencyField, PurchaseHint, ErrorHelper, FormErrorCallout, DsfrCallout },
+  components: { DsfrCurrencyField, DsfrHighlight, PurchaseHint, ErrorHelper, FormErrorCallout, DsfrCallout },
   props: {
     diagnostic: {
       type: Object,
@@ -69,6 +95,9 @@ export default {
     purchasesSummary: {
       type: Object,
     },
+    canteen: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -78,9 +107,20 @@ export default {
       totalFamiliesErrorMessage: null,
       errorHelperUsed: false,
       errorHelperFields: [],
+      minCostPerMealExpected: 0.5,
+      maxCostPerMealExpected: 20,
     }
   },
   computed: {
+    displayMealPrice() {
+      return this.payload.valeurTotale && this.payload.valeurTotale !== null && this.canteen.yearlyMealCount !== null
+    },
+    mealPrice() {
+      return Number(this.payload.valeurTotale / this.canteen.yearlyMealCount).toFixed(2)
+    },
+    mealPriceError() {
+      return this.mealPrice < this.minCostPerMealExpected || this.mealPrice > this.maxCostPerMealExpected
+    },
     validators() {
       return validators
     },
@@ -224,3 +264,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.color-warning {
+  color: #fc5d00 !important;
+}
+</style>

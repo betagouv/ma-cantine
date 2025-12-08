@@ -76,8 +76,8 @@ export default {
       tdConfirmed: false,
       teledeclarationFormIsValid: true,
       maxSatellitesExpected: 200,
-      minCostPerMealExpected: 0.1,
-      maxCostPerMealExpected: 10,
+      minCostPerMealExpected: 0.5,
+      maxCostPerMealExpected: 20,
       minDaysOpenExpected: 50,
       maxDaysOpenExpected: 365,
     }
