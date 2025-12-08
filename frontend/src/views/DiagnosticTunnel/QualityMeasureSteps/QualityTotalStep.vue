@@ -100,9 +100,7 @@ export default {
       return this.payload.valeurTotale !== null && this.canteen.yearlyMealCount !== null
     },
     mealPrice() {
-      const result = this.payload.valeurTotale / this.canteen.yearlyMealCount
-      const roundedResult = Math.round(result * 100) / 100
-      return roundedResult
+      return Number(this.payload.valeurTotale / this.canteen.yearlyMealCount).toFixed(2)
     },
     validators() {
       return validators
