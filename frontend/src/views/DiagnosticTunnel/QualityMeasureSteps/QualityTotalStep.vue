@@ -42,7 +42,7 @@
     <DsfrHighlight v-if="displayMealPrice" class="mt-8 ml-0">
       <p>
         <strong>
-          Coût repas estimé {{ mealPrice }}€ = {{ payload.valeurTotale }} €HT / {{ canteen.yearlyMealCount }} repas
+          Coût repas estimé {{ mealPrice }} € = {{ payload.valeurTotale }} €HT / {{ canteen.yearlyMealCount }} repas
           annuel
         </strong>
       </p>
