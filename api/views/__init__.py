@@ -29,6 +29,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
     DiagnosticsToTeledeclareListView,
     DiagnosticTeledeclareView,
+    DiagnosticTeledeclarationCancelView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
 )

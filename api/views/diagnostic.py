@@ -192,6 +192,22 @@ class DiagnosticTeledeclareView(APIView):
         return HttpResponse(status=200)
 
 
+class DiagnosticTeledeclarationCancelView(APIView):
+    permission_classes = [IsLinkedCanteenManager]
+    required_scopes = ["canteen"]
+
+    def post(self, request, *args, **kwargs):
+        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
+        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
+            raise PermissionDenied()
+        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+
+        # if ValidationError, it will be raised (and handled by custom_exception_handler)
+        diagnostic.cancel()
+
+        return HttpResponse(status=200)
+
+
 class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
     serializer_class = DiagnosticTeledeclaredAnalysisSerializer
     filter_backends = [django_filters.DjangoFilterBackend]
