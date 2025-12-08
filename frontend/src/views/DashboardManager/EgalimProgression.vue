@@ -39,7 +39,7 @@
               color="primary"
               :to="{
                 name: 'MyProgress',
-                params: { canteenUrlComponent, year: year, measure: firstActionableMeasure },
+                params: { canteenUrlComponent, year: year, measure: 'etablissement' },
               }"
             >
               <span class="fr-text-lg">Faire le bilan {{ year }}</span>
@@ -221,15 +221,6 @@ export default {
       }
       return this.canteenDiagnostic
     },
-    firstActionableMeasure() {
-      if (
-        this.canteen.productionType === "site_cooked_elsewhere" &&
-        this.centralDiagnostic?.centralKitchenDiagnosticMode === "APPRO"
-      ) {
-        return "gaspillage-alimentaire"
-      }
-      return "qualite-des-produits"
-    },
     hasPurchases() {
       return false
     },
@@ -277,7 +268,7 @@ export default {
         params: {
           canteenUrlComponent: this.canteenUrlComponent,
           year: this.canteenDiagnostic.year,
-          measure: this.firstActionableMeasure,
+          measure: "etablissement",
         },
       }
     },
