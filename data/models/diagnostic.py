@@ -56,22 +56,26 @@ def valeur_totale_is_filled_query():
 
 def diagnostic_type_simple_is_filled_query():
     """
-    NOTE: changes in 2025
+    - common checks: diagnostic_type & valeur_totale
+    - before/after 2025: required fields change
     """
-    before_2O25 = Q(year__lt=2025) & Q(
-        **{f"{field}__isnull": False for field in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_BEFORE_2025}
+    before_2025 = Q(year__lt=2025) & Q(
+        **{f"{field}__isnull": False for field in Diagnostic.APPRO_FIELDS_REQUIRED_BEFORE_2025}
     )
-    after_2O25 = Q(year__gte=2025) & Q(
+    after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025}
     )
-    return diagnostic_type_simple_query() & valeur_totale_is_filled_query() & (before_2O25 | after_2O25)
+    return diagnostic_type_simple_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
 
 
 def diagnostic_type_complete_is_filled_query():
     """
-    NOTE: changes in 2025
+    - common checks: diagnostic_type & valeur_totale
+    - before/after 2025: required fields change
     """
-    before_2025 = Q(year__lt=2025) & Q(valeur_totale__gt=0)
+    before_2025 = Q(year__lt=2025) & Q(
+        **{f"{field}__isnull": False for field in Diagnostic.APPRO_FIELDS_REQUIRED_BEFORE_2025}
+    )
     after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025}
     )
@@ -387,7 +391,7 @@ class Diagnostic(models.Model):
     SIMPLE_APPRO_FIELDS_FOR_IMPORT = [
         field_name for field_name in SIMPLE_APPRO_FIELDS if "commerce_equitable" not in field_name
     ]
-    SIMPLE_APPRO_FIELDS_REQUIRED_BEFORE_2025 = [
+    APPRO_FIELDS_REQUIRED_BEFORE_2025 = [
         "valeur_totale",
     ]
     SIMPLE_APPRO_FIELDS_REQUIRED_2025 = [
