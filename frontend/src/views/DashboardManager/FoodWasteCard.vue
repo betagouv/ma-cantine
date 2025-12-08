@@ -6,7 +6,7 @@
       </v-icon>
       <h3 class="fr-text font-weight-bold">{{ keyMeasure.shortTitle }}</h3>
     </v-card-title>
-    <v-card-text v-if="!delegatedToCentralKitchen">
+    <v-card-text v-if="!delegatedToCentralKitchen && needsData">
       <KeyMeasureBadge class="py-0 ml-8" :canteen="canteen" :diagnostic="diagnostic" :year="year" :id="measureId" />
     </v-card-text>
     <v-card-text v-if="!needsData && level" :class="`mt-n4 pl-12 ${level.colorClass}`">

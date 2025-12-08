@@ -21,6 +21,7 @@
       </v-card-title>
       <v-card-text v-if="!delegatedToCentralKitchen">
         <KeyMeasureBadge
+          v-if="!canteenDiagnostic.isTeledeclared"
           class="py-0 ml-8"
           :canteen="canteen"
           :diagnostic="canteenDiagnostic"
@@ -78,6 +79,7 @@
       </v-card-title>
       <v-card-text>
         <KeyMeasureBadge
+          v-if="!canteenDiagnostic.isTeledeclared"
           class="py-0 ml-8"
           :canteen="canteen"
           :diagnostic="canteenDiagnostic"
