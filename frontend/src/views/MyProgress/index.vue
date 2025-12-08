@@ -48,8 +48,10 @@
         <div v-if="hasActiveTeledeclaration">
           <p>
             Votre bilan a été télédéclaré
-            <b>{{ timeAgo(diagnostic.teledeclaration.creationDate, true) }}.</b>
+            <b>{{ timeAgo(diagnostic.teledeclarationDate, true) }}.</b>
           </p>
+          <!--
+          TODO : WAIT FOR ENDPOINT TO BE READY
           <DownloadLink
             :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
             label="Télécharger le justificatif"
@@ -57,6 +59,7 @@
             target="_blank"
             class="mr-4"
           />
+          -->
           <p v-if="inTeledeclarationCampaign || inCorrectionCampaign">
             En cas d'erreur, vous pouvez modifier vos données
             <span v-if="campaignEndDate">
@@ -279,7 +282,7 @@ import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
-import DownloadLink from "@/components/DownloadLink"
+// import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
 import DataInfoBadge from "@/components/DataInfoBadge"
@@ -305,7 +308,7 @@ export default {
     ProgressTab,
     DsfrTabsVue,
     DsfrNativeSelect,
-    DownloadLink,
+    // DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
     DataInfoBadge,
@@ -380,7 +383,7 @@ export default {
       return this.inCorrectionCampaign && correctionActions.includes(this.canteenAction)
     },
     hasActiveTeledeclaration() {
-      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      return this.diagnostic?.isTeledeclared
     },
     isCentralKitchen() {
       return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
@@ -525,13 +528,14 @@ export default {
     submitTeledeclaration() {
       return this.$store
         .dispatch("submitTeledeclaration", { diagnosticId: this.diagnostic.id, canteenId: this.canteen.id })
-        .then((diagnostic) => {
+        .then(() => {
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
+          this.fetchCanteen()
           this.fetchCanteenAction()
-          this.updateFromServer(diagnostic)
+          this.assignDiagnostic()
           window.scrollTo(0, 0)
         })
         .catch((e) => {
@@ -546,24 +550,18 @@ export default {
       return this.$store
         .dispatch("cancelTeledeclaration", {
           canteenId: this.canteen.id,
-          id: this.diagnostic.teledeclaration.id,
+          diagnosticId: this.diagnostic.id,
         })
-        .then((diagnostic) => {
+        .then(() => {
           this.$store.dispatch("notify", {
             title: "Votre télédéclaration a bien été annulée",
           })
+          this.fetchCanteen()
           this.fetchCanteenAction()
-          this.updateFromServer(diagnostic)
+          this.assignDiagnostic()
         })
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         .finally(() => (this.cancelDialog = false))
-    },
-    updateFromServer(diagnostic) {
-      const diagnosticIndex = this.canteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
-      if (diagnosticIndex > -1) {
-        this.canteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
-        this.assignDiagnostic()
-      }
     },
     handleModeChange() {
       const mode = this.centralKitchenDiagnosticMode

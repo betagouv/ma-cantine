@@ -565,9 +565,9 @@ export default new Vuex.Store({
         })
     },
 
-    cancelTeledeclaration(context, { id }) {
+    cancelTeledeclaration(context, { canteenId, diagnosticId }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/teledeclaration/${id}/cancel/`, {
+      return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/teledeclaration/cancel`, {
         method: "POST",
         headers,
       })

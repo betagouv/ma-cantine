@@ -8,7 +8,7 @@
         {{ keyMeasure.shortTitle }}
       </h3>
     </v-card-title>
-    <v-card-text v-if="!delegatedToCentralKitchen">
+    <v-card-text v-if="!delegatedToCentralKitchen && needsData">
       <KeyMeasureBadge class="py-0 ml-8" :canteen="canteen" :diagnostic="diagnostic" :year="year" :id="measureId" />
     </v-card-text>
     <v-card-text v-if="!needsData && level" :class="`mt-n4 pl-12 ${level.colorClass}`">
@@ -57,7 +57,7 @@ export default {
       return keyMeasures.find((x) => x.id === this.measureId)
     },
     needsData() {
-      const hasActiveTeledeclaration = this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      const hasActiveTeledeclaration = this.diagnostic?.isTeledeclared
       return !hasActiveTeledeclaration && !this.delegatedToCentralKitchen && this.level === Constants.Levels.UNKNOWN
     },
     level() {

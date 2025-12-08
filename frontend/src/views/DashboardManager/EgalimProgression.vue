@@ -197,7 +197,7 @@ export default {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
     },
     hasActiveTeledeclaration() {
-      return this.canteenDiagnostic?.teledeclaration?.status === "SUBMITTED"
+      return this.canteenDiagnostic?.isTeledeclared
     },
     lastYearDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.lastYear)
@@ -282,13 +282,13 @@ export default {
     },
     submitTeledeclaration() {
       return this.$store
-        .dispatch("submitTeledeclaration", { diagdiagnosticId: this.canteenDiagnostic.id, canteenId: this.canteen.id })
-        .then((diagnostic) => {
+        .dispatch("submitTeledeclaration", { diagnosticId: this.canteenDiagnostic.id, canteenId: this.canteen.id })
+        .then(() => {
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
             status: "success",
           })
-          this.replaceDiagnostic(diagnostic)
+          this.$emit("update-canteen")
           window.scrollTo(0, 0)
         })
         .catch((e) => {

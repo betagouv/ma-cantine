@@ -160,7 +160,13 @@ class FullDiagnosticSerializer(DiagnosticSerializer):
 
     class Meta:
         model = Diagnostic
-        fields = FIELDS + ["teledeclaration"] + Diagnostic.CREATION_META_FIELDS + Diagnostic.TUNNEL_PROGRESS_FIELDS
+        fields = (
+            FIELDS
+            + ["teledeclaration"]
+            + Diagnostic.TELEDECLARATION_FIELDS
+            + Diagnostic.CREATION_META_FIELDS
+            + Diagnostic.TUNNEL_PROGRESS_FIELDS
+        )
         read_only_fields = fields
 
 

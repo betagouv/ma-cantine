@@ -208,7 +208,7 @@ export default {
       return false
     },
     hasActiveTeledeclaration() {
-      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      return this.diagnostic?.isTeledeclared
     },
     modificationLink() {
       return this.isCanteenTab
