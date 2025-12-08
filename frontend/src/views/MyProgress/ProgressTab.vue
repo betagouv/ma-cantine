@@ -212,7 +212,11 @@ export default {
     },
     modificationLink() {
       return this.isCanteenTab
-        ? { name: "CanteenForm", params: { canteenUrlComponent: this.canteenUrlComponent } }
+        ? {
+            name: "GestionnaireCantineModifier",
+            params: { canteenUrlComponent: this.canteenUrlComponent },
+            query: { redirection: this.$router.currentRoute.path },
+          }
         : {
             name: "DiagnosticTunnel",
             params: {
