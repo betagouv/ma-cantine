@@ -109,8 +109,6 @@ export default {
       return Number(this.payload.valeurTotale / this.canteen.yearlyMealCount).toFixed(2)
     },
     mealPriceError() {
-      console.log("min", this.mealPrice < this.minCostPerMealExpected)
-      console.log("max", this.mealPrice > this.maxCostPerMealExpected)
       return this.mealPrice < this.minCostPerMealExpected || this.mealPrice > this.maxCostPerMealExpected
     },
     validators() {
