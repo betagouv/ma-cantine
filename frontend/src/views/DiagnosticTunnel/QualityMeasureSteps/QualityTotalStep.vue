@@ -41,13 +41,23 @@
     />
     <DsfrHighlight v-if="displayMealPrice" class="mt-8 ml-0">
       <p>
-        <strong>{{ mealPrice }}€</strong>
+        <strong>
+          Coût repas estimé {{ mealPrice }}€ = {{ payload.valeurTotale }} €HT / {{ canteen.yearlyMealCount }} repas
+          annuel
+        </strong>
       </p>
       <p>
-        Coût repas estimé (€HT/nombre de repas annuel) : {{ payload.valeurTotale }} €HT /
-        {{ canteen.yearlyMealCount }} repas annuel
-        <br />
         La fourchette en restauration collective est comprise entre 0,50€ et 20€.
+        <br />
+        Le nombre de repas annuels renseigné est incorrect ?
+        <router-link
+          :to="{
+            name: 'GestionnaireCantineModifier',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+        >
+          Cliquez-ici pour le modifier.
+        </router-link>
       </p>
       <p v-if="mealPriceError" class="color-warning">
         <v-icon class="color-warning">$error-warning-line</v-icon>
