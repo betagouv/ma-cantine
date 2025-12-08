@@ -563,13 +563,6 @@ export default {
         .catch((e) => this.$store.dispatch("notifyServerError", e))
         .finally(() => (this.cancelDialog = false))
     },
-    updateFromServer(diagnostic) {
-      const diagnosticIndex = this.canteen.diagnostics.findIndex((x) => x.id === diagnostic.id)
-      if (diagnosticIndex > -1) {
-        this.canteen.diagnostics.splice(diagnosticIndex, 1, diagnostic)
-        this.assignDiagnostic()
-      }
-    },
     handleModeChange() {
       const mode = this.centralKitchenDiagnosticMode
       if (!mode || !this.isCentralKitchen || !this.canteen) return
