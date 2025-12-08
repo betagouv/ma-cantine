@@ -28,8 +28,8 @@ from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
     DiagnosticsToTeledeclareListView,
-    DiagnosticTeledeclareView,
     DiagnosticTeledeclarationCancelView,
+    DiagnosticTeledeclarationCreateView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
 )

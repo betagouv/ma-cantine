@@ -529,7 +529,7 @@ export default new Vuex.Store({
 
     submitTeledeclaration(context, { diagnosticId, canteenId }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/teledeclare`, {
+      return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/teledeclaration/create`, {
         method: "POST",
         headers,
       })

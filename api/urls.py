@@ -21,8 +21,8 @@ from api.views import (
     DiagnosticCreateView,
     DiagnosticsFromPurchasesView,
     DiagnosticsToTeledeclareListView,
-    DiagnosticTeledeclareView,
     DiagnosticTeledeclarationCancelView,
+    DiagnosticTeledeclarationCreateView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
     ImportCanteensView,
@@ -109,9 +109,9 @@ urlpatterns = {
         name="diagnostic_update",
     ),
     path(
-        "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclare",
-        DiagnosticTeledeclareView.as_view(),
-        name="diagnostic_teledeclare",
+        "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/create",
+        DiagnosticTeledeclarationCreateView.as_view(),
+        name="diagnostic_teledeclaration_create",
     ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/cancel",
