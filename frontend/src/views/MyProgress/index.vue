@@ -549,7 +549,7 @@ export default {
       return this.$store
         .dispatch("cancelTeledeclaration", {
           canteenId: this.canteen.id,
-          id: this.diagnostic.teledeclaration.id,
+          diagnosticId: this.diagnostic.id,
         })
         .then((diagnostic) => {
           this.$store.dispatch("notify", {
