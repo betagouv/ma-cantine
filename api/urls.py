@@ -22,6 +22,7 @@ from api.views import (
     DiagnosticsFromPurchasesView,
     DiagnosticsToTeledeclareListView,
     DiagnosticTeledeclareView,
+    DiagnosticTeledeclarationCancelView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
     ImportCanteensView,
@@ -111,6 +112,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclare",
         DiagnosticTeledeclareView.as_view(),
         name="diagnostic_teledeclare",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/cancel",
+        DiagnosticTeledeclarationCancelView.as_view(),
+        name="diagnostic_teledeclaration_cancel",
     ),
     path(
         "canteens/<int:canteen_pk>/wasteMeasurements/",

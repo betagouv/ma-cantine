@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Sector, Teledeclaration, Diagnostic
 
 
@@ -158,7 +158,7 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
         self.assertEqual(results[0]["canteenId"], canteen_with_correction.id)
 
 
-class DiagnosticTeledeclarationApiTest(APITestCase):
+class DiagnosticTeledeclarationCreateApiTest(APITestCase):
     def test_cannot_teledeclare_if_unauthenticated(self):
         diagnostic = DiagnosticFactory(year=2024)
 
@@ -300,3 +300,88 @@ class DiagnosticTeledeclarationApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
         self.assertTrue(diagnostic.is_teledeclared)
+
+
+class DiagnosticTeledeclarationCancelView(APITestCase):
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_cancel_teledeclaration_if_unauthenticated(self):
+        user = UserFactory()
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(user)
+        diagnostic.teledeclare(user)
+
+        # unauthenticated request
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_cancel_teledeclaration_if_not_canteen_manager(self):
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.teledeclare(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_cancel_teledeclaration_if_diagnostic_not_teledeclared(self):
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(authenticate.user)
+        # diagnostic not teledeclared
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()["detail"], ["Ce diagnostic doit avoir été télédéclaré"])
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_cancel_teledeclaration_after_campaign(self):
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic.teledeclare(authenticate.user)
+
+        with freeze_time("2025-06-30"):  # after the 2024 campaign
+            response = self.client.post(
+                reverse(
+                    "diagnostic_teledeclaration_cancel",
+                    kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                )
+            )
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertEqual(
+                response.json()["detail"],
+                ["Ce n'est pas possible d'annuler une télédéclaration hors de la période de la campagne"],
+            )
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_can_cancel_teledeclaration_during_campaign(self):
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic.teledeclare(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertFalse(diagnostic.is_teledeclared)
