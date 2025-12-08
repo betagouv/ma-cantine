@@ -51,7 +51,7 @@
             <b>{{ timeAgo(diagnostic.modificationDate, true) }}.</b>
           </p>
           <!--
-            TODO FIX
+          TODO : WAIT FOR ENDPOINT TO BE READY
           <DownloadLink
             :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
             label="Télécharger le justificatif"
