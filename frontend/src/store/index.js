@@ -527,15 +527,11 @@ export default new Vuex.Store({
       context.commit("REMOVE_NOTIFICATIONS")
     },
 
-    submitTeledeclaration(context, { id }) {
+    submitTeledeclaration(context, { diagnosticId, canteenId }) {
       context.commit("SET_CANTEENS_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      const payload = {
-        diagnosticId: id,
-      }
-      return fetch("/api/v1/teledeclaration/", {
+      return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/teledeclare`, {
         method: "POST",
         headers,
-        body: JSON.stringify(payload),
       })
         .then(verifyResponse)
         .then((diagnostic) => {
