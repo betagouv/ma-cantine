@@ -523,7 +523,7 @@ export default {
     timeAgo,
     submitTeledeclaration() {
       return this.$store
-        .dispatch("submitTeledeclaration", { id: this.diagnostic.id })
+        .dispatch("submitTeledeclaration", { diagnosticId: this.diagnostic.id, canteenId: this.canteen.id })
         .then((diagnostic) => {
           this.$store.dispatch("notify", {
             title: "Télédéclaration prise en compte",
