@@ -176,7 +176,7 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
         return canteens_filled
 
 
-class DiagnosticTeledeclareView(APIView):
+class DiagnosticTeledeclarationCreateView(APIView):
     permission_classes = [IsLinkedCanteenManager]
     required_scopes = ["canteen"]
 

@@ -7,7 +7,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Sector, Teledeclaration, Diagnostic
+from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
 
 class DiagnosticToTeledeclareApiTest(APITestCase):
@@ -164,7 +164,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
@@ -178,7 +178,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": 9999, "pk": diagnostic.id},
             )
         )
@@ -186,7 +186,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": 9999},
             )
         )
@@ -199,7 +199,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
@@ -213,7 +213,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
@@ -230,7 +230,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
@@ -246,7 +246,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
@@ -262,7 +262,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
@@ -277,7 +277,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
@@ -293,7 +293,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         response = self.client.post(
             reverse(
-                "diagnostic_teledeclare",
+                "diagnostic_teledeclaration_create",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
