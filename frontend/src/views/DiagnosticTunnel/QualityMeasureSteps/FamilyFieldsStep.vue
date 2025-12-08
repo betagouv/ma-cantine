@@ -35,7 +35,7 @@
     <v-row>
       <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6" class="py-2">
         <label :for="fId" :class="`fr-text ${!validFamily(fId) ? 'grey--text text--darken-1' : ''}`">
-          {{ family.text }}
+          {{ getFamilyText(family) }}
           <span v-if="isOptionnalField(fId)" class="fr-hint-text mt-2">Optionnel</span>
         </label>
         <div v-if="validFamily(fId)">
@@ -450,6 +450,11 @@ export default {
     },
     validFamily(id) {
       return this.possibleFamilies.indexOf(id) > -1
+    },
+    getFamilyText(family) {
+      let familyText = family.text
+      if (this.characteristicId === "COMMERCE_EQUITABLE") familyText += " (hors bio)"
+      return familyText
     },
   },
   mounted() {
