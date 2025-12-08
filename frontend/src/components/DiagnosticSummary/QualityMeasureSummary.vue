@@ -370,7 +370,7 @@ export default {
       return this.diagnostic.diagnosticType === "COMPLETE" || this.usesPurchasesData
     },
     hasActiveTeledeclaration() {
-      return this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      return this.diagnostic?.isTeledeclared
     },
     canteenUrlComponent() {
       return this.$store.getters.getCanteenUrlComponent(this.canteen)

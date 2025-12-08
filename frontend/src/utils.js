@@ -638,7 +638,7 @@ export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
 
   if (!inTeledeclarationCampaign(diagnostic.year)) return false
 
-  const hasActiveTeledeclaration = diagnostic.teledeclaration?.status === "SUBMITTED"
+  const hasActiveTeledeclaration = diagnostic.isTeledeclared
   if (hasActiveTeledeclaration) return false
 
   if (canteen.productionType === "site_cooked_elsewhere") {

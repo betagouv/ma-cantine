@@ -197,7 +197,7 @@ export default {
       return this.canteen.diagnostics.find((x) => x.year === this.year)
     },
     hasActiveTeledeclaration() {
-      return this.canteenDiagnostic?.teledeclaration?.status === "SUBMITTED"
+      return this.canteenDiagnostic?.isTeledeclared
     },
     lastYearDiagnostic() {
       return this.canteen.diagnostics.find((x) => x.year === this.lastYear)

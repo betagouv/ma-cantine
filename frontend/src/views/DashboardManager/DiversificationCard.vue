@@ -57,7 +57,7 @@ export default {
       return keyMeasures.find((x) => x.id === this.measureId)
     },
     needsData() {
-      const hasActiveTeledeclaration = this.diagnostic?.teledeclaration?.status === "SUBMITTED"
+      const hasActiveTeledeclaration = this.diagnostic?.isTeledeclared
       return !hasActiveTeledeclaration && !this.delegatedToCentralKitchen && this.level === Constants.Levels.UNKNOWN
     },
     level() {
