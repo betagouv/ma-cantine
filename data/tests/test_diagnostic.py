@@ -14,8 +14,23 @@ date_in_teledeclaration_campaign = "2025-03-30"
 date_in_correction_campaign = "2025-04-20"
 date_in_last_teledeclaration_campaign = "2024-02-01"
 
-VALID_DIAGNOSTIC = {
-    "year": year_data,
+VALID_DIAGNOSTIC_SIMPLE_2024 = {
+    "year": 2024,
+    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
+    "valeur_totale": 1000,
+    "valeur_bio": None,
+    "valeur_siqo": None,
+    "valeur_externalites_performance": None,
+    "valeur_egalim_autres": None,
+    "valeur_viandes_volailles": None,
+    "valeur_viandes_volailles_egalim": None,
+    "valeur_viandes_volailles_france": None,
+    "valeur_produits_de_la_mer": None,
+    "valeur_produits_de_la_mer_egalim": None,
+}
+
+VALID_DIAGNOSTIC_SIMPLE_2025 = {
+    "year": 2025,
     "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
     "valeur_totale": 1000,
     "valeur_bio": 200,
@@ -31,56 +46,126 @@ VALID_DIAGNOSTIC = {
 
 
 class DiagnosticModelSaveTest(TransactionTestCase):
-    def test_diagnostic_year_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC.copy()
+    def test_year_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
-        # should be a year (or None)
-        for TUPLE_OK in [
-            (2024, 2024),
-            ("2023", 2023),
-            (None, None),
-        ]:
-            with self.subTest(year=TUPLE_OK[0]):
-                diagnostic = DiagnosticFactory(year=TUPLE_OK[0], **VALID_DIAGNOSTIC_WITHOUT_YEAR)
-                diagnostic.full_clean()
-                self.assertEqual(diagnostic.year, TUPLE_OK[1])
-        for valeur_NOT_OK in ["", "abcd"]:
-            with self.subTest(year=valeur_NOT_OK):
+        # on save
+        for VALUE_OK_ON_SAVE in [None, -2000, 0, 1991, 2024, "2023"]:
+            with self.subTest(year=VALUE_OK_ON_SAVE):
+                diagnostic = DiagnosticFactory(year=VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+                self.assertEqual(diagnostic.year, VALUE_OK_ON_SAVE)
+        for VALUE_NOT_OK_ON_SAVE in ["", "  ", "abcd"]:
+            with self.subTest(year=VALUE_NOT_OK_ON_SAVE):
                 self.assertRaises(
-                    ValueError, Diagnostic.objects.create, year=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR
+                    ValueError, Diagnostic.objects.create, year=VALUE_NOT_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR
                 )
-        # should be in a specific range
-        for valeur_NOT_OK in [1991]:
-            with self.subTest(year=valeur_NOT_OK):
-                diagnostic = DiagnosticFactory(year=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+        # on full_clean
+        for TUPLE_OK_ON_FULL_CLEAN in [(2024, 2024), ("2023", 2023)]:
+            with self.subTest(year=TUPLE_OK_ON_FULL_CLEAN[0]):
+                diagnostic = DiagnosticFactory(year=TUPLE_OK_ON_FULL_CLEAN[0], **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+                diagnostic.full_clean()
+                self.assertEqual(diagnostic.year, TUPLE_OK_ON_FULL_CLEAN[1])
+        for VALUE_NOT_OK_ON_FULL_CLEAN in [None, 1991]:
+            with self.subTest(year=VALUE_NOT_OK_ON_FULL_CLEAN):
+                diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    def test_diagnostic_valeur_totale_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT = VALID_DIAGNOSTIC.copy()
-        VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT.pop("valeur_totale")
-        # should be a number (or None)
-        for TUPLE_OK in [
-            (1000, 1000),
-            ("2000", 2000),
-            (Decimal("1234.56"), Decimal("1234.56")),
-            (None, None),
-        ]:
-            with self.subTest(valeur_totale=TUPLE_OK[0]):
-                diagnostic = DiagnosticFactory(valeur_totale=TUPLE_OK[0], **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT)
-                diagnostic.full_clean()
-                self.assertEqual(diagnostic.valeur_totale, TUPLE_OK[1])
-        for valeur_NOT_OK in ["", "abcd"]:  # Decimal("1234.567")
-            with self.subTest(valeur_totale=valeur_NOT_OK):
+    def test_diagnostic_type_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_TYPE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_TYPE.pop("diagnostic_type")
+        # on save
+        for VALUE_OK_ON_SAVE in [None, "", "  ", "invalid", 123, *Diagnostic.DiagnosticType.values]:
+            with self.subTest(diagnostic_type=VALUE_OK_ON_SAVE):
+                diagnostic = DiagnosticFactory(diagnostic_type=VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_TYPE)
+                self.assertEqual(diagnostic.diagnostic_type, VALUE_OK_ON_SAVE)
+        for VALUE_NOT_OK_ON_SAVE in []:
+            with self.subTest(diagnostic_type=VALUE_NOT_OK_ON_SAVE):
                 self.assertRaises(
                     (ValueError, ValidationError),
-                    Diagnostic.objects.create,
-                    valeur_totale=valeur_NOT_OK,
-                    **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT,
+                    DiagnosticFactory,
+                    diagnostic_type=VALUE_NOT_OK_ON_SAVE,
+                    **VALID_DIAGNOSTIC_WITHOUT_TYPE,
                 )
+        # on full_clean
+        for VALUE_OK_ON_FULL_CLEAN in [*Diagnostic.DiagnosticType.values]:
+            with self.subTest(diagnostic_type=VALUE_OK_ON_FULL_CLEAN):
+                diagnostic = DiagnosticFactory(diagnostic_type=VALUE_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_TYPE)
+                diagnostic.full_clean()
+                self.assertEqual(diagnostic.diagnostic_type, VALUE_OK_ON_FULL_CLEAN)
+        for VALUE_NOT_OK_ON_FULL_CLEAN in [None, "", 123, "invalid"]:
+            with self.subTest(diagnostic_type=VALUE_NOT_OK_ON_FULL_CLEAN):
+                diagnostic = DiagnosticFactory(
+                    diagnostic_type=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_TYPE
+                )
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_appro_fields_required_before_2024_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2024.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
+        # on full_clean
+        diagnostic = DiagnosticFactory(valeur_totale=None, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+        diagnostic.full_clean()
+
+    def test_diagnostic_simple_appro_fields_required_after_2025_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
+        # on full_clean (simple & valeur_totale)
+        diagnostic = DiagnosticFactory(valeur_totale=None, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        diagnostic.full_clean()
+
+    def test_diagnostic_complete_appro_fields_required_after_2025_validation(self):
+        VALID_DIAGNOSTIC_COMPLETE_2025 = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_COMPLETE_2025["diagnostic_type"] = Diagnostic.DiagnosticType.COMPLETE
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_COMPLETE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
+        # on full_clean (complete & valeur_totale)
+        diagnostic = DiagnosticFactory(valeur_totale=None, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
+        diagnostic.full_clean()
+
+    def test_diagnostic_valeur_totale_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
+        # on save
+        for VALEUR_TOTALE_VALUE_OK_ON_SAVE in [None, -1000, 0, 1000, Decimal("1234.56")]:
+            with self.subTest(valeur_totale=VALEUR_TOTALE_VALUE_OK_ON_SAVE):
+                diagnostic = DiagnosticFactory(
+                    valeur_totale=VALEUR_TOTALE_VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE
+                )
+                self.assertEqual(diagnostic.valeur_totale, VALEUR_TOTALE_VALUE_OK_ON_SAVE)
+        for VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE in ["", "  ", "invalid"]:
+            with self.subTest(valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE):
+                self.assertRaises(
+                    (ValueError, ValidationError),
+                    DiagnosticFactory,
+                    valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE,
+                    **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE,
+                )
+        # on full_clean
+        for VALEUR_TOTALE_VALUE_OK_ON_FULL_CLEAN in [1000, Decimal("1234.56")]:
+            diagnostic = DiagnosticFactory(
+                valeur_totale=VALEUR_TOTALE_VALUE_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE
+            )
+            diagnostic.full_clean()
+        for VALEUR_TOTALE_VALUE_NOT_OK_ON_FULL_CLEAN in [None, -1000, 0]:
+            with self.subTest(valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_FULL_CLEAN):
+                diagnostic = DiagnosticFactory(
+                    valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE
+                )
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_valeur_totale_extra_validation(self):
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT.pop("valeur_totale")
         # should be > the sum of other fields
         self.assertEqual(
             sum(
-                VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT[k]
+                VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT[k]
                 for k in [
                     "valeur_bio",
                     "valeur_siqo",
@@ -90,42 +175,97 @@ class DiagnosticModelSaveTest(TransactionTestCase):
             ),
             500,
         )
-        for valeur_NOT_OK in [-100, 0, 100]:
-            with self.subTest(valeur_totale=valeur_NOT_OK):
-                diagnostic = DiagnosticFactory(valeur_totale=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_TOTAL_HT)
+        for VALUE_NOT_OK in [-100, 0, 100]:
+            with self.subTest(valeur_totale=VALUE_NOT_OK):
+                diagnostic = DiagnosticFactory(valeur_totale=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_valeur_viandes_volailles_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES = VALID_DIAGNOSTIC.copy()
-        VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
         # should be >= valeur_viandes_volailles_egalim
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES["valeur_viandes_volailles_egalim"], 50)
-        for valeur_NOT_OK in [-100, 0, 49]:
-            with self.subTest(valeur_viandes_volailles=valeur_NOT_OK):
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES["valeur_viandes_volailles_egalim"], 50)
+        for VALUE_NOT_OK in [-100, 0, 49]:
+            with self.subTest(valeur_viandes_volailles=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    valeur_viandes_volailles=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
+                    valeur_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
         # should be >= valeur_viandes_volailles_france
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES["valeur_viandes_volailles_france"], 20)
-        for valeur_NOT_OK in [-100, 0, 19]:
-            with self.subTest(valeur_viandes_volailles=valeur_NOT_OK):
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES["valeur_viandes_volailles_france"], 20)
+        for VALUE_NOT_OK in [-100, 0, 19]:
+            with self.subTest(valeur_viandes_volailles=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    valeur_viandes_volailles=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_VIANDES_VOLAILLES
+                    valeur_viandes_volailles=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_valeur_produits_de_la_mer_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC.copy()
-        VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER.pop("valeur_produits_de_la_mer")
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER.pop("valeur_produits_de_la_mer")
         # should be >= valeur_produits_de_la_mer_egalim
-        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER["valeur_produits_de_la_mer_egalim"], 40)
-        for valeur_NOT_OK in [-100, 0, 39]:
-            with self.subTest(valeur_produits_de_la_mer=valeur_NOT_OK):
+        self.assertEqual(VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER["valeur_produits_de_la_mer_egalim"], 40)
+        for VALUE_NOT_OK in [-100, 0, 39]:
+            with self.subTest(valeur_produits_de_la_mer=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
-                    valeur_produits_de_la_mer=valeur_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_valeur_PRODUITS_DE_LA_MER
+                    valeur_produits_de_la_mer=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
+
+
+class Diagnostic2024ModelSaveTest(TransactionTestCase):
+    def test_diagnostic_simple_2024(self):
+        # valid
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+        diagnostic.full_clean()
+        # valid (valeur_bio is optional)
+        VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_BIO = {**VALID_DIAGNOSTIC_SIMPLE_2024, "valeur_bio": None}
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_BIO)
+        diagnostic.full_clean()
+        # not valid (valeur_totale is required)
+        VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE = {**VALID_DIAGNOSTIC_SIMPLE_2024, "valeur_totale": None}
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_complete_2024(self):
+        # valid
+        VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE = {
+            **VALID_DIAGNOSTIC_SIMPLE_2024,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
+        }
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE)
+        diagnostic.full_clean()
+
+
+class Diagnostic2025ModelSaveTest(TransactionTestCase):
+    def test_diagnostic_simple_2025(self):
+        # valid
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        diagnostic.full_clean()
+        # not valid (valeur_bio is required)
+        VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_BIO = {**VALID_DIAGNOSTIC_SIMPLE_2025, "valeur_bio": None}
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_BIO)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # not valid (valeur_totale is required)
+        VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_TOTALE = {**VALID_DIAGNOSTIC_SIMPLE_2025, "valeur_totale": None}
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_TOTALE)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_diagnostic_complete_2025(self):
+        # valid (because DiagnosticFactory sets default values)
+        VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE = {
+            **VALID_DIAGNOSTIC_SIMPLE_2025,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
+        }
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE)
+        diagnostic.full_clean()
+        # not valid (valeur_produits_de_la_mer is required)
+        diagnostic = DiagnosticFactory(
+            **VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE
+        )  # sets a value for valeur_produits_de_la_mer
+        diagnostic.valeur_produits_de_la_mer = None
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
 
 
 class DiagnosticQuerySetTest(TestCase):
@@ -325,13 +465,19 @@ class DiagnosticQuerySetTest(TestCase):
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.diagnostic_2024_simple_empty = DiagnosticFactory(
+        cls.diagnostic_2024_simple_not_filled = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=None
         )
         cls.diagnostic_2024_simple_filled = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
         )
-        cls.diagnostic_2025_simple_empty = DiagnosticFactory(
+        cls.diagnostic_2024_complete_not_filled = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, valeur_totale=None
+        )
+        cls.diagnostic_2024_complete_filled = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, valeur_totale=1000
+        )
+        cls.diagnostic_2025_simple_not_filled = DiagnosticFactory(
             year=2025,
             canteen=CanteenFactory(),
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -346,24 +492,64 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             valeur_bio=200,
             valeur_siqo=100,
             valeur_egalim_autres=100,
+            valeur_viandes_volailles=100,
             valeur_viandes_volailles_egalim=0,
+        )
+        cls.diagnostic_2025_complete_not_filled = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_egalim_autres=100,
+            valeur_viandes_volailles=100,
+            valeur_viandes_volailles_egalim=0,
+        )
+        cls.diagnostic_2025_complete_not_filled.valeur_produits_de_la_mer = None
+        cls.diagnostic_2025_complete_not_filled.save()
+        cls.diagnostic_2025_complete_filled = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_egalim_autres=100,
+            valeur_viandes_volailles=100,
+            valeur_viandes_volailles_egalim=0,
+            # rest will be filled by DiagnosticFactory defaults
         )
 
     def test_filled_queryset(self):
-        self.assertEqual(Diagnostic.objects.all().count(), 4)
-        self.assertEqual(Diagnostic.objects.filled().count(), 2)
+        self.assertEqual(Diagnostic.objects.all().count(), 8)
+        self.assertEqual(Diagnostic.objects.filled().count(), 4)
 
     def test_is_filled_property(self):
-        self.assertFalse(self.diagnostic_2024_simple_empty.is_filled)
-        self.assertTrue(self.diagnostic_2024_simple_filled.is_filled)
-        self.assertFalse(self.diagnostic_2025_simple_empty.is_filled)
-        self.assertTrue(self.diagnostic_2025_simple_filled.is_filled)
+        # filled
+        for diagnostic in [
+            self.diagnostic_2024_simple_filled,
+            self.diagnostic_2024_complete_filled,
+            self.diagnostic_2025_simple_filled,
+            self.diagnostic_2025_complete_filled,
+        ]:
+            with self.subTest(diagnostic=diagnostic):
+                self.assertTrue(diagnostic.is_filled)
+        # not filled
+        for diagnostic in [
+            self.diagnostic_2024_simple_not_filled,
+            self.diagnostic_2024_complete_not_filled,
+            self.diagnostic_2025_simple_not_filled,
+            self.diagnostic_2025_complete_not_filled,
+        ]:
+            with self.subTest(diagnostic=diagnostic):
+                self.assertFalse(diagnostic.is_filled)
 
 
 class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.diagnostic_empty_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=None)
+        cls.diagnostic_not_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=None)
         cls.diagnostic_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=1000)
         cls.diagnostic_filled_submitted = DiagnosticFactory(
             canteen=CanteenFactory(), valeur_totale=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED
@@ -374,7 +560,7 @@ class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
         self.assertEqual(Diagnostic.objects.teledeclared().count(), 1)
 
     def test_is_teledeclared_property(self):
-        self.assertFalse(self.diagnostic_empty_draft.is_teledeclared)
+        self.assertFalse(self.diagnostic_not_filled_draft.is_teledeclared)
         self.assertFalse(self.diagnostic_filled_draft.is_teledeclared)
         self.assertTrue(self.diagnostic_filled_submitted.is_teledeclared)
 

@@ -16,17 +16,13 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     year = factory.Faker("year")
     diagnostic_type = fuzzy.FuzzyChoice(list(Diagnostic.DiagnosticType))
 
+    # SIMPLE_APPRO_FIELDS_REQUIRED_2025
     valeur_totale = factory.Faker("random_int", min=6000, max=10000)
     valeur_bio = factory.Faker("random_int", min=0, max=2000)
     valeur_siqo = factory.Faker("random_int", min=0, max=2000)
-    valeur_externalites_performance = factory.Faker("random_int", min=0, max=20)
     valeur_egalim_autres = factory.Faker("random_int", min=0, max=20)
-
     valeur_viandes_volailles = factory.Faker("random_int", min=0, max=20)
     valeur_viandes_volailles_egalim = factory.Faker("random_int", min=0, max=20)
-    valeur_viandes_volailles_france = factory.Faker("random_int", min=0, max=20)
-    valeur_produits_de_la_mer = factory.Faker("random_int", min=0, max=20)
-    valeur_produits_de_la_mer_egalim = factory.Faker("random_int", min=0, max=20)
 
     has_waste_diagnostic = factory.Faker("boolean")
     has_waste_plan = factory.Faker("boolean")
@@ -45,6 +41,20 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     communication_supports = factory.List(random.sample(list(Diagnostic.CommunicationType), random.randint(0, 2)))
     communication_support_url = factory.Faker("uri")
     communicates_on_food_plan = factory.Faker("boolean")
+
+    @factory.post_generation
+    def fill_complete_fields(obj, create, extracted, **kwargs):
+        try:
+            if obj.year >= 2025 and obj.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+                for field_name in [
+                    field_name
+                    for field_name in Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025
+                    if field_name not in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025
+                ]:
+                    if getattr(obj, field_name) is None:
+                        setattr(obj, field_name, 0)
+        except:  # noqa
+            pass
 
 
 class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
