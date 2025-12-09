@@ -6,21 +6,19 @@
         <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
 
         {% if not valeur_viandes_volailles is None %}
-            {{ valeur_viandes_volailles|floatformat:2 }}
+            {{ valeur_viandes_volailles|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
     <li>
         <span>Valeur totale en HT des achats en poissons, produits de la mer et de l'aquaculture</span> :
 
         {% if not valeur_produits_de_la_mer is None %}
-            {{ valeur_produits_de_la_mer|floatformat:2 }}
+            {{ valeur_produits_de_la_mer|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
 </ul>
 {% for label, family_values in complete_appro.items %}
@@ -31,11 +29,10 @@
         <span>{{ family }} {{ label }}</span> :
 
         {% if not family_label_value is None %}
-            {{ family_label_value|floatformat:2 }}
+            {{ family_label_value|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
     {% endfor %}
 </ul>
