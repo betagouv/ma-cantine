@@ -35,14 +35,14 @@
     <v-row>
       <v-col v-for="(family, fId) in families" :key="fId" cols="12" md="6" class="py-2">
         <label :for="fId" :class="`fr-text ${!validFamily(fId) ? 'grey--text text--darken-1' : ''}`">
-          {{ family.text }}
+          {{ getFamilyText(family) }}
           <span v-if="isOptionnalField(fId)" class="fr-hint-text mt-2">Optionnel</span>
         </label>
         <div v-if="validFamily(fId)">
           <DsfrCurrencyField
             :id="fId"
             :rules="getValidatorsRules(fId)"
-            @blur="fieldUpdate(diagnosticKey(fId))"
+            @blur="fieldUpdate()"
             solo
             v-model.number="payload[diagnosticKey(fId)]"
             validate
@@ -56,7 +56,7 @@
             v-model="payload[diagnosticKey(fId)]"
             :purchaseType="family.shortText + ' pour cette caractéristique'"
             :amount="purchasesSummary[diagnosticKey(fId)]"
-            @autofill="fieldUpdate(diagnosticKey(fId))"
+            @autofill="fieldUpdate()"
           />
           <v-row v-if="characteristicId === 'BIO'" class="my-0 my-md-6">
             <v-col cols="1" class="pt-0 d-flex align-top justify-end">
@@ -70,7 +70,7 @@
               <DsfrCurrencyField
                 :id="`${fId}_DONT_COMMERCE_EQUITABLE`"
                 :rules="[validators.decimalPlaces(2), validators.lteOrEmpty(payload[diagnosticKey(fId)])]"
-                @blur="fieldUpdate(diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE'))"
+                @blur="fieldUpdate()"
                 v-model.number="payload[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
                 validate-on-blur
                 class="mt-2"
@@ -81,7 +81,7 @@
                 v-model="payload[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
                 :purchaseType="family.shortText + ' dont commerce équitable pour cette caractéristique'"
                 :amount="purchasesSummary[diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE')]"
-                @autofill="fieldUpdate(diagnosticKey(fId, '_DONT_COMMERCE_EQUITABLE'))"
+                @autofill="fieldUpdate()"
               />
             </v-col>
           </v-row>
@@ -414,8 +414,7 @@ export default {
         return this.errorMessage(total, this.payload.valeurTotale, 1, undefined, char.text)
       }
     },
-    fieldUpdate(fieldName) {
-      if (this.diagnostic[fieldName] === this.payload[fieldName]) return
+    fieldUpdate() {
       this.checkTotal()
       this.populateSimplifiedDiagnostic()
     },
@@ -451,6 +450,11 @@ export default {
     },
     validFamily(id) {
       return this.possibleFamilies.indexOf(id) > -1
+    },
+    getFamilyText(family) {
+      let familyText = family.text
+      if (this.characteristicId === "COMMERCE_EQUITABLE") familyText += " (hors bio)"
+      return familyText
     },
   },
   mounted() {

@@ -351,7 +351,6 @@ export default Object.freeze({
       "AUTRES",
       "BOISSONS",
     ],
-    RUP: ["PRODUITS_DE_LA_MER"],
     COMMERCE_EQUITABLE: [],
     FERMIER: ["FRUITS_ET_LEGUMES", "PRODUITS_DE_LA_MER", "BOULANGERIE", "AUTRES", "BOISSONS"],
     EXTERNALITES: [],
