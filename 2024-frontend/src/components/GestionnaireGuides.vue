@@ -14,7 +14,7 @@ const tiles = [
   {
     title: "Télédéclaration",
     horizontal: true,
-    details: "Déclarer vos achats et à suivre vos indicateurs EGalim",
+    details: "Déclarer vos achats et à suivre vos indicateurs EGalim.",
     to: "https://ma-cantine.crisp.help/fr/category/teledeclaration-18r0z84/",
     imgSrc: pictoCrispTeledeclaration,
   },
