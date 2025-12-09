@@ -6,6 +6,51 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.42.0](https://github.com/betagouv/ma-cantine/compare/v2025.41.1...v2025.42.0) (2025-12-09)
+
+
+### Nouveautés
+
+* **Ressources:** ajout de l'infographie de l'ademe sur le gaspillage ([#5970](https://github.com/betagouv/ma-cantine/issues/5970)) ([53aac73](https://github.com/betagouv/ma-cantine/commit/53aac732809526764e9730896d8d8c8127458540))
+* **Télédéclaration:** affiche le coût des denrées dans le tunnel "Appro" ([#5991](https://github.com/betagouv/ma-cantine/issues/5991)) ([3cf8cc7](https://github.com/betagouv/ma-cantine/commit/3cf8cc743ff809f3f5d5236a63d09b3b59f1fb64))
+* **Télédéclaration:** afficher les nouveaux champs de la TD détaillée hors-tunnel ([#5973](https://github.com/betagouv/ma-cantine/issues/5973)) ([6018b0c](https://github.com/betagouv/ma-cantine/commit/6018b0c3ba68e20fdb583db49c7b00fc61db2e9d))
+* **Télédéclaration:** ajoute le remplissage automatique à partir des achats pour les catégories bio + commerce équitable ([#5980](https://github.com/betagouv/ma-cantine/issues/5980)) ([46f6e01](https://github.com/betagouv/ma-cantine/commit/46f6e01a39927d6de60c9c53ee025c4994d4c19f))
+* **Télédéclaration:** ajoute les champs du commerce équitable dans l'étape bio ([#5972](https://github.com/betagouv/ma-cantine/issues/5972)) ([3537161](https://github.com/betagouv/ma-cantine/commit/353716120e604bff3f6e24b70fc35cddc4d020af))
+* **Télédéclaration:** branche la correction d'un bilan et l'affichage dynamique une fois le bilan télédéclaré ([#5992](https://github.com/betagouv/ma-cantine/issues/5992)) ([4c6a632](https://github.com/betagouv/ma-cantine/commit/4c6a632aa1ef5aaa31204b59c546d58c5e74a268))
+* **Télédéclaration:** rend obligatoire des champs de la TD détaillée ([#5969](https://github.com/betagouv/ma-cantine/issues/5969)) ([de76751](https://github.com/betagouv/ma-cantine/commit/de7675167eb85ca18b7fff793ba943eacbba2459))
+
+
+### Améliorations
+
+* **Admin:** ré-afficher la gestion des groupes d'utilisateurs ([#5967](https://github.com/betagouv/ma-cantine/issues/5967)) ([9dc4a26](https://github.com/betagouv/ma-cantine/commit/9dc4a26bb823dc28dc79207537a277101d591631))
+* **Télédéclaration:** améliore le parcours entre les pages "Bilan" et "Modifier ma cantine" ([#5993](https://github.com/betagouv/ma-cantine/issues/5993)) ([0ebd29d](https://github.com/betagouv/ma-cantine/commit/0ebd29dfa2ff65b5dcae903047006d68af9c7e5f))
+* **Télédéclaration:** améliore les catégories "dont origine France" de la TD détaillée ([#5987](https://github.com/betagouv/ma-cantine/issues/5987)) ([8f5d940](https://github.com/betagouv/ma-cantine/commit/8f5d94089af067a5a08d621efbca5b1868c677fc))
+* **Télédéclaration:** au remplissage automatique depuis les achats autorise les valeurs vides pour les champs non obligatoires ([#5975](https://github.com/betagouv/ma-cantine/issues/5975)) ([0c5f718](https://github.com/betagouv/ma-cantine/commit/0c5f71812edc95e2b9c71908b88223ca4f49a4a7))
+* **Télédéclaration:** mise à jour des terminologies ([#5974](https://github.com/betagouv/ma-cantine/issues/5974)) ([71321f0](https://github.com/betagouv/ma-cantine/commit/71321f098102eb15341b30e010c882c0d04f9723))
+* **Télédéclaration:** nouvel endpoint coté Diagnostic pour annuler une télédéclaration ([#5989](https://github.com/betagouv/ma-cantine/issues/5989)) ([e1b7044](https://github.com/betagouv/ma-cantine/commit/e1b704424f5acc4ae7fbf2e68bcf2ddf4a720f94))
+* **Télédéclaration:** nouvel endpoint coté Diagnostic pour télédéclarer ([#5981](https://github.com/betagouv/ma-cantine/issues/5981)) ([d451100](https://github.com/betagouv/ma-cantine/commit/d4511005e81a37ef9a4f492bca7f5d2667eb9843))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** ajoute les nouveaux champs dans les totaux provenant des achats ([#5976](https://github.com/betagouv/ma-cantine/issues/5976)) ([3866fdd](https://github.com/betagouv/ma-cantine/commit/3866fddc84feccfca9d5dedadd69e9f8f0151bc2))
+* **Télédéclaration:** branche le bouton "Télédéclarer" sur la nouvelle route api ([#5986](https://github.com/betagouv/ma-cantine/issues/5986)) ([2ed5e90](https://github.com/betagouv/ma-cantine/commit/2ed5e9008f201d290cbf7e9f88b4f9a0c17edd68))
+* **Télédéclaration:** calculer les actions 'Télédéclaré' sur la table Diagnostic ([#5988](https://github.com/betagouv/ma-cantine/issues/5988)) ([f86eb39](https://github.com/betagouv/ma-cantine/commit/f86eb39001871db5ce4d3459d1cd6ee58b8cfe1e))
+* **Télédéclaration:** corrige l'erreur de variable inconnue ([#5968](https://github.com/betagouv/ma-cantine/issues/5968)) ([d20adf5](https://github.com/betagouv/ma-cantine/commit/d20adf595d918a1cfdb672ea37b18571b42166f3))
+* **Télédéclaration:** recettage (plusieurs corrections) ([#5994](https://github.com/betagouv/ma-cantine/issues/5994)) ([ec1d2cc](https://github.com/betagouv/ma-cantine/commit/ec1d2cc0e2491860b0bb94ef0d06802546996f56))
+* **Télédéclaration:** rend obligatoire l'étape 'choix du mode de saisie' (simplifiée ou détaillée) ([#5978](https://github.com/betagouv/ma-cantine/issues/5978)) ([4bbcb98](https://github.com/betagouv/ma-cantine/commit/4bbcb989f7de77ab34ef705f1bd1e3bab02737ea))
+
+
+### Technique
+
+* **Achats:** réorganise les tests (list / get / create / update / delete) ([#5977](https://github.com/betagouv/ma-cantine/issues/5977)) ([79215b7](https://github.com/betagouv/ma-cantine/commit/79215b7b14cb45aa6fdfea889c0548a986adb3ba))
+* **API:** enlever les camelize et JSONResponse inutiles ([#5909](https://github.com/betagouv/ma-cantine/issues/5909)) ([d4f79d1](https://github.com/betagouv/ma-cantine/commit/d4f79d14c6b22f37c4a436709e76279a7f698df7))
+* **API:** généraliser l'usage de PATCH (au lieu de PUT) pour la modification ([#5966](https://github.com/betagouv/ma-cantine/issues/5966)) ([9eefdca](https://github.com/betagouv/ma-cantine/commit/9eefdca59a370dcda304725150c36bc9eaa694c9))
+* **Diagnostics:** réorgnise les tests (create / update) ([#5979](https://github.com/betagouv/ma-cantine/issues/5979)) ([ccd8451](https://github.com/betagouv/ma-cantine/commit/ccd8451bf489cad1dea2be431177db732f208c1f))
+* **Télédéclaration:** ajoute les règles métiers "remplie" sur les TD simplifiée et détaillée (et sépare avant/après 2025) ([#5960](https://github.com/betagouv/ma-cantine/issues/5960)) ([8c82094](https://github.com/betagouv/ma-cantine/commit/8c82094728a85f84469e77dc6c91b3a5d8e086b8))
+* **Télédéclaration:** renomme le nouvel endpoint de création de TD en '/teledeclaration/create' ([#5990](https://github.com/betagouv/ma-cantine/issues/5990)) ([ab35213](https://github.com/betagouv/ma-cantine/commit/ab352130348bff8651950078ea80e32e27c1f60b))
+* **Télédéclaration:** supprime les anciennes URL de création et annulation de TD ([#5996](https://github.com/betagouv/ma-cantine/issues/5996)) ([d2952a8](https://github.com/betagouv/ma-cantine/commit/d2952a820804a4d38b6d89a9f7c3ac74d10b8265))
+
 ## [2025.41.1](https://github.com/betagouv/ma-cantine/compare/v2025.41.0...v2025.41.1) (2025-12-03)
 
 
