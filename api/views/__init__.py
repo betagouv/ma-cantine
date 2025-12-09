@@ -65,8 +65,6 @@ from .subscription import SubscribeNewsletter  # noqa: F401
 from .teledeclaration import (  # noqa: F401
     TeledeclarationCampaignDatesListView,
     TeledeclarationCampaignDatesRetrieveView,
-    TeledeclarationCancelView,
-    TeledeclarationCreateView,
     TeledeclarationPdfView,
 )
 from .user import (  # noqa: F401

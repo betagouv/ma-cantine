@@ -1,174 +1,28 @@
 import logging
 import os
-from datetime import datetime
 
 from django.conf import settings
 from django.contrib.staticfiles import finders
-from django.core.exceptions import ValidationError as DjangoValidationError
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.utils.text import slugify
-from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
-from rest_framework import serializers, status
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
-from api.permissions import IsAuthenticated, IsAuthenticatedOrTokenHasResourceScope
-from api.serializers import FullDiagnosticSerializer
+from api.permissions import IsAuthenticatedOrTokenHasResourceScope
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import (
     CAMPAIGN_DATES,
     is_in_correction,
     is_in_teledeclaration,
-    is_in_teledeclaration_or_correction,
 )
 
 
 logger = logging.getLogger(__name__)
-
-
-@extend_schema_view(
-    post=extend_schema(
-        summary="Télédéclarer un diagnostic",
-        description="La télédéclaration créée prendra le diagnostic de l'année concernée pour créer un snapshot immutable. En créant une télédéclaration,"
-        + "l'utilisateur s'engage sur l'honneur sur la véracité des données télédéclarées.\n\n"
-        + "C'est possible d'envoyer une liste de `diagnostic_ids` pour télédéclarer plusieurs avec une requête. Dans ce cas, vous recevrez une `200` réponse, sinon une `201`.",
-    ),
-)
-class TeledeclarationCreateView(APIView):
-    """
-    This view allows creating a teledeclaration from an
-    existing diagnostic.
-    """
-
-    permission_classes = [IsAuthenticated]
-    required_scopes = ["canteen"]
-
-    @extend_schema(
-        request=inline_serializer(name="Testing", fields={"diagnostic_id": serializers.IntegerField()}),
-        responses={
-            "201": FullDiagnosticSerializer,
-        },
-    )
-    def post(self, request):
-        data = request.data
-        diagnostic_id = data.get("diagnostic_id")
-        if not diagnostic_id:
-            raise ValidationError("diagnosticId manquant")
-
-        td = TeledeclarationCreateView._teledeclare_diagnostic(diagnostic_id, request.user)
-        return Response(FullDiagnosticSerializer(td.diagnostic).data, status=status.HTTP_201_CREATED)
-
-    def _teledeclare_diagnostic(diagnostic_id, user):  # noqa: C901
-        last_year = datetime.now().year - 1
-
-        try:
-            diagnostic = Diagnostic.objects.get(pk=diagnostic_id)
-
-            if not is_in_teledeclaration_or_correction():
-                raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
-
-            if diagnostic.year != last_year:
-                raise PermissionDenied(f"Seuls les diagnostics pour l'année {last_year} peuvent être créés")
-
-            if user not in diagnostic.canteen.managers.all():
-                raise PermissionDenied()
-
-            # extra rule for correction campaign
-            # only allow to "edit" a teledeclaration
-            # (a teledeclaration must exist during the teledeclaration campaign)
-            if is_in_correction():
-                if (
-                    not Teledeclaration.objects.in_year(last_year)
-                    .in_campaign(last_year)
-                    .filter(canteen=diagnostic.canteen)
-                    .exists()
-                ):
-                    raise PermissionDenied(
-                        "La campagne de correction est réservée aux cantines qui ont télédéclaré durant la campagne de télédéclaration."
-                    )
-
-            try:
-                Teledeclaration.validate_diagnostic(diagnostic)
-            except DjangoValidationError as e:
-                raise TeledeclarationCreateView._parse_diagnostic_validation_error(e) from e
-
-            try:
-                td = Teledeclaration.create_from_diagnostic(diagnostic, user)
-                return td
-            except DjangoValidationError as e:
-                if hasattr(e, "message") and e.message == "Données d'approvisionnement manquantes":
-                    message = e.message
-                else:
-                    message = "Il existe déjà une télédéclaration en cours pour cette année"
-                raise ValidationError(message) from e
-
-        except Diagnostic.DoesNotExist:
-            raise PermissionDenied()  # in general we throw 403s not 404s
-
-    def _parse_diagnostic_validation_error(e):
-        if hasattr(e, "message"):
-            return ValidationError(e.message)
-        elif hasattr(e, "messages"):
-            return ValidationError(e.messages[0])
-        else:
-            logger.error(f"Unhandled validation error when teledeclaring: {e}")
-            return ValidationError("Unknown error")
-
-
-@extend_schema_view(
-    post=extend_schema(
-        summary="Annuler une télédéclaration existante.",
-        description="Un diagnostic ne peut pas être modifié si une télédéclaration a été créée. Pour corriger des données, l'utilisateur devra d'abord annuler la télédeclaration. À noter que l'utilisateur devra en créer une nouvelle une fois que le diagnostic a été corrigé.",
-    ),
-)
-class TeledeclarationCancelView(APIView):
-    """
-    This view cancels a submitted teledeclaration
-    """
-
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    required_scopes = ["canteen"]
-
-    def post(self, request, *args, **kwargs):
-        last_year = datetime.now().year - 1
-
-        try:
-            teledeclaration_id = kwargs.get("pk")
-            teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
-
-            if not is_in_teledeclaration_or_correction():
-                raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
-
-            if teledeclaration.year != last_year:
-                raise PermissionDenied(f"Seules les télédéclarations pour l'année {last_year} peuvent être annulées")
-
-            if request.user not in teledeclaration.canteen.managers.all():
-                raise PermissionDenied()
-
-            # extra rule for correction campaign
-            # only allow to "edit" a teledeclaration
-            # (a teledeclaration must exist during the teledeclaration campaign)
-            if is_in_correction():
-                if (
-                    not Teledeclaration.objects.in_year(last_year)
-                    .in_campaign(last_year)
-                    .filter(canteen=teledeclaration.canteen)
-                    .exists()
-                ):
-                    raise PermissionDenied(
-                        "La campagne de correction est réservée aux cantines qui ont télédéclaré durant la campagne de télédéclaration."
-                    )
-
-            # all the checks avec passed, we can cancel the teledeclaration
-            teledeclaration.cancel()
-
-            return Response(FullDiagnosticSerializer(teledeclaration.diagnostic).data, status=status.HTTP_200_OK)
-
-        except Teledeclaration.DoesNotExist:
-            raise ValidationError("La télédéclaration specifiée n'existe pas")
 
 
 @extend_schema_view(

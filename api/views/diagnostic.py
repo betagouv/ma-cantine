@@ -177,7 +177,7 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
 
 
 class DiagnosticTeledeclarationCreateView(APIView):
-    permission_classes = [IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):
@@ -193,7 +193,7 @@ class DiagnosticTeledeclarationCreateView(APIView):
 
 
 class DiagnosticTeledeclarationCancelView(APIView):
-    permission_classes = [IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     required_scopes = ["canteen"]
 
     def post(self, request, *args, **kwargs):

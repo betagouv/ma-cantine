@@ -5,7 +5,7 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import authenticate
+from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
@@ -160,7 +160,20 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
 
 class DiagnosticTeledeclarationCreateApiTest(APITestCase):
     def test_cannot_teledeclare_if_unauthenticated(self):
+        # not canteen manager
         diagnostic = DiagnosticFactory(year=2024)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # canteen manager
+        user = UserFactory()
+        diagnostic.canteen.managers.add(user)
 
         response = self.client.post(
             reverse(
@@ -197,6 +210,21 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
     def test_cannot_teledeclare_if_not_canteen_manager(self):
         diagnostic = DiagnosticFactory(year=2024)
 
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_teledeclare_with_oauth2_token(self):
+        user, token = get_oauth2_token("canteen:write")
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(user)
+
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
@@ -325,6 +353,22 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
         diagnostic = DiagnosticFactory(year=2024)
         diagnostic.teledeclare(authenticate.user)
 
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_cancel_teledeclaration_with_oauth2_token(self):
+        user, token = get_oauth2_token("canteen:write")
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(user)
+        diagnostic.teledeclare(user)
+
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_cancel",
