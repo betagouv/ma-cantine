@@ -1,6 +1,5 @@
 import logging
 import os
-from datetime import datetime
 
 from django.conf import settings
 from django.contrib.staticfiles import finders
@@ -15,70 +14,15 @@ from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope
-from api.serializers import FullDiagnosticSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import (
     CAMPAIGN_DATES,
     is_in_correction,
     is_in_teledeclaration,
-    is_in_teledeclaration_or_correction,
 )
 
 
 logger = logging.getLogger(__name__)
-
-
-@extend_schema_view(
-    post=extend_schema(
-        summary="Annuler une télédéclaration existante.",
-        description="Un diagnostic ne peut pas être modifié si une télédéclaration a été créée. Pour corriger des données, l'utilisateur devra d'abord annuler la télédeclaration. À noter que l'utilisateur devra en créer une nouvelle une fois que le diagnostic a été corrigé.",
-    ),
-)
-class TeledeclarationCancelView(APIView):
-    """
-    This view cancels a submitted teledeclaration
-    """
-
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    required_scopes = ["canteen"]
-
-    def post(self, request, *args, **kwargs):
-        last_year = datetime.now().year - 1
-
-        try:
-            teledeclaration_id = kwargs.get("pk")
-            teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
-
-            if not is_in_teledeclaration_or_correction():
-                raise PermissionDenied("La campagne de télédéclaration n'est pas ouverte.")
-
-            if teledeclaration.year != last_year:
-                raise PermissionDenied(f"Seules les télédéclarations pour l'année {last_year} peuvent être annulées")
-
-            if request.user not in teledeclaration.canteen.managers.all():
-                raise PermissionDenied()
-
-            # extra rule for correction campaign
-            # only allow to "edit" a teledeclaration
-            # (a teledeclaration must exist during the teledeclaration campaign)
-            if is_in_correction():
-                if (
-                    not Teledeclaration.objects.in_year(last_year)
-                    .in_campaign(last_year)
-                    .filter(canteen=teledeclaration.canteen)
-                    .exists()
-                ):
-                    raise PermissionDenied(
-                        "La campagne de correction est réservée aux cantines qui ont télédéclaré durant la campagne de télédéclaration."
-                    )
-
-            # all the checks avec passed, we can cancel the teledeclaration
-            teledeclaration.cancel()
-
-            return Response(FullDiagnosticSerializer(teledeclaration.diagnostic).data, status=status.HTTP_200_OK)
-
-        except Teledeclaration.DoesNotExist:
-            raise ValidationError("La télédéclaration specifiée n'existe pas")
 
 
 @extend_schema_view(
