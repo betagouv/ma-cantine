@@ -60,7 +60,6 @@ from api.views import (
     TeledeclarationCampaignDatesListView,
     TeledeclarationCampaignDatesRetrieveView,
     TeledeclarationCancelView,
-    TeledeclarationCreateView,
     TeledeclarationPdfView,
     TerritoryCanteensListView,
     UndoClaimCanteenView,
@@ -183,11 +182,6 @@ urlpatterns = {
         "campaignDates/<int:year>/",
         TeledeclarationCampaignDatesRetrieveView.as_view(),
         name="retrieve_teledeclaration_campaign_dates",
-    ),
-    path(
-        "teledeclaration/",
-        TeledeclarationCreateView.as_view(),
-        name="teledeclaration_create",
     ),
     path(
         "teledeclaration/<int:pk>/cancel/",

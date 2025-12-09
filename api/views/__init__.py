@@ -66,7 +66,6 @@ from .teledeclaration import (  # noqa: F401
     TeledeclarationCampaignDatesListView,
     TeledeclarationCampaignDatesRetrieveView,
     TeledeclarationCancelView,
-    TeledeclarationCreateView,
     TeledeclarationPdfView,
 )
 from .user import (  # noqa: F401
