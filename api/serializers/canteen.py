@@ -628,6 +628,7 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             "region",
             # "region_lib",
             "sectors",  # from "sectors_m2m"
+            "sector_list",
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
@@ -666,6 +667,11 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "yearly_meal_count",
             "sectors",  # from "sectors_m2m"
+            "sector_list",
+            "line_ministry",
+            "production_type",
+            "management_type",
+            "economic_model",
         )
 
 

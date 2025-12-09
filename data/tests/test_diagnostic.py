@@ -7,7 +7,7 @@ from django.utils import timezone
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Diagnostic
+from data.models import Canteen, Diagnostic, Sector
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -612,6 +612,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         cls.canteen_sat = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central.siret,
+            sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL],
         )
         cls.diagnostic = DiagnosticFactory(
             canteen=cls.canteen_central,
@@ -655,9 +656,17 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic.applicant, self.user)
         self.assertIsNotNone(self.diagnostic.canteen_snapshot)
         self.assertEqual(self.diagnostic.canteen_snapshot["id"], self.canteen_central.id)
+        self.assertEqual(self.diagnostic.canteen_snapshot["production_type"], Canteen.ProductionType.CENTRAL)
+        self.assertEqual(self.diagnostic.canteen_snapshot["sector_list"], [])
         self.assertIsNotNone(self.diagnostic.satellites_snapshot)
         self.assertEqual(len(self.diagnostic.satellites_snapshot), 1)
         self.assertEqual(self.diagnostic.satellites_snapshot[0]["id"], self.canteen_sat.id)
+        self.assertEqual(
+            self.diagnostic.satellites_snapshot[0]["production_type"], Canteen.ProductionType.ON_SITE_CENTRAL
+        )
+        self.assertEqual(
+            self.diagnostic.satellites_snapshot[0]["sector_list"], [Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL]
+        )
         self.assertIsNotNone(self.diagnostic.applicant_snapshot)
         self.assertEqual(self.diagnostic.applicant_snapshot["email"], self.user.email)
         self.assertEqual(self.diagnostic.valeur_bio_agg, 200)
