@@ -342,6 +342,9 @@ export default {
     }
   },
   computed: {
+    teledeclarationId() {
+      return this.diagnostic?.teledeclaration?.id || ""
+    },
     tabHeaders() {
       const tabHeaders = []
       tabHeaders.push({
