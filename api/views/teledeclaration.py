@@ -9,11 +9,12 @@ from django.utils.text import slugify
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
-from api.permissions import IsAuthenticatedOrTokenHasResourceScope
+from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager, IsCanteenManager
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import (
     CAMPAIGN_DATES,
@@ -31,96 +32,84 @@ logger = logging.getLogger(__name__)
         description="",
     ),
 )
-class TeledeclarationPdfView(APIView):
+class DiagnosticTeledeclarationPdfView(APIView):
     """
     This view returns a PDF for proof of teledeclaration
     """
 
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
     required_scopes = ["canteen"]
 
     def get(self, request, *args, **kwargs):
-        teledeclaration_id = kwargs.get("pk")
-        if not teledeclaration_id:
-            raise ValidationError("teledeclarationId manquant")
-
-        try:
-            teledeclaration = Teledeclaration.objects.get(pk=teledeclaration_id)
-        except Teledeclaration.DoesNotExist:
-            raise ValidationError("La télédéclaration specifiée n'existe pas")
-
-        if request.user not in teledeclaration.canteen.managers.all():
+        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
+        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
             raise PermissionDenied()
+        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
 
-        if teledeclaration.status != Teledeclaration.TeledeclarationStatus.SUBMITTED:
-            raise ValidationError("La télédéclaration n'est pas validée par l'utilisateur")
+        if not diagnostic.is_teledeclared:
+            raise ValidationError("Le diagnostic n'a pas été télédéclaré.")
 
         template = (
             get_template("teledeclaration_campaign_2024/index.html")
-            if teledeclaration.year >= 2023
+            if diagnostic.year >= 2023
             else get_template("teledeclaration_pdf.html")
         )
-        context = TeledeclarationPdfView.get_context(teledeclaration)
+        context = DiagnosticTeledeclarationPdfView.get_context(diagnostic)
         html = template.render(context)
 
         response = HttpResponse(content_type="application/pdf")
-        filename = TeledeclarationPdfView.get_filename(teledeclaration)
+        filename = DiagnosticTeledeclarationPdfView.get_filename(diagnostic)
         response["Content-Disposition"] = f'attachment; filename="{filename}"'
-        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=TeledeclarationPdfView.link_callback)
+        pisa_status = pisa.CreatePDF(html, dest=response, link_callback=DiagnosticTeledeclarationPdfView.link_callback)
 
         if pisa_status.err:
-            logger.error(f"Error while generating PDF for teledeclaration {teledeclaration.id}:\n{pisa_status.err}")
+            logger.error(f"Error while generating PDF for diagnostic {diagnostic.id}:\n{pisa_status.err}")
             return HttpResponse("An error ocurred", status=500)
 
         return response
 
     @staticmethod
-    def get_context(teledeclaration):
-        declared_data = teledeclaration.declared_data
-
-        central_kitchen_siret = declared_data.get("central_kitchen_siret", None)
+    def get_context(diagnostic):
+        central_kitchen_siret = diagnostic.canteen_snapshot.get("central_kitchen_siret", None)
         central_kitchen_name = None
-        if teledeclaration.teledeclaration_mode == Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
+        if diagnostic.teledeclaration_mode == Teledeclaration.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
             try:
                 central_kitchen_name = Canteen.objects.get(siret=central_kitchen_siret).name
             except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
                 pass
 
-        canteen_data = declared_data["canteen"]
-        teledeclaration_data = declared_data["teledeclaration"]
-        processed_canteen_data = TeledeclarationPdfView._get_canteen_override_data(canteen_data)
-        processed_diagnostic_data = TeledeclarationPdfView._get_teledeclaration_override_data(teledeclaration_data)
-        additional_questions = TeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_data)
+        canteen_snapshot = diagnostic.canteen_snapshot
+        processed_canteen_snapshot = DiagnosticTeledeclarationPdfView._get_canteen_override_data(canteen_snapshot)
+        processed_diagnostic_data = DiagnosticTeledeclarationPdfView._get_teledeclaration_override_data(diagnostic)
+        additional_questions = DiagnosticTeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_snapshot)
 
-        is_complete = (
-            declared_data["teledeclaration"].get("diagnostic_type", None) == Diagnostic.DiagnosticType.COMPLETE
-        )
         structure_complete_appro_data = {}
-        if is_complete:
-            structure_complete_appro_data = TeledeclarationPdfView._structure_complete_appro_data(teledeclaration_data)
+        if diagnostic.is_diagnostic_type_complete:
+            structure_complete_appro_data = DiagnosticTeledeclarationPdfView._structure_complete_appro_data(diagnostic)
 
         return {
-            **{**teledeclaration_data, **processed_diagnostic_data},
+            **diagnostic.__dict__,
+            **processed_diagnostic_data,
             **{
-                "diagnostic_type": "détaillée" if is_complete else "simplifiée",
-                "year": teledeclaration.year,
-                "date": teledeclaration.creation_date,
-                "applicant": declared_data["applicant"]["name"],
-                "teledeclaration_mode": teledeclaration.teledeclaration_mode,
+                "diagnostic_type": "détaillée" if diagnostic.is_diagnostic_type_complete else "simplifiée",
+                "year": diagnostic.year,
+                "date": diagnostic.creation_date,
+                "applicant": diagnostic.applicant_snapshot["name"],
+                "teledeclaration_mode": diagnostic.teledeclaration_mode,
                 "central_kitchen_siret": central_kitchen_siret,
                 "central_kitchen_name": central_kitchen_name,
-                "satellites": declared_data.get("satellites", []),
-                "canteen": {**canteen_data, **processed_canteen_data},
+                "satellites": diagnostic.satellites_snapshot or [],
+                "canteen": {**canteen_snapshot, **processed_canteen_snapshot},
                 "additional_questions": additional_questions,
                 "complete_appro": structure_complete_appro_data,
             },
         }
 
     @staticmethod
-    def get_filename(teledeclaration):
-        year = teledeclaration.year
-        canteenName = slugify(teledeclaration.declared_data["canteen"]["name"])
-        creation_date = teledeclaration.creation_date.strftime("%Y-%m-%d")
+    def get_filename(diagnostic):
+        year = diagnostic.year
+        canteenName = slugify(diagnostic.canteen_snapshot["name"])
+        creation_date = diagnostic.creation_date.strftime("%Y-%m-%d")
         return f"teledeclaration-{year}--{canteenName}--{creation_date}.pdf"
 
     @staticmethod
@@ -155,78 +144,76 @@ class TeledeclarationPdfView(APIView):
         return path
 
     @staticmethod
-    def _get_canteen_override_data(canteen_data):
+    def _get_canteen_override_data(canteen_snapshot):
         """
         Returns the JSON data of the canteen parameters that need to be overriden in order for
         them to be human-readable (e.g., replacing keys with labels)
         """
         return {
-            "sectors": ", ".join([x["name"] for x in (canteen_data.get("sectors") or [])]),
+            "sectors": ", ".join(
+                [x["name"] for x in (canteen_snapshot.get("sectors") or [])]
+            ),  # TODO: manage sector_list
             "production_type": (
-                Canteen.ProductionType(canteen_data["production_type"]).label
-                if canteen_data.get("production_type")
+                Canteen.ProductionType(canteen_snapshot["production_type"]).label
+                if canteen_snapshot.get("production_type")
                 else None
             ),
             "management_type": (
-                Canteen.ManagementType(canteen_data["management_type"]).label
-                if canteen_data.get("management_type")
+                Canteen.ManagementType(canteen_snapshot["management_type"]).label
+                if canteen_snapshot.get("management_type")
                 else None
             ),
             "line_ministry": (
-                Canteen.Ministries(canteen_data["line_ministry"]).label if canteen_data.get("line_ministry") else None
+                Canteen.Ministries(canteen_snapshot["line_ministry"]).label
+                if canteen_snapshot.get("line_ministry")
+                else None
             ),
             "economic_model": (
-                Canteen.EconomicModel(canteen_data["economic_model"]).label
-                if canteen_data.get("economic_model")
+                Canteen.EconomicModel(canteen_snapshot["economic_model"]).label
+                if canteen_snapshot.get("economic_model")
                 else None
             ),
         }
 
     @staticmethod
-    def _get_teledeclaration_override_data(teledeclaration_data):
+    def _get_teledeclaration_override_data(diagnostic):
         """
         Returns the JSON data of the teledeclaration parameters that need to be overriden in order for
         them to be human-readable (e.g., replacing keys with labels and merging multiple choice with
         "other" editable choices)
         """
-        processed_waste_actions = [
-            Diagnostic.WasteActions(x).label for x in (teledeclaration_data.get("waste_actions") or [])
-        ]
+        processed_waste_actions = [Diagnostic.WasteActions(x).label for x in (diagnostic.waste_actions or [])]
         combined_waste_actions = processed_waste_actions + (
-            [teledeclaration_data.get("other_waste_action")] if teledeclaration_data.get("other_waste_action") else []
+            [diagnostic.other_waste_action] if diagnostic.other_waste_action else []
         )
         processed_communication_supports = [
-            Diagnostic.CommunicationType(x).label for x in (teledeclaration_data.get("communication_supports") or [])
+            Diagnostic.CommunicationType(x).label for x in (diagnostic.communication_supports or [])
         ]
         combined_communication_supports = processed_communication_supports + (
-            [teledeclaration_data.get("other_communication_support")]
-            if teledeclaration_data.get("other_communication_support")
-            else []
+            [diagnostic.other_communication_support] if diagnostic.other_communication_support else []
         )
 
         return {
             "waste_actions": combined_waste_actions,
             "diversification_plan_actions": [
-                Diagnostic.DiversificationPlanActions(x).label
-                for x in (teledeclaration_data.get("diversification_plan_actions") or [])
+                Diagnostic.DiversificationPlanActions(x).label for x in (diagnostic.diversification_plan_actions or [])
             ],
             "vegetarian_weekly_recurrence": (
-                Diagnostic.VegetarianMenuFrequency(teledeclaration_data["vegetarian_weekly_recurrence"]).label
-                if teledeclaration_data.get("vegetarian_weekly_recurrence")
+                Diagnostic.VegetarianMenuFrequency(diagnostic.vegetarian_weekly_recurrence).label
+                if diagnostic.vegetarian_weekly_recurrence
                 else None
             ),
             "vegetarian_menu_type": (
-                Diagnostic.VegetarianMenuType(teledeclaration_data["vegetarian_menu_type"]).label
-                if teledeclaration_data.get("vegetarian_menu_type")
+                Diagnostic.VegetarianMenuType(diagnostic.vegetarian_menu_type).label
+                if diagnostic.vegetarian_menu_type
                 else None
             ),
             "vegetarian_menu_bases": [
-                Diagnostic.VegetarianMenuBase(x).label
-                for x in (teledeclaration_data.get("vegetarian_menu_bases") or [])
+                Diagnostic.VegetarianMenuBase(x).label for x in (diagnostic.vegetarian_menu_bases or [])
             ],
             "communication_frequency": (
-                Diagnostic.CommunicationFrequency(teledeclaration_data["communication_frequency"]).label
-                if teledeclaration_data.get("communication_frequency")
+                Diagnostic.CommunicationFrequency(diagnostic.communication_frequency).label
+                if diagnostic.communication_frequency
                 else None
             ),
             "communication_supports": combined_communication_supports,
@@ -234,11 +221,11 @@ class TeledeclarationPdfView(APIView):
 
     # this method should correspond to the rules in frontend utils : applicableDiagnosticRules
     @staticmethod
-    def _get_applicable_diagnostic_rules(canteen_data):
+    def _get_applicable_diagnostic_rules(canteen_snapshot):
         donation_agreement = diversification_plan = False
-        if "daily_meal_count" in canteen_data and canteen_data["daily_meal_count"]:
-            donation_agreement = canteen_data["daily_meal_count"] >= 3000
-            diversification_plan = canteen_data["daily_meal_count"] >= 200
+        if "daily_meal_count" in canteen_snapshot and canteen_snapshot["daily_meal_count"]:
+            donation_agreement = canteen_snapshot["daily_meal_count"] >= 3000
+            diversification_plan = canteen_snapshot["daily_meal_count"] >= 200
         return {
             "donation_agreement": donation_agreement,
             "diversification_plan": diversification_plan,

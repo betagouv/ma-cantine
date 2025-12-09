@@ -209,6 +209,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_teledeclare_if_not_canteen_manager(self):
         diagnostic = DiagnosticFactory(year=2024)
+        # authenticate.user is not a manager of the canteen
 
         response = self.client.post(
             reverse(
@@ -351,6 +352,7 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_cancel_teledeclaration_if_not_canteen_manager(self):
         diagnostic = DiagnosticFactory(year=2024)
+        # authenticate.user is not a manager of the canteen
         diagnostic.teledeclare(authenticate.user)
 
         response = self.client.post(

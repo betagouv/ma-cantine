@@ -23,6 +23,7 @@ from api.views import (
     DiagnosticsToTeledeclareListView,
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
+    DiagnosticTeledeclarationPdfView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
     ImportCanteensView,
@@ -59,7 +60,6 @@ from api.views import (
     TeamJoinRequestView,
     TeledeclarationCampaignDatesListView,
     TeledeclarationCampaignDatesRetrieveView,
-    TeledeclarationPdfView,
     TerritoryCanteensListView,
     UndoClaimCanteenView,
     UnlinkSatelliteView,
@@ -115,6 +115,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/cancel",
         DiagnosticTeledeclarationCancelView.as_view(),
         name="diagnostic_teledeclaration_cancel",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/document.pdf",
+        DiagnosticTeledeclarationPdfView.as_view(),
+        name="diagnostic_teledeclaration_pdf",
     ),
     path(
         "canteens/<int:canteen_pk>/wasteMeasurements/",
@@ -181,11 +186,6 @@ urlpatterns = {
         "campaignDates/<int:year>/",
         TeledeclarationCampaignDatesRetrieveView.as_view(),
         name="retrieve_teledeclaration_campaign_dates",
-    ),
-    path(
-        "teledeclaration/<int:pk>/document.pdf",
-        TeledeclarationPdfView.as_view(),
-        name="teledeclaration_pdf",
     ),
     path("inquiry/", InquiryView.as_view(), name="inquiry"),
     path(
