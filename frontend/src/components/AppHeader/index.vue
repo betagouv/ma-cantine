@@ -249,10 +249,6 @@ export default {
               text: "Blog",
               to: { name: "BlogsHome" },
             },
-            {
-              text: "Pour aller plus loin",
-              href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-            },
           ],
         },
         {

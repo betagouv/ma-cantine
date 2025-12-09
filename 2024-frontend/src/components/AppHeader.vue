@@ -60,12 +60,6 @@ const navItems = [
         text: "Blog",
         to: { name: "BlogsHome" },
       },
-      {
-        text: "Pour aller plus loin",
-        to: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-        target: "_blank",
-        rel: "noopener external",
-      },
     ],
   },
   {
