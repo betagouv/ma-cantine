@@ -101,7 +101,7 @@ const navItems = [
       },
       {
         text: "Documentation",
-        to: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+        to: "https://ma-cantine.crisp.help/fr/",
         target: "_blank",
         rel: "noopener external",
       },
