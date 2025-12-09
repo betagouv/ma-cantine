@@ -36,6 +36,7 @@
         :purchasesSummary="purchasesSummary"
         v-on:update-payload="updatePayloadFromComponent"
         v-on:tunnel-autofill="onTunnelAutofill"
+        v-on:save-diagnostic-and-go-to-page="saveDiagnosticAndGoToPage"
       />
     </div>
   </v-form>
@@ -171,6 +172,9 @@ export default {
   methods: {
     updatePayloadFromComponent(e) {
       this.$set(this, "payload", e.payload)
+    },
+    saveDiagnosticAndGoToPage(e) {
+      this.$emit("save-diagnostic-and-go-to-page", { payload: e.payload, nextPage: e.nextPage })
     },
     updatePayload() {
       let formIsValid = this.formIsValid
