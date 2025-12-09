@@ -245,7 +245,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
             "fermier": "Fermier",
             "externalites": "Externalités environnementales",
             "performance": "Performance environnementale",
-            "non_egalim": "non-EGalim",
+            "non_egalim": "Non-EGalim",
             "france": "Origine France",
             "circuit_court": "Origine France : dont circuit-court",
             "local": "Origine France : dont local",
