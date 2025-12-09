@@ -167,11 +167,11 @@
       "constraints": {
         "required": false
       },
-      "description": "Nombre de restaurants satellites pour une cuisine centrale",
+      "description": "Ce champ est obligatoire pour les types de production 'central' ou 'central_serving'",
       "example": "12",
       "format": "default",
       "name": "nombre_satellites",
-      "title": "Nombre de restaurants satellites. Ce champ est obligatoire pour les types de production 'central' ou 'central_serving'",
+      "title": "Nombre de restaurants satellites.",
       "type": "integer"
     }
   ],
