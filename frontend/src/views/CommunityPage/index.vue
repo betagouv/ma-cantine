@@ -7,7 +7,7 @@
       </v-col>
       <v-col cols="12" sm="6" class="px-2 px-md-10 py-4">
         <h1 class="text-h4 font-weight-black">
-          Par ici, on propose un espace d'entraide et rencontre, participez !
+          Les webinaires
         </h1>
       </v-col>
       <v-col>
@@ -26,7 +26,7 @@
       </v-col>
     </v-row>
 
-    <h2 class="font-weight-black text-h5" id="evenements">Webinaires à venir</h2>
+    <h2 class="font-weight-black text-h5" id="evenements">À venir</h2>
     <p class="my-4">
       Membres de la communauté partagent expériences et conseils pour utiliser notre plateforme et améliorer votre
       offre, inscrivez-vous pour y assister !
@@ -41,7 +41,7 @@
       </v-col>
     </v-row>
 
-    <h3 class="font-weight-black text-h5 mt-8" id="precedents-evenements">Précedents webinaires à revoir</h3>
+    <h3 class="font-weight-black text-h5 mt-8" id="precedents-evenements">À revoir</h3>
     <p class="my-4">
       Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
       regarder les replays !
