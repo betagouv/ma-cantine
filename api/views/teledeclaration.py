@@ -235,19 +235,20 @@ class DiagnosticTeledeclarationPdfView(APIView):
         """
         labels_variable_to_display = {
             "bio": "Bio",
+            "bio_dont_commerce_equitable": "Bio et Commerce équitable",
             "label_rouge": "Label Rouge",
             "aocaop_igp_stg": "AOC/AOP, IGP ou STG",
             "hve": "Certification Environnementale de Niveau 2 ou HVE",
             "peche_durable": "Écolabel pêche durable",
             "rup": "RUP",
-            "commerce_equitable": "Commerce Équitable",
+            "commerce_equitable": "Commerce équitable (hors bio)",
             "fermier": "Fermier",
             "externalites": "Externalités environnementales",
             "performance": "Performance environnementale",
             "non_egalim": "non-EGalim",
-            "france": "origine France",
-            "circuit_court": "circuit-court",
-            "local": "« local »",
+            "france": "Origine France",
+            "circuit_court": "Origine France : dont circuit-court",
+            "local": "Origine France : dont local",
         }
         family_variable_to_display = {
             "viandes_volailles": "Viandes et volailles",
