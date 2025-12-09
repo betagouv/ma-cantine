@@ -263,7 +263,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
         for label, display_label in labels_variable_to_display.items():
             structured_data[display_label] = {}
             for family, display_family in family_variable_to_display.items():
-                structured_data[display_label][display_family] = getattr(diagnostic, f"value_{family}_{label}")
+                structured_data[display_label][display_family] = getattr(diagnostic, f"valeur_{family}_{label}")
         return structured_data
 
 
