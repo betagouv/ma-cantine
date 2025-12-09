@@ -14,7 +14,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
-from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager, IsCanteenManager
+from api.permissions import (
+    IsAuthenticatedOrTokenHasResourceScope,
+    IsAuthenticated,
+    IsLinkedCanteenManager,
+    IsCanteenManager,
+)
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import (
     CAMPAIGN_DATES,
@@ -24,6 +29,38 @@ from macantine.utils import (
 
 
 logger = logging.getLogger(__name__)
+
+
+class DiagnosticTeledeclarationCreateView(APIView):
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    required_scopes = ["canteen"]
+
+    def post(self, request, *args, **kwargs):
+        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
+        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
+            raise PermissionDenied()
+        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+
+        # if ValidationError, it will be raised (and handled by custom_exception_handler)
+        diagnostic.teledeclare(request.user)
+
+        return HttpResponse(status=200)
+
+
+class DiagnosticTeledeclarationCancelView(APIView):
+    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    required_scopes = ["canteen"]
+
+    def post(self, request, *args, **kwargs):
+        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
+        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
+            raise PermissionDenied()
+        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+
+        # if ValidationError, it will be raised (and handled by custom_exception_handler)
+        diagnostic.cancel()
+
+        return HttpResponse(status=200)
 
 
 @extend_schema_view(

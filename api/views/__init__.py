@@ -28,8 +28,6 @@ from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
     DiagnosticsToTeledeclareListView,
-    DiagnosticTeledeclarationCancelView,
-    DiagnosticTeledeclarationCreateView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
 )
@@ -66,6 +64,8 @@ from .teledeclaration import (  # noqa: F401
     TeledeclarationCampaignDatesListView,
     TeledeclarationCampaignDatesRetrieveView,
     DiagnosticTeledeclarationPdfView,
+    DiagnosticTeledeclarationCancelView,
+    DiagnosticTeledeclarationCreateView,
 )
 from .user import (  # noqa: F401
     ChangePasswordView,
