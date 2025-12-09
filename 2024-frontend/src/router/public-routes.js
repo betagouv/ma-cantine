@@ -7,7 +7,6 @@ import ConditionsGeneralesUtilisation from "@/views/ConditionsGeneralesUtilisati
 import Contact from "@/views/Contact.vue"
 import Developpeurs from "@/views/Developpeurs.vue"
 import DonneesPersonnelles from "@/views/DonneesPersonnelles.vue"
-import FoireAuxQuestions from "@/views/FoireAuxQuestions.vue"
 import MentionsLegales from "@/views/MentionsLegales.vue"
 import Observatoire from "@/views/Observatoire.vue"
 import PlanDuSite from "@/views/PlanDuSite.vue"
@@ -59,15 +58,6 @@ const routes = [
     component: Contact,
     meta: {
       title: "Contactez-nous",
-      siteMap: site,
-    },
-  },
-  {
-    path: "/foire-aux-questions",
-    name: "FoireAuxQuestions",
-    component: FoireAuxQuestions,
-    meta: {
-      title: "Foire aux questions",
       siteMap: site,
     },
   },
