@@ -1,28 +1,11 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav />
-    <v-row class="my-4 align-center">
-      <v-col cols="12" sm="2" class="pl-2 pr-2 pl-md-8 pr-md-0">
-        <v-img src="/static/images/doodles-dsfr/primary/Hi.png" max-height="180" contain></v-img>
-      </v-col>
-      <v-col cols="12" sm="6" class="px-2 px-md-10 py-4">
+    <v-row class="my-4">
+      <v-col cols="12" class="pl-2 pr-2">
         <h1 class="text-h4 font-weight-black">
           Les webinaires
         </h1>
-      </v-col>
-      <v-col>
-        <ul class="text-body-2">
-          <li v-for="link in links" :key="link.title" class="my-1">
-            <a :href="`#${link.id}`" v-if="link.id">
-              <v-icon small color="primary">mdi-chevron-right</v-icon>
-              {{ link.title }}
-            </a>
-            <router-link :to="link.to" v-else>
-              <v-icon small color="primary">mdi-chevron-right</v-icon>
-              {{ link.title }}
-            </router-link>
-          </li>
-        </ul>
       </v-col>
     </v-row>
 
@@ -68,36 +51,6 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 export default {
   name: "CommunityPage",
   components: { WebinaireCard, TheNewsletter, BreadcrumbsNav, VideoTutorials },
-  data() {
-    return {
-      links: [
-        {
-          id: "precedents-evenements",
-          title: "Précedents webinaires",
-        },
-        {
-          id: "evenements",
-          title: "Webinaires à venir",
-        },
-        {
-          to: { name: "BlogsHome" },
-          title: "Notre blog",
-        },
-        {
-          to: { name: "PartnersHome" },
-          title: "Trouver des acteurs de l'éco-système",
-        },
-        {
-          to: { name: "FoireAuxQuestions" },
-          title: "Foire aux questions",
-        },
-        {
-          id: "suivre",
-          title: "Suivre nos actus",
-        },
-      ],
-    }
-  },
   computed: {
     webinaires() {
       return this.$store.state.upcomingCommunityEvents
