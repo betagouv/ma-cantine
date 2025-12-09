@@ -1,9 +1,5 @@
 <script setup>
 import AppSeparator from "@/components/AppSeparator.vue"
-
-const openCrisp = () => {
-  window.$crisp.push(["do", "helpdesk:search"])
-}
 </script>
 
 <template>
@@ -18,8 +14,7 @@ const openCrisp = () => {
         Si vous avez des questions ou des problèmes pour importer votre fichier, vous pouvez
         <a
           href="https://ma-cantine.crisp.help/fr/"
-          class="fr-icon-arrow-right-line fr-link--icon-right"
-          @click.prevent="openCrisp()"
+          target="_blank"
         >
           consulter nos ressources
         </a>
