@@ -54,9 +54,6 @@
     </v-row>
 
     <v-divider aria-hidden="true" role="presentation" class="my-10"></v-divider>
-    <FacebookSection id="facebook" />
-
-    <v-divider aria-hidden="true" role="presentation" class="my-10"></v-divider>
     <TheNewsletter id="suivre" />
   </div>
 </template>
@@ -65,13 +62,12 @@
 import WebinaireCard from "./WebinaireCard"
 import VideoTutorials from "./VideoTutorials"
 import TheNewsletter from "@/components/TheNewsletter"
-import FacebookSection from "./FacebookSection"
 import { hideCommunityEventsBanner } from "@/utils"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 
 export default {
   name: "CommunityPage",
-  components: { WebinaireCard, TheNewsletter, FacebookSection, BreadcrumbsNav, VideoTutorials },
+  components: { WebinaireCard, TheNewsletter, BreadcrumbsNav, VideoTutorials },
   data() {
     return {
       links: [
@@ -82,10 +78,6 @@ export default {
         {
           id: "evenements",
           title: "Webinaires à venir",
-        },
-        {
-          id: "facebook",
-          title: "Rejoindre la communauté sur Facebook",
         },
         {
           to: { name: "BlogsHome" },
