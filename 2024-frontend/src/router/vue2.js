@@ -82,7 +82,7 @@ const vue2routes = [
     },
   },
   {
-    path: "/communaute",
+    path: "/webinaires",
     name: "CommunityPage",
     meta: {
       title: "Webinaires",
