@@ -167,7 +167,7 @@
       "constraints": {
         "required": false
       },
-      "description": "Ce champ est obligatoire pour les types de production 'central' ou 'central_serving'",
+      "description": "Ce champ est obligatoire pour les types de production 'central' et 'central_serving'",
       "example": "12",
       "format": "default",
       "name": "nombre_satellites",
