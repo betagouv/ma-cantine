@@ -26,18 +26,6 @@
       </v-col>
     </v-row>
 
-    <h3 class="font-weight-black text-h5 mt-8" id="precedents-evenements">Précedents webinaires à revoir</h3>
-    <p class="my-4">
-      Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
-      regarder les replays !
-    </p>
-
-    <VideoTutorials
-      id="evenements-passes"
-      v-if="videoTutorials && videoTutorials.length > 0"
-      :tutorials="videoTutorials"
-    />
-
     <h2 class="font-weight-black text-h5" id="evenements">Webinaires à venir</h2>
     <p class="my-4">
       Membres de la communauté partagent expériences et conseils pour utiliser notre plateforme et améliorer votre
@@ -52,6 +40,18 @@
         <p class="mb-0">Aucun webinaire à venir, à bientôt !</p>
       </v-col>
     </v-row>
+
+    <h3 class="font-weight-black text-h5 mt-8" id="precedents-evenements">Précedents webinaires à revoir</h3>
+    <p class="my-4">
+      Nos webinaires sont interactifs et permettent de poser vos questions aux intervenants. Vous pouvez toutefois
+      regarder les replays !
+    </p>
+
+    <VideoTutorials
+      id="evenements-passes"
+      v-if="videoTutorials && videoTutorials.length > 0"
+      :tutorials="videoTutorials"
+    />
 
     <v-divider aria-hidden="true" role="presentation" class="my-10"></v-divider>
     <TheNewsletter id="suivre" />
