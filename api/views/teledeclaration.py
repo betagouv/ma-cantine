@@ -235,19 +235,20 @@ class DiagnosticTeledeclarationPdfView(APIView):
         """
         labels_variable_to_display = {
             "bio": "Bio",
+            "bio_dont_commerce_equitable": "Bio et Commerce équitable",
             "label_rouge": "Label Rouge",
             "aocaop_igp_stg": "AOC/AOP, IGP ou STG",
             "hve": "Certification Environnementale de Niveau 2 ou HVE",
             "peche_durable": "Écolabel pêche durable",
             "rup": "RUP",
-            "commerce_equitable": "Commerce Équitable",
+            "commerce_equitable": "Commerce équitable (hors bio)",
             "fermier": "Fermier",
             "externalites": "Externalités environnementales",
             "performance": "Performance environnementale",
-            "non_egalim": "non-EGalim",
-            "france": "origine France",
-            "circuit_court": "circuit-court",
-            "local": "« local »",
+            "non_egalim": "Non-EGalim",
+            "france": "Origine France",
+            "circuit_court": "Origine France : dont circuit-court",
+            "local": "Origine France : dont local",
         }
         family_variable_to_display = {
             "viandes_volailles": "Viandes et volailles",
@@ -263,7 +264,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
         for label, display_label in labels_variable_to_display.items():
             structured_data[display_label] = {}
             for family, display_family in family_variable_to_display.items():
-                structured_data[display_label][display_family] = getattr(diagnostic, f"value_{family}_{label}")
+                structured_data[display_label][display_family] = getattr(diagnostic, f"valeur_{family}_{label}")
         return structured_data
 
 

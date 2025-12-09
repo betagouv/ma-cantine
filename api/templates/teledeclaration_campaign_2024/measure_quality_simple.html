@@ -5,57 +5,50 @@
     <li>
         <span>Valeur en HT des achats alimentaires en Bio</span> :
         {% if not valeur_bio is None %}
-            {{ valeur_bio|floatformat:2 }}
+            {{ valeur_bio|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
     <li>
         <span>Dont valeur en € HT de mes achats Bio et Commerce équitable</span> :
         {% if not valeur_bio_dont_commerce_equitable is None %}
-            {{ valeur_bio_dont_commerce_equitable|floatformat:2 }}
+            {{ valeur_bio_dont_commerce_equitable|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
     <li>
         <span>Valeur en HT de mes achats SIQO (AOP/AOC, IGP, STG, Label Rouge)</span> :
         {% if not valeur_siqo is None %}
-            {{ valeur_siqo|floatformat:2 }}
+            {{ valeur_siqo|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
     <li>
         <span>Valeur en HT de mes autres achats EGalim</span> :
         {% if not valeur_egalim_autres is None %}
-            {{ valeur_egalim_autres|floatformat:2 }}
+            {{ valeur_egalim_autres|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
     <li>
         <span>Dont valeur en € HT des achats Commerce équitable (hors bio)</span> :
         {% if not valeur_egalim_autres_dont_commerce_equitable is None %}
-            {{ valeur_egalim_autres_dont_commerce_equitable|floatformat:2 }}
+            {{ valeur_egalim_autres_dont_commerce_equitable|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
     <li>
-        <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou leurs
-            performances en matière environnementale</span> :
+        <span>Valeur en HT de mes achats prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale</span> :
         {% if not valeur_externalites_performance is None %}
-            {{ valeur_externalites_performance|floatformat:2 }}
+            {{ valeur_externalites_performance|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
 </ul>
 <p>Viandes et volailles</p>
@@ -63,29 +56,18 @@
     <li>
         <span>Valeur totale en HT des achats en viandes et volailles fraiches ou surgelées</span> :
         {% if not valeur_viandes_volailles is None %}
-            {{ valeur_viandes_volailles|floatformat:2 }}
+            {{ valeur_viandes_volailles|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
     <li>
         <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées EGalim</span> :
         {% if not valeur_viandes_volailles_egalim is None %}
-            {{ valeur_viandes_volailles_egalim|floatformat:2 }}
+            {{ valeur_viandes_volailles_egalim|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
-    </li>
-    <li>
-        <span>Valeur en HT des achats en viandes et volailles fraiches ou surgelées origine France</span> :
-        {% if not valeur_viandes_volailles_france is None %}
-            {{ valeur_viandes_volailles_france|floatformat:2 }}
-        {% else %}
-            —
-        {% endif %}
-        €
     </li>
 </ul>
 <p>Poissons, produits de la mer et de l'aquaculture</p>
@@ -93,19 +75,85 @@
     <li>
         <span>Valeur totale en HT des achats en poissons, produits de la mer et de l'aquaculture</span> :
         {% if not valeur_produits_de_la_mer is None %}
-            {{ valeur_produits_de_la_mer|floatformat:2 }}
+            {{ valeur_produits_de_la_mer|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
     </li>
     <li>
         <span>Valeur en HT des achats en poissons, produits de la mer et de l'aquaculture EGalim</span> :
         {% if not valeur_produits_de_la_mer_egalim is None %}
-            {{ valeur_produits_de_la_mer_egalim|floatformat:2 }}
+            {{ valeur_produits_de_la_mer_egalim|floatformat:2 }} €
         {% else %}
-            —
+            Non renseignée
         {% endif %}
-        €
+    </li>
+</ul>
+
+<p>Origine France</p>
+<ul>
+    <li>
+        <span>Valeur en HT des achats en viandes et volailles origine France</span> :
+        {% if not valeur_viandes_volailles_france is None %}
+            {{ valeur_viandes_volailles_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en poissons, produits de la mer et de l'aquaculture origine France</span> :
+        {% if not valeur_produits_de_la_mer_france is None %}
+            {{ valeur_produits_de_la_mer_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en charcuterie origine France</span> :
+        {% if not valeur_charcuterie_france is None %}
+            {{ valeur_charcuterie_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en fruits et légumes frais et surgelés origine France</span> :
+        {% if not valeur_fruits_et_legumes_france is None %}
+            {{ valeur_fruits_et_legumes_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en BOF (Produits laitiers, beurre et œufs) origine France</span> :
+        {% if not valeur_produits_laitiers_france is None %}
+            {{ valeur_produits_laitiers_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en boulangerie / pâtisserie fraîches origine France</span> :
+        {% if not valeur_boulangerie_france is None %}
+            {{ valeur_boulangerie_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en boissons origine France</span> :
+        {% if not valeur_boissons_france is None %}
+            {{ valeur_boissons_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en autres produits frais, surgelés et d’épicerie origine France</span> :
+        {% if not valeur_autres_france is None %}
+            {{ valeur_autres_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
     </li>
 </ul>
