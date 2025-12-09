@@ -1,6 +1,6 @@
 siret,nom,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels,nombre_satellites
-21340172201787,A canteen,,700,14000,Cliniques+Hôpitaux,site,conceded,public,,
+21340172201787,A canteen,,700,14000,"Cliniques,Hôpitaux",site,conceded,public,,
 21380185500015,Another canteen,,700,14000,,central,conceded,public,,1
-21670482500019,A third canteen,,700,14000,Cliniques+Hôpitaux,central_serving,conceded,public,,1
-40419443300078,A satellite canteen,21380185500015,700,14000,Cliniques+Hôpitaux,site_cooked_elsewhere,conceded,public,,
-83014132100034,Another satellite canteen,21670482500019,700,14000,Cliniques+Hôpitaux,site_cooked_elsewhere,conceded,public,,
+21670482500019,A third canteen,,700,14000,"Cliniques,Hôpitaux",central_serving,conceded,public,,1
+40419443300078,A satellite canteen,21380185500015,700,14000,"Cliniques,Hôpitaux",site_cooked_elsewhere,conceded,public,,
+83014132100034,Another satellite canteen,21670482500019,700,14000,"Cliniques,Hôpitaux",site_cooked_elsewhere,conceded,public,,
