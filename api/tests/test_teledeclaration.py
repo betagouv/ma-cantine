@@ -4,90 +4,100 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, DiagnosticFactory, TeledeclarationFactory, UserFactory
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models import Canteen, Diagnostic
 
 
-class TestTeledeclarationPdfApi(APITestCase):
-    def test_generate_pdf_unauthenticated(self):
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
+class DiagnosticTeledeclarationPdfApiTest(APITestCase):
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_generate_pdf_if_unauthenticated(self):
+        user = UserFactory()
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(user)
+        diagnostic.teledeclare(user)
+
+        response = self.client.get(
+            reverse(
+                "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
+            )
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
-    def test_generate_pdf_unexistent_teledeclaration(self):
-        """
-        A validation error is returned if the teledeclaration does not exist
-        """
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": 1}))
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_cannot_generate_pdf_if_unknown_canteen_or_diagnostic(self):
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic.teledeclare(authenticate.user)
 
+        response = self.client.get(
+            reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": 9999, "pk": diagnostic.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        response = self.client.get(
+            reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": 9999})
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
-    def test_generate_pdf_unauthorized(self):
-        """
-        Only managers of the canteen can get PDF documents
-        """
-        manager = UserFactory()
-        canteen = CanteenFactory()
-        canteen.managers.add(manager)
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, manager)
+    def test_cannot_generate_pdf_if_not_canteen_manager(self):
+        diagnostic = DiagnosticFactory(year=2024)
+        # authenticate.user is not a manager of the canteen
+        diagnostic.teledeclare(authenticate.user)
 
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        response = self.client.get(
+            reverse(
+                "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
+            )
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @authenticate
+    def test_can_generate_pdf(self):
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+        diagnostic.teledeclare(applicant=authenticate.user)
+
+        response = self.client.get(
+            reverse(
+                "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
     @authenticate
-    def test_generate_pdf(self):
-        """
-        The user can get a justificatif in PDF for a teledeclaration
-        """
+    def test_can_generate_pdf_legacy_teledeclaration(self):
         canteen = CanteenFactory(managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
-
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @freeze_time("2023-03-30")  # during the 2022 campaign
-    @authenticate
-    def test_generate_pdf_legacy_teledeclaration(self):
-        """
-        The user can get a justificatif in PDF for a teledeclaration
-        with minimal information
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-        teledeclaration = TeledeclarationFactory(
-            canteen=canteen,
-            diagnostic=diagnostic,
-            year=2021,
-            declared_data={
-                "year": 2021,
-                "canteen": {
-                    "name": "",
-                },
-                "applicant": {
-                    "name": "",
-                },
-                "teledeclaration": {},
-            },
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
+        diagnostic.teledeclare(applicant=authenticate.user)
+        # simulate legacy diagnostic without type
+        Diagnostic.objects.filter(id=diagnostic.id).update(
+            diagnostic_type=None, canteen_snapshot={"name": ""}, applicant_snapshot={"name": ""}
         )
 
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        response = self.client.get(
+            reverse(
+                "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
+            )
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @freeze_time("2022-12-25")  # after the 2021 campaign
+    @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
-    def test_generate_pdf_central(self):
-        """
-        A central kitchen should be able to generate a PDF
-        """
+    def test_can_generate_pdf_central(self):
         canteen = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2021, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-        teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+        diagnostic.teledeclare(applicant=authenticate.user)
 
-        response = self.client.get(reverse("teledeclaration_pdf", kwargs={"pk": teledeclaration.id}))
+        response = self.client.get(
+            reverse(
+                "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
+            )
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -115,13 +125,5 @@ class TestTeledeclarationCampaignDatesApi(APITestCase):
 
                     body = response.json()
                     self.assertEqual(body["year"], 2024)
-                    self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
-                    self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
-                    self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
-                    self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
-                    self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
-                    self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
-                    self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
-                    self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
                     self.assertEqual(body["inTeledeclaration"], date_freeze["in_teledeclaration"])
                     self.assertEqual(body["inCorrection"], date_freeze["in_correction"])
