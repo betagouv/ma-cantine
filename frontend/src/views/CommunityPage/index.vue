@@ -38,18 +38,6 @@
       :tutorials="videoTutorials"
     />
 
-    <v-btn
-      outlined
-      color="primary"
-      large
-      class="mt-4 mb-8"
-      href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/webinaires-les-defis-de-ma-cantine"
-    >
-      <v-icon class="mr-2">mdi-play-circle</v-icon>
-      <span v-if="videoTutorials && videoTutorials.length > 0">Revoir les autres webinaires</span>
-      <span v-else>Revoir les webinaires</span>
-    </v-btn>
-
     <h2 class="font-weight-black text-h5" id="evenements">Webinaires à venir</h2>
     <p class="my-4">
       Membres de la communauté partagent expériences et conseils pour utiliser notre plateforme et améliorer votre
