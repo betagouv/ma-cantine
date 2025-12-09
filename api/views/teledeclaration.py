@@ -27,10 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 @extend_schema_view(
-    get=extend_schema(
-        summary="Obtenir une représentation PDF de la télédéclaration.",
-        description="",
-    ),
+    get=extend_schema(summary="Obtenir une représentation PDF de la télédéclaration.", tags=["teledeclaration"]),
 )
 class DiagnosticTeledeclarationPdfView(APIView):
     """
@@ -38,7 +35,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
     """
 
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
-    required_scopes = ["canteen"]
+    required_scopes = ["teledeclaration"]
 
     def get(self, request, *args, **kwargs):
         canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
@@ -93,7 +90,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
             **{
                 "diagnostic_type": "détaillée" if diagnostic.is_diagnostic_type_complete else "simplifiée",
                 "year": diagnostic.year,
-                "date": diagnostic.creation_date,
+                "date": diagnostic.teledeclaration_date,
                 "applicant": diagnostic.applicant_snapshot["name"],
                 "teledeclaration_mode": diagnostic.teledeclaration_mode,
                 "central_kitchen_siret": central_kitchen_siret,
@@ -108,9 +105,9 @@ class DiagnosticTeledeclarationPdfView(APIView):
     @staticmethod
     def get_filename(diagnostic):
         year = diagnostic.year
-        canteenName = slugify(diagnostic.canteen_snapshot["name"])
-        creation_date = diagnostic.creation_date.strftime("%Y-%m-%d")
-        return f"teledeclaration-{year}--{canteenName}--{creation_date}.pdf"
+        canteen_name = slugify(diagnostic.canteen_snapshot["name"])
+        teledeclaration_date = diagnostic.teledeclaration_date.strftime("%Y-%m-%d")
+        return f"teledeclaration-{year}--{canteen_name}--{teledeclaration_date}.pdf"
 
     @staticmethod
     def link_callback(uri, rel):
@@ -232,7 +229,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
         }
 
     @staticmethod
-    def _structure_complete_appro_data(teledeclaration_data):
+    def _structure_complete_appro_data(diagnostic):
         """
         This function restructures appro data to reduce template code
         """
@@ -266,7 +263,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
         for label, display_label in labels_variable_to_display.items():
             structured_data[display_label] = {}
             for family, display_family in family_variable_to_display.items():
-                structured_data[display_label][display_family] = teledeclaration_data[f"value_{family}_{label}"]
+                structured_data[display_label][display_family] = getattr(diagnostic, f"value_{family}_{label}")
         return structured_data
 
 

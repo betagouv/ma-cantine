@@ -117,7 +117,7 @@ urlpatterns = {
         name="diagnostic_teledeclaration_cancel",
     ),
     path(
-        "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/document.pdf",
+        "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/pdf",
         DiagnosticTeledeclarationPdfView.as_view(),
         name="diagnostic_teledeclaration_pdf",
     ),

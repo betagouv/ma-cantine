@@ -53,7 +53,7 @@
           <!--
           TODO : WAIT FOR ENDPOINT TO BE READY
           <DownloadLink
-            :href="`/api/v1/teledeclaration/${diagnostic.teledeclaration.id}/document.pdf`"
+            :href="`/api/v1/canteens/${canteen.id}/diagnostics/${diagnostic.id}/teledeclaration/pdf`"
             label="Télécharger le justificatif"
             sizeStr="60 Ko"
             target="_blank"
