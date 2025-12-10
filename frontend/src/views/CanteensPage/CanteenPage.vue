@@ -86,8 +86,6 @@
       </div>
 
       <CanteenPublication :canteen="canteen" />
-
-      <ContactForm id="contact" :canteen="canteen" class="mt-16" />
     </div>
     <v-progress-circular indeterminate v-else style="position: absolute; left: 50%; top: 50%"></v-progress-circular>
   </div>
@@ -95,7 +93,6 @@
 
 <script>
 import CanteenPublication from "@/components/CanteenPublication"
-import ContactForm from "./ContactForm"
 import CanteenIndicators from "@/components/CanteenIndicators"
 import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import labels from "@/data/quality-labels.json"
@@ -115,7 +112,6 @@ export default {
   },
   components: {
     CanteenPublication,
-    ContactForm,
     CanteenIndicators,
     BreadcrumbsNav,
     DsfrCallout,
