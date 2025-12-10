@@ -6,6 +6,7 @@ import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
+import ImportFilesExample from "@/components/ImportFilesExample.vue"
 
 /* Router */
 const route = useRoute()
@@ -15,6 +16,10 @@ const schemaFile = "achats.json"
 const exampleFile = {
   name: "achats_fichier_exemple_ma_cantine.csv",
   size: "189 octets",
+}
+const filePreviews = {
+  success: "achats_fichier_exemple_fichier_accepte.jpg",
+  error: "achats_fichier_exemple_fichier_rejete.jpg",
 }
 
 /* Sucess */
@@ -37,6 +42,7 @@ const success = (count) => {
     .
   </p>
   <ImportExplanation :exampleFile />
+  <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportFileUpload @success="success" apiUrl="importPurchases" eventMatomo="import-purchases-success" />
   <ImportSuccessModal
