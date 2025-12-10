@@ -396,8 +396,18 @@ class Diagnostic(models.Model):
     ]
     # TODO: clean up when updating the imports
     SIMPLE_APPRO_FIELDS_FOR_IMPORT = [
-        field_name for field_name in SIMPLE_APPRO_FIELDS if "commerce_equitable" not in field_name
+        "valeur_totale",
+        "valeur_bio",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
+        "valeur_viandes_volailles",
+        "valeur_viandes_volailles_egalim",
+        "valeur_viandes_volailles_france",
+        "valeur_produits_de_la_mer",
+        "valeur_produits_de_la_mer_egalim",
     ]
+
     APPRO_FIELDS_REQUIRED_BEFORE_2025 = [
         "valeur_totale",
     ]
