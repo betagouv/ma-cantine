@@ -655,20 +655,6 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.diagnostic.teledeclare(applicant=self.user)
         self.assertEqual(self.diagnostic.applicant, self.user)
         self.assertIsNotNone(self.diagnostic.canteen_snapshot)
-        self.assertEqual(self.diagnostic.canteen_snapshot["id"], self.canteen_central.id)
-        self.assertEqual(self.diagnostic.canteen_snapshot["production_type"], Canteen.ProductionType.CENTRAL)
-        self.assertEqual(self.diagnostic.canteen_snapshot["sector_list"], [])
-        self.assertIsNotNone(self.diagnostic.satellites_snapshot)
-        self.assertEqual(len(self.diagnostic.satellites_snapshot), 1)
-        self.assertEqual(self.diagnostic.satellites_snapshot[0]["id"], self.canteen_sat.id)
-        self.assertEqual(
-            self.diagnostic.satellites_snapshot[0]["production_type"], Canteen.ProductionType.ON_SITE_CENTRAL
-        )
-        self.assertEqual(
-            self.diagnostic.satellites_snapshot[0]["sector_list"], [Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL]
-        )
-        self.assertIsNotNone(self.diagnostic.applicant_snapshot)
-        self.assertEqual(self.diagnostic.applicant_snapshot["email"], self.user.email)
         self.assertEqual(self.diagnostic.valeur_bio_agg, 200)
         self.assertEqual(self.diagnostic.valeur_siqo_agg, 100)
         self.assertEqual(self.diagnostic.valeur_externalites_performance_agg, 100)
@@ -680,6 +666,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
         self.assertEqual(self.diagnostic.teledeclaration_version, 15)
         self.assertIsNone(self.diagnostic.teledeclaration_id)
+        # for snapshots, see tests below
         # try to teledeclare again
         with self.assertRaises(ValidationError):
             self.diagnostic.teledeclare(applicant=UserFactory())
@@ -729,3 +716,75 @@ class DiagnosticModelCancelMethodTest(TestCase):
         self.assertIsNone(self.diagnostic.teledeclaration_mode)
         self.assertIsNone(self.diagnostic.teledeclaration_version)
         self.assertIsNone(self.diagnostic.teledeclaration_id)
+
+
+class DiagnosticTeledeclaredSnapshotsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        # central + sat
+        cls.canteen_central = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_sat = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=cls.canteen_central.siret,
+        )
+        cls.diagnostic_central = DiagnosticFactory(
+            canteen=cls.canteen_central,
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            valeur_totale=1000,
+        )
+        # site
+        cls.canteen_site = CanteenFactory(
+            siret="21640122400011",
+            production_type=Canteen.ProductionType.ON_SITE,
+            sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL],
+        )
+        cls.diagnostic_site = DiagnosticFactory(
+            canteen=cls.canteen_site,
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            valeur_totale=1000,
+            valeur_bio=200,
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.diagnostic_central.teledeclare(applicant=cls.user)
+            cls.diagnostic_site.teledeclare(applicant=cls.user)
+
+    def test_diagnostic_canteen_snapshot(self):
+        # central
+        self.assertIsNotNone(self.diagnostic_central.canteen_snapshot)
+        self.assertEqual(self.diagnostic_central.canteen_snapshot["id"], self.canteen_central.id)
+        self.assertEqual(self.diagnostic_central.canteen_snapshot["production_type"], Canteen.ProductionType.CENTRAL)
+        self.assertEqual(self.diagnostic_central.canteen_snapshot["sector_list"], [])
+        self.assertEqual(self.diagnostic_central.canteen_snapshot_sector_list_display, None)
+        # site
+        self.assertIsNotNone(self.diagnostic_site.canteen_snapshot)
+        self.assertEqual(self.diagnostic_site.canteen_snapshot["id"], self.canteen_site.id)
+        self.assertEqual(self.diagnostic_site.canteen_snapshot["production_type"], Canteen.ProductionType.ON_SITE)
+        self.assertEqual(len(self.diagnostic_site.canteen_snapshot["sector_list"]), 2)
+        self.assertEqual(self.diagnostic_site.canteen_snapshot["sector_list"][0], "education_primaire")
+        self.assertEqual(
+            self.diagnostic_site.canteen_snapshot_sector_list_display,
+            "Ecole primaire (maternelle et élémentaire), Hôpitaux",
+        )
+
+    def test_diagnostic_satellites_snapshot(self):
+        # central
+        self.assertIsNotNone(self.diagnostic_central.satellites_snapshot)
+        self.assertEqual(len(self.diagnostic_central.satellites_snapshot), 1)
+        self.assertEqual(self.diagnostic_central.satellites_snapshot[0]["id"], self.canteen_sat.id)
+        # site
+        self.assertIsNone(self.diagnostic_site.satellites_snapshot)
+
+    def test_diagnostic_applicant_snapshot(self):
+        # central
+        self.assertIsNotNone(self.diagnostic_central.applicant_snapshot)
+        self.assertEqual(self.diagnostic_central.applicant_snapshot["id"], self.user.id)
+        self.assertEqual(self.diagnostic_central.applicant_snapshot["email"], self.user.email)
+        # site
+        self.assertIsNotNone(self.diagnostic_site.applicant_snapshot)
+        self.assertEqual(self.diagnostic_site.applicant_snapshot["id"], self.user.id)
+        self.assertEqual(self.diagnostic_site.applicant_snapshot["email"], self.user.email)
