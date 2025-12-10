@@ -73,14 +73,14 @@ class CanteenSchemaTest(TestCase):
     def test_type_gestion_regex(self):
         pattern = self.get_pattern(self.schema, "type_gestion")
         for VALUE_OK in [
-            "conceded",
-            " conceded",
-            "conceded ",
-            " conceded ",
-            "direct",
-            " direct",
-            "direct ",
-            " direct ",
+            "Concédée",
+            " Concédée",
+            "Concédée ",
+            " Concédée ",
+            "Directe",
+            " Directe",
+            "Directe ",
+            " Directe ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
