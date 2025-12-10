@@ -278,7 +278,9 @@ class ImportCanteensView(APIView):
         management_type = next(
             (value for value, label in Canteen.ManagementType.choices if label.lower() == row[7].strip().lower()), None
         )
-        economic_model = row[8].strip().lower()
+        economic_model = next(
+            (value for value, label in Canteen.EconomicModel.choices if label.lower() == row[8].strip().lower()), None
+        )
         central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
         satellite_canteens_count = row[10].strip() if row[10] else None
 
