@@ -1610,6 +1610,19 @@ class Diagnostic(models.Model):
         ]
 
     @property
+    def canteen_snapshot_sector_list_display(self):
+        from data.models import Sector
+
+        if self.canteen_snapshot:
+            if "sector_list" in self.canteen_snapshot:
+                if len(self.canteen_snapshot["sector_list"]) > 0:
+                    return ", ".join([Sector(sector).label for sector in self.canteen_snapshot["sector_list"]])
+            elif "sectors" in self.canteen_snapshot:
+                if len(self.canteen_snapshot["sectors"]) > 0:
+                    return ", ".join([x["name"] for x in (self.canteen_snapshot.get("sectors") or [])])
+        return None
+
+    @property
     def latest_submitted_teledeclaration(self):
         submitted_teledeclarations = self.teledeclaration_set.submitted()
         if submitted_teledeclarations.count() == 0:

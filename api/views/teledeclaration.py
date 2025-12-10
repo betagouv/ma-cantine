@@ -76,7 +76,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
                 pass
 
         canteen_snapshot = diagnostic.canteen_snapshot
-        processed_canteen_snapshot = DiagnosticTeledeclarationPdfView._get_canteen_override_data(canteen_snapshot)
+        processed_canteen_snapshot = DiagnosticTeledeclarationPdfView._get_canteen_override_data(diagnostic)
         processed_diagnostic_data = DiagnosticTeledeclarationPdfView._get_teledeclaration_override_data(diagnostic)
         additional_questions = DiagnosticTeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_snapshot)
 
@@ -141,33 +141,31 @@ class DiagnosticTeledeclarationPdfView(APIView):
         return path
 
     @staticmethod
-    def _get_canteen_override_data(canteen_snapshot):
+    def _get_canteen_override_data(diagnostic):
         """
         Returns the JSON data of the canteen parameters that need to be overriden in order for
         them to be human-readable (e.g., replacing keys with labels)
         """
         return {
-            "sectors": ", ".join(
-                [x["name"] for x in (canteen_snapshot.get("sectors") or [])]
-            ),  # TODO: manage sector_list
+            "sectors": diagnostic.canteen_snapshot_sector_list_display,
             "production_type": (
-                Canteen.ProductionType(canteen_snapshot["production_type"]).label
-                if canteen_snapshot.get("production_type")
+                Canteen.ProductionType(diagnostic.canteen_snapshot["production_type"]).label
+                if diagnostic.canteen_snapshot.get("production_type")
                 else None
             ),
             "management_type": (
-                Canteen.ManagementType(canteen_snapshot["management_type"]).label
-                if canteen_snapshot.get("management_type")
+                Canteen.ManagementType(diagnostic.canteen_snapshot["management_type"]).label
+                if diagnostic.canteen_snapshot.get("management_type")
                 else None
             ),
             "line_ministry": (
-                Canteen.Ministries(canteen_snapshot["line_ministry"]).label
-                if canteen_snapshot.get("line_ministry")
+                Canteen.Ministries(diagnostic.canteen_snapshot["line_ministry"]).label
+                if diagnostic.canteen_snapshot.get("line_ministry")
                 else None
             ),
             "economic_model": (
-                Canteen.EconomicModel(canteen_snapshot["economic_model"]).label
-                if canteen_snapshot.get("economic_model")
+                Canteen.EconomicModel(diagnostic.canteen_snapshot["economic_model"]).label
+                if diagnostic.canteen_snapshot.get("economic_model")
                 else None
             ),
         }
