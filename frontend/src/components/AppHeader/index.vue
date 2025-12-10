@@ -277,14 +277,6 @@ export default {
           text: "Aide",
           children: [
             {
-              text: "Foire aux questions",
-              to: { name: "FoireAuxQuestions" },
-            },
-            {
-              text: "Importer un fichier",
-              to: { name: "GestionnaireImport" },
-            },
-            {
               text: "Contactez-nous",
               to: { name: "Contact" },
             },
