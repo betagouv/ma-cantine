@@ -105,7 +105,7 @@
         "pattern": "^ *(Cuisine centrale|Cuisine centrale et site|Restaurant avec cuisine sur place|Restaurant satellite) *$",
         "required": true
       },
-      "description": "Il existe 4 types différents : 'Cuisine centrale' sans lieu de consommation, 'Cuisine centrale et site' cuisine centrale qui accueille aussi des convives sur place, 'Restaurant avec cuisine sur place' cantine qui produit les repas sur place, 'Restaurant satellite' cantine qui sert des repas preparés par une cuisine centrale, appelé également restaurant satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de restaurants satellites.",
+      "description": "Il existe 4 types différents : 'Cuisine centrale' sans lieu de consommation, 'Cuisine centrale et site' qui accueille aussi des convives sur place, 'Restaurant avec cuisine sur place' qui produit les repas sur place, 'Restaurant satellite' qui sert des repas preparés par une cuisine centrale. Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de restaurants satellites.",
       "doc_enum": [
         "Cuisine centrale",
         "Cuisine centrale et site",
