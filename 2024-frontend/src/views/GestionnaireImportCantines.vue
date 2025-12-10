@@ -7,6 +7,7 @@ import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportStaffCallout from "@/components/ImportStaffCallout.vue"
+import ImportFilesExample from "@/components/ImportFilesExample.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 
 /* Store and Router */
@@ -22,6 +23,10 @@ const exampleFile = {
 const fileOptions = {
   hint: "Extensions de fichier autorisées : Excel (.xlsx), CSV (.csv), TSV (.tsv)",
   accept: ".csv,.tsv,.xlsx",
+}
+const filePreviews = {
+  success: "importer_des_cantines_exemple_fichier_accepte.jpg",
+  error: "importer_des_cantines_exemple_fichier_rejete.jpg",
 }
 
 /* Success */
@@ -44,6 +49,7 @@ const success = (count) => {
     .
   </p>
   <ImportExplanation :exampleFile :hasExcel="true" />
+  <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
   <ImportFileUpload
