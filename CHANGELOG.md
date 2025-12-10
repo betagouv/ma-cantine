@@ -6,6 +6,25 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.42.1](https://github.com/betagouv/ma-cantine/compare/v2025.42.0...v2025.42.1) (2025-12-10)
+
+
+### Améliorations
+
+* **Cantines:** enlever le formulaire de contact sur la page vitrine de chaque cantine ([#5914](https://github.com/betagouv/ma-cantine/issues/5914)) ([b95a1d6](https://github.com/betagouv/ma-cantine/commit/b95a1d6c025e10acae0d1d7592a215143d1adfe3))
+
+
+### Corrections (bugs, typos...)
+
+* **CI:** corrige les tests en erreur de l'import diagnostic ([#6010](https://github.com/betagouv/ma-cantine/issues/6010)) ([e477ceb](https://github.com/betagouv/ma-cantine/commit/e477ceb673e1bb4880d2dcad560dff2989d20136))
+* **Crisp:** supprime et remplace les références à l'ancienne url de documentation de Gitbook ([#6002](https://github.com/betagouv/ma-cantine/issues/6002)) ([81ba35a](https://github.com/betagouv/ma-cantine/commit/81ba35a271e1240ba244fb5466d8fe7321ee2c95))
+* **Foire aux questions:** supprime la page ([#6007](https://github.com/betagouv/ma-cantine/issues/6007)) ([a52a4cd](https://github.com/betagouv/ma-cantine/commit/a52a4cdac9482c40fd6e1f010e8bba8c99158156))
+* **Imports:** ouvre le centre de ressources dans un nouvel onglet ([#6000](https://github.com/betagouv/ma-cantine/issues/6000)) ([344ce52](https://github.com/betagouv/ma-cantine/commit/344ce524c78b255ffa7f9372d4d3ede2e84163a7))
+* **Menu:** supprime le lien vers la page d'import des fichiers du sous-menu "Aide" ([#6008](https://github.com/betagouv/ma-cantine/issues/6008)) ([a2afeb6](https://github.com/betagouv/ma-cantine/commit/a2afeb6b70471410dc126a09fc2d0e60f20278c6))
+* **Tableau de bord:** met à jour les tuiles de bas de page ([#6006](https://github.com/betagouv/ma-cantine/issues/6006)) ([caa6b02](https://github.com/betagouv/ma-cantine/commit/caa6b02944779fa86c407bd9cf05e588090bc28c))
+* **Télédéclaration:** Justificatif: répare l'affichage des secteurs de la cantine ([#6009](https://github.com/betagouv/ma-cantine/issues/6009)) ([7fae2d5](https://github.com/betagouv/ma-cantine/commit/7fae2d58c5d0c782700d35ad62a746a249b319f8))
+* **Webinaires:** mise à jour de la page ([#6004](https://github.com/betagouv/ma-cantine/issues/6004)) ([a83d3e8](https://github.com/betagouv/ma-cantine/commit/a83d3e8eec480a7a7e11cd9b750a60641cc0a543))
+
 ## [2025.42.0](https://github.com/betagouv/ma-cantine/compare/v2025.41.1...v2025.42.0) (2025-12-09)
 
 
