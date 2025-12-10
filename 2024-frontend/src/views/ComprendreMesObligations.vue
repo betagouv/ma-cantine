@@ -54,10 +54,8 @@ const closeModal = () => {
   </section>
   <AppNeedHelp badge="En savoir plus" align="center" title="Pour les acteurs de la restauration collective">
     <p class="fr-mb-0">
-      Retrouvez des ressources, contenus videos, documents, témoignages, articles, recettes,
-      <a href="https://ma-cantine-1.gitbook.io/ma-cantine-egalim/" target="_blank">sur notre documentation</a>
-      . Pour toute question, consultez
-      <a href="https://ma-cantine.crisp.help/fr/" target="_blank">notre centre d'aide</a>
+      Pour toute question, consultez
+      <a href="https://ma-cantine.crisp.help/fr/" target="_blank">notre documentation</a>
     </p>
   </AppNeedHelp>
 </template>

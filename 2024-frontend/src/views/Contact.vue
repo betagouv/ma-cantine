@@ -8,15 +8,11 @@ const links = [
   },
   {
     to: { name: "CommunityPage" },
-    title: "Webinaires à venir",
+    title: "Webinaires",
   },
   {
-    href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/nos-webinaires",
-    title: "Webinaires précedents",
-  },
-  {
-    href: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
-    title: "Documentation sur les lois et ressources",
+    href: "https://ma-cantine.crisp.help/fr/",
+    title: "Documentation",
   },
   {
     to: { name: "BlogsHome" },

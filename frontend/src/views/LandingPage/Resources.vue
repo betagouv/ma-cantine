@@ -69,7 +69,7 @@ export default {
       title: "Documentation",
       icon: "$book-2-fill",
       description: "Ressources pour les acteurs et actrices de la restauration collective",
-      url: "https://ma-cantine-1.gitbook.io/ma-cantine-egalim/",
+      url: "https://ma-cantine.crisp.help/fr/",
       to: null,
       ctaText: "Consulter nos ressources",
     })
