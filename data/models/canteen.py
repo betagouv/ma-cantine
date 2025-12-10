@@ -380,12 +380,12 @@ class Canteen(SoftDeletionModel):
         CONCEDED = "conceded", "Concédée"
 
     class ProductionType(models.TextChoices):
-        CENTRAL = "central", "Livre des repas mais n'a pas de lieu de service en propre"
-        CENTRAL_SERVING = "central_serving", "Livre des repas et accueille aussi des convives sur place"
-        ON_SITE = "site", "Produit sur place les repas qu'il sert aux convives"
+        CENTRAL = "central", "Cuisine centrale"
+        CENTRAL_SERVING = "central_serving", "Cuisine centrale et site"
+        ON_SITE = "site", "Restaurant avec cuisine sur place"
         ON_SITE_CENTRAL = (
             "site_cooked_elsewhere",
-            "Sert des repas préparés par une cuisine centrale (une petite partie peut être réalisée sur place entrée / dessert)",
+            "Restaurant satellite",
         )
 
     class EconomicModel(models.TextChoices):
