@@ -66,7 +66,7 @@ class WebSitemap(Sitemap):
             {"location": "/mentions-legales", "changefreq": "yearly", "priority": 0.2},
             {"location": "/cgu", "changefreq": "yearly", "priority": 0.2},
             {"location": "/blog", "changefreq": "monthly", "priority": 0.5},
-            {"location": "/communaute", "changefreq": "monthly", "priority": 0.5},
+            {"location": "/webinaires", "changefreq": "monthly", "priority": 0.5},
             {"location": "/acteurs-de-l-eco-systeme", "changefreq": "monthly", "priority": 0.4},
             {"location": "/statistiques-regionales", "changefreq": "monthly", "priority": 0.3},
             {"location": "/statistiques-plateforme", "changefreq": "monthly", "priority": 0.3},

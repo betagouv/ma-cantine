@@ -345,7 +345,7 @@ const routes = [
     },
   },
   {
-    path: "/communaute/",
+    path: "/webinaires",
     name: "CommunityPage",
     component: CommunityPage,
     meta: {
@@ -531,6 +531,11 @@ routes.push({
 routes.push({
   path: "/mesures-phares/*",
   redirect: { name: "ComprendreMesObligations" },
+})
+
+routes.push({
+  path: "/communaute",
+  redirect: { name: "CommunityPage" },
 })
 
 routes.push({
