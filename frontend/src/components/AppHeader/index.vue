@@ -277,10 +277,6 @@ export default {
           text: "Aide",
           children: [
             {
-              text: "Foire aux questions",
-              to: { name: "FoireAuxQuestions" },
-            },
-            {
               text: "Contactez-nous",
               to: { name: "Contact" },
             },

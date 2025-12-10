@@ -3,10 +3,6 @@ import AppFormSendInquiry from "@/components/AppFormSendInquiry.vue"
 
 const links = [
   {
-    to: { name: "FoireAuxQuestions" },
-    title: "Foire aux questions",
-  },
-  {
     to: { name: "CommunityPage" },
     title: "Webinaires",
   },

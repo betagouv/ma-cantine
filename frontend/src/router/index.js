@@ -460,10 +460,6 @@ const vue3Routes = [
     name: "GestionnaireCantineSatellitesAjouter",
   },
   {
-    path: "/foire-aux-questions/",
-    name: "FoireAuxQuestions",
-  },
-  {
     path: "/donnees-personnelles",
     name: "DonneesPersonnelles",
   },
