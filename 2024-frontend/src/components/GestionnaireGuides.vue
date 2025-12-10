@@ -1,24 +1,22 @@
 <script setup>
-const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
-const pictoSearch = "/static/images/picto-dsfr/search.svg"
+const pictoCrispTeledeclaration = "/static/images/picto-dsfr/crisp-teledeclaration.svg"
+const pictoCrispBienDemarrer = "/static/images/picto-dsfr/crisp-bien-demarrer.svg"
 const pictoSelfTraining = "/static/images/picto-dsfr/self-training.svg"
 
 const tiles = [
-  {
-    title: "Le guide de télédéclaration",
-    download: true,
+{
+    title: "Bien démarrer",
+    to: "https://ma-cantine.crisp.help/fr/category/bien-demarrer-1fn9r2h/",
     horizontal: true,
-    details: "PDF - 4,5 Mo",
-    to: "/static/documents/Guide_prise_en_main_ma_cantine_janv2025.pdf",
-    imgSrc: pictoDocuments,
+    details: "Découverte de la plateforme : inscription, configuration et premières actions.",
+    imgSrc: pictoCrispBienDemarrer,
   },
   {
-    title: "Comment saisir mes achats",
-    to: "/static/documents/Antiseche_donnees_dachat_ma_cantine_2025.pdf",
+    title: "Télédéclaration",
     horizontal: true,
-    download: true,
-    details: "PDF - 1,9 Mo",
-    imgSrc: pictoSearch,
+    details: "Déclarer vos achats et à suivre vos indicateurs EGalim.",
+    to: "https://ma-cantine.crisp.help/fr/category/teledeclaration-18r0z84/",
+    imgSrc: pictoCrispTeledeclaration,
   },
   {
     title: "Inscrivez-vous à nos webinaires",
@@ -33,6 +31,7 @@ const tiles = [
   <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
     <li v-for="tile in tiles" :key="tile.title" class="fr-col-12 fr-col-md-4">
       <DsfrTile
+        class="gestionnaire-guides__tiles"
         title-tag="h2"
         :title="tile.title"
         :to="tile.to"
@@ -45,3 +44,11 @@ const tiles = [
     </li>
   </ul>
 </template>
+
+<style lang="scss">
+.gestionnaire-guides__tiles {
+  .fr-artwork {
+    max-width: 100% !important;
+  }
+}
+</style>
