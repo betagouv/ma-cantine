@@ -281,10 +281,6 @@ export default {
               to: { name: "FoireAuxQuestions" },
             },
             {
-              text: "Importer un fichier",
-              to: { name: "GestionnaireImport" },
-            },
-            {
               text: "Contactez-nous",
               to: { name: "Contact" },
             },
