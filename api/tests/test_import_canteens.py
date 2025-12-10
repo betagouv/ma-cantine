@@ -84,7 +84,7 @@ class CanteenSchemaTest(TestCase):
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["type de gestion inconnu", "", "CONCEDED", "     "]:
+        for VALUE_NOT_OK in ["type de gestion inconnu", "", "conceded", "direct", "     "]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
