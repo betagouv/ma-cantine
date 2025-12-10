@@ -1273,7 +1273,3 @@ class TestImportDiagnosticsFromAPIIntegration(APITestCase):
         self.assertEqual(canteen.postal_code, "07130")
         self.assertEqual(canteen.city, "Saint-Romain-de-Lerps")
         self.assertEqual(canteen.department, Department.ardeche)
-        self.assertEqual(canteen.department, Department.ardeche)
-        self.assertEqual(canteen.department, Department.ardeche)
-        self.assertEqual(canteen.department, Department.ardeche)
-        self.assertEqual(canteen.department, Department.ardeche)
