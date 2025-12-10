@@ -120,15 +120,15 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(conceded|direct) *$",
+        "pattern": "^ *(Concédée|Directe) *$",
         "required": true
       },
-      "description": "Elle peut être gérée directement ('direct') ou de manière concédée ('conceded'). Si de manière concédée, la délégation peut être totale ou partielle.",
+      "description": "Elle peut être gérée de manière 'Directe' ou de manière 'Concédée'. Si de manière concédée, la délégation peut être totale ou partielle.",
       "doc_enum": [
-        "conceded",
-        "direct"
+        "Concédée",
+        "Directe"
       ],
-      "example": "conceded",
+      "example": "Directe",
       "format": "default",
       "name": "type_gestion",
       "title": "Mode de gestion de la cantine",
