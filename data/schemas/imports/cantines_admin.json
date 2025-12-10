@@ -131,23 +131,23 @@
       "example": "Directe",
       "format": "default",
       "name": "type_gestion",
-      "title": "Mode de gestion de la cantine",
+      "title": "Mode de gestion de l'établissement",
       "type": "string"
     },
     {
       "constraints": {
-        "pattern": "^ *(public|private) *$",
+        "pattern": "^ *(Public|Privé) *$",
         "required": true
       },
-      "description": "Il existe 2 types différents : cantine publique ('public'), et cantine privée ('private').",
+      "description": "",
       "doc_enum": [
-        "public",
-        "private"
+        "Public",
+        "Privé"
       ],
-      "example": "public",
+      "example": "Public",
       "format": "default",
       "name": "modèle_économique",
-      "title": "Modèle économique",
+      "title": "Modèle économique de l'établissement",
       "type": "string"
     },
     {
