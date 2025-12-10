@@ -123,7 +123,7 @@
         "pattern": "^ *(Concédée|Directe) *$",
         "required": true
       },
-      "description": "Elle peut être gérée de manière 'Directe' ou de manière 'Concédée'. Si de manière concédée, la délégation peut être totale ou partielle.",
+      "description": "Si de manière concédée, la délégation peut être totale ou partielle.",
       "doc_enum": [
         "Concédée",
         "Directe"
