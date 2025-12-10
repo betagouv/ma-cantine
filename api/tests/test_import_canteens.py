@@ -91,18 +91,18 @@ class CanteenSchemaTest(TestCase):
     def test_modele_economique_regex(self):
         pattern = self.get_pattern(self.schema, "modèle_économique")
         for VALUE_OK in [
-            "public",
-            " public",
-            "public ",
-            " public ",
-            "private",
-            " private",
-            "private ",
-            " private ",
+            "Public",
+            " Public",
+            "Public ",
+            " Public ",
+            "Privé",
+            " Privé",
+            "Privé ",
+            " Privé ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["modèle économique inconnu", "", "PUBLIC", "     "]:
+        for VALUE_NOT_OK in ["modèle économique inconnu", "", "public", "private", "     "]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
