@@ -309,7 +309,8 @@ export default {
     usesCentralKitchenDiagnostics() {
       return (
         this.selectedCanteen?.productionType === "site_cooked_elsewhere" &&
-        this.selectedCanteen?.centralKitchenDiagnostics?.length > 0
+        this.selectedCanteen?.centralKitchenDiagnostics?.length > 0 &&
+        this.selectedCanteen?.centralKitchenDiagnostics?.some((x) => x.year === this.publicationYear)
       )
     },
     diagnosticSet() {
