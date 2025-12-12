@@ -4,6 +4,7 @@ Actuellement les dates sont celles des 1ères créations de TD avec la version c
 
 |Version|Date création de la version|Date 1ère TD avec cette version|Changements|
 |-|-|-|-|
+|16|09/12/2025||- Nouveaux champs simplifiée et détaillée<br>- Renommer 'value' en 'valeur', enlever 'ht'<br>- Traduit certains champs en français<br>- Ajout de champs supplémentaires dans les snapshot 'canteen' et 'satellites' (sector_list entre autre)|
 |15|||- Modifications sur la façon de stocker Canteen.line_ministry|
 |14||17/03/2025|- Ajout du champ Canteen.canteen_siren_unite_legale|
 |13||05/03/2025|- Ajout du champ Canteen.sectors.name|
