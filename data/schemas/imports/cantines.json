@@ -136,7 +136,7 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(Public|Privé) *$",
+        "pattern": "^ *(Public|Privé|public|private) *$",
         "required": true
       },
       "description": "",
