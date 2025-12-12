@@ -63,7 +63,7 @@
         "pattern": "(^ *$)|(^ *(Crèche|Etablissements de la PJJ|Secondaire lycée \\(hors agricole\\)|Etablissements d[’']enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d[’']entreprises|Restaurants inter-entreprises|Autres structures d[’']enseignement|Ecole primaire \\(maternelle et élémentaire\\)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP|ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d[’']Etat \\(RA\\)|Restaurants des armées / police / gendarmerie|Etablissements publics d[’']Etat \\(EPA ou EPIC\\)|Supérieur et Universitaire|Restaurants inter-administratifs d[’']État \\(RIA\\))( *\\, *(Crèche|Etablissements de la PJJ|Secondaire lycée \\(hors agricole\\)|Etablissements d[’']enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d[’']entreprises|Restaurants inter-entreprises|Autres structures d[’']enseignement|Ecole primaire \\(maternelle et élémentaire\\)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP|ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d[’']Etat \\(RA\\)|Restaurants des armées / police / gendarmerie|Etablissements publics d[’']Etat \\(EPA ou EPIC\\)|Supérieur et Universitaire|Restaurants inter-administratifs d[’']État \\(RIA\\)))* *)$",
         "required": false
       },
-      "description": "3 secteurs maximum. Ce champ est obligatoire sauf si le type de production est 'central'",
+      "description": "3 secteurs maximum. Ce champ est obligatoire sauf si le type de production est 'Cuisine centrale'",
       "doc_enum": [
         "Crèche",
         "Etablissements de la PJJ",
@@ -102,17 +102,17 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(central|central_serving|site|site_cooked_elsewhere) *$",
+        "pattern": "^ *(Cuisine centrale|Cuisine centrale et site|Restaurant avec cuisine sur place|Restaurant satellite) *$",
         "required": true
       },
-      "description": "Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également restaurant satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de restaurants satellites.",
+      "description": "Il existe 4 types différents : 'Cuisine centrale' sans lieu de consommation, 'Cuisine centrale et site' qui accueille aussi des convives sur place, 'Restaurant avec cuisine sur place' qui produit les repas sur place, 'Restaurant satellite' qui sert des repas preparés par une cuisine centrale. Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de restaurants satellites.",
       "doc_enum": [
-        "central",
-        "central_serving",
-        "site",
-        "site_cooked_elsewhere"
+        "Cuisine centrale",
+        "Cuisine centrale et site",
+        "Restaurant avec cuisine sur place",
+        "Restaurant satellite"
       ],
-      "example": "central",
+      "example": "Cuisine centrale",
       "format": "default",
       "name": "type_production",
       "title": "Lieu de production et de service des repas",
@@ -120,34 +120,34 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(conceded|direct) *$",
+        "pattern": "^ *(Concédée|Directe) *$",
         "required": true
       },
-      "description": "Elle peut être gérée directement ('direct') ou de manière concédée ('conceded'). Si de manière concédée, la délégation peut être totale ou partielle.",
+      "description": "Si de manière concédée, la délégation peut être totale ou partielle.",
       "doc_enum": [
-        "conceded",
-        "direct"
+        "Concédée",
+        "Directe"
       ],
-      "example": "conceded",
+      "example": "Directe",
       "format": "default",
       "name": "type_gestion",
-      "title": "Mode de gestion de la cantine",
+      "title": "Mode de gestion de l'établissement",
       "type": "string"
     },
     {
       "constraints": {
-        "pattern": "^ *(public|private) *$",
+        "pattern": "^ *(Public|Privé) *$",
         "required": true
       },
-      "description": "Il existe 2 types différents : cantine publique ('public'), et cantine privée ('private').",
+      "description": "",
       "doc_enum": [
-        "public",
-        "private"
+        "Public",
+        "Privé"
       ],
-      "example": "public",
+      "example": "Public",
       "format": "default",
       "name": "modèle_économique",
-      "title": "Modèle économique",
+      "title": "Modèle économique de l'établissement",
       "type": "string"
     },
     {
@@ -167,7 +167,7 @@
       "constraints": {
         "required": false
       },
-      "description": "Ce champ est obligatoire pour les types de production 'central' et 'central_serving'",
+      "description": "Ce champ est obligatoire pour les types de production 'Cuisine centrale' et 'Cuisine centrale et site'",
       "example": "12",
       "format": "default",
       "name": "nombre_satellites",
