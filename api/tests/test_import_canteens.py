@@ -48,53 +48,61 @@ class CanteenSchemaTest(TestCase):
     def test_type_production_regex(self):
         pattern = self.get_pattern(self.schema, "type_production")
         for VALUE_OK in [
-            "central",
-            "central_serving",
-            "site",
-            "site_cooked_elsewhere",
-            " central_serving",
-            " site ",
-            "site_cooked_elsewhere ",
+            "Cuisine centrale",
+            "Cuisine centrale et site",
+            "Restaurant avec cuisine sur place",
+            "Restaurant satellite",
+            " Cuisine centrale et site",
+            " Restaurant avec cuisine sur place ",
+            "Restaurant satellite ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["type de production inconnu", "", "CENTRAL", "site-cooked-elsewhere", "     "]:
+        for VALUE_NOT_OK in [
+            "type de production inconnu",
+            "",
+            "central",
+            "central_serving",
+            "site_cooked_elsewhere",
+            "site",
+            "     ",
+        ]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_type_gestion_regex(self):
         pattern = self.get_pattern(self.schema, "type_gestion")
         for VALUE_OK in [
-            "conceded",
-            " conceded",
-            "conceded ",
-            " conceded ",
-            "direct",
-            " direct",
-            "direct ",
-            " direct ",
+            "Concédée",
+            " Concédée",
+            "Concédée ",
+            " Concédée ",
+            "Directe",
+            " Directe",
+            "Directe ",
+            " Directe ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["type de gestion inconnu", "", "CONCEDED", "     "]:
+        for VALUE_NOT_OK in ["type de gestion inconnu", "", "conceded", "direct", "     "]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_modele_economique_regex(self):
         pattern = self.get_pattern(self.schema, "modèle_économique")
         for VALUE_OK in [
-            "public",
-            " public",
-            "public ",
-            " public ",
-            "private",
-            " private",
-            "private ",
-            " private ",
+            "Public",
+            " Public",
+            "Public ",
+            " Public ",
+            "Privé",
+            " Privé",
+            "Privé ",
+            " Privé ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["modèle économique inconnu", "", "PUBLIC", "     "]:
+        for VALUE_NOT_OK in ["modèle économique inconnu", "", "public", "private", "     "]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 

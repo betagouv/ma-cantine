@@ -74,7 +74,7 @@ class TestETLAnalysisCanteen(TestCase):
         self.assertEqual(canteen_1["categorie"], "Administration")
         self.assertEqual(canteen_1["ministere_tutelle"], "Agriculture, Alimentation et Forêts")
         self.assertEqual(canteen_1["type_gestion"], "Directe")
-        self.assertEqual(canteen_1["type_production"], "Produit sur place les repas qu'il sert aux convives")
+        self.assertEqual(canteen_1["type_production"], "Restaurant avec cuisine sur place")
         self.assertEqual(canteen_1["modele_economique"], "Public")
         self.assertEqual(canteen_1["spe"], "Oui")  # because line_ministry is set
 
