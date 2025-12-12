@@ -55,16 +55,28 @@ class CanteenSchemaTest(TestCase):
             " Cuisine centrale et site",
             " Restaurant avec cuisine sur place ",
             "Restaurant satellite ",
+            "central",
+            "central_serving",
+            "site_cooked_elsewhere",
+            "site",
+            " central",
+            " central_serving",
+            " site_cooked_elsewhere",
+            " site",
+            "central ",
+            "central_serving ",
+            "site_cooked_elsewhere ",
+            "site ",
+            " central ",
+            " central_serving ",
+            " site_cooked_elsewhere ",
+            " site ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in [
             "type de production inconnu",
             "",
-            "central",
-            "central_serving",
-            "site_cooked_elsewhere",
-            "site",
             "     ",
         ]:
             with self.subTest(VALUE=VALUE_NOT_OK):
@@ -81,10 +93,18 @@ class CanteenSchemaTest(TestCase):
             " Directe",
             "Directe ",
             " Directe ",
+            "conceded",
+            "direct",
+            " conceded",
+            " direct",
+            "conceded ",
+            "direct ",
+            " conceded ",
+            " direct ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["type de gestion inconnu", "", "conceded", "direct", "     "]:
+        for VALUE_NOT_OK in ["type de gestion inconnu", "", "     "]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
@@ -99,10 +119,18 @@ class CanteenSchemaTest(TestCase):
             " Privé",
             "Privé ",
             " Privé ",
+            "public",
+            "private",
+            " public",
+            " private",
+            "public ",
+            "private ",
+            " public ",
+            " private ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["modèle économique inconnu", "", "public", "private", "     "]:
+        for VALUE_NOT_OK in ["modèle économique inconnu", "", "     "]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
@@ -464,6 +492,26 @@ class CanteenImportSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
         canteen = Canteen.objects.first()
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
+
+    @authenticate
+    def test_import_with_choices_slug_value(self):
+        """
+        Should be able to import canteens
+        """
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteens_good_choices_slug_values.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 5)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 5)
+        self.assertEqual(len(body["canteens"]), 5)
+        self.assertEqual(len(errors), 0, errors)
 
     @authenticate
     def test_admin_import(self):
