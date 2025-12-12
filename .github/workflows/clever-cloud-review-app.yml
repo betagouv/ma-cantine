@@ -2,8 +2,13 @@ name: Create review app with Clever Cloud
 
 on:
   pull_request_target:
-    types: [opened, closed, synchronize, reopened]
-    branches: [staging]
+    types:
+      - opened
+      - closed
+      - synchronize
+      - reopened
+    branches:
+      - staging
 
 jobs:
   deploy:

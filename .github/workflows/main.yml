@@ -1,11 +1,19 @@
 name: Ma Cantine CI
 
-on: [push]
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
 jobs:
   build:
     name: "ma-cantine: build and test"
     runs-on: ubuntu-latest
+    # Skip if PR is in draft
+    if: ${{ !github.event.pull_request.draft }}
 
     steps:
       - uses: actions/checkout@v4
