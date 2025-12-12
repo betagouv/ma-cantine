@@ -27,7 +27,9 @@ logger = logging.getLogger(__name__)
 
 
 PURCHASE_SCHEMA_FILE_PATH = "data/schemas/imports/achats.json"
-PURCHASE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/raphodn/backend-purchase-import-choice-fields-mandatory/{PURCHASE_SCHEMA_FILE_PATH}"
+PURCHASE_SCHEMA_URL = (
+    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{PURCHASE_SCHEMA_FILE_PATH}"
+)
 
 
 class ImportPurchasesView(APIView):
