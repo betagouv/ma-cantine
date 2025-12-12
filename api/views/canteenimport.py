@@ -271,7 +271,7 @@ class ImportCanteensView(APIView):
         yearly_meal_count = row[4].strip()
         sector_list = [
             next(value for value, label in Sector.choices if label == sector.replace("’", "'"))
-            for sector in row[5].strip().split("+")
+            for sector in row[5].strip().split(",")
             if sector
         ]
         production_type = row[6].strip().lower()
