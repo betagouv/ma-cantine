@@ -1,3 +1,4 @@
 siret,nom,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels,nombre_satellites
-000 000 000 00000,Ma Cantine,,700,14000,Administration+Crèche,central,conceded,public,"test1@example.com,test2@example.com",5
-000 000 000 00001,Ma Cantine,69123,69001,000 000 000 00000,790,14000,Administration+Crèche,site,conceded,public,"test1@example.com,test2@example.com",
+81264674048255,Cuisine centrale,,700,14000,,central,conceded,public,"test1@example.com,test2@example.com",5
+01551685603889,Restaurant satellite,81264674048255,790,14000,"Autres établissements non listés",site_cooked_elsewhere,conceded,public,test3@example.com,
+49741884000847,Cantine qui produit les repas sur place,,3,420,"EHPAD / maisons de retraite / foyers de personnes âgées,Crèche",site,direct,private,,
