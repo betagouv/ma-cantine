@@ -63,7 +63,7 @@
     {
       "constraints": {
         "pattern": "^ *(VIANDES_VOLAILLES|CHARCUTERIE|PRODUITS_DE_LA_MER|FRUITS_ET_LEGUMES|PRODUITS_LAITIERS|BOULANGERIE|BOISSONS|AUTRES) *$",
-        "required": false
+        "required": true
       },
       "description": "",
       "doc_enum": [
