@@ -102,7 +102,7 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(Cuisine centrale|Cuisine centrale et site|Restaurant avec cuisine sur place|Restaurant satellite) *$",
+        "pattern": "^ *(Cuisine centrale|Cuisine centrale et site|Restaurant avec cuisine sur place|Restaurant satellite|central|central_serving|site|site_cooked_elsewhere) *$",
         "required": true
       },
       "description": "Il existe 4 types différents : 'Cuisine centrale' sans lieu de consommation, 'Cuisine centrale et site' qui accueille aussi des convives sur place, 'Restaurant avec cuisine sur place' qui produit les repas sur place, 'Restaurant satellite' qui sert des repas preparés par une cuisine centrale. Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de restaurants satellites.",
@@ -120,7 +120,7 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(Concédée|Directe) *$",
+        "pattern": "^ *(Concédée|Directe|conceded|direct) *$",
         "required": true
       },
       "description": "Si de manière concédée, la délégation peut être totale ou partielle.",
@@ -136,7 +136,7 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(Public|Privé) *$",
+        "pattern": "^ *(Public|Privé|public|private) *$",
         "required": true
       },
       "description": "",
