@@ -1,5 +1,4 @@
 siret,nom,siret_livreur_repas,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels,nombre_satellites
 16463707389922,A canteen,,700,14000,Cliniques,Cuisine centrale,Concédée,Public,,1
 59501921996028,canteen,,700,14000,"Cliniques,Hôpitaux,Crèche,Restaurants des armées / police / gendarmerie",Restaurant avec cuisine sur place,Concédée,Public,,
-68995896814290,C canteen,,700,14000,,Cuisine centrale et site,Concédée,Public,,1
 68231355846247,D canteen,16463707389922,700,14000,,Restaurant satellite,Concédée,Public,,
