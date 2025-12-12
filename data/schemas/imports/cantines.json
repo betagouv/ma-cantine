@@ -166,7 +166,7 @@
       "constraints": {
         "required": false
       },
-      "description": "Ce champ est obligatoire pour les types de production 'Cuisine centrale' et 'Cuisine centrale et site'",
+      "description": "Ce champ est obligatoire pour le type de production 'Cuisine centrale'",
       "example": "12",
       "format": "default",
       "name": "nombre_satellites",
