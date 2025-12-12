@@ -115,18 +115,6 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [""])
         self.assertEqual(purchase.local_definition, "")
-        # purchase with family empty
-        purchase = Purchase.objects.filter(description="Pommes, vertes 2").first()
-        self.assertEqual(purchase.canteen.siret, "21010034300016")
-        self.assertEqual(purchase.family, "")
-        self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO])
-        self.assertEqual(purchase.local_definition, "")
-        # purchase with family and characteristics empty
-        purchase = Purchase.objects.filter(description="Pommes, vertes 3").first()
-        self.assertEqual(purchase.canteen.siret, "21010034300016")
-        self.assertEqual(purchase.family, "")
-        self.assertEqual(purchase.characteristics, [""])
-        self.assertEqual(purchase.local_definition, "")
         # Test that the purchase import source contains the complete file digest
         filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
@@ -302,11 +290,12 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         errors = response.json()["errors"]
-        self.assertEqual(len(errors), 12)
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(len(errors), 13)
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # siret
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # description
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # provider
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # family
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # date
         self.assertEqual(
             errors.pop(0)["message"],
             "La date doit être écrite sous la forme `aaaa-mm-jj`",
@@ -315,7 +304,7 @@ class TestPurchaseImport(APITestCase):
             errors.pop(0)["message"],
             "La date doit être écrite sous la forme `aaaa-mm-jj`",
         )
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # price
         self.assertTrue(errors.pop(0)["message"].startswith("A price ne respecte pas le motif imposé"))
         self.assertTrue(
             errors.pop(0)["message"].startswith("NOPE ne respecte pas le motif imposé"),
