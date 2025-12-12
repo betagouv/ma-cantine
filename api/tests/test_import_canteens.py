@@ -55,16 +55,25 @@ class CanteenSchemaTest(TestCase):
             " Cuisine centrale et site",
             " Restaurant avec cuisine sur place ",
             "Restaurant satellite ",
+            "site",
+            " central",
+            " central_serving",
+            " site_cooked_elsewhere",
+            " site",
+            "central ",
+            "central_serving ",
+            "site_cooked_elsewhere ",
+            "site ",
+            " central ",
+            " central_serving ",
+            " site_cooked_elsewhere ",
+            " site ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in [
             "type de production inconnu",
             "",
-            "central",
-            "central_serving",
-            "site_cooked_elsewhere",
-            "site",
             "     ",
         ]:
             with self.subTest(VALUE=VALUE_NOT_OK):
@@ -81,10 +90,18 @@ class CanteenSchemaTest(TestCase):
             " Directe",
             "Directe ",
             " Directe ",
+            "conceded",
+            "direct",
+            " conceded",
+            " direct",
+            "conceded ",
+            "direct ",
+            " conceded ",
+            " direct ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["type de gestion inconnu", "", "conceded", "direct", "     "]:
+        for VALUE_NOT_OK in ["type de gestion inconnu", "", "     "]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
@@ -99,10 +116,18 @@ class CanteenSchemaTest(TestCase):
             " Privé",
             "Privé ",
             " Privé ",
+            "public",
+            "private",
+            " public",
+            " private",
+            "public ",
+            "private ",
+            " public ",
+            " private ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["modèle économique inconnu", "", "public", "private", "     "]:
+        for VALUE_NOT_OK in ["modèle économique inconnu", "", "     "]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
