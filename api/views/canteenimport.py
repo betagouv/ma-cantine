@@ -32,10 +32,10 @@ CANTEEN_ADMIN_SCHEMA_FILE_NAME = "cantines_admin.json"
 CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
 CANTEEN_ADMIN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_ADMIN_SCHEMA_FILE_NAME}"
 CANTEEN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_SCHEMA_FILE_PATH}"
+    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/imports-2025/{CANTEEN_SCHEMA_FILE_PATH}"
 )
 CANTEEN_ADMIN_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
+    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/imports-2025/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
 )
 
 
