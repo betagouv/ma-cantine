@@ -6,6 +6,30 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.43.0](https://github.com/betagouv/ma-cantine/compare/v2025.42.1...v2025.43.0) (2025-12-12)
+
+
+### Nouveautés
+
+* **Ressources:** ajout du support webinaire ([#6014](https://github.com/betagouv/ma-cantine/issues/6014)) ([562c413](https://github.com/betagouv/ma-cantine/commit/562c413ad692f70c57cbb4d9d048ffbc0b2b6f27))
+
+
+### Améliorations
+
+* **Achats:** Admin: accélérer le chargement ([#5983](https://github.com/betagouv/ma-cantine/issues/5983)) ([de1e87e](https://github.com/betagouv/ma-cantine/commit/de1e87e43e956aff11851c27fe99b03f0fadc1d7))
+* **Achats:** Règles métiers: au moment du save, vérifier les règles de bases ([#5984](https://github.com/betagouv/ma-cantine/issues/5984)) ([81f209a](https://github.com/betagouv/ma-cantine/commit/81f209a3f4dc0de564ddafc8a8cc3d57cbe676f6))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** Affiche: répare l'affichage des données dans le cas de satellites qui ont TD mais pas leur centrale ([#6022](https://github.com/betagouv/ma-cantine/issues/6022)) ([6ece192](https://github.com/betagouv/ma-cantine/commit/6ece192c3247a70a009ff80fbbc806db026d62d1))
+* **Trouver une cantine:** corrige les graphiques "taux télédéclaration" qui ne s'affichaient  ([#6018](https://github.com/betagouv/ma-cantine/issues/6018)) ([7520269](https://github.com/betagouv/ma-cantine/commit/7520269a4d07d3bad714dd768fdbe20624476e0f))
+
+
+### Technique
+
+* **Télédéclaration:** bouge la logique TD des Diagnostic dans un fichier séparé ([#6003](https://github.com/betagouv/ma-cantine/issues/6003)) ([d66f81e](https://github.com/betagouv/ma-cantine/commit/d66f81eb5c57ce8f0d76f434a26be6c51ca42146))
+
 ## [2025.42.1](https://github.com/betagouv/ma-cantine/compare/v2025.42.0...v2025.42.1) (2025-12-10)
 
 
