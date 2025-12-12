@@ -19,7 +19,7 @@
     "vue-matomo": "^4.2.0",
     "vue-router": "^3.6.5",
     "vue-select": "^3.20.3",
-    "vuetify": "^2.7.2",
+    "vuetify": "^3.0.0",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
