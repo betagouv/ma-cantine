@@ -49,26 +49,27 @@ class CanteenSchemaTest(TestCase):
         pattern = self.get_pattern(self.schema, "type_production")
         for VALUE_OK in [
             "Cuisine centrale",
-            "Cuisine centrale et site",
+            " Cuisine centrale",
+            "Cuisine centrale ",
+            " Cuisine centrale ",
             "Restaurant avec cuisine sur place",
-            "Restaurant satellite",
-            " Cuisine centrale et site",
+            " Restaurant avec cuisine sur place",
+            "Restaurant avec cuisine sur place ",
             " Restaurant avec cuisine sur place ",
+            "Restaurant satellite",
+            " Restaurant satellite",
             "Restaurant satellite ",
+            " Restaurant satellite ",
             "central",
-            "central_serving",
             "site_cooked_elsewhere",
             "site",
             " central",
-            " central_serving",
             " site_cooked_elsewhere",
             " site",
             "central ",
-            "central_serving ",
             "site_cooked_elsewhere ",
             "site ",
             " central ",
-            " central_serving ",
             " site_cooked_elsewhere ",
             " site ",
         ]:
@@ -78,6 +79,8 @@ class CanteenSchemaTest(TestCase):
             "type de production inconnu",
             "",
             "     ",
+            "Cuisine centrale et site",
+            "central_serving",
         ]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
