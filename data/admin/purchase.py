@@ -24,6 +24,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "import_source",
         "creation_source",
         "creation_date",
+        "modification_date",
         "deletion_date",
     )
     readonly_fields = (
@@ -40,6 +41,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "import_source",
         "creation_source",
         "creation_date",
+        "modification_date",
     )
     list_display = (
         "date",
@@ -64,6 +66,11 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "import_source",
     )
     search_help_text = f"Cherche sur les champs : Cantine (SIRET), {Purchase._meta.get_field('description').verbose_name.capitalize()}, {Purchase._meta.get_field('import_source').verbose_name.capitalize()}"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.prefetch_related("canteen")
+        return qs
 
     def save_model(self, request, obj, form, change):
         if not change:
