@@ -19,3 +19,6 @@ class PurchaseFactory(factory.django.DjangoModelFactory):
     family = FuzzyChoice(Purchase.Family.values)
     characteristics = factory.List(random.sample(list(Purchase.Characteristic.values), random.randint(0, 3)))
     price_ht = factory.Faker("random_int", min=0, max=2000)
+    local_definition = factory.LazyAttribute(
+        lambda x: random.choice(Purchase.Local.values) if Purchase.Characteristic.LOCAL in x.characteristics else None
+    )

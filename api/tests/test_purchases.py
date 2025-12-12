@@ -758,6 +758,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
                 Purchase.Characteristic.CIRCUIT_COURT,
                 Purchase.Characteristic.LOCAL,
             ],
+            local_definition=Purchase.Local.AUTRE,
             price_ht=10,
         )
 
@@ -783,6 +784,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             date=d,
             family=Purchase.Family.AUTRES,
             characteristics=[Purchase.Characteristic.LOCAL],
+            local_definition=Purchase.Local.AUTRE,
             price_ht=50,
         )
         PurchaseFactory(
@@ -790,6 +792,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             date=d,
             family=Purchase.Family.AUTRES,
             characteristics=[Purchase.Characteristic.LOCAL],
+            local_definition=Purchase.Local.AUTRE,
             price_ht=50,
         )
 

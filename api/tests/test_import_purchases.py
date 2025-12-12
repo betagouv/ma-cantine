@@ -96,20 +96,38 @@ class TestPurchaseImport(APITestCase):
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 2)
+        self.assertEqual(Purchase.objects.count(), 4)
         self.assertFalse(ImportFailure.objects.exists())
-        purchase = Purchase.objects.filter(description="Pommes, rouges").first()
+        purchase = Purchase.objects.filter(description="Pommes, rouges, local").first()
         self.assertEqual(purchase.canteen.siret, "21010034300016")
-        self.assertEqual(purchase.description, "Pommes, rouges")
+        self.assertEqual(purchase.description, "Pommes, rouges, local")
         self.assertEqual(purchase.provider, "Le bon traiteur")
         self.assertEqual(purchase.price_ht, Decimal("90.11"))
         self.assertEqual(purchase.date, date(2022, 5, 2))
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
         self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTMENT)
-        # Test that the purchase import source contains the complete file digest
         self.assertIsNotNone(purchase.import_source)
         self.assertEqual(purchase.creation_source, CreationSource.IMPORT)
+        # purchase with characteristics empty
+        purchase = Purchase.objects.filter(description="Pommes, vertes 1").first()
+        self.assertEqual(purchase.canteen.siret, "21010034300016")
+        self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
+        self.assertEqual(purchase.characteristics, [""])
+        self.assertEqual(purchase.local_definition, "")
+        # purchase with family empty
+        purchase = Purchase.objects.filter(description="Pommes, vertes 2").first()
+        self.assertEqual(purchase.canteen.siret, "21010034300016")
+        self.assertEqual(purchase.family, "")
+        self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO])
+        self.assertEqual(purchase.local_definition, "")
+        # purchase with family and characteristics empty
+        purchase = Purchase.objects.filter(description="Pommes, vertes 3").first()
+        self.assertEqual(purchase.canteen.siret, "21010034300016")
+        self.assertEqual(purchase.family, "")
+        self.assertEqual(purchase.characteristics, [""])
+        self.assertEqual(purchase.local_definition, "")
+        # Test that the purchase import source contains the complete file digest
         filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
@@ -131,27 +149,24 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.price_ht, Decimal("90.11"))
 
     @authenticate
-    def test_import_with_no_local_definition(self):
+    def test_import_with_local_definition_missing(self):
         """
-        Tests that can import a file without local definition
+        If characteristics includes LOCAL, local_definition must be filled
         """
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
 
-        file_path = "./api/tests/files/achats/purchases_good_no_local_def.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_no_local_definition.csv"
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 2)
-        self.assertFalse(ImportFailure.objects.exists())
-        purchase = Purchase.objects.filter(description="Pommes, rouges").first()
-        self.assertEqual(purchase.canteen.siret, "21010034300016")
-        self.assertEqual(purchase.description, "Pommes, rouges")
-        self.assertEqual(purchase.provider, "Le bon traiteur")
-        self.assertEqual(purchase.price_ht, Decimal("90.11"))
-        self.assertEqual(purchase.date, date(2022, 5, 2))
-        self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
-        self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO])
-        self.assertEqual(purchase.local_definition, None)
+        self.assertEqual(Purchase.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
+        errors = response.json()["errors"]
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(
+            errors[0]["message"], "La caractéristique LOCAL est sélectionnée : le champ doit être rempli."
+        )
+        self.assertEqual(errors[0]["status"], 400)
 
     @authenticate
     def test_import_purchases_different_separators(self):
@@ -188,7 +203,7 @@ class TestPurchaseImport(APITestCase):
         file_path = "./api/tests/files/achats/purchases_good.csv"
         with open(file_path) as purchase_file:
             _ = self.client.post(reverse("import_purchases"), {"file": purchase_file})
-        self.assertEqual(_process_chunk_mock.call_count, 2)
+        self.assertEqual(_process_chunk_mock.call_count, 4)
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=10)
@@ -287,6 +302,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         errors = response.json()["errors"]
+        self.assertEqual(len(errors), 12)
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")
@@ -346,22 +362,22 @@ class TestPurchaseImport(APITestCase):
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 2)
+        self.assertEqual(Purchase.objects.count(), 4)
         self.assertFalse(ImportFailure.objects.exists())
 
         # upload again
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 2)  # no additional purchases created
+        self.assertEqual(Purchase.objects.count(), 4)  # no additional purchases created
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
         self.assertEqual(body["count"], 0)
         self.assertTrue(body["duplicateFile"])
-        self.assertEqual(len(body["duplicatePurchases"]), 2)
-        self.assertEqual(body["duplicatePurchaseCount"], 2)
+        self.assertEqual(len(body["duplicatePurchases"]), 4)
+        self.assertEqual(body["duplicatePurchaseCount"], 4)
 
     @authenticate
     def test_errors_prevent_all_purchase_creation(self):

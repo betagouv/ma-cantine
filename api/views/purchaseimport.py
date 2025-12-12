@@ -207,7 +207,7 @@ class ImportPurchasesView(APIView):
         family = row.pop(0)
         characteristics = row.pop(0)
         characteristics = [c.strip() for c in characteristics.split(",")]
-        local_definition = ImportPurchasesView._get_local_definition(row, characteristics)
+        local_definition = row.pop(0)
 
         purchase = Purchase(
             canteen=canteen,
@@ -217,27 +217,12 @@ class ImportPurchasesView(APIView):
             price_ht=price,
             family=family.strip(),
             characteristics=characteristics,
-            local_definition=local_definition,
+            local_definition=local_definition.strip(),
             import_source=self.tmp_id,
             creation_source=CreationSource.IMPORT,
         )
         purchase.full_clean()
         self.purchases.append(purchase)
-
-    # Factored out because _create_purchase_for_canteen was too complex for flake8 validation
-    @staticmethod
-    def _get_local_definition(row, characteristics):
-        local_definition = None
-        if "LOCAL" in characteristics:
-            try:
-                local_definition = row.pop(0)
-                if not local_definition:
-                    raise IndexError
-            except IndexError:
-                raise ValidationError(
-                    {"local_definition": "La définition de local est obligatoire pour les produits locaux"}
-                )
-        return local_definition.strip() if local_definition else None
 
     def _get_success_response(self):
         return JsonResponse(
