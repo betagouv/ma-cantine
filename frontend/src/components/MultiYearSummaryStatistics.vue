@@ -183,12 +183,12 @@ export default {
   },
   methods: {
     bioPercentage(diagnostic) {
-      return "percentageValueBio" in diagnostic
-        ? Math.round(diagnostic.percentageValueBio * 100)
+      return "percentageValeurBio" in diagnostic
+        ? Math.round(diagnostic.percentageValeurBio * 100)
         : getPercentage(diagnostic.valeurBio, diagnostic.valeurTotale)
     },
     sustainablePercentage(diagnostic) {
-      return "percentageValueTotale" in diagnostic
+      return "percentageValeurTotale" in diagnostic
         ? Math.round(getSustainableTotal(diagnostic) * 100)
         : getPercentage(getSustainableTotal(diagnostic), diagnostic.valeurTotale)
     },

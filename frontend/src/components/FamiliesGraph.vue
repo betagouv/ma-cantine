@@ -155,16 +155,16 @@ export default {
       return colors[baseColor][modifier]
     },
     getValuesForCharacteristic(characteristicId) {
-      const usesPercentages = "percentageValueTotale" in this.diagnostic
+      const usesPercentages = "percentageValeurTotale" in this.diagnostic
       const baseFields = {
-        VIANDES_VOLAILLES: usesPercentages ? "percentageValueViandesVolailles" : "valeurViandesVolailles",
-        CHARCUTERIE: usesPercentages ? "percentageValueCharcuterie" : "valeurCharcuterie",
-        PRODUITS_DE_LA_MER: usesPercentages ? "percentageValueProduitsDeLaMer" : "valeurProduitsDeLaMer",
-        FRUITS_ET_LEGUMES: usesPercentages ? "percentageValueFruitsEtLegumes" : "valeurFruitsEtLegumes",
-        PRODUITS_LAITIERS: usesPercentages ? "percentageValueProduitsLaitiers" : "valeurProduitsLaitiers",
-        BOULANGERIE: usesPercentages ? "percentageValueBoulangerie" : "valeurBoulangerie",
-        BOISSONS: usesPercentages ? "percentageValueBoissons" : "valeurBoissons",
-        AUTRES: usesPercentages ? "percentageValueAutres" : "valeurAutres",
+        VIANDES_VOLAILLES: usesPercentages ? "percentageValeurViandesVolailles" : "valeurViandesVolailles",
+        CHARCUTERIE: usesPercentages ? "percentageValeurCharcuterie" : "valeurCharcuterie",
+        PRODUITS_DE_LA_MER: usesPercentages ? "percentageValeurProduitsDeLaMer" : "valeurProduitsDeLaMer",
+        FRUITS_ET_LEGUMES: usesPercentages ? "percentageValeurFruitsEtLegumes" : "valeurFruitsEtLegumes",
+        PRODUITS_LAITIERS: usesPercentages ? "percentageValeurProduitsLaitiers" : "valeurProduitsLaitiers",
+        BOULANGERIE: usesPercentages ? "percentageValeurBoulangerie" : "valeurBoulangerie",
+        BOISSONS: usesPercentages ? "percentageValeurBoissons" : "valeurBoissons",
+        AUTRES: usesPercentages ? "percentageValeurAutres" : "valeurAutres",
       }
       const baseModifiers = {
         BIO: "Bio",

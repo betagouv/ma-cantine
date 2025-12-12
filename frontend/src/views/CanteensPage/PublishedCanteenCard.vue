@@ -101,7 +101,7 @@ export default {
       return this.canteen?.approDiagnostic
     },
     bioPercent() {
-      return toPercentage(this.approDiagnostic?.percentageValueBio)
+      return toPercentage(this.approDiagnostic?.percentageValeurBio)
     },
     sustainablePercent() {
       if (!this.approDiagnostic) return

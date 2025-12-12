@@ -168,31 +168,34 @@ export default {
       return this.diagnostic.year || lastYear()
     },
     bioPercent() {
-      if (this.diagnostic.percentageValueTotale)
-        return getPercentage(this.diagnostic.percentageValueBio, this.diagnostic.percentageValueTotale)
+      if (this.diagnostic.percentageValeurTotale)
+        return getPercentage(this.diagnostic.percentageValeurBio, this.diagnostic.percentageValeurTotale)
       return getPercentage(this.diagnostic.valeurBio, this.diagnostic.valeurTotale)
     },
     sustainablePercent() {
-      if (this.diagnostic.percentageValueTotale)
-        return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.percentageValueTotale)
+      if (this.diagnostic.percentageValeurTotale)
+        return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.percentageValeurTotale)
       return getPercentage(getSustainableTotal(this.diagnostic), this.diagnostic.valeurTotale)
     },
     previousBioPercent() {
-      if (this.diagnostic.percentageValueTotale)
-        return getPercentage(this.previousDiagnostic.percentageValueBio, this.previousDiagnostic.percentageValueTotale)
+      if (this.diagnostic.percentageValeurTotale)
+        return getPercentage(
+          this.previousDiagnostic.percentageValeurBio,
+          this.previousDiagnostic.percentageValeurTotale
+        )
       return getPercentage(this.previousDiagnostic.valeurBio, this.previousDiagnostic.valeurTotale)
     },
     previousSustainablePercent() {
-      if (this.diagnostic.percentageValueTotale)
+      if (this.diagnostic.percentageValeurTotale)
         return getPercentage(
           getSustainableTotal(this.previousDiagnostic),
-          this.previousDiagnostic.percentageValueTotale
+          this.previousDiagnostic.percentageValeurTotale
         )
       return getPercentage(getSustainableTotal(this.previousDiagnostic), this.previousDiagnostic.valeurTotale)
     },
     hasCurrentYearData() {
       if (!this.diagnostic) return false
-      return !!this.diagnostic.valeurTotale || !!this.diagnostic.percentageValueTotale
+      return !!this.diagnostic.valeurTotale || !!this.diagnostic.percentageValeurTotale
     },
     earnedBadges() {
       if (!this.canteen.badges) return [] // for non-connected view

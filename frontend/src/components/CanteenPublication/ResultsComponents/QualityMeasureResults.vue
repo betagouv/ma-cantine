@@ -225,11 +225,11 @@ export default {
       return applicableDiagnosticRules(this.canteen, yearMaybe)
     },
     hasPercentages() {
-      return !!this.diagnosticForYear && "percentageValueTotale" in this.diagnosticForYear
+      return !!this.diagnosticForYear && "percentageValeurTotale" in this.diagnosticForYear
     },
     viandesVolaillesEgalimPercentage() {
       return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValueViandesVolaillesEgalim)
+        ? toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesEgalim)
         : getPercentage(
             this.diagnosticForYear.valeurViandesVolaillesEgalim,
             this.diagnosticForYear.valeurViandesVolailles
@@ -237,7 +237,7 @@ export default {
     },
     viandesVolaillesFrancePercentage() {
       return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValueViandesVolaillesFrance)
+        ? toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesFrance)
         : getPercentage(
             this.diagnosticForYear.valeurViandesVolaillesFrance,
             this.diagnosticForYear.valeurViandesVolailles
@@ -245,7 +245,7 @@ export default {
     },
     produitsDeLaMerEgalimPercentage() {
       return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValueProduitsDeLaMerEgalim)
+        ? toPercentage(this.diagnosticForYear.percentageValeurProduitsDeLaMerEgalim)
         : getPercentage(
             this.diagnosticForYear.valeurProduitsDeLaMerEgalim,
             this.diagnosticForYear.valeurProduitsDeLaMer

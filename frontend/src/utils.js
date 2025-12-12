@@ -230,25 +230,25 @@ export const getSustainableTotal = (diagnostic) => {
     (diagnostic.valeurSiqo || 0) +
     (diagnostic.valeurExternalitesPerformance || 0) +
     (diagnostic.valeurEgalimAutres || 0) +
-    (diagnostic.percentageValueSiqo || 0) +
-    (diagnostic.percentageValueExternalitesPerformance || 0) +
-    (diagnostic.percentageValueEgalimAutres || 0)
+    (diagnostic.percentageValeurSiqo || 0) +
+    (diagnostic.percentageValeurExternalitesPerformance || 0) +
+    (diagnostic.percentageValeurEgalimAutres || 0)
   return sustainableSum
 }
 
 // returns a dict of integers (null/0-100) for the appro %
 export const getApproPercentages = (diagnostic) => {
   // two cases: 1) raw data in diagnostic; 2) only percentages in diagnostic
-  const valeurTotal = diagnostic.percentageValueTotale || diagnostic.valeurTotale
-  const valeurBio = diagnostic.percentageValueBio || diagnostic.valeurBio
+  const valeurTotal = diagnostic.percentageValeurTotale || diagnostic.valeurTotale
+  const valeurBio = diagnostic.percentageValeurBio || diagnostic.valeurBio
   const valeurViandesVolaillesTotal = diagnostic.valeurViandesVolailles || 1
   const valeurViandesVolaillesEgalim =
-    diagnostic.percentageValueViandesVolaillesEgalim || diagnostic.valeurViandesVolaillesEgalim
+    diagnostic.percentageValeurViandesVolaillesEgalim || diagnostic.valeurViandesVolaillesEgalim
   const valeurViandesVolaillesFrance =
-    diagnostic.percentageValueViandesVolaillesFrance || diagnostic.valeurViandesVolaillesFrance
+    diagnostic.percentageValeurViandesVolaillesFrance || diagnostic.valeurViandesVolaillesFrance
   const valeurProduitsDeLaMerTotal = diagnostic.valeurProduitsDeLaMer || 1
   const valeurProduitsDeLaMerEgalim =
-    diagnostic.percentageValueProduitsDeLaMerEgalim || diagnostic.valeurProduitsDeLaMerEgalim
+    diagnostic.percentageValeurProduitsDeLaMerEgalim || diagnostic.valeurProduitsDeLaMerEgalim
   const allSustainable = getSustainableTotal(diagnostic)
   const allEgalim = (valeurBio || 0) + (allSustainable || 0)
   return {
