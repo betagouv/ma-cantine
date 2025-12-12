@@ -28,8 +28,6 @@ from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
     DiagnosticsToTeledeclareListView,
-    DiagnosticTeledeclarationCancelView,
-    DiagnosticTeledeclarationCreateView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
 )
@@ -62,10 +60,14 @@ from .review import ReviewView  # noqa: F401
 from .sector import SectorListView  # noqa: F401
 from .statistics import CanteenStatisticsView  # noqa: F401
 from .subscription import SubscribeNewsletter  # noqa: F401
+from .diagnostic_teledeclaration import (  # noqa: F401
+    DiagnosticTeledeclarationPdfView,
+    DiagnosticTeledeclarationCancelView,
+    DiagnosticTeledeclarationCreateView,
+)
 from .teledeclaration import (  # noqa: F401
     TeledeclarationCampaignDatesListView,
     TeledeclarationCampaignDatesRetrieveView,
-    DiagnosticTeledeclarationPdfView,
 )
 from .user import (  # noqa: F401
     ChangePasswordView,
