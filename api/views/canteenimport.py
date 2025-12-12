@@ -272,13 +272,13 @@ class ImportCanteensView(APIView):
             if sector
         ]
         production_type = next(
-            (value for value, label in Canteen.ProductionType.choices if label == row[6].strip()), None
+            (value for value, label in Canteen.ProductionType.choices if row[6].strip() in [label, value]), None
         )
         management_type = next(
-            (value for value, label in Canteen.ManagementType.choices if label == row[7].strip()), None
+            (value for value, label in Canteen.ManagementType.choices if row[7].strip() in [label, value]), None
         )
         economic_model = next(
-            (value for value, label in Canteen.EconomicModel.choices if label == row[8].strip()), None
+            (value for value, label in Canteen.EconomicModel.choices if row[8].strip() in [label, value]), None
         )
         central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
         satellite_canteens_count = row[10].strip() if row[10] else None
