@@ -1623,13 +1623,6 @@ class Diagnostic(models.Model):
         return None
 
     @property
-    def latest_submitted_teledeclaration(self):
-        submitted_teledeclarations = self.teledeclaration_set.submitted()
-        if submitted_teledeclarations.count() == 0:
-            return None
-        return submitted_teledeclarations.order_by("-creation_date").first()
-
-    @property
     def appro_badge(self) -> bool | None:
         total = self.valeur_totale
         if total:
