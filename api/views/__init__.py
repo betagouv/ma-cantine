@@ -61,11 +61,13 @@ from .sector import SectorListView  # noqa: F401
 from .statistics import CanteenStatisticsView  # noqa: F401
 from .subscription import SubscribeNewsletter  # noqa: F401
 from .diagnostic_teledeclaration import (  # noqa: F401
-    TeledeclarationCampaignDatesListView,
-    TeledeclarationCampaignDatesRetrieveView,
     DiagnosticTeledeclarationPdfView,
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
+)
+from .teledeclaration import (  # noqa: F401
+    TeledeclarationCampaignDatesListView,
+    TeledeclarationCampaignDatesRetrieveView,
 )
 from .user import (  # noqa: F401
     ChangePasswordView,
