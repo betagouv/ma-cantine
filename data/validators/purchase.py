@@ -11,22 +11,14 @@ def validate_purchase_local_definition(instance):
     errors = {}
     field_name = "local_definition"
     value = getattr(instance, field_name)
-    characteristics = getattr(instance, "characteristics")
-    if characteristics:
-        if instance.Characteristic.LOCAL in characteristics:
-            if value in [None, ""]:
-                utils_utils.add_validation_error(
-                    errors,
-                    field_name,
-                    f"La caractéristique {instance.Characteristic.LOCAL} est sélectionnée : le champ doit être rempli.",
-                )
-        else:
-            if value not in [None, ""]:
-                utils_utils.add_validation_error(
-                    errors,
-                    field_name,
-                    f"La caractéristique {instance.Characteristic.LOCAL} n'est pas sélectionnée : le champ doit être vide.",
-                )
+    characteristics = getattr(instance, "characteristics") or []
+    if instance.Characteristic.LOCAL in characteristics:
+        if value in [None, ""]:
+            utils_utils.add_validation_error(
+                errors,
+                field_name,
+                f"La caractéristique {instance.Characteristic.LOCAL} est sélectionnée : le champ doit être rempli.",
+            )
     else:
         if value not in [None, ""]:
             utils_utils.add_validation_error(
