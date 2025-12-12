@@ -49,26 +49,27 @@ class CanteenSchemaTest(TestCase):
         pattern = self.get_pattern(self.schema, "type_production")
         for VALUE_OK in [
             "Cuisine centrale",
-            "Cuisine centrale et site",
+            " Cuisine centrale",
+            "Cuisine centrale ",
+            " Cuisine centrale ",
             "Restaurant avec cuisine sur place",
-            "Restaurant satellite",
-            " Cuisine centrale et site",
+            " Restaurant avec cuisine sur place",
+            "Restaurant avec cuisine sur place ",
             " Restaurant avec cuisine sur place ",
+            "Restaurant satellite",
+            " Restaurant satellite",
             "Restaurant satellite ",
+            " Restaurant satellite ",
             "central",
-            "central_serving",
             "site_cooked_elsewhere",
             "site",
             " central",
-            " central_serving",
             " site_cooked_elsewhere",
             " site",
             "central ",
-            "central_serving ",
             "site_cooked_elsewhere ",
             "site ",
             " central ",
-            " central_serving ",
             " site_cooked_elsewhere ",
             " site ",
         ]:
@@ -78,6 +79,8 @@ class CanteenSchemaTest(TestCase):
             "type de production inconnu",
             "",
             "     ",
+            "Cuisine centrale et site",
+            "central_serving",
         ]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
@@ -339,9 +342,8 @@ class CanteenImportErrorTest(APITestCase):
         error_message_min_max = "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs."
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 4, errors)
+        self.assertEqual(len(errors), 3, errors)
         self.assertEqual(errors.pop(0)["message"], error_message_central)
-        self.assertEqual(errors.pop(0)["message"], error_message_min_max)
         self.assertEqual(errors.pop(0)["message"], error_message_min_max)
         self.assertEqual(errors.pop(0)["message"], error_message_min_max)
 
@@ -396,12 +398,12 @@ class CanteenImportSuccessTest(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 5)
+        self.assertEqual(Canteen.objects.count(), 4)
         self.assertFalse(ImportFailure.objects.exists())
         body = response.json()
         errors = body["errors"]
-        self.assertEqual(body["count"], 5)
-        self.assertEqual(len(body["canteens"]), 5)
+        self.assertEqual(body["count"], 4)
+        self.assertEqual(len(body["canteens"]), 4)
         self.assertEqual(len(errors), 0, errors)
 
     @authenticate
@@ -505,12 +507,12 @@ class CanteenImportSuccessTest(APITestCase):
             response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 5)
+        self.assertEqual(Canteen.objects.count(), 4)
         self.assertFalse(ImportFailure.objects.exists())
         body = response.json()
         errors = body["errors"]
-        self.assertEqual(body["count"], 5)
-        self.assertEqual(len(body["canteens"]), 5)
+        self.assertEqual(body["count"], 4)
+        self.assertEqual(len(body["canteens"]), 4)
         self.assertEqual(len(errors), 0, errors)
 
     @authenticate
