@@ -494,6 +494,26 @@ class CanteenImportSuccessTest(APITestCase):
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
 
     @authenticate
+    def test_import_with_choices_slug_value(self):
+        """
+        Should be able to import canteens
+        """
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteens_good_choices_slug_values.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("import_canteens"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 5)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 5)
+        self.assertEqual(len(body["canteens"]), 5)
+        self.assertEqual(len(errors), 0, errors)
+
+    @authenticate
     def test_admin_import(self):
         """
         Admin get to specify extra columns and have fewer requirements on what data is required.
