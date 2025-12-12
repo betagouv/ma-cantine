@@ -217,10 +217,10 @@ export const getPercentage = (partialValue, totalValue, round = true) => {
 // of their nullability
 export const hasApproGraphData = (diagnostic) => {
   const graphDataKeys = [
-    "percentageValueBio",
-    "percentageValueSiqo",
-    "percentageValueExternalitesPerformance",
-    "percentageValueEgalimAutres",
+    "percentageValeurBio",
+    "percentageValeurSiqo",
+    "percentageValeurExternalitesPerformance",
+    "percentageValeurEgalimAutres",
   ]
   return graphDataKeys.some((k) => Object.hasOwn(diagnostic, k))
 }
