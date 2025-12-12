@@ -33,15 +33,15 @@ class CanteenSchemaTest(TestCase):
             " ",
             "Crèche",
             " Cliniques ",
-            "Cliniques+Crèche",
-            " Cliniques + Crèche ",
+            "Cliniques,Crèche",
+            " Cliniques , Crèche ",
             "EHPAD / maisons de retraite / foyers de personnes âgées",
             "Restaurants administratifs d’Etat (RA)",
             "Restaurants administratifs d'Etat (RA)",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["Secteur qui n'existe pas", "Cliniques,Crèche", " Cliniques + Crèche , Hôpitaux"]:
+        for VALUE_NOT_OK in ["Secteur qui n'existe pas", "Cliniques+Crèche", " Cliniques + Crèche , Hôpitaux"]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
