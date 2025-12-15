@@ -1,4 +1,4 @@
-# ma cantine
+# ma cantine - edit demo
 
 Accompagner au mieux les acteurs de la restauration collective dans leur offre aux consommateurs pour une alimentation de qualité, saine et durable.
 
