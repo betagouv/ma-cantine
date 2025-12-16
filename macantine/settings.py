@@ -51,14 +51,10 @@ ENFORCE_HOST = os.getenv("ENFORCE_HOST", None)
 DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANCE") == "True"
 
 # Environment
-
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 # Git branch
-try:
-    GIT_BRANCH = os.popen("git rev-parse --abbrev-ref HEAD").read().strip()
-except Exception:
-    GIT_BRANCH = "main"  # default to main if git command fails
+GIT_BRANCH = os.getenv("GIT_BRANCH", "staging" if ENVIRONMENT == "dev" else "main")
 
 # Sentry
 # No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
