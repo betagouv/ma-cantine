@@ -12,7 +12,19 @@
     <v-row class="my-0 my-md-6">
       <v-col cols="12" md="8" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
-          <LogoBio style="max-height: 30px;" v-if="$vuetify.breakpoint.smAndDown" />
+          <div v-if="$vuetify.breakpoint.smAndDown" class="d-flex align-center">
+            <LogoBio style="max-height: 30px;" />
+            <v-icon class="px-2" size="20" color="black" aria-hidden="true" title="Fermier">
+              mdi-plus
+            </v-icon>
+            <img
+              class="ml-2"
+              :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+              :alt="commerceEquitableLabels[0].title"
+              :title="commerceEquitableLabels[0].title"
+              style="max-height: 40px;"
+            />
+          </div>
           <label class="ml-4 ml-md-0" for="valeurBio">
             La valeur (en € HT) de mes achats Bio ou en conversion Bio
           </label>
@@ -36,6 +48,15 @@
       </v-col>
       <v-col md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
         <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" />
+        <v-icon class="px-2" size="20" color="black" aria-hidden="true" title="Fermier">
+          mdi-plus
+        </v-icon>
+        <img
+          :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+          :alt="commerceEquitableLabels[0].title"
+          :title="commerceEquitableLabels[0].title"
+          style="max-height: 40px;"
+        />
       </v-col>
     </v-row>
 
@@ -46,19 +67,14 @@
       </v-col>
       <v-col cols="11" md="7" class="pr-4 pr-md-10">
         <div class="d-block d-sm-flex align-center">
-          <div v-if="$vuetify.breakpoint.smAndDown" class="d-flex align-center">
-            <LogoBio style="max-height: 30px;" />
-            <v-icon class="px-2" size="20" color="black" aria-hidden="true" title="Fermier">
-              mdi-plus
-            </v-icon>
-            <img
-              class="ml-2"
-              :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
-              :alt="commerceEquitableLabels[0].title"
-              :title="commerceEquitableLabels[0].title"
-              style="max-height: 40px;"
-            />
-          </div>
+          <img
+            v-if="$vuetify.breakpoint.smAndDown"
+            class="pl-8"
+            :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
+            :alt="commerceEquitableLabels[0].title"
+            :title="commerceEquitableLabels[0].title"
+            style="max-height: 40px;"
+          />
           <label class="ml-4 ml-md-0" for="valeurBioDontCommerceEquitable">
             Dont valeur (en € HT) de mes achats Bio et Commerce équitable
             <span class="fr-hint-text my-2">Optionnel</span>
@@ -82,11 +98,8 @@
         />
       </v-col>
       <v-col cols="12" md="4" class="d-flex align-center left-border" v-if="$vuetify.breakpoint.mdAndUp">
-        <LogoBio style="max-height: 60px;" class="pl-8 d-none d-md-block" />
-        <v-icon class="px-2" size="20" color="black" aria-hidden="true" title="Fermier">
-          mdi-plus
-        </v-icon>
         <img
+          class="pl-8"
           :src="`/static/images/quality-labels/${commerceEquitableLabels[0].src}`"
           :alt="commerceEquitableLabels[0].title"
           :title="commerceEquitableLabels[0].title"
