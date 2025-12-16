@@ -134,6 +134,6 @@
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
   "name": "import-achats",
-  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/data/schemas/imports/achats.json",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json",
   "title": "Schema import des achats"
 }

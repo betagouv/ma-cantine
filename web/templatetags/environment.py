@@ -24,3 +24,8 @@ def admin_css_override():
 @register.simple_tag
 def hostname():
     return f"{getattr(settings, 'PROTOCOL')}://{getattr(settings, 'HOSTNAME', '')}"
+
+
+@register.simple_tag
+def git_branch():
+    return getattr(settings, "GIT_BRANCH", "")
