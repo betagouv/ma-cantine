@@ -68,10 +68,10 @@ class TestPurchaseSchema(TestCase):
     def test_definition_local_regex(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "definition_local"), None)
         pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in ["DEPARTMENT", "DEPARTMENT ", " DEPARTMENT "]:
+        for VALUE_OK in ["DEPARTEMENT", "DEPARTEMENT ", " DEPARTEMENT "]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST", "DEPARTMENT,", "DEPARTMENT,REGION"]:
+        for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION"]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
@@ -106,7 +106,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.date, date(2022, 5, 2))
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
-        self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTMENT)
+        self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTEMENT)
         self.assertIsNotNone(purchase.import_source)
         self.assertEqual(purchase.creation_source, CreationSource.IMPORT)
         # purchase with characteristics empty
