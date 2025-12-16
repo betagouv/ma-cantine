@@ -79,7 +79,6 @@ onMounted(() => {
   emit("provide-vuelidate", v$)
   payload.periodStartDate = originalPayload?.periodStartDate
   payload.periodEndDate = originalPayload?.periodEndDate
-  payload.mealCount = originalPayload?.mealCount
 })
 </script>
 
