@@ -33,7 +33,7 @@ const fileErrorPath = `/static/documents/${props.filePreviews.error}`
   &__image-container {
     width: 100%;
     overflow-x: scroll;
-    height: 8rem;
+    height: 15rem;
     border-style: solid;
     border-width: 0.5rem;
 
