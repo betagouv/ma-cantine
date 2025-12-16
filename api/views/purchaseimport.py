@@ -27,9 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 PURCHASE_SCHEMA_FILE_PATH = "data/schemas/imports/achats.json"
-PURCHASE_SCHEMA_URL = (
-    f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/staging/{PURCHASE_SCHEMA_FILE_PATH}"
-)
+PURCHASE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SCHEMA_FILE_PATH}"
 
 
 class ImportPurchasesView(APIView):
