@@ -664,7 +664,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         self.assertEqual(self.diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
-        self.assertEqual(self.diagnostic.teledeclaration_version, 15)
+        self.assertEqual(self.diagnostic.teledeclaration_version, 16)
         self.assertIsNone(self.diagnostic.teledeclaration_id)
         # for snapshots, see tests below
         # try to teledeclare again
