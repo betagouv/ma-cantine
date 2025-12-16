@@ -6,13 +6,13 @@ const fileErrorPath = `/static/documents/${props.filePreviews.error}`
 
 <template>
   <ul class="ma-cantine--unstyled-list import-files-example">
-    <li class="import-files-example__bloc">
+    <li class="import-files-example__bloc fr-mt-2w">
       <DsfrBadge class="import-files-example__badge" type="error" label="Automatiquement rejeté" />
       <div class="import-files-example__image-container import-files-example__image-container--error">
         <img class="import-files-example__image" :src="fileErrorPath" alt="Exemple de fichier automatiquement rejeté" />
       </div>
     </li>
-    <li class="import-files-example__bloc">
+    <li class="import-files-example__bloc fr-mt-2w">
       <DsfrBadge class="import-files-example__badge" type="success" label="accepté" />
       <div class="import-files-example__image-container import-files-example__image-container--success">
         <img class="import-files-example__image" :src="fileSuccessPath"  alt="Exemple de fichier automatiquement rejeté" />
