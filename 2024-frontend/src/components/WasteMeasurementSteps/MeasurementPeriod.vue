@@ -14,31 +14,12 @@ const emit = defineEmits(["provide-vuelidate", "update-payload"])
 const originalPayload = inject("originalPayload")
 const canteen = inject("canteen")
 
-const state = reactive({
-  editMealCount: false,
-})
-
-const togglePeriodEdit = () => {
-  state.editMealCount = !state.editMealCount
-}
-
 const datesEntered = computed(() => {
   return !!payload.periodStartDate && !!payload.periodEndDate
 })
 
 const startDateAsDate = computed(() => {
   return new Date(payload.periodStartDate)
-})
-const endDateAsDate = computed(() => {
-  return new Date(payload.periodEndDate)
-})
-
-const daysInPeriod = computed(() => {
-  if (!datesEntered.value) return undefined
-  const milliseconds = endDateAsDate.value - startDateAsDate.value
-  const daysInclusive = milliseconds / 1000 / 60 / 60 / 24 + 1
-  if (daysInclusive < 0) return undefined
-  return daysInclusive
 })
 
 
@@ -101,6 +82,13 @@ onMounted(() => {
               :min="payload.periodStartDate"
               :error-message="formatError(v$.periodEndDate)"
             />
+            <DsfrInputGroup
+              v-model.number="payload.mealCount"
+              type="number"
+              :label="Constants.WasteMeasurement.mealCount.title"
+              :hint="`Pour rappel, votre nombre de couvert par jour est de ${canteen.dailyMealCount} jours`"
+              label-visible
+              :error-message="formatError(v$.mealCount)"
             />
           </div>
         </fieldset>
@@ -110,69 +98,6 @@ onMounted(() => {
           <p class="fr-mb-0">
             Pour garantir une bonne estimation, nous vous conseillons de réaliser vos mesures sur une période
             <b>d'au moins 5 jours.</b>
-          </p>
-        </HelpText>
-      </div>
-    </div>
-    <div class="fr-grid-row fr-grid-row--middle fr-mt-2w" v-if="canteen.dailyMealCount">
-      <div class="fr-col-md-6">
-        <div class="fr-grid-row fr-grid-row--bottom">
-          <div class="fr-mr-2w">
-            <DsfrInputGroup
-              v-model.number="payload.mealCount"
-              type="number"
-              :label="Constants.WasteMeasurement.mealCount.title"
-              :hint="`${daysInPeriod || '?'} jours`"
-              label-visible
-              :error-message="formatError(v$.mealCount)"
-              :disabled="!state.editMealCount"
-            />
-          </div>
-          <div>
-            <DsfrButton
-              v-if="!state.editMealCount"
-              @click="togglePeriodEdit"
-              :disabled="!datesEntered"
-              tertiary
-              icon="fr-icon-pencil-fill"
-            >
-              Modifier
-            </DsfrButton>
-          </div>
-        </div>
-      </div>
-      <div class="fr-col-md-6">
-        <HelpText v-if="datesEntered">
-          <p class="fr-mb-1w">
-            Calculé à partir du nombre de couverts par jour indiqué pour votre établissement :
-          </p>
-          <p class="fr-mb-0">
-            <b>{{ canteen.dailyMealCount }}</b>
-          </p>
-        </HelpText>
-      </div>
-    </div>
-    <div class="fr-grid-row fr-grid-row--middle fr-mt-2w" v-else>
-      <div class="fr-col-md-6">
-        <div class="fr-grid-row fr-grid-row--bottom">
-          <div class="fr-mr-2w">
-            <DsfrInputGroup
-              v-model.number="payload.mealCount"
-              type="number"
-              :label="Constants.WasteMeasurement.mealCount.title"
-              :hint="`${daysInPeriod || '?'} jours`"
-              label-visible
-              :error-message="formatError(v$.mealCount)"
-            />
-          </div>
-        </div>
-      </div>
-      <div class="fr-col-md-6">
-        <HelpText v-if="datesEntered && canteen.yearlyMealCount">
-          <p class="fr-mb-1w">
-            Pour rappel, votre établissement sert
-            <b>{{ canteen.yearlyMealCount }}</b>
-            repas par an.
           </p>
         </HelpText>
       </div>
