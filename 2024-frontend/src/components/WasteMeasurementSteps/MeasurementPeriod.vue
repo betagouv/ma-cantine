@@ -14,14 +14,9 @@ const emit = defineEmits(["provide-vuelidate", "update-payload"])
 const originalPayload = inject("originalPayload")
 const canteen = inject("canteen")
 
-const datesEntered = computed(() => {
-  return !!payload.periodStartDate && !!payload.periodEndDate
-})
-
 const startDateAsDate = computed(() => {
   return new Date(payload.periodStartDate)
 })
-
 
 const payload = reactive({})
 
@@ -94,7 +89,7 @@ onMounted(() => {
         </fieldset>
       </div>
       <div class="fr-col-md-6">
-        <HelpText v-if="!datesEntered" question="Pendant combien de temps mesurer&nbsp;?">
+        <HelpText question="Pendant combien de temps mesurer&nbsp;?">
           <p class="fr-mb-0">
             Pour garantir une bonne estimation, nous vous conseillons de réaliser vos mesures sur une période
             <b>d'au moins 5 jours.</b>
