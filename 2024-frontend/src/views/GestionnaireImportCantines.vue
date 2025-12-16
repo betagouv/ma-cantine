@@ -26,7 +26,9 @@ const fileOptions = {
 }
 const filePreviews = {
   success: "importer_des_cantines_exemple_fichier_accepte.jpg",
+  altSuccess: "Exemple de fichier accepté pour importer des cantines, qui contient le bon nom de colonnes et les bonnes valeurs",
   error: "importer_des_cantines_exemple_fichier_rejete.jpg",
+  altError: "Exemple de fichier rejeté pour importer des cantines, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 
 /* Success */

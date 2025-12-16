@@ -19,7 +19,9 @@ const exampleFile = {
 }
 const filePreviews = {
   success: "achats_fichier_exemple_fichier_accepte.jpg",
+  altSuccess: "Exemple de fichier accepté pour importer des achats, qui contient le bon nom de colonnes et les bonnes valeurs",
   error: "achats_fichier_exemple_fichier_rejete.jpg",
+  altError: "Exemple de fichier rejeté pour importer des achats, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 
 /* Sucess */
