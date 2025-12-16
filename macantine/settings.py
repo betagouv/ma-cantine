@@ -50,28 +50,10 @@ ENFORCE_HOST = os.getenv("ENFORCE_HOST", None)
 
 DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANCE") == "True"
 
-# Environment
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 # Git branch
 GIT_BRANCH = os.getenv("GIT_BRANCH", "staging" if ENVIRONMENT == "dev" else "main")
-
-# Sentry
-# No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
-if not DEBUG:
-    sentry_sdk.init(
-        dsn="https://db78f7d440094c498a02135e8abefa27@sentry.incubateur.net/2",
-        integrations=[DjangoIntegration(), CeleryIntegration()],
-        # Tracing: set traces_sample_rate to 1.0 to capture 100% of transactions
-        traces_sample_rate=0.2,  # 20%
-        # Profiling: set profiles_sample_rate to 1.0 to profile 100% of sampled transactions.
-        # The profiles_sample_rate setting is relative to the traces_sample_rate setting.
-        profiles_sample_rate=0.2,  # 4%
-        send_default_pii=False,
-        send_client_reports=False,
-        before_send=before_send,
-    )
-    sentry_sdk.set_level(logging.ERROR)
 
 INTERNAL_IPS = []
 
@@ -261,7 +243,32 @@ LOGIN_URL = "/s-identifier"
 
 HOSTNAME = os.getenv("HOSTNAME")
 
-# API - Django Rest Framework
+
+# Sentry
+# https://docs.sentry.io/platforms/python/integrations/django/
+# ------------------------------------------------------------------------------
+
+# No need making this one secret: https://forum.sentry.io/t/dsn-private-public/6297/3
+SENTRY_DSN = "https://db78f7d440094c498a02135e8abefa27@sentry.incubateur.net/2"
+if not DEBUG:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), CeleryIntegration()],
+        # Tracing: set traces_sample_rate to 1.0 to capture 100% of transactions
+        traces_sample_rate=0.2,  # 20%
+        # Profiling: set profiles_sample_rate to 1.0 to profile 100% of sampled transactions.
+        # The profiles_sample_rate setting is relative to the traces_sample_rate setting.
+        profiles_sample_rate=0.2,  # 4%
+        send_default_pii=False,
+        send_client_reports=False,
+        before_send=before_send,
+    )
+    sentry_sdk.set_level(logging.ERROR)
+
+
+# API: Django Rest Framework
+# https://www.django-rest-framework.org/
+# ------------------------------------------------------------------------------
 
 REST_FRAMEWORK = {
     "COERCE_DECIMAL_TO_STRING": False,
@@ -291,6 +298,10 @@ with open(BASE_DIR / "docs/api.html") as f:
     doc_api = f.read()
 
 
+# API: drf-spectacular
+# https://drf-spectacular.readthedocs.io/en/latest/readme.html
+# ------------------------------------------------------------------------------
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Ma Cantine API",
     "DESCRIPTION": doc_api,
@@ -314,7 +325,10 @@ SPECTACULAR_SETTINGS = {
     "OAUTH2_SCOPES": {"read": "Lecture", "write": "Ecriture"},
 }
 
-# Frontend - VueJS application
+
+# Frontend: Vue 2 & Vue 3 with django-vite-plugin
+# https://github.com/protibimbok/django-vite-plugin
+# ------------------------------------------------------------------------------
 
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 STATICFILES_DIRS = [
@@ -334,7 +348,53 @@ DJANGO_VITE_PLUGIN = {
     "BUILD_DIR": "build",
 }
 
+
+# Authentication
+# https://github.com/betagouv/django-magicauth
+# ------------------------------------------------------------------------------
+
+MAGICAUTH_EMAIL_FIELD = "email"
+MAGICAUTH_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+MAGICAUTH_LOGIN_URL = "envoyer-email-conexion"
+MAGICAUTH_LOGGED_IN_REDIRECT_URL_NAME = "app"
+MAGICAUTH_EMAIL_SUBJECT = "Votre lien de connexion avec Ma Cantine"
+MAGICAUTH_EMAIL_HTML_TEMPLATE = "magicauth/magicauth_email.html"
+MAGICAUTH_EMAIL_TEXT_TEMPLATE = "magicauth/magicauth_email.txt"
+MAGICAUTH_LOGIN_VIEW_TEMPLATE = "magicauth/login_magicauth.html"
+MAGICAUTH_EMAIL_SENT_VIEW_TEMPLATE = "magicauth/magicauth_email_sent.html"
+MAGICAUTH_ENABLE_2FA = False
+
+OAUTH2_PROVIDER = {
+    "PKCE_REQUIRED": False,
+    "SCOPES": {
+        "user:read": "Lire votre profil utilisateur",
+        "canteen:read": "Lire les données de votre cantine",
+        "canteen:write": "Modifier les données de votre cantine",
+    },
+}
+
+AUTHLIB_OAUTH_CLIENTS = {
+    "moncomptepro": {
+        "client_id": os.getenv("MONCOMPTEPRO_CLIENT_ID"),
+        "client_secret": os.getenv("MONCOMPTEPRO_SECRET"),
+    }
+}
+MONCOMPTEPRO_CONFIG = os.getenv("MONCOMPTEPRO_CONFIG")
+USES_MONCOMPTEPRO = (
+    os.getenv("MONCOMPTEPRO_CLIENT_ID") and os.getenv("MONCOMPTEPRO_SECRET") and os.getenv("MONCOMPTEPRO_CONFIG")
+)
+
+
+# Redis
+# ------------------------------------------------------------------------------
+
+REDIS_URL = os.getenv("REDIS_URL")
+REDIS_PREPEND_KEY = os.getenv("REDIS_PREPEND_KEY", "")
+
+
 # Email
+# ------------------------------------------------------------------------------
+
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL")
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
@@ -348,60 +408,25 @@ ANYMAIL = {
 }
 NEWSLETTER_SENDINBLUE_LIST_ID = os.getenv("NEWSLETTER_SENDINBLUE_LIST_ID")
 
-# Magicauth
-MAGICAUTH_EMAIL_FIELD = "email"
-MAGICAUTH_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
-MAGICAUTH_LOGIN_URL = "envoyer-email-conexion"
-MAGICAUTH_LOGGED_IN_REDIRECT_URL_NAME = "app"
-MAGICAUTH_EMAIL_SUBJECT = "Votre lien de connexion avec Ma Cantine"
-MAGICAUTH_EMAIL_HTML_TEMPLATE = "magicauth/magicauth_email.html"
-MAGICAUTH_EMAIL_TEXT_TEMPLATE = "magicauth/magicauth_email.txt"
-MAGICAUTH_LOGIN_VIEW_TEMPLATE = "magicauth/login_magicauth.html"
-MAGICAUTH_EMAIL_SENT_VIEW_TEMPLATE = "magicauth/magicauth_email_sent.html"
-MAGICAUTH_ENABLE_2FA = False
+TEMPLATE_ID_NO_CANTEEN_FIRST = (
+    int(os.getenv("TEMPLATE_ID_NO_CANTEEN_FIRST")) if os.getenv("TEMPLATE_ID_NO_CANTEEN_FIRST", None) else None
+)
+TEMPLATE_ID_NO_CANTEEN_SECOND = (
+    int(os.getenv("TEMPLATE_ID_NO_CANTEEN_SECOND")) if os.getenv("TEMPLATE_ID_NO_CANTEEN_SECOND", None) else None
+)
+TEMPLATE_ID_NO_DIAGNOSTIC_FIRST = (
+    int(os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST")) if os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST", None) else None
+)
 
-# CK Editor
-CKEDITOR_UPLOAD_PATH = "uploads/"
-CKEDITOR_IMAGE_BACKEND = "pillow"
-CKEDITOR_BROWSE_SHOW_DIRS = True
-
-CKEDITOR_CONFIGS = {
-    "default": {
-        "toolbar": "Custom",
-        "toolbar_Custom": [
-            ["Format", "Blockquote"],
-            ["Bold", "Italic"],
-            [
-                "NumberedList",
-                "BulletedList",
-                "-",
-                "Outdent",
-                "Indent",
-            ],
-            ["Link", "Unlink"],
-            [
-                "Image",
-                "-",
-                "Table",
-                "SpecialChar",
-            ],
-            ["Source", "Maximize"],
-        ],
-        "extraPlugins": ",".join(
-            [
-                "image2",
-                "codesnippet",
-                "placeholder",
-            ]
-        ),
-        "removePlugins": ",".join(["image"]),
-    }
-}
 
 # Analytics
+# ------------------------------------------------------------------------------
+
 MATOMO_ID = os.getenv("MATOMO_ID", "")
 
+
 # Logging
+# ------------------------------------------------------------------------------
 
 LOGGING = {
     "version": 1,
@@ -428,20 +453,10 @@ LOGGING = {
     },
 }
 
-# Performance debug with Django debug console
-if DEBUG_PERFORMANCE:
-    INTERNAL_IPS.append("127.0.0.1")
-    INSTALLED_APPS.append("debug_toolbar")
-    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
 
-# Maximum CSV import file size: 10Mo
-CSV_IMPORT_MAX_SIZE = 10485760
-CSV_IMPORT_MAX_SIZE_PRETTY = "10Mo"
-
-# Size of each chunk when processing files
-CSV_PURCHASE_CHUNK_LINES = 10000
-
-# CSP headers (https://content-security-policy.com/)
+# CSP headers
+# https://content-security-policy.com/
+# ------------------------------------------------------------------------------
 
 # CSP Debug domains -  unsafe-eval needed in DEBUG for hot-reload of the frontend server
 CSP_DEBUG_DOMAINS = (
@@ -543,14 +558,106 @@ CSP_FRAME_SRC = (
 if DEBUG:
     CSP_FRAME_SRC += CSP_DEBUG_DOMAINS
 
-# Campaign dates override
+
+# Wagtail CMS
+# https://docs.wagtail.org/en/stable/
+# ------------------------------------------------------------------------------
+
+WAGTAIL_SITE_NAME = "ma-cantine"
+# WAGTAILADMIN_BASE_URL # Declare if null URL in notification emails
+WAGTAILDOCS_EXTENSIONS = ["csv", "docx", "key", "odt", "pdf", "pptx", "rtf", "txt", "xlsx", "zip"]
+
+
+# CKEditor
+# ------------------------------------------------------------------------------
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"
+CKEDITOR_BROWSE_SHOW_DIRS = True
+
+CKEDITOR_CONFIGS = {
+    "default": {
+        "toolbar": "Custom",
+        "toolbar_Custom": [
+            ["Format", "Blockquote"],
+            ["Bold", "Italic"],
+            [
+                "NumberedList",
+                "BulletedList",
+                "-",
+                "Outdent",
+                "Indent",
+            ],
+            ["Link", "Unlink"],
+            [
+                "Image",
+                "-",
+                "Table",
+                "SpecialChar",
+            ],
+            ["Source", "Maximize"],
+        ],
+        "extraPlugins": ",".join(
+            [
+                "image2",
+                "codesnippet",
+                "placeholder",
+            ]
+        ),
+        "removePlugins": ",".join(["image"]),
+    }
+}
+
+
+# Tests
+# ------------------------------------------------------------------------------
+
+TEST_RUNNER = "macantine.testrunner.MaCantineTestRunner"
+OVERRIDE_TEST_SEED = os.getenv("OVERRIDE_TEST_SEED", None)
+SKIP_TESTS_THAT_REQUIRE_INTERNET = os.getenv("SKIP_TESTS_THAT_REQUIRE_INTERNET", False)
+
+
+# Django Debug Toolbar
+# https://django-debug-toolbar.readthedocs.io/en/latest/
+# ------------------------------------------------------------------------------
+
+if DEBUG_PERFORMANCE:
+    INTERNAL_IPS.append("127.0.0.1")
+    INSTALLED_APPS.append("debug_toolbar")
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+
+# Maximum CSV import file size: 10Mo
+CSV_IMPORT_MAX_SIZE = 10485760
+CSV_IMPORT_MAX_SIZE_PRETTY = "10Mo"
+
+# Size of each chunk when processing files
+CSV_PURCHASE_CHUNK_LINES = 10000
+
+
+# Django-extensions
+# https://django-extensions.readthedocs.io
+# ------------------------------------------------------------------------------
+
+SHELL_PLUS = "ipython"
+SHELL_PLUS_POST_IMPORTS = [
+    "from datetime import datetime, date",
+    "from collections import Counter",
+]
+
+
+# ma cantine : teledeclaration campaign dates override
+# ------------------------------------------------------------------------------
+
 ENABLE_TELEDECLARATION = os.getenv("ENABLE_TELEDECLARATION") == "True"
 TELEDECLARATION_START_DATE_OVERRIDE = os.getenv("TELEDECLARATION_START_DATE_OVERRIDE", "")
 TELEDECLARATION_END_DATE_OVERRIDE = os.getenv("TELEDECLARATION_END_DATE_OVERRIDE", "")
 CORRECTION_START_DATE_OVERRIDE = os.getenv("CORRECTION_START_DATE_OVERRIDE", "")
 CORRECTION_END_DATE_OVERRIDE = os.getenv("CORRECTION_END_DATE_OVERRIDE", "")
 
-# Feature flags
+
+# ma cantine : feature flags
+# ------------------------------------------------------------------------------
+
 ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"
 ENABLE_XP_VEGE = os.getenv("ENABLE_XP_VEGE") == "True"
 ENABLE_DASHBOARD = os.getenv("ENABLE_DASHBOARD") == "True"
@@ -559,61 +666,10 @@ ENABLE_WASTE_MEASUREMENTS = os.getenv("ENABLE_WASTE_MEASUREMENTS") == "True"
 SHOW_BANNER = os.getenv("SHOW_BANNER") == "True"
 SHOW_JE_DONNE_MON_AVIS = os.getenv("SHOW_JE_DONNE_MON_AVIS") == "True"
 
-# Custom testing
-TEST_RUNNER = "macantine.testrunner.MaCantineTestRunner"
-OVERRIDE_TEST_SEED = os.getenv("OVERRIDE_TEST_SEED", None)
-SKIP_TESTS_THAT_REQUIRE_INTERNET = os.getenv("SKIP_TESTS_THAT_REQUIRE_INTERNET", False)
 
-# Automatic emails
-TEMPLATE_ID_NO_CANTEEN_FIRST = (
-    int(os.getenv("TEMPLATE_ID_NO_CANTEEN_FIRST")) if os.getenv("TEMPLATE_ID_NO_CANTEEN_FIRST", None) else None
-)
-TEMPLATE_ID_NO_CANTEEN_SECOND = (
-    int(os.getenv("TEMPLATE_ID_NO_CANTEEN_SECOND")) if os.getenv("TEMPLATE_ID_NO_CANTEEN_SECOND", None) else None
-)
-TEMPLATE_ID_NO_DIAGNOSTIC_FIRST = (
-    int(os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST")) if os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST", None) else None
-)
+# ma cantine : history cleanup
+# ------------------------------------------------------------------------------
 
-OAUTH2_PROVIDER = {
-    "PKCE_REQUIRED": False,
-    "SCOPES": {
-        "user:read": "Lire votre profil utilisateur",
-        "canteen:read": "Lire les données de votre cantine",
-        "canteen:write": "Modifier les données de votre cantine",
-    },
-}
-
-REDIS_URL = os.getenv("REDIS_URL")
-REDIS_PREPEND_KEY = os.getenv("REDIS_PREPEND_KEY", "")
-
-AUTHLIB_OAUTH_CLIENTS = {
-    "moncomptepro": {
-        "client_id": os.getenv("MONCOMPTEPRO_CLIENT_ID"),
-        "client_secret": os.getenv("MONCOMPTEPRO_SECRET"),
-    }
-}
-MONCOMPTEPRO_CONFIG = os.getenv("MONCOMPTEPRO_CONFIG")
-USES_MONCOMPTEPRO = (
-    os.getenv("MONCOMPTEPRO_CLIENT_ID") and os.getenv("MONCOMPTEPRO_SECRET") and os.getenv("MONCOMPTEPRO_CONFIG")
-)
 MAX_DAYS_HISTORICAL_RECORDS = (
     int(os.getenv("MAX_DAYS_HISTORICAL_RECORDS")) if os.getenv("MAX_DAYS_HISTORICAL_RECORDS", None) else None
 )
-
-# Wagtail CMS
-# https://docs.wagtail.org/en/stable/
-# ------------------------------------------------------------------------------
-WAGTAIL_SITE_NAME = "ma-cantine"
-# WAGTAILADMIN_BASE_URL # Declare if null URL in notification emails
-WAGTAILDOCS_EXTENSIONS = ["csv", "docx", "key", "odt", "pdf", "pptx", "rtf", "txt", "xlsx", "zip"]
-
-
-# Django-extensions
-# https://django-extensions.readthedocs.io
-# ------------------------------------------------------------------------------
-SHELL_PLUS = "ipython"
-SHELL_PLUS_POST_IMPORTS = [
-    "from datetime import datetime, date",
-    "from collections import Counter",
-]

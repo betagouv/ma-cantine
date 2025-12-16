@@ -271,6 +271,10 @@ python manage.py test
 
 Sur VSCode, ces tests peuvent être debuggés avec la configuration "Python: Tests", présente sur le menu "Run".
 
+Tips :
+- lancer les tests plus rapidement : `python manage.py test --keepdb`
+- lancer les tests qui ne nécessitent pas internet : `SKIP_TESTS_THAT_REQUIRE_INTERNET=True python manage.py test`
+
 ### Vue2
 
 Il faut d'abord se placer sur `/frontend`, ensuite la commande pour lancer les tests VueJS est :
