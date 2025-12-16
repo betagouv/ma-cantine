@@ -69,6 +69,7 @@ jobs:
           DEFAULT_FROM_EMAIL: contact@example.com
           CONTACT_EMAIL: contact@example.com
           REDIS_URL: redis://localhost:6379/0
+          GIT_BRANCH: ${{ github.head_ref }}
         run: |
           uv run python manage.py test
 
