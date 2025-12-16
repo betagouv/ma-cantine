@@ -41,11 +41,6 @@ const daysInPeriod = computed(() => {
   return daysInclusive
 })
 
-const calculateMealCountMaybe = () => {
-  if (datesEntered.value && canteen.value.dailyMealCount) {
-    payload.mealCount = canteen.value.dailyMealCount * daysInPeriod.value
-  }
-}
 
 const payload = reactive({})
 
@@ -96,7 +91,6 @@ onMounted(() => {
               label-visible
               :max="payload.periodEndDate"
               :error-message="formatError(v$.periodStartDate)"
-              @change="calculateMealCountMaybe"
             />
             <DsfrInputGroup
               v-model="payload.periodEndDate"
@@ -106,7 +100,7 @@ onMounted(() => {
               class="fr-mb-2w"
               :min="payload.periodStartDate"
               :error-message="formatError(v$.periodEndDate)"
-              @change="calculateMealCountMaybe"
+            />
             />
           </div>
         </fieldset>
