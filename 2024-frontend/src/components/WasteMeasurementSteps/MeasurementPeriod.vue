@@ -1,38 +1,26 @@
 <script setup>
-import { onMounted, reactive, watch, inject, computed } from "vue"
+import { onMounted, reactive, watch, inject } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { formatError } from "@/utils.js"
+import { helpers } from "@vuelidate/validators"
+import { useValidators } from "@/validators.js"
 import HelpText from "./HelpText.vue"
 import Constants from "@/constants.js"
 
-import { helpers } from "@vuelidate/validators"
-import { useValidators } from "@/validators.js"
-const { required, integer, minValue } = useValidators()
-
 const emit = defineEmits(["provide-vuelidate", "update-payload"])
-
 const originalPayload = inject("originalPayload")
 const canteen = inject("canteen")
-
-const startDateAsDate = computed(() => {
-  return new Date(payload.periodStartDate)
-})
-
 const payload = reactive({})
-
-const afterStartDateValidator = (date) => {
-  date = new Date(date)
-  return date >= startDateAsDate.value
-}
-
-const afterStartDate = helpers.withMessage(
-  "La date de fin ne peut pas être avant la date de début",
-  afterStartDateValidator
-)
+const { required, integer, minValue } = useValidators()
 
 const rules = {
   periodStartDate: { required },
-  periodEndDate: { required, afterStartDate },
+  periodEndDate: { required,
+    afterStartDate: helpers.withMessage(
+      "La date de fin ne peut pas être avant la date de début",
+      (periodEndDate) => new Date(payload.periodStartDate) <= new Date(periodEndDate)
+    )
+  },
   mealCount: { required, integer, minValue: minValue(1) },
 }
 
