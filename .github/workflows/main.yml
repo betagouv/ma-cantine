@@ -71,6 +71,7 @@ jobs:
           REDIS_URL: redis://localhost:6379/0
           GIT_BRANCH: ${{ github.head_ref }}
         run: |
+          echo "GIT_BRANCH=$GIT_BRANCH"
           uv run python manage.py test
 
       - name: Setup Node
