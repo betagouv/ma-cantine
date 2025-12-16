@@ -6,6 +6,40 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.44.0](https://github.com/betagouv/ma-cantine/compare/v2025.43.0...v2025.44.0) (2025-12-16)
+
+
+### Nouveautés
+
+* **Import:** Cantines: remplacer les valeurs anglaises par leur version "verbeuse" française ([#6012](https://github.com/betagouv/ma-cantine/issues/6012)) ([dbe634f](https://github.com/betagouv/ma-cantine/commit/dbe634f975ea57ae9adf14cc5e570c509ecd42a3))
+* **Imports:** Cantines: autorise les valeurs en anglais à l'import sans les afficher aux utilisateurs ([#6016](https://github.com/betagouv/ma-cantine/issues/6016)) ([793e9ce](https://github.com/betagouv/ma-cantine/commit/793e9ce0f63e2e71c6a7a98e0f3ca4cf1304a7c7))
+* **Imports:** Cantines: supprime le type "Cuisine centrale et site" ([#6019](https://github.com/betagouv/ma-cantine/issues/6019)) ([a895264](https://github.com/betagouv/ma-cantine/commit/a895264ea5ba41580e70cdc6cf124eb9eb778831))
+
+
+### Améliorations
+
+* **Imports:** Achats: rendre le champ "famille_produits" obligatoire ([#5985](https://github.com/betagouv/ma-cantine/issues/5985)) ([c8c7c6a](https://github.com/betagouv/ma-cantine/commit/c8c7c6ad43bf8ff87f3c54e3dc70a359f6aba847))
+* **Imports:** Cantines: amélioration des terminologies du schéma ([#5998](https://github.com/betagouv/ma-cantine/issues/5998)) ([28ee396](https://github.com/betagouv/ma-cantine/commit/28ee396bcdbac39ca58e67adb56918a94373ae7e))
+* **Imports:** Schémas: rendre dynamique l'URL en fonction de la branche git ([#6033](https://github.com/betagouv/ma-cantine/issues/6033)) ([eb71955](https://github.com/betagouv/ma-cantine/commit/eb719555faacfdfa2968e4ce9753b3eafacbb173))
+
+
+### Corrections (bugs, typos...)
+
+* **CI:** lancer la suite de tests seulement à l'ouverture de la PR (fix 'on') ([#6032](https://github.com/betagouv/ma-cantine/issues/6032)) ([64dd905](https://github.com/betagouv/ma-cantine/commit/64dd905613a26a8b1b1c796ce8806f8a92daa897))
+* **Imports:** Cantines: met à jour le fichier démo ([#6021](https://github.com/betagouv/ma-cantine/issues/6021)) ([0c82ac8](https://github.com/betagouv/ma-cantine/commit/0c82ac8a7315446cd1cf4d230c9f9e593ed54133))
+* **Imports:** Cantines: supprime du fichier d'exemple le SIRET commençant par un zéro ([#6035](https://github.com/betagouv/ma-cantine/issues/6035)) ([fd7b312](https://github.com/betagouv/ma-cantine/commit/fd7b312cf8046a321f8119324fa75c7332e3976a))
+* **Télédéclaration:** répare un test suite au bump de la version de la TD à 16 ([#6030](https://github.com/betagouv/ma-cantine/issues/6030)) ([429ec03](https://github.com/betagouv/ma-cantine/commit/429ec03921754bfb872b774c733c803abc787c25))
+
+
+### Technique
+
+* **CI:** permet à la variable "GIT_BRANCH" d'être une config d'environnement ([#6038](https://github.com/betagouv/ma-cantine/issues/6038)) ([de1dea9](https://github.com/betagouv/ma-cantine/commit/de1dea9f83a0c58e987aac190befe4bd39e23d35))
+
+
+### Documentation
+
+* **Télédéclaration:** bump à la version 16. Lister les changements ([#6005](https://github.com/betagouv/ma-cantine/issues/6005)) ([1e2eb17](https://github.com/betagouv/ma-cantine/commit/1e2eb1792f2d6c7812d34720ef264ff0521d8f98))
+
 ## [2025.43.0](https://github.com/betagouv/ma-cantine/compare/v2025.42.1...v2025.43.0) (2025-12-12)
 
 
