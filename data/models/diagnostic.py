@@ -1676,6 +1676,9 @@ class Diagnostic(models.Model):
             Diagnostic.VegetarianMenuFrequency.MID,
             Diagnostic.VegetarianMenuFrequency.HIGH,
         ]
+        # Only the canteens with more than 200 daily meals with a diverisfication plan
+        if self.canteen.daily_meal_count and self.canteen.daily_meal_count >= 200 and self.has_diversification_plan:
+            return True
         # Only the canteens is in the administration sector must have a daily frequency
         if self.canteen.in_administration and has_daily_frequency:
             return True
