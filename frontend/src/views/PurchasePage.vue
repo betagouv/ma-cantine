@@ -156,7 +156,6 @@
                   :key="characteristic"
                   :value="characteristic"
                   :disabled="disabledForFamily(characteristic)"
-                  validate-on-blur
                   :rules="[validators.required]"
                 >
                   <template v-slot:label>
