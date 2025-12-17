@@ -125,6 +125,8 @@
               optionsRow
               labelClasses="body-2 my-3"
               optionClasses="body-2 grey--text text--darken-4"
+              validate-on-blur
+              :rules="[validators.required]"
             />
           </v-col>
           <v-col cols="12" md="4">
@@ -158,6 +160,8 @@
                   :key="characteristic"
                   :value="characteristic"
                   :disabled="disabledForFamily(characteristic)"
+                  validate-on-blur
+                  :rules="[validators.required]"
                 >
                   <template v-slot:label>
                     <span
