@@ -8,6 +8,10 @@ on:
       - reopened
       - ready_for_review
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: "ma-cantine: build and test"
