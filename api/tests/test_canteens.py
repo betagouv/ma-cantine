@@ -308,6 +308,51 @@ class CanteenDetailApiTest(APITestCase):
         self.assertIsNone(badges["diversification"])
 
     @authenticate
+    @freeze_time("2024-01-20")
+    def test_canteen_badges_vegetarian_diversification_plan_rule(self):
+        canteen_199_daily_meals = CanteenFactory(managers=[authenticate.user], daily_meal_count=199)
+        DiagnosticFactory(
+            canteen=canteen_199_daily_meals,
+            year=2023,
+            has_diversification_plan=True,
+            vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.NEVER,
+        )
+
+        canteen_200_daily_meals = CanteenFactory(managers=[authenticate.user], daily_meal_count=200)
+        DiagnosticFactory(
+            canteen=canteen_200_daily_meals,
+            year=2023,
+            has_diversification_plan=True,
+            vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.NEVER,
+        )
+
+        canteen_201_daily_meals = CanteenFactory(managers=[authenticate.user], daily_meal_count=201)
+        DiagnosticFactory(
+            canteen=canteen_201_daily_meals,
+            year=2023,
+            has_diversification_plan=True,
+            vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.NEVER,
+        )
+
+        response_canteen_199 = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_199_daily_meals.id}))
+        self.assertEqual(response_canteen_199.status_code, status.HTTP_200_OK)
+        body = response_canteen_199.json()
+        self.assertIs(body["dailyMealCount"], 199)
+        self.assertIs(body["badges"]["diversification"], None)
+
+        response_canteen_200 = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_200_daily_meals.id}))
+        self.assertEqual(response_canteen_200.status_code, status.HTTP_200_OK)
+        body = response_canteen_200.json()
+        self.assertIs(body["dailyMealCount"], 200)
+        self.assertIs(body["badges"]["diversification"], True)
+
+        response_canteen_201 = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_201_daily_meals.id}))
+        self.assertEqual(response_canteen_201.status_code, status.HTTP_200_OK)
+        body = response_canteen_201.json()
+        self.assertIs(body["dailyMealCount"], 201)
+        self.assertIs(body["badges"]["diversification"], True)
+
+    @authenticate
     def test_canteen_returns_latest_diagnostic_year(self):
         """
         Test whether the canteen returns the latest year it has data for
