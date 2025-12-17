@@ -25,7 +25,7 @@ def before_send(event, hint):
         # the app registry is not ready yet.
         # django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
 
-        from api.views.diagnostic_import import FileFormatError
+        from api.views.diagnostic_import_old import FileFormatError
         from data.models import SectorM2M
 
         exceptions.append(SectorM2M.DoesNotExist)

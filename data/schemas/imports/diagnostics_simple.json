@@ -1,0 +1,173 @@
+{
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "constraints": {
+        "pattern": "^[0-9]{14}$",
+        "required": true,
+        "unique": true
+      },
+      "description": "L'établissement avec ce SIRET doit être déjà enregistrée sur notre plateforme.",
+      "example": "49463556926130",
+      "format": "default",
+      "name": "siret",
+      "title": "SIRET de l'établissement",
+      "type": "any"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "Réfère à l'année des données et non l'année de déclaration.",
+      "example": "2021",
+      "name": "année_bilan",
+      "title": "Année du bilan",
+      "type": "year"
+    },
+    {
+      "constraints": {
+        "pattern": "^\\d+([.,]\\d+)?$",
+        "required": true
+      },
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_totale",
+      "title": "Valeur totale (HT) des achats",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "pattern": "^\\d+([.,]\\d+)?$",
+        "required": true
+      },
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_bio",
+      "title": "Valeur totale (HT) des achats bio",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_bio_dont_commerce_equitable",
+      "title": "Valeur totale (HT) des achats bio dont commerce équitable",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_siqo",
+      "title": "Valeur totale (HT) des achats SIQO",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_externalites_performance",
+      "title": "Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_egalim_autres",
+      "title": "Valeur totale (HT) des achats commerce équitable (hors bio)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_egalim_autres_dont_commerce_equitable",
+      "title": "Valeur totale (HT) des achats commerce équitable (hors bio)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_viandes_volailles",
+      "title": "Valeur totale (HT) viandes et volailles fraiches ou surgelées",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_viandes_volailles_egalim",
+      "title": "Valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_viandes_volailles_france",
+      "title": "Valeur totale (HT) viandes et volailles fraiches ou surgelées origine France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_de_la_mer",
+      "title": "Valeur totale (HT) poissons et produits aquatiques",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_de_la_mer_egalim",
+      "title": "Valeur totale (HT) poissons et produits aquatiques EGalim",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_de_la_mer_france",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Provenance France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_fruits_et_legumes_france",
+      "title": "Fruits et légumes frais et surgelés, Provenance France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_charcuterie_france",
+      "title": "Charcuterie, Provenance France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_laitiers_france",
+      "title": "BOF (Produits laitiers, beurre et œufs), Provenance France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boulangerie_france",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Provenance France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boissons_france",
+      "title": "Boissons, Provenance France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_autres_france",
+      "title": "Autres produits frais, surgelés et d’épicerie, Provenance France",
+      "type": "number"
+    }
+  ],
+  "homepage": "https://github.com/betagouv/ma-cantine",
+  "name": "import-diagnostics-simple",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/diagnostics_simple.json",
+  "title": "Schema import des diagnostics (simple)"
+}

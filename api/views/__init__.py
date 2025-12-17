@@ -31,7 +31,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
 )
-from .diagnostic_import import (  # noqa: F401
+from .diagnostic_import_old import (  # noqa: F401
     ImportCompleteCentralKitchenView,
     ImportCompleteDiagnosticsView,
     ImportSimpleCentralKitchenView,
