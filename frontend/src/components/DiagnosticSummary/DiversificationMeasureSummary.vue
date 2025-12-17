@@ -63,7 +63,8 @@
         </div>
       </li>
 
-      <div v-if="diagnostic.vegetarianWeeklyRecurrence !== 'NEVER'">
+      <!--TODO : remove year check when we stop displaying diagnostic summary for previous years -->
+      <div v-if="diagnostic.vegetarianWeeklyRecurrence !== 'NEVER' && diagnostic.year < 2025">
         <li v-if="diagnostic.vegetarianMenuType">
           <v-icon color="primary" class="mr-2">$check-line</v-icon>
           <div>
