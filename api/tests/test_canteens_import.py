@@ -16,7 +16,7 @@ from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation, S
 from data.models.creation_source import CreationSource
 
 
-class CanteenSchemaTest(TestCase):
+class CanteensSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.schema = json.load(open(CANTEEN_SCHEMA_FILE_PATH))
@@ -153,7 +153,7 @@ class CanteenSchemaTest(TestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class CanteenImportErrorTest(APITestCase):
+class CanteensImportApiErrorTest(APITestCase):
     def test_unauthenticated(self):
         response = self.client.post(reverse("import_canteens"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -386,7 +386,7 @@ class CanteenImportErrorTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class CanteenImportSuccessTest(APITestCase):
+class CanteensImportApiSuccessTest(APITestCase):
     @authenticate
     def test_import_only_canteens(self):
         """

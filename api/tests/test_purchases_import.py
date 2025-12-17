@@ -22,7 +22,7 @@ from data.models.creation_source import CreationSource
 from data.models.purchase import Purchase
 
 
-class TestPurchaseSchema(TestCase):
+class PurchasesSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.schema = json.load(open(PURCHASE_SCHEMA_FILE_PATH))
@@ -78,7 +78,7 @@ class TestPurchaseSchema(TestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class TestPurchaseImport(APITestCase):
+class PurchasesImportApiTest(APITestCase):
     def test_unauthenticated_import_call(self):
         """
         Expect 403 if unauthenticated
