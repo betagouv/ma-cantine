@@ -487,7 +487,6 @@ export default {
 
       const diversificationPlanActions = this.getDiversificationPlanActions(this.diagnostic.diversificationPlanActions)
       const vegetarianWeeklyRecurrence = this.getVegetarianWeeklyRecurrence(this.diagnostic.vegetarianWeeklyRecurrence)
-      const vegetarianMenuType = this.getVegetarianMenuType(this.diagnostic.vegetarianMenuType)
       const vegetarianMenuBases = this.getVegetarianMenuBases(this.diagnostic.vegetarianMenuBases)
       const communicationFrequency = this.getCommunicationFrequency(this.diagnostic.communicationFrequency)
 
@@ -577,11 +576,6 @@ export default {
           label: "Menus végétariens par semaine",
           value: vegetarianWeeklyRecurrence,
           class: vegetarianWeeklyRecurrence === "Non renseigné" ? "warn" : "",
-        },
-        {
-          label: "Menu végétarien proposé",
-          value: vegetarianMenuType,
-          class: vegetarianMenuType === "Non renseigné" ? "warn" : "",
         },
         {
           label: "Bases du menu végétarien",
@@ -698,12 +692,6 @@ export default {
       if (!vegetarianWeeklyRecurrence) return "Non renseigné"
       const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianWeeklyRecurrence.items)
       return items[vegetarianWeeklyRecurrence] || "Non renseigné"
-    },
-    getVegetarianMenuType(vegetarianMenuType) {
-      if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
-      if (!vegetarianMenuType) return "Non renseigné"
-      const items = selectListToObject(Constants.DiversificationMeasureStep.vegetarianMenuType.items)
-      return items[vegetarianMenuType] || "Non renseigné"
     },
     getVegetarianMenuBases(vegetarianMenuBases) {
       if (this.diagnostic.vegetarianWeeklyRecurrence === "NEVER") return "Non applicable"
