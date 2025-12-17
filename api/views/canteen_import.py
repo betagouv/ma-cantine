@@ -36,7 +36,7 @@ CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/ref
 CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
 
 
-class ImportCanteensView(APIView):
+class CanteensImportView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     manager_column_idx = 9  # gestionnaires_additionnels
@@ -143,7 +143,7 @@ class ImportCanteensView(APIView):
 
             except Exception as e:
                 for error in self._parse_errors(e, row):
-                    self.errors.append(ImportCanteensView._get_error(e, error["message"], error["code"], row_number))
+                    self.errors.append(CanteensImportView._get_error(e, error["message"], error["code"], row_number))
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
 
@@ -239,7 +239,7 @@ class ImportCanteensView(APIView):
         try:
             manager_emails = []
             if len(row) > self.manager_column_idx and row[self.manager_column_idx]:
-                manager_emails = ImportCanteensView._get_manager_emails(row[self.manager_column_idx])
+                manager_emails = CanteensImportView._get_manager_emails(row[self.manager_column_idx])
         except Exception:
             raise ValidationError(
                 {"email": f"Un adresse email des gestionnaires ({row[self.manager_column_idx]}) n'est pas valide."}
@@ -329,9 +329,9 @@ class ImportCanteensView(APIView):
         if not self.request.user.is_staff:
             canteen.managers.add(self.request.user)
         if manager_emails:
-            ImportCanteensView._add_managers_to_canteen(manager_emails, canteen)
+            CanteensImportView._add_managers_to_canteen(manager_emails, canteen)
         if silently_added_manager_emails:
-            ImportCanteensView._add_managers_to_canteen(
+            CanteensImportView._add_managers_to_canteen(
                 silently_added_manager_emails, canteen, send_invitation_mail=False
             )
         should_update_geolocation = not canteen_exists
@@ -343,7 +343,7 @@ class ImportCanteensView(APIView):
         if len(row) > self.silent_manager_idx:  # already checked earlier that it's a staff user
             try:
                 if row[self.silent_manager_idx]:
-                    silently_added_manager_emails = ImportCanteensView._get_manager_emails(
+                    silently_added_manager_emails = CanteensImportView._get_manager_emails(
                         row[self.silent_manager_idx]
                     )
             except Exception:
@@ -359,22 +359,22 @@ class ImportCanteensView(APIView):
     def _parse_errors(self, e, row):  # noqa: C901
         errors = []
         if isinstance(e, PermissionDenied):
-            ImportCanteensView._add_error(errors, e.detail, 401)
+            CanteensImportView._add_error(errors, e.detail, 401)
         elif isinstance(e, ValidationError):
             if hasattr(e, "message_dict"):
                 for field, messages in e.message_dict.items():
-                    verbose_field_name = ImportCanteensView._get_verbose_field_name(field)
+                    verbose_field_name = CanteensImportView._get_verbose_field_name(field)
                     for message in messages:
                         user_message = message
                         if field != "__all__":
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
-                        ImportCanteensView._add_error(errors, user_message)
+                        CanteensImportView._add_error(errors, user_message)
             elif hasattr(e, "message"):
-                ImportCanteensView._add_error(errors, e.message)
+                CanteensImportView._add_error(errors, e.message)
             elif hasattr(e, "params"):
-                ImportCanteensView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
+                CanteensImportView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
-                ImportCanteensView._add_error(
+                CanteensImportView._add_error(
                     errors, "Une erreur s'est produite en créant une cantine pour cette ligne"
                 )
         elif isinstance(e, ValueError):
@@ -382,20 +382,20 @@ class ImportCanteensView(APIView):
             field_name = match.group(1) if match else ""
             value_given = match.group(2) if match else ""
             if field_name:
-                verbose_field_name = ImportCanteensView._get_verbose_field_name(field_name)
-                ImportCanteensView._add_error(
+                verbose_field_name = CanteensImportView._get_verbose_field_name(field_name)
+                CanteensImportView._add_error(
                     errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
                 )
         elif isinstance(e, Canteen.MultipleObjectsReturned):
-            ImportCanteensView._add_error(
+            CanteensImportView._add_error(
                 errors,
                 f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons.",
             )
         elif isinstance(e, FileFormatError):
-            ImportCanteensView._add_error(errors, e.detail)
+            CanteensImportView._add_error(errors, e.detail)
         if not errors:
             logger.exception(f"No errors added through parsing but exception raised: {e}")
-            ImportCanteensView._add_error(errors, "Une erreur s'est produite en créant une cantine pour cette ligne")
+            CanteensImportView._add_error(errors, "Une erreur s'est produite en créant une cantine pour cette ligne")
         return errors
 
 
