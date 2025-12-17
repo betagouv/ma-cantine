@@ -51,8 +51,6 @@ ENFORCE_HOST = os.getenv("ENFORCE_HOST", None)
 DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANCE") == "True"
 
 ENVIRONMENT = os.getenv("ENVIRONMENT")
-
-# Git branch
 GIT_BRANCH = os.getenv("GIT_BRANCH", "staging" if ENVIRONMENT == "dev" else "main")
 
 INTERNAL_IPS = []
@@ -103,9 +101,6 @@ INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
     "drf_spectacular_sidecar",
     "simple_history",
 ]
-
-# Storing celery results
-CELERY_RESULT_EXTENDED = True
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -392,7 +387,13 @@ REDIS_URL = os.getenv("REDIS_URL")
 REDIS_PREPEND_KEY = os.getenv("REDIS_PREPEND_KEY", "")
 
 
-# Email
+# Celery
+# ------------------------------------------------------------------------------
+
+CELERY_RESULT_EXTENDED = True
+
+
+# Emails
 # ------------------------------------------------------------------------------
 
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
@@ -645,7 +646,7 @@ SHELL_PLUS_POST_IMPORTS = [
 ]
 
 
-# ma cantine : teledeclaration campaign dates override
+# ma cantine: teledeclaration campaign dates override
 # ------------------------------------------------------------------------------
 
 ENABLE_TELEDECLARATION = os.getenv("ENABLE_TELEDECLARATION") == "True"
@@ -655,7 +656,7 @@ CORRECTION_START_DATE_OVERRIDE = os.getenv("CORRECTION_START_DATE_OVERRIDE", "")
 CORRECTION_END_DATE_OVERRIDE = os.getenv("CORRECTION_END_DATE_OVERRIDE", "")
 
 
-# ma cantine : feature flags
+# ma cantine: feature flags
 # ------------------------------------------------------------------------------
 
 ENABLE_XP_RESERVATION = os.getenv("ENABLE_XP_RESERVATION") == "True"
@@ -667,7 +668,7 @@ SHOW_BANNER = os.getenv("SHOW_BANNER") == "True"
 SHOW_JE_DONNE_MON_AVIS = os.getenv("SHOW_JE_DONNE_MON_AVIS") == "True"
 
 
-# ma cantine : history cleanup
+# ma cantine: history cleanup
 # ------------------------------------------------------------------------------
 
 MAX_DAYS_HISTORICAL_RECORDS = (
