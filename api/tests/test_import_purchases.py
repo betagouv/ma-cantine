@@ -113,7 +113,7 @@ class TestPurchaseImport(APITestCase):
         purchase = Purchase.objects.filter(description="Pommes, vertes 1").first()
         self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
-        self.assertEqual(purchase.characteristics, [""])
+        self.assertEqual(purchase.characteristics, [Purchase.Characteristic.RUP])
         self.assertEqual(purchase.local_definition, "")
         # Test that the purchase import source contains the complete file digest
         filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()
@@ -295,6 +295,9 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # description
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # provider
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # family
+        self.assertEqual(
+            errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée"
+        )  # characteristics
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # date
         self.assertEqual(
             errors.pop(0)["message"],
@@ -311,10 +314,6 @@ class TestPurchaseImport(APITestCase):
         )
         self.assertTrue(
             errors.pop(0)["message"].startswith("BIO,NOPE ne respecte pas le motif imposé"),
-        )
-        self.assertEqual(
-            errors.pop(0)["message"],
-            "La ligne n'a pas le même nombre de cellules que l'en-tête",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -448,8 +447,8 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
-        self.assertEqual(len(body["errors"]), 48)
-        self.assertEqual(body["errorCount"], 48)
+        self.assertEqual(len(body["errors"]), 52)
+        self.assertEqual(body["errorCount"], 52)
 
     @authenticate
     def test_encoding_autodetect_windows1252(self):
