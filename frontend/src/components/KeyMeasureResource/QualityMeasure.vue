@@ -1,15 +1,5 @@
 <template>
   <div>
-    <v-dialog max-width="700" v-model="calculatorModal" @input="stopVideo">
-      <template v-slot:activator="{ on, attrs }">
-        <p class="mt-4 body-1">
-          Si vous avez besoin d'aide pour calculer votre part de bios et de produits labélisés, vous pouvez
-          <a href="#" v-on="on" v-bind="attrs">tester notre calculateur sous format excel</a>
-        </p>
-      </template>
-      <CalculatorResourceModal ref="modalContent" @closeModal="closeCalculatorModal" />
-    </v-dialog>
-
     <p>
       Pour plus d'informations sur les catégories de produits durables et de qualité et pour des explications concernant
       la catégorie « les produits acquis principalement sur la base de leurs performances en matière environnementale et
@@ -47,27 +37,11 @@
 </template>
 
 <script>
-import CalculatorResourceModal from "@/components/KeyMeasureResource/CalculatorResourceModal"
 import DownloadLink from "@/components/DownloadLink"
 
 export default {
   components: {
-    CalculatorResourceModal,
     DownloadLink,
-  },
-  data() {
-    return {
-      calculatorModal: false,
-    }
-  },
-  methods: {
-    closeCalculatorModal() {
-      this.$refs.modalContent.stopVideo()
-      this.calculatorModal = false
-    },
-    stopVideo(modalIsOpened) {
-      if (!modalIsOpened) this.$refs.modalContent.stopVideo()
-    },
   },
 }
 </script>
