@@ -9,6 +9,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.views.canteenimport import CANTEEN_SCHEMA_FILE_PATH, CANTEEN_ADMIN_SCHEMA_FILE_PATH
 from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation, Sector
@@ -18,8 +19,8 @@ from data.models.creation_source import CreationSource
 class CanteenSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open("data/schemas/imports/cantines.json"))
-        cls.schema_admin = json.load(open("data/schemas/imports/cantines_admin.json"))
+        cls.schema = json.load(open(CANTEEN_SCHEMA_FILE_PATH))
+        cls.schema_admin = json.load(open(CANTEEN_ADMIN_SCHEMA_FILE_PATH))
 
     def get_pattern(self, schema, field_name):
         field_index = next((i for i, f in enumerate(schema["fields"]) if f["name"] == field_name), None)

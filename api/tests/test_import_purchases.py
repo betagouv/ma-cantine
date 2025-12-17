@@ -14,6 +14,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.views.purchaseimport import PURCHASE_SCHEMA_FILE_PATH
 from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
@@ -24,7 +25,7 @@ from data.models.purchase import Purchase
 class TestPurchaseSchema(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open("data/schemas/imports/achats.json"))
+        cls.schema = json.load(open(PURCHASE_SCHEMA_FILE_PATH))
 
     def test_prix_ht_decimal(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "prix_ht"), None)
