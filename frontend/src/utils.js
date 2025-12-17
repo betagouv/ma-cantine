@@ -297,7 +297,7 @@ export const applicableDiagnosticRules = (canteen, year) => {
   const shouldHaveDailyMealCount = canteen && canteen.productionType !== "central"
   return {
     hasDonationAgreement: shouldHaveDailyMealCount ? canteen.dailyMealCount >= 3000 : true,
-    hasDiversificationPlan: shouldHaveDailyMealCount && year >= 2025 ? canteen.dailyMealCount >= 200 : true,
+    hasDiversificationPlan: shouldHaveDailyMealCount && year < 2025 ? canteen.dailyMealCount >= 200 : true,
     bioThreshold,
     qualityThreshold,
     hasQualityException,
