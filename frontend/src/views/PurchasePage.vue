@@ -25,9 +25,6 @@
               <v-col cols="12">
                 <label class="body-2" for="description">
                   Description du produit
-                  <span class="fr-hint-text grey--text">
-                    Optionnel
-                  </span>
                 </label>
                 <DsfrCombobox
                   validate-on-blur
@@ -36,14 +33,12 @@
                   class="mt-2"
                   id="description"
                   :items="productDescriptions"
+                  :rules="[validators.required]"
                 ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">
                   Fournisseur
-                  <span class="fr-hint-text grey--text">
-                    Optionnel
-                  </span>
                 </label>
                 <DsfrCombobox
                   validate-on-blur
@@ -52,6 +47,7 @@
                   class="mt-2"
                   id="provider"
                   :items="providers"
+                  :rules="[validators.required]"
                 ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="4">
