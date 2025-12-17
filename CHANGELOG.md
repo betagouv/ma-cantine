@@ -6,6 +6,37 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.45.0](https://github.com/betagouv/ma-cantine/compare/v2025.44.0...v2025.45.0) (2025-12-17)
+
+
+### Nouveautés
+
+* **Achats:** Formulaire: rend les champs familles et caractéristiques obligatoires ([#6048](https://github.com/betagouv/ma-cantine/issues/6048)) ([d89fb3a](https://github.com/betagouv/ma-cantine/commit/d89fb3a53bb93bc5061cbcacab2542169a9af828))
+* **Imports:** ajouter une prévisualisation de fichiers d'exemples valide et non-valide ([#6040](https://github.com/betagouv/ma-cantine/issues/6040)) ([51a5f31](https://github.com/betagouv/ma-cantine/commit/51a5f31aead62180c0fd4fdeb54ca809dd4ee4af))
+
+
+### Améliorations
+
+* **Achats:** renomme 'DEPARTMENT' en 'DEPARTEMENT' ([#6042](https://github.com/betagouv/ma-cantine/issues/6042)) ([cd76d2f](https://github.com/betagouv/ma-cantine/commit/cd76d2ff3281a322a1cf5f7445ad4aa3d466c67b))
+* **Gaspillage alimentaire:** champ nombre de repas devient un champ libre ([#6044](https://github.com/betagouv/ma-cantine/issues/6044)) ([11fa0e7](https://github.com/betagouv/ma-cantine/commit/11fa0e734cd54e46881b434336bf3c910bdff4c7))
+* **Imports:** Achats: rendre le champ caracteristiques obligatoire ([#6039](https://github.com/betagouv/ma-cantine/issues/6039)) ([c6c999e](https://github.com/betagouv/ma-cantine/commit/c6c999e42088b03da319981bcc8f7babe0fabdf8))
+* **Tableur excel:** supprime le tableur obsolète ([#6047](https://github.com/betagouv/ma-cantine/issues/6047)) ([7c6eb2f](https://github.com/betagouv/ma-cantine/commit/7c6eb2f98a695e6eaa1a14cab986384ebab0c386))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** ré-organise les icones EGalim et commerce équitable ([#6041](https://github.com/betagouv/ma-cantine/issues/6041)) ([f9bb794](https://github.com/betagouv/ma-cantine/commit/f9bb794680cf4151cf17f412891b4105edb7b741))
+
+
+### Technique
+
+* évite d'avoir en parallèle plusieurs Github Actions de test pour la même PR ([#6043](https://github.com/betagouv/ma-cantine/issues/6043)) ([f9fea13](https://github.com/betagouv/ma-cantine/commit/f9fea13d11c6f12de98b57b45c71b8c3eb373ef2))
+
+
+### Documentation
+
+* améliore la lisibilité des settings. documente la facon actuelle de lancer nos tests ([#6037](https://github.com/betagouv/ma-cantine/issues/6037)) ([846434c](https://github.com/betagouv/ma-cantine/commit/846434cfdb7deb332360eb312f06d86dbb724dc3))
+
 ## [2025.44.0](https://github.com/betagouv/ma-cantine/compare/v2025.43.0...v2025.44.0) (2025-12-16)
 
 
