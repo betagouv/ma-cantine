@@ -9,7 +9,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.views.canteenimport import CANTEEN_SCHEMA_FILE_PATH, CANTEEN_ADMIN_SCHEMA_FILE_PATH
+from api.views.canteen_import import CANTEEN_SCHEMA_FILE_PATH, CANTEEN_ADMIN_SCHEMA_FILE_PATH
 from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation, Sector

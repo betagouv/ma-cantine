@@ -14,7 +14,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.views.purchaseimport import PURCHASE_SCHEMA_FILE_PATH
+from api.views.purchase_import import PURCHASE_SCHEMA_FILE_PATH
 from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
