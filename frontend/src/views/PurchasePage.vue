@@ -23,7 +23,9 @@
           <v-col cols="12" md="8">
             <v-row class="mb-4">
               <v-col cols="12">
-                <label class="body-2" for="description">Description du produit</label>
+                <label class="body-2" for="description">
+                  Description du produit
+                </label>
                 <DsfrCombobox
                   validate-on-blur
                   hide-details="auto"
@@ -31,10 +33,13 @@
                   class="mt-2"
                   id="description"
                   :items="productDescriptions"
+                  :rules="[validators.required]"
                 ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="8">
-                <label class="body-2" for="provider">Fournisseur</label>
+                <label class="body-2" for="provider">
+                  Fournisseur
+                </label>
                 <DsfrCombobox
                   validate-on-blur
                   hide-details="auto"
@@ -42,6 +47,7 @@
                   class="mt-2"
                   id="provider"
                   :items="providers"
+                  :rules="[validators.required]"
                 ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="4">
@@ -115,6 +121,8 @@
               optionsRow
               labelClasses="body-2 my-3"
               optionClasses="body-2 grey--text text--darken-4"
+              validate-on-blur
+              :rules="[validators.required]"
             />
           </v-col>
           <v-col cols="12" md="4">
@@ -148,6 +156,7 @@
                   :key="characteristic"
                   :value="characteristic"
                   :disabled="disabledForFamily(characteristic)"
+                  :rules="[validators.required]"
                 >
                   <template v-slot:label>
                     <span
