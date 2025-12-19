@@ -76,7 +76,6 @@ class ImportCanteensView(APIView):
                 return self._get_success_response()
 
             # Header validation
-            print(validata_response["report"])
             header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
             if header_has_errors:
                 self.errors = [
