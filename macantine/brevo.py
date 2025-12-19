@@ -27,7 +27,12 @@ def send_sib_template(template_id, parameters, to_email, to_name):
 
 def user_to_brevo_payload(user, bulk=True):
     dict_attributes = {
+        "NOM": user.last_name,
+        "PRENOM": user.first_name,
+        "NOM_COMPLET": user.get_full_name(),
+        "EMAIL": user.email,
         "MA_CANTINE_DATE_INSCRIPTION": user.date_joined.strftime("%Y-%m-%d"),
+        "DERNIERE_CONNEXION": user.last_login.strftime("%Y-%m-%d") if user.last_login else "",
         "MA_CANTINE_COMPTE_DEV": user.is_dev,
         "MA_CANTINE_COMPTE_ELU_E": user.is_elected_official,
         "MA_CANTINE_GERE_UN_ETABLISSEMENT": user.canteens.exists(),
