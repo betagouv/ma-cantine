@@ -25,8 +25,8 @@ from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
-
-PURCHASE_SCHEMA_FILE_PATH = "data/schemas/imports/achats.json"
+PURCHASE_SCHEMA_FILE_NAME = "achats.json"
+PURCHASE_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SCHEMA_FILE_NAME}"
 PURCHASE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SCHEMA_FILE_PATH}"
 
 
@@ -45,8 +45,6 @@ class ImportPurchasesView(APIView):
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
-        self.header = None
-        self.schema_url = PURCHASE_SCHEMA_URL
         self.expected_header = file_import.get_expected_header_from_schema(PURCHASE_SCHEMA_FILE_PATH)
         super().__init__(**kwargs)
 
@@ -55,22 +53,45 @@ class ImportPurchasesView(APIView):
         logger.info("Purchase bulk import started")
         try:
             self.file = request.data["file"]
+            schema_name = PURCHASE_SCHEMA_FILE_NAME
+            schema_url = PURCHASE_SCHEMA_URL
 
             # Step 1: File validation
             file_import.validate_file_size(self.file)
-
             self.file_digest = file_import.get_file_digest(self.file)
             self._check_duplication()
 
-            self.dialect = file_import.get_csv_file_dialect(self.file)
-            self.header = file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
-
             # Step 2: Schema validation (Validata)
-            validata_response = validata.validate_file_against_schema(self.file, self.schema_url)
-            report = validata_response["report"]
-            self.errors = validata.process_errors(report)
+            validata_response = validata.validate_file_against_schema(self.file, schema_url)
+
+            # Error generating the report
+            if "error" in validata_response:
+                error = validata_response["error"]["message"]
+                self.errors = [
+                    {
+                        "message": f"Une erreur inconnue s'est produite en lisant votre fichier : « {error} ». Renouveler votre essai, et si l'erreur persiste contactez le support.",
+                        "status": 400,
+                    }
+                ]
+                self._log_error(f"Echec lors de la demande de validation du fichier (schema {schema_name} - Validata)")
+                return self._get_success_response()
+
+            # Header validation
+            header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
+            if header_has_errors:
+                self.errors = [
+                    {
+                        "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+                        "status": 400,
+                    }
+                ]
+                self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
+                return self._get_success_response()
+
+            # Rows validation
+            self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
-                self._log_error("Echec lors de la validation du fichier (schema achats.json - Validata)")
+                self._log_error(f"Echec lors de la validation du fichier (schema {schema_name} - Validata)")
                 return self._get_success_response()
 
             # Step 3: ma-cantine validation (permissions, last checks...) + import
