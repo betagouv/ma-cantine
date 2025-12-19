@@ -487,6 +487,7 @@ export default {
 
       const diversificationPlanActions = this.getDiversificationPlanActions(this.diagnostic.diversificationPlanActions)
       const vegetarianWeeklyRecurrence = this.getVegetarianWeeklyRecurrence(this.diagnostic.vegetarianWeeklyRecurrence)
+      const serviceType = this.getServiceType(this.diagnostic.serviceType)
       const vegetarianMenuBases = this.getVegetarianMenuBases(this.diagnostic.vegetarianMenuBases)
       const communicationFrequency = this.getCommunicationFrequency(this.diagnostic.communicationFrequency)
 
@@ -571,6 +572,11 @@ export default {
           label: "Actions incluses dans le plan de diversification des protéines",
           value: diversificationPlanActions,
           class: diversificationPlanActions === "Non renseigné" ? "warn" : "",
+        },
+        {
+          label: "Service proposé",
+          value: serviceType,
+          class: serviceType === "Non renseigné" ? "warn" : "",
         },
         {
           label: "Menus végétariens par semaine",
@@ -687,6 +693,11 @@ export default {
       const actionItems = selectListToObject(Constants.DiversificationMeasureStep.diversificationPlanActions.items)
       const labels = diversificationPlanActions.map((x) => actionItems[x]).filter((x) => !!x)
       return labels.join(", ")
+    },
+    getServiceType(serviceType) {
+      if (!serviceType) return "Non renseigné"
+      const items = selectListToObject(Constants.DiversificationMeasureStep.serviceType.items)
+      return items[serviceType] || "Non renseigné"
     },
     getVegetarianWeeklyRecurrence(vegetarianWeeklyRecurrence) {
       if (!vegetarianWeeklyRecurrence) return "Non renseigné"
