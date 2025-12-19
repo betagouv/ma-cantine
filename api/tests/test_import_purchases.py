@@ -366,8 +366,8 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
         self.assertEqual(body["count"], 0)
         self.assertTrue(body["duplicateFile"])
-        self.assertEqual(len(body["duplicatePurchases"]), 4)
-        self.assertEqual(body["duplicatePurchaseCount"], 4)
+        self.assertEqual(len(body["duplicatePurchases"]), 5)
+        self.assertEqual(body["duplicatePurchaseCount"], 5)
 
     @authenticate
     def test_errors_prevent_all_purchase_creation(self):
