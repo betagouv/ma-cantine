@@ -142,6 +142,22 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(purchase.price_ht, Decimal("90.11"))
 
     @authenticate
+    def test_import_excel_file(self):
+        """
+        Tests that can import a file with comma-separated numbers
+        """
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+
+        file_path = "./api/tests/files/achats/purchases_good.xlsx"
+        with open(file_path, "rb") as purchase_file:
+            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+        purchase = Purchase.objects.filter(description="Pommes, rouges, local").first()
+        self.assertEqual(purchase.price_ht, Decimal("90.11"))
+
+    @authenticate
     def test_import_with_local_definition_missing(self):
         """
         If characteristics includes LOCAL, local_definition must be filled
