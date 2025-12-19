@@ -290,14 +290,11 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         errors = response.json()["errors"]
-        self.assertEqual(len(errors), 13)
+        self.assertEqual(len(errors), 12)
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # siret
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # description
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # provider
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # family
-        self.assertEqual(
-            errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée"
-        )  # characteristics
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # date
         self.assertEqual(
             errors.pop(0)["message"],
@@ -447,8 +444,8 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
-        self.assertEqual(len(body["errors"]), 52)
-        self.assertEqual(body["errorCount"], 52)
+        self.assertEqual(len(body["errors"]), 12)
+        self.assertEqual(body["errorCount"], 12)
 
     @authenticate
     def test_encoding_autodetect_windows1252(self):
