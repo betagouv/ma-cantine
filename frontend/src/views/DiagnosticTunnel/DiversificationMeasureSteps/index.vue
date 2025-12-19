@@ -51,14 +51,6 @@
         optional
       />
     </div>
-    <DsfrRadio
-      v-else-if="stepUrlSlug === 'options'"
-      :label="stepConstants.vegetarianMenuType.title"
-      :items="stepConstants.vegetarianMenuType.items"
-      v-model="payload.vegetarianMenuType"
-      hide-details
-      optional
-    />
     <fieldset v-else-if="stepUrlSlug === 'composition'">
       <legend class="text-left mb-2 mt-3">
         {{ stepConstants.vegetarianMenuBases.title }}
@@ -98,10 +90,6 @@ const stepList = [
     urlSlug: "menu",
   },
   {
-    title: "Options végétariennes proposées aux convives",
-    urlSlug: "options",
-  },
-  {
     title: "Composition du plat végétarien principal",
     urlSlug: "composition",
   },
@@ -138,7 +126,6 @@ export default {
         "diversificationPlanActions",
         "serviceType",
         "vegetarianWeeklyRecurrence",
-        "vegetarianMenuType",
         "vegetarianMenuBases",
       ],
     }
