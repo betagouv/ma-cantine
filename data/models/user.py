@@ -157,6 +157,12 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.get_full_name()} ({self.username})"
 
+    def has_missing_diagnostic_for_year(self, year):
+        return self.canteens.exists() and any(not x.has_diagnostic_for_year(year) for x in self.canteens.all())
+
+    def has_missing_teledeclaration_for_year(self, year):
+        return self.canteens.exists() and any(not x.has_teledeclaration_for_year(year) for x in self.canteens.all())
+
     @property
     def has_mtm_data(self):
         return self.creation_mtm_source or self.creation_mtm_campaign or self.creation_mtm_medium
