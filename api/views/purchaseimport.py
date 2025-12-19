@@ -1,5 +1,3 @@
-import csv
-import io
 import logging
 import time
 import uuid
@@ -25,8 +23,8 @@ from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
-
-PURCHASE_SCHEMA_FILE_PATH = "data/schemas/imports/achats.json"
+PURCHASE_SCHEMA_FILE_NAME = "achats.json"
+PURCHASE_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SCHEMA_FILE_NAME}"
 PURCHASE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SCHEMA_FILE_PATH}"
 
 
@@ -45,8 +43,6 @@ class ImportPurchasesView(APIView):
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
-        self.header = None
-        self.schema_url = PURCHASE_SCHEMA_URL
         self.expected_header = file_import.get_expected_header_from_schema(PURCHASE_SCHEMA_FILE_PATH)
         super().__init__(**kwargs)
 
@@ -55,28 +51,50 @@ class ImportPurchasesView(APIView):
         logger.info("Purchase bulk import started")
         try:
             self.file = request.data["file"]
+            schema_name = PURCHASE_SCHEMA_FILE_NAME
+            schema_url = PURCHASE_SCHEMA_URL
 
-            # Step 1: Format validation
+            # Step 1: File validation
             file_import.validate_file_size(self.file)
-            file_import.validate_file_format(self.file)
-
             self.file_digest = file_import.get_file_digest(self.file)
             self._check_duplication()
 
-            self.dialect = file_import.get_csv_file_dialect(self.file)
-            self.header = file_import.verify_first_line_is_header(self.file, self.dialect, self.expected_header)
-
             # Step 2: Schema validation (Validata)
-            validata_response = validata.validate_file_against_schema(self.file, self.schema_url)
-            report = validata_response["report"]
-            self.errors = validata.process_errors(report)
+            validata_response = validata.validate_file_against_schema(self.file, schema_url)
+
+            # Error generating the report
+            if "error" in validata_response:
+                error = validata_response["error"]["message"]
+                self.errors = [
+                    {
+                        "message": f"Une erreur inconnue s'est produite en lisant votre fichier : « {error} ». Renouveler votre essai, et si l'erreur persiste contactez le support.",
+                        "status": 400,
+                    }
+                ]
+                self._log_error(f"Echec lors de la demande de validation du fichier (schema {schema_name} - Validata)")
+                return self._get_success_response()
+
+            # Header validation
+            header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
+            if header_has_errors:
+                self.errors = [
+                    {
+                        "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+                        "status": 400,
+                    }
+                ]
+                self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
+                return self._get_success_response()
+
+            # Rows validation
+            self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
-                self._log_error("Echec lors de la validation du fichier (schema achats.json - Validata)")
+                self._log_error(f"Echec lors de la validation du fichier (schema {schema_name} - Validata)")
                 return self._get_success_response()
 
             # Step 3: ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
-                self._process_file()
+                self._process_file(validata_response["resource_data"])
 
                 # If at least an error has been detected, we raise an error to interrupt the
                 # transaction and rollback the insertion of any data
@@ -113,13 +131,12 @@ class ImportPurchasesView(APIView):
             import_type=ImportType.PURCHASE,
         )
 
-    def _process_file(self):
+    def _process_file(self, data):
         chunk = []
         row_count = 0
-        for row_number, row in enumerate(self.file, start=1):
+        for row_number, row in enumerate(data, start=1):
             if row_number == 1:  # skip header
                 continue
-
             # Split into chunks
             chunk.append(row)
             row_count += 1
@@ -153,25 +170,15 @@ class ImportPurchasesView(APIView):
         errors = []
         self.purchases = []
 
-        decoded_chunk = self._decode_chunk(chunk)
-        csvreader = csv.reader(io.StringIO("".join(decoded_chunk)), self.dialect)
-        for row_number, row in enumerate(csvreader, start=1):
-            siret = None
-
+        for row_number, row in enumerate(chunk, start=1):
             try:
-                # first check that the number of columns is good
-                #   to throw error if badly formatted early on.
-                if len(row) < len(self.expected_header):
-                    raise BadRequest()
-                siret = row.pop(0)
-                if siret == "":
-                    raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
-                siret = utils_utils.normalize_string(siret)
+                siret = utils_utils.normalize_string(row[0])
                 self._create_purchase_for_canteen(siret, row)
 
             except Exception as e:
                 for error in self._parse_errors(e, row, siret):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
+
         self.errors += errors
 
         # If no error has been detected in the file so far, we insert the chunk into the db
@@ -185,10 +192,10 @@ class ImportPurchasesView(APIView):
         if self.request.user not in canteen.managers.all():
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
-        description = row.pop(0)
-        provider = row.pop(0)
-        date = row.pop(0)
-        price = row.pop(0).strip().replace(",", ".")
+        description = row[1]
+        provider = row[2]
+        date = row[3]
+        price = row[4].strip().replace(",", ".")
 
         # We try to round the price. If we can't, we will let Django's field validation
         # manage the error - hence the `pass` in the exception handler
@@ -197,10 +204,10 @@ class ImportPurchasesView(APIView):
         except InvalidOperation:
             pass
 
-        family = row.pop(0)
-        characteristics = row.pop(0)
+        family = row[5]
+        characteristics = row[6]
         characteristics = [c.strip() for c in characteristics.split(",")]
-        local_definition = row.pop(0)
+        local_definition = row[7]
 
         purchase = Purchase(
             canteen=canteen,

@@ -23,6 +23,10 @@ const filePreviews = {
   error: "achats_fichier_exemple_fichier_rejete.jpg",
   altError: "Exemple de fichier rejeté pour importer des achats, qui contient des erreurs dans les colonnes ou les valeurs",
 }
+const fileOptions = {
+  hint: "Extensions de fichier autorisées : Excel (.xlsx), CSV (.csv), TSV (.tsv)",
+  accept: ".csv,.tsv,.xlsx",
+}
 
 /* Sucess */
 const showModal = ref(false)
@@ -46,7 +50,7 @@ const success = (count) => {
   <ImportExplanation :exampleFile />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
-  <ImportFileUpload @success="success" apiUrl="importPurchases" eventMatomo="import-purchases-success" />
+  <ImportFileUpload @success="success" apiUrl="importPurchases" eventMatomo="import-purchases-success"  :fileOptions="fileOptions" />
   <ImportSuccessModal
     :opened="showModal"
     :message="

@@ -25,6 +25,10 @@ const pages = ref([
     description: "Vous voulez importer des données d'achat pour des cantines existantes.",
     badges: [
       {
+        label: "Excel",
+        noIcon: true,
+      },
+      {
         label: "CSV",
         noIcon: true,
       },
