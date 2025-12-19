@@ -15,16 +15,17 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
+from api.views.purchase_import import PURCHASE_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.creation_source import CreationSource
 from data.models.purchase import Purchase
 
 
-class TestPurchaseSchema(TestCase):
+class PurchasesSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open("data/schemas/imports/achats.json"))
+        cls.schema = json.load(open(PURCHASE_SCHEMA_FILE_PATH))
 
     def test_prix_ht_decimal(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "prix_ht"), None)
@@ -77,12 +78,12 @@ class TestPurchaseSchema(TestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class TestPurchaseImport(APITestCase):
+class PurchasesImportApiTest(APITestCase):
     def test_unauthenticated_import_call(self):
         """
         Expect 403 if unauthenticated
         """
-        response = self.client.post(reverse("import_purchases"))
+        response = self.client.post(reverse("purchases_import"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -94,7 +95,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 5)
         self.assertFalse(ImportFailure.objects.exists())
@@ -134,7 +135,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_separator_comma.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
         self.assertFalse(ImportFailure.objects.exists())
@@ -150,7 +151,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good.xlsx"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
         self.assertFalse(ImportFailure.objects.exists())
@@ -166,7 +167,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_no_local_definition.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -178,7 +179,7 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(errors[0]["status"], 400)
 
     @authenticate
-    def test_import_purchases_different_separators(self):
+    def test_purchases_import_different_separators(self):
         """
         Tests that can import a well formatted purchases file
         """
@@ -187,7 +188,7 @@ class TestPurchaseImport(APITestCase):
         # tab
         file_path = "./api/tests/files/achats/purchases_good_separator_tab.tsv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
         self.assertFalse(ImportFailure.objects.exists())
@@ -195,14 +196,14 @@ class TestPurchaseImport(APITestCase):
         # semicolon
         file_path = "./api/tests/files/achats/purchases_good_separator_semicolon.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1 + 1)
         self.assertFalse(ImportFailure.objects.exists())
 
     @authenticate
     @override_settings(CSV_PURCHASE_CHUNK_LINES=1)
-    @patch("api.views.ImportPurchasesView._process_chunk")
+    @patch("api.views.PurchasesImportView._process_chunk")
     def test_import_batch_purchases(self, _process_chunk_mock):
         """
         Tests that actually split the file into chunks. The header is considered as a line.
@@ -211,7 +212,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good.csv"
         with open(file_path) as purchase_file:
-            _ = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            _ = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(_process_chunk_mock.call_count, 5)
 
     @authenticate
@@ -225,7 +226,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -246,7 +247,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_no_header.csv"
         with open(file_path, "rb") as diag_file:
-            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+            response = self.client.post(f"{reverse('purchases_import')}", {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -269,7 +270,7 @@ class TestPurchaseImport(APITestCase):
         # wrong header
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header.csv"
         with open(file_path, "rb") as diag_file:
-            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+            response = self.client.post(f"{reverse('purchases_import')}", {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -284,7 +285,7 @@ class TestPurchaseImport(APITestCase):
         # partial header
         file_path = "./api/tests/files/achats/purchases_bad_partial_header.csv"
         with open(file_path, "rb") as diag_file:
-            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
+            response = self.client.post(f"{reverse('purchases_import')}", {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -306,7 +307,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -347,7 +348,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_corrupt.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -366,14 +367,14 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 5)
         self.assertFalse(ImportFailure.objects.exists())
 
         # upload again
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 5)  # no additional purchases created
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -396,7 +397,7 @@ class TestPurchaseImport(APITestCase):
         # date format error
         file_path = "./api/tests/files/achats/purchases_bad_nearly_good.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -411,7 +412,7 @@ class TestPurchaseImport(APITestCase):
         # unknown canteen error
         file_path = "./api/tests/files/achats/purchases_bad_nearly_good_2.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -426,7 +427,7 @@ class TestPurchaseImport(APITestCase):
         CanteenFactory(siret="21730065600014")
         file_path = "./api/tests/files/achats/purchases_bad_nearly_good_2.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -444,7 +445,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_floating_number.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
         self.assertFalse(ImportFailure.objects.exists())
@@ -460,7 +461,7 @@ class TestPurchaseImport(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_many_errors.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -475,7 +476,7 @@ class TestPurchaseImport(APITestCase):
         """
         file_path = "./api/tests/files/achats/purchases_bad_empty_rows.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(f"{reverse('import_purchases')}", {"file": canteen_file})
+            response = self.client.post(f"{reverse('purchases_import')}", {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)

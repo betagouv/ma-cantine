@@ -24,7 +24,7 @@ NEXT_YEAR = datetime.date.today().year + 1
 
 
 @requests_mock.Mocker()
-class TestImportDiagnosticsAPI(APITestCase):
+class DiagnosticsImportApiTest(APITestCase):
     def test_unauthenticated_import_call(self, mock):
         """
         Expect 403 if unauthenticated
@@ -1245,8 +1245,6 @@ class TestImportDiagnosticsAPI(APITestCase):
             "Ce fichier est au format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier au format CSV et réessayer.",
         )
 
-
-class TestImportDiagnosticsFromAPIIntegration(APITestCase):
     @unittest.skipUnless(os.environ.get("ENVIRONMENT") == "dev", "Not in dev environment")
     @authenticate
     def test_location_found_integration(self):

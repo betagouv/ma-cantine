@@ -28,7 +28,7 @@ PURCHASE_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SCHEMA_FILE_NAME}"
 PURCHASE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SCHEMA_FILE_PATH}"
 
 
-class ImportPurchasesView(APIView):
+class PurchasesImportView(APIView):
     permission_classes = [IsAuthenticated]
 
     def __init__(self, **kwargs):
@@ -177,8 +177,7 @@ class ImportPurchasesView(APIView):
 
             except Exception as e:
                 for error in self._parse_errors(e, row, siret):
-                    errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
-
+                    errors.append(PurchasesImportView._get_error(e, error["message"], error["code"], row_number))
         self.errors += errors
 
         # If no error has been detected in the file so far, we insert the chunk into the db

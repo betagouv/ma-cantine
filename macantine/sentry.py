@@ -4,15 +4,15 @@ from rest_framework.exceptions import PermissionDenied
 
 def before_send(event, hint):
     """
-    Sentry loggs handled exceptions as well as unhandled. We may want to filter
+    Sentry logs handled exceptions as well as unhandled. We may want to filter
     out some of the exceptions. For instance, PermissionDenied and ValidationErrors
-    that occur on the diagnostic import can be safely ignored.
+    that occur on the imports can be safely ignored.
     """
 
     exception_type, _, _ = hint.get("exc_info")
     module = hint.get("log_record").module
 
-    modules = ["diagnosticimport", "purchaseimport"]
+    modules = ["canteen_import", "diagnostic_import", "purchase_import"]
     exceptions = [
         PermissionDenied,
         ValidationError,
@@ -25,7 +25,7 @@ def before_send(event, hint):
         # the app registry is not ready yet.
         # django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
 
-        from api.views.diagnosticimport import FileFormatError
+        from api.views.diagnostic_import import FileFormatError
         from data.models import SectorM2M
 
         exceptions.append(SectorM2M.DoesNotExist)
