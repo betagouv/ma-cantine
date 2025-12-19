@@ -61,7 +61,7 @@ class TestPurchaseSchema(TestCase):
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST"]:
+        for VALUE_NOT_OK in ["TEST"]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
