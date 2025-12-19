@@ -4,7 +4,6 @@
   "fields": [
     {
       "constraints": {
-        "pattern": "^[0-9]{14}$",
         "required": true
       },
       "description": "La cantine avec ce SIRET doit être déjà enregistrée sur notre plateforme.",
@@ -12,7 +11,7 @@
       "format": "default",
       "name": "siret",
       "title": "SIRET de la cantine ayant réalisé l'achat",
-      "type": "string"
+      "type": "any"
     },
     {
       "constraints": {
