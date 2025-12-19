@@ -19,6 +19,7 @@ labels = [
     ("FRANCE", "Provenance France"),
     ("CIRCUIT_COURT", "Circuit-court"),
     ("LOCAL", "Produit local"),
+    ("NON_EGALIM", "Non-EGalim"),
 ]
 families = [
     ("VIANDES_VOLAILLES", "Viandes et volailles fraîches et surgelées"),

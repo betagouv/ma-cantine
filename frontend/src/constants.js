@@ -141,6 +141,7 @@ export default Object.freeze({
     FRANCE: { text: "Origine France" },
     CIRCUIT_COURT: { text: "Origine France : dont circuit-court" },
     LOCAL: { text: "Origine France : dont local" },
+    NON_EGALIM: { text: "Non-EGalim" },
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts

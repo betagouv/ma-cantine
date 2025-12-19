@@ -66,6 +66,7 @@ class Purchase(SoftDeletionModel):
         FRANCE = "FRANCE", "Provenance France"
         CIRCUIT_COURT = "CIRCUIT_COURT", "Circuit-court"
         LOCAL = "LOCAL", "Produit local"
+        NON_EGALIM = "NON_EGALIM", "Non-EGalim"
 
     class Local(models.TextChoices):
         REGION = "REGION", "Région"
