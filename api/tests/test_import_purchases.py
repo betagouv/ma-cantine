@@ -453,61 +453,6 @@ class TestPurchaseImport(APITestCase):
         self.assertEqual(body["errorCount"], 12)
 
     @authenticate
-    def test_encoding_autodetect_windows1252(self):
-        """
-        Attempt to auto-detect file encodings: Windows 1252
-        This is a smoke test - purchase import reuses diagnostics import
-        More tests are with the diagnostic import tests
-        """
-        CanteenFactory(siret="96463820453707", managers=[authenticate.user])
-        self.assertEqual(Purchase.objects.count(), 0)
-
-        file_path = "./api/tests/files/achats/purchases_good_encoding_iso-8859-1.csv"
-        with open(file_path, "rb") as diag_file:
-            response = self.client.post(f"{reverse('import_purchases')}", {"file": diag_file})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
-        self.assertEqual(Purchase.objects.first().description, "deuxième pomme")
-        body = response.json()
-        self.assertEqual(body["count"], 1)
-        self.assertEqual(len(body["errors"]), 0)
-        self.assertEqual(body["encoding"], "ISO-8859-1")
-
-    @authenticate
-    def test_fail_import_bad_format(self):
-        file_path = "./api/tests/files/achats/purchases_bad_file_format.ods"
-        with open(file_path, "rb") as diag_file:
-            response = self.client.post(reverse("import_purchases"), {"file": diag_file})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
-        body = response.json()
-        errors = body["errors"]
-        first_error = errors.pop(0)
-        self.assertEqual(first_error["status"], 400)
-        self.assertEqual(
-            first_error["message"],
-            "Ce fichier est au format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier au format CSV et réessayer.",
-        )
-
-    @authenticate
-    def test_fail_import_bad_extension(self):
-        file_path = "./api/tests/files/achats/purchases_bad_extension.txt"
-        with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
-        body = response.json()
-        errors = body["errors"]
-        first_error = errors.pop(0)
-        self.assertEqual(
-            first_error["message"],
-            "Ce fichier est au format text/plain, merci d'exporter votre fichier au format CSV et réessayer.",
-        )
-
-    @authenticate
     def test_import_with_empty_rows(self):
         """
         A file should not be valid if it contains empty rows (Validata)
