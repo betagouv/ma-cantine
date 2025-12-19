@@ -56,7 +56,7 @@ class ImportPurchasesView(APIView):
         try:
             self.file = request.data["file"]
 
-            # Step 1: Format validation
+            # Step 1: File validation
             file_import.validate_file_size(self.file)
 
             self.file_digest = file_import.get_file_digest(self.file)
