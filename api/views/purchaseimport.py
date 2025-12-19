@@ -58,7 +58,6 @@ class ImportPurchasesView(APIView):
 
             # Step 1: Format validation
             file_import.validate_file_size(self.file)
-            file_import.validate_file_format(self.file)
 
             self.file_digest = file_import.get_file_digest(self.file)
             self._check_duplication()
