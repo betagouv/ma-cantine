@@ -176,14 +176,14 @@ class ImportPurchasesView(APIView):
         self.purchases = []
 
         for row_number, row in enumerate(chunk, start=1):
-            siret = None
             try:
-                siret = utils_utils.normalize_string(siret)
+                siret = utils_utils.normalize_string(row[0])
                 self._create_purchase_for_canteen(siret, row)
 
             except Exception as e:
                 for error in self._parse_errors(e, row, siret):
                     errors.append(ImportPurchasesView._get_error(e, error["message"], error["code"], row_number))
+
         self.errors += errors
 
         # If no error has been detected in the file so far, we insert the chunk into the db
