@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.45.1](https://github.com/betagouv/ma-cantine/compare/v2025.45.0...v2025.45.1) (2025-12-19)
+
+
+### Corrections (bugs, typos...)
+
+* **Achats:** rend le champ caractéristique optionnel ([#6055](https://github.com/betagouv/ma-cantine/issues/6055)) ([029016a](https://github.com/betagouv/ma-cantine/commit/029016a8b82d7524fb2f3d9f085e14cbdf75aaa2))
+
 ## [2025.45.0](https://github.com/betagouv/ma-cantine/compare/v2025.44.0...v2025.45.0) (2025-12-17)
 
 
