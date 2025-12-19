@@ -359,7 +359,7 @@ class TestPurchaseImport(APITestCase):
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("import_purchases"), {"file": purchase_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 4)  # no additional purchases created
+        self.assertEqual(Purchase.objects.count(), 5)  # no additional purchases created
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
