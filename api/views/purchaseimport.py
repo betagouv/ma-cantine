@@ -197,10 +197,10 @@ class ImportPurchasesView(APIView):
         if self.request.user not in canteen.managers.all():
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
-        description = row.pop(0)
-        provider = row.pop(0)
-        date = row.pop(0)
-        price = row.pop(0).strip().replace(",", ".")
+        description = row[1]
+        provider = row[2]
+        date = row[3]
+        price = row[4].strip().replace(",", ".")
 
         # We try to round the price. If we can't, we will let Django's field validation
         # manage the error - hence the `pass` in the exception handler
@@ -209,10 +209,10 @@ class ImportPurchasesView(APIView):
         except InvalidOperation:
             pass
 
-        family = row.pop(0)
-        characteristics = row.pop(0)
+        family = row[5]
+        characteristics = row[6]
         characteristics = [c.strip() for c in characteristics.split(",")]
-        local_definition = row.pop(0)
+        local_definition = row[7]
 
         purchase = Purchase(
             canteen=canteen,
