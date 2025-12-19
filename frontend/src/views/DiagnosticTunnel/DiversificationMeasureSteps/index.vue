@@ -1,6 +1,13 @@
 <template>
   <v-form @submit.prevent>
     <div v-if="stepUrlSlug === 'plan'">
+      <LastYearAutofillOption
+        :canteen="canteen"
+        :diagnostic="diagnostic"
+        :fields="fields"
+        @tunnel-autofill="onTunnelAutofill"
+        class="mb-xs-6 mb-xl-16"
+      />
       <DsfrRadio
         :label="stepConstants.hasDiversificationPlan.title"
         v-model="payload.hasDiversificationPlan"
@@ -36,13 +43,6 @@
       optional
     />
     <div v-else-if="stepUrlSlug === 'menu'">
-      <LastYearAutofillOption
-        :canteen="canteen"
-        :diagnostic="diagnostic"
-        :fields="fields"
-        @tunnel-autofill="onTunnelAutofill"
-        class="mb-xs-6 mb-xl-16"
-      />
       <DsfrRadio
         :label="stepConstants.vegetarianWeeklyRecurrence.title"
         :items="stepConstants.vegetarianWeeklyRecurrence.items"
