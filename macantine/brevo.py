@@ -35,7 +35,7 @@ def user_to_brevo_payload(user, bulk=True):
         "DERNIERE_CONNEXION": user.last_login.strftime("%Y-%m-%d") if user.last_login else "",
         "MA_CANTINE_COMPTE_DEV": user.is_dev,
         "MA_CANTINE_COMPTE_ELU_E": user.is_elected_official,
-        "MA_CANTINE_GERE_UN_ETABLISSEMENT": user.canteens.exists(),
+        "MA_CANTINE_GERE_UN_ETABLISSEMENT": user.has_canteens(),
         "MA_CANTINE_MANQUE_BILAN_DONNEES_2024": user.has_missing_diagnostic_for_year(2024),
         "MA_CANTINE_MANQUE_BILAN_DONNEES_2023": user.has_missing_diagnostic_for_year(2023),
         "MA_CANTINE_MANQUE_BILAN_DONNEES_2022": user.has_missing_diagnostic_for_year(2022),

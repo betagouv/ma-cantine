@@ -157,6 +157,12 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.get_full_name()} ({self.username})"
 
+    def canteens_count(self):
+        return self.canteens.count()
+
+    def has_canteens(self):
+        return self.canteens.exists()
+
     def has_missing_diagnostic_for_year(self, year):
         return self.canteens.exists() and any(not x.has_diagnostic_for_year(year) for x in self.canteens.all())
 
