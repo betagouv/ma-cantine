@@ -1,5 +1,3 @@
-import csv
-import io
 import logging
 import time
 import uuid
@@ -96,7 +94,7 @@ class ImportPurchasesView(APIView):
 
             # Step 3: ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
-                self._process_file()
+                self._process_file(validata_response["resource_data"])
 
                 # If at least an error has been detected, we raise an error to interrupt the
                 # transaction and rollback the insertion of any data
@@ -138,13 +136,12 @@ class ImportPurchasesView(APIView):
             import_type=ImportType.PURCHASE,
         )
 
-    def _process_file(self):
+    def _process_file(self, data):
         chunk = []
         row_count = 0
-        for row_number, row in enumerate(self.file, start=1):
+        for row_number, row in enumerate(data, start=1):
             if row_number == 1:  # skip header
                 continue
-
             # Split into chunks
             chunk.append(row)
             row_count += 1
@@ -178,19 +175,9 @@ class ImportPurchasesView(APIView):
         errors = []
         self.purchases = []
 
-        decoded_chunk = self._decode_chunk(chunk)
-        csvreader = csv.reader(io.StringIO("".join(decoded_chunk)), self.dialect)
-        for row_number, row in enumerate(csvreader, start=1):
+        for row_number, row in enumerate(chunk, start=1):
             siret = None
-
             try:
-                # first check that the number of columns is good
-                #   to throw error if badly formatted early on.
-                if len(row) < len(self.expected_header):
-                    raise BadRequest()
-                siret = row.pop(0)
-                if siret == "":
-                    raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
                 siret = utils_utils.normalize_string(siret)
                 self._create_purchase_for_canteen(siret, row)
 
