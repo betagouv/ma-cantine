@@ -15,6 +15,10 @@
     {% endif %}
 {% endif %}
 
+{% if service_type %}
+    {% include "./response.html" with success=True text="Service proposé" value=service_type only %}
+{% endif %}
+
 {% if vegetarian_weekly_recurrence == "Jamais" %}
     {% include "./response.html" with success=False text="Fréquence hebdomadaire des menus végétariens" value=vegetarian_weekly_recurrence only %}
 {% else %}
@@ -39,4 +43,5 @@
     {% else %}
         {% include "./response.html" with success=None text="Le plat principal du menu végétarien est majoritairement à base de" value="Inconnu" only %}
     {% endif %}
+
 {% endif %}

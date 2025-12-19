@@ -228,6 +228,9 @@ class DiagnosticTeledeclarationPdfView(APIView):
                 if diagnostic.vegetarian_weekly_recurrence
                 else None
             ),
+            "service_type": (
+                Diagnostic.ServiceType(diagnostic.service_type).label if diagnostic.service_type else None
+            ),
             "vegetarian_menu_type": (
                 Diagnostic.VegetarianMenuType(diagnostic.vegetarian_menu_type).label
                 if diagnostic.vegetarian_menu_type
