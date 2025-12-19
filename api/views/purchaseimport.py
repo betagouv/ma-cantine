@@ -89,24 +89,19 @@ class ImportPurchasesView(APIView):
             return self._get_success_response()
 
         except IntegrityError as e:
-            self._log_error(f"L'import du fichier CSV a échoué:\n{e}")
-            return self._get_success_response()
-
+            self._log_error(f"L'import du fichier CSV a échoué: {e}")
         except UnicodeDecodeError as e:
             self._log_error(f"UnicodeDecodeError: {e.reason}")
             self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
-            return self._get_success_response()
-
         except ValidationError as e:
             self._log_error(e.message)
             self.errors = [{"row": 0, "status": 400, "message": e.message}]
-            return self._get_success_response()
-
         except Exception as e:
-            message = "Échec lors de la lecture du fichier"
-            self._log_error(f"{message}:\n{e}", "exception")
+            message = f"Échec lors de la lecture du fichier: {e}"
+            self._log_error(message, "exception")
             self.errors = [{"row": 0, "status": 400, "message": message}]
-            return self._get_success_response()
+
+        return self._get_success_response()
 
     def _log_error(self, message, level="warning"):
         logger_function = getattr(logger, level)
@@ -246,7 +241,6 @@ class ImportPurchasesView(APIView):
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
-        logger.warning(f"Error on row {row_number}:\n{e}\n{message}")
         return {"row": row_number, "status": error_status, "message": message}
 
     def _parse_errors(self, e, row, siret):

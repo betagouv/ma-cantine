@@ -1,6 +1,16 @@
 """
 https://validata.fr
 
+Response keys:
+- schema
+- url (None in our case)
+- options
+- version
+- date
+- report (optional: only if there is no errors in the request)
+- error (optional: only if an error occurred during the request or the schema)
+- resource_data (optional: only if "include_resource_data" is True in the request)
+
 Possible error keys:
 - cell
 - fieldName

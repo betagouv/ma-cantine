@@ -104,7 +104,7 @@ class ImportCanteensView(APIView):
             self._log_error(e.detail)
             self.errors = [{"row": 0, "status": 401, "message": e.detail}]
         except IntegrityError as e:
-            self._log_error(f"L'import du fichier CSV a échoué:\n{e}")
+            self._log_error(f"L'import du fichier CSV a échoué: {e}")
         except ValidationError as e:
             self._log_error(e.message)
             self.errors = [{"row": 0, "status": 400, "message": e.message}]
@@ -112,8 +112,9 @@ class ImportCanteensView(APIView):
             self._log_error(e.reason)
             self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
         except Exception as e:
-            self._log_error(f"Échec lors de la lecture du fichier:\n{e}", "exception")
-            self.errors = [{"row": 0, "status": 400, "message": "Échec lors de la lecture du fichier"}]
+            message = f"Échec lors de la lecture du fichier: {e}"
+            self._log_error(message, "exception")
+            self.errors = [{"row": 0, "status": 400, "message": message}]
 
         return self._get_success_response()
 
@@ -172,7 +173,6 @@ class ImportCanteensView(APIView):
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
-        logger.exception(f"Error on row {row_number}:\n{e}")
         return {"row": row_number, "status": error_status, "message": message}
 
     @staticmethod
@@ -196,10 +196,8 @@ class ImportCanteensView(APIView):
         for email in emails:
             try:
                 AddManagerView.add_manager_to_canteen(email, canteen, send_invitation_mail=send_invitation_mail)
-            except IntegrityError as e:
-                logger.warning(
-                    f"Attempt to add existing manager with email {email} to canteen {canteen.id} from a CSV import:\n{e}"
-                )
+            except IntegrityError:
+                pass
 
     def _get_success_response(self):
         serialized_canteens = (
@@ -376,7 +374,6 @@ class ImportCanteensView(APIView):
             elif hasattr(e, "params"):
                 ImportCanteensView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
-                logger.exception(f"Unknown validation error: {e}")
                 ImportCanteensView._add_error(
                     errors, "Une erreur s'est produite en créant une cantine pour cette ligne"
                 )
