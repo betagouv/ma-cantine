@@ -1,10 +1,35 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
+from django.db.models import Count, Q
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from data.models.geo import Department
 from data.fields import ChoiceArrayField
 from data.utils import optimize_image
+
+
+class UserQuerySet(models.QuerySet):
+    def with_canteen_stats(self):
+        from data.models import Canteen
+
+        return self.prefetch_related("canteens").annotate(
+            nb_cantines=Count("canteens", distinct=True),
+            nb_cantines_site=Count(
+                "canteens", filter=Q(canteens__production_type=Canteen.ProductionType.ON_SITE), distinct=True
+            ),
+            nb_cantines_satellite=Count(
+                "canteens", filter=Q(canteens__production_type=Canteen.ProductionType.ON_SITE_CENTRAL), distinct=True
+            ),
+            nb_cantines_gestion_concedee=Count(
+                "canteens", filter=Q(canteens__management_type=Canteen.ManagementType.CONCEDED), distinct=True
+            ),
+        )
+
+
+class UserManager(BaseUserManager):
+    pass
 
 
 class User(AbstractUser):
@@ -62,6 +87,15 @@ class User(AbstractUser):
         "creation_mtm_campaign",
         "creation_mtm_medium",
     ]
+
+    DATA_CANTEEN_FIELDS = [
+        "nb_cantines",
+        "nb_cantines_site",
+        "nb_cantines_satellite",
+        "nb_cantines_gestion_concedee",
+    ]
+
+    objects = UserManager.from_queryset(UserQuerySet)()
 
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
     email = models.EmailField(_("email address"), unique=True)
@@ -155,6 +189,10 @@ class User(AbstractUser):
             self.avatar = optimize_image(self.avatar, self.avatar.name, max_avatar_size)
         super().save(**kwargs)
 
+    @property
+    def has_mtm_data(self):
+        return self.creation_mtm_source or self.creation_mtm_campaign or self.creation_mtm_medium
+
     def __str__(self):
         return f"{self.get_full_name()} ({self.username})"
 
@@ -170,6 +208,8 @@ class User(AbstractUser):
     def has_missing_teledeclaration_for_year(self, year):
         return self.canteens.exists() and any(not x.has_teledeclaration_for_year(year) for x in self.canteens.all())
 
-    @property
-    def has_mtm_data(self):
-        return self.creation_mtm_source or self.creation_mtm_campaign or self.creation_mtm_medium
+    def update_data(self):
+        # need to have called the user with 'with_canteen_stats' queryset method
+        self.data = {field: getattr(self, field) for field in self.DATA_CANTEEN_FIELDS}
+        self.data["modification_date"] = timezone.now().isoformat()
+        self.save(update_fields=["data"])

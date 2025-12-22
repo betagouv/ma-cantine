@@ -109,6 +109,24 @@ def no_canteen_second_reminder():
 
 
 ##########################################################################
+# User data
+
+
+@app.task()
+def update_user_data():
+    """
+    Update calculated fields in User.data JSONField
+    """
+    logger.info("update_user_data task starting")
+    start = time.time()
+    users = User.objects.with_canteen_stats()
+    for user in users:
+        user.update_data()
+    end = time.time()
+    logger.info(f"update_user_data task ended. Duration : {end - start} seconds")
+
+
+##########################################################################
 # Taken from itertools recipes. Will be able to remove once we pass to
 # Python 3.12 since they added it as itertools.batched. Server is currently
 # on Python 3.11

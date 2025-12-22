@@ -45,7 +45,7 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_empty_canteen(self, batch_update_mock, create_contact_mock):
         """
-        As soon as a user has a canteen, pending actions will follow and all paramteres
+        As soon as a user has a canteen, pending actions will follow and all parameters
         related to the diagnostic, TD and publication will be active
         """
         user = UserFactory()
