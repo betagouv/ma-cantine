@@ -1,7 +1,7 @@
 <script setup>
 // import { ref } from "vue"
 import { useRoute } from "vue-router"
-// import ImportExplanation from "@/components/ImportExplanation.vue"
+import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 // import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 // import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
@@ -13,10 +13,10 @@ const route = useRoute()
 
 /* Data */
 // const schemaFile = "diagnostics_simple.json"
-// const exampleFile = {
-//   name: "",
-//   size: "",
-// }
+const exampleFile = {
+  name: "importer_des_bilans_simplifies_exemple.csv",
+  size: "606 octets",
+}
 // const filePreviews = {
 //   success: "",
 //   altSuccess: "",
@@ -39,8 +39,8 @@ const route = useRoute()
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet d’ajouter les bilans simplifiés de toutes vos cantines d’un coup.
   </p>
-  <!--
   <ImportExplanation :exampleFile/>
+  <!--
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportFileUpload @success="success" apiUrl="" eventMatomo=""/>
