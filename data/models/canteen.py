@@ -295,76 +295,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 class CanteenManager(SoftDeletionManager):
     queryset_model = CanteenQuerySet
 
-    def publicly_visible(self):
-        return self.get_queryset().publicly_visible()
-
-    def publicly_hidden(self):
-        return self.get_queryset().publicly_hidden()
-
-    def created_before_year_campaign_end_date(self, year):
-        return self.get_queryset().created_before_year_campaign_end_date(year)
-
-    def is_central(self):
-        return self.get_queryset().is_central()
-
-    def exclude_central(self):
-        return self.get_queryset().exclude_central()
-
-    def is_central_cuisine(self):
-        return self.get_queryset().is_central_cuisine()
-
-    def is_satellite(self):
-        return self.get_queryset().is_satellite()
-
-    def annotate_with_central_kitchen_id(self):
-        return self.get_queryset().annotate_with_central_kitchen_id()
-
-    def get_satellites(self, central_producer_siret):
-        return self.get_queryset().get_satellites(central_producer_siret)
-
-    def annotate_with_satellites_in_db_count(self):
-        return self.get_queryset().annotate_with_satellites_in_db_count()
-
-    def annotate_with_purchases_for_year(self, year):
-        return self.get_queryset().annotate_with_purchases_for_year(year)
-
-    def annotate_with_diagnostic_for_year(self, year):
-        return self.get_queryset().annotate_with_diagnostic_for_year(year)
-
-    def annotate_with_requires_line_ministry(self):
-        return self.get_queryset().annotate_with_requires_line_ministry()
-
-    def annotate_with_sector_list_count(self):
-        return self.get_queryset().annotate_with_sector_list_count()
-
-    def annotate_with_sector_category_list(self):
-        return self.get_queryset().annotate_with_sector_category_list()
-
-    def has_siret(self):
-        return self.get_queryset().has_siret()
-
-    def has_city_insee_code(self):
-        return self.get_queryset().has_city_insee_code()
-
-    def has_city_insee_code_missing(self):
-        return self.get_queryset().has_city_insee_code_missing()
-
-    def has_missing_data(self):
-        return self.get_queryset().has_missing_data()
-
-    def filled(self):
-        return self.get_queryset().filled()
-
-    def group_and_count_by_field(self, field):
-        return self.get_queryset().group_and_count_by_field(field)
-
-    def annotate_with_action_for_year(self, year):
-        return self.get_queryset().annotate_with_action_for_year(year)
-
 
 class Canteen(SoftDeletionModel):
-    objects = CanteenManager()
-    all_objects = CanteenManager(alive_only=False)
+    objects = CanteenManager.from_queryset(CanteenQuerySet)()
+    all_objects = CanteenManager.from_queryset(CanteenQuerySet)(alive_only=False)
 
     class Meta:
         verbose_name = "cantine"
