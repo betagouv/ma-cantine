@@ -265,7 +265,7 @@ class CanteensImportView(APIView):
         daily_meal_count = row[3]
         yearly_meal_count = row[4]
         sector_list = [
-            next(value for value, label in Sector.choices if label == sector.replace("’", "'"))
+            next(value for value, label in Sector.choices if label == sector.strip().replace("’", "'"))
             for sector in row[5].strip().split(",")
             if sector
         ]
