@@ -83,6 +83,8 @@ CAMPAIGN_DATES = {
         "teledeclaration_end_date": datetime(
             2022, 12, 4, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
         ),
+        "correction_start_date": None,
+        "correction_end_date": None,
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/Rapport_Bilan_Statistique_EGALIM_2022.pdf",
     },
     2022: {
@@ -90,6 +92,8 @@ CAMPAIGN_DATES = {
         "teledeclaration_end_date": datetime(
             2023, 6, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
         ),
+        "correction_start_date": None,
+        "correction_end_date": None,
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/Rapport_Bilan_Statistique_EGALIM_2023.pdf",
     },
     2023: {
@@ -126,6 +130,9 @@ CAMPAIGN_DATES = {
         "teledeclaration_end_date": datetime(
             2026, 3, 31, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
         ),
+        "correction_start_date": None,
+        "correction_end_date": None,
+        "rapport_parlement_url": None,
     },
     # Note: au moment d'ajouter une nouvelle année :
     # - penser à y ajouter les settings (pour override dans les environnements non-prod)
@@ -161,7 +168,7 @@ def is_in_correction(year=None):
         if year != now_campaign_year:
             return False
     if now_campaign_year in CAMPAIGN_DATES:
-        if "correction_start_date" in CAMPAIGN_DATES[now_campaign_year]:
+        if CAMPAIGN_DATES[now_campaign_year]["correction_start_date"]:
             start_date = CAMPAIGN_DATES[now_campaign_year]["correction_start_date"]
             end_date = CAMPAIGN_DATES[now_campaign_year]["correction_end_date"]
             return start_date <= now <= end_date
