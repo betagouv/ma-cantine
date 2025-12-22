@@ -57,6 +57,12 @@ class User(AbstractUser):
         SOCIAL_MEDIA = "SOCIAL_MEDIA", "Réseaux sociaux"
         OTHER = "OTHER", "Autre (spécifiez)"
 
+    MATOMO_FIELDS = [
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
+    ]
+
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
     email = models.EmailField(_("email address"), unique=True)
     email_confirmed = models.BooleanField(default="False", verbose_name="adresse email confirmée")
@@ -125,13 +131,6 @@ class User(AbstractUser):
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
 
-    # Bizdev fields
-    number_of_managed_cantines = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name="Nombre d'établissements gérés par l'utilisateur",
-    )
-
     # Geographical scope for elected profiles
     departments = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=Department.choices),
@@ -144,6 +143,8 @@ class User(AbstractUser):
     last_brevo_update = models.DateTimeField(
         null=True, blank=True, verbose_name="Date de la dernière mise à jour Brevo"
     )
+
+    data = models.JSONField(blank=True, null=True, verbose_name="Données calculées")
 
     # Django fields
     # last_login, date_joined, is_active, is_staff, is_superuser
