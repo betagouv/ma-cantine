@@ -57,6 +57,12 @@ class User(AbstractUser):
         SOCIAL_MEDIA = "SOCIAL_MEDIA", "Réseaux sociaux"
         OTHER = "OTHER", "Autre (spécifiez)"
 
+    MATOMO_FIELDS = [
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
+    ]
+
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
     email = models.EmailField(_("email address"), unique=True)
     email_confirmed = models.BooleanField(default="False", verbose_name="adresse email confirmée")
