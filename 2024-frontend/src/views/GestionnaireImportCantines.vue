@@ -20,10 +20,6 @@ const exampleFile = {
   name: "importer_des_cantines_exemple_ma_cantine.csv",
   size: "496 octets",
 }
-const fileOptions = {
-  hint: "Extensions de fichier autorisées : Excel (.xlsx), CSV (.csv), TSV (.tsv)",
-  accept: ".csv,.tsv,.xlsx",
-}
 const filePreviews = {
   success: "importer_des_cantines_exemple_fichier_accepte.jpg",
   altSuccess: "Exemple de fichier accepté pour importer des cantines, qui contient le bon nom de colonnes et les bonnes valeurs",
@@ -50,7 +46,7 @@ const success = (count) => {
     <router-link :to="{ name: 'GestionnaireCantineAjouter' }">notre formulaire</router-link>
     .
   </p>
-  <ImportExplanation :exampleFile :hasExcel="true" />
+  <ImportExplanation :exampleFile />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
@@ -58,7 +54,6 @@ const success = (count) => {
     @success="success"
     apiUrl="importCanteens"
     eventMatomo="import-canteen-success"
-    :fileOptions="fileOptions"
   />
   <ImportSuccessModal
     :opened="showModal"
