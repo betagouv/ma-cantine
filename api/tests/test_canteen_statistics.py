@@ -312,7 +312,7 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(body["teledeclarationsCount"], None)
         self.assertTrue("campaignInfo" in body["notes"])
         # year with campaign but report not published yet
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data + 1})
+        response = self.client.get(reverse("canteen_statistics"), {"year": "2025"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)
