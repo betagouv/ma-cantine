@@ -25,9 +25,9 @@ const fileOptions = {
   accept: ".csv,.tsv,.xlsx",
 }
 const filePreviews = {
-  success: "importer_des_cantines_exemple_fichier_accepte.jpg",
+  success: "importer_des_cantines_exemple_fichier_accepte.jpg?v=1",
   altSuccess: "Exemple de fichier accepté pour importer des cantines, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "importer_des_cantines_exemple_fichier_rejete.jpg",
+  error: "importer_des_cantines_exemple_fichier_rejete.jpg?v=1",
   altError: "Exemple de fichier rejeté pour importer des cantines, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 
