@@ -4,6 +4,7 @@
       <v-col>
         <ProductionTypeTag :canteen="canteen" class="mt-2" />
         <h1 class="fr-h3 mt-2 mb-2">{{ canteen.name }}</h1>
+        <DsfrTag :clickable="false" :text="`ID : ${canteen.id}`" />
         <DsfrTag v-if="canteen.siret" :clickable="false" :text="`SIRET : ${canteen.siret}`" />
         <DsfrTag
           v-if="canteen.sirenUniteLegale"
