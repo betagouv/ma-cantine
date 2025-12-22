@@ -4,10 +4,13 @@
       <v-col>
         <ProductionTypeTag :canteen="canteen" class="mt-2" />
         <h1 class="fr-h3 mt-2 mb-2">{{ canteen.name }}</h1>
-        <p class="mb-0">SIRET : {{ canteen.siret || "inconnu" }}</p>
-        <p v-if="canteen.sirenUniteLegale" class="mb-0">
-          <span>SIREN de l'unité légale : {{ canteen.sirenUniteLegale }}</span>
-        </p>
+        <DsfrTag :clickable="false" :text="`ID : ${canteen.id}`" />
+        <DsfrTag v-if="canteen.siret" :clickable="false" :text="`SIRET : ${canteen.siret}`" />
+        <DsfrTag
+          v-if="canteen.sirenUniteLegale"
+          :clickable="false"
+          :text="`SIREN de l'unité légale :${canteen.sirenUniteLegale}`"
+        />
       </v-col>
     </v-row>
 
@@ -75,6 +78,7 @@ import SatellitesWidget from "./SatellitesWidget"
 import CanteenInfoWidget from "./CanteenInfoWidget"
 import TeamWidget from "./TeamWidget"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
+import DsfrTag from "@/components/DsfrTag"
 
 export default {
   name: "DashboardManager",
@@ -86,6 +90,7 @@ export default {
     CanteenInfoWidget,
     TeamWidget,
     ProductionTypeTag,
+    DsfrTag,
   },
   data() {
     return {
