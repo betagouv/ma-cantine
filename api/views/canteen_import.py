@@ -262,8 +262,8 @@ class CanteensImportView(APIView):
         # TODO: remove hardcoded indexes
         siret = utils_utils.normalize_string(row[0])
         name = row[1].strip()
-        daily_meal_count = row[3].strip()
-        yearly_meal_count = row[4].strip()
+        daily_meal_count = row[3]
+        yearly_meal_count = row[4]
         sector_list = [
             next(value for value, label in Sector.choices if label == sector.replace("’", "'"))
             for sector in row[5].strip().split(",")
