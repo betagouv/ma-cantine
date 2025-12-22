@@ -145,6 +145,8 @@ class User(AbstractUser):
         null=True, blank=True, verbose_name="Date de la dernière mise à jour Brevo"
     )
 
+    data = models.JSONField(blank=True, null=True, verbose_name="Données calculées")
+
     # Django fields
     # last_login, date_joined, is_active, is_staff, is_superuser
 
