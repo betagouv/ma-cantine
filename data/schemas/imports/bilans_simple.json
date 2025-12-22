@@ -26,7 +26,6 @@
     },
     {
       "constraints": {
-        "pattern": "^\\d+([.,]\\d+)?$",
         "required": true
       },
       "description": "",
@@ -37,7 +36,6 @@
     },
     {
       "constraints": {
-        "pattern": "^\\d+([.,]\\d+)?$",
         "required": true
       },
       "description": "",
