@@ -164,7 +164,7 @@
     }
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
-  "name": "import-diagnostics-simple",
+  "name": "import-bilans-simple",
   "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/bilans_simple.json",
-  "title": "Schema import des diagnostics (simple)"
+  "title": "Schema import des bilans (simple)"
 }
