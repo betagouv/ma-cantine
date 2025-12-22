@@ -6,6 +6,44 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.46.0](https://github.com/betagouv/ma-cantine/compare/v2025.45.1...v2025.46.0) (2025-12-22)
+
+
+### Nouveautés
+
+* **Badge:** valide le badge végétarien pour les cantines d'au minimum 200 couverts journaliers et un plan de diversification alimentaire ([#6051](https://github.com/betagouv/ma-cantine/issues/6051)) ([268b9aa](https://github.com/betagouv/ma-cantine/commit/268b9aa88d918f9331b6662ec8fdcef41cf75d0b))
+* **Cantines:** affiche le numéro ID de la cantine ([#6066](https://github.com/betagouv/ma-cantine/issues/6066)) ([21c0b38](https://github.com/betagouv/ma-cantine/commit/21c0b38bb159cf57a0947e2b784fc0fe826118ec))
+* **Imports:** Achats: utilise Validata pour vérifier le fichier importé et autorise Excel ([#6057](https://github.com/betagouv/ma-cantine/issues/6057)) ([e4d99ec](https://github.com/betagouv/ma-cantine/commit/e4d99ecd867409e370ea3bf1e21651ec687a63bc))
+* **Ressources:** ajoute le bilan 2025 ([#6067](https://github.com/betagouv/ma-cantine/issues/6067)) ([c3cb4e2](https://github.com/betagouv/ma-cantine/commit/c3cb4e2b6c6c9793cf0d3ffeeba873281938c9b0))
+* **Télédéclaration:** mise à jour des questions du volet "Menu végétarien" ([#6049](https://github.com/betagouv/ma-cantine/issues/6049)) ([808fc7a](https://github.com/betagouv/ma-cantine/commit/808fc7a44f9a3a9c493c0797163f5688ae68cb6f))
+* **Télédéclaration:** Végétarien: déplace le bouton de remplissage automatique à la première question ([#6061](https://github.com/betagouv/ma-cantine/issues/6061)) ([9227c28](https://github.com/betagouv/ma-cantine/commit/9227c2810f8d46cda53da301d33f7aa12b2ae0e1))
+
+
+### Améliorations
+
+* **Brevo:** ajout des champs de bases utilisateurs (nom, prénom, email, dernière connexion) ([#6062](https://github.com/betagouv/ma-cantine/issues/6062)) ([43f4dfe](https://github.com/betagouv/ma-cantine/commit/43f4dfe050e4caa1b85d8e8b137b1821d3173d86))
+* **Ressources:** homogénéise les noms des fichiers des rapports statistiques EGalim ([#6070](https://github.com/betagouv/ma-cantine/issues/6070)) ([bf0773b](https://github.com/betagouv/ma-cantine/commit/bf0773b26b223ec1b234e809e873a358e52e47b5))
+* **Utilisateurs:** nouveau champ 'data' (JSONField) pour stocker des données calculées ([#6064](https://github.com/betagouv/ma-cantine/issues/6064)) ([bb48c5a](https://github.com/betagouv/ma-cantine/commit/bb48c5a3c23d918984a6f9996d83b1c36d58b22b))
+
+
+### Corrections (bugs, typos...)
+
+* **Imports:** Achats: remet un test de valeur non valide du regex ([#6059](https://github.com/betagouv/ma-cantine/issues/6059)) ([d735595](https://github.com/betagouv/ma-cantine/commit/d73559552457d6bc95b684cd82e82c55eb0205a9))
+* **Imports:** affiche le format "excel" pour tous les imports ([#6063](https://github.com/betagouv/ma-cantine/issues/6063)) ([e16e155](https://github.com/betagouv/ma-cantine/commit/e16e1551d1193221c5e3e527cef160942eb3acbc))
+* **Imports:** corrige des erreurs de formats des cellules d'Excel et autorise les majuscule dans le nom de colonnes ([#6065](https://github.com/betagouv/ma-cantine/issues/6065)) ([bcb7296](https://github.com/betagouv/ma-cantine/commit/bcb72961129eaebae7509bfa43941f89536bfc6d))
+* **Télédéclaration:** Affiche le champ "Service proposé" ([#6060](https://github.com/betagouv/ma-cantine/issues/6060)) ([46135ee](https://github.com/betagouv/ma-cantine/commit/46135ee82a4b9d9a13a61c58fbe975b13c7a5ebb))
+
+
+### Technique
+
+* **Imports:** homogénéiser le nommage des views & tests ([#6052](https://github.com/betagouv/ma-cantine/issues/6052)) ([e7c858a](https://github.com/betagouv/ma-cantine/commit/e7c858a193c7f4ed0815d7ae1d736392e906f0a0))
+* **Validata:** faire un peu le ménage dans les erreurs remontées ([#6050](https://github.com/betagouv/ma-cantine/issues/6050)) ([1a3f4a9](https://github.com/betagouv/ma-cantine/commit/1a3f4a9e25c95f6d8ac37fc37252524745d02df2))
+
+
+### Documentation
+
+* **Télédéclaration:** ajout d'un serializer pour l'endpoint campaign dates ([#6026](https://github.com/betagouv/ma-cantine/issues/6026)) ([efeb9b8](https://github.com/betagouv/ma-cantine/commit/efeb9b8c8d0d4de4107788dbf4c176d30bbef9a0))
+
 ## [2025.45.1](https://github.com/betagouv/ma-cantine/compare/v2025.45.0...v2025.45.1) (2025-12-19)
 
 
