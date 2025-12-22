@@ -168,7 +168,7 @@ def is_in_correction(year=None):
         if year != now_campaign_year:
             return False
     if now_campaign_year in CAMPAIGN_DATES:
-        if "correction_start_date" in CAMPAIGN_DATES[now_campaign_year]:
+        if CAMPAIGN_DATES[now_campaign_year]["correction_start_date"]:
             start_date = CAMPAIGN_DATES[now_campaign_year]["correction_start_date"]
             end_date = CAMPAIGN_DATES[now_campaign_year]["correction_end_date"]
             return start_date <= now <= end_date
