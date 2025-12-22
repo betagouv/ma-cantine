@@ -26,27 +26,26 @@ def send_sib_template(template_id, parameters, to_email, to_name):
 
 
 def user_to_brevo_payload(user, bulk=True):
-    has_canteens = user.canteens.exists()
-    date_joined = user.date_joined
-
-    def missing_diag_for_year(year, user):
-        return user.canteens.exists() and any(not x.has_diagnostic_for_year(year) for x in user.canteens.all())
-
-    def missing_td_for_year(year, user):
-        return user.canteens.exists() and any(not x.has_teledeclaration_for_year(year) for x in user.canteens.all())
-
     dict_attributes = {
-        "MA_CANTINE_DATE_INSCRIPTION": date_joined.strftime("%Y-%m-%d"),
+        "NOM": user.last_name,
+        "PRENOM": user.first_name,
+        "NOM_COMPLET": user.get_full_name(),
+        "EMAIL": user.email,
+        "MA_CANTINE_DATE_INSCRIPTION": user.date_joined.strftime("%Y-%m-%d"),
+        "DERNIERE_CONNEXION": user.last_login.strftime("%Y-%m-%d") if user.last_login else "",
         "MA_CANTINE_COMPTE_DEV": user.is_dev,
         "MA_CANTINE_COMPTE_ELU_E": user.is_elected_official,
-        "MA_CANTINE_GERE_UN_ETABLISSEMENT": has_canteens,
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2023": missing_diag_for_year(2023, user),
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2022": missing_diag_for_year(2022, user),
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2021": missing_diag_for_year(2021, user),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2023": missing_td_for_year(2023, user),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2022": missing_td_for_year(2022, user),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2021": missing_td_for_year(2021, user),
+        "MA_CANTINE_GERE_UN_ETABLISSEMENT": user.has_canteens(),
+        "MA_CANTINE_MANQUE_BILAN_DONNEES_2024": user.has_missing_diagnostic_for_year(2024),
+        "MA_CANTINE_MANQUE_BILAN_DONNEES_2023": user.has_missing_diagnostic_for_year(2023),
+        "MA_CANTINE_MANQUE_BILAN_DONNEES_2022": user.has_missing_diagnostic_for_year(2022),
+        "MA_CANTINE_MANQUE_BILAN_DONNEES_2021": user.has_missing_diagnostic_for_year(2021),
+        "MA_CANTINE_MANQUE_TD_DONNEES_2024": user.has_missing_teledeclaration_for_year(2024),
+        "MA_CANTINE_MANQUE_TD_DONNEES_2023": user.has_missing_teledeclaration_for_year(2023),
+        "MA_CANTINE_MANQUE_TD_DONNEES_2022": user.has_missing_teledeclaration_for_year(2022),
+        "MA_CANTINE_MANQUE_TD_DONNEES_2021": user.has_missing_teledeclaration_for_year(2021),
     }
+
     if bulk:
         return sib_api_v3_sdk.UpdateBatchContactsContacts(email=user.email, attributes=dict_attributes)
     return sib_api_v3_sdk.CreateContact(email=user.email, attributes=dict_attributes, update_enabled=True)
