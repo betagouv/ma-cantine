@@ -17,4 +17,8 @@ class Migration(migrations.Migration):
                 blank=True, null=True, verbose_name="Données calculées"
             ),
         ),
+        migrations.RemoveField(
+            model_name="user",
+            name="number_of_managed_cantines",
+        ),
     ]

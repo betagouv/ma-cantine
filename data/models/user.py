@@ -131,13 +131,6 @@ class User(AbstractUser):
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
 
-    # Bizdev fields
-    number_of_managed_cantines = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name="Nombre d'établissements gérés par l'utilisateur",
-    )
-
     # Geographical scope for elected profiles
     departments = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=Department.choices),

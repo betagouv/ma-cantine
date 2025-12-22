@@ -69,7 +69,6 @@ class MaCanteenUserAdmin(UserAdmin):
                     "is_dev",
                     "job",
                     "other_job_description",
-                    "number_of_managed_cantines",
                 )
             },
         ),
