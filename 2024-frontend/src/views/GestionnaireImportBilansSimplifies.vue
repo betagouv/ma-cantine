@@ -3,7 +3,7 @@
 import { useRoute } from "vue-router"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
-// import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
+import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 // import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 // import ImportFileUpload from "@/components/ImportFileUpload.vue"
 // import ImportFilesExample from "@/components/ImportFilesExample.vue"
@@ -12,7 +12,7 @@ import ImportHelp from "@/components/ImportHelp.vue"
 const route = useRoute()
 
 /* Data */
-// const schemaFile = "diagnostics_simple.json"
+const schemaFile = "bilans_simple.json"
 const exampleFile = {
   name: "importer_des_bilans_simplifies_exemple.csv",
   size: "606 octets",
@@ -42,12 +42,15 @@ const exampleFile = {
   <ImportExplanation :exampleFile/>
   <!--
   <ImportFilesExample :filePreviews />
+-->
   <ImportSchemaTable :schemaFile />
+  <!--
   <ImportFileUpload @success="success" apiUrl="" eventMatomo=""/>
   <ImportSuccessModal
     :opened="showModal"
     :message=""
     @close="showModal = false"
-  />-->
+  />
+  -->
   <ImportHelp />
 </template>
