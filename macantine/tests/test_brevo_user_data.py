@@ -18,11 +18,13 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_create_new_user(self, batch_update_mock, create_contact_mock):
         """
-        A new user without canteens will have all paramteres related to the diagnostic,
+        A new user without canteens will have all parameters related to the diagnostic,
         TD and publication to `False` because they can't be missing them without even having
         a canteen.
         """
         new_user = UserFactory()
+
+        tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
@@ -51,6 +53,7 @@ class TestBrevoUserData(TestCase):
         user = UserFactory()
         CanteenFactory(managers=[user])
 
+        tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
         create_contact_mock.assert_called_once()
         batch_update_mock.assert_not_called()
@@ -70,10 +73,10 @@ class TestBrevoUserData(TestCase):
     def test_user_has_canteen_with_diag(self, batch_update_mock, create_contact_mock):
         user = UserFactory()
         canteen = CanteenFactory(managers=[user])
-
         DiagnosticFactory(year=2021, canteen=canteen)
         DiagnosticFactory(year=2022, canteen=canteen)
 
+        tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
@@ -94,10 +97,8 @@ class TestBrevoUserData(TestCase):
     def test_user_has_canteen_with_td(self, batch_update_mock, create_contact_mock):
         user = UserFactory()
         canteen = CanteenFactory(managers=[user])
-
         diag_2021 = DiagnosticFactory(year=2021, canteen=canteen)
         diag_2022 = DiagnosticFactory(year=2022, canteen=canteen)
-
         TeledeclarationFactory(
             diagnostic=diag_2021,
             year=2021,
@@ -115,6 +116,7 @@ class TestBrevoUserData(TestCase):
             applicant=user,
         )
 
+        tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
@@ -141,7 +143,6 @@ class TestBrevoUserData(TestCase):
             central_producer_siret=central_kitchen.siret,
             managers=[user],
         )
-
         DiagnosticFactory(
             year=2021,
             canteen=central_kitchen,
@@ -153,6 +154,7 @@ class TestBrevoUserData(TestCase):
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
+        tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
         create_contact_mock.assert_called_once()
         batch_update_mock.assert_not_called()
@@ -179,7 +181,6 @@ class TestBrevoUserData(TestCase):
             central_producer_siret=central_kitchen.siret,
             managers=[user],
         )
-
         diag_2021 = DiagnosticFactory(
             year=2021,
             canteen=central_kitchen,
@@ -190,7 +191,6 @@ class TestBrevoUserData(TestCase):
             canteen=central_kitchen,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
-
         TeledeclarationFactory(
             diagnostic=diag_2021,
             year=2021,
@@ -208,6 +208,7 @@ class TestBrevoUserData(TestCase):
             applicant=user,
         )
 
+        tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
         create_contact_mock.assert_called_once()
         batch_update_mock.assert_not_called()

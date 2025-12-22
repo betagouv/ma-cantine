@@ -524,7 +524,7 @@ class CanteenCreateApiTest(APITestCase):
     @authenticate
     def test_create_canteen_with_tracking_info(self):
         """
-        The app should store the mtm paramteres on creation
+        The app should store the mtm parameters on creation
         """
         payload = self.DEFAULT_PAYLOAD.copy()
         payload["creation_mtm_source"] = "mtm_source_value"
