@@ -47,7 +47,7 @@ const success = (count) => {
     <router-link :to="{ name: 'PurchasesHome' }">sur la plateforme</router-link>
     .
   </p>
-  <ImportExplanation :exampleFile :hasExcel="true"/>
+  <ImportExplanation :exampleFile/>
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportFileUpload @success="success" apiUrl="importPurchases" eventMatomo="import-purchases-success"  :fileOptions="fileOptions" />
