@@ -3,7 +3,6 @@
   "fields": [
     {
       "constraints": {
-        "pattern": "^[0-9]{14}$",
         "required": true,
         "unique": true
       },
