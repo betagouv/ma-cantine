@@ -280,7 +280,7 @@ class CanteensImportView(APIView):
             (value for value, label in Canteen.EconomicModel.choices if row[8].strip() in [label, value]), None
         )
         central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
-        satellite_canteens_count = row[10]
+        satellite_canteens_count = row[10] if row[10] else None
 
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
