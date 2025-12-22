@@ -262,11 +262,12 @@ class CanteensImportView(APIView):
         # TODO: remove hardcoded indexes
         siret = utils_utils.normalize_string(row[0])
         name = row[1].strip()
-        daily_meal_count = row[3].strip()
-        yearly_meal_count = row[4].strip()
+        daily_meal_count = row[3]
+        yearly_meal_count = row[4]
+        file_sector_list = row[5].strip() if row[5] else ""
         sector_list = [
-            next(value for value, label in Sector.choices if label == sector.replace("’", "'"))
-            for sector in row[5].strip().split(",")
+            next(value for value, label in Sector.choices if label == sector.strip().replace("’", "'"))
+            for sector in file_sector_list.split(",")
             if sector
         ]
         production_type = next(
@@ -279,7 +280,7 @@ class CanteensImportView(APIView):
             (value for value, label in Canteen.EconomicModel.choices if row[8].strip() in [label, value]), None
         )
         central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
-        satellite_canteens_count = row[10].strip() if row[10] else None
+        satellite_canteens_count = row[10] if row[10] else None
 
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (

@@ -37,7 +37,7 @@ def validate_file_against_schema(file, schema_url):
             files={
                 "file": (file.name, file.read(), file.content_type),
             },
-            data={"schema": schema_url, "header_case": True, "include_resource_data": True},
+            data={"schema": schema_url, "ignore_header_case": True, "include_resource_data": True},
         )
         return response.json()
     except Exception:
