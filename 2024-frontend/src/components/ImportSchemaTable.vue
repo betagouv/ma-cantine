@@ -28,7 +28,7 @@ const formatFields = (fields) => {
         id: field.name,
         title: field.title,
         description: field.description,
-        constraints: field.constraints.enum || field.doc_enum,
+        constraints: field?.constraints?.enum || field?.doc_enum,
         multiple: field.doc_enum_multiple,
         separator: field.doc_enum_multiple_seperator,
       },
