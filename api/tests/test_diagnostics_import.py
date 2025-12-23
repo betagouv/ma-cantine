@@ -107,10 +107,20 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         """
         If errors occur, discard the file and return the errors with row and message
         """
+        # creating canteens
+        CanteenFactory(siret="50044221500025", managers=[authenticate.user])
+        CanteenFactory(siret="82821513700013", managers=[authenticate.user])
+        CanteenFactory(siret="82217035300012", managers=[authenticate.user])
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+        CanteenFactory(siret="90930179110860", managers=[authenticate.user])
+        CanteenFactory(siret="73282932000074", managers=[authenticate.user])
         # creating 2 canteens with same siret here to error when this situation exists IRL
-        CanteenFactory(siret="42111303053388")
+        CanteenFactory(siret="42111303053388", managers=[authenticate.user])
         canteen_with_same_siret = CanteenFactory()
         Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="42111303053388")
+
+        self.assertEqual(Canteen.objects.count(), 8)
+        self.assertEqual(Diagnostic.objects.count(), 0)
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
         with open(file_path) as diag_file:
@@ -125,7 +135,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
         self.assertEqual(len(errors), 7, errors)
-        self.assertEqual(errors[0]["row"], 1)
+        self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
             errors.pop(0)["message"],
@@ -137,7 +147,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Plusieurs cantines correspondent au SIRET 42111303053388. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
+            "Plusieurs cantines correspondent au SIRET 42111303053388. Veuillez enlever les doublons pour pouvoir créer le bilan.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -191,7 +201,6 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
 
     @authenticate
     def test_import_wrong_header(self):
-
         with open("./api/tests/files/diagnostics/diagnostics_simple_bad_wrong_header.csv") as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics_simple')}", {"file": diag_file})
         body = response.json()
@@ -265,4 +274,4 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(len(body["errors"]), 1)
-        self.assertIn("Une erreur inconnue",  body["errors"][0]["message"])
+        self.assertIn("Une erreur inconnue", body["errors"][0]["message"])
