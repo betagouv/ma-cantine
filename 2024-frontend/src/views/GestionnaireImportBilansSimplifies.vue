@@ -6,7 +6,7 @@ import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
-// import ImportFilesExample from "@/components/ImportFilesExample.vue"
+import ImportFilesExample from "@/components/ImportFilesExample.vue"
 
 /* Router */
 const route = useRoute()
@@ -17,12 +17,12 @@ const exampleFile = {
   name: "importer_des_bilans_simplifies_exemple.csv",
   size: "606 octets",
 }
-// const filePreviews = {
-//   success: "",
-//   altSuccess: "",
-//   error: "",
-//   altError: "",
-// }
+const filePreviews = {
+  success: "bilans_simple_fichier_exemple_fichier_accepte.jpg?v=1",
+  altSuccess: "Exemple de fichier accepté pour importer des bilans simples, qui contient le bon nom de colonnes et les bonnes valeurs",
+  error: "bilans_simple_fichier_exemple_fichier_rejete.jpg?v=2",
+  altError: "Exemple de fichier rejeté pour importer des bilans simples, qui contient des erreurs dans les colonnes ou les valeurs",
+}
 
 /* Sucess */
 const showModal = ref(false)
@@ -42,7 +42,7 @@ const success = (count) => {
     Notre outil d’import de masse vous permet d’ajouter les bilans simplifiés de toutes vos cantines d’un coup.
   </p>
   <ImportExplanation :exampleFile/>
-  <!--<ImportFilesExample :filePreviews />-->
+  <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportFileUpload @success="success" apiUrl="importDiagnostics/simple" eventMatomo="import-diagnostics-success"/>
   <ImportSuccessModal
