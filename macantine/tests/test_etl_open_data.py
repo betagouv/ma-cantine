@@ -130,8 +130,8 @@ class TestETLOpenData(TestCase):
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_central_kitchen_siret"], None)
         self.assertEqual(str(etl_td.get_dataset().iloc[0]["canteen_satellite_canteens_count"]), "<NA>")
         self.assertEqual(
-            etl_td.get_dataset().iloc[0]["canteen_sectors"],
-            '"[""Ecole primaire (maternelle et élémentaire)"", ""Secondaire collège""]"',
+            etl_td.get_dataset().iloc[0]["canteen_sector_list"],
+            "Ecole primaire (maternelle et élémentaire),Secondaire collège",
         )
         self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertGreater(

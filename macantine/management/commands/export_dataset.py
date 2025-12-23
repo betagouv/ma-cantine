@@ -10,10 +10,12 @@ from macantine.tasks import (
 
 class Command(BaseCommand):
     """
-    Exemple: python manage.py export_dataset --model Canteen --destination analysis
+    Exemples:
+    - python manage.py export_dataset --model Canteen --destination analysis
+    - python manage.py export_dataset --model Teledeclaration --destination opendata
     """
 
-    help = "Command to export datasets. 4 choices: Cantines (analysis) ; Cantines (opendata) ; Toutes les TD (analysis) ; 4. TD par années (opendata)"
+    help = "Command to export datasets. 4 choices: Cantines (analysis) ; Cantines (opendata) ; Toutes les TD (analysis) ; TD par années (opendata)"
 
     def add_arguments(self, parser):
         parser.add_argument(

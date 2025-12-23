@@ -302,7 +302,7 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
     canteen_economic_model = serializers.CharField(source="canteen_snapshot.economic_model", read_only=True)
     canteen_management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
     canteen_production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
-    canteen_sectors = serializers.ListField(source="canteen_snapshot.sectors", read_only=True)
+    canteen_sector_list = serializers.SerializerMethodField()
     canteen_line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
 
     teledeclaration_ratio_bio = serializers.SerializerMethodField(read_only=True)  # TODO: compute & store in DB?
@@ -339,13 +339,20 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
             "canteen_economic_model",
             "canteen_management_type",
             "canteen_production_type",
-            "canteen_sectors",
+            "canteen_sector_list",
             "canteen_line_ministry",
             # value fields
             "teledeclaration_ratio_bio",
             "teledeclaration_ratio_egalim_hors_bio",
         )
         read_only_fields = fields
+
+    def get_canteen_sector_list(self, obj):
+        # TODO 2026: manage sector_list
+        sectors = obj.canteen_snapshot.get("sectors", None)
+        if sectors:
+            return [sector["name"] for sector in sectors]
+        return []
 
     def get_teledeclaration_ratio_bio(self, obj):
         return obj.valeur_bio_agg / obj.valeur_totale

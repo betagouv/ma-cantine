@@ -155,11 +155,11 @@
       "type": "string"
     },
     {
-      "description": "Liste définissant les secteurs d'activités de la cantine. Chaque élément de cette liste est défini par quatre paramètres :  id, name, category, has_line_ministry (ministère de tutelle).",
-      "example": "[\"Secondaire collège\", \"Ecole primaire (maternelle et élémentaire)\"]",
-      "name": "canteen_sectors",
+      "description": "Liste des secteurs d'activités de la cantine.",
+      "example": "Secondaire collège,Ecole primaire (maternelle et élémentaire)",
+      "name": "canteen_sector_list",
       "title": "Secteurs cantines",
-      "type": "array"
+      "type": "string"
     },
     {
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
