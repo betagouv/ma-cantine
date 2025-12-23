@@ -221,46 +221,42 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(diagnostic.valeur_totale, 1000)
         self.assertEqual(diagnostic.valeur_bio, 500)
 
-    # @authenticate
-    # def test_update_diagnostic_conditional_on_teledeclaration_status(self, mock):
-    #     """
-    #     If a diagnostic with a valid TD already exists for the canteen, throw an error
-    #     If the TD is cancelled, allow update
-    #     """
-    #     date_in_2022_teledeclaration_campaign = "2022-08-30"
-    #     canteen = CanteenFactory(siret="21340172201787", name="Old name", managers=[authenticate.user])
-    #     diagnostic = DiagnosticFactory(canteen=canteen, year=2021, valeur_totale=1, valeur_bio=0.2)
+    @authenticate
+    def test_update_diagnostic_conditional_on_teledeclaration_status(self):
+        """
+        If a diagnostic with a valid TD already exists for the canteen, throw an error
+        If the TD is cancelled, allow update
+        """
+        date_in_2024_teledeclaration_campaign = "2025-01-30"
+        CanteenFactory(siret="73282932000074", managers=[authenticate.user])
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
 
-    #     with freeze_time(date_in_2022_teledeclaration_campaign):
-    #         diagnostic.teledeclare(applicant=authenticate.user)
+        with freeze_time(date_in_2024_teledeclaration_campaign):
+            diagnostic.teledeclare(applicant=authenticate.user)
 
-    #         with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
-    #             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+            with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+                response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
 
-    #         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #         body = response.json()
-    #         self.assertEqual(len(body["errors"]), 1)
-    #         self.assertEqual(
-    #             body["errors"][0]["message"],
-    #             "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration.",
-    #         )
-    #         canteen.refresh_from_db()
-    #         self.assertEqual(canteen.name, "Old name")
-    #         diagnostic.refresh_from_db()
-    #         self.assertEqual(diagnostic.valeur_totale, 1)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(len(body["errors"]), 1)
+            self.assertEqual(
+                body["errors"][0]["message"],
+                "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration.",
+            )
+            self.assertEqual(diagnostic.valeur_totale, 1)
 
-    #         # now test cancelled TD
-    #         diagnostic.cancel()
-    #         with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
-    #             response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+            # now test cancelled TD
+            diagnostic.cancel()
+            with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+                response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
 
-    #         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #         body = response.json()
-    #         self.assertEqual(len(body["errors"]), 0)
-    #         canteen.refresh_from_db()
-    #         self.assertEqual(canteen.name, "A canteen")
-    #         diagnostic.refresh_from_db()
-    #         self.assertEqual(diagnostic.valeur_totale, 1000)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(len(body["errors"]), 0)
+            diagnostic.refresh_from_db()
+            self.assertEqual(diagnostic.valeur_totale, 1000)
 
     # @authenticate
     # def test_fail_import_bad_format(self, mock):
