@@ -200,25 +200,26 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
             "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
-    # @authenticate
-    # def test_update_existing_diagnostic(self, mock):
-    #     """
-    #     If a diagnostic already exists for the canteen, update the diag and canteen
-    #     with data in import file
-    #     """
-    #     canteen = CanteenFactory(siret="21340172201787", name="Old name", managers=[authenticate.user])
-    #     diagnostic = DiagnosticFactory(canteen=canteen, year=2021, valeur_totale=1, valeur_bio=0.2)
+    @authenticate
+    def test_update_existing_diagnostic(self):
+        """
+        If a diagnostic already exists for the canteen,
+        update the diag with data in import file
+        """
+        CanteenFactory(siret="73282932000074", managers=[authenticate.user])
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
 
-    #     with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
-    #         response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
 
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     body = response.json()
-    #     self.assertEqual(len(body["errors"]), 0)
-    #     canteen.refresh_from_db()
-    #     self.assertEqual(canteen.name, "A canteen")
-    #     diagnostic.refresh_from_db()
-    #     self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        print(body)
+        self.assertEqual(len(body["errors"]), 0)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(diagnostic.valeur_bio, 500)
 
     # @authenticate
     # def test_update_diagnostic_conditional_on_teledeclaration_status(self, mock):
