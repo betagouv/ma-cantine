@@ -1,7 +1,6 @@
 import datetime
 from decimal import Decimal
 
-import requests_mock
 from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
@@ -16,59 +15,84 @@ from data.models.creation_source import CreationSource
 NEXT_YEAR = datetime.date.today().year + 1
 
 
-@requests_mock.Mocker()
-class DiagnosticsImportApiTest(APITestCase):
-    def test_unauthenticated_import_call(self, mock):
+class DiagnosticsSimpleImportApiTest(APITestCase):
+    def test_unauthenticated_import_call(self):
         """
         Expect 403 if unauthenticated
         """
-        response = self.client.post(reverse("import_diagnostics"))
+        response = self.client.post(reverse("import_diagnostics_simple"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    # @authenticate
-    # def test_diagnostics_created(self, mock):
-    #     """
-    #     Given valid data, multiple diagnostics are created for multiple canteens,
-    #     the authenticated user is added as the manager,
-    #     and a summary of the results is returned
-    #     """
-    #     self.assertEqual(Canteen.objects.count(), 0)
-    #     self.assertEqual(Diagnostic.objects.count(), 0)
+    @authenticate
+    def test_diagnostics_created(self):
+        """
+        Given valid data, multiple diagnostics are created for multiple canteens,
+        the authenticated user is added as the manager
+        """
+        siret_canteen_1 = "21340172201787"
+        siret_canteen_2 = "73282932000074"
+        canteen_1 = CanteenFactory(siret=siret_canteen_1, managers=[authenticate.user])
+        canteen_2 = CanteenFactory(siret=siret_canteen_2, managers=[authenticate.user])
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(Diagnostic.objects.count(), 0)
 
-    #     with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
-    #         response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
 
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     body = response.json()
-    #     self.assertEqual(body["count"], 2)
-    #     self.assertEqual(body["canteens"][0]["siret"], "21340172201787")
-    #     self.assertEqual(body["canteens"][0]["diagnostics"][0]["year"], 2021)
-    #     self.assertEqual(len(body["errors"]), 0)
-    #     self.assertEqual(Canteen.objects.count(), 2)
-    #     self.assertEqual(Canteen.objects.first().managers.first().id, authenticate.user.id)
-    #     self.assertEqual(Diagnostic.objects.count(), 2)
-    #     canteen = Canteen.objects.get(siret="21340172201787")
-    #     self.assertEqual(canteen.daily_meal_count, 700)
-    #     self.assertEqual(canteen.yearly_meal_count, 14000)
-    #     self.assertEqual(canteen.production_type, "site")
-    #     self.assertEqual(canteen.management_type, "conceded")
-    #     self.assertEqual(canteen.economic_model, "public")
-    #     self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
-    #     diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
-    #     self.assertEqual(diagnostic.year, 2021)
-    #     self.assertEqual(diagnostic.valeur_totale, 1000)
-    #     self.assertEqual(diagnostic.valeur_bio, 500)
-    #     self.assertEqual(diagnostic.valeur_siqo, Decimal("100.1"))
-    #     self.assertEqual(diagnostic.valeur_externalites_performance, 10)
-    #     self.assertEqual(diagnostic.valeur_egalim_autres, 20)
-    #     self.assertEqual(diagnostic.valeur_viandes_volailles, 30)
-    #     self.assertEqual(diagnostic.valeur_viandes_volailles_egalim, 1)
-    #     self.assertEqual(diagnostic.valeur_viandes_volailles_france, 2)
-    #     self.assertEqual(diagnostic.valeur_produits_de_la_mer, 4)
-    #     self.assertEqual(diagnostic.valeur_produits_de_la_mer_egalim, 3)
-    #     self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
-    #     self.assertEqual(diagnostic.creation_source, CreationSource.IMPORT)
-    #     self.assertIn("seconds", body)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 2)
+        self.assertEqual(body["errorCount"], 0)
+        self.assertEqual(Diagnostic.objects.count(), 2)
+
+        diagnostic_1 = Diagnostic.objects.get(canteen_id=canteen_1.id)
+        self.assertEqual(diagnostic_1.year, 2024)
+        self.assertEqual(diagnostic_1.valeur_totale, 1000)
+        self.assertEqual(diagnostic_1.valeur_bio, 500)
+        self.assertEqual(diagnostic_1.valeur_bio_dont_commerce_equitable, 250)
+        self.assertEqual(diagnostic_1.valeur_siqo, Decimal("100.1"))
+        self.assertEqual(diagnostic_1.valeur_externalites_performance, 10)
+        self.assertEqual(diagnostic_1.valeur_egalim_autres, 20)
+        self.assertEqual(diagnostic_1.valeur_egalim_autres_dont_commerce_equitable, 15)
+        self.assertEqual(diagnostic_1.valeur_viandes_volailles, 2)
+        self.assertEqual(diagnostic_1.valeur_viandes_volailles_egalim, 1)
+        self.assertEqual(diagnostic_1.valeur_viandes_volailles_france, 1)
+        self.assertEqual(diagnostic_1.valeur_produits_de_la_mer, 3)
+        self.assertEqual(diagnostic_1.valeur_produits_de_la_mer_egalim, 1)
+        self.assertEqual(diagnostic_1.valeur_produits_de_la_mer_france, 1)
+        self.assertEqual(diagnostic_1.valeur_fruits_et_legumes_france, Decimal("1.1"))
+        self.assertEqual(diagnostic_1.valeur_charcuterie_france, Decimal("1.2"))
+        self.assertEqual(diagnostic_1.valeur_produits_laitiers_france, Decimal("1.3"))
+        self.assertEqual(diagnostic_1.valeur_boulangerie_france, Decimal("1.4"))
+        self.assertEqual(diagnostic_1.valeur_boissons_france, Decimal("1.5"))
+        self.assertEqual(diagnostic_1.valeur_autres_france, Decimal("1.6"))
+        self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
+
+        diagnostic_2 = Diagnostic.objects.get(canteen_id=canteen_2.id)
+        self.assertEqual(diagnostic_2.year, 2024)
+        self.assertEqual(diagnostic_2.valeur_totale, 200)
+        self.assertEqual(diagnostic_2.valeur_bio, 0)
+        self.assertEqual(diagnostic_2.valeur_bio_dont_commerce_equitable, 0)
+        self.assertEqual(diagnostic_2.valeur_siqo, 0)
+        self.assertEqual(diagnostic_2.valeur_externalites_performance, 0)
+        self.assertEqual(diagnostic_2.valeur_egalim_autres, 0)
+        self.assertEqual(diagnostic_2.valeur_egalim_autres_dont_commerce_equitable, 0)
+        self.assertEqual(diagnostic_2.valeur_viandes_volailles, 0)
+        self.assertEqual(diagnostic_2.valeur_viandes_volailles_egalim, 0)
+        self.assertEqual(diagnostic_2.valeur_viandes_volailles_france, None)
+        self.assertEqual(diagnostic_2.valeur_produits_de_la_mer, 0)
+        self.assertEqual(diagnostic_2.valeur_produits_de_la_mer_egalim, 0)
+        self.assertEqual(diagnostic_2.valeur_produits_de_la_mer_france, None)
+        self.assertEqual(diagnostic_2.valeur_fruits_et_legumes_france, None)
+        self.assertEqual(diagnostic_2.valeur_charcuterie_france, None)
+        self.assertEqual(diagnostic_2.valeur_produits_laitiers_france, None)
+        self.assertEqual(diagnostic_2.valeur_boulangerie_france, None)
+        self.assertEqual(diagnostic_2.valeur_boissons_france, None)
+        self.assertEqual(diagnostic_2.valeur_autres_france, None)
+        self.assertEqual(diagnostic_2.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
+        self.assertIn("seconds", body)
 
     # @authenticate
     # def test_error_collection(self, mock):
