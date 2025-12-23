@@ -21,9 +21,9 @@ from data.models.creation_source import CreationSource
 logger = logging.getLogger(__name__)
 
 
-DIAGNOSTICS_SCHEMA_FILE_NAME = "bilans_simple.json"
-DIAGNOSTICS_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SCHEMA_FILE_NAME}"
-DIAGNOSTICS_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SCHEMA_FILE_PATH}"
+DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME = "bilans_simple.json"
+DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME}"
+DIAGNOSTICS_SIMPLE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH}"
 
 
 class ImportDiagnosticsView(ABC, APIView):
@@ -49,8 +49,8 @@ class ImportDiagnosticsView(ABC, APIView):
                 self.file = request.data["file"]
                 file_import.validate_file_size(self.file)
 
-                schema_name = DIAGNOSTICS_SCHEMA_FILE_NAME
-                schema_url = DIAGNOSTICS_SCHEMA_URL
+                schema_name = DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME
+                schema_url = DIAGNOSTICS_SIMPLE_SCHEMA_URL
 
                 # Schema validation (Validata)
                 validata_response = validata.validate_file_against_schema(self.file, schema_url)
