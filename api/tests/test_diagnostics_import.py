@@ -172,21 +172,21 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
             "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
-    # @override_settings(CSV_IMPORT_MAX_SIZE=1)
-    # @authenticate
-    # def test_max_size(self, mock):
-    #     file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_decimal_number.csv"
-    #     with open(file_path) as diag_file:
-    #         response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(Diagnostic.objects.count(), 0)
-    #     assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
-    #     body = response.json()
-    #     errors = body["errors"]
-    #     self.assertEqual(body["count"], 0)
-    #     self.assertEqual(
-    #         errors.pop(0)["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
-    #     )
+    @override_settings(CSV_IMPORT_MAX_SIZE=1)
+    @authenticate
+    def test_max_size(self):
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(
+            errors.pop(0)["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
+        )
 
     # @authenticate
     # def test_import_wrong_header(self, mock):
