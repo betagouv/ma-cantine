@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
-from django.db.models import Case, F, IntegerField, Q, Sum, When
+from django.db.models import Case, F, IntegerField, Q, Sum, When, Value, CharField, Func
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
 from django.utils import timezone
@@ -179,6 +179,20 @@ class DiagnosticQuerySet(models.QuerySet):
 
     def publicly_visible(self):
         return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+
+    def with_satellites_count(self):
+        return self.annotate(
+            canteen_production_type=Cast(KT("canteen_snapshot__production_type"), output_field=CharField()),
+            satellites_length=Func("satellites_snapshot", function="jsonb_array_length", output_field=IntegerField()),
+            satellites_count=Case(
+                When(Q(canteen_production_type=Canteen.ProductionType.CENTRAL), then="satellites_length"),
+                When(
+                    Q(canteen_production_type=Canteen.ProductionType.CENTRAL_SERVING), then=F("satellites_length") + 1
+                ),
+                default=Value(1),  # ON_SITE, ON_SITE_CENTRAL
+                output_field=IntegerField(),
+            ),
+        )
 
     def with_appro_percent_stats(self):
         """
