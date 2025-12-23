@@ -250,6 +250,7 @@ class DiagnosticsSimpleImportView(ImportDiagnosticsView):
 
     def _validate_diagnostic(self, row):
         values_dict = {}
+        # TODO : move constants
         value_fields = [
             "valeur_totale",
             "valeur_bio",
