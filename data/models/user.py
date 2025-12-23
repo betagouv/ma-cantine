@@ -213,3 +213,35 @@ class User(AbstractUser):
         self.data = {field: getattr(self, field) for field in self.DATA_CANTEEN_FIELDS}
         self.data["modification_date"] = timezone.now().isoformat()
         self.save(update_fields=["data"])
+
+    def get_brevo_data(self):
+        """
+        See macantine/brevo.py for usage.
+        """
+        data_canteen_fields_dict = {
+            f"MA_CANTINE_{field.upper()}": self.data.get(field, 0) if self.data else 0
+            for field in self.DATA_CANTEEN_FIELDS
+        }
+        return {
+            # user info
+            "NOM": self.last_name,
+            "PRENOM": self.first_name,
+            "NOM_COMPLET": self.get_full_name(),
+            "EMAIL": self.email,
+            "MA_CANTINE_DATE_INSCRIPTION": self.date_joined.strftime("%Y-%m-%d"),
+            "DERNIERE_CONNEXION": self.last_login.strftime("%Y-%m-%d") if self.last_login else "",
+            "MA_CANTINE_COMPTE_DEV": self.is_dev,
+            "MA_CANTINE_COMPTE_ELU_E": self.is_elected_official,
+            # user canteen info
+            "MA_CANTINE_GERE_UN_ETABLISSEMENT": self.data.get("nb_cantines", 0) > 0 if self.data else False,
+            **data_canteen_fields_dict,
+            # user canteen diagnostic info
+            "MA_CANTINE_MANQUE_BILAN_DONNEES_2024": self.has_missing_diagnostic_for_year(2024),
+            "MA_CANTINE_MANQUE_BILAN_DONNEES_2023": self.has_missing_diagnostic_for_year(2023),
+            "MA_CANTINE_MANQUE_BILAN_DONNEES_2022": self.has_missing_diagnostic_for_year(2022),
+            "MA_CANTINE_MANQUE_BILAN_DONNEES_2021": self.has_missing_diagnostic_for_year(2021),
+            "MA_CANTINE_MANQUE_TD_DONNEES_2024": self.has_missing_teledeclaration_for_year(2024),
+            "MA_CANTINE_MANQUE_TD_DONNEES_2023": self.has_missing_teledeclaration_for_year(2023),
+            "MA_CANTINE_MANQUE_TD_DONNEES_2022": self.has_missing_teledeclaration_for_year(2022),
+            "MA_CANTINE_MANQUE_TD_DONNEES_2021": self.has_missing_teledeclaration_for_year(2021),
+        }

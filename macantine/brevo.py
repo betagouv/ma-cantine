@@ -26,29 +26,21 @@ def send_sib_template(template_id, parameters, to_email, to_name):
 
 
 def user_to_brevo_payload(user, bulk=True):
-    dict_attributes = {
-        "NOM": user.last_name,
-        "PRENOM": user.first_name,
-        "NOM_COMPLET": user.get_full_name(),
-        "EMAIL": user.email,
-        "MA_CANTINE_DATE_INSCRIPTION": user.date_joined.strftime("%Y-%m-%d"),
-        "DERNIERE_CONNEXION": user.last_login.strftime("%Y-%m-%d") if user.last_login else "",
-        "MA_CANTINE_COMPTE_DEV": user.is_dev,
-        "MA_CANTINE_COMPTE_ELU_E": user.is_elected_official,
-        "MA_CANTINE_GERE_UN_ETABLISSEMENT": user.has_canteens(),
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2024": user.has_missing_diagnostic_for_year(2024),
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2023": user.has_missing_diagnostic_for_year(2023),
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2022": user.has_missing_diagnostic_for_year(2022),
-        "MA_CANTINE_MANQUE_BILAN_DONNEES_2021": user.has_missing_diagnostic_for_year(2021),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2024": user.has_missing_teledeclaration_for_year(2024),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2023": user.has_missing_teledeclaration_for_year(2023),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2022": user.has_missing_teledeclaration_for_year(2022),
-        "MA_CANTINE_MANQUE_TD_DONNEES_2021": user.has_missing_teledeclaration_for_year(2021),
-    }
+    """
+    The user payload for Brevo API.
+    - defined in the User model method `get_brevo_data()`
+    - bulk: whether the payload is for bulk update (True) or individual create/update (False)
 
+    How to add a new field:
+    1. Create the field in Brevo
+        - https://my.brevo.com/lists/add-attributes
+        - prefix with "MA_CANTINE_"
+    2. Add the field in the User model method `get_brevo_data()`
+        - you might need to update the corresponding QuerySet
+    """
     if bulk:
-        return sib_api_v3_sdk.UpdateBatchContactsContacts(email=user.email, attributes=dict_attributes)
-    return sib_api_v3_sdk.CreateContact(email=user.email, attributes=dict_attributes, update_enabled=True)
+        return sib_api_v3_sdk.UpdateBatchContactsContacts(email=user.email, attributes=user.get_brevo_data())
+    return sib_api_v3_sdk.CreateContact(email=user.email, attributes=user.get_brevo_data(), update_enabled=True)
 
 
 def update_existing_brevo_contacts(users_to_update, today):
