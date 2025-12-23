@@ -258,16 +258,12 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.valeur_totale, 1000)
 
-    # @authenticate
-    # def test_fail_import_bad_format(self, mock):
-    #     with open("./api/tests/files/diagnostics/diagnostics_bad_file_format.ods", "rb") as diag_file:
-    #         response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     body = response.json()
-    #     errors = body["errors"]
-    #     first_error = errors.pop(0)
-    #     self.assertEqual(first_error["status"], 400)
-    #     self.assertEqual(
-    #         first_error["message"],
-    #         "Ce fichier est au format application/vnd.oasis.opendocument.spreadsheet, merci d'exporter votre fichier au format CSV et réessayer.",
-    #     )
+    @authenticate
+    def test_fail_import_bad_format(self):
+        with open("./api/tests/files/diagnostics/diagnostics_simple_bad_file_format.ods", "rb") as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertIn("Une erreur inconnue",  body["errors"][0]["message"])
