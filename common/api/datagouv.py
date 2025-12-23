@@ -8,14 +8,47 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------------
+# DATAGOUV
+# URL: https://www.data.gouv.fr
+# API DOCUMENTATION: https://www.data.gouv.fr/fr/dataservices/api-catalogue-des-donnees-ouvertes-data-gouv-fr/
 
-# DATAGOUV_DOCUMENTATION: https://www.data.gouv.fr/fr/dataservices/api-catalogue-des-donnees-ouvertes-data-gouv-fr/
 DATAGOUV_API_URL = "https://www.data.gouv.fr/api/1"
 
-# PAT (Projets Alimentaires Territoriaux): https://france-pat.fr/presentation-de-l-observatoire/
+
+# ------------------------------------------------------------------------------
+# Ma Cantine
+# URL: https://ma-cantine.agriculture.gouv.fr
+
+# Cantines
+MA_CANTINE_DATAGOUV_CANTEEN_DATASET_ID = "registre-national-des-cantines"
+MA_CANTINE_DATAGOUV_CANTEEN_URL = f"https://www.data.gouv.fr/datasets/{MA_CANTINE_DATAGOUV_CANTEEN_DATASET_ID}"
+MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME = "schema_cantines.json"
+MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_PATH = (
+    f"data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME}"
+)
+MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/main/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME}"
+
+# Teledeclarations
+MA_CANTINE_DATAGOUV_TELEDECLARATION_DATASET_ID = "resultats-de-campagnes-de-teledeclaration-des-cantines"
+MA_CANTINE_DATAGOUV_TELEDECLARATION_URL = (
+    f"https://www.data.gouv.fr/datasets/{MA_CANTINE_DATAGOUV_TELEDECLARATION_DATASET_ID}"
+)
+MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME = "schema_teledeclarations.json"
+MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_PATH = (
+    f"data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME}"
+)
+MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/main/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME}"
+
+
+# ------------------------------------------------------------------------------
+# PAT (Projets Alimentaires Territoriaux)
+# URL: https://france-pat.fr/presentation-de-l-observatoire/
 # Note: data updated twice a year
 # Note: communes can belong to multiple PATs
+
 PAT_DATAGOUV_DATASET_ID = "pat-projets-alimentaires-territoriaux-description"
+PAT_DATAGOUV_URL = f"https://www.data.gouv.fr/datasets/{PAT_DATAGOUV_DATASET_ID}"
 # PAT_DATAGOUV_RESOURCE_ID = "4f2a6bed-e9e3-48eb-aecc-85b08cb984f3"  # 20250224
 PAT_DATAGOUV_RESOURCE_ID = "96606cae-0b3b-4910-9d8b-65e3dd7f1bda"  # 20250224 (ISO-8859-1)
 PAT_DATAGOUV_CSV_URL = "https://static.data.gouv.fr/resources/pat-projets-alimentaires-territoriaux-description/20250224-103639/pats-20250224-win1252.csv"

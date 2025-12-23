@@ -8,6 +8,14 @@ import pandas as pd
 from django.core.files.storage import default_storage
 
 import macantine.etl.utils
+from common.api.datagouv import (
+    MA_CANTINE_DATAGOUV_CANTEEN_DATASET_ID,
+    MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_PATH,
+    MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_URL,
+    MA_CANTINE_DATAGOUV_TELEDECLARATION_DATASET_ID,
+    MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_PATH,
+    MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL,
+)
 from api.views.canteen import CanteenOpenDataListView
 from api.views.diagnostic import DiagnosticTeledeclaredOpenDataListView
 from common.api.datagouv import update_dataset_resources
@@ -150,9 +158,9 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
     def __init__(self):
         super().__init__()
         self.dataset_name = "registre_cantines"
-        self.datagouv_dataset_id = "registre-national-des-cantines"
-        self.schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
-        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_cantines.json"
+        self.datagouv_dataset_id = MA_CANTINE_DATAGOUV_CANTEEN_DATASET_ID
+        self.schema = json.load(open(MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_PATH))
+        self.schema_url = MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_URL
         self.columns = [field["name"] for field in self.schema["fields"]]
         self.view = CanteenOpenDataListView
 
@@ -176,9 +184,9 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self.years = [year]
         self.year = year
         self.dataset_name = f"campagne_td_{year}"
-        self.datagouv_dataset_id = "resultats-de-campagnes-de-teledeclaration-des-cantines"
-        self.schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
-        self.schema_url = "https://raw.githubusercontent.com/betagouv/ma-cantine/staging/data/schemas/export_opendata/schema_teledeclarations.json"
+        self.datagouv_dataset_id = MA_CANTINE_DATAGOUV_TELEDECLARATION_DATASET_ID
+        self.schema = json.load(open(MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_PATH))
+        self.schema_url = MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL
         self.view = DiagnosticTeledeclaredOpenDataListView
         self.df = None
 
