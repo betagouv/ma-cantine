@@ -161,7 +161,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
-        self.assertEqual(len(errors), 11, errors)
+        self.assertEqual(body["errorCount"], 11, errors)
         # Invalid year
         self.assertEqual(errors[0]["field"], "année_bilan")
         self.assertTrue(errors[0]["message"].startswith("L'année doit être composée de 4 chiffres"))
@@ -213,7 +213,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(Diagnostic.objects.count(), 0)
         errors = body["errors"]
-        self.assertEqual(len(errors), 7, errors)
+        self.assertEqual(body["errorCount"], 7, errors)
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
@@ -256,7 +256,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(body["errorCount"], 1)
         self.assertEqual(
             body["errors"][0]["message"],
             "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
@@ -303,7 +303,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body["errors"]), 0)
+        self.assertEqual(body["errorCount"], 0)
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.valeur_totale, 1000)
         self.assertEqual(diagnostic.valeur_bio, 500)
@@ -326,7 +326,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()
-            self.assertEqual(len(body["errors"]), 1)
+            self.assertEqual(body["errorCount"], 1)
             self.assertEqual(
                 body["errors"][0]["message"],
                 "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration.",
@@ -340,7 +340,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()
-            self.assertEqual(len(body["errors"]), 0)
+            self.assertEqual(body["errorCount"], 0)
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.valeur_totale, 1000)
 
@@ -375,5 +375,5 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(body["errorCount"], 1)
         self.assertIn("Une erreur inconnue", body["errors"][0]["message"])
