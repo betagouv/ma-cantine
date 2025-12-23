@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.47.1](https://github.com/betagouv/ma-cantine/compare/v2025.47.0...v2025.47.1) (2025-12-23)
+
+
+### Documentation
+
+* **Open Data:** mettre les constants dans datagouv.py & documenter l'ajout de nouveaux fichiers ([#6079](https://github.com/betagouv/ma-cantine/issues/6079)) ([9f10193](https://github.com/betagouv/ma-cantine/commit/9f101932481bba713d3397bc799f0f2991b9f157))
+
 ## [2025.47.0](https://github.com/betagouv/ma-cantine/compare/v2025.46.0...v2025.47.0) (2025-12-23)
 
 
