@@ -26,6 +26,7 @@ every_minute = crontab(minute="*/1")  # For testing purposes
 hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
 nightly_0 = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
+nightly_0_30 = crontab(hour=0, minute=30, day_of_week="*")  # Every day at 12:30AM
 nightly_4 = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
 nightly_5 = crontab(hour=5, minute=0, day_of_week="*")  # Every day at 5AM
 weekly = crontab(hour=4, minute=0, day_of_week=6)  # Saturday 4AM
@@ -67,10 +68,15 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.export_dataset_canteen_opendata",
         "schedule": nightly_5,
     },
+    # User data
+    "update_user_data": {
+        "task": "macantine.tasks.update_user_data",
+        "schedule": nightly_0,
+    },
     # Brevo
     "update_brevo_contacts": {
         "task": "macantine.tasks.update_brevo_contacts",
-        "schedule": nightly_0,
+        "schedule": nightly_0_30,
     },
 }
 
