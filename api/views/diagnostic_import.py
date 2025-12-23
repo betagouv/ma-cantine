@@ -128,7 +128,7 @@ class ImportDiagnosticsView(ABC, APIView):
             except Exception as e:
                 for error in self._parse_errors(e, row, siret):
                     self.errors.append(
-                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number + 1)
+                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number)
                     )
 
     @transaction.atomic
