@@ -31,13 +31,15 @@ from .diagnostic import (  # noqa: F401
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
 )
-
 # from .diagnostic_import_old import (  # noqa: F401
 #     ImportCompleteCentralKitchenView,
 #     ImportCompleteDiagnosticsView,
 #     ImportSimpleCentralKitchenView,
 #     ImportSimpleDiagnosticsView,
 # )
+from .diagnostic_import import (  # noqa: F401
+    DiagnosticsSimpleImportView
+)
 from .diagnostic_teledeclaration import (  # noqa: F401
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
