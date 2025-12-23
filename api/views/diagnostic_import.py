@@ -1,13 +1,10 @@
-import csv
 import logging
 import re
 import time
 from abc import ABC, abstractmethod
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from rest_framework import status
@@ -16,16 +13,9 @@ from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
-from api.serializers import FullCanteenSerializer
-from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
-from common.utils import utils as utils_utils
-from data.models import Canteen, Diagnostic, ImportFailure, ImportType, Sector
+from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource
-from data.models.teledeclaration import Teledeclaration
-
-from .canteen import AddManagerView
-from .utils import camelize
 
 logger = logging.getLogger(__name__)
 
@@ -41,23 +31,10 @@ class ImportDiagnosticsView(ABC, APIView):
 
     def __init__(self, **kwargs):
         self.diagnostics_created = 0
-        self.teledeclarations = 0
-        self.canteens = {}
         self.errors = []
         self.start_time = None
-        self.encoding_detected = None
         self.file = None
-        self.is_admin_import = False
-        self.expected_header_list = file_import.get_expected_header_list_from_schema_list(
-            [
-                DIAGNOSTICS_SCHEMA_FILE_PATH,
-            ]
-        )
         super().__init__(**kwargs)
-
-    @property
-    @abstractmethod
-    def final_value_idx(): ...
 
     @property
     @abstractmethod
@@ -70,9 +47,7 @@ class ImportDiagnosticsView(ABC, APIView):
             with transaction.atomic():
                 self.file = request.data["file"]
                 file_import.validate_file_size(self.file)
-                file_import.validate_file_format(self.file)
                 self._process_file(self.file)
-
                 if self.errors:
                     raise IntegrityError()
         except PermissionDenied as e:
@@ -83,9 +58,6 @@ class ImportDiagnosticsView(ABC, APIView):
         except ValidationError as e:
             self._log_error(e.message)
             self.errors = [{"row": 0, "status": 400, "message": e.message}]
-        except UnicodeDecodeError as e:
-            self._log_error(e.reason)
-            self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
         except Exception as e:
             message = f"Échec lors de la lecture du fichier: {e}"
             self._log_error(message, "exception")
@@ -103,87 +75,39 @@ class ImportDiagnosticsView(ABC, APIView):
             import_type=self.import_type,
         )
 
-    def check_admin_values(self, header):
-        self.is_admin_import = any("admin_" in column for column in header)
-        if self.is_admin_import and not self.request.user.is_staff:
-            raise PermissionDenied(
-                detail="Vous n'êtes pas autorisé à importer des diagnostics avec des champs administratifs. Veuillez supprimer les colonnes commençant par 'admin_'"
-            )
-
     def _process_file(self, file):
-        locations_csv_str = "siret,citycode,postcode\n"
-        has_locations_to_find = False
-
-        filestring = self._decode_file(file)
-        filelines = filestring.splitlines()
-        dialect = csv.Sniffer().sniff(filelines[0])
-
-        csvreader = csv.reader(filelines, dialect=dialect)
-        header = next(csvreader)
-        if not any([set(header).issubset(set(expected_header)) for expected_header in self.expected_header_list]):
-            raise ValidationError(
-                "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus."
-            )
-        self.check_admin_values(header)
-
-        for row_number, row in enumerate(csvreader):
+        print("file")
+        print(file)
+        # TODO : add Validata checks
+        # TODO : add a loop with Validata returned rows
+        rows = []
+        for row_number, row in rows:
             try:
-                canteen, should_update_geolocation = self._save_data_from_row(row)
-                self.canteens[canteen.siret] = canteen
-                if should_update_geolocation and not self.errors:
-                    has_locations_to_find = True
-                    if canteen.city_insee_code:
-                        locations_csv_str += f"{canteen.siret},{canteen.city_insee_code},\n"
-                    else:
-                        locations_csv_str += f"{canteen.siret},,{canteen.postal_code}\n"
-
+                self._save_data_from_row(row)
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     self.errors.append(
                         ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number + 1)
                     )
-        if has_locations_to_find:
-            self._update_location_data(locations_csv_str)
-
-    def _decode_file(self, file):
-        (result, encoding) = file_import.decode_bytes(file.read())
-        self.encoding_detected = encoding
-        return result
 
     @transaction.atomic
     def _save_data_from_row(self, row):
-        if row[0] == "":
-            raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
-        # validate data for format etc, starting with basic non-data-specific row checks
-        self._validate_row(row)
-        ImportDiagnosticsView._validate_canteen(row)
-        manager_emails = self._get_manager_emails_to_notify(row)
         diagnostic_year, values_dict, diagnostic_type = self._validate_diagnostic(row)
-        # return staff-customisable fields
-        (
-            import_source,
-            should_teledeclare,
-            silently_added_manager_emails,
-        ) = self._generate_canteen_meta_fields(row)
-        # create the canteen and potentially the diagnostic
-        canteen, should_update_geolocation = self._update_or_create_canteen(
-            row, import_source, manager_emails, silently_added_manager_emails
-        )
-        if diagnostic_year:
-            diagnostic = self._update_or_create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
-            if should_teledeclare and self.request.user.is_staff:
-                self._teledeclare_diagnostic(diagnostic)
-
-        return (canteen, should_update_geolocation)
-
-    @abstractmethod
-    def _validate_row(self, row): ...
+        print("diagnostic_year")
+        print(diagnostic_year)
+        print("values_dict")
+        print(values_dict)
+        print("diagnostic_type")
+        print(diagnostic_type)
+        canteen = ""  # TODO : find canteen from SIRET and link diagnostic to canteen
+        self._has_canteen_permission(
+            canteen
+        )  # TODO : check if user has permission to create diagnostic for this canteen
+        self._update_or_create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
 
     @abstractmethod
     def _validate_diagnostic(self, row): ...
 
-    # NB: this function should only be called once the data has been validated since by this point a canteen
-    # will have been saved to the DB and we don't want partial imports caused by exceptions from this method
     def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
         diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()
         diagnostic = (
@@ -202,26 +126,6 @@ class ImportDiagnosticsView(ABC, APIView):
         diagnostic.save()
         update_change_reason(diagnostic, f"Mass CSV import. {self.__class__.__name__[:100]}")
         self.diagnostics_created += 1
-        return diagnostic
-
-    def _teledeclare_diagnostic(self, diagnostic):
-        # TODO: replace with Diagnostic.teledeclare() (or delete completely ???)
-        Teledeclaration.validate_diagnostic(diagnostic)
-        try:
-            Teledeclaration.create_from_diagnostic(diagnostic, self.request.user)
-            self.teledeclarations += 1
-        except Exception:
-            raise ValidationError("Ce diagnostic n'a pas été télédéclaré")
-
-    @staticmethod
-    def _should_update_geolocation(canteen, row):
-        if canteen.city:
-            city_code_changed = row[2] and canteen.city_insee_code != row[2].strip()
-            postal_code_changed = row[3] and canteen.postal_code != row[3].strip()
-            return city_code_changed or postal_code_changed
-        else:
-            has_geo_data = canteen.city_insee_code or canteen.postal_code
-            return has_geo_data
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
@@ -238,193 +142,21 @@ class ImportDiagnosticsView(ABC, APIView):
                 pass
         return field_name
 
-    @staticmethod
-    def _get_manager_emails(row):
-        manager_emails = row.split(",")
-        normalized_emails = list(map(lambda x: get_user_model().objects.normalize_email(x.strip()), manager_emails))
-        for email in normalized_emails:
-            validate_email(email)
-        return normalized_emails
-
-    @staticmethod
-    def _add_managers_to_canteen(emails, canteen, send_invitation_mail=True):
-        for email in emails:
-            try:
-                AddManagerView.add_manager_to_canteen(email, canteen, send_invitation_mail=send_invitation_mail)
-            except IntegrityError:
-                pass
-
     def _get_success_response(self):
-        serialized_canteens = (
-            []
-            if len(self.errors)
-            else [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens.values()]
-        )
         body = {
-            "canteens": serialized_canteens,
             "count": 0 if len(self.errors) else self.diagnostics_created,
             "errors": self.errors,
+            "errorCount": len(self.errors),
             "seconds": time.time() - self.start_time,
-            "encoding": self.encoding_detected,
         }
-        if self.request.user.is_staff:
-            body["teledeclarations"] = self.teledeclarations
         return JsonResponse(body, status=status.HTTP_200_OK)
-
-    def _update_location_data(self, locations_csv_str):
-        try:
-            response = fetch_geo_data_from_code_csv(locations_csv_str)
-            for row in csv.reader(response.splitlines()):
-                if row[0] == "siret":
-                    continue  # skip header
-                if row[5] != "":  # city found, so rest of data is found
-                    canteen = self.canteens[row[0]]
-                    canteen.city_insee_code = row[3]
-                    canteen.postal_code = row[4]
-                    canteen.city = row[5]
-                    canteen.department = row[6].split(",")[0]
-                    canteen.save()
-                    update_change_reason(canteen, f"Mass CSV import - Geo data. {self.__class__.__name__[:100]}")
-        except Exception as e:
-            logger.exception(f"Error while updating location data : {repr(e)} - {e}")
 
     @staticmethod
     def _add_error(errors, message, code=400):
         errors.append({"message": message, "code": code})
 
-    @staticmethod
-    def _validate_canteen(row):
-        if not row[2] and not row[3]:
-            raise ValidationError(
-                {"postal_code": "Ce champ ne peut pas être vide si le code INSEE de la ville est vide."}
-            )
-
-    def _get_manager_emails_to_notify(self, row):
-        try:
-            manager_emails = []
-            if len(row) > self.manager_column_idx and row[self.manager_column_idx]:
-                manager_emails = ImportDiagnosticsView._get_manager_emails(row[self.manager_column_idx])
-        except Exception:
-            raise ValidationError(
-                {"email": f"Un adresse email des gestionnaires ({row[self.manager_column_idx]}) n'est pas valide."}
-            )
-        return manager_emails
-
     def _has_canteen_permission(self, canteen):
         return self.request.user in canteen.managers.all()
-
-    def _update_or_create_canteen(
-        self,
-        row,
-        import_source,
-        manager_emails,
-        silently_added_manager_emails,
-        satellite_canteens_count=None,
-    ):
-        siret = utils_utils.normalize_string(row[0])
-        name = row[1].strip()
-        daily_meal_count = row[5].strip()
-        yearly_meal_count = row[6].strip()
-        sector_list = [
-            next(value for value, label in Sector.choices if label == sector.replace("’", "'"))
-            for sector in row[7].strip().split("+")
-            if sector
-        ]
-        management_type = row[9].strip().lower()
-        production_type = row[8].strip().lower()
-        economic_model = row[10].strip().lower()
-        central_producer_siret = utils_utils.normalize_string(row[4])
-        satellite_canteens_count = satellite_canteens_count or None
-        canteen_exists = Canteen.objects.filter(siret=siret).exists()
-        canteen = (
-            Canteen.objects.get(siret=siret)
-            if canteen_exists
-            else Canteen.objects.create(
-                name=name,
-                siret=siret,
-                daily_meal_count=daily_meal_count,
-                yearly_meal_count=yearly_meal_count,
-                sector_list=sector_list,
-                management_type=management_type,
-                production_type=production_type,
-                economic_model=economic_model,
-                central_producer_siret=central_producer_siret,
-                satellite_canteens_count=satellite_canteens_count,
-                creation_source=CreationSource.IMPORT,
-            )
-        )
-
-        if not canteen_exists:
-            update_change_reason(canteen, f"Mass CSV import - canteen creation. {self.__class__.__name__[:100]}")
-
-        if canteen_exists and not self._has_canteen_permission(canteen):
-            raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
-
-        should_update_geolocation = (
-            ImportDiagnosticsView._should_update_geolocation(canteen, row) if canteen_exists else True
-        )
-
-        canteen.name = row[1].strip()
-        canteen.city_insee_code = row[2].strip()
-        canteen.postal_code = row[3].strip()
-        canteen.daily_meal_count = row[5].strip()
-        canteen.yearly_meal_count = row[6].strip()
-        canteen.sector_list = sector_list
-        canteen.production_type = row[8].strip().lower()
-        canteen.management_type = row[9].strip().lower()
-        canteen.economic_model = row[10].strip().lower() if len(row) > 10 else None
-        canteen.central_producer_siret = utils_utils.normalize_string(row[4])
-        canteen.satellite_canteens_count = satellite_canteens_count
-        canteen.import_source = import_source
-
-        canteen.save()
-        update_change_reason(canteen, f"Mass CSV import. {self.__class__.__name__[:100]}")
-
-        if not self.request.user.is_staff:
-            canteen.managers.add(self.request.user)
-        if manager_emails:
-            ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
-        if silently_added_manager_emails:
-            ImportDiagnosticsView._add_managers_to_canteen(
-                silently_added_manager_emails, canteen, send_invitation_mail=False
-            )
-        return (canteen, should_update_geolocation)
-
-    def _generate_canteen_meta_fields(self, row):
-        silent_manager_idx = self.final_value_idx + 1
-        silently_added_manager_emails = []
-        import_source = "Import massif"
-        should_teledeclare = False
-        if len(row) > silent_manager_idx:  # already checked earlier that it's a staff user
-            try:
-                if row[silent_manager_idx]:
-                    silently_added_manager_emails = ImportDiagnosticsView._get_manager_emails(row[silent_manager_idx])
-            except Exception:
-                raise ValidationError(
-                    {
-                        "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[silent_manager_idx]}) n'est pas valide."
-                    }
-                )
-
-            try:
-                import_source = row[silent_manager_idx + 1].strip()
-            except Exception:
-                raise ValidationError({"import_source": "Ce champ ne peut pas être vide."})
-
-            teledeclaration_idx = silent_manager_idx + 2
-            if len(row) > teledeclaration_idx and row[teledeclaration_idx]:
-                if row[teledeclaration_idx] == "teledeclare":
-                    should_teledeclare = True
-                elif row[teledeclaration_idx] == "brouillon":
-                    should_teledeclare = False
-                else:
-                    raise ValidationError(
-                        {
-                            "teledeclaration": f"'{row[teledeclaration_idx]}' n'est pas un statut de télédéclaration valid"
-                        }
-                    )
-
-        return (import_source, should_teledeclare, silently_added_manager_emails)
 
     def _parse_errors(self, e, row):  # noqa: C901
         errors = []
@@ -456,13 +188,6 @@ class ImportDiagnosticsView(ABC, APIView):
                 ImportDiagnosticsView._add_error(
                     errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
                 )
-        elif isinstance(e, Canteen.MultipleObjectsReturned):
-            ImportDiagnosticsView._add_error(
-                errors,
-                f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
-            )
-        elif isinstance(e, FileFormatError):
-            ImportDiagnosticsView._add_error(errors, e.detail)
         if not errors:
             ImportDiagnosticsView._add_error(
                 errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
@@ -471,55 +196,18 @@ class ImportDiagnosticsView(ABC, APIView):
 
 
 class DiagnosticsSimpleImportView(ImportDiagnosticsView):
-    final_value_idx = 22
     total_value_idx = 13
     import_type = ImportType.DIAGNOSTIC_SIMPLE
 
-    def _validate_row(self, row):
-        try:
-            diagnostic_year = row[self.year_idx]
-            # Flake formatting bug: https://github.com/PyCQA/pycodestyle/issues/373#issuecomment-760190686
-            if not diagnostic_year and any(row[13 : self.final_value_idx]):  # noqa: E203
-                raise ValidationError({"year": "L'année est obligatoire pour créer un diagnostic."})
-        except IndexError:
-            pass
-
     def _validate_diagnostic(self, row):
-        # NB: if year is given, appro data is required, else only canteen data required
         values_dict = None
-        diagnostic_year = row[self.year_idx] if len(row) > self.year_idx else None
-
-        if diagnostic_year:
-            try:
-                diagnostic_year = int(diagnostic_year.strip())
-            except ValueError:
-                raise ValidationError({"year": f"La valeur « {row[self.year_idx]} » doit être un nombre entier."})
-            mandatory_fields = [
-                "valeur_totale",
-            ]
-            appro_fields_length = len(row) - self.total_value_idx
-            value_fields = Diagnostic.SIMPLE_APPRO_FIELDS_FOR_IMPORT[:appro_fields_length]
-            values_dict = {}
-            value_offset = 0
-            for value in value_fields:
-                value_offset = value_offset + 1
-                value_idx = self.year_idx + value_offset
-                if value in mandatory_fields and not row[value_idx]:
-                    error = {}
-                    error[value] = "Ce champ ne peut pas être vide."
-                    raise ValidationError(error)
-                try:
-                    values_dict[value] = (
-                        None if not row[value_idx] else Decimal(row[value_idx].strip().replace(",", "."))
-                    )
-                except InvalidOperation:
-                    error = {}
-                    # TODO: This should take into account more number formats and be factored out to utils
-                    error[value] = f"La valeur « {row[value_idx]} » doit être un nombre décimal."
-                    raise ValidationError(error)
+        diagnostic_year = row[self.year_idx]
+        appro_fields_length = len(row) - self.total_value_idx
+        value_fields = Diagnostic.SIMPLE_APPRO_FIELDS_FOR_IMPORT[:appro_fields_length]
+        values_dict = {}
+        value_offset = 0
+        for value in value_fields:
+            value_offset = value_offset + 1
+            value_idx = self.year_idx + value_offset
+            values_dict[value] = None if not row[value_idx] else Decimal(row[value_idx].strip().replace(",", "."))
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
-
-
-class ImportSimpleCentralKitchenView(DiagnosticsSimpleImportView):
-    final_value_idx = 23
-    import_type = ImportType.CC_SIMPLE
