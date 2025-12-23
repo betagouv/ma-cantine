@@ -201,41 +201,6 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         )
 
     # @authenticate
-    # def test_optional_appro_values(self, mock):
-    #     """
-    #     For simplified diagnostics, an empty appro value is considered unknown
-    #     """
-    #     with open(
-    #         "./api/tests/files/diagnostics/diagnostics_simple_good_separator_semicolon_no_appro.csv"
-    #     ) as diag_file:
-    #         response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
-
-    #     body = response.json()
-    #     self.assertEqual(len(body["errors"]), 0)
-    #     self.assertEqual(Diagnostic.objects.count(), 1)
-    #     diagnostic = Diagnostic.objects.first()
-
-    #     self.assertEqual(diagnostic.valeur_totale, 1000)
-    #     self.assertIsNone(diagnostic.valeur_bio)
-    #     self.assertEqual(diagnostic.valeur_siqo, 0)
-
-    # @authenticate
-    # def test_mandatory_total_simplified(self, mock):
-    #     """
-    #     For simplified diagnostics, only the total HT is mandatory in the appro fields
-    #     """
-    #     file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_separator_semicolon_no_total.csv"
-    #     with open(file_path) as diag_file:
-    #         response = self.client.post(f"{reverse('import_diagnostics')}", {"file": diag_file})
-    #     self.assertEqual(Diagnostic.objects.count(), 0)
-    #     assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
-    #     body = response.json()
-    #     self.assertEqual(len(body["errors"]), 1)
-    #     self.assertEqual(
-    #         body["errors"][0]["message"], "Champ 'Valeur totale annuelle HT' : Ce champ ne peut pas être vide."
-    #     )
-
-    # @authenticate
     # def test_update_existing_diagnostic(self, mock):
     #     """
     #     If a diagnostic already exists for the canteen, update the diag and canteen
