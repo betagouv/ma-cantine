@@ -40,8 +40,8 @@ const approBadge = "/static/images/badges/appro.svg"
           :viandesVolaillesProduitsDeLaMerEgalimPercent="stats.viandesVolaillesProduitsDeLaMerEgalimPercent"
         />
       </li>
-      <li>
-        <ObservatoryGraphMeatFrance :viandesVolaillesFrancePercent="stats.viandesVolaillesFrancePercent" />
+      <li class="fr-hidden">
+        <ObservatoryGraphMeatFrance :viandesVolaillesFrancePercent="stats.viandesVolaillesFrancePercent"/>
       </li>
     </ol>
   </div>
