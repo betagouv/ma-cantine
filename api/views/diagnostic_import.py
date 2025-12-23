@@ -212,7 +212,7 @@ class ImportDiagnosticsView(ABC, APIView):
                         if field != "__all__":
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
                         ImportDiagnosticsView._add_error(errors, user_message)
-            if hasattr(e, "message"):
+            elif hasattr(e, "message"):
                 ImportDiagnosticsView._add_error(errors, e.message)
             elif hasattr(e, "params"):
                 ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
