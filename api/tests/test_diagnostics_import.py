@@ -156,21 +156,21 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
             "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
         )
 
-    # @authenticate
-    # def test_diagnostic_no_header(self, mock):
-    #     """
-    #     A file should not be valid if doesn't contain a valid header
-    #     """
-    #     with open("./api/tests/files/diagnostics/diagnostics_simple_bad_no_header.csv") as diag_file:
-    #         response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     body = response.json()
-    #     self.assertEqual(body["count"], 0)
-    #     self.assertEqual(len(body["errors"]), 1)
-    #     self.assertEqual(
-    #         body["errors"][0]["message"],
-    #         "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-    #     )
+    @authenticate
+    def test_diagnostic_no_header(self):
+        """
+        A file should not be valid if doesn't contain a valid header
+        """
+        with open("./api/tests/files/diagnostics/diagnostics_simple_bad_no_header.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+        )
 
     # @override_settings(CSV_IMPORT_MAX_SIZE=1)
     # @authenticate
