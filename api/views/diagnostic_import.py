@@ -177,7 +177,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
                 ImportDiagnosticsView._add_error(
-                    errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
+                    errors, "Une erreur s'est produite en créant un bilan pour cette ligne"
                 )
         elif isinstance(e, ValueError):
             match = self.value_error_regex.search(str(e))
@@ -190,7 +190,7 @@ class ImportDiagnosticsView(ABC, APIView):
                 )
         if not errors:
             ImportDiagnosticsView._add_error(
-                errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
+                errors, "Une erreur s'est produite en créant un bilan pour cette ligne"
             )
         return errors
 
