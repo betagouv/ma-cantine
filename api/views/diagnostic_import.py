@@ -2,7 +2,6 @@ import logging
 import re
 import time
 from abc import ABC, abstractmethod
-from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
@@ -276,5 +275,5 @@ class DiagnosticsSimpleImportView(ImportDiagnosticsView):
         offset_row = 2  # Two columns before value_fields in row
         for idx, value in enumerate(value_fields):
             value_idx = idx + offset_row
-            values_dict[value] = None if not row[value_idx] else Decimal(row[value_idx].strip())
+            values_dict[value] = None if not row[value_idx] else row[value_idx]
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
