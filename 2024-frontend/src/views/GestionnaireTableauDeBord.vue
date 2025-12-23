@@ -40,6 +40,10 @@ const links = [
     to: { name: "GestionnaireImportBilansSimples" },
     label: "Importer des bilans simples",
   },
+  {
+    to: { name: "GestionnaireImport" },
+    label: "Importer des bilans détaillés",
+  },
 ]
 
 /* SEARCH */
