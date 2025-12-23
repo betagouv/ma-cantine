@@ -188,25 +188,17 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
             errors.pop(0)["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
 
-    # @authenticate
-    # def test_import_wrong_header(self, mock):
-    #     with open("./api/tests/files/diagnostics/diagnostics_complete_bad_no_header.csv") as diag_file:
-    #         response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
-    #     body = response.json()
+    @authenticate
+    def test_import_wrong_header(self):
 
-    #     self.assertEqual(
-    #         body["errors"][0]["message"],
-    #         "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-    #     )
+        with open("./api/tests/files/diagnostics/diagnostics_simple_bad_wrong_header.csv") as diag_file:
+            response = self.client.post(f"{reverse('import_diagnostics_simple')}", {"file": diag_file})
+        body = response.json()
 
-    #     with open("./api/tests/files/diagnostics/diagnostics_complete_bad_wrong_header.csv") as diag_file:
-    #         response = self.client.post(f"{reverse('import_complete_diagnostics')}", {"file": diag_file})
-    #     body = response.json()
-
-    #     self.assertEqual(
-    #         body["errors"][0]["message"],
-    #         "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-    #     )
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+        )
 
     # @authenticate
     # def test_optional_appro_values(self, mock):
