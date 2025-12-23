@@ -15,14 +15,7 @@ from data.models.creation_source import CreationSource
 NEXT_YEAR = datetime.date.today().year + 1
 
 
-class DiagnosticsSimpleImportApiTest(APITestCase):
-    def test_unauthenticated_import_call(self):
-        """
-        Expect 403 if unauthenticated
-        """
-        response = self.client.post(reverse("import_diagnostics_simple"))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
+class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
     @authenticate
     def test_diagnostics_created(self):
         """
@@ -134,7 +127,35 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
     @authenticate
-    def test_error_format_collection(self):
+    def test_update_existing_diagnostic(self):
+        """
+        If a diagnostic already exists for the canteen,
+        update the diag with data in import file
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
+
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["errorCount"], 0)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(diagnostic.valeur_bio, 500)
+
+
+class DiagnosticsSimpleImportApiErrorTest(APITestCase):
+    def test_unauthenticated_import_call(self):
+        """
+        Expect 403 if unauthenticated
+        """
+        response = self.client.post(reverse("import_diagnostics_simple"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_error_collection_format(self):
         # creating canteens
         CanteenFactory(siret="50044221500025", managers=[authenticate.user])
         CanteenFactory(siret="82821513700013", managers=[authenticate.user])
@@ -247,7 +268,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         )
 
     @authenticate
-    def test_diagnostic_no_header(self):
+    def test_file_no_header(self):
         """
         A file should not be valid if doesn't contain a valid header
         """
@@ -264,7 +285,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
 
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     @authenticate
-    def test_max_size(self):
+    def test_file_above_max_size(self):
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
@@ -279,7 +300,17 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         )
 
     @authenticate
-    def test_import_wrong_header(self):
+    def test_file_bad_format(self):
+        with open("./api/tests/files/diagnostics/diagnostics_simple_bad_file_format.ods", "rb") as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["errorCount"], 1)
+        self.assertIn("Une erreur inconnue", body["errors"][0]["message"])
+
+    @authenticate
+    def test_file_wrong_header(self):
         with open("./api/tests/files/diagnostics/diagnostics_simple_bad_wrong_header.csv") as diag_file:
             response = self.client.post(f"{reverse('import_diagnostics_simple')}", {"file": diag_file})
         body = response.json()
@@ -290,26 +321,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         )
 
     @authenticate
-    def test_update_existing_diagnostic(self):
-        """
-        If a diagnostic already exists for the canteen,
-        update the diag with data in import file
-        """
-        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
-
-        with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["errorCount"], 0)
-        diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.valeur_totale, 1000)
-        self.assertEqual(diagnostic.valeur_bio, 500)
-
-    @authenticate
-    def test_update_diagnostic_conditional_on_teledeclaration_status(self):
+    def test_update_diagnostic_teledeclared(self):
         """
         If a diagnostic with a valid TD already exists for the canteen, throw an error
         If the TD is cancelled, allow update
@@ -345,7 +357,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
             self.assertEqual(diagnostic.valeur_totale, 1000)
 
     @authenticate
-    def test_fail_user_not_canteen_manager(self):
+    def test_user_not_canteen_manager(self):
         CanteenFactory(siret="21340172201787", managers=[])
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
@@ -356,7 +368,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(body["errors"][0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
     @authenticate
-    def test_fail_no_canteen_found_with_siret(self):
+    def test_canteen_not_found_with_siret(self):
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
 
@@ -367,13 +379,3 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
             body["errors"][0]["message"],
             "Une cantine avec le siret « 21340172201787 » n'existe pas sur la plateforme.",
         )
-
-    @authenticate
-    def test_fail_import_bad_format(self):
-        with open("./api/tests/files/diagnostics/diagnostics_simple_bad_file_format.ods", "rb") as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["errorCount"], 1)
-        self.assertIn("Une erreur inconnue", body["errors"][0]["message"])
