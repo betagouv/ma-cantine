@@ -94,8 +94,47 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
         self.assertIn("seconds", body)
 
+    @authenticate
+    def test_diagnostics_created_excel_file(self):
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+        self.assertEqual(Canteen.objects.count(), 1)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good.xlsx", "rb") as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(body["errorCount"], 0)
+        self.assertEqual(Diagnostic.objects.count(), 1)
+
+        diagnostic_1 = Diagnostic.objects.get(canteen_id=canteen.id)
+        self.assertEqual(diagnostic_1.year, 2024)
+        self.assertEqual(diagnostic_1.valeur_totale, 1000)
+        self.assertEqual(diagnostic_1.valeur_bio, 500)
+        self.assertEqual(diagnostic_1.valeur_bio_dont_commerce_equitable, 250)
+        self.assertEqual(diagnostic_1.valeur_siqo, Decimal("100.1"))
+        self.assertEqual(diagnostic_1.valeur_externalites_performance, 10)
+        self.assertEqual(diagnostic_1.valeur_egalim_autres, 20)
+        self.assertEqual(diagnostic_1.valeur_egalim_autres_dont_commerce_equitable, 15)
+        self.assertEqual(diagnostic_1.valeur_viandes_volailles, 2)
+        self.assertEqual(diagnostic_1.valeur_viandes_volailles_egalim, 1)
+        self.assertEqual(diagnostic_1.valeur_viandes_volailles_france, 1)
+        self.assertEqual(diagnostic_1.valeur_produits_de_la_mer, 3)
+        self.assertEqual(diagnostic_1.valeur_produits_de_la_mer_egalim, 1)
+        self.assertEqual(diagnostic_1.valeur_produits_de_la_mer_france, 1)
+        self.assertEqual(diagnostic_1.valeur_fruits_et_legumes_france, Decimal("1.1"))
+        self.assertEqual(diagnostic_1.valeur_charcuterie_france, Decimal("1.2"))
+        self.assertEqual(diagnostic_1.valeur_produits_laitiers_france, Decimal("1.3"))
+        self.assertEqual(diagnostic_1.valeur_boulangerie_france, Decimal("1.4"))
+        self.assertEqual(diagnostic_1.valeur_boissons_france, Decimal("1.5"))
+        self.assertEqual(diagnostic_1.valeur_autres_france, Decimal("1.6"))
+        self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
+
     # @authenticate
-    # def test_validata_errors(self ):
+    # def test_error_format_collection(self ):
     #   siret
     #   siret dupliqué
     #   année
