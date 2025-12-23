@@ -14,13 +14,13 @@ const route = useRoute()
 /* Data */
 const schemaFile = "bilans_simple.json"
 const exampleFile = {
-  name: "importer_des_bilans_simplifies_exemple.csv",
+  name: "importer_des_bilans_simples_exemple.csv",
   size: "606 octets",
 }
 const filePreviews = {
-  success: "bilans_simple_fichier_exemple_fichier_accepte.jpg?v=1",
+  success: "importer_des_bilans_simples_exemple_fichier_accepte.jpg?v=1",
   altSuccess: "Exemple de fichier accepté pour importer des bilans simples, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "bilans_simple_fichier_exemple_fichier_rejete.jpg?v=2",
+  error: "importer_des_bilans_simples_exemple_fichier_rejete.jpg?v=1",
   altError: "Exemple de fichier rejeté pour importer des bilans simples, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 
