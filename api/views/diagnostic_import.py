@@ -52,8 +52,6 @@ class ImportDiagnosticsView(ABC, APIView):
                 schema_name = DIAGNOSTICS_SCHEMA_FILE_NAME
                 schema_url = DIAGNOSTICS_SCHEMA_URL
 
-                print(self.file)
-
                 # Schema validation (Validata)
                 validata_response = validata.validate_file_against_schema(self.file, schema_url)
 
@@ -93,7 +91,6 @@ class ImportDiagnosticsView(ABC, APIView):
                 with transaction.atomic():
                     self._process_file(validata_response["resource_data"])
                     if self.errors:
-                        print("ERRREURS ICI")
                         raise IntegrityError()
 
         except PermissionDenied as e:
@@ -129,8 +126,6 @@ class ImportDiagnosticsView(ABC, APIView):
                     continue
                 self._save_data_from_row(row)
             except Exception as e:
-                print("ERREUR 2", row, siret)
-                print(self._parse_errors)
                 for error in self._parse_errors(e, row, siret):
                     self.errors.append(
                         ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number + 1)
@@ -163,8 +158,6 @@ class ImportDiagnosticsView(ABC, APIView):
             )
         diagnostic.diagnostic_type = diagnostic_type
         for key, value in values_dict.items():
-            print("key", key)
-            print("value", value)
             setattr(diagnostic, key, value)
         diagnostic.full_clean()
         diagnostic.save()
