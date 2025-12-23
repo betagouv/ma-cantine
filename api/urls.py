@@ -173,7 +173,7 @@ urlpatterns = {
     ),
     path("importPurchases/", PurchasesImportView.as_view(), name="purchases_import"),
     path("importCanteens/", CanteensImportView.as_view(), name="canteens_import"),
-    path("importDiagnostics/simple/", DiagnosticsSimpleImportView.as_view(), name="import_diagnostics"),
+    path("importDiagnostics/simple/", DiagnosticsSimpleImportView.as_view(), name="import_diagnostics_simple"),
     # path("importDiagnostics/simple/", ImportSimpleDiagnosticsView.as_view(), name="import_diagnostics"),
     # path("importDiagnostics/complete/", ImportCompleteDiagnosticsView.as_view(), name="import_complete_diagnostics"),
     # path("importDiagnostics/ccSimple/", ImportSimpleCentralKitchenView.as_view(), name="import_cc_diagnostics"),
