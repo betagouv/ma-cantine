@@ -218,7 +218,7 @@ class User(AbstractUser):
         """
         See macantine/brevo.py for usage.
         """
-        user_data_nb_cantines = {
+        data_canteen_fields_dict = {
             f"MA_CANTINE_{field.upper()}": self.data.get(field, 0) if self.data else 0
             for field in self.DATA_CANTEEN_FIELDS
         }
@@ -234,7 +234,7 @@ class User(AbstractUser):
             "MA_CANTINE_COMPTE_ELU_E": self.is_elected_official,
             # user canteen info
             "MA_CANTINE_GERE_UN_ETABLISSEMENT": self.data.get("nb_cantines", 0) > 0 if self.data else False,
-            **user_data_nb_cantines,
+            **data_canteen_fields_dict,
             # user canteen diagnostic info
             "MA_CANTINE_MANQUE_BILAN_DONNEES_2024": self.has_missing_diagnostic_for_year(2024),
             "MA_CANTINE_MANQUE_BILAN_DONNEES_2023": self.has_missing_diagnostic_for_year(2023),
