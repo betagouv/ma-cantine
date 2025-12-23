@@ -35,9 +35,9 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
 
     def transform_canteen_arrayfields(self, prefix=""):
         # sector_list, pat_list & pat_lib_list
-        self.df[prefix + "sector_list"] = self.df[prefix + "sector_list"].apply(lambda x: ",".join(x))
-        self.df[prefix + "pat_list"] = self.df[prefix + "pat_list"].apply(lambda x: ",".join(x))
-        self.df[prefix + "pat_lib_list"] = self.df[prefix + "pat_lib_list"].apply(lambda x: ",".join(x))
+        for col in [prefix + "sector_list", prefix + "pat_list", prefix + "pat_lib_list"]:
+            if col in self.df.columns:
+                self.df[col] = self.df[col].apply(lambda x: ",".join(x))
 
     def transform_canteen_geo_data(self, prefix=""):
         logger.info("Start fetching communes details")
@@ -157,16 +157,13 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         self.view = CanteenOpenDataListView
 
     def transform_dataset(self):
-        logger.info("Canteens : Clean dataset...")
+        logger.info("Canteens: Clean dataset...")
         self._clean_dataset()
-
-        logger.info("Canteens : Transform ChoiceFields...")
+        logger.info("Canteens: Transform ChoiceFields...")
         self.transform_canteen_choicefields()
-
-        logger.info("Canteens : Transform ArrayFields...")
+        logger.info("Canteens: Transform ArrayFields...")
         self.transform_canteen_arrayfields()
-
-        logger.info("Canteens : Fill geo name...")
+        logger.info("Canteens: Fill geo name...")
         start = time.time()
         self.transform_canteen_geo_data()
         end = time.time()
@@ -185,21 +182,14 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self.view = DiagnosticTeledeclaredOpenDataListView
         self.df = None
 
-    def transform_sectors(self) -> pd.Series:
-        sectors = self.df["canteen_sectors"]
-        if not sectors.isnull().all():
-            sectors = sectors.apply(lambda x: list(map(lambda y: macantine.etl.utils.format_sector(y), x)))
-            sectors = sectors.apply(macantine.etl.utils.format_list)
-        return sectors
-
     def transform_dataset(self):
-        logger.info("TD campagne : Clean dataset...")
+        logger.info("TD campagne: Clean dataset...")
         self._clean_dataset()
-        logger.info("TD campagne : Format the decimals...")
+        logger.info("TD campagne: Format the decimals...")
         self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
-        logger.info("TD campagne : Transform ChoiceFields...")
+        logger.info("TD campagne: Transform ChoiceFields...")
         self.transform_canteen_choicefields(prefix="canteen_")
-        logger.info("TD campagne : Transform sectors...")
-        self.df["canteen_sectors"] = self.transform_sectors()
-        logger.info("TD Campagne : Fill geo name...")
+        logger.info("TD campagne: Transform Canteen ArrayFields...")
+        self.transform_canteen_arrayfields(prefix="canteen_")
+        logger.info("TD campagne: Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
