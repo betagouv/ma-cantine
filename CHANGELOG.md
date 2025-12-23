@@ -6,6 +6,31 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.47.0](https://github.com/betagouv/ma-cantine/compare/v2025.46.0...v2025.47.0) (2025-12-23)
+
+
+### Nouveautés
+
+* **Observatoire:** rend les statistiques de la campagne de télédéclaration 2025 publiques ([#6068](https://github.com/betagouv/ma-cantine/issues/6068)) ([2e79822](https://github.com/betagouv/ma-cantine/commit/2e798229945eca17e417b888bd169ee31e8f7e75))
+* **Open Data:** exporte les données de la campagne de télédéclaration 2025 ([#6073](https://github.com/betagouv/ma-cantine/issues/6073)) ([51ed5cf](https://github.com/betagouv/ma-cantine/commit/51ed5cf1f907d9562550148de9cfa230a20f18e5))
+* **Utilisateurs:** Brevo: utiliser les données stockées dans le nouveau champ 'data' ([#6072](https://github.com/betagouv/ma-cantine/issues/6072)) ([c1aea24](https://github.com/betagouv/ma-cantine/commit/c1aea246b281455e40d299e29d6de559547220a5))
+* **Utilisateurs:** stocker toutes les nuits des données en lien avec les cantines gérées ([#6069](https://github.com/betagouv/ma-cantine/issues/6069)) ([48775c5](https://github.com/betagouv/ma-cantine/commit/48775c5af4e32e226ac60f64192de7c89e5ac7ae))
+
+
+### Améliorations
+
+* **Open Data:** mieux exporter les secteurs des cantines ([#6076](https://github.com/betagouv/ma-cantine/issues/6076)) ([54d75c1](https://github.com/betagouv/ma-cantine/commit/54d75c15a56f08fe8acda919fd59686201160623))
+
+
+### Corrections (bugs, typos...)
+
+* **Observatoire:** cache temporairement le graphique "Viandes origine France" ([#6077](https://github.com/betagouv/ma-cantine/issues/6077)) ([b5a02db](https://github.com/betagouv/ma-cantine/commit/b5a02db2972ddbe61c2a3e4797fa5abdb5bb7af5))
+
+
+### Technique
+
+* **Cantines:** évite d'avoir à dupliquer les QuerySet dans Manager ([#6071](https://github.com/betagouv/ma-cantine/issues/6071)) ([4e3fe60](https://github.com/betagouv/ma-cantine/commit/4e3fe60338b5ee0f80946aba89c626ad969c39cc))
+
 ## [2025.46.0](https://github.com/betagouv/ma-cantine/compare/v2025.45.1...v2025.46.0) (2025-12-22)
 
 
