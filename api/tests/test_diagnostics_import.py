@@ -97,6 +97,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
     # @authenticate
     # def test_validata_errors(self ):
     #   siret
+    #   siret dupliqué
     #   année
     #   autre champs obligatoire
     #   champs avec un text au lieu d'un nombre attendu
@@ -206,11 +207,10 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         If a diagnostic already exists for the canteen,
         update the diag with data in import file
         """
-        CanteenFactory(siret="73282932000074", managers=[authenticate.user])
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
 
-        with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
             response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -228,14 +228,13 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         If the TD is cancelled, allow update
         """
         date_in_2024_teledeclaration_campaign = "2025-01-30"
-        CanteenFactory(siret="73282932000074", managers=[authenticate.user])
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
 
         with freeze_time(date_in_2024_teledeclaration_campaign):
             diagnostic.teledeclare(applicant=authenticate.user)
 
-            with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+            with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
                 response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -249,7 +248,7 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
 
             # now test cancelled TD
             diagnostic.cancel()
-            with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
+            with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
                 response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
