@@ -244,31 +244,9 @@ class DiagnosticsSimpleImportView(ImportDiagnosticsView):
 
     def _validate_diagnostic(self, row):
         values_dict = {}
-        # TODO : move constants
-        value_fields = [
-            "valeur_totale",
-            "valeur_bio",
-            "valeur_bio_dont_commerce_equitable",
-            "valeur_siqo",
-            "valeur_externalites_performance",
-            "valeur_egalim_autres",
-            "valeur_egalim_autres_dont_commerce_equitable",
-            "valeur_viandes_volailles",
-            "valeur_viandes_volailles_egalim",
-            "valeur_viandes_volailles_france",
-            "valeur_produits_de_la_mer",
-            "valeur_produits_de_la_mer_egalim",
-            "valeur_produits_de_la_mer_france",
-            "valeur_fruits_et_legumes_france",
-            "valeur_charcuterie_france",
-            "valeur_produits_laitiers_france",
-            "valeur_boulangerie_france",
-            "valeur_boissons_france",
-            "valeur_autres_france",
-        ]
         diagnostic_year = row[1]
         offset_row = 2  # Two columns before value_fields in row
-        for idx, value in enumerate(value_fields):
+        for idx, value in enumerate(Diagnostic.SIMPLE_APPRO_FIELDS):
             value_idx = idx + offset_row
             values_dict[value] = None if not row[value_idx] else row[value_idx]
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
