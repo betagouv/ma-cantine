@@ -27,9 +27,11 @@ const exampleFile = {
 /* Sucess */
 const showModal = ref(false)
 const diagnosticsCount = ref(0)
+const successMessage = ref("")
 
 const success = (count) => {
   diagnosticsCount.value = count
+  successMessage.value = count > 1 ? `Les ${count} bilans simples ont été importés avec succès` : 'Le bilan simple a été importé avec succès'
   showModal.value = true
 }
 </script>
@@ -45,7 +47,7 @@ const success = (count) => {
   <ImportFileUpload @success="success" apiUrl="importDiagnostics/simple" eventMatomo="import-diagnostics-success"/>
   <ImportSuccessModal
     :opened="showModal"
-    :message="`${diagnosticsCount} bilans simples ont été importés avec succès`"
+    :message="successMessage"
     @close="showModal = false"
   />
   <ImportHelp />
