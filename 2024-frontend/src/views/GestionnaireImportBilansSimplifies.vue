@@ -1,11 +1,11 @@
 <script setup>
-// import { ref } from "vue"
+import { ref } from "vue"
 import { useRoute } from "vue-router"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
-// import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-// import ImportFileUpload from "@/components/ImportFileUpload.vue"
+import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
+import ImportFileUpload from "@/components/ImportFileUpload.vue"
 // import ImportFilesExample from "@/components/ImportFilesExample.vue"
 
 /* Router */
@@ -25,13 +25,13 @@ const exampleFile = {
 // }
 
 /* Sucess */
-// const showModal = ref(false)
-// const purchaseCount = ref(0)
+const showModal = ref(false)
+const diagnosticsCount = ref(0)
 
-// const success = (count) => {
-//   purchaseCount.value = count
-//   showModal.value = true
-// }
+const success = (count) => {
+  diagnosticsCount.value = count
+  showModal.value = true
+}
 </script>
 
 <template>
@@ -40,17 +40,13 @@ const exampleFile = {
     Notre outil d’import de masse vous permet d’ajouter les bilans simplifiés de toutes vos cantines d’un coup.
   </p>
   <ImportExplanation :exampleFile/>
-  <!--
-  <ImportFilesExample :filePreviews />
--->
+  <!--<ImportFilesExample :filePreviews />-->
   <ImportSchemaTable :schemaFile />
-  <!--
   <ImportFileUpload @success="success" apiUrl="" eventMatomo=""/>
   <ImportSuccessModal
     :opened="showModal"
-    :message=""
+    :message="`${diagnosticsCount} bilans simples ont été importés avec succès`"
     @close="showModal = false"
   />
-  -->
   <ImportHelp />
 </template>
