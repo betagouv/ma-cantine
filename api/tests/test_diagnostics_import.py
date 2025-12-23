@@ -95,120 +95,66 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertIn("seconds", body)
 
     # @authenticate
-    # def test_error_collection(self, mock):
-    #     """
-    #     If errors occur, discard the file and return the errors with row and message
-    #     """
-    #     # creating 2 canteens with same siret here to error when this situation exists IRL
-    #     CanteenFactory(siret="42111303053388")
-    #     canteen_with_same_siret = CanteenFactory()
-    #     Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="42111303053388")
+    # def test_validata_errors(self ):
+    #   siret
+    #   année
+    #   autre champs obligatoire
+    #   champs avec un text au lieu d'un nombre attendu
 
-    #     file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
-    #     with open(file_path) as diag_file:
-    #         response = self.client.post(reverse("import_diagnostics"), {"file": diag_file})
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(Diagnostic.objects.count(), 0)
-    #     assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
-    #     body = response.json()
-    #     self.assertEqual(body["count"], 0)
-    #     # no new objects should have been saved to the DB since it failed
-    #     self.assertEqual(Canteen.objects.count(), 2)
-    #     self.assertEqual(Diagnostic.objects.count(), 0)
-    #     errors = body["errors"]
-    #     self.assertEqual(len(errors), 22, errors)
-    #     self.assertEqual(errors[0]["row"], 1)
-    #     self.assertEqual(errors[0]["status"], 400)
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'année' : L'année est obligatoire pour créer un diagnostic.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'année' : La valeur « . » doit être un nombre entier.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'repas par jour' : La valeur «\xa0not a number\xa0» doit être un nombre entier.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'repas par jour' : Le champ doit être un nombre entier.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'mode de production' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'Valeur totale annuelle HT' : La valeur « invalid total » doit être un nombre décimal.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         f"Champ 'année' : L'année doit être comprise entre 2019 et {NEXT_YEAR}.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 300, est plus que le total, 20",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'siret' : Le siret de la cantine ne peut pas être vide",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'Modèle économique' : La valeur «\xa0'blah'\xa0» n’est pas un choix valide.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'repas par jour' : Le champ ne peut pas être vide.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'nom' : Ce champ ne peut pas être vide.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'code postal' : Ce champ ne peut pas être vide si le code INSEE de la ville est vide.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Plusieurs cantines correspondent au SIRET 42111303053388. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         # TODO: is this the best field to point to as being wrong? hors bio could be confusing
-    #         "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'siret' : 14 caractères numériques sont attendus",
-    #     )
-    #     self.assertEqual(
-    #         errors.pop(0)["message"],
-    #         "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs.",
-    #     )
+    @authenticate
+    def test_error_collection(self):
+        """
+        If errors occur, discard the file and return the errors with row and message
+        """
+        # creating 2 canteens with same siret here to error when this situation exists IRL
+        CanteenFactory(siret="42111303053388")
+        canteen_with_same_siret = CanteenFactory()
+        Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="42111303053388")
 
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+
+        body = response.json()
+        # no new objects should have been saved to the DB since it failed
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        errors = body["errors"]
+        self.assertEqual(len(errors), 7, errors)
+        self.assertEqual(errors[0]["row"], 1)
+        self.assertEqual(errors[0]["status"], 400)
+        self.assertEqual(
+            errors.pop(0)["message"],
+            f"Champ 'année' : L'année doit être comprise entre 2019 et {NEXT_YEAR}.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 300, est plus que le total, 20",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Plusieurs cantines correspondent au SIRET 42111303053388. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            # TODO: is this the best field to point to as being wrong? hors bio could be confusing
+            "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
+        )
 
     # @authenticate
     # def test_diagnostic_no_header(self, mock):
