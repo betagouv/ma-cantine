@@ -122,7 +122,7 @@ CAMPAIGN_DATES = {
             convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end")
             or datetime(2025, 4, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
-        "rapport_parlement_url": None,  # not published yet
+        "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2025.pdf",
     },
     2025: {
         # TODO: basculer les OVERRIDE
