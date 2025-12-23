@@ -27,7 +27,7 @@ MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME = "schema_cantines.json"
 MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_PATH = (
     f"data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME}"
 )
-MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/main/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME}"
+MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME}"
 
 # Teledeclarations
 MA_CANTINE_DATAGOUV_TELEDECLARATION_DATASET_ID = "resultats-de-campagnes-de-teledeclaration-des-cantines"
@@ -38,7 +38,7 @@ MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME = "schema_teledeclarations.
 MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_PATH = (
     f"data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME}"
 )
-MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/main/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME}"
+MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME}"
 
 
 # ------------------------------------------------------------------------------
