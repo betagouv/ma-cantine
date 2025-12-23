@@ -10,6 +10,7 @@ import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAli
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImport from "@/views/GestionnaireImport.vue"
 import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
+import GestionnaireImportBilansSimplifies from "@/views/GestionnaireImportBilansSimplifies.vue"
 import GestionnaireImportCantines from "@/views/GestionnaireImportCantines.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 
@@ -69,6 +70,18 @@ const routes = [
         component: GestionnaireImportAchats,
         meta: {
           title: "Importer des achats",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "bilans-simplifies",
+        name: "GestionnaireImportBilansSimplifies",
+        component: GestionnaireImportBilansSimplifies,
+        meta: {
+          title: "Importer des bilans simplifiés",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
