@@ -217,19 +217,16 @@ class ImportDiagnosticsView(ABC, APIView):
                     for message in messages:
                         user_message = message
                         if field != "__all__":
-                            # TODO : delete
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
                         ImportDiagnosticsView._add_error(errors, user_message)
-            elif hasattr(e, "message"):
+            if hasattr(e, "message"):
                 ImportDiagnosticsView._add_error(errors, e.message)
-            # TODO : delete ?
             elif hasattr(e, "params"):
                 ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
                 ImportDiagnosticsView._add_error(
                     errors, "Une erreur s'est produite en créant un bilan pour cette ligne"
                 )
-        # TODO : delete ?
         elif isinstance(e, ValueError):
             match = self.value_error_regex.search(str(e))
             field_name = match.group(1) if match else ""
