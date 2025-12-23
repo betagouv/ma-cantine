@@ -276,5 +276,5 @@ class DiagnosticsSimpleImportView(ImportDiagnosticsView):
         offset_row = 2  # Two columns before value_fields in row
         for idx, value in enumerate(value_fields):
             value_idx = idx + offset_row
-            values_dict[value] = None if not row[value_idx] else Decimal(row[value_idx].strip().replace(",", "."))
+            values_dict[value] = None if not row[value_idx] else Decimal(row[value_idx].strip())
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
