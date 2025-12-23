@@ -229,6 +229,11 @@ class ImportDiagnosticsView(ABC, APIView):
                 ImportDiagnosticsView._add_error(
                     errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
                 )
+        elif isinstance(e, Canteen.MultipleObjectsReturned):
+            ImportDiagnosticsView._add_error(
+                errors,
+                f"Plusieurs cantines correspondent au SIRET {siret}. Veuillez enlever les doublons pour pouvoir créer le bilan.",
+            )
         if not errors:
             ImportDiagnosticsView._add_error(errors, "Une erreur s'est produite en créant un bilan pour cette ligne")
         return errors
