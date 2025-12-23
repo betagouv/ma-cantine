@@ -303,7 +303,6 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        print(body)
         self.assertEqual(len(body["errors"]), 0)
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.valeur_totale, 1000)
