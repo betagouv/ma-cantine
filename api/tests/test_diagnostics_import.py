@@ -345,6 +345,17 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
             self.assertEqual(diagnostic.valeur_totale, 1000)
 
     @authenticate
+    def test_fail_user_not_canteen_manager(self):
+        CanteenFactory(siret="21340172201787", managers=[])
+        with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["errorCount"], 1)
+        self.assertEqual(body["errors"][0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
+
+    @authenticate
     def test_fail_import_bad_format(self):
         with open("./api/tests/files/diagnostics/diagnostics_simple_bad_file_format.ods", "rb") as diag_file:
             response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
