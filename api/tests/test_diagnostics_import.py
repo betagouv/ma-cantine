@@ -133,13 +133,53 @@ class DiagnosticsSimpleImportApiTest(APITestCase):
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
-    # @authenticate
-    # def test_error_format_collection(self ):
-    #   siret
-    #   siret dupliqué
-    #   année
-    #   autre champs obligatoire
-    #   champs avec un text au lieu d'un nombre attendu
+    @authenticate
+    def test_error_format_collection(self):
+        # creating canteens
+        CanteenFactory(siret="50044221500025", managers=[authenticate.user])
+        CanteenFactory(siret="82821513700013", managers=[authenticate.user])
+        CanteenFactory(siret="82217035300012", managers=[authenticate.user])
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+        CanteenFactory(siret="90930179110860", managers=[authenticate.user])
+        CanteenFactory(siret="73282932000074", managers=[authenticate.user])
+        CanteenFactory(siret="82938781909454", managers=[authenticate.user])
+        CanteenFactory(siret="15952607273997", managers=[authenticate.user])
+        CanteenFactory(siret="42111303053388", managers=[authenticate.user])
+
+        self.assertEqual(Canteen.objects.count(), 9)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_format.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+
+        body = response.json()
+        # no new objects should have been saved to the DB since it failed
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        errors = body["errors"]
+        self.assertEqual(len(errors), 11, errors)
+        # Invalid year
+        self.assertEqual(errors[0]["field"], "année_bilan")
+        self.assertTrue(errors[0]["message"].startswith("L'année doit être composée de 4 chiffres"))
+        # Missing required values
+        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[1]["message"])
+        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[2]["message"])
+        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[3]["message"])
+        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[4]["message"])
+        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[5]["message"])
+        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[6]["message"])
+        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[7]["message"])
+        # Invalid number
+        self.assertEqual(
+            "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal", errors[8]["message"]
+        )
+        self.assertTrue(errors[9]["message"].startswith("Le séparateur décimal à utiliser est le point"))
+        # Unique SIRET
+        self.assertEqual("Les valeurs de cette colonne doivent être uniques", errors[10]["message"])
 
     @authenticate
     def test_error_collection(self):
