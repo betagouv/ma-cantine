@@ -247,7 +247,7 @@ class PurchasesImportApiTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_no_header.csv"
         with open(file_path, "rb") as diag_file:
-            response = self.client.post(f"{reverse('purchases_import')}", {"file": diag_file})
+            response = self.client.post(reverse("purchases_import"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -270,7 +270,7 @@ class PurchasesImportApiTest(APITestCase):
         # wrong header
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header.csv"
         with open(file_path, "rb") as diag_file:
-            response = self.client.post(f"{reverse('purchases_import')}", {"file": diag_file})
+            response = self.client.post(reverse("purchases_import"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -285,7 +285,7 @@ class PurchasesImportApiTest(APITestCase):
         # partial header
         file_path = "./api/tests/files/achats/purchases_bad_partial_header.csv"
         with open(file_path, "rb") as diag_file:
-            response = self.client.post(f"{reverse('purchases_import')}", {"file": diag_file})
+            response = self.client.post(reverse("purchases_import"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
@@ -476,7 +476,7 @@ class PurchasesImportApiTest(APITestCase):
         """
         file_path = "./api/tests/files/achats/purchases_bad_empty_rows.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(f"{reverse('purchases_import')}", {"file": canteen_file})
+            response = self.client.post(reverse("purchases_import"), {"file": canteen_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)

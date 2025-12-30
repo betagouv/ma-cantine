@@ -31,7 +31,7 @@ class DiagnosticsImportView(ABC, APIView):
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
 
     def __init__(self, **kwargs):
-        self.diagnostics_created = 0
+        self.diagnostics_created_count = 0
         self.errors = []
         self.start_time = None
         self.file = None
@@ -95,17 +95,16 @@ class DiagnosticsImportView(ABC, APIView):
 
         except PermissionDenied as e:
             self._log_error(e.detail)
-            self.errors = [{"row": 0, "status": 401, "message": e.detail}]
+            self.errors = [{"row": 0, "status": status.HTTP_401_UNAUTHORIZED, "message": e.detail}]
         except IntegrityError as e:
             self._log_error(f"L'import du fichier CSV a échoué: {e}")
         except ValidationError as e:
             self._log_error(e.message)
-            self.errors = [{"row": 0, "status": 400, "message": e.message}]
+            self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
         except Exception as e:
             message = f"Échec lors de la lecture du fichier: {e}"
             self._log_error(message, "exception")
-            self.errors = [{"row": 0, "status": 400, "message": message}]
-
+            self.errors = [{"row": 0, "status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": message}]
         return self._get_success_response()
 
     def _log_error(self, message, level="warning"):
@@ -162,7 +161,7 @@ class DiagnosticsImportView(ABC, APIView):
         diagnostic.full_clean()
         diagnostic.save()
         update_change_reason(diagnostic, f"Mass CSV import. {self.__class__.__name__[:100]}")
-        self.diagnostics_created += 1
+        self.diagnostics_created_count += 1
 
     @staticmethod
     def _get_error(e, message, error_status, row_number):
@@ -181,9 +180,9 @@ class DiagnosticsImportView(ABC, APIView):
 
     def _get_success_response(self):
         body = {
-            "count": 0 if len(self.errors) else self.diagnostics_created,
+            # "diagnostics": serialized_diagnostics,
+            "count": 0 if len(self.errors) else self.diagnostics_created_count,
             "errors": self.errors,
-            "errorCount": len(self.errors),
             "seconds": time.time() - self.start_time,
         }
         return JsonResponse(body, status=status.HTTP_200_OK)

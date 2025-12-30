@@ -110,15 +110,20 @@ class PurchasesImportView(APIView):
             self._log_error(f"L'import du fichier CSV a échoué: {e}")
         except UnicodeDecodeError as e:
             self._log_error(f"UnicodeDecodeError: {e.reason}")
-            self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
+            self.errors = [
+                {
+                    "row": 0,
+                    "status": status.HTTP_400_BAD_REQUEST,
+                    "message": "Le fichier doit être sauvegardé en Unicode (utf-8)",
+                }
+            ]
         except ValidationError as e:
             self._log_error(e.message)
-            self.errors = [{"row": 0, "status": 400, "message": e.message}]
+            self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
         except Exception as e:
             message = f"Échec lors de la lecture du fichier: {e}"
             self._log_error(message, "exception")
-            self.errors = [{"row": 0, "status": 400, "message": message}]
-
+            self.errors = [{"row": 0, "status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": message}]
         return self._get_success_response()
 
     def _log_error(self, message, level="warning"):
