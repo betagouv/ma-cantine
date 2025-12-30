@@ -30,7 +30,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -94,7 +94,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good.xlsx", "rb") as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -136,7 +136,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
 
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -151,7 +151,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         """
         Expect 403 if unauthenticated
         """
-        response = self.client.post(reverse("import_diagnostics_simple"))
+        response = self.client.post(reverse("diagnostics_simple_import"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -172,7 +172,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_format.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
@@ -224,7 +224,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
@@ -273,7 +273,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         A file should not be valid if doesn't contain a valid header
         """
         with open("./api/tests/files/diagnostics/diagnostics_simple_bad_no_header.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 0)
@@ -288,7 +288,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     def test_file_above_max_size(self):
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
@@ -302,7 +302,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     @authenticate
     def test_file_bad_format(self):
         with open("./api/tests/files/diagnostics/diagnostics_simple_bad_file_format.ods", "rb") as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -312,7 +312,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     @authenticate
     def test_file_wrong_header(self):
         with open("./api/tests/files/diagnostics/diagnostics_simple_bad_wrong_header.csv") as diag_file:
-            response = self.client.post(f"{reverse('import_diagnostics_simple')}", {"file": diag_file})
+            response = self.client.post(f"{reverse('diagnostics_simple_import')}", {"file": diag_file})
         body = response.json()
 
         self.assertEqual(
@@ -334,7 +334,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             diagnostic.teledeclare(applicant=authenticate.user)
 
             with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
-                response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+                response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()
@@ -348,7 +348,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             # now test cancelled TD
             diagnostic.cancel()
             with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
-                response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+                response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()
@@ -360,7 +360,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     def test_user_not_canteen_manager(self):
         CanteenFactory(siret="21340172201787", managers=[])
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -370,7 +370,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     @authenticate
     def test_canteen_not_found_with_siret(self):
         with open("./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv") as diag_file:
-            response = self.client.post(reverse("import_diagnostics_simple"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()

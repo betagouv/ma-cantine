@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from api.views import (
+from api.views import (  # ImportCompleteCentralKitchenView,; ImportCompleteDiagnosticsView,; ImportSimpleCentralKitchenView,; ImportSimpleDiagnosticsView,
     ActionableCanteenRetrieveView,
     ActionableCanteensListView,
     AddManagerView,
@@ -21,17 +21,13 @@ from api.views import (
     CommunityEventsView,
     DiagnosticCreateView,
     DiagnosticsFromPurchasesView,
+    DiagnosticsSimpleImportView,
     DiagnosticsToTeledeclareListView,
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
     DiagnosticTeledeclarationPdfView,
     DiagnosticUpdateView,
-    DiagnosticsSimpleImportView,
     EmailDiagnosticImportFileView,
-    # ImportCompleteCentralKitchenView,
-    # ImportCompleteDiagnosticsView,
-    # ImportSimpleCentralKitchenView,
-    # ImportSimpleDiagnosticsView,
     InitialDataView,
     InquiryView,
     LoggedUserView,
@@ -173,7 +169,7 @@ urlpatterns = {
     ),
     path("importPurchases/", PurchasesImportView.as_view(), name="purchases_import"),
     path("importCanteens/", CanteensImportView.as_view(), name="canteens_import"),
-    path("importDiagnostics/simple/", DiagnosticsSimpleImportView.as_view(), name="import_diagnostics_simple"),
+    path("importDiagnostics/simple/", DiagnosticsSimpleImportView.as_view(), name="diagnostics_simple_import"),
     # path("importDiagnostics/simple/", ImportSimpleDiagnosticsView.as_view(), name="import_diagnostics"),
     # path("importDiagnostics/complete/", ImportCompleteDiagnosticsView.as_view(), name="import_complete_diagnostics"),
     # path("importDiagnostics/ccSimple/", ImportSimpleCentralKitchenView.as_view(), name="import_cc_diagnostics"),
