@@ -11,6 +11,12 @@ from data.utils import optimize_image
 
 
 class UserQuerySet(models.QuerySet):
+    def brevo_to_create(self):
+        return self.filter(Q(last_brevo_update__isnull=True))
+
+    def brevo_to_update(self, threshold_date):
+        return self.filter(Q(last_brevo_update__lte=threshold_date))
+
     def with_canteen_stats(self):
         from data.models import Canteen
 

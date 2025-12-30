@@ -1,7 +1,10 @@
 from django.test import TestCase
+from django.utils import timezone
 
 from data.factories import CanteenFactory, UserFactory
 from data.models import Canteen, User
+
+import macantine.brevo as brevo
 
 
 class UserModelTest(TestCase):
@@ -39,6 +42,27 @@ class UserModelTest(TestCase):
             economic_model=Canteen.EconomicModel.PRIVATE,
             managers=[cls.user_with_canteens],
         )
+
+    def test_queryset_brevo_to_create(self):
+        self.assertEqual(User.objects.count(), 2)
+
+        self.assertEqual(User.objects.brevo_to_create().count(), 2)
+
+    def test_queryset_brevo_to_update(self):
+        self.assertEqual(User.objects.count(), 2)
+
+        # No users have last_brevo_update set yet
+        self.assertEqual(User.objects.brevo_to_update(brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD).count(), 0)
+
+        # Set last_brevo_update for one user to now
+        now = timezone.now()
+        User.objects.filter(id=self.user_with_canteens.id).update(last_brevo_update=now)
+        self.assertEqual(User.objects.brevo_to_update(brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD).count(), 0)
+
+        # Set last_brevo_update for the other user to 2 days ago
+        two_days_ago = timezone.now() - timezone.timedelta(days=2)
+        User.objects.filter(id=self.user_without_canteens.id).update(last_brevo_update=two_days_ago)
+        self.assertEqual(User.objects.brevo_to_update(brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD).count(), 1)
 
     def test_queryset_with_canteen_stats(self):
         user_qs = User.objects.with_canteen_stats()
