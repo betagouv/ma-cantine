@@ -54,14 +54,14 @@ class CanteensImportView(APIView):
         self.start_time = time.time()
         logger.info("Canteen bulk import started")
         try:
+            # File validation
             self.file = request.data["file"]
             file_import.validate_file_size(self.file)
 
+            # Schema validation (Validata)
             self.is_admin_import = self.request.user.is_staff
             schema_name = CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME
             schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
-
-            # Schema validation (Validata)
             validata_response = validata.validate_file_against_schema(self.file, schema_url)
 
             # Error generating the report
@@ -103,7 +103,7 @@ class CanteensImportView(APIView):
 
         except PermissionDenied as e:
             self._log_error(e.detail)
-            self.errors = [{"row": 0, "status": 401, "message": e.detail}]
+            self.errors = [{"row": 0, "status": status.HTTP_401_UNAUTHORIZED, "message": e.detail}]
         except IntegrityError as e:
             self._log_error(f"L'import du fichier CSV a échoué: {e}")
         except ValidationError as e:

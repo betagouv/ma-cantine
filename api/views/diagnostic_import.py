@@ -46,13 +46,13 @@ class DiagnosticsImportView(ABC, APIView):
         logger.info("Diagnostic bulk import started")
         try:
             with transaction.atomic():
+                # File validation
                 self.file = request.data["file"]
                 file_import.validate_file_size(self.file)
 
+                # Schema validation (Validata)
                 schema_name = DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME
                 schema_url = DIAGNOSTICS_SIMPLE_SCHEMA_URL
-
-                # Schema validation (Validata)
                 validata_response = validata.validate_file_against_schema(self.file, schema_url)
 
                 # Error generating the report
