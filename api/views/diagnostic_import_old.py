@@ -37,7 +37,7 @@ DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH = "data/schemas/imports/diagnostics_comple
 DIAGNOSTICS_COMPLETE_CC_SCHEMA_FILE_PATH = "data/schemas/imports/diagnostics_complets_cc.json"
 
 
-class ImportDiagnosticsView(ABC, APIView):
+class DiagnosticsImportView(ABC, APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     manager_column_idx = 11
@@ -148,7 +148,7 @@ class ImportDiagnosticsView(ABC, APIView):
             except Exception as e:
                 for error in self._parse_errors(e, row):
                     self.errors.append(
-                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number + 1)
+                        DiagnosticsImportView._get_error(e, error["message"], error["code"], row_number + 1)
                     )
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
@@ -164,7 +164,7 @@ class ImportDiagnosticsView(ABC, APIView):
             raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
         # validate data for format etc, starting with basic non-data-specific row checks
         self._validate_row(row)
-        ImportDiagnosticsView._validate_canteen(row)
+        DiagnosticsImportView._validate_canteen(row)
         manager_emails = self._get_manager_emails_to_notify(row)
         diagnostic_year, values_dict, diagnostic_type = self._validate_diagnostic(row)
         # return staff-customisable fields
@@ -311,7 +311,7 @@ class ImportDiagnosticsView(ABC, APIView):
         try:
             manager_emails = []
             if len(row) > self.manager_column_idx and row[self.manager_column_idx]:
-                manager_emails = ImportDiagnosticsView._get_manager_emails(row[self.manager_column_idx])
+                manager_emails = DiagnosticsImportView._get_manager_emails(row[self.manager_column_idx])
         except Exception:
             raise ValidationError(
                 {"email": f"Un adresse email des gestionnaires ({row[self.manager_column_idx]}) n'est pas valide."}
@@ -369,7 +369,7 @@ class ImportDiagnosticsView(ABC, APIView):
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
         should_update_geolocation = (
-            ImportDiagnosticsView._should_update_geolocation(canteen, row) if canteen_exists else True
+            DiagnosticsImportView._should_update_geolocation(canteen, row) if canteen_exists else True
         )
 
         canteen.name = row[1].strip()
@@ -391,9 +391,9 @@ class ImportDiagnosticsView(ABC, APIView):
         if not self.request.user.is_staff:
             canteen.managers.add(self.request.user)
         if manager_emails:
-            ImportDiagnosticsView._add_managers_to_canteen(manager_emails, canteen)
+            DiagnosticsImportView._add_managers_to_canteen(manager_emails, canteen)
         if silently_added_manager_emails:
-            ImportDiagnosticsView._add_managers_to_canteen(
+            DiagnosticsImportView._add_managers_to_canteen(
                 silently_added_manager_emails, canteen, send_invitation_mail=False
             )
         return (canteen, should_update_geolocation)
@@ -406,7 +406,7 @@ class ImportDiagnosticsView(ABC, APIView):
         if len(row) > silent_manager_idx:  # already checked earlier that it's a staff user
             try:
                 if row[silent_manager_idx]:
-                    silently_added_manager_emails = ImportDiagnosticsView._get_manager_emails(row[silent_manager_idx])
+                    silently_added_manager_emails = DiagnosticsImportView._get_manager_emails(row[silent_manager_idx])
             except Exception:
                 raise ValidationError(
                     {
@@ -437,22 +437,22 @@ class ImportDiagnosticsView(ABC, APIView):
     def _parse_errors(self, e, row):  # noqa: C901
         errors = []
         if isinstance(e, PermissionDenied):
-            ImportDiagnosticsView._add_error(errors, e.detail, 401)
+            DiagnosticsImportView._add_error(errors, e.detail, 401)
         elif isinstance(e, ValidationError):
             if hasattr(e, "message_dict"):
                 for field, messages in e.message_dict.items():
-                    verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field)
+                    verbose_field_name = DiagnosticsImportView._get_verbose_field_name(field)
                     for message in messages:
                         user_message = message
                         if field != "__all__":
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
-                        ImportDiagnosticsView._add_error(errors, user_message)
+                        DiagnosticsImportView._add_error(errors, user_message)
             elif hasattr(e, "message"):
-                ImportDiagnosticsView._add_error(errors, e.message)
+                DiagnosticsImportView._add_error(errors, e.message)
             elif hasattr(e, "params"):
-                ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
+                DiagnosticsImportView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
-                ImportDiagnosticsView._add_error(
+                DiagnosticsImportView._add_error(
                     errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
                 )
         elif isinstance(e, ValueError):
@@ -460,26 +460,26 @@ class ImportDiagnosticsView(ABC, APIView):
             field_name = match.group(1) if match else ""
             value_given = match.group(2) if match else ""
             if field_name:
-                verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field_name)
-                ImportDiagnosticsView._add_error(
+                verbose_field_name = DiagnosticsImportView._get_verbose_field_name(field_name)
+                DiagnosticsImportView._add_error(
                     errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
                 )
         elif isinstance(e, Canteen.MultipleObjectsReturned):
-            ImportDiagnosticsView._add_error(
+            DiagnosticsImportView._add_error(
                 errors,
                 f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons pour pouvoir créer le diagnostic.",
             )
         elif isinstance(e, FileFormatError):
-            ImportDiagnosticsView._add_error(errors, e.detail)
+            DiagnosticsImportView._add_error(errors, e.detail)
         if not errors:
-            ImportDiagnosticsView._add_error(
+            DiagnosticsImportView._add_error(
                 errors, "Une erreur s'est produite en créant un diagnostic pour cette ligne"
             )
         return errors
 
 
 # Allows canteen-only and simple diagnostics import
-class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
+class ImportSimpleDiagnosticsView(DiagnosticsImportView):
     final_value_idx = 22
     total_value_idx = 13
     import_type = ImportType.DIAGNOSTIC_SIMPLE
@@ -529,7 +529,7 @@ class ImportSimpleDiagnosticsView(ImportDiagnosticsView):
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
 
 
-class ImportCompleteDiagnosticsView(ImportDiagnosticsView):
+class ImportCompleteDiagnosticsView(DiagnosticsImportView):
     final_value_idx = 127
     import_type = ImportType.DIAGNOSTIC_COMPLETE
 
