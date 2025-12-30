@@ -1,4 +1,5 @@
 import logging
+import datetime
 import re
 import time
 from abc import ABC, abstractmethod
@@ -24,6 +25,8 @@ logger = logging.getLogger(__name__)
 DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME = "bilans_simple.json"
 DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME}"
 DIAGNOSTICS_SIMPLE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH}"
+
+LAST_YEAR = datetime.date.today().year - 1
 
 
 class DiagnosticsImportView(ABC, APIView):
@@ -154,6 +157,10 @@ class DiagnosticsImportView(ABC, APIView):
         if diagnostic.is_teledeclared:
             raise ValidationError(
                 "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration."
+            )
+        if int(diagnostic.year) < LAST_YEAR:
+            raise ValidationError(
+                f"Il n'est pas possible de créer ou modifier un diagnostic d'une année antérieure à {LAST_YEAR}."
             )
         diagnostic.diagnostic_type = diagnostic_type
         for key, value in values_dict.items():
