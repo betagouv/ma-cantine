@@ -101,31 +101,77 @@ def validate_valeur_totale(instance):
     return errors
 
 
+def validate_valeur_bio(instance):
+    """
+    Extra validation on bio fields
+    """
+    errors = {}
+    if instance.valeur_bio is not None:
+        if (
+            instance.valeur_bio_dont_commerce_equitable is not None
+            and instance.valeur_bio_dont_commerce_equitable > instance.valeur_bio
+        ):
+            utils_utils.add_validation_error(
+                errors,
+                "valeur_bio",
+                f"La valeur (HT) bio dont commerce équitable, {instance.valeur_bio_dont_commerce_equitable}, est plus que la valeur totale (HT) bio, {instance.valeur_bio}",
+            )
+    return errors
+
+
+def validate_valeur_egalim_autres(instance):
+    """
+    Extra validation on egalim_autres fields
+    """
+    errors = {}
+    if instance.valeur_egalim_autres is not None:
+        if (
+            instance.valeur_egalim_autres_dont_commerce_equitable is not None
+            and instance.valeur_egalim_autres_dont_commerce_equitable > instance.valeur_egalim_autres
+        ):
+            utils_utils.add_validation_error(
+                errors,
+                "valeur_egalim_autres",
+                f"La valeur (HT) achats commerce équitable (hors bio), {instance.valeur_egalim_autres_dont_commerce_equitable}, est plus que la valeur totale (HT) des autres achats EGalim, {instance.valeur_egalim_autres}",
+            )
+    return errors
+
+
 def validate_viandes_volailles_total(instance):
     """
     Extra validation on viandes_volailles fields
     """
     errors = {}
-    if (
-        instance.valeur_viandes_volailles is not None
-        and instance.valeur_viandes_volailles is not None
-        and instance.valeur_viandes_volailles_egalim > instance.valeur_viandes_volailles
-    ):
-        utils_utils.add_validation_error(
-            errors,
-            "valeur_viandes_volailles",
-            f"La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, {instance.valeur_viandes_volailles_egalim}, est plus que la valeur totale (HT) viandes et volailles, {instance.valeur_viandes_volailles}",
-        )
-    elif (
-        instance.valeur_viandes_volailles_france is not None
-        and instance.valeur_viandes_volailles is not None
-        and instance.valeur_viandes_volailles_france > instance.valeur_viandes_volailles
-    ):
-        utils_utils.add_validation_error(
-            errors,
-            "valeur_viandes_volailles",
-            f"La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, {instance.valeur_viandes_volailles_france}, est plus que la valeur totale (HT) viandes et volailles, {instance.valeur_viandes_volailles}",
-        )
+    if instance.valeur_viandes_volailles is not None:
+        if (
+            instance.valeur_viandes_volailles_egalim is not None
+            and instance.valeur_viandes_volailles_egalim > instance.valeur_viandes_volailles
+        ):
+            utils_utils.add_validation_error(
+                errors,
+                "valeur_viandes_volailles",
+                f"La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, {instance.valeur_viandes_volailles_egalim}, est plus que la valeur totale (HT) viandes et volailles, {instance.valeur_viandes_volailles}",
+            )
+        elif (
+            instance.valeur_viandes_volailles_france is not None
+            and instance.valeur_viandes_volailles_france > instance.valeur_viandes_volailles
+        ):
+            utils_utils.add_validation_error(
+                errors,
+                "valeur_viandes_volailles",
+                f"La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, {instance.valeur_viandes_volailles_france}, est plus que la valeur totale (HT) viandes et volailles, {instance.valeur_viandes_volailles}",
+            )
+        elif (
+            instance.valeur_viandes_volailles_egalim is not None
+            and instance.valeur_viandes_volailles_france is not None
+            and (instance.valeur_viandes_volailles_egalim + instance.valeur_viandes_volailles_france)
+            > instance.valeur_viandes_volailles
+        ):
+            utils_utils.add_validation_error(
+                errors,
+                "valeur_viandes_volailles",
+                f"La somme des valeurs totales (HT) viandes et volailles EGalim, {instance.valeur_viandes_volailles_egalim}, et provenance France, {instance.valeur_viandes_volailles_france}, est plus que la valeur totale (HT) viandes et volailles, {instance.valeur_viandes_volailles}",
+            )
     return errors
 
 
@@ -134,16 +180,36 @@ def validate_produits_de_la_mer_total(instance):
     Extra validation on produits_de_la_mer fields
     """
     errors = {}
-    if (
-        instance.valeur_produits_de_la_mer_egalim is not None
-        and instance.valeur_produits_de_la_mer is not None
-        and instance.valeur_produits_de_la_mer_egalim > instance.valeur_produits_de_la_mer
-    ):
-        utils_utils.add_validation_error(
-            errors,
-            "valeur_produits_de_la_mer",
-            f"La valeur totale (HT) poissons et produits aquatiques EGalim, {instance.valeur_produits_de_la_mer_egalim}, est plus que la valeur totale (HT) poissons et produits aquatiques, {instance.valeur_produits_de_la_mer}",
-        )
+    if instance.valeur_produits_de_la_mer is not None:
+        if (
+            instance.valeur_produits_de_la_mer_egalim is not None
+            and instance.valeur_produits_de_la_mer_egalim > instance.valeur_produits_de_la_mer
+        ):
+            utils_utils.add_validation_error(
+                errors,
+                "valeur_produits_de_la_mer",
+                f"La valeur totale (HT) poissons et produits aquatiques EGalim, {instance.valeur_produits_de_la_mer_egalim}, est plus que la valeur totale (HT) poissons et produits aquatiques, {instance.valeur_produits_de_la_mer}",
+            )
+        elif (
+            instance.valeur_produits_de_la_mer_france is not None
+            and instance.valeur_produits_de_la_mer_france > instance.valeur_produits_de_la_mer
+        ):
+            utils_utils.add_validation_error(
+                errors,
+                "valeur_produits_de_la_mer",
+                f"La valeur totale (HT) poissons et produits aquatiques provenance France, {instance.valeur_produits_de_la_mer_france}, est plus que la valeur totale (HT) poissons et produits aquatiques, {instance.valeur_produits_de_la_mer}",
+            )
+        elif (
+            instance.valeur_produits_de_la_mer_egalim is not None
+            and instance.valeur_produits_de_la_mer_france is not None
+            and (instance.valeur_produits_de_la_mer_egalim + instance.valeur_produits_de_la_mer_france)
+            > instance.valeur_produits_de_la_mer
+        ):
+            utils_utils.add_validation_error(
+                errors,
+                "valeur_produits_de_la_mer",
+                f"La somme des valeurs totales (HT) poissons et produits aquatiques EGalim, {instance.valeur_produits_de_la_mer_egalim}, et provenance France, {instance.valeur_produits_de_la_mer_france}, est plus que la valeur totale (HT) poissons et produits aquatiques, {instance.valeur_produits_de_la_mer}",
+            )
     return errors
 
 
