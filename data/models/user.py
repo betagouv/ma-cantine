@@ -227,7 +227,6 @@ class User(AbstractUser):
             "NOM": self.last_name,
             "PRENOM": self.first_name,
             "NOM_COMPLET": self.get_full_name(),
-            "EMAIL": self.email,
             "MA_CANTINE_DATE_INSCRIPTION": self.date_joined.strftime("%Y-%m-%d"),
             "DERNIERE_CONNEXION": self.last_login.strftime("%Y-%m-%d") if self.last_login else "",
             "MA_CANTINE_COMPTE_DEV": self.is_dev,
