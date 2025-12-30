@@ -4,7 +4,7 @@ import uuid
 from decimal import ROUND_HALF_DOWN, Decimal, InvalidOperation
 
 from django.conf import settings
-from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from rest_framework import status
@@ -39,7 +39,6 @@ class PurchasesImportView(APIView):
         self.tmp_id = uuid.uuid4()
         self.file = None
         self.dialect = None
-        self.encoding_detected = None
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
@@ -50,16 +49,15 @@ class PurchasesImportView(APIView):
         self.start_time = time.time()
         logger.info("Purchase bulk import started")
         try:
+            # File validation
             self.file = request.data["file"]
-            schema_name = PURCHASE_SCHEMA_FILE_NAME
-            schema_url = PURCHASE_SCHEMA_URL
-
-            # Step 1: File validation
             file_import.validate_file_size(self.file)
             self.file_digest = file_import.get_file_digest(self.file)
             self._check_duplication()
 
-            # Step 2: Schema validation (Validata)
+            # Schema validation (Validata)
+            schema_name = PURCHASE_SCHEMA_FILE_NAME
+            schema_url = PURCHASE_SCHEMA_URL
             validata_response = validata.validate_file_against_schema(self.file, schema_url)
 
             # Error generating the report
@@ -92,7 +90,7 @@ class PurchasesImportView(APIView):
                 self._log_error(f"Echec lors de la validation du fichier (schema {schema_name} - Validata)")
                 return self._get_success_response()
 
-            # Step 3: ma-cantine validation (permissions, last checks...) + import
+            # ma-cantine validation (permissions, last checks...) + import
             with transaction.atomic():
                 self._process_file(validata_response["resource_data"])
 
@@ -106,19 +104,18 @@ class PurchasesImportView(APIView):
 
             return self._get_success_response()
 
+        except PermissionDenied as e:
+            self._log_error(e.detail)
+            self.errors = [{"row": 0, "status": status.HTTP_401_UNAUTHORIZED, "message": e.detail}]
         except IntegrityError as e:
             self._log_error(f"L'import du fichier CSV a échoué: {e}")
-        except UnicodeDecodeError as e:
-            self._log_error(f"UnicodeDecodeError: {e.reason}")
-            self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
         except ValidationError as e:
             self._log_error(e.message)
-            self.errors = [{"row": 0, "status": 400, "message": e.message}]
+            self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
         except Exception as e:
             message = f"Échec lors de la lecture du fichier: {e}"
             self._log_error(message, "exception")
-            self.errors = [{"row": 0, "status": 400, "message": message}]
-
+            self.errors = [{"row": 0, "status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": message}]
         return self._get_success_response()
 
     def _log_error(self, message, level="warning"):
@@ -140,23 +137,14 @@ class PurchasesImportView(APIView):
             # Split into chunks
             chunk.append(row)
             row_count += 1
-
             # Process full chunk
             if row_count == settings.CSV_PURCHASE_CHUNK_LINES:
                 self._process_chunk(chunk)
                 chunk = []
                 row_count = 0
-
         # Process the last chunk
         if len(chunk) > 0:
             self._process_chunk(chunk)
-
-    def _decode_chunk(self, chunk_list):
-        if self.encoding_detected is None:
-            chunk = b"".join(chunk_list)
-            (_, encoding) = file_import.decode_bytes(chunk)
-            self.encoding_detected = encoding
-        return [chunk.decode(self.encoding_detected) for chunk in chunk_list]
 
     def _check_duplication(self):
         matching_purchases = Purchase.objects.filter(import_source=self.file_digest)
@@ -223,20 +211,9 @@ class PurchasesImportView(APIView):
         purchase.full_clean()
         self.purchases.append(purchase)
 
-    def _get_success_response(self):
-        return JsonResponse(
-            {
-                "count": 0 if self.errors else len(self.purchases),
-                "errorCount": len(self.errors),
-                "errors": self.errors,
-                "seconds": time.time() - self.start_time,
-                "duplicatePurchases": camelize(PurchaseSerializer(self.duplicate_purchases, many=True).data),
-                "duplicateFile": self.is_duplicate_file,
-                "duplicatePurchaseCount": self.duplicate_purchase_count,
-                "encoding": self.encoding_detected,
-            },
-            status=status.HTTP_200_OK,
-        )
+    @staticmethod
+    def _get_error(e, message, error_status, row_number):
+        return {"row": row_number, "status": error_status, "message": message}
 
     @staticmethod
     def _get_verbose_field_name(field_name):
@@ -245,26 +222,28 @@ class PurchasesImportView(APIView):
         except Exception:
             return field_name
 
-    @staticmethod
-    def _get_error(e, message, error_status, row_number):
-        return {"row": row_number, "status": error_status, "message": message}
+    def _get_success_response(self):
+        return JsonResponse(
+            {
+                "count": 0 if self.errors else len(self.purchases),
+                "errors": self.errors,
+                "seconds": time.time() - self.start_time,
+                "duplicatePurchases": camelize(PurchaseSerializer(self.duplicate_purchases, many=True).data),
+                "duplicateFile": self.is_duplicate_file,
+                "duplicatePurchaseCount": self.duplicate_purchase_count,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    staticmethod
+
+    def _add_error(errors, message, code=400):
+        errors.append({"message": message, "code": code})
 
     def _parse_errors(self, e, row, siret):
         errors = []
         if isinstance(e, PermissionDenied):
-            errors.append(
-                {
-                    "message": e.detail,
-                    "code": 401,
-                }
-            )
-        elif isinstance(e, BadRequest):
-            errors.append(
-                {
-                    "message": f"Format fichier : {len(self.expected_header)} colonnes attendues, {len(row)} trouvées.",
-                    "code": 400,
-                }
-            )
+            PurchasesImportView._add_error(errors, e.detail, 401)
         elif isinstance(e, ObjectDoesNotExist):
             errors.append(
                 {
@@ -273,22 +252,11 @@ class PurchasesImportView(APIView):
                 }
             )
         elif isinstance(e, ValidationError):
-            if e.message_dict:
+            if hasattr(e, "message_dict"):
                 for field, messages in e.message_dict.items():
                     for message in messages:
                         user_message = message
-                        errors.append(
-                            {
-                                "field": field,
-                                "message": user_message,
-                                "code": 400,
-                            }
-                        )
+                        PurchasesImportView._add_error(errors, user_message)
         if not errors:
-            errors.append(
-                {
-                    "message": "Une erreur s'est produite en créant un achat pour cette ligne",
-                    "code": 400,
-                }
-            )
+            PurchasesImportView._add_error(errors, "Une erreur s'est produite en créant un achat pour cette ligne")
         return errors

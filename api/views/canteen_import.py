@@ -17,8 +17,8 @@ from simple_history.utils import update_change_reason
 from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
 from common.api import validata
-from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import file_import
+from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.creation_source import CreationSource
@@ -46,7 +46,6 @@ class CanteensImportView(APIView):
         self.canteens = {}
         self.errors = []
         self.start_time = None
-        self.encoding_detected = None
         self.file = None
         self.is_admin_import = False
         super().__init__(**kwargs)
@@ -55,12 +54,14 @@ class CanteensImportView(APIView):
         self.start_time = time.time()
         logger.info("Canteen bulk import started")
         try:
+            # File validation
             self.file = request.data["file"]
+            file_import.validate_file_size(self.file)
+
+            # Schema validation (Validata)
             self.is_admin_import = self.request.user.is_staff
             schema_name = CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME
             schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
-
-            # Schema validation (Validata)
             validata_response = validata.validate_file_against_schema(self.file, schema_url)
 
             # Error generating the report
@@ -102,20 +103,16 @@ class CanteensImportView(APIView):
 
         except PermissionDenied as e:
             self._log_error(e.detail)
-            self.errors = [{"row": 0, "status": 401, "message": e.detail}]
+            self.errors = [{"row": 0, "status": status.HTTP_401_UNAUTHORIZED, "message": e.detail}]
         except IntegrityError as e:
             self._log_error(f"L'import du fichier CSV a échoué: {e}")
         except ValidationError as e:
             self._log_error(e.message)
-            self.errors = [{"row": 0, "status": 400, "message": e.message}]
-        except UnicodeDecodeError as e:
-            self._log_error(e.reason)
-            self.errors = [{"row": 0, "status": 400, "message": "Le fichier doit être sauvegardé en Unicode (utf-8)"}]
+            self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
         except Exception as e:
             message = f"Échec lors de la lecture du fichier: {e}"
             self._log_error(message, "exception")
-            self.errors = [{"row": 0, "status": 400, "message": message}]
-
+            self.errors = [{"row": 0, "status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": message}]
         return self._get_success_response()
 
     def _log_error(self, message, level="warning"):
@@ -146,13 +143,6 @@ class CanteensImportView(APIView):
                     self.errors.append(CanteensImportView._get_error(e, error["message"], error["code"], row_number))
         if has_locations_to_find:
             self._update_location_data(locations_csv_str)
-
-    def _decode_file(self, file):
-        # TODO: refactor
-        file.seek(0)
-        (result, encoding) = file_import.decode_bytes(file.read())
-        self.encoding_detected = encoding
-        return result
 
     @transaction.atomic
     def _save_data_from_row(self, row):
@@ -210,7 +200,6 @@ class CanteensImportView(APIView):
             "count": 0 if len(self.errors) else len(serialized_canteens),
             "errors": self.errors,
             "seconds": time.time() - self.start_time,
-            "encoding": self.encoding_detected,
         }
         return JsonResponse(body, status=status.HTTP_200_OK)
 

@@ -2,6 +2,7 @@ import json
 import re
 from unittest import skipIf
 
+from django.test.utils import override_settings
 from django.conf import settings
 from django.core import mail
 from django.test import TestCase
@@ -155,18 +156,25 @@ class CanteensSchemaTest(TestCase):
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteensImportApiErrorTest(APITestCase):
     def test_unauthenticated(self):
+        self.assertEqual(Canteen.objects.count(), 0)
+
         response = self.client.post(reverse("canteens_import"))
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Canteen.objects.count(), 0)
 
     @authenticate
-    def test_header_error(self):
+    def test_validata_header_error(self):
         """
         A file should not be valid if it doesn't contain a valid header
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+
         # header missing
         file_path = "./api/tests/files/canteens/canteens_bad_no_header.csv"
         with open(file_path, "rb") as canteen_file:
-            response = self.client.post(f"{reverse('canteens_import')}", {"file": canteen_file})
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
@@ -182,7 +190,8 @@ class CanteensImportApiErrorTest(APITestCase):
         # wrong header
         file_path = "./api/tests/files/canteens/canteens_bad_wrong_header.csv"
         with open(file_path, "rb") as canteen_file:
-            response = self.client.post(f"{reverse('canteens_import')}", {"file": canteen_file})
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
@@ -198,7 +207,8 @@ class CanteensImportApiErrorTest(APITestCase):
         # partial header
         file_path = "./api/tests/files/canteens/canteens_bad_partial_header.csv"
         with open(file_path, "rb") as canteen_file:
-            response = self.client.post(f"{reverse('canteens_import')}", {"file": canteen_file})
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
@@ -214,11 +224,14 @@ class CanteensImportApiErrorTest(APITestCase):
     @authenticate
     def test_validata_empty_rows_error(self):
         """
-        A file should not be valid if it contains empty rows
+        A file should not be valid if it contains empty rows (Validata)
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+
         file_path = "./api/tests/files/canteens/canteens_bad_empty_rows.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(f"{reverse('canteens_import')}", {"file": canteen_file})
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
@@ -237,9 +250,12 @@ class CanteensImportApiErrorTest(APITestCase):
         If a canteen succeeds and another one doesn't, no canteen should be saved
         and the array of canteens should return zero
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+
         file_path = "./api/tests/files/canteens/canteens_bad_nearly_good.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(f"{reverse('canteens_import')}", {"file": canteen_file})
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
@@ -259,104 +275,17 @@ class CanteensImportApiErrorTest(APITestCase):
         )
 
     @authenticate
-    def test_not_canteen_manager_error(self):
-        """
-        Cannot update an existing canteen if the user is not a manager of this canteen
-        """
-        CanteenFactory(siret="21010034300016")
-        file_path = "./api/tests/files/canteens/canteens_bad_nearly_good_2.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 1 + 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
-
-    @authenticate
-    def test_staff_import_non_admin_header(self):
-        """
-        Staff users must import file with additionnal columns
-        """
-        user = authenticate.user
-        user.is_staff = True
-        user.save()
-
-        file_path = "./api/tests/files/canteens/canteens_good.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0]["status"], 400)
-        self.assertEqual(
-            errors.pop(0)["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
-
-    @authenticate
-    def test_staff_import_non_staff(self):
-        """
-        Non-staff users shouldn't have staff import capabilities
-        """
-        file_path = "./api/tests/files/canteens/canteens_admin_good_new_canteen.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0]["status"], 400)
-        self.assertEqual(
-            errors.pop(0)["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
-
-    @authenticate
-    def test_sectors_error(self):
-        """
-        - Sectors are required if canteen production_type is site, site_cooked_elsewhere, central_serving
-        - Canteen can't have more than 3 sectors
-        """
-        file_path = "./api/tests/files/canteens/canteen_bad_sectors.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
-        body = response.json()
-        errors = body["errors"]
-        error_message_central = "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
-        error_message_min_max = "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs."
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 3, errors)
-        self.assertEqual(errors.pop(0)["message"], error_message_central)
-        self.assertEqual(errors.pop(0)["message"], error_message_min_max)
-        self.assertEqual(errors.pop(0)["message"], error_message_min_max)
-
-    @authenticate
     def test_model_validation_error(self):
         """
         If a canteen doesn't pass model validation, no canteen should be saved
         and the array of canteens should return zero
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+
         file_path = "./api/tests/files/canteens/canteens_bad.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
@@ -382,6 +311,126 @@ class CanteensImportApiErrorTest(APITestCase):
             errors.pop(0)["message"].startswith(
                 "Champ 'siret de la cuisine centrale' : Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite."
             ),
+        )
+
+    @authenticate
+    def test_user_not_canteen_manager(self):
+        """
+        Cannot update an existing canteen if the user is not a manager of this canteen
+        """
+        CanteenFactory(siret="21010034300016")
+        self.assertEqual(Canteen.objects.count(), 1)
+
+        file_path = "./api/tests/files/canteens/canteens_bad_nearly_good_2.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 1 + 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
+
+    @authenticate
+    def test_staff_import_non_admin_header(self):
+        """
+        Staff users must import file with additionnal columns
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteens_good.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]["status"], 400)
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+        )
+
+    @authenticate
+    def test_staff_import_non_staff(self):
+        """
+        Non-staff users shouldn't have staff import capabilities
+        """
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteens_admin_good_new_canteen.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]["status"], 400)
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+        )
+
+    @authenticate
+    def test_sectors_error(self):
+        """
+        - Sectors are required if canteen production_type is site, site_cooked_elsewhere, central_serving
+        - Canteen can't have more than 3 sectors
+        """
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteen_bad_sectors.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        errors = body["errors"]
+        error_message_central = "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
+        error_message_min_max = "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs."
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 3, errors)
+        self.assertEqual(errors.pop(0)["message"], error_message_central)
+        self.assertEqual(errors.pop(0)["message"], error_message_min_max)
+        self.assertEqual(errors.pop(0)["message"], error_message_min_max)
+
+    @authenticate
+    @override_settings(CSV_IMPORT_MAX_SIZE=1)
+    def test_file_above_max_size(self):
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteens_good.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(
+            errors.pop(0)["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
 
 
@@ -413,10 +462,12 @@ class CanteensImportApiSuccessTest(APITestCase):
         Should be able to import canteens with managers
         """
         manager = UserFactory(email="manager@example.com")
+        self.assertEqual(Canteen.objects.count(), 0)
 
         file_path = "./api/tests/files/canteens/canteens_good_add_manager.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 1)
         self.assertFalse(ImportFailure.objects.exists())
@@ -432,11 +483,15 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         Sectors are not required if canteen production_type is central
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+
         file_path = "./api/tests/files/canteens/canteen_good_empty_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 1)
+
         canteen = Canteen.objects.get(siret="16463707389922")
         self.assertEqual(canteen.production_type, "central")
         self.assertEqual(len(canteen.sector_list), 0)
@@ -446,9 +501,12 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         Different apostrophes caracters should be accepted but a unique one should be saved
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+
         file_path = "./api/tests/files/canteens/canteens_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
@@ -466,9 +524,12 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         Canteen can have 3 sectors or less
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+
         file_path = "./api/tests/files/canteens/canteens_good_max_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
@@ -482,9 +543,12 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         User can import excel file
         """
+        self.assertEqual(Canteen.objects.count(), 0)
+
         file_path = "./api/tests/files/canteens/canteens_good.xlsx"
         with open(file_path, "rb") as canteen_file:
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
@@ -493,6 +557,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 1)
         self.assertFalse(ImportFailure.objects.exists())
         self.assertEqual(Canteen.objects.count(), 1)
+
         canteen = Canteen.objects.first()
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
 
@@ -534,10 +599,10 @@ class CanteensImportApiSuccessTest(APITestCase):
         file_path = "./api/tests/files/canteens/canteens_admin_good_new_canteen.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
-
         self.assertEqual(body["count"], 3)
         self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(errors), 0, errors)
