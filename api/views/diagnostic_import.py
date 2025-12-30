@@ -4,7 +4,7 @@ import time
 from abc import ABC, abstractmethod
 
 from django.conf import settings
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from rest_framework import status
@@ -13,8 +13,8 @@ from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 
 from api.permissions import IsAuthenticated
-from common.utils import file_import
 from common.api import validata
+from common.utils import file_import
 from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource
 
@@ -26,7 +26,7 @@ DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE
 DIAGNOSTICS_SIMPLE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH}"
 
 
-class ImportDiagnosticsView(ABC, APIView):
+class DiagnosticsImportView(ABC, APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
 
@@ -128,7 +128,7 @@ class ImportDiagnosticsView(ABC, APIView):
             except Exception as e:
                 for error in self._parse_errors(e, row, siret):
                     self.errors.append(
-                        ImportDiagnosticsView._get_error(e, error["message"], error["code"], row_number)
+                        DiagnosticsImportView._get_error(e, error["message"], error["code"], row_number)
                     )
 
     @transaction.atomic
@@ -195,7 +195,7 @@ class ImportDiagnosticsView(ABC, APIView):
     def _parse_errors(self, e, row, siret):  # noqa: C901
         errors = []
         if isinstance(e, PermissionDenied):
-            ImportDiagnosticsView._add_error(errors, e.detail, 401)
+            DiagnosticsImportView._add_error(errors, e.detail, 401)
         elif isinstance(e, ObjectDoesNotExist):
             errors.append(
                 {
@@ -206,18 +206,18 @@ class ImportDiagnosticsView(ABC, APIView):
         elif isinstance(e, ValidationError):
             if hasattr(e, "message_dict"):
                 for field, messages in e.message_dict.items():
-                    verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field)
+                    verbose_field_name = DiagnosticsImportView._get_verbose_field_name(field)
                     for message in messages:
                         user_message = message
                         if field != "__all__":
                             user_message = f"Champ '{verbose_field_name}' : {user_message}"
-                        ImportDiagnosticsView._add_error(errors, user_message)
+                        DiagnosticsImportView._add_error(errors, user_message)
             elif hasattr(e, "message"):
-                ImportDiagnosticsView._add_error(errors, e.message)
+                DiagnosticsImportView._add_error(errors, e.message)
             elif hasattr(e, "params"):
-                ImportDiagnosticsView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
+                DiagnosticsImportView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
             else:
-                ImportDiagnosticsView._add_error(
+                DiagnosticsImportView._add_error(
                     errors, "Une erreur s'est produite en créant un bilan pour cette ligne"
                 )
         elif isinstance(e, ValueError):
@@ -225,21 +225,21 @@ class ImportDiagnosticsView(ABC, APIView):
             field_name = match.group(1) if match else ""
             value_given = match.group(2) if match else ""
             if field_name:
-                verbose_field_name = ImportDiagnosticsView._get_verbose_field_name(field_name)
-                ImportDiagnosticsView._add_error(
+                verbose_field_name = DiagnosticsImportView._get_verbose_field_name(field_name)
+                DiagnosticsImportView._add_error(
                     errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
                 )
         elif isinstance(e, Canteen.MultipleObjectsReturned):
-            ImportDiagnosticsView._add_error(
+            DiagnosticsImportView._add_error(
                 errors,
                 f"Plusieurs cantines correspondent au SIRET {siret}. Veuillez enlever les doublons pour pouvoir créer le bilan.",
             )
         if not errors:
-            ImportDiagnosticsView._add_error(errors, "Une erreur s'est produite en créant un bilan pour cette ligne")
+            DiagnosticsImportView._add_error(errors, "Une erreur s'est produite en créant un bilan pour cette ligne")
         return errors
 
 
-class DiagnosticsSimpleImportView(ImportDiagnosticsView):
+class DiagnosticsSimpleImportView(DiagnosticsImportView):
     import_type = ImportType.DIAGNOSTIC_SIMPLE
 
     def _validate_diagnostic(self, row):
