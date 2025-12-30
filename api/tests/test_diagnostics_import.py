@@ -25,7 +25,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
     @authenticate
-    def test_header_error(self):
+    def test_validata_header_error(self):
         """
         A file should not be valid if it doesn't contain a valid header
         """
@@ -69,7 +69,32 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         # TODO
 
     @authenticate
-    def test_error_collection_format(self):
+    def test_validata_empty_rows_error(self):
+        """
+        A file should not be valid if it contains empty rows (Validata)
+        """
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_empty_rows.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 2, errors)
+        self.assertTrue(
+            errors.pop(0)["field"].startswith("ligne vide"),
+        )
+
+    @authenticate
+    def test_validata_format_error(self):
+        """
+        Errors returned by Validata
+        """
         # creating canteens
         CanteenFactory(siret="50044221500025", managers=[authenticate.user])
         CanteenFactory(siret="82821513700013", managers=[authenticate.user])
@@ -114,9 +139,9 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual("Les valeurs de cette colonne doivent être uniques", errors[10]["message"])
 
     @authenticate
-    def test_error_collection(self):
+    def test_model_validation_error(self):
         """
-        If errors occur, discard the file and return the errors with row and message
+        Errors returned by model validation
         """
         # creating canteens
         CanteenFactory(siret="50044221500025", managers=[authenticate.user])
@@ -177,8 +202,8 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
         )
 
-    @override_settings(CSV_IMPORT_MAX_SIZE=1)
     @authenticate
+    @override_settings(CSV_IMPORT_MAX_SIZE=1)
     def test_file_above_max_size(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
@@ -252,21 +277,6 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             self.assertEqual(diagnostic.valeur_totale, 1000)
 
     @authenticate
-    def test_user_not_canteen_manager(self):
-        CanteenFactory(siret="21340172201787", managers=[])
-        self.assertEqual(Diagnostic.objects.count(), 0)
-
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv"
-        with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(errors[0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
-
-    @authenticate
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
@@ -282,6 +292,21 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             errors[0]["message"],
             "Une cantine avec le siret « 21340172201787 » n'existe pas sur la plateforme.",
         )
+
+    @authenticate
+    def test_user_not_canteen_manager(self):
+        CanteenFactory(siret="21340172201787", managers=[])
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(errors[0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
 
 class DiagnosticsSimpleImportApiSuccessTest(APITestCase):

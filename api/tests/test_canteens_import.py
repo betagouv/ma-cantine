@@ -223,7 +223,7 @@ class CanteensImportApiErrorTest(APITestCase):
     @authenticate
     def test_validata_empty_rows_error(self):
         """
-        A file should not be valid if it contains empty rows
+        A file should not be valid if it contains empty rows (Validata)
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
