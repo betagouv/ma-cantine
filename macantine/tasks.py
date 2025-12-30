@@ -160,7 +160,7 @@ def update_brevo_contacts():
     brevo.create_new_brevo_contacts(users_to_create, timezone.now())
 
     logger.info("Update existing Brevo contacts by batch")
-    users_to_update = User.objects.brevo_to_update(brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD)
+    users_to_update = User.objects.brevo_to_update()
     chunks = batched(users_to_update, brevo.CONTACT_BULK_UPDATE_SIZE)
     brevo.update_existing_brevo_contacts(chunks, timezone.now())
 
