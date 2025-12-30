@@ -160,18 +160,22 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         Errors returned by model validation
         """
         # creating canteens
-        CanteenFactory(siret="50044221500025", managers=[authenticate.user])
-        CanteenFactory(siret="82821513700013", managers=[authenticate.user])
-        CanteenFactory(siret="82217035300012", managers=[authenticate.user])
         CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        CanteenFactory(siret="90930179110860", managers=[authenticate.user])
-        CanteenFactory(siret="73282932000074", managers=[authenticate.user])
+        CanteenFactory(siret="21380185500015", managers=[authenticate.user])
+        CanteenFactory(siret="21670482500019", managers=[authenticate.user])
+        CanteenFactory(siret="21640122400011", managers=[authenticate.user])
+        CanteenFactory(siret="21130055300016", managers=[authenticate.user])
+        CanteenFactory(siret="21730065600014", managers=[authenticate.user])
+        CanteenFactory(siret="21590350100017", managers=[authenticate.user])
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        CanteenFactory(siret="92341284500011", managers=[authenticate.user])
+        CanteenFactory(siret="40419443300078", managers=[authenticate.user])
+        CanteenFactory(siret="83014132100034", managers=[authenticate.user])
+        CanteenFactory(siret="11007001800012", managers=[authenticate.user])
         # creating 2 canteens with same siret here to error when this situation exists IRL
-        CanteenFactory(siret="42111303053388", managers=[authenticate.user])
         canteen_with_same_siret = CanteenFactory()
-        Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="42111303053388")
-
-        self.assertEqual(Canteen.objects.count(), 8)
+        Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="21670482500019")
+        self.assertEqual(Canteen.objects.count(), 13)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
@@ -185,7 +189,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 7)
+        self.assertEqual(len(errors), 12)
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
@@ -198,7 +202,8 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Plusieurs cantines correspondent au SIRET 42111303053388. Veuillez enlever les doublons pour pouvoir créer le bilan.",
+            # Note: if the line has other errors, they will not be raised...
+            "Plusieurs cantines correspondent au SIRET 21670482500019. Veuillez enlever les doublons pour pouvoir créer le bilan.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -210,13 +215,34 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         )
         self.assertEqual(
             errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La somme des valeurs totales (HT) viandes et volailles EGalim, 30, et provenance France, 30, est plus que la valeur totale (HT) viandes et volailles, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques provenance France, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La somme des valeurs totales (HT) poissons et produits aquatiques EGalim, 30, et provenance France, 30, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
             errors.pop(0)["message"],
             # TODO: is this the best field to point to as being wrong? hors bio could be confusing
             "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
         )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Bio - Valeur annuelle HT' : La valeur (HT) bio dont commerce équitable, 150, est plus que la valeur totale (HT) bio, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) des autres achats EGalim' : La valeur (HT) achats commerce équitable (hors bio), 150, est plus que la valeur totale (HT) des autres achats EGalim, 50",
+        )
+        self.assertEqual(len(errors), 0)
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
