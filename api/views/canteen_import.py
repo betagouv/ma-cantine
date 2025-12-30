@@ -17,6 +17,7 @@ from simple_history.utils import update_change_reason
 from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
 from common.api import validata
+from common.utils import file_import
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportFailure, ImportType, Sector
@@ -54,6 +55,8 @@ class CanteensImportView(APIView):
         logger.info("Canteen bulk import started")
         try:
             self.file = request.data["file"]
+            file_import.validate_file_size(self.file)
+
             self.is_admin_import = self.request.user.is_staff
             schema_name = CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME
             schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL

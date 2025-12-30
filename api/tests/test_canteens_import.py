@@ -2,6 +2,7 @@ import json
 import re
 from unittest import skipIf
 
+from django.test.utils import override_settings
 from django.conf import settings
 from django.core import mail
 from django.test import TestCase
@@ -163,7 +164,7 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 0)
 
     @authenticate
-    def test_header_error(self):
+    def test_validata_header_error(self):
         """
         A file should not be valid if it doesn't contain a valid header
         """
@@ -274,7 +275,46 @@ class CanteensImportApiErrorTest(APITestCase):
         )
 
     @authenticate
-    def test_not_canteen_manager_error(self):
+    def test_model_validation_error(self):
+        """
+        If a canteen doesn't pass model validation, no canteen should be saved
+        and the array of canteens should return zero
+        """
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteens_bad.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 4, errors)
+        self.assertTrue(
+            errors.pop(0)["message"].startswith("Champ 'repas par jour' : Le champ doit être au moins égal à 3."),
+        )
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Champ 'repas par an (y compris livrés)' : Le champ doit être au moins égal à 420."
+            ),
+        )
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
+            ),
+        )
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Champ 'siret de la cuisine centrale' : Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite."
+            ),
+        )
+
+    @authenticate
+    def test_user_not_canteen_manager(self):
         """
         Cannot update an existing canteen if the user is not a manager of this canteen
         """
@@ -375,14 +415,11 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(errors.pop(0)["message"], error_message_min_max)
 
     @authenticate
-    def test_model_validation_error(self):
-        """
-        If a canteen doesn't pass model validation, no canteen should be saved
-        and the array of canteens should return zero
-        """
+    @override_settings(CSV_IMPORT_MAX_SIZE=1)
+    def test_file_above_max_size(self):
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_bad.csv"
+        file_path = "./api/tests/files/canteens/canteens_good.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
 
@@ -392,25 +429,8 @@ class CanteensImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 4, errors)
-        self.assertTrue(
-            errors.pop(0)["message"].startswith("Champ 'repas par jour' : Le champ doit être au moins égal à 3."),
-        )
-        self.assertTrue(
-            errors.pop(0)["message"].startswith(
-                "Champ 'repas par an (y compris livrés)' : Le champ doit être au moins égal à 420."
-            ),
-        )
-        self.assertTrue(
-            errors.pop(0)["message"].startswith(
-                "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
-            ),
-        )
-        self.assertTrue(
-            errors.pop(0)["message"].startswith(
-                "Champ 'siret de la cuisine centrale' : Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite."
-            ),
+        self.assertEqual(
+            errors.pop(0)["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
 
 
