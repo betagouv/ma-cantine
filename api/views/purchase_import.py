@@ -232,7 +232,6 @@ class PurchasesImportView(APIView):
         return JsonResponse(
             {
                 "count": 0 if self.errors else len(self.purchases),
-                "errorCount": len(self.errors),
                 "errors": self.errors,
                 "seconds": time.time() - self.start_time,
                 "duplicatePurchases": camelize(PurchaseSerializer(self.duplicate_purchases, many=True).data),
