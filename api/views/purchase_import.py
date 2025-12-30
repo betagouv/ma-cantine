@@ -4,7 +4,7 @@ import uuid
 from decimal import ROUND_HALF_DOWN, Decimal, InvalidOperation
 
 from django.conf import settings
-from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from rest_framework import status
@@ -211,6 +211,17 @@ class PurchasesImportView(APIView):
         purchase.full_clean()
         self.purchases.append(purchase)
 
+    @staticmethod
+    def _get_error(e, message, error_status, row_number):
+        return {"row": row_number, "status": error_status, "message": message}
+
+    @staticmethod
+    def _get_verbose_field_name(field_name):
+        try:
+            return Purchase._meta.get_field(field_name).verbose_name
+        except Exception:
+            return field_name
+
     def _get_success_response(self):
         return JsonResponse(
             {
@@ -224,33 +235,15 @@ class PurchasesImportView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    @staticmethod
-    def _get_verbose_field_name(field_name):
-        try:
-            return Purchase._meta.get_field(field_name).verbose_name
-        except Exception:
-            return field_name
+    staticmethod
 
-    @staticmethod
-    def _get_error(e, message, error_status, row_number):
-        return {"row": row_number, "status": error_status, "message": message}
+    def _add_error(errors, message, code=400):
+        errors.append({"message": message, "code": code})
 
     def _parse_errors(self, e, row, siret):
         errors = []
         if isinstance(e, PermissionDenied):
-            errors.append(
-                {
-                    "message": e.detail,
-                    "code": 401,
-                }
-            )
-        elif isinstance(e, BadRequest):
-            errors.append(
-                {
-                    "message": f"Format fichier : {len(self.expected_header)} colonnes attendues, {len(row)} trouvées.",
-                    "code": 400,
-                }
-            )
+            PurchasesImportView._add_error(errors, e.detail, 401)
         elif isinstance(e, ObjectDoesNotExist):
             errors.append(
                 {
@@ -259,22 +252,11 @@ class PurchasesImportView(APIView):
                 }
             )
         elif isinstance(e, ValidationError):
-            if e.message_dict:
+            if hasattr(e, "message_dict"):
                 for field, messages in e.message_dict.items():
                     for message in messages:
                         user_message = message
-                        errors.append(
-                            {
-                                "field": field,
-                                "message": user_message,
-                                "code": 400,
-                            }
-                        )
+                        PurchasesImportView._add_error(errors, user_message)
         if not errors:
-            errors.append(
-                {
-                    "message": "Une erreur s'est produite en créant un achat pour cette ligne",
-                    "code": 400,
-                }
-            )
+            PurchasesImportView._add_error(errors, "Une erreur s'est produite en créant un achat pour cette ligne")
         return errors
