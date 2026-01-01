@@ -365,7 +365,7 @@ lxml==5.3.0
     #   svglib
 matplotlib-inline==0.1.7
     # via ipython
-mccabe==0.6.1
+mccabe==0.7.0
     # via
     #   ma-cantine
     #   pylint
