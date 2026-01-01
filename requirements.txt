@@ -678,7 +678,7 @@ virtualenv==20.26.6
     #   pre-commit
 wagtail==6.3
     # via ma-cantine
-wcwidth==0.2.13
+wcwidth==0.2.14
     # via
     #   ma-cantine
     #   prompt-toolkit
