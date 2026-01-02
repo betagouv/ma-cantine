@@ -1469,6 +1469,8 @@ class Diagnostic(models.Model):
             diagnostic_validators.validate_diagnostic_type(self),
             diagnostic_validators.validate_appro_fields_required(self),
             diagnostic_validators.validate_valeur_totale(self),
+            diagnostic_validators.validate_valeur_bio(self),
+            diagnostic_validators.validate_valeur_egalim_autres(self),
             diagnostic_validators.validate_viandes_volailles_total(self),
             diagnostic_validators.validate_produits_de_la_mer_total(self),
             diagnostic_validators.validate_viandes_volailles_produits_de_la_mer_egalim(self),
