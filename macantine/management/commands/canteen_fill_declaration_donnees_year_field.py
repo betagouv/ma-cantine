@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     """
     Usage:
-    - python manage.py canteen_fill_declaration_donnees_year_field --year 2024
+    - python manage.py canteen_fill_declaration_donnees_year_field --year 2025
     """
 
     help = "Fill canteen declaration_donnees_YEAR field"
