@@ -77,7 +77,7 @@ def get_common_error_informations(error):
 def get_specific_error_informations(error):
     if error["type"] == "blank-row":
         return {
-            "title": "Valeur incorrect",
+            "title": "Valeur incorrecte la ligne doit être supprimée",
             # "column": "",
             "field": "ligne vide",
             # "cell": "",
