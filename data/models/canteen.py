@@ -464,6 +464,7 @@ class Canteen(SoftDeletionModel):
     declaration_donnees_2022 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2022")
     declaration_donnees_2023 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2023")
     declaration_donnees_2024 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2024")
+    declaration_donnees_2025 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2025")
 
     logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
 
