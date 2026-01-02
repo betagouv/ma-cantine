@@ -218,6 +218,13 @@
       "type": "boolean"
     },
     {
+      "description": "A télédéclaré ses données lors de la campagne 2026 (portant sur les données 2025)",
+      "example": "true",
+      "name": "declaration_donnees_2025",
+      "title": "A déclaré en 2026 ses données de 2025",
+      "type": "boolean"
+    },
+    {
       "description": "A un gestionnaire sur (email) et a fais au moins une action (à définir) - Indique si la cantine est active sur l'apllication Ma Cantine ou si elle a été importée via une source de données externe",
       "example": "true",
       "name": "active_on_ma_cantine",
