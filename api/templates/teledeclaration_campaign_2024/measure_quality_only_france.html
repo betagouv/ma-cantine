@@ -1,0 +1,67 @@
+<p>Origine France</p>
+<ul>
+    <li>
+        <span>Valeur en HT des achats en viandes et volailles origine France</span> :
+        {% if not valeur_viandes_volailles_france is None %}
+            {{ valeur_viandes_volailles_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en poissons, produits de la mer et de l'aquaculture origine France</span> :
+        {% if not valeur_produits_de_la_mer_france is None %}
+            {{ valeur_produits_de_la_mer_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en charcuterie origine France</span> :
+        {% if not valeur_charcuterie_france is None %}
+            {{ valeur_charcuterie_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en fruits et légumes frais et surgelés origine France</span> :
+        {% if not valeur_fruits_et_legumes_france is None %}
+            {{ valeur_fruits_et_legumes_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en BOF (Produits laitiers, beurre et œufs) origine France</span> :
+        {% if not valeur_produits_laitiers_france is None %}
+            {{ valeur_produits_laitiers_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en boulangerie / pâtisserie fraîches origine France</span> :
+        {% if not valeur_boulangerie_france is None %}
+            {{ valeur_boulangerie_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en boissons origine France</span> :
+        {% if not valeur_boissons_france is None %}
+            {{ valeur_boissons_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+    <li>
+        <span>Valeur en HT des achats en autres produits frais, surgelés et d’épicerie origine France</span> :
+        {% if not valeur_autres_france is None %}
+            {{ valeur_autres_france|floatformat:2 }} €
+        {% else %}
+            Non renseignée
+        {% endif %}
+    </li>
+</ul>
