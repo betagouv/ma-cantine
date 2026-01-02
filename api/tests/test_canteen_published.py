@@ -1,6 +1,6 @@
 import datetime
 import os
-from datetime import date
+from freezegun import freeze_time
 
 from django.core.files import File
 from django.urls import reverse
@@ -298,6 +298,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertEqual(results[2]["name"], "Wasabi")
         self.assertEqual(results[3]["name"], "Shiso")
 
+    @freeze_time("2025-08-30")  # once the 2024 campaign is over
     def test_filter_appro_values(self):
         """
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
@@ -344,7 +345,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             central_producer_siret=None,
         )
 
-        publication_year = date.today().year - 1
+        publication_year = 2024
 
         DiagnosticFactory(
             canteen=good_canteen,
