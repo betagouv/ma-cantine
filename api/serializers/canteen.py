@@ -732,6 +732,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
             "declaration_donnees_2022",
             "declaration_donnees_2023",
             "declaration_donnees_2024",
+            "declaration_donnees_2025",
             "adresses_gestionnaires",
         )
         read_only_fields = fields

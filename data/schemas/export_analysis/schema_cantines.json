@@ -220,6 +220,12 @@
       "type": "boolean"
     },
     {
+      "example": "true",
+      "name": "declaration_donnees_2025",
+      "title": "A déclaré en 2026 ses données de 2025",
+      "type": "boolean"
+    },
+    {
       "description": "Adresses mél des gestionnaires",
       "example": "gestionnaire1@example.com, gestionnaire2@example.com",
       "format": "default",
