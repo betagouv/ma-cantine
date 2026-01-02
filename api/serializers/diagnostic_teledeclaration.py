@@ -45,6 +45,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     declaration_donnees_2022 = serializers.SerializerMethodField()
     declaration_donnees_2023 = serializers.SerializerMethodField()
     declaration_donnees_2024 = serializers.SerializerMethodField()
+    declaration_donnees_2025 = serializers.SerializerMethodField()
 
     valeur_bio = serializers.FloatField(source="valeur_bio_agg", read_only=True)
     valeur_siqo = serializers.FloatField(source="valeur_siqo_agg", read_only=True)
@@ -115,6 +116,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "declaration_donnees_2022",
             "declaration_donnees_2023",
             "declaration_donnees_2024",
+            "declaration_donnees_2025",
             # value fields
             "valeur_totale",
             "valeur_bio",
@@ -225,6 +227,9 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
 
     def get_declaration_donnees_2024(self, obj):
         return obj.canteen.declaration_donnees_2024
+
+    def get_declaration_donnees_2025(self, obj):
+        return obj.canteen.declaration_donnees_2025
 
     def get_valeur_somme_egalim_hors_bio(self, obj):
         return utils.sum_int_and_none(

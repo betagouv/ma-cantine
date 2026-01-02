@@ -36,7 +36,7 @@ class TeledeclarationQuerySetTest(TestCase):
         cls.invalid_canteen.refresh_from_db()
         cls.deleted_canteen = CanteenFactory(
             siret="21730065600014",
-            deletion_date=now().replace(month=3, day=1),
+            deletion_date=now().replace(month=3, day=1, year=2025),
         )
 
         for index, canteen in enumerate(
@@ -70,7 +70,7 @@ class TeledeclarationQuerySetTest(TestCase):
         cls.valid_canteen_diagnostic_correction = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
-            creation_date=now().replace(month=7, day=1),
+            creation_date=now().replace(month=7, day=1, year=2025),
             canteen=cls.valid_canteen_4,
             valeur_totale=1000.00,
             valeur_bio=200.00,

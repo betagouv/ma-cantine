@@ -2,6 +2,12 @@
 
 Tous les changements notables apportés aux jeux de données exposés sur data.gouv.fr vont être documentés ici.
 
+## 2026-01-05
+
+### Ajout
+
+* Colonne 'declaration_donnees_2025'
+
 ## 2025-11-24
 
 ### Modification
