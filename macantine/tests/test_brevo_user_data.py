@@ -35,7 +35,7 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_DATE_INSCRIPTION"), "2021-01-20")
         self.assertEqual(attributes.get("MA_CANTINE_COMPTE_DEV"), new_user.is_dev)
         self.assertEqual(attributes.get("MA_CANTINE_COMPTE_ELU_E"), new_user.is_elected_official)
-        self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), False)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
@@ -60,7 +60,7 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), True)
@@ -84,7 +84,7 @@ class TestBrevoUserData(TestCase):
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
 
-        self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
@@ -123,7 +123,7 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
@@ -161,7 +161,7 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
@@ -215,7 +215,7 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_GERE_UN_ETABLISSEMENT"), True)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
