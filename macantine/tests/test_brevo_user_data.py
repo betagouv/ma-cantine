@@ -51,7 +51,7 @@ class TestBrevoUserData(TestCase):
         related to the diagnostic, TD and publication will be active
         """
         user = UserFactory()
-        CanteenFactory(managers=[user])
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[user])
 
         tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
@@ -60,7 +60,8 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 1)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_SITE"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), True)
@@ -72,7 +73,7 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_diag(self, batch_update_mock, create_contact_mock):
         user = UserFactory()
-        canteen = CanteenFactory(managers=[user])
+        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[user])
         DiagnosticFactory(year=2021, canteen=canteen)
         DiagnosticFactory(year=2022, canteen=canteen)
 
@@ -84,7 +85,8 @@ class TestBrevoUserData(TestCase):
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
 
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 1)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_SITE"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
@@ -96,7 +98,7 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_td(self, batch_update_mock, create_contact_mock):
         user = UserFactory()
-        canteen = CanteenFactory(managers=[user])
+        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[user])
         diag_2021 = DiagnosticFactory(year=2021, canteen=canteen)
         diag_2022 = DiagnosticFactory(year=2022, canteen=canteen)
         TeledeclarationFactory(
@@ -123,7 +125,8 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 1)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_SITE"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
@@ -161,7 +164,8 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 2)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_SATELLITE"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
@@ -215,7 +219,8 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 2)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_SATELLITE"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
