@@ -129,49 +129,49 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_france",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Provenance France",
+      "title": "Poissons, produits de la mer et de l'aquaculture, origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_france",
-      "title": "Fruits et légumes frais et surgelés, Provenance France",
+      "title": "Fruits et légumes frais et surgelés, origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_france",
-      "title": "Charcuterie, Provenance France",
+      "title": "Charcuterie, origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_france",
-      "title": "BOF (Produits laitiers, beurre et œufs), Provenance France",
+      "title": "BOF (Produits laitiers, beurre et œufs), origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_france",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Provenance France",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_france",
-      "title": "Boissons, Provenance France",
+      "title": "Boissons, origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_france",
-      "title": "Autres produits frais, surgelés et d’épicerie, Provenance France",
+      "title": "Autres produits frais, surgelés et d’épicerie, origine France",
       "type": "number"
     }
   ],
