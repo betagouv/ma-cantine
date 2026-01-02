@@ -16,6 +16,16 @@ class UserQuerySet(models.QuerySet):
 
         return self.prefetch_related("canteens").annotate(
             nb_cantines=Count("canteens", distinct=True),
+            nb_cantines_groupe=Count(
+                "canteens",
+                filter=Q(
+                    canteens__production_type__in=[
+                        Canteen.ProductionType.CENTRAL,
+                        Canteen.ProductionType.CENTRAL_SERVING,
+                    ]
+                ),
+                distinct=True,
+            ),
             nb_cantines_site=Count(
                 "canteens", filter=Q(canteens__production_type=Canteen.ProductionType.ON_SITE), distinct=True
             ),
@@ -92,6 +102,7 @@ class User(AbstractUser):
         "nb_cantines",
         "nb_cantines_site",
         "nb_cantines_satellite",
+        "nb_cantines_groupe",
         "nb_cantines_gestion_concedee",
     ]
 

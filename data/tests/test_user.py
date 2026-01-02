@@ -47,11 +47,13 @@ class UserModelTest(TestCase):
         user_without_canteens = user_qs.get(id=self.user_without_canteens.id)
 
         self.assertEqual(user_with_canteens.nb_cantines, 5)
+        self.assertEqual(user_with_canteens.nb_cantines_groupe, 1)
         self.assertEqual(user_with_canteens.nb_cantines_site, 2)
         self.assertEqual(user_with_canteens.nb_cantines_satellite, 1)
         self.assertEqual(user_with_canteens.nb_cantines_gestion_concedee, 1)
 
         self.assertEqual(user_without_canteens.nb_cantines, 0)
+        self.assertEqual(user_without_canteens.nb_cantines_groupe, 0)
         self.assertEqual(user_without_canteens.nb_cantines_site, 0)
         self.assertEqual(user_without_canteens.nb_cantines_satellite, 0)
         self.assertEqual(user_without_canteens.nb_cantines_gestion_concedee, 0)
@@ -65,6 +67,7 @@ class UserModelTest(TestCase):
         self.user_with_canteens.refresh_from_db()
 
         self.assertEqual(self.user_with_canteens.data["nb_cantines"], 5)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines_groupe"], 1)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_site"], 2)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_satellite"], 1)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_gestion_concedee"], 1)
@@ -74,6 +77,7 @@ class UserModelTest(TestCase):
         self.user_without_canteens.refresh_from_db()
 
         self.assertEqual(self.user_without_canteens.data["nb_cantines"], 0)
+        self.assertEqual(self.user_without_canteens.data["nb_cantines_groupe"], 0)
         self.assertEqual(self.user_without_canteens.data["nb_cantines_site"], 0)
         self.assertEqual(self.user_without_canteens.data["nb_cantines_satellite"], 0)
         self.assertEqual(self.user_without_canteens.data["nb_cantines_gestion_concedee"], 0)
