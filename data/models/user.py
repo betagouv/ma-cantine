@@ -48,6 +48,12 @@ class UserQuerySet(models.QuerySet):
         )
 
     def with_diagnostic_stats(self):
+        """
+        Note: basic stats, we ignore if the central/group has done the diagnostic for its satellites
+            - should we look at the central/group ?
+            - should we use the canteen.declaration_donnees_YEAR field instead ?
+        Note: needs to add a new year every campaign
+        """
         from data.models import Diagnostic
 
         return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
