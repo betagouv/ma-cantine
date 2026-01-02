@@ -47,6 +47,30 @@ class UserQuerySet(models.QuerySet):
             ),
         )
 
+    def with_diagnostic_stats(self):
+        from data.models import Diagnostic
+
+        return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
+            nb_bilans_2025=Count("canteens__diagnostics", filter=Q(canteens__diagnostics__year=2024), distinct=True),
+            nb_td_2025=Count(
+                "canteens__diagnostics",
+                filter=Q(
+                    canteens__diagnostics__year=2024,
+                    canteens__diagnostics__status=Diagnostic.DiagnosticStatus.SUBMITTED,
+                ),
+                distinct=True,
+            ),
+            nb_bilans_todo_2025=Count("canteens", distinct=True)
+            - Count("canteens__diagnostics", filter=Q(canteens__diagnostics__year=2024), distinct=True),
+            nb_td_todo_2025=Count(
+                "canteens__diagnostics",
+                filter=Q(
+                    canteens__diagnostics__year=2024, canteens__diagnostics__status=Diagnostic.DiagnosticStatus.DRAFT
+                ),
+                distinct=True,
+            ),
+        )
+
 
 class UserManager(BaseUserManager):
     pass
@@ -119,6 +143,12 @@ class User(AbstractUser):
         "nb_cantines_satellite",
         "nb_cantines_groupe",
         "nb_cantines_gestion_concedee",
+    ]
+    DATA_DIAGNOSTIC_FIELDS = [
+        "nb_bilans_2025",
+        "nb_td_2025",
+        "nb_bilans_todo_2025",
+        "nb_td_todo_2025",
     ]
 
     objects = UserManager.from_queryset(UserQuerySet)()
@@ -231,8 +261,8 @@ class User(AbstractUser):
         )
 
     def update_data(self):
-        # need to have called the user with 'with_canteen_stats' queryset method
-        self.data = {field: getattr(self, field) for field in self.DATA_CANTEEN_FIELDS}
+        # need to have called the user with 'with_canteen_stats' & 'with_diagnostic_stats' queryset method
+        self.data = {field: getattr(self, field) for field in self.DATA_CANTEEN_FIELDS + self.DATA_DIAGNOSTIC_FIELDS}
         self.data["modification_date"] = timezone.now().isoformat()
         self.save(update_fields=["data"])
 
