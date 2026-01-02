@@ -817,6 +817,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
             "declaration_donnees_2022",
             "declaration_donnees_2023",
             "declaration_donnees_2024",
+            "declaration_donnees_2025",
             "active_on_ma_cantine",
         )
 

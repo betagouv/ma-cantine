@@ -226,6 +226,9 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     def get_declaration_donnees_2024(self, obj):
         return obj.canteen.declaration_donnees_2024
 
+    def get_declaration_donnees_2025(self, obj):
+        return obj.canteen.declaration_donnees_2025
+
     def get_valeur_somme_egalim_hors_bio(self, obj):
         return utils.sum_int_and_none(
             [
