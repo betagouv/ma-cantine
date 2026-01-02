@@ -603,10 +603,10 @@ export const missingCanteenData = (canteen, sectors) => {
   const missingFieldLambda = (f) => !canteen[f] || canteen[f].length === 0
   const missingSharedRequiredData = requiredFields.some(missingFieldLambda)
   if (missingSharedRequiredData) return true
-
   // sectors checks
   if (lineMinistryRequired(canteen, sectors) && !canteen.lineMinistry) return true
-  if (canteen.sectorList.length === 0 || canteen.sectorList.length > 3) return true
+  if ((canteen.sectorList.length === 0 && canteen.productionType !== "central") || canteen.sectorList.length > 3)
+    return true
 
   // production type specific checks
   const yearlyMealCountKey = "yearlyMealCount"
