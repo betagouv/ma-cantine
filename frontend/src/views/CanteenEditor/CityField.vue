@@ -5,7 +5,6 @@
     :items="communes"
     :search-input.sync="search"
     auto-select-first
-    cache-items
     @click:clear="$emit('update:inseeCode', null)"
     v-model="cityAutocompleteChoice"
     :no-data-text="noDataText"
