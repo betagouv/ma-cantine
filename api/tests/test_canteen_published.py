@@ -298,7 +298,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertEqual(results[2]["name"], "Wasabi")
         self.assertEqual(results[3]["name"], "Shiso")
 
-    @freeze_time("2025-08-30")  # once the 2024 campaign is over
+    @freeze_time("2025-08-30")  # after the 2024 campaign
     def test_filter_appro_values(self):
         """
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
