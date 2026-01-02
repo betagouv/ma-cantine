@@ -5,12 +5,21 @@ from django.db.models import Count, Q
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
+import macantine.brevo as brevo
+
 from data.models.geo import Department
 from data.fields import ChoiceArrayField
 from data.utils import optimize_image
 
 
 class UserQuerySet(models.QuerySet):
+    def brevo_to_create(self):
+        return self.filter(Q(last_brevo_update__isnull=True))
+
+    def brevo_to_update(self):
+        one_day_ago = timezone.now() - timezone.timedelta(days=brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD_DAYS)
+        return self.filter(Q(last_brevo_update__lte=one_day_ago))
+
     def with_canteen_stats(self):
         from data.models import Canteen
 

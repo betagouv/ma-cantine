@@ -5,7 +5,7 @@ import time
 import redis as r
 from django.conf import settings
 from django.core.management import call_command
-from django.db.models import F, Q
+from django.db.models import F
 from django.db.models.functions import Length
 from django.utils import timezone
 from sib_api_v3_sdk.rest import ApiException
@@ -154,19 +154,15 @@ def update_brevo_contacts():
     """
     logger.info("update_brevo_contacts task starting")
     start = time.time()
-    # This call concerns the users that have not been updated in the last day
-    today = timezone.now()
-    threshold = today - datetime.timedelta(days=1)
 
     logger.info("Create individually new Brevo users (allowing the update flag to be set)")
-    users_to_create = User.objects.filter(Q(last_brevo_update__isnull=True))
-    brevo.create_new_brevo_contacts(users_to_create, today)
+    users_to_create = User.objects.brevo_to_create()
+    brevo.create_new_brevo_contacts(users_to_create, timezone.now())
 
     logger.info("Update existing Brevo contacts by batch")
-    users_to_update = User.objects.filter(Q(last_brevo_update__lte=threshold))
-    bulk_update_size = 100
-    chunks = batched(users_to_update, bulk_update_size)
-    brevo.update_existing_brevo_contacts(chunks, today)
+    users_to_update = User.objects.brevo_to_update()
+    chunks = batched(users_to_update, brevo.CONTACT_BULK_UPDATE_SIZE)
+    brevo.update_existing_brevo_contacts(chunks, timezone.now())
 
     end = time.time()
     logger.info(f"update_brevo_contacts task ended. Duration : {end - start} seconds")

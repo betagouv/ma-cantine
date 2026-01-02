@@ -7,6 +7,9 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
+CONTACT_BULK_UPDATE_SIZE = 100
+CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD_DAYS = 1
+
 configuration = sib_api_v3_sdk.Configuration()
 configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")
 api_client = sib_api_v3_sdk.ApiClient(configuration)
@@ -30,6 +33,7 @@ def user_to_brevo_payload(user, bulk=True):
     The user payload for Brevo API.
     - defined in the User model method `get_brevo_data()`
     - bulk: whether the payload is for bulk update (True) or individual create/update (False)
+        - we then use CONTACT_BULK_UPDATE_SIZE
 
     How to add a new field:
     1. Create the field in Brevo
