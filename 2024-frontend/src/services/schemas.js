@@ -7,7 +7,6 @@ const getFields = async (schemaFile) => {
 }
 
 const getFieldType = (field) => {
-  console.log(field)
   const types = {
     date: "Date (au format AAAA-MM-JJ)",
     integer: "Chiffre",
