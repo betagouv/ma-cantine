@@ -111,7 +111,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2024-02-10")  # during the 2024 campaign
+    @freeze_time("2024-02-10")  # during the 2023 campaign
     def test_diagnostic_appro_fields_required_before_2024_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2024.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
@@ -227,7 +227,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
 
 
 class Diagnostic2024ModelSaveTest(TransactionTestCase):
-    @freeze_time("2024-02-10")  # during the 2024 campaign
+    @freeze_time("2024-02-10")  # during the 2023 campaign
     def test_diagnostic_simple_2024(self):
         # valid
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
@@ -241,7 +241,7 @@ class Diagnostic2024ModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE)
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2024-02-10")  # during the 2024 campaign
+    @freeze_time("2024-02-10")  # during the 2023 campaign
     def test_diagnostic_complete_2024(self):
         # valid
         VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE = {

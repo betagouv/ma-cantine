@@ -1042,7 +1042,7 @@ class PurchaseCanteenOptionsApiTest(APITestCase):
 
 
 class DiagnosticsFromPurchasesApiTest(APITestCase):
-    @freeze_time("2022-02-10")  # during the 2022 campaign
+    @freeze_time("2022-02-10")  # during the 2021 campaign
     @authenticate
     def test_create_diagnostics_from_purchases(self):
         """
@@ -1117,7 +1117,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2021}), {}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @freeze_time("2024-02-10")  # during the 2024 campaign
+    @freeze_time("2024-02-10")  # during the 2023 campaign
     @authenticate
     def test_errors_for_create_diagnostics_from_purchases(self):
         """
