@@ -180,6 +180,10 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         return (UserInline, DiagnosticInline)
 
     def save_model(self, request, obj, form, change):
+        """
+        - run validation (will be run on save())
+        - set creation_source (on create)
+        """
         if not change:
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
