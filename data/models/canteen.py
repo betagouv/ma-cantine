@@ -242,10 +242,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         # annotate with action
         conditions = [
             When(
-                is_central_cuisine_query() & Q(satellites_in_db_count=None),
-                then=Value(Canteen.Actions.ADD_SATELLITES),
-            ),
-            When(
                 is_satellite_query()
                 & Q(
                     diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
@@ -260,6 +256,14 @@ class CanteenQuerySet(SoftDeletionQuerySet):
                     has_diagnostic_teledeclared_for_year=True,
                 ),
                 then=Value(Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED),
+            ),
+            When(
+                has_diagnostic_teledeclared_for_year=True,
+                then=Value(Canteen.Actions.NOTHING),
+            ),
+            When(
+                is_central_cuisine_query() & Q(satellites_in_db_count=None),
+                then=Value(Canteen.Actions.ADD_SATELLITES),
             ),
             When(
                 Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
