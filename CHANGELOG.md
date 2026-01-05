@@ -6,6 +6,51 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.48.0](https://github.com/betagouv/ma-cantine/compare/v2025.47.0...v2025.48.0) (2026-01-05)
+
+
+### Nouveautés
+
+* **Bilans:** autoriser la création de bilans uniquement pour l'année précédente et l'année suivante ([#6116](https://github.com/betagouv/ma-cantine/issues/6116)) ([927cb2f](https://github.com/betagouv/ma-cantine/commit/927cb2f6083985efa13bf0c87002201668274523))
+* **Bilans:** Imports: création de la page avec les données statiques (bilans simples) ([#6075](https://github.com/betagouv/ma-cantine/issues/6075)) ([2b01d1a](https://github.com/betagouv/ma-cantine/commit/2b01d1aaec390cca6bec2ef5acd3fce5a27d4456))
+* **Bilans:** Imports: mise en place de l'import avec Validata et le nouveau schéma (bilans simples) ([#6078](https://github.com/betagouv/ma-cantine/issues/6078)) ([2c1eb45](https://github.com/betagouv/ma-cantine/commit/2c1eb450a8b499f4af39d9f53ebdff71b2e22856))
+* **Bilans:** Imports: v1 du schéma pour le bilan simplifié (compatible Validata) ([#6053](https://github.com/betagouv/ma-cantine/issues/6053)) ([c752172](https://github.com/betagouv/ma-cantine/commit/c7521729c3c5c254e4e85fa922b61c23d7dddd5b))
+* **Ressources:** ajout du guide pratique "plus de bio" ([#6107](https://github.com/betagouv/ma-cantine/issues/6107)) ([3b6fe23](https://github.com/betagouv/ma-cantine/commit/3b6fe23edf1efda55b39b42724fcb83ff74eacf7))
+* **Télédéclaration:** nouvelle campagne pour l'année 2025 ([#6103](https://github.com/betagouv/ma-cantine/issues/6103)) ([19a050f](https://github.com/betagouv/ma-cantine/commit/19a050f0f4e032972c0165448ba53fff98bcbaf5))
+
+
+### Améliorations
+
+* **Bilans:** Admin: lancer les validation à la création & modification ([#6117](https://github.com/betagouv/ma-cantine/issues/6117)) ([13c6cee](https://github.com/betagouv/ma-cantine/commit/13c6cee44629b6ef74e427e902accf58f9c4b6b7))
+* **Bilans:** ajouter de nouvelles règles métiers au niveau du modèle (bilans simples) ([#6086](https://github.com/betagouv/ma-cantine/issues/6086)) ([6280698](https://github.com/betagouv/ma-cantine/commit/62806981b64d719848838ce65a754d250686d630))
+* **Imports:** améliore le message d'erreur pour les lignes vides ([#6104](https://github.com/betagouv/ma-cantine/issues/6104)) ([f21a36a](https://github.com/betagouv/ma-cantine/commit/f21a36a7327649188b9eb6f86bdb61b7f9aaee91))
+
+
+### Corrections (bugs, typos...)
+
+* **Badges:** le badge télédéclaré est prioritaire par rapport aux informations manquantes ([#6118](https://github.com/betagouv/ma-cantine/issues/6118)) ([e75fe74](https://github.com/betagouv/ma-cantine/commit/e75fe740540ac50a3e2d60f21ef2c762da0c7b1f))
+* **Brevo:** ne pas tenter de synchroniser le champ email vu qu'il est déjà connu par Brevo ([#6085](https://github.com/betagouv/ma-cantine/issues/6085)) ([3f0c8db](https://github.com/betagouv/ma-cantine/commit/3f0c8db12ddf75f51483fc7f84ce1ddf44ac7d55))
+* **Imports:** Bilans: autorise les formats texte et nombre pour le champ "année_bilan" ([#6115](https://github.com/betagouv/ma-cantine/issues/6115)) ([1d709cd](https://github.com/betagouv/ma-cantine/commit/1d709cdb874b5224b946f7e4b3bfa02b20eeca72))
+* **Imports:** Bilans: remplace provenance France par origine France ([#6106](https://github.com/betagouv/ma-cantine/issues/6106)) ([1cc73f8](https://github.com/betagouv/ma-cantine/commit/1cc73f8aba0cd06d9a61c94161f1f7c2ffc7e711))
+* **Télédéclaration:** justificatif de la télédéclaration détaillée n'affiche pas tous les champs ([#6105](https://github.com/betagouv/ma-cantine/issues/6105)) ([d0bba30](https://github.com/betagouv/ma-cantine/commit/d0bba303dad7cb276544bff13cb89b4ff448a8d6))
+* **Télédéclaration:** le sous-badge "à compléter" s'affichait pour une cuisine centrale sans secteurs ([#6108](https://github.com/betagouv/ma-cantine/issues/6108)) ([daeb7dc](https://github.com/betagouv/ma-cantine/commit/daeb7dc83442579cc5c178d0945e069a33bdbda3))
+* **Trouver une cantine:** corrige l'affichage répétitif des villes ([#6109](https://github.com/betagouv/ma-cantine/issues/6109)) ([f82707e](https://github.com/betagouv/ma-cantine/commit/f82707e3cee405d2a58fe0da9ac427ba87abff6e))
+
+
+### Technique
+
+* **Bilans:** Imports: commente l'ancien code en attendant de finir l'intégration des nouveaux imports bilans ([#6080](https://github.com/betagouv/ma-cantine/issues/6080)) ([264d06f](https://github.com/betagouv/ma-cantine/commit/264d06ff5f0b7da118279e94ebba96630ba0726f))
+* **Brevo:** fait le ménage dans la logique pour filtrer les utilisateurs ([#6084](https://github.com/betagouv/ma-cantine/issues/6084)) ([fc26cb5](https://github.com/betagouv/ma-cantine/commit/fc26cb50130c5bda251c501f2ed62b6c87328291))
+* **Brevo:** rajoute un champ avec le nombre de groupe (CC) ([#6111](https://github.com/betagouv/ma-cantine/issues/6111)) ([c24c59a](https://github.com/betagouv/ma-cantine/commit/c24c59aae607a3baf1615027ed93389c2d14981c))
+* **Brevo:** renomme 1 champ. supprime un autre non utilisé ([#6110](https://github.com/betagouv/ma-cantine/issues/6110)) ([d1ad10c](https://github.com/betagouv/ma-cantine/commit/d1ad10c9f7d6f4d8f088a56fe8caa9cb0f2826d0))
+* **Diagnostics:** ajouter un related_name sur la FK canteen ([#6113](https://github.com/betagouv/ma-cantine/issues/6113)) ([b5eacdf](https://github.com/betagouv/ma-cantine/commit/b5eacdfc9d209a58be187c11aa13b53096e4ae62))
+* **Imports:** ménage pour homogénéiser entre cantines, achats & bilans ([#6083](https://github.com/betagouv/ma-cantine/issues/6083)) ([8999ec6](https://github.com/betagouv/ma-cantine/commit/8999ec6bba23597b861a3ba9fb7e3f845c483b54))
+
+
+### Documentation
+
+* **Open Data:** mettre les constants dans datagouv.py & documenter l'ajout de nouveaux fichiers ([#6079](https://github.com/betagouv/ma-cantine/issues/6079)) ([9f10193](https://github.com/betagouv/ma-cantine/commit/9f101932481bba713d3397bc799f0f2991b9f157))
+
 ## [2025.47.0](https://github.com/betagouv/ma-cantine/compare/v2025.46.0...v2025.47.0) (2025-12-23)
 
 
