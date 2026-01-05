@@ -36,11 +36,12 @@
   <!-- SIMPLIFIED DECLARATION -->
 
   {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
+  {% include "./measure_quality_common.html" %}
   {% if not diagnostic_type == "détaillée" %}
-  {% include "./measure_quality_simple.html" %}
+  {% include "./measure_quality_france.html" %}
   {% else %}
   <!-- COMPLETE DECLARATION -->
-  {% include "./measure_quality_complete.html" %}
+  {% include "./measure_quality_all_families.html" %}
   {% endif %}
   {% endif %}
 
