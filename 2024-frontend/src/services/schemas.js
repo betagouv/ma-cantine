@@ -7,6 +7,7 @@ const getFields = async (schemaFile) => {
 }
 
 const getFieldType = (field) => {
+  console.log(field)
   const types = {
     date: "Date (au format AAAA-MM-JJ)",
     integer: "Chiffre",
@@ -16,7 +17,7 @@ const getFieldType = (field) => {
     string: "Texte (libre)",
     string_enum: "Texte (choix unique)",
     string_enum_multiple: "Texte (choix multiples)",
-    year: "Année (AAAA)",
+    année_bilan: "Année (AAAA)",
   }
 
   let fieldType = ""
