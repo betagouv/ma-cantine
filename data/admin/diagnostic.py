@@ -168,6 +168,11 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         return qs
 
     def save_model(self, request, obj, form, change):
+        """
+        - run validation (full_clean() is called here, because they are not run on save())
+        - set creation_source (on create)
+        """
+        obj.full_clean()
         if not change:
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)

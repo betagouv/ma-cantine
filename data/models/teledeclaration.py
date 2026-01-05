@@ -446,7 +446,3 @@ class Teledeclaration(models.Model):
     def __str__(self):
         canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
         return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"
