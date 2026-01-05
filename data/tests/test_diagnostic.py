@@ -46,6 +46,7 @@ VALID_DIAGNOSTIC_SIMPLE_2025 = {
 
 
 class DiagnosticModelSaveTest(TransactionTestCase):
+    @freeze_time("2024-02-10")  # during the 2024 campaign
     def test_year_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
