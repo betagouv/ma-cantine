@@ -646,3 +646,22 @@ class CanteenActionApiTest(APITestCase):
         response = self.client.get(reverse("list_actionable_canteens", kwargs={"year": last_year}))
         returned_canteens = response.json()["results"]
         self.assertEqual(returned_canteens[0]["action"], Canteen.Actions.TELEDECLARE)
+
+    @authenticate
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_display_nothing_action_if_the_canteen_missing_informations_but_has_teledeclaration(self):
+        """
+        Always display "nothing" action if the canteen has a diagnostic teledeclared
+        """
+        year = 2024
+        canteen = CanteenFactory(managers=[authenticate.user])
+        DiagnosticFactory(year=year, canteen=canteen).teledeclare(applicant=authenticate.user)
+        response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": canteen.id, "year": year}))
+        body = response.json()
+        self.assertEqual(body["action"], Canteen.Actions.NOTHING)
+
+        with freeze_time("2025-10-30"):  # after the 2024 campaign
+            Canteen.objects.filter(id=canteen.id).update(daily_meal_count=None)  # create a error on a field
+            response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": canteen.id, "year": year}))
+            body = response.json()
+            self.assertEqual(body["action"], Canteen.Actions.NOTHING)
