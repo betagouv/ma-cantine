@@ -661,6 +661,7 @@ class CanteenActionApiTest(APITestCase):
         self.assertEqual(body["action"], Canteen.Actions.NOTHING)
 
         with freeze_time("2025-10-30"):  # after the 2024 campaign
+            Canteen.objects.filter(id=canteen.id).update(daily_meal_count=None)  # create a error on a field
             response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": canteen.id, "year": year}))
             body = response.json()
             self.assertEqual(body["action"], Canteen.Actions.NOTHING)
