@@ -1,5 +1,4 @@
 import json
-import datetime
 from decimal import Decimal
 
 from django.test.utils import override_settings
@@ -14,8 +13,6 @@ from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic, ImportType, ImportFailure
 from data.models.creation_source import CreationSource
-
-NEXT_YEAR = datetime.date.today().year + 1
 
 
 class DiagnosticsSimpleSchemaTest(TestCase):
@@ -150,6 +147,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         # Unique SIRET
         self.assertEqual("Les valeurs de cette colonne doivent être uniques", errors[9]["message"])
 
+    @freeze_time("2025-02-15")  # during the 2024 campaign
     @authenticate
     def test_model_validation_error(self):
         """
@@ -190,7 +188,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
             errors.pop(0)["message"],
-            f"Champ 'année' : L'année doit être comprise entre 2019 et {NEXT_YEAR}.",
+            "Champ 'année' : L'année doit être comprise entre 2024 et 2026.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
@@ -348,6 +346,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
 
 class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
+    @freeze_time("2025-02-10")  # during the 2024 campaign
     @authenticate
     def test_diagnostics_created(self):
         """
@@ -422,6 +421,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_2.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
+    @freeze_time("2025-02-10")  # during the 2024 campaign
     @authenticate
     def test_diagnostics_created_excel_file(self):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
@@ -464,6 +464,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
+    @freeze_time("2025-02-10")  # during the 2024 campaign
     @authenticate
     def test_update_existing_diagnostic(self):
         """

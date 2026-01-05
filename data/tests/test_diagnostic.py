@@ -60,12 +60,24 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                     ValueError, Diagnostic.objects.create, year=VALUE_NOT_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR
                 )
         # on full_clean
-        for TUPLE_OK_ON_FULL_CLEAN in [(2024, 2024), ("2023", 2023)]:
+        this_year = datetime.now().date().year
+        last_year = datetime.now().date().year - 1
+        next_year = datetime.now().date().year + 1
+        last_two_years = datetime.now().date().year - 2
+        next_two_years = datetime.now().date().year - 2
+        for TUPLE_OK_ON_FULL_CLEAN in [
+            (this_year, this_year),
+            (f"{this_year}", this_year),
+            (last_year, last_year),
+            (f"{last_year}", last_year),
+            (next_year, next_year),
+            (f"{next_year}", next_year),
+        ]:
             with self.subTest(year=TUPLE_OK_ON_FULL_CLEAN[0]):
                 diagnostic = DiagnosticFactory(year=TUPLE_OK_ON_FULL_CLEAN[0], **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 diagnostic.full_clean()
                 self.assertEqual(diagnostic.year, TUPLE_OK_ON_FULL_CLEAN[1])
-        for VALUE_NOT_OK_ON_FULL_CLEAN in [None, 1991]:
+        for VALUE_NOT_OK_ON_FULL_CLEAN in [None, 1991, last_two_years, next_two_years, 2222]:
             with self.subTest(year=VALUE_NOT_OK_ON_FULL_CLEAN):
                 diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
@@ -99,6 +111,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    @freeze_time("2024-02-10")  # during the 2023 campaign
     def test_diagnostic_appro_fields_required_before_2024_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2024.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
@@ -214,6 +227,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
 
 
 class Diagnostic2024ModelSaveTest(TransactionTestCase):
+    @freeze_time("2024-02-10")  # during the 2023 campaign
     def test_diagnostic_simple_2024(self):
         # valid
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
@@ -227,6 +241,7 @@ class Diagnostic2024ModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE)
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    @freeze_time("2024-02-10")  # during the 2023 campaign
     def test_diagnostic_complete_2024(self):
         # valid
         VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE = {
