@@ -295,10 +295,7 @@ class TestAutomaticEmails(TestCase):
         )
         canteen_no_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
-            managers=[
-                anna,
-                jean,
-            ],
+            managers=[anna, jean],
         )
         Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
@@ -311,9 +308,7 @@ class TestAutomaticEmails(TestCase):
         )
         canteen_no_diagnostics_recent = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
-            managers=[
-                sophie,
-            ],
+            managers=[sophie],
         )
         Canteen.objects.filter(pk=canteen_no_diagnostics_recent.id).update(creation_date=(today - timedelta(days=3)))
 
@@ -326,9 +321,7 @@ class TestAutomaticEmails(TestCase):
 
         canteen_with_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
-            managers=[
-                fred,
-            ],
+            managers=[fred],
         )
         Canteen.objects.filter(pk=canteen_with_diagnostics.id).update(creation_date=(today - timedelta(weeks=3)))
         DiagnosticFactory(canteen=canteen_with_diagnostics)
@@ -344,9 +337,7 @@ class TestAutomaticEmails(TestCase):
         canteen_no_diagnostics_contacted = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             email_no_diagnostic_first_reminder=(today - timedelta(weeks=1)),
-            managers=[
-                lena,
-            ],
+            managers=[lena],
         )
         Canteen.objects.filter(pk=canteen_no_diagnostics_contacted.id).update(
             creation_date=(today - timedelta(weeks=2))
@@ -468,10 +459,7 @@ class TestAutomaticEmails(TestCase):
         )
         canteen_no_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
-            managers=[
-                anna,
-                jean,
-            ],
+            managers=[anna, jean],
         )
         Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
@@ -503,9 +491,7 @@ class TestAutomaticEmails(TestCase):
             production_type=Canteen.ProductionType.CENTRAL,
             siret="32441387130915",
         )
-        DiagnosticFactory(
-            canteen=central_kitchen,
-        )
+        DiagnosticFactory(canteen=central_kitchen)
 
         # We create a satellite canteen with no diagnostics managed by
         # Jean. He should not receive the email since later

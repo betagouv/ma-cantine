@@ -176,7 +176,7 @@ def no_diagnostic_first_reminder():
     today = timezone.now()
     threshold = today - datetime.timedelta(weeks=1)
     canteens = Canteen.objects.filter(
-        diagnostic__isnull=True,
+        diagnostics__isnull=True,
         creation_date__lte=threshold,
         email_no_diagnostic_first_reminder__isnull=True,
     ).all()
