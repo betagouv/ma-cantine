@@ -21,7 +21,7 @@
       "example": "2021",
       "name": "année_bilan",
       "title": "Année du bilan",
-      "type": "year"
+      "type": "any"
     },
     {
       "constraints": {
