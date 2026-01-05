@@ -23,6 +23,7 @@ from data.models.sector import (
     annotate_with_sector_category_list,
 )
 from data.utils import (
+    get_diagnostic_lowest_limit_year,
     get_diagnostic_upper_limit_year,
     has_charfield_missing_query,
     optimize_image,
@@ -34,8 +35,7 @@ from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDelet
 
 
 def get_diagnostic_year_choices():
-    lower_diagnostic_year = 2019
-    return [(y, str(y)) for y in range(lower_diagnostic_year, get_diagnostic_upper_limit_year())]
+    return [(y, str(y)) for y in range(get_diagnostic_lowest_limit_year(), get_diagnostic_upper_limit_year())]
 
 
 def list_properties(queryset, property):

@@ -110,6 +110,10 @@ def optimize_image(image, name, max_size=1600):
         return image
 
 
+def get_diagnostic_lowest_limit_year():
+    return 2019
+
+
 def get_diagnostic_lower_limit_year():
     return datetime.datetime.now().date().year - 1
 
