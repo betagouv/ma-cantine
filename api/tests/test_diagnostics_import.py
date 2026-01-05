@@ -158,6 +158,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21380185500015", managers=[authenticate.user])
         CanteenFactory(siret="21670482500019", managers=[authenticate.user])
         CanteenFactory(siret="21640122400011", managers=[authenticate.user])
+        CanteenFactory(siret="21630113500010", managers=[authenticate.user])
         CanteenFactory(siret="21130055300016", managers=[authenticate.user])
         CanteenFactory(siret="21730065600014", managers=[authenticate.user])
         CanteenFactory(siret="21590350100017", managers=[authenticate.user])
@@ -168,8 +169,8 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         CanteenFactory(siret="11007001800012", managers=[authenticate.user])
         # creating 2 canteens with same siret here to error when this situation exists IRL
         canteen_with_same_siret = CanteenFactory()
-        Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="21670482500019")
-        self.assertEqual(Canteen.objects.count(), 13)
+        Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="21340172201787")
+        self.assertEqual(Canteen.objects.count(), 14)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
@@ -183,21 +184,29 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 12)
+        self.assertEqual(len(errors), 14)
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
+        self.assertEqual(
+            errors.pop(0)["message"],
+            # Note: if the line has other errors, they will not be raised...
+            "Plusieurs cantines correspondent au SIRET 21340172201787. Veuillez enlever les doublons pour pouvoir créer le bilan.",
+        )
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'année' : L'année doit être comprise entre 2024 et 2026.",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            "Champ 'Valeur totale annuelle HT' : La somme des valeurs d'approvisionnement, 300, est plus que le total, 20",
+            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la valeur (HT) valeur_bio, 1500",
         )
         self.assertEqual(
             errors.pop(0)["message"],
-            # Note: if the line has other errors, they will not be raised...
-            "Plusieurs cantines correspondent au SIRET 21670482500019. Veuillez enlever les doublons pour pouvoir créer le bilan.",
+            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 1500",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 2000",
         )
         self.assertEqual(
             errors.pop(0)["message"],

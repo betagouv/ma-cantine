@@ -1554,6 +1554,12 @@ class Diagnostic(models.Model):
                 sum = sum + value
         return sum
 
+    def egalim_sum(self):
+        # return self.label_group_group_sum("egalim")
+        return sum_int_with_potential_null(
+            [getattr(self, f"valeur_{group}") for group in Diagnostic.APPRO_LABELS_GROUPS_GROUPS_MAPPING["egalim"]]
+        )
+
     @property
     def valeur_totale_is_filled(self):
         return self.valeur_totale and self.valeur_totale > 0
@@ -1625,13 +1631,7 @@ class Diagnostic(models.Model):
         total = self.valeur_totale
         if total:
             bio_percent = (self.valeur_bio or 0) / total
-            egalim_sum = (
-                (self.valeur_bio or 0)
-                + (self.valeur_siqo or 0)
-                + (self.valeur_externalites_performance or 0)
-                + (self.valeur_egalim_autres or 0)
-            )
-            egalim_percent = egalim_sum / total
+            egalim_percent = self.egalim_sum() / total
 
             bio_threshold = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
             combined_threshold = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
