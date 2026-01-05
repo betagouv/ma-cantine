@@ -1,4 +1,5 @@
 import random
+import datetime
 
 import factory
 from factory import fuzzy
@@ -13,7 +14,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
         model = Diagnostic
 
     canteen = factory.SubFactory(CanteenFactory)
-    year = factory.Faker("year")
+    year = datetime.date.today().year - 1
     diagnostic_type = fuzzy.FuzzyChoice(list(Diagnostic.DiagnosticType))
 
     # SIMPLE_APPRO_FIELDS_REQUIRED_2025
