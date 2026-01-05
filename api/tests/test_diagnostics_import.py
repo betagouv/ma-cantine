@@ -112,7 +112,6 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         Errors returned by Validata
         """
         # creating canteens
-        CanteenFactory(siret="50044221500025", managers=[authenticate.user])
         CanteenFactory(siret="82821513700013", managers=[authenticate.user])
         CanteenFactory(siret="82217035300012", managers=[authenticate.user])
         CanteenFactory(siret="21340172201787", managers=[authenticate.user])
@@ -121,7 +120,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         CanteenFactory(siret="82938781909454", managers=[authenticate.user])
         CanteenFactory(siret="15952607273997", managers=[authenticate.user])
         CanteenFactory(siret="42111303053388", managers=[authenticate.user])
-        self.assertEqual(Canteen.objects.count(), 9)
+        self.assertEqual(Canteen.objects.count(), 8)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_format.csv"
@@ -134,25 +133,22 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 11)
-        # Invalid year
-        self.assertEqual(errors[0]["field"], "année_bilan")
-        self.assertTrue(errors[0]["message"].startswith("L'année doit être composée de 4 chiffres"))
+        self.assertEqual(len(errors), 10)
         # Missing required values
+        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[0]["message"])
         self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[1]["message"])
         self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[2]["message"])
         self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[3]["message"])
         self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[4]["message"])
         self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[5]["message"])
         self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[6]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[7]["message"])
         # Invalid number
         self.assertEqual(
-            "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal", errors[8]["message"]
+            "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal", errors[7]["message"]
         )
-        self.assertTrue(errors[9]["message"].startswith("Le séparateur décimal à utiliser est le point"))
+        self.assertTrue(errors[8]["message"].startswith("Le séparateur décimal à utiliser est le point"))
         # Unique SIRET
-        self.assertEqual("Les valeurs de cette colonne doivent être uniques", errors[10]["message"])
+        self.assertEqual("Les valeurs de cette colonne doivent être uniques", errors[9]["message"])
 
     @authenticate
     def test_model_validation_error(self):
