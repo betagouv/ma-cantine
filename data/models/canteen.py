@@ -638,7 +638,7 @@ class Canteen(SoftDeletionModel):
     @property
     def central_kitchen_diagnostics(self):
         if self.central_kitchen:
-            return self.central_kitchen.diagnostic_set.filter(central_kitchen_diagnostic_mode__isnull=False)
+            return self.central_kitchen.diagnostics.filter(central_kitchen_diagnostic_mode__isnull=False)
 
     @property
     def category_list_from_sector_list(self):
@@ -688,7 +688,7 @@ class Canteen(SoftDeletionModel):
         return is_filled
 
     def has_diagnostic_for_year(self, year):
-        has_diagnostics = self.diagnostic_set.filter(year=year).exists()
+        has_diagnostics = self.diagnostics.filter(year=year).exists()
         has_central_kitchen_diagnostic = (
             self.central_kitchen_diagnostics and self.central_kitchen_diagnostics.filter(year=year).exists()
         )
@@ -756,14 +756,14 @@ class Canteen(SoftDeletionModel):
 
     @cached_property
     def appro_diagnostics(self):
-        diag_ids = list_properties(self.diagnostic_set, "id")
+        diag_ids = list_properties(self.diagnostics, "id")
 
         if self.central_kitchen_diagnostics:
             # for any given year, could have own diag or CC diag
             # CC diag always takes precedent TODO: do we consistently assume this?
             # if don't have own diag, include CC diag in set
             cc_diag_years = list_properties(self.central_kitchen_diagnostics, "year")
-            own_diagnostics = self.diagnostic_set.exclude(year__in=cc_diag_years)
+            own_diagnostics = self.diagnostics.exclude(year__in=cc_diag_years)
 
             diag_ids = list_properties(self.central_kitchen_diagnostics, "id")
             diag_ids += list_properties(own_diagnostics, "id")
@@ -775,7 +775,7 @@ class Canteen(SoftDeletionModel):
 
     @cached_property
     def service_diagnostics(self):
-        diag_ids = list_properties(self.diagnostic_set, "id")
+        diag_ids = list_properties(self.diagnostics, "id")
 
         if self.central_kitchen_diagnostics:
             cc_service_diagnostics = self.central_kitchen_diagnostics.filter(central_kitchen_diagnostic_mode="ALL")
@@ -783,7 +783,7 @@ class Canteen(SoftDeletionModel):
             # CC diag always takes precedent, if ALL TODO: do we consistently assume this?
             # if don't have own diag, include CC diag in set
             cc_diag_years = list_properties(cc_service_diagnostics, "year")
-            own_diagnostics = self.diagnostic_set.exclude(year__in=cc_diag_years)
+            own_diagnostics = self.diagnostics.exclude(year__in=cc_diag_years)
 
             diag_ids = list_properties(cc_service_diagnostics, "id")
             diag_ids += list_properties(own_diagnostics, "id")

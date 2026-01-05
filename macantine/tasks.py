@@ -176,7 +176,7 @@ def no_diagnostic_first_reminder():
     today = timezone.now()
     threshold = today - datetime.timedelta(weeks=1)
     canteens = Canteen.objects.filter(
-        diagnostic__isnull=True,
+        diagnostics__isnull=True,
         creation_date__lte=threshold,
         email_no_diagnostic_first_reminder__isnull=True,
     ).all()
@@ -220,7 +220,7 @@ def _covered_by_central_kitchen(canteen):
     if canteen.production_type == Canteen.ProductionType.ON_SITE_CENTRAL and canteen.central_producer_siret:
         try:
             central_kitchen = Canteen.objects.get(siret=canteen.central_producer_siret)
-            covered_by_central_kitchen = central_kitchen.diagnostic_set.exists()
+            covered_by_central_kitchen = central_kitchen.diagnostics.exists()
             return covered_by_central_kitchen
         except Canteen.DoesNotExist:
             pass
