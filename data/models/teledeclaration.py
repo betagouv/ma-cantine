@@ -286,7 +286,7 @@ class Teledeclaration(models.Model):
         if is_satellite and diagnostic.canteen.central_producer_siret:
             try:
                 central_kitchen = Canteen.objects.get(siret=diagnostic.canteen.central_producer_siret)
-                existing_diagnostic = central_kitchen.diagnostic_set.get(year=diagnostic.year)
+                existing_diagnostic = central_kitchen.diagnostics.get(year=diagnostic.year)
                 handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
                     Diagnostic.CentralKitchenDiagnosticMode.APPRO,
                     Diagnostic.CentralKitchenDiagnosticMode.ALL,

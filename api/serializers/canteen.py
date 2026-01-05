@@ -65,7 +65,7 @@ class MediaListSerializer(serializers.ListSerializer):
 
 
 class MinimalCanteenSerializer(serializers.ModelSerializer):
-    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
+    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
 
     class Meta:
         model = Canteen
@@ -107,9 +107,9 @@ class BadgesSerializer(serializers.ModelSerializer):
 
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
-    appro_diagnostic = PublicApproDiagnosticSerializer(read_only=True, source="latest_published_appro_diagnostic")
+    appro_diagnostic = PublicApproDiagnosticSerializer(source="latest_published_appro_diagnostic", read_only=True)
     lead_image = CanteenImageSerializer()
-    badges = BadgesSerializer(read_only=True, source="*")
+    badges = BadgesSerializer(source="*", read_only=True)
 
     class Meta:
         model = Canteen
@@ -144,16 +144,16 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
 class PublicCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     appro_diagnostics = PublicApproDiagnosticSerializer(
-        many=True, read_only=True, source="published_appro_diagnostics"
+        source="published_appro_diagnostics", many=True, read_only=True
     )
     service_diagnostics = PublicServiceDiagnosticSerializer(
-        many=True, read_only=True, source="published_service_diagnostics"
+        source="published_service_diagnostics", many=True, read_only=True
     )
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
-    badges = BadgesSerializer(read_only=True, source="*")
+    badges = BadgesSerializer(source="*", read_only=True)
     resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
 
     class Meta:
@@ -202,10 +202,10 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
 
 class ElectedCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
-    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True)
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     is_managed_by_user = serializers.SerializerMethodField(read_only=True)
-    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
+    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
 
     class Meta:
         model = Canteen
@@ -248,7 +248,7 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
     user_can_view = serializers.SerializerMethodField(read_only=True)
-    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
+    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
 
     class Meta:
         model = Canteen
@@ -276,18 +276,18 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(
         source="sectors_m2m", many=True, queryset=SectorM2M.objects.all(), required=False
     )
-    diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     managers = CanteenManagerSerializer(many=True, read_only=True)
-    manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
+    manager_invitations = ManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
-    badges = BadgesSerializer(read_only=True, source="*")
+    badges = BadgesSerializer(source="*", read_only=True)
     resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
-    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
+    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
 
     class Meta:
         model = Canteen
@@ -435,9 +435,9 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 class CanteenSummarySerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     lead_image = CanteenImageSerializer()
-    diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
     central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
-    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
+    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
 
     class Meta:
         model = Canteen
@@ -513,7 +513,7 @@ class CanteenPreviewSerializer(serializers.ModelSerializer):
 
 class ManagingTeamSerializer(serializers.ModelSerializer):
     managers = CanteenManagerSerializer(many=True, read_only=True)
-    manager_invitations = ManagerInvitationSerializer(many=True, read_only=True, source="managerinvitation_set")
+    manager_invitations = ManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
 
     class Meta:
         model = Canteen
@@ -523,9 +523,9 @@ class ManagingTeamSerializer(serializers.ModelSerializer):
 class CanteenActionsSerializer(serializers.ModelSerializer):
     # TODO: is it worth moving the job of fetching the specific diag required to the front?
     sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
-    publication_status = serializers.CharField(read_only=True, source="publication_status_display_to_public")
+    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
     lead_image = CanteenImageSerializer()
-    diagnostics = FullDiagnosticSerializer(many=True, read_only=True, source="diagnostic_set")
+    diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
     action = serializers.CharField(allow_null=True)
 
     class Meta:

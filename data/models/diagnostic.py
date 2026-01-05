@@ -701,7 +701,9 @@ class Diagnostic(models.Model):
     modification_date = models.DateTimeField(auto_now=True)
     history = HistoricalRecords(excluded_fields=["canteen_snapshot", "satellites_snapshot", "applicant_snapshot"])
 
-    canteen = models.ForeignKey(Canteen, on_delete=models.SET_NULL, null=True, verbose_name="cantine")
+    canteen = models.ForeignKey(
+        Canteen, on_delete=models.SET_NULL, null=True, related_name="diagnostics", verbose_name="cantine"
+    )
 
     year = models.IntegerField(
         null=True,
@@ -1699,7 +1701,7 @@ class Diagnostic(models.Model):
         if self.canteen.is_satellite and self.canteen.central_producer_siret:
             try:
                 central_kitchen = Canteen.objects.get(siret=self.canteen.central_producer_siret)
-                existing_diagnostic = central_kitchen.diagnostic_set.get(year=self.year)
+                existing_diagnostic = central_kitchen.diagnostics.get(year=self.year)
                 handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
                     Diagnostic.CentralKitchenDiagnosticMode.APPRO,
                     Diagnostic.CentralKitchenDiagnosticMode.ALL,
