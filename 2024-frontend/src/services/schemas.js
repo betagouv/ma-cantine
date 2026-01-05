@@ -16,7 +16,7 @@ const getFieldType = (field) => {
     string: "Texte (libre)",
     string_enum: "Texte (choix unique)",
     string_enum_multiple: "Texte (choix multiples)",
-    year: "Année (AAAA)",
+    année_bilan: "Année (AAAA)",
   }
 
   let fieldType = ""
