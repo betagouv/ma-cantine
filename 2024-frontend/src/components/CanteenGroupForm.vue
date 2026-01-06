@@ -21,8 +21,6 @@ const selectEstablishment = (canteenInfos) => {
 const form = reactive({})
 
 const resetFields = () => {
-  form.hasSiret = "no-siret"
-  form.siret = null
   form.sirenUniteLegale = null
   form.name = null
   form.managementType = null
@@ -32,7 +30,6 @@ const resetFields = () => {
 }
 
 const prefillFields = () => {
-  form.hasSiret = "no-siret"
   form.sirenUniteLegale = props.establishmentData.sirenUniteLegale
   form.name = props.establishmentData.name
   form.managementType = props.establishmentData.managementType
