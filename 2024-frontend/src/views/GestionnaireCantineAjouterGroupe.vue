@@ -1,9 +1,21 @@
 <script setup>
+import { ref } from "vue"
 import { useRoute } from "vue-router"
 import AppRessources from "@/components/AppRessources.vue"
+import CanteenGroupForm from "@/components/CanteenGroupForm.vue"
 
 /* Router and Store */
 const route = useRoute()
+
+/* Component */
+const forceRerender = ref(0)
+
+/* API */
+const saveGroup = (props) => {
+  const { form, action } = props
+  console.log(form)
+  console.log(action)
+}
 </script>
 
 <template>
@@ -20,4 +32,8 @@ const route = useRoute()
       </li>
     </AppRessources>
   </section>
+  <CanteenGroupForm
+    :key="forceRerender"
+    @sendForm="(payload) => saveGroup(payload)"
+  />
 </template>
