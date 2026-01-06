@@ -95,7 +95,7 @@ if (props.establishmentData) {
         />
         <DsfrInputGroup
           v-model="form.centralProducerSiret"
-          label="SIRET du livreur"
+          label="SIRET de la cuisine centrale"
           hint="Optionnel"
           :label-visible="true"
           :error-message="formatError(v$.centralProducerSiret)"
