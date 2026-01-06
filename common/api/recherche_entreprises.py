@@ -59,7 +59,8 @@ def fetch_geo_data_from_siren(siren, response):
 
     response["siren"] = siren
     try:
-        api_response = requests.get(f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siren}")
+        api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siren}"
+        api_response = requests.get(api_url)
         api_response.raise_for_status()
         result = validate_result(siren, api_response)
         if result:
@@ -111,7 +112,8 @@ def fetch_geo_data_from_siret(siret):
     response = {}
     response["siret"] = siret
     try:
-        api_response = requests.get(f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siret}")
+        api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siret}"
+        api_response = requests.get(api_url)
         api_response.raise_for_status()
         result = validate_result(siret, api_response)
         if result:
