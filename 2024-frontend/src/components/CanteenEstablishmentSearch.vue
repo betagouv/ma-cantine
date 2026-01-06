@@ -136,7 +136,7 @@ const unselectCanteen = () => {
 
 <template>
   <div class="canteen-establishment-search">
-    <p class="fr-mb-0">{{ title }} *</p>
+    <p class="fr-label fr-mb-0">{{ title }} *</p>
     <p class="fr-hint-text">
       Nous utilisons le site
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
