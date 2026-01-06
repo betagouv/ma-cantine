@@ -60,8 +60,10 @@ const saveGroup = (props) => {
   <CanteenGroupForm
     v-else-if="!loading && canteenData.id"
     :key="forceRerender"
+    :showCancelButton="true"
     :establishment-data="canteenData"
     @sendForm="(payload) => saveGroup(payload)"
+    @cancel="goToCanteenPage(canteenData)"
   />
   <p v-else>
     Une erreur est survenue,
