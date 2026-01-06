@@ -167,10 +167,11 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         CanteenFactory(siret="40419443300078", managers=[authenticate.user])
         CanteenFactory(siret="83014132100034", managers=[authenticate.user])
         CanteenFactory(siret="11007001800012", managers=[authenticate.user])
+        CanteenFactory(siret="21070017500016", managers=[authenticate.user])
         # creating 2 canteens with same siret here to error when this situation exists IRL
         canteen_with_same_siret = CanteenFactory()
         Canteen.objects.filter(id=canteen_with_same_siret.id).update(siret="21340172201787")
-        self.assertEqual(Canteen.objects.count(), 14)
+        self.assertEqual(Canteen.objects.count(), 15)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
@@ -184,7 +185,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 14)
+        self.assertEqual(len(errors), 15)
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
@@ -207,6 +208,10 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 2000",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement pour le label france, 1600",
         )
         self.assertEqual(
             errors.pop(0)["message"],
