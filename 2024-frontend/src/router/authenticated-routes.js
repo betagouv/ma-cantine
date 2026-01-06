@@ -4,7 +4,7 @@ import { sectionId } from "@/constants/site-map.js"
 import GestionnaireCantineGerer from "@/views/GestionnaireCantineGerer.vue"
 import GestionnaireCantineAjouter from "@/views/GestionnaireCantineAjouter.vue"
 import GestionnaireCantineModifier from "@/views/GestionnaireCantineModifier.vue"
-import GestionnaireCantineAjouterGroupe from "@/views/GestionnaireCantineAjouterGroupe.vue"
+import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineSatellitesAjouter from "@/views/GestionnaireCantineSatellitesAjouter.vue"
 import GestionnaireCantineSatellitesGerer from "@/views/GestionnaireCantineSatellitesGerer.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
@@ -115,10 +115,10 @@ const routes = [
   },
   {
     path: "/tableau-de-bord/cantines/ajouter-groupe",
-    name: "GestionnaireCantineAjouterGroupe",
-    component: GestionnaireCantineAjouterGroupe,
+    name: "GestionnaireCantineGroupeAjouter",
+    component: GestionnaireCantineGroupeAjouter,
     meta: {
-      title: "Ajouter un groupe de cantines",
+      title: "Ajouter un groupe de restaurants satellites",
       breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
       siteMap: action,
     },

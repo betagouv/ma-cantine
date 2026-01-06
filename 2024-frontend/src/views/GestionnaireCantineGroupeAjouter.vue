@@ -22,6 +22,9 @@ const saveGroup = (props) => {
   <section class="fr-grid-row fr-grid-row--bottom">
     <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
       <h1>{{ route.meta.title }}</h1>
+      <p>
+        Les groupes de restaurants satellites vous permettent de gérer plusieurs établissements ensemble. Vous disposez d’une vue consolidée et pouvez réaliser une déclaration unique. Le montant total des achats du groupe est ensuite réparti automatiquement entre chaque restaurant satellite, au prorata de son nombre de couverts annuels. Les restaurants satellites peuvent être ajoutés ou retirés librement du groupe.
+      </p>
     </div>
     <div class="fr-col-offset-md-1"></div>
     <AppRessources>
