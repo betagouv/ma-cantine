@@ -48,6 +48,10 @@ def has_siret_or_siren_unite_legale_query():
     return has_siret_query | has_siren_unite_legale_query
 
 
+def is_groupe_query():
+    return Q(production_type=Canteen.ProductionType.GROUPE)
+
+
 def is_central_query():
     return Q(production_type=Canteen.ProductionType.CENTRAL)
 
@@ -106,11 +110,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             return self.filter(creation_date__lt=canteen_created_before_date)
         return self.none()
 
+    def is_groupe(self):
+        return self.filter(is_groupe_query())
+
     def is_central(self):
         return self.filter(is_central_query())
-
-    def exclude_central(self):
-        return self.exclude(is_central_query())
 
     def is_central_cuisine(self):
         return self.filter(is_central_cuisine_query())
@@ -318,6 +322,7 @@ class Canteen(SoftDeletionModel):
         CONCEDED = "conceded", "Concédée"
 
     class ProductionType(models.TextChoices):
+        GROUPE = "groupe", "Groupe"
         CENTRAL = "central", "Cuisine centrale"
         CENTRAL_SERVING = "central_serving", "Cuisine centrale et site"
         ON_SITE = "site", "Restaurant avec cuisine sur place"

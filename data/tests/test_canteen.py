@@ -435,6 +435,7 @@ class CanteenCreatedBeforeQuerySetTest(TestCase):
 class CanteenCentralAndSatelliteQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(siret="12345678901234", production_type=Canteen.ProductionType.GROUPE)
         cls.canteen_central_1 = CanteenFactory(
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
@@ -465,20 +466,20 @@ class CanteenCentralAndSatelliteQuerySetTest(TestCase):
             sector_list=[Sector.EDUCATION_PRIMAIRE],
         )
 
+    def test_is_groupe(self):
+        self.assertEqual(Canteen.objects.count(), 7)
+        self.assertEqual(Canteen.objects.is_groupe().count(), 1)
+
     def test_is_central(self):
-        self.assertEqual(Canteen.objects.count(), 6)
+        self.assertEqual(Canteen.objects.count(), 7)
         self.assertEqual(Canteen.objects.is_central().count(), 2)
 
-    def test_exclude_central(self):
-        self.assertEqual(Canteen.objects.count(), 6)
-        self.assertEqual(Canteen.objects.exclude_central().count(), 4)
-
     def test_is_satellite(self):
-        self.assertEqual(Canteen.objects.count(), 6)
+        self.assertEqual(Canteen.objects.count(), 7)
         self.assertEqual(Canteen.objects.is_satellite().count(), 3)
 
     def test_annotate_with_central_kitchen_id(self):
-        self.assertEqual(Canteen.objects.count(), 6)
+        self.assertEqual(Canteen.objects.count(), 7)
         self.assertEqual(
             Canteen.objects.annotate_with_central_kitchen_id()
             .get(id=self.canteen_on_site_central_1.id)
@@ -496,12 +497,12 @@ class CanteenCentralAndSatelliteQuerySetTest(TestCase):
         )
 
     def test_get_satellites(self):
-        self.assertEqual(Canteen.objects.count(), 6)
+        self.assertEqual(Canteen.objects.count(), 7)
         self.assertEqual(Canteen.objects.get_satellites(self.canteen_central_1.siret).count(), 1)
         self.assertEqual(Canteen.objects.get_satellites(self.canteen_central_2.siret).count(), 2)
 
     def test_annotate_with_satellites_in_db_count(self):
-        self.assertEqual(Canteen.objects.count(), 6)
+        self.assertEqual(Canteen.objects.count(), 7)
         self.assertEqual(
             Canteen.objects.annotate_with_satellites_in_db_count()
             .filter(id=self.canteen_central_1.id)
@@ -646,7 +647,7 @@ class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
         cls.canteen_none_2.refresh_from_db()
 
     def has_siret_or_siren_unite_legale_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 6)
+        self.assertEqual(Canteen.objects.count(), 7)
         self.assertEqual(Canteen.objects.has_siret_or_siren_unite_legale().count(), 4)
 
     def test_siret_or_siren_unite_legale_property(self):
