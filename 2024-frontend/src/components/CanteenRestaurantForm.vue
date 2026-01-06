@@ -8,7 +8,6 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
-import arraysService from "@/services/arrays.js"
 import options from "@/constants/canteen-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
 
@@ -19,11 +18,6 @@ const emit = defineEmits(["sendForm", "cancel"])
 
 /* Siret */
 const prefillEstablishment = ref(props.establishmentData)
-const hasSiretOptions = computed(() => {
-  let siretOptionWithDisabled = options.hasSiret
-  siretOptionWithDisabled[1].disabled = form.productionType === "central" || form.productionType === "central_serving"
-  return siretOptionWithDisabled
-})
 
 const changeHasSiret = () => {
   form.siret = null
@@ -53,22 +47,6 @@ const selectEstablishment = (canteenInfos) => {
       break
   }
 }
-
-/* Production type */
-const productionTypeOptions = computed(() => {
-  const isDisabled = form.hasSiret === "no-siret"
-  const disabledHint = isDisabled
-    ? "Ce mode de production n'est pas disponible pour les établissements rattachés à une unité légale"
-    : false
-  const optionsWithDisabled = arraysService.createCopy(options.productionType)
-  const indexCentralType = optionsWithDisabled.findIndex((option) => option.value === "central")
-  const indexCentralServingType = optionsWithDisabled.findIndex((option) => option.value === "central_serving")
-  optionsWithDisabled[indexCentralType].disabled = isDisabled
-  optionsWithDisabled[indexCentralType].hint = disabledHint || optionsWithDisabled[indexCentralType].hint
-  optionsWithDisabled[indexCentralServingType].disabled = isDisabled
-  optionsWithDisabled[indexCentralServingType].hint = disabledHint || optionsWithDisabled[indexCentralType].hint
-  return optionsWithDisabled
-})
 
 /* Sectors */
 const sectorsOptions = ref([])
@@ -163,8 +141,6 @@ const displayCitiesResult = (cities) => {
 
 /* Form fields */
 const form = reactive({
-  oneDelivery: null,
-  manyDelivery: null,
   noSiret: null,
 })
 
@@ -181,14 +157,11 @@ const resetFields = () => {
   form.dailyMealCount = null
   form.yearlyMealCount = null
   form.centralProducerSiret = null
-  form.satelliteCanteensCount = null
   form.postalCode = null
   form.citySelector = null
   form.city = null
   form.cityInseeCode = null
   form.department = null
-  form.oneDelivery = null
-  form.manyDelivery = null
   form.noSiret = null
 }
 
@@ -205,7 +178,6 @@ const prefillFields = () => {
   form.dailyMealCount = props.establishmentData.dailyMealCount
   form.yearlyMealCount = props.establishmentData.yearlyMealCount
   form.centralProducerSiret = props.establishmentData.centralProducerSiret
-  form.satelliteCanteensCount = props.establishmentData.satelliteCanteensCount
   form.postalCode = props.establishmentData.postalCode
   form.city = props.establishmentData.city
   form.cityInseeCode = props.establishmentData.cityInseeCode
@@ -219,9 +191,6 @@ const prefillFields = () => {
 
 /* Dynamic Inputs */
 const showCentralProducerSiret = computed(() => form.productionType === "site_cooked_elsewhere")
-const showSatelliteCanteensCount = computed(
-  () => form.productionType === "central" || form.productionType === "central_serving"
-)
 const showLineMinistry = computed(() => {
   if (sectorsOptions.value.length === 0) return false
   if (form.sectorList.length === 0) return false
@@ -234,17 +203,11 @@ const showLineMinistry = computed(() => {
   }
   return false
 })
-const showCheckboxOneDelivery = computed(() => Number(form.satelliteCanteensCount) === 1)
-const showCheckboxManyDelivery = computed(() => Number(form.satelliteCanteensCount) >= 250)
 const showCheckboxNoSiret = computed(() => form.hasSiret === "no-siret")
 const showCitySelector = computed(() => form.hasSiret === "no-siret")
 
 const changeProductionMode = () => {
-  form.satelliteCanteensCount = null
   form.centralProducerSiret = null
-  form.sectorList = []
-  form.lineMinistry = null
-  forceRerender.value++
 }
 
 /* Fields verification */
@@ -253,7 +216,6 @@ const yearlyMealMinValue = computed(() => Math.max(form.dailyMealCount, 420))
 const dailyMealMaxValue = computed(() => form.yearlyMealCount)
 const siretIsRequired = computed(() => form.hasSiret === "has-siret")
 const sirenIsRequired = computed(() => form.hasSiret === "no-siret")
-const sectorsAreRequired = computed(() => form.productionType !== "central")
 
 const rules = {
   name: { required },
@@ -271,12 +233,11 @@ const rules = {
   managementType: { required },
   productionType: { required },
   centralProducerSiret: {
-    required: false,
     minLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", minLength(14)),
     maxLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", maxLength(14)),
   },
   sectorList: {
-    required: requiredIf(sectorsAreRequired),
+    required,
     maxThree: helpers.withMessage(
       "Vous ne pouvez pas sélectionner plus de 3 secteurs",
       (sectorList) => sectorList.length <= 3
@@ -285,13 +246,6 @@ const rules = {
   lineMinistry: { required: requiredIf(showLineMinistry) },
   dailyMealCount: { required, integer, minValue: minValue(3), maxValue: maxValue(dailyMealMaxValue) },
   yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
-  satelliteCanteensCount: { required: requiredIf(showSatelliteCanteensCount), integer, minValue: minValue(1) },
-  oneDelivery: {
-    beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxOneDelivery.value || value),
-  },
-  manyDelivery: {
-    beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxManyDelivery.value || value),
-  },
   noSiret: {
     beChecked: helpers.withMessage("La case doit être cochée", (value) => !showCheckboxNoSiret.value || value),
   },
@@ -337,7 +291,7 @@ if (props.establishmentData) {
         <DsfrRadioButtonSet
           legend="Mode de production *"
           v-model="form.productionType"
-          :options="productionTypeOptions"
+          :options="options.productionType"
           :error-message="formatError(v$.productionType)"
           @change="changeProductionMode"
         />
@@ -349,15 +303,6 @@ if (props.establishmentData) {
           :label-visible="true"
           :error-message="formatError(v$.centralProducerSiret)"
         />
-        <DsfrInputGroup
-          v-if="showSatelliteCanteensCount"
-          v-model="form.satelliteCanteensCount"
-          type="number"
-          label="Nombre de restaurant satellite *"
-          hint="Nombre de cantines/lieux de service à qui je fournis des repas"
-          :label-visible="true"
-          :error-message="formatError(v$.satelliteCanteensCount)"
-        />
       </fieldset>
       <fieldset class="fr-mb-4w canteen-restaurant-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">2. Identification de l’établissement</legend>
@@ -366,7 +311,7 @@ if (props.establishmentData) {
           legend="Avez-vous un numéro SIRET ?"
           :key="forceRerender"
           :error-message="formatError(v$.hasSiret)"
-          :options="hasSiretOptions"
+          :options="options.hasSiret"
           @update:modelValue="changeHasSiret()"
         />
         <CanteenEstablishmentSearch
@@ -416,7 +361,6 @@ if (props.establishmentData) {
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
         <DsfrMultiselect
-          v-if="form.productionType !== 'central'"
           v-model="form.sectorList"
           label="Secteurs *"
           labelVisible
@@ -436,7 +380,6 @@ if (props.establishmentData) {
             </div>
           </template>
         </DsfrMultiselect>
-        <p v-else class="fr-mb-0">Concerne uniquement les cantines recevant des convives</p>
         <DsfrSelect
           v-if="showLineMinistry"
           v-model="form.lineMinistry"
@@ -470,55 +413,34 @@ if (props.establishmentData) {
           </div>
         </div>
       </fieldset>
-      <fieldset
-        v-if="showCheckboxOneDelivery || showCheckboxManyDelivery || showCheckboxNoSiret"
-        class="fr-py-0 fr-my-3w fr-mb-md-3w"
-      >
+      <fieldset v-if="showCheckboxNoSiret" class="fr-py-0 fr-my-3w fr-mb-md-3w">
         <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
+        <p class="fr-mb-1v">
+          Votre cantine n’a pas de numéro de SIRET et vous êtes sur le point de la rattacher à une unité légale
+          existante. Avant de confirmer :
+        </p>
+        <ul>
+          <li>
+            avez-vous vérifié que votre cantine ne dispose pas d’un numéro SIRET (ex : une facture, l’annuaire des
+            entreprises, annuaire des cantines scolaires) ?
+          </li>
+          <li>
+            l’unité légale à laquelle vous vous rattachez correspond bien à l’entité qui contrôle votre cantine ?
+          </li>
+          <li>
+            vous êtes-vous assuré que votre cantine ne figure pas dans la liste des établissements de l’unité légale ?
+          </li>
+        </ul>
+        <p>
+          Ces éléments sont essentiels pour éviter les doublons et garantir l’exactitude des télédéclarations
+          effectuées sur ma cantine.
+        </p>
         <DsfrCheckbox
-          v-if="showCheckboxOneDelivery"
-          v-model="form.oneDelivery"
-          name="oneDelivery"
-          label="En cochant cette case, je confirme déclarer une livraison depuis mon établissement à uniquement 1 seul autre site de service"
-          :error-message="formatError(v$.oneDelivery)"
+          v-model="form.noSiret"
+          name="noSiret"
+          :error-message="formatError(v$.noSiret)"
+          label="En cochant cette case vous confirmez avoir vérifié ces informations"
         />
-        <DsfrCheckbox
-          v-if="showCheckboxManyDelivery"
-          v-model="form.manyDelivery"
-          name="manyDelivery"
-          :label="
-            `En cochant cette case, je confirme déclarer une livraison depuis mon établissement à ${form.satelliteCanteensCount} sites de service`
-          "
-          :error-message="formatError(v$.manyDelivery)"
-        />
-        <div v-if="showCheckboxNoSiret">
-          <p class="fr-mb-1v">
-            Votre cantine n’a pas de numéro de SIRET et vous êtes sur le point de la rattacher à une unité légale
-            existante. Avant de confirmer :
-          </p>
-          <ul>
-            <li>
-              avez-vous vérifié que votre cantine ne dispose pas d’un numéro SIRET (ex : une facture, l’annuaire des
-              entreprises, annuaire des cantines scolaires) ?
-            </li>
-            <li>
-              l’unité légale à laquelle vous vous rattachez correspond bien à l’entité qui contrôle votre cantine ?
-            </li>
-            <li>
-              vous êtes-vous assuré que votre cantine ne figure pas dans la liste des établissements de l’unité légale ?
-            </li>
-          </ul>
-          <p>
-            Ces éléments sont essentiels pour éviter les doublons et garantir l’exactitude des télédéclarations
-            effectuées sur ma cantine.
-          </p>
-          <DsfrCheckbox
-            v-model="form.noSiret"
-            name="noSiret"
-            :error-message="formatError(v$.noSiret)"
-            label="En cochant cette case vous confirmez avoir vérifié ces informations"
-          />
-        </div>
       </fieldset>
       <div class="fr-grid-row fr-grid-row--right fr-grid-row--top">
         <DsfrButton
