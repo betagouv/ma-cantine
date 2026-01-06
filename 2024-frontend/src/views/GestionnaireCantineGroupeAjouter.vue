@@ -20,12 +20,12 @@ const saveGroup = (props) => {
   const { form, action } = props
   canteensService
     .createCanteen(form)
-    .then((groupeCreated) => {
-      const stayOnCreationPage = groupeCreated.id && action === "stay-on-creation-page"
-      const redirect = groupeCreated.id && action === "go-to-canteen-page"
-      if (!groupeCreated.id) store.notifyServerError()
-      if (stayOnCreationPage) resetForm(groupeCreated.name)
-      if (redirect) goToNewCanteenPage(groupeCreated)
+    .then((canteenCreated) => {
+      const stayOnCreationPage = canteenCreated.id && action === "stay-on-creation-page"
+      const redirect = canteenCreated.id && action === "go-to-canteen-page"
+      if (!canteenCreated.id) store.notifyServerError()
+      if (stayOnCreationPage) resetForm(canteenCreated.name)
+      if (redirect) goToNewCanteenPage(canteenCreated)
     })
     .catch((e) => { store.notifyServerError(e) })
 }
