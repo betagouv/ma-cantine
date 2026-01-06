@@ -6,7 +6,7 @@ from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_lim
 
 def validate_year(instance):
     """
-    Extra validation:
+    - extra validation:
         - year must be filled
         - year must be an integer
         - year must be between lower and upper limit years
@@ -30,7 +30,7 @@ def validate_year(instance):
 
 def validate_diagnostic_type(instance):
     """
-    Extra validation:
+    - extra validation:
         - diagnostic_type must be filled
         - diagnostic_type must be among the allowed values
     """
@@ -75,7 +75,8 @@ def validate_valeur_totale(instance):
     - clean_fields() (called by full_clean()) already does some checks
     - extra validation:
         - valeur_totale must be > 0
-        - sum of egalim fields must be <= valeur_totale
+        - valeur_totale must be >= each of the other fields (simple only for now)
+        - valeur_totale must be >= sum of egalim fields
     """
     errors = {}
     if instance.valeur_totale is not None:
@@ -86,24 +87,28 @@ def validate_valeur_totale(instance):
                 "La valeur totale (HT) doit être supérieure à 0",
             )
         elif isinstance(instance.valeur_totale, Decimal):
-            egalim_sum = (
-                (instance.valeur_bio or 0)
-                + (instance.valeur_siqo or 0)
-                + (instance.valeur_externalites_performance or 0)
-                + (instance.valeur_egalim_autres or 0)
-            )
+            for field_name in instance.SIMPLE_APPRO_FIELDS:
+                field_value = getattr(instance, field_name)
+                if field_value is not None and field_value > instance.valeur_totale:
+                    utils_utils.add_validation_error(
+                        errors,
+                        "valeur_totale",
+                        f"La valeur totale (HT), {instance.valeur_totale}, est moins que la valeur (HT) {field_name}, {field_value}",
+                    )
+            egalim_sum = instance.egalim_sum()
             if egalim_sum > instance.valeur_totale:
                 utils_utils.add_validation_error(
                     errors,
                     "valeur_totale",
-                    f"La somme des valeurs d'approvisionnement, {egalim_sum}, est plus que le total, {instance.valeur_totale}",
+                    f"La valeur totale (HT), {instance.valeur_totale}, est moins que la somme des valeurs d'approvisionnement, {egalim_sum}",
                 )
     return errors
 
 
 def validate_valeur_bio(instance):
     """
-    Extra validation on bio fields
+    - extra validation:
+        - valeur_bio_dont_commerce_equitable must be <= valeur_bio
     """
     errors = {}
     if instance.valeur_bio is not None:
@@ -121,7 +126,8 @@ def validate_valeur_bio(instance):
 
 def validate_valeur_egalim_autres(instance):
     """
-    Extra validation on egalim_autres fields
+    - extra validation:
+        - valeur_egalim_autres_dont_commerce_equitable must be <= valeur_egalim_autres
     """
     errors = {}
     if instance.valeur_egalim_autres is not None:
@@ -139,7 +145,10 @@ def validate_valeur_egalim_autres(instance):
 
 def validate_viandes_volailles_total(instance):
     """
-    Extra validation on viandes_volailles fields
+    - extra validation:
+        - valeur_viandes_volailles_egalim must be <= valeur_viandes_volailles
+        - valeur_viandes_volailles_france must be <= valeur_viandes_volailles
+        - sum of valeur_viandes_volailles_egalim and valeur_viandes_volailles_france must be <= valeur_viandes_volailles
     """
     errors = {}
     if instance.valeur_viandes_volailles is not None:
@@ -177,7 +186,10 @@ def validate_viandes_volailles_total(instance):
 
 def validate_produits_de_la_mer_total(instance):
     """
-    Extra validation on produits_de_la_mer fields
+    - extra validation:
+        - valeur_produits_de_la_mer_egalim must be <= valeur_produits_de_la_mer
+        - valeur_produits_de_la_mer_france must be <= valeur_produits_de_la_mer
+        - sum of valeur_produits_de_la_mer_egalim and valeur_produits_de_la_mer_france must be <= valeur_produits_de_la_mer
     """
     errors = {}
     if instance.valeur_produits_de_la_mer is not None:
@@ -215,16 +227,12 @@ def validate_produits_de_la_mer_total(instance):
 
 def validate_viandes_volailles_produits_de_la_mer_egalim(instance):
     """
-    Extra validation on EGalim fields
+    - extra validation:
+        - sum of valeur_viandes_volailles_egalim and valeur_produits_de_la_mer_egalim must be <= sum of egalim fields
     """
     errors = {}
-    if instance.valeur_totale is not None and isinstance(instance.valeur_totale, Decimal):
-        egalim_sum = (
-            (instance.valeur_bio or 0)
-            + (instance.valeur_siqo or 0)
-            + (instance.valeur_externalites_performance or 0)
-            + (instance.valeur_egalim_autres or 0)
-        )
+    if instance.valeur_viandes_volailles_egalim is not None and instance.valeur_produits_de_la_mer_egalim is not None:
+        egalim_sum = instance.egalim_sum()
         viandes_volailles_produits_de_la_mer_egalim_sum = (instance.valeur_produits_de_la_mer_egalim or 0) + (
             instance.valeur_viandes_volailles_egalim or 0
         )
