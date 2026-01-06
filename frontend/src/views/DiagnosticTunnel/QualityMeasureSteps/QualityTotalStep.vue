@@ -165,7 +165,7 @@ export default {
       this.$emit("save-diagnostic-and-go-to-page", {
         payload: this.payload,
         nextPage: {
-          name: "GestionnaireCantineModifier",
+          name: "GestionnaireCantineRestaurantModifier",
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
           query: { redirection: this.$router.currentRoute.path },
         },

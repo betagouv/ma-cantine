@@ -213,7 +213,7 @@ export default {
     modificationLink() {
       return this.isCanteenTab
         ? {
-            name: "GestionnaireCantineModifier",
+            name: "GestionnaireCantineRestaurantModifier",
             params: { canteenUrlComponent: this.canteenUrlComponent },
             query: { redirection: this.$router.currentRoute.path },
           }

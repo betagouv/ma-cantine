@@ -86,7 +86,7 @@ const removeRow = (id) => {
         modifier votre mode de production
         <AppLinkRouter
           title="cliquez-ici"
-          :to="{ name: 'GestionnaireCantineModifier', params: route.canteenUrlComponent }"
+          :to="{ name: 'GestionnaireCantineRestaurantModifier', params: route.canteenUrlComponent }"
         />
       </p>
     </div>
@@ -104,7 +104,7 @@ const removeRow = (id) => {
         </router-link>
         <router-link
           :to="{
-            name: 'GestionnaireCantineSatellitesAjouter',
+            name: 'GestionnaireCantineGroupeSatellitesAjouter',
             params: { canteenUrlComponent: route.canteenUrlComponent },
           }"
           class="ma-cantine--unstyled-link fr-m-1v"
@@ -131,7 +131,7 @@ const removeRow = (id) => {
         <template v-if="colKey === 'edit'">
           <router-link
             v-if="cell.userCan"
-            :to="{ name: 'GestionnaireCantineModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
+            :to="{ name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
             class="ma-cantine--unstyled-link"
           >
             <DsfrButton tertiary label="Modifier" />
