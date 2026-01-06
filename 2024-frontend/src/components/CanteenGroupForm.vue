@@ -77,9 +77,7 @@ if (props.establishmentData) {
 </script>
 
 <template>
-  <section
-    class="canteen-establishment-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
-  >
+  <section class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center">
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-4w">
         <DsfrInputGroup
@@ -157,20 +155,3 @@ if (props.establishmentData) {
     </form>
   </section>
 </template>
-
-<style lang="scss">
-.canteen-establishment-form {
-  .hide {
-    display: none !important;
-  }
-
-  &__reduce-margin-bottom {
-    .fr-form-group:last-child {
-      .fr-fieldset,
-      .fr-fieldset__element:last-child {
-        margin-bottom: 0 !important;
-      }
-    }
-  }
-}
-</style>
