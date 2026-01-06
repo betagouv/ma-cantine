@@ -35,7 +35,22 @@ const pages = ref([
     ],
   },
   {
-    title: "Importer des bilans",
+    title: "Importer des bilans simples",
+    to: { name: "GestionnaireImportBilansSimples" },
+    description: "Vous voulez importer des bilans simples pour des cantines existantes.",
+    badges: [
+      {
+        label: "Excel",
+        noIcon: true,
+      },
+      {
+        label: "CSV",
+        noIcon: true,
+      },
+    ],
+  },
+  {
+    title: "Importer des bilans détaillés",
     disabled: true,
     description: "Cette fonctionnalité est en cours de construction et sera disponible prochainement.",
     badges: [

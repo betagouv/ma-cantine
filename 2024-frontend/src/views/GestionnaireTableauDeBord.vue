@@ -37,12 +37,12 @@ const links = [
     label: "Importer des achats",
   },
   {
-    to: { name: "GestionnaireImport" },
-    label: "Importer un bilan simple",
+    to: { name: "GestionnaireImportBilansSimples" },
+    label: "Importer des bilans simples",
   },
   {
     to: { name: "GestionnaireImport" },
-    label: "Importer un bilan détaillé",
+    label: "Importer des bilans détaillés",
   },
 ]
 
