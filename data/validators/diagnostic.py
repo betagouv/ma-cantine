@@ -75,7 +75,7 @@ def validate_valeur_totale(instance):
     - clean_fields() (called by full_clean()) already does some checks
     - extra validation:
         - valeur_totale must be > 0
-        - valeur_totale must be >= each of the egalim fields
+        - valeur_totale must be >= each of the other fields (simple only for now)
         - valeur_totale must be >= sum of egalim fields
     """
     errors = {}
@@ -87,7 +87,7 @@ def validate_valeur_totale(instance):
                 "La valeur totale (HT) doit être supérieure à 0",
             )
         elif isinstance(instance.valeur_totale, Decimal):
-            for field_name in [f"valeur_{group}" for group in instance.APPRO_LABELS_GROUPS_GROUPS_MAPPING["egalim"]]:
+            for field_name in instance.SIMPLE_APPRO_FIELDS:
                 field_value = getattr(instance, field_name)
                 if field_value is not None and field_value > instance.valeur_totale:
                     utils_utils.add_validation_error(
