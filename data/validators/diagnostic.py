@@ -76,6 +76,7 @@ def validate_valeur_totale(instance):
     - extra validation:
         - valeur_totale must be > 0
         - valeur_totale must be >= each of the other fields (simple only for now)
+        - valeur totale must be >= sum of each label
         - valeur_totale must be >= sum of egalim fields
     """
     errors = {}
@@ -89,14 +90,22 @@ def validate_valeur_totale(instance):
         elif isinstance(instance.valeur_totale, Decimal):
             for field_name in instance.SIMPLE_APPRO_FIELDS:
                 field_value = getattr(instance, field_name)
-                if field_value is not None and field_value > instance.valeur_totale:
+                if field_value and field_value > instance.valeur_totale:
                     utils_utils.add_validation_error(
                         errors,
                         "valeur_totale",
                         f"La valeur totale (HT), {instance.valeur_totale}, est moins que la valeur (HT) {field_name}, {field_value}",
                     )
+            for label in instance.APPRO_LABELS_ALL:
+                label_sum = instance.label_sum(label)
+                if label_sum and label_sum > instance.valeur_totale:
+                    utils_utils.add_validation_error(
+                        errors,
+                        "valeur_totale",
+                        f"La valeur totale (HT), {instance.valeur_totale}, est moins que la somme des valeurs d'approvisionnement pour le label {label}, {label_sum}",
+                    )
             egalim_sum = instance.egalim_sum()
-            if egalim_sum > instance.valeur_totale:
+            if egalim_sum and egalim_sum > instance.valeur_totale:
                 utils_utils.add_validation_error(
                     errors,
                     "valeur_totale",

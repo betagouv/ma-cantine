@@ -142,6 +142,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.full_clean()
 
     def test_diagnostic_valeur_totale_validation(self):
+        # TODO: add tests against each simple field / sum of each label / sum of egalim fields
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
         # on save
