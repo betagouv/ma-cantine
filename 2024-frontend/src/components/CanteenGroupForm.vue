@@ -105,7 +105,8 @@ if (props.establishmentData) {
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
           :error-required="formatError(v$.sirenUniteLegale)"
           :establishment-data="prefillEstablishment"
-          has-siret="no-siret"
+          :has-siret="false"
+          title="Mon établissement"
           class="fr-mb-4w"
         />
         <div class="fr-grid-row fr-grid-row--gutters">
