@@ -377,6 +377,7 @@ if (props.establishmentData) {
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
           :error-required="formatError(v$.siret) || formatError(v$.sirenUniteLegale)"
           :has-siret="form.hasSiret === 'has-siret'"
+          :title="form.hasSiret === 'has-siret' ? 'Établissement' : 'Mon unité légale de rattachement'"
           :establishment-data="prefillEstablishment"
         />
       </fieldset>
