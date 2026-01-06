@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
 import urlService from "@/services/urls"
@@ -11,6 +11,7 @@ import CanteenGroupForm from "@/components/CanteenGroupForm.vue"
 
 /* Router and Store */
 const route = useRoute()
+const router = useRouter()
 const store = useRootStore()
 
 /* Component */
@@ -30,12 +31,26 @@ canteenService
   })
   .catch((e) => store.notifyServerError(e))
 
-
-/* API */
+/* Save group */
 const saveGroup = (props) => {
-  const { form, action } = props
-  console.log(form)
-  console.log(action)
+  const { form } = props
+  canteenService
+    .updateCanteen(form, canteenId)
+    .then((canteen) => {
+      if(canteen.id) goToCanteenPage(canteen)
+      else store.notifyServerError()
+    })
+    .catch((e) => { store.notifyServerError(e) })
+}
+
+/* Page redirection */
+const goToCanteenPage = (canteen) => {
+  const canteenPage = {
+    name: "GestionnaireCantineGerer",
+    params: { canteenUrlComponent: urlService.getCanteenUrl(canteen) },
+  }
+  const redirectPage = route.query['redirection']
+  router.replace(redirectPage || canteenPage)
 }
 </script>
 
