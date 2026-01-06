@@ -1,14 +1,35 @@
 <script setup>
 import { ref } from "vue"
 import { useRoute } from "vue-router"
+import { useRootStore } from "@/stores/root"
+import canteenService from "@/services/canteens.js"
+import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
+import AppLoader from "@/components/AppLoader.vue"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import CanteenGroupForm from "@/components/CanteenGroupForm.vue"
 
 /* Router and Store */
 const route = useRoute()
+const store = useRootStore()
 
 /* Component */
 const forceRerender = ref(0)
+
+/* Get establishemnt infos */
+const canteenData = ref({})
+const loading = ref(true)
+const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
+
+canteenService
+  .fetchCanteen(canteenId)
+  .then((response) => {
+    loading.value = false
+    if (response.id) canteenData.value = response
+    else store.notifyServerError()
+  })
+  .catch((e) => store.notifyServerError(e))
+
 
 /* API */
 const saveGroup = (props) => {
@@ -35,8 +56,15 @@ const saveGroup = (props) => {
       </li>
     </AppRessources>
   </section>
+  <AppLoader v-if="loading" />
   <CanteenGroupForm
+    v-else-if="!loading && canteenData.id"
     :key="forceRerender"
+    :establishment-data="canteenData"
     @sendForm="(payload) => saveGroup(payload)"
   />
+  <p v-else>
+    Une erreur est survenue,
+    <AppLinkRouter :to="{ name: 'DashboardManager' }" title="revenir à la page précédente" />
+  </p>
 </template>
