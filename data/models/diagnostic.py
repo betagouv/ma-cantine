@@ -362,6 +362,7 @@ class Diagnostic(models.Model):
         "local",
     ]
     APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
+    APPRO_LABELS_ALL = APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_FRANCE
     APPRO_LABELS_GROUPS_MAPPING = {
         "bio": ["bio"],
         "siqo": ["label_rouge", "aocaop_igp_stg"],
