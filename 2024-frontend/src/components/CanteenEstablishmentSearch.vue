@@ -5,16 +5,15 @@ import canteensService from "@/services/canteens.js"
 import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
-const props = defineProps(["errorRequired", "hasSiret", "establishmentData"])
+const props = defineProps(["errorRequired", "hasSiret", "establishmentData", "title"])
 
 /* Store */
 const store = useRootStore()
 
 /* Content */
 const numberName = computed(() => (props.hasSiret ? "SIRET" : "SIREN"))
-const title = computed(() => (props.hasSiret ? "Mon établissement" : "Mon unité légale de rattachement"))
 const establishment = computed(() => (props.hasSiret ? "votre établissement" : "l'établissement"))
-const placeholder = computed(() => (props.hasSiret ? "Tapez votre n° SIRET" : "Tapez le n° SIREN de l’unité légale"))
+const placeholder = computed(() => (props.hasSiret ? "Tapez votre n° SIRET" : "Tapez le n° SIREN"))
 const label = computed(() => `Rechercher un établissement par son numéro ${numberName.value}`)
 const hasSelected = ref(false)
 
@@ -136,7 +135,7 @@ const unselectCanteen = () => {
 
 <template>
   <div class="canteen-establishment-search">
-    <p class="fr-mb-0">{{ title }} *</p>
+    <p class="fr-label fr-mb-0">{{ title }} *</p>
     <p class="fr-hint-text">
       Nous utilisons le site
       <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">annuaire-des-entreprises</a>
