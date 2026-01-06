@@ -6,6 +6,30 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.49.0](https://github.com/betagouv/ma-cantine/compare/v2025.48.0...v2025.49.0) (2026-01-06)
+
+
+### Nouveautés
+
+* **Imports:** Bilans simples: rend la nouvelle page visible à nos utilisateurs ([#6082](https://github.com/betagouv/ma-cantine/issues/6082)) ([5a574bf](https://github.com/betagouv/ma-cantine/commit/5a574bf9155deca79a49caad3c55775ab63d73f2))
+
+
+### Améliorations
+
+* **Bilans:** ajouter de nouvelles règles métiers au niveau du modèle (valeur totale) (2/2) ([#6120](https://github.com/betagouv/ma-cantine/issues/6120)) ([cfc87f7](https://github.com/betagouv/ma-cantine/commit/cfc87f753e720570a85465607eb0910ba8f4138a))
+* **Bilans:** ajouter de nouvelles règles métiers au niveau du modèle (valeur totale) (bilans simples) ([#6119](https://github.com/betagouv/ma-cantine/issues/6119)) ([c531d40](https://github.com/betagouv/ma-cantine/commit/c531d404139b1227731a699c2a91836c86a19333))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** API: répare l'endpoint recherche par siren ([#6123](https://github.com/betagouv/ma-cantine/issues/6123)) ([8876a65](https://github.com/betagouv/ma-cantine/commit/8876a65403ef141ca3623dfed803c7960ce712c1))
+* **Cantines:** API: répare l'endpoint recherche par siren (ajout de tests) ([#6124](https://github.com/betagouv/ma-cantine/issues/6124)) ([aa4c44f](https://github.com/betagouv/ma-cantine/commit/aa4c44fb3e2021f656f01e5d133119f2a06e915f))
+
+
+### Technique
+
+* **Achats:** éviter une requête N+1 sur l'endpoint /api/v1/purchases ([#6122](https://github.com/betagouv/ma-cantine/issues/6122)) ([d7ed2e8](https://github.com/betagouv/ma-cantine/commit/d7ed2e8458fe47d28ef97262947f0a0e69618563))
+
 ## [2025.48.0](https://github.com/betagouv/ma-cantine/compare/v2025.47.0...v2025.48.0) (2026-01-05)
 
 
