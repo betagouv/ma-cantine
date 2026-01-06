@@ -332,11 +332,11 @@ class CanteenModelSaveTest(TransactionTestCase):
                         satellite_canteens_count=VALUE_NOT_OK,
                     )
 
-    def test_canteen_central_producer_siret_required_if_satellite_validation(self):
+    def test_canteen_central_producer_siret_validation(self):
         central_kitchen = CanteenFactory(siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL)
         canteen_site = CanteenFactory(siret="83014132100034", production_type=Canteen.ProductionType.ON_SITE)
 
-        for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL]:
+        for production_type in [Canteen.ProductionType.GROUPE, Canteen.ProductionType.ON_SITE_CENTRAL]:
             for TUPLE_OK in [
                 ("215 903 501 00017", central_kitchen.siret),
                 (central_kitchen.siret, central_kitchen.siret),

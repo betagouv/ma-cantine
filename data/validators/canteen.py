@@ -199,14 +199,14 @@ def validate_canteen_central_producer_siret_field(instance):
     - clean_fields() (called by full_clean()) already checks that
     the central_producer_siret field is the correct length and format
     - extra validation:
-        - if satellite: central_producer_siret is not mandatory
+        - if groupe or satellite: central_producer_siret is not mandatory
         - if satellite & central_producer_siret: must be different from the satellite siret
-        - if not satellite: central_producer_siret must be empty
+        - if not groupe or satellite: central_producer_siret must be empty
     """
     errors = {}
     field_name = "central_producer_siret"
     value = getattr(instance, field_name)
-    if instance.is_satellite:
+    if instance.is_groupe or instance.is_satellite:
         if value:
             if instance.siret == value:
                 utils_utils.add_validation_error(
@@ -215,6 +215,6 @@ def validate_canteen_central_producer_siret_field(instance):
     else:
         if value:
             utils_utils.add_validation_error(
-                errors, field_name, "Le champ ne peut être rempli que pour les restaurants satellites."
+                errors, field_name, "Le champ ne peut être rempli que pour les groupes ou les restaurants satellites."
             )
     return errors
