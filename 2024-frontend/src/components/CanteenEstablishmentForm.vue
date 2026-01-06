@@ -8,7 +8,7 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
-import options from "@/constants/canteen-establishment-form-options"
+import options from "@/constants/canteen-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
 
 /* Data */
