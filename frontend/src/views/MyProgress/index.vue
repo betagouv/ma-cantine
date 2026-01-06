@@ -114,7 +114,7 @@
             <li v-if="hasSatelliteInconsistency" class="mb-1">
               <router-link
                 :to="{
-                  name: 'GestionnaireCantineSatellitesGerer',
+                  name: 'GestionnaireCantineGroupeGerer',
                   params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
                 }"
               >
@@ -124,7 +124,7 @@
             <li v-if="missingCanteenData" class="mb-1">
               <router-link
                 :to="{
-                  name: 'GestionnaireCantineModifier',
+                  name: 'GestionnaireCantineRestaurantModifier',
                   params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
                 }"
               >

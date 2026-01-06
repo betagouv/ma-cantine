@@ -35,7 +35,7 @@
       <p class="mx-2 mb-2">
         <v-btn
           :to="{
-            name: 'GestionnaireCantineSatellitesGerer',
+            name: 'GestionnaireCantineGroupeGerer',
             params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
           }"
           color="primary"

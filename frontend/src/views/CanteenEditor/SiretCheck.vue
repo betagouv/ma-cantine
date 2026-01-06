@@ -16,7 +16,7 @@
             <v-btn
               color="primary"
               :to="{
-                name: 'GestionnaireCantineModifier',
+                name: 'GestionnaireCantineRestaurantModifier',
                 params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(duplicateSiretCanteen) },
               }"
             >
