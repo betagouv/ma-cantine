@@ -115,7 +115,7 @@
       <v-col cols="12">
         <p>
           <v-btn
-            :to="{ name: 'GestionnaireCantineSatellitesGerer' }"
+            :to="{ name: 'GestionnaireCantineGroupeGerer' }"
             outlined
             small
             color="primary"

@@ -137,7 +137,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
             <router-link
               class="ma-cantine--unstyled-link"
               :to="{
-                name: 'GestionnaireCantineModifier',
+                name: 'GestionnaireCantineRestaurantModifier',
                 params: { canteenUrlComponent: route.params.canteenUrlComponent },
               }"
             >
