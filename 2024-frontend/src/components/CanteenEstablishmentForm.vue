@@ -14,7 +14,7 @@ import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.
 
 /* Data */
 const store = useRootStore()
-const props = defineProps(["establishmentData", "showCreateButton", "showCancelButton", "addSatellite"])
+const props = defineProps(["establishmentData", "showCreateButton", "showCancelButton"])
 const emit = defineEmits(["sendForm", "cancel"])
 
 /* Siret */
@@ -218,7 +218,7 @@ const prefillFields = () => {
 }
 
 /* Dynamic Inputs */
-const showCentralProducerSiret = computed(() => form.productionType === "site_cooked_elsewhere" && !props.addSatellite)
+const showCentralProducerSiret = computed(() => form.productionType === "site_cooked_elsewhere")
 const showSatelliteCanteensCount = computed(
   () => form.productionType === "central" || form.productionType === "central_serving"
 )
@@ -249,7 +249,6 @@ const changeProductionMode = () => {
 
 /* Fields verification */
 const { required, integer, minValue, maxValue, requiredIf, minLength, maxLength } = useValidators()
-const productionTypeRequired = computed(() => !props.addSatellite)
 const yearlyMealMinValue = computed(() => Math.max(form.dailyMealCount, 420))
 const dailyMealMaxValue = computed(() => form.yearlyMealCount)
 const siretIsRequired = computed(() => form.hasSiret === "has-siret")
@@ -270,7 +269,7 @@ const rules = {
   },
   economicModel: { required },
   managementType: { required },
-  productionType: { required: requiredIf(productionTypeRequired) },
+  productionType: { required },
   centralProducerSiret: {
     required: false,
     minLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", minLength(14)),
@@ -336,7 +335,6 @@ if (props.establishmentData) {
           :error-message="formatError(v$.managementType)"
         />
         <DsfrRadioButtonSet
-          v-show="!addSatellite"
           legend="Mode de production *"
           v-model="form.productionType"
           :options="productionTypeOptions"
@@ -526,11 +524,7 @@ if (props.establishmentData) {
         <DsfrButton
           v-if="showCreateButton"
           :disabled="isSaving"
-          :label="
-            addSatellite
-              ? 'Enregistrer et créer un nouveau restaurant satellite'
-              : 'Enregistrer et créer un nouvel établissement'
-          "
+          label="Enregistrer et créer un nouvel établissement"
           secondary
           class="fr-mb-1v fr-mr-1v"
           @click="validateForm('stay-on-creation-page')"
