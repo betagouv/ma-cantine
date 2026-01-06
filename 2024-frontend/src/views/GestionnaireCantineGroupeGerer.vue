@@ -102,15 +102,6 @@ const removeRow = (id) => {
         >
           <DsfrButton secondary label="Importer des restaurants satellites" icon="fr-icon-file-add-line" />
         </router-link>
-        <router-link
-          :to="{
-            name: 'GestionnaireCantineGroupeSatellitesAjouter',
-            params: { canteenUrlComponent: route.canteenUrlComponent },
-          }"
-          class="ma-cantine--unstyled-link fr-m-1v"
-        >
-          <DsfrButton label="Ajouter un restaurant satellite" icon="fr-icon-add-line" />
-        </router-link>
       </div>
     </div>
     <AppLoader v-if="loading" />

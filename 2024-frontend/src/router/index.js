@@ -12,6 +12,12 @@ vue3routes.forEach((r) => {
 })
 routes.push(...vue2routes)
 
+/* Redirects */
+routes.push({
+  path: "/v2/tableau-de-bord/cantines/:canteenUrlComponent/satellites/ajouter",
+  redirect: { name: "GestionnaireCantineGroupeGerer" },
+})
+
 /* Create router */
 const router = createRouter({
   history: createWebHistory(),
@@ -38,5 +44,6 @@ router.beforeEach(async (to) => {
     return { name: "Vue2Home", replace: true }
   }
 })
+
 
 export { router, routes }
