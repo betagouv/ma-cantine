@@ -25,7 +25,7 @@ const canteenSentence = computed(() => {
 /* BUTTON */
 const links = [
   {
-    to: { name: "GestionnaireCantineAjouter" },
+    to: { name: "GestionnaireCantineRestaurantAjouter" },
     label: "Ajouter une cantine",
   },
   {
