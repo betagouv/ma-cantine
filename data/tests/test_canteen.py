@@ -200,13 +200,37 @@ class CanteenModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, CanteenFactory, production_type=VALUE_NOT_OK)
 
     def test_canteen_economic_model_validation(self):
-        for TUPLE_OK in [(key, key) for key in Canteen.EconomicModel.values]:
-            with self.subTest(economic_model=TUPLE_OK[0]):
-                canteen = CanteenFactory(economic_model=TUPLE_OK[0])
-                self.assertEqual(canteen.economic_model, TUPLE_OK[1])
-        for VALUE_NOT_OK in [None, "", "  ", 123, "invalid"]:
-            with self.subTest(economic_model=VALUE_NOT_OK):
-                self.assertRaises(ValidationError, CanteenFactory, economic_model=VALUE_NOT_OK)
+        # groupe: must be empty
+        for production_type in [Canteen.ProductionType.GROUPE]:
+            for TUPLE_OK in [(None, None), ("", "")]:
+                with self.subTest(
+                    siren_unite_legale="756656218", production_type=production_type, economic_model=TUPLE_OK[0]
+                ):
+                    canteen = CanteenFactory(production_type=production_type, economic_model=TUPLE_OK[0])
+                    self.assertEqual(canteen.economic_model, TUPLE_OK[1])
+            for VALUE_NOT_OK in [key for key, _ in Canteen.EconomicModel.choices]:
+                with self.subTest(production_type=production_type, economic_model=VALUE_NOT_OK):
+                    self.assertRaises(
+                        ValidationError,
+                        CanteenFactory,
+                        production_type=production_type,
+                        economic_model=VALUE_NOT_OK,
+                    )
+        for production_type in [
+            Canteen.ProductionType.CENTRAL,
+            Canteen.ProductionType.CENTRAL_SERVING,
+            Canteen.ProductionType.ON_SITE,
+            Canteen.ProductionType.ON_SITE_CENTRAL,
+        ]:
+            for TUPLE_OK in [(key, key) for key in Canteen.EconomicModel.values]:
+                with self.subTest(economic_model=TUPLE_OK[0]):
+                    canteen = CanteenFactory(production_type=production_type, economic_model=TUPLE_OK[0])
+                    self.assertEqual(canteen.economic_model, TUPLE_OK[1])
+            for VALUE_NOT_OK in [None, "", "  ", 123, "invalid"]:
+                with self.subTest(economic_model=VALUE_NOT_OK):
+                    self.assertRaises(
+                        ValidationError, CanteenFactory, production_type=production_type, economic_model=VALUE_NOT_OK
+                    )
 
     def test_canteen_sector_list_validation(self):
         # central kitchen: must be empty
@@ -435,7 +459,9 @@ class CanteenCreatedBeforeQuerySetTest(TestCase):
 class CanteenCentralAndSatelliteQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_groupe = CanteenFactory(siret="12345678901234", production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_groupe = CanteenFactory(
+            siren_unite_legale="756656218", production_type=Canteen.ProductionType.GROUPE, economic_model=None
+        )
         cls.canteen_central_1 = CanteenFactory(
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
@@ -469,14 +495,17 @@ class CanteenCentralAndSatelliteQuerySetTest(TestCase):
     def test_is_groupe(self):
         self.assertEqual(Canteen.objects.count(), 7)
         self.assertEqual(Canteen.objects.is_groupe().count(), 1)
+        self.assertTrue(self.canteen_groupe.is_groupe)
 
     def test_is_central(self):
         self.assertEqual(Canteen.objects.count(), 7)
         self.assertEqual(Canteen.objects.is_central().count(), 2)
+        self.assertTrue(self.canteen_central_1.is_central)
 
     def test_is_satellite(self):
         self.assertEqual(Canteen.objects.count(), 7)
         self.assertEqual(Canteen.objects.is_satellite().count(), 3)
+        self.assertTrue(self.canteen_on_site_central_1.is_satellite)
 
     def test_annotate_with_central_kitchen_id(self):
         self.assertEqual(Canteen.objects.count(), 7)

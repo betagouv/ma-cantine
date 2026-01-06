@@ -567,7 +567,9 @@ class Canteen(SoftDeletionModel):
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
             canteen_validators.validate_canteen_siret_or_siren_unite_legale(self),
-            canteen_validators.validate_canteen_choice_fields(self),
+            canteen_validators.validate_canteen_management_type_field(self),
+            canteen_validators.validate_canteen_production_type_field(self),
+            canteen_validators.validate_canteen_economic_model_field(self),
             canteen_validators.validate_canteen_meal_count_fields(self),
             canteen_validators.validate_canteen_sector_list_field(self),
             canteen_validators.validate_canteen_satellite_count(self),
@@ -599,6 +601,10 @@ class Canteen(SoftDeletionModel):
     @property
     def siret_or_siren_unite_legale(self) -> str:
         return self.siret or self.siren_unite_legale or ""
+
+    @property
+    def is_groupe(self) -> bool:
+        return self.production_type and self.production_type == Canteen.ProductionType.GROUPE
 
     @property
     def is_central(self) -> bool:

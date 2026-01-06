@@ -11,8 +11,9 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
     - extra validation:
         - siret & siren_unite_legale: at least one must be filled
         - siret & siren_unite_legale: both cannot be filled at the same time
+        - if groupe: only the siren_unite_legale field must be filled
         - if central: only the siret field must be filled
-        - if siret: must be unique (NOTE: check is NOT done on all_objects)
+        - if siret: must be unique (NOTE: check is done on all, NOT on all_objects)
     """
     errors = {}
     siret = instance.siret
@@ -35,6 +36,11 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
             "siren_unite_legale",
             "Le champ SIRET ou le champ SIREN unité légale ne peuvent pas être vides en même temps.",
         )
+    if instance.is_groupe:
+        if not siren_unite_legale:
+            utils_utils.add_validation_error(errors, "siren_unite_legale", "Groupe : le champ ne peut pas être vide.")
+        if siret:
+            utils_utils.add_validation_error(errors, "siret", "Groupe : le champ ne peut pas être rempli.")
     if instance.is_central_cuisine:
         if not siret:
             utils_utils.add_validation_error(errors, "siret", "Cuisine centrale : le champ ne peut pas être vide.")
@@ -53,15 +59,48 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
     return errors
 
 
-def validate_canteen_choice_fields(instance):
+def validate_canteen_management_type_field(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the value is in the choices
     - extra validation:
-        - some choice fields must be filled
+        - the field must be filled
     """
     errors = {}
-    for field_name in ["management_type", "production_type", "economic_model"]:
-        value = getattr(instance, field_name)
+    field_name = "management_type"
+    value = getattr(instance, field_name)
+    if value in [None, ""]:
+        utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
+    return errors
+
+
+def validate_canteen_production_type_field(instance):
+    """
+    - clean_fields() (called by full_clean()) already checks that the value is in the choices
+    - extra validation:
+        - the field must be filled
+    """
+    errors = {}
+    field_name = "production_type"
+    value = getattr(instance, field_name)
+    if value in [None, ""]:
+        utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
+    return errors
+
+
+def validate_canteen_economic_model_field(instance):
+    """
+    - clean_fields() (called by full_clean()) already checks that the value is in the choices
+    - extra validation:
+        - if groupe: the field must be empty
+        - if not groupe: the field must be filled
+    """
+    errors = {}
+    field_name = "economic_model"
+    value = getattr(instance, field_name)
+    if instance.is_groupe:
+        if value not in [None, ""]:
+            utils_utils.add_validation_error(errors, field_name, "Groupe : le champ doit être vide.")
+    else:
         if value in [None, ""]:
             utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
     return errors
@@ -111,14 +150,14 @@ def validate_canteen_sector_list_field(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the value is a list (empty or with Sectors)
     - extra validation:
-        - if central: the sector_list should be empty
-        - if not central: the sector_list should be between 1 & 3
+        - if groupe/central: the sector_list should be empty
+        - if not groupe/central: the sector_list should be between 1 & 3
     """
     errors = {}
     field_name = "sector_list"
     value = getattr(instance, field_name)
     if value is not None:  # check done in clean_fields()
-        if instance.is_central:
+        if instance.is_groupe or instance.is_central:
             if len(value):
                 utils_utils.add_validation_error(errors, field_name, "Cuisine centrale : le champ doit être vide.")
         else:
