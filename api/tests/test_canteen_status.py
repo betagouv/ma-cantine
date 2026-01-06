@@ -37,16 +37,16 @@ class CanteenStatusBySiretApiTest(APITestCase):
             ],
             "total_results": 1,
         }
+        cls.url = reverse("canteen_status_by_siret", kwargs={"siret": cls.siret})
 
     @authenticate
     def test_check_siret_managed(self):
         """
         If checking a siret of a canteen that exists and I manage, give me canteen info
         """
-        siret = "26566234910966"
-        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
+        canteen = CanteenFactory(siret=self.siret, managers=[authenticate.user])
 
-        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -61,11 +61,10 @@ class CanteenStatusBySiretApiTest(APITestCase):
         If checking a siret of a canteen that exists but no one manages,
         give me minimal canteen info and an indication that the canteen can be claimed
         """
-        siret = "26566234910966"
-        canteen = CanteenFactory(siret=siret)
+        canteen = CanteenFactory(siret=self.siret)
         canteen.managers.clear()
 
-        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -80,10 +79,9 @@ class CanteenStatusBySiretApiTest(APITestCase):
         If checking a siret of a canteen that exists but is managed by someone else,
         give me minimal canteen info and an indication that the canteen can't be claimed
         """
-        siret = "26566234910966"
-        canteen = CanteenFactory(siret=siret)
+        canteen = CanteenFactory(siret=self.siret)
 
-        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": siret}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -111,7 +109,7 @@ class CanteenStatusBySiretApiTest(APITestCase):
         }
         mock.get(geo_api_url, json=geo_mocked_response)
 
-        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": self.siret}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -128,7 +126,7 @@ class CanteenStatusBySiretApiTest(APITestCase):
     def test_check_siret_existing_canteen(self, mock):
         canteen = CanteenFactory(siret=self.siret)
 
-        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": self.siret}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -139,7 +137,7 @@ class CanteenStatusBySiretApiTest(APITestCase):
     @mock.patch("requests.post", side_effect=requests.exceptions.ConnectTimeout)
     @authenticate
     def test_external_api_down(self, mock_get, mock_post):
-        response = self.client.get(reverse("canteen_status_by_siret", kwargs={"siret": self.siret}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -177,13 +175,14 @@ class CanteenStatusBySirenApiTest(APITestCase):
             ],
             "total_results": 1,
         }
+        cls.url = reverse("canteen_status_by_siren", kwargs={"siren": cls.siren})
 
     @requests_mock.Mocker()
     @authenticate
     def test_check_siren_new_canteen(self, mock):
         mock.get(self.recherche_entreprises_api_url, json=self.recherche_entreprises_api_mocked_response)
 
-        response = self.client.get(reverse("canteen_status_by_siren", kwargs={"siren": self.siren}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -201,7 +200,7 @@ class CanteenStatusBySirenApiTest(APITestCase):
         canteen = CanteenFactory(siret=None, siren_unite_legale=self.siren)
         mock.get(self.recherche_entreprises_api_url, json=self.recherche_entreprises_api_mocked_response)
 
-        response = self.client.get(reverse("canteen_status_by_siren", kwargs={"siren": self.siren}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -214,7 +213,7 @@ class CanteenStatusBySirenApiTest(APITestCase):
     @mock.patch("requests.post", side_effect=requests.exceptions.ConnectTimeout)
     @authenticate
     def test_external_api_down(self, mock_get, mock_post):
-        response = self.client.get(reverse("canteen_status_by_siren", kwargs={"siren": self.siren}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
