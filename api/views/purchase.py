@@ -119,7 +119,7 @@ class PurchaseListCreateView(ListCreateAPIView):
     filterset_class = PurchaseFilterSet
 
     def get_queryset(self):
-        return Purchase.objects.filter(canteen__in=self.request.user.canteens.all())
+        return Purchase.objects.select_related("canteen").filter(canteen__in=self.request.user.canteens.all())
 
     def perform_create(self, serializer):
         canteen_id = self.request.data.get("canteen")
