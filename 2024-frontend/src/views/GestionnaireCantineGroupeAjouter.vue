@@ -18,6 +18,7 @@ const forceRerender = ref(0)
 /* Save group */
 const saveGroup = (props) => {
   const { form, action } = props
+  form.siret = null // SIRET is required to create a canteen
   canteensService
     .createCanteen(form)
     .then((canteenCreated) => {

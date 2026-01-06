@@ -20,7 +20,6 @@ const selectEstablishment = (canteenInfos) => {
 /* FORM */
 const form = reactive({
   productionType: "groupe", // TODO: remove hard coded value and use data file
-  siret: null,
 })
 
 const resetFields = () => {
