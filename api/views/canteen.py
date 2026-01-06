@@ -47,7 +47,7 @@ from api.serializers import (
     PublicCanteenSerializer,
     SatelliteCanteenSerializer,
 )
-from api.views.utils import camelize, update_change_reason_with_auth
+from api.views.utils import update_change_reason_with_auth
 from common.api.adresse import fetch_geo_data_from_code
 from common.api.recherche_entreprises import fetch_geo_data_from_siren, fetch_geo_data_from_siret
 from common.utils import send_mail
@@ -439,7 +439,7 @@ class CanteenStatusBySirenView(APIView):
         if not response:
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         response["canteens"] = get_cantine_list_from_siren_unite_legale(siren, request)
-        return Response(response, status=status.HTTP_200_OK, safe=False)
+        return Response(response, status=status.HTTP_200_OK)
 
 
 def get_cantine_from_siret(siret, request):
@@ -453,7 +453,7 @@ def get_cantine_from_siret(siret, request):
 def get_cantine_list_from_siren_unite_legale(siren, request):
     if siren:
         canteens = Canteen.objects.filter(siren_unite_legale=siren).order_by("name")
-        return Response(CanteenStatusSerializer(canteens, many=True, context={"request": request}).data)
+        return CanteenStatusSerializer(canteens, many=True, context={"request": request}).data
 
 
 class AddManagerView(APIView):
