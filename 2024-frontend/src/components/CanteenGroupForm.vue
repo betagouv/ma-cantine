@@ -82,7 +82,7 @@ if (props.establishmentData) {
       <fieldset class="fr-mb-4w">
         <DsfrInputGroup
           v-model="form.name"
-          label="Nom du groupe *"
+          label="Nom *"
           :error-message="formatError(v$.name)"
         />
         <DsfrRadioButtonSet
