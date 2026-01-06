@@ -10,7 +10,7 @@ const pictoDocumentAdd = "/static/images/picto-dsfr/document-add.svg"
         class="gestionnaire-canteens-create__card"
         title="Ajouter une cantine via le formulaire"
         :imgSrc="pictoDocuments"
-        :link="{ name: 'GestionnaireCantineAjouter' }"
+        :link="{ name: 'GestionnaireCantineRestaurantAjouter' }"
         endDetail="Ajouter votre cantine"
         description="Pour ajouter votre lieu de restauration collective munissez-vous de votre numéro SIRET ou du numéro SIREN de votre unité légale."
       />
