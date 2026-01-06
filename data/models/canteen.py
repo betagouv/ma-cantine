@@ -48,6 +48,10 @@ def has_siret_or_siren_unite_legale_query():
     return has_siret_query | has_siren_unite_legale_query
 
 
+def is_groupe_query():
+    return Q(production_type=Canteen.ProductionType.GROUPE)
+
+
 def is_central_query():
     return Q(production_type=Canteen.ProductionType.CENTRAL)
 
@@ -106,11 +110,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             return self.filter(creation_date__lt=canteen_created_before_date)
         return self.none()
 
+    def is_groupe(self):
+        return self.filter(is_groupe_query())
+
     def is_central(self):
         return self.filter(is_central_query())
-
-    def exclude_central(self):
-        return self.exclude(is_central_query())
 
     def is_central_cuisine(self):
         return self.filter(is_central_cuisine_query())
@@ -318,6 +322,7 @@ class Canteen(SoftDeletionModel):
         CONCEDED = "conceded", "Concédée"
 
     class ProductionType(models.TextChoices):
+        GROUPE = "groupe", "Groupe"
         CENTRAL = "central", "Cuisine centrale"
         CENTRAL_SERVING = "central_serving", "Cuisine centrale et site"
         ON_SITE = "site", "Restaurant avec cuisine sur place"
@@ -562,7 +567,9 @@ class Canteen(SoftDeletionModel):
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
             canteen_validators.validate_canteen_siret_or_siren_unite_legale(self),
-            canteen_validators.validate_canteen_choice_fields(self),
+            canteen_validators.validate_canteen_management_type_field(self),
+            canteen_validators.validate_canteen_production_type_field(self),
+            canteen_validators.validate_canteen_economic_model_field(self),
             canteen_validators.validate_canteen_meal_count_fields(self),
             canteen_validators.validate_canteen_sector_list_field(self),
             canteen_validators.validate_canteen_satellite_count(self),
@@ -594,6 +601,10 @@ class Canteen(SoftDeletionModel):
     @property
     def siret_or_siren_unite_legale(self) -> str:
         return self.siret or self.siren_unite_legale or ""
+
+    @property
+    def is_groupe(self) -> bool:
+        return self.production_type and self.production_type == Canteen.ProductionType.GROUPE
 
     @property
     def is_central(self) -> bool:
