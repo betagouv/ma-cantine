@@ -73,6 +73,10 @@ const searchByNumber = () => {
     .canteenStatus(searchBy, cleanNumber)
     .then((response) => {
       switch (true) {
+        case response instanceof Error:
+          canteen.found = false
+          errorNotFound.value = "Une erreur est survenue lors de la recherche de l'établissement, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr"
+          break
         case response.length === 0:
           canteen.found = false
           errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanNumber} » ne correspond à aucun établissement`
