@@ -235,24 +235,41 @@ class CanteenFactory(factory.django.DjangoModelFactory):
         model = Canteen
 
     name = factory.Faker("text", max_nb_chars=20)
-    siret = factory.Sequence(lambda n: SIRET_LIST_FOR_FACTORY[n % len(SIRET_LIST_FOR_FACTORY)])
+    # siret: empty if groupe
+    siret = factory.LazyAttributeSequence(
+        lambda obj, n: SIRET_LIST_FOR_FACTORY[n % len(SIRET_LIST_FOR_FACTORY)]
+        if obj.production_type != Canteen.ProductionType.GROUPE
+        else None
+    )
+    # siren_unite_legale: filled if groupe
+    siren_unite_legale = factory.LazyAttributeSequence(
+        lambda obj, n: SIRET_LIST_FOR_FACTORY[n % len(SIRET_LIST_FOR_FACTORY)][:9]
+        if obj.production_type == Canteen.ProductionType.GROUPE
+        else None
+    )
     city = factory.Faker("city")
     city_insee_code = factory.Faker("postcode")
     daily_meal_count = 12
     yearly_meal_count = 1000
-    management_type = factory.Iterator([key for key, _ in Canteen.ManagementType.choices])
+    management_type = random.choice(Canteen.ManagementType.values)
     production_type = Canteen.ProductionType.ON_SITE  # the production_type with the least constraints
-    economic_model = factory.Iterator([key for key, _ in Canteen.EconomicModel.choices])
+    # economic_model: empty if groupe
+    economic_model = factory.LazyAttribute(
+        lambda obj: random.choice(Canteen.EconomicModel.values)
+        if obj.production_type != Canteen.ProductionType.GROUPE
+        else None
+    )
+    # sector_list: empty if groupe or central
     sector_list = factory.LazyAttribute(
-        lambda x: [Sector.SANTE_HOPITAL]
-        if x.production_type
-        in [
-            Canteen.ProductionType.CENTRAL_SERVING,
-            Canteen.ProductionType.ON_SITE,
-            Canteen.ProductionType.ON_SITE_CENTRAL,
+        lambda obj: [Sector.SANTE_HOPITAL]
+        if obj.production_type
+        not in [
+            Canteen.ProductionType.GROUPE,
+            Canteen.ProductionType.CENTRAL,
         ]
         else []
     )
+    # satellite_canteens_count: filled if central_cuisine
     satellite_canteens_count = factory.LazyAttribute(
         lambda obj: (
             2
