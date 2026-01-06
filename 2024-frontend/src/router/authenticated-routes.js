@@ -153,20 +153,7 @@ const routes = [
         },
       },
       {
-        path: "modifier-groupe",
-        name: "GestionnaireCantineGroupeModifier",
-        component: GestionnaireCantineGroupeModifier,
-        meta: {
-          title: "Modifier mon groupe de restaurants satellites",
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
-            { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
-          ],
-        },
-      },
-      {
-        path: "satellites/",
+        path: "groupe/",
         children: [
           {
             path: "gerer",
@@ -177,6 +164,19 @@ const routes = [
               breadcrumbs: [
                 { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
                 { to: { name: "DashboardManager" }, useCanteenName: true },
+              ],
+            },
+          },
+          {
+            path: "modifier",
+            name: "GestionnaireCantineGroupeModifier",
+            component: GestionnaireCantineGroupeModifier,
+            meta: {
+              title: "Modifier mon groupe de restaurants satellites",
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "DashboardManager" }, useCanteenName: true },
+                { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
               ],
             },
           },
