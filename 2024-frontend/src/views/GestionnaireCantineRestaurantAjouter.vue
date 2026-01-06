@@ -6,7 +6,7 @@ import canteensService from "@/services/canteens"
 import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
+import CanteenRestaurantForm from "@/components/CanteenRestaurantForm.vue"
 
 /* Router and Store */
 const route = useRoute()
@@ -94,7 +94,7 @@ const resetForm = (name) => {
       </li>
     </AppRessources>
   </section>
-  <CanteenEstablishmentForm
+  <CanteenRestaurantForm
     :showCreateButton="true"
     :key="forceRerender"
     @sendForm="(payload) => saveCanteen(payload)"
