@@ -27,7 +27,13 @@ const satellitesCountSentence = computed(() => {
   else return `${satellites.value.length} restaurants satellites renseignés`
 })
 
+const canManageSatellites = computed(() => {
+  const allowedProductionTypes = ["central", "central_serving", "groupe"]
+  return allowedProductionTypes.includes(canteen.value.productionType)
+})
+
 /* Table */
+const lastYear = new Date().getFullYear() - 1
 const tableHeaders = [
   {
     key: "name",
@@ -35,11 +41,15 @@ const tableHeaders = [
   },
   {
     key: "siretSiren",
-    label: "SIRET ou SIREN",
+    label: "Siret / Siren",
   },
   {
     key: "dailyMealCount",
     label: "Couverts par jour",
+  },
+  {
+    key: "diagnostic",
+    label: `Bilan ${lastYear}`,
   },
   {
     key: "edit",
@@ -59,6 +69,7 @@ const tableRows = computed(() => {
           name: sat.name,
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
+          diagnostic: "",
           edit: {
             userCan: sat.userCanView,
             satelliteComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
@@ -78,10 +89,10 @@ const removeRow = (id) => {
 }
 </script>
 <template>
-  <section class="gestionnaire-cantine-satellites-gerer">
-    <div class="fr-col-12 fr-col-md-8">
+  <section class="gestionnaire-cantine-groupe-satellites">
+    <div class="fr-col-12 fr-col-md-7">
       <h1>{{ route.meta.title }}</h1>
-      <p v-if="!canteen.isCentralCuisine">
+      <p v-if="!canManageSatellites">
         Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de restaurants satellites. Pour
         modifier votre mode de production
         <AppLinkRouter
@@ -90,18 +101,9 @@ const removeRow = (id) => {
         />
       </p>
     </div>
-    <div v-if="canteen.isCentralCuisine" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+    <div v-if="canManageSatellites" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
       <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
-        <router-link
-          :to="{
-            name: 'GestionnaireImportCantines',
-            params: { canteenUrlComponent: route.canteenUrlComponent },
-          }"
-          class="ma-cantine--unstyled-link fr-m-1v"
-        >
-          <DsfrButton secondary label="Importer des restaurants satellites" icon="fr-icon-file-add-line" />
-        </router-link>
       </div>
     </div>
     <AppLoader v-if="loading" />
@@ -116,7 +118,7 @@ const removeRow = (id) => {
       :pagination-options="[50, 100, 200]"
       :rows-per-page="50"
       pagination-wrapper-class="fr-mt-3w"
-      class="gestionnaire-cantine-satellites-gerer__table"
+      class="gestionnaire-cantine-groupe-satellites__table"
     >
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'edit'">
@@ -125,7 +127,7 @@ const removeRow = (id) => {
             :to="{ name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
             class="ma-cantine--unstyled-link"
           >
-            <DsfrButton tertiary label="Modifier" />
+            <DsfrButton tertiary label="Modifier" icon="fr-icon-pencil-fill" />
           </router-link>
           <CanteenButtonJoin v-else :id="cell.satellite.id" :name="cell.satellite.name" />
         </template>
@@ -145,13 +147,8 @@ const removeRow = (id) => {
 </template>
 
 <style lang="scss">
-.gestionnaire-cantine-satellites-gerer {
+.gestionnaire-cantine-groupe-satellites {
   &__table {
-    td {
-      width: 20% !important;
-      white-space: initial !important;
-    }
-
     .fr-select {
       width: 10rem !important;
     }
