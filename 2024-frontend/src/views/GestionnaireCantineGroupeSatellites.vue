@@ -9,13 +9,16 @@ import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
 import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
 import CanteenButtonUnlink from "@/components/CanteenButtonUnlink.vue"
+import CanteenAddSatelliteModal from "@/components/CanteenAddSatelliteModal.vue"
 
+/* Data */
 const route = useRoute()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteen = computedAsync(async () => await canteenService.fetchCanteen(canteenId), {})
 const loading = ref(true)
+const modalOpened = ref(false)
 
-/* CAMPAIGN */
+/* Campaign */
 const campaign = computedAsync(async () => {
   const lastYear = new Date().getFullYear() - 1
   return await campaignService.getYearCampaignDates(lastYear)
@@ -96,7 +99,9 @@ const removeRow = (id) => {
     <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
       <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
+        <DsfrButton primary label="Ajouter un restaurant satellite" icon="fr-icon-add-circle-fill" @click="modalOpened = true" />
       </div>
+      <CanteenAddSatelliteModal :open="modalOpened" @close="modalOpened = false" />
     </div>
     <AppLoader v-if="loading" />
     <DsfrDataTable
