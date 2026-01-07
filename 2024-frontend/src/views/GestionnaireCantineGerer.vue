@@ -15,9 +15,10 @@ const canteenInfos = computedAsync(
   async () => {
     const id = urlService.getCanteenId(route.params.canteenUrlComponent)
     const infos = await canteenService.fetchCanteen(id)
+    const isGroup = infos.productionType === "groupe"
     const editableInfos = filterEditableInfos(infos)
-    const notEditableInfos = filterNotEditableInfos(infos)
-    const editPageName = infos.productionType === "groupe" ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier"
+    const notEditableInfos = !isGroup ? filterNotEditableInfos(infos) : null
+    const editPageName = isGroup ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier"
     return { editable: editableInfos, notEditable: notEditableInfos, editPage: editPageName }
   },
   { editable: [], notEditable: [], editPage: "" }
@@ -122,7 +123,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
       <h1>{{ route.meta.title }}</h1>
     </div>
     <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-12 fr-col-md-6">
+      <div class="fr-col-12" :class="{'fr-col-md-6': canteenInfos.notEditable}">
         <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Informations renseignées</h2>
           <p>Informations renseignées lors de la création de votre établissement.</p>
@@ -147,7 +148,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
           </div>
         </div>
       </div>
-      <div class="fr-col-12 fr-col-md-6">
+      <div v-if="canteenInfos.notEditable" class="fr-col-12 fr-col-md-6">
         <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Informations générées</h2>
           <p>
