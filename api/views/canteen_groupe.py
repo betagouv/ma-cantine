@@ -21,7 +21,7 @@ class CanteenGroupeSatellitesListView(ListAPIView):
 
     def get_queryset(self):
         canteen_pk = self.kwargs["canteen_pk"]
-        return Canteen.objects.filter(groupe_id=canteen_pk)
+        return Canteen.objects.get(pk=canteen_pk).satellites.annotate_with_action_for_year()
 
 
 @extend_schema_view(

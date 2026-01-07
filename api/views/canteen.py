@@ -736,7 +736,7 @@ class SatelliteListCreateView(ListCreateAPIView):
 
     def get_queryset(self):
         canteen_pk = self.kwargs["canteen_pk"]
-        return Canteen.objects.only("siret").get(pk=canteen_pk).satellites
+        return Canteen.objects.get(pk=canteen_pk).satellites.annotate_with_action_for_year()
 
     def post(self, request, canteen_pk):
         canteen = Canteen.objects.get(pk=canteen_pk)
