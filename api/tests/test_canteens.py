@@ -155,20 +155,71 @@ class CanteenListPreviewApiTest(APITestCase):
 
 
 class CanteenDetailApiTest(APITestCase):
+    def test_cannot_get_single_user_canteen_unauthorized(self):
+        """
+        Users cannot access to the full representation of a single
+        canteen if they are not authenticated
+        """
+        canteen = CanteenFactory()
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_single_user_canteen_unknown(self):
+        """
+        Users cannot access the full representation of a single
+        canteen that does not exist.
+        """
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": 9999}))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_single_user_canteen_if_not_manager(self):
+        """
+        Users cannot access the full representation of a single
+        canteen if they do not manage it.
+        """
+        canteen = CanteenFactory()
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     @authenticate
     def test_get_single_user_canteen(self):
         """
-        Users can access to the full representation of a single
+        Users can access the full representation of a single
         canteen as long as they manage it.
         """
         user_canteen = CanteenFactory(managers=[authenticate.user])
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
         self.assertEqual(body["id"], user_canteen.id)
         self.assertEqual(body["managers"][0]["email"], authenticate.user.email)
+
+    @authenticate
+    def test_get_single_user_canteen_groupe(self):
+        """
+        The full representation of a canteen contains the groupe info
+        """
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        user_canteen = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[authenticate.user]
+        )
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], user_canteen.id)
+        self.assertEqual(body["groupe"]["id"], canteen_groupe.id)
+        self.assertEqual(body["groupe"]["name"], canteen_groupe.name)
 
     @authenticate
     def test_get_numeric_appro_values(self):
@@ -177,7 +228,6 @@ class CanteenDetailApiTest(APITestCase):
         values - as opposed to the published endpoint which returns percentage values
         """
         user_canteen = CanteenFactory(managers=[authenticate.user])
-
         DiagnosticFactory(
             canteen=user_canteen,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -189,27 +239,15 @@ class CanteenDetailApiTest(APITestCase):
         )
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
-        body = response.json()
 
+        body = response.json()
         self.assertEqual(len(body.get("diagnostics")), 1)
         serialized_diag = body.get("diagnostics")[0]
-
         self.assertEqual(serialized_diag["valeurTotale"], 1200)
         self.assertEqual(serialized_diag["valeurBio"], 600)
         self.assertEqual(serialized_diag["valeurSiqo"], 300)
         # total_leftovers should be converted from ton to kg
         self.assertEqual(serialized_diag["totalLeftovers"], 1234.56)
-
-    @authenticate
-    def test_get_single_user_canteen_unauthorized(self):
-        """
-        Users cannot access to the full representation of a single
-        canteen if they are not managers.
-        """
-        canteen = CanteenFactory()
-
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_get_canteen_without_tracking(self):
@@ -224,9 +262,9 @@ class CanteenDetailApiTest(APITestCase):
         )
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
         self.assertNotIn("mtm_source_value", body)
         self.assertNotIn("mtm_campaign_value", body)
         self.assertNotIn("mtm_medium_value", body)

@@ -73,12 +73,14 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "siret",
+            "siren_unite_legale",
             "publication_status",
         )
         fields = (
             "id",
             "name",
             "siret",
+            "siren_unite_legale",
             "publication_status",
         )
 
@@ -282,8 +284,9 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     managers = CanteenManagerSerializer(many=True, read_only=True)
     manager_invitations = ManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
-    central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
+    groupe = MinimalCanteenSerializer(read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
+    central_kitchen_diagnostics = serializers.SerializerMethodField(read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
     badges = BadgesSerializer(source="*", read_only=True)
     resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
@@ -304,8 +307,9 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "managers",
             "manager_invitations",
             "publication_status",
-            "central_kitchen_diagnostics",
+            "groupe",
             "central_kitchen",
+            "central_kitchen_diagnostics",
             "satellites",
             "is_central_cuisine",
             "is_satellite",
@@ -329,15 +333,16 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "region_lib",
             "sector_list",
             "sectors",  # from "sectors_m2m"
-            "central_kitchen_diagnostics",
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
             "satellite_canteens_count",
             "siret",
             "siren_unite_legale",
+            "groupe",
             "central_producer_siret",
             "central_kitchen",
+            "central_kitchen_diagnostics",
             "satellites",
             "management_type",
             "production_type",
