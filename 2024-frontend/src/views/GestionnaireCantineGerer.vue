@@ -19,7 +19,7 @@ const canteenInfos = computedAsync(
     const editableInfos = filterEditableInfos(infos)
     const notEditableInfos = !isGroup ? filterNotEditableInfos(infos) : null
     const editPageName = isGroup ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier"
-    return { editable: editableInfos, notEditable: notEditableInfos, editPage: editPageName }
+    return { editable: editableInfos, notEditable: notEditableInfos, editPage: editPageName, id: id }
   },
   { editable: [], notEditable: [], editPage: "" }
 )
@@ -188,7 +188,25 @@ const getMinistrieName = (canteenMinistrySlug) => {
           />
         </div>
       </div>
+      <div class="fr-col-12">
+        <div class="fr-card fr-p-2w fr-p-md-6w">
+          <h2 class="fr-h6">Identifiant (ID)</h2>
+          <p>Numéro identifiant attribué automatiquement lors de la création d'un établissement sur la plateforme <em>ma-cantine</em>.
+            <br/>
+            Il est unique et non modifiable.
+          </p>
+          <ul>
+            <li>
+              <p class="fr-mb-0">
+                <span class="fr-text--bold">ID :</span>
+                {{ canteenInfos.id }}
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
+
   </section>
   <section class="fr-container fr-background-alt--red-marianne fr-p-3w fr-mt-2w fr-grid-row fr-grid-row--center">
     <div class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
