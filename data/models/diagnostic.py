@@ -178,7 +178,9 @@ class DiagnosticQuerySet(models.QuerySet):
         return results.select_related("canteen")
 
     def publicly_visible(self):
-        return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+        return self.exclude(canteen__production_type=Canteen.ProductionType.GROUPE).exclude(
+            canteen__line_ministry=Canteen.Ministries.ARMEE
+        )
 
     def with_appro_percent_stats(self):
         """
