@@ -20,6 +20,7 @@ from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIV
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.utils import timezone
 
 from api.exceptions import DuplicateException
 from api.filters.utils import MaCantineOrderingFilter, UnaccentSearchFilter
@@ -735,8 +736,9 @@ class SatelliteListCreateView(ListCreateAPIView):
     serializer_class = SatelliteCanteenSerializer
 
     def get_queryset(self):
+        year = timezone.now().year - 1
         canteen_pk = self.kwargs["canteen_pk"]
-        return Canteen.objects.get(pk=canteen_pk).satellites.annotate_with_action_for_year()
+        return Canteen.objects.get(pk=canteen_pk).satellites.annotate_with_action_for_year(year)
 
     def post(self, request, canteen_pk):
         canteen = Canteen.objects.get(pk=canteen_pk)
