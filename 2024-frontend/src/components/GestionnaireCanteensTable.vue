@@ -55,7 +55,7 @@ const rows = computed(() => {
 })
 
 const getNameInfos = (canteen) => {
-  const satellitesCount = 2 // TODO : get value from canteen
+  const satellitesCount = "" // TODO : get value from canteen
   const satellitesCountSentence = satellitesCount !== "" ? getSatellitesCountSentence(satellitesCount) : null
   return {
     name: canteen.name,
