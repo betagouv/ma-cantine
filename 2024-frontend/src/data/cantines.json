@@ -20,7 +20,7 @@
   ],
   "economicModelName": "Modèle économique",
   "epciLib": "Établissement Public de Coopération Intercommunale (EPCI)",
-  "id": "ID, identifiant de l'établissement sur la plateforme",
+  "id": "ID",
   "lineMinistry": "Ministère de tutelle",
   "managementType": [
     {
