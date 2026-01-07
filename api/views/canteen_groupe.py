@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import JsonResponse
+from django.utils import timezone
 
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
 from api.serializers import SatelliteCanteenSerializer, FullCanteenSerializer
@@ -20,8 +21,9 @@ class CanteenGroupeSatellitesListView(ListAPIView):
     serializer_class = SatelliteCanteenSerializer
 
     def get_queryset(self):
+        year = timezone.now().year - 1
         canteen_pk = self.kwargs["canteen_pk"]
-        return Canteen.objects.filter(groupe_id=canteen_pk)
+        return Canteen.objects.get(pk=canteen_pk).satellites.annotate_with_action_for_year(year)
 
 
 @extend_schema_view(

@@ -251,6 +251,7 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
     user_can_view = serializers.SerializerMethodField(read_only=True)
     publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
+    action = serializers.CharField(allow_null=True)
 
     class Meta:
         model = Canteen
@@ -266,6 +267,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "user_can_view",
             "publication_status",
+            "action",  # annotate
         )
 
     def get_user_can_view(self, obj):
