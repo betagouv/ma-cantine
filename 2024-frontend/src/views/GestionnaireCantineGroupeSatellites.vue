@@ -6,7 +6,6 @@ import canteenService from "@/services/canteens.js"
 import diagnosticService from "@/services/diagnostics.js"
 import campaignService from "@/services/campaigns.js"
 import urlService from "@/services/urls.js"
-import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppLoader from "@/components/AppLoader.vue"
 import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
 import CanteenButtonUnlink from "@/components/CanteenButtonUnlink.vue"
@@ -33,11 +32,6 @@ const satellitesCountSentence = computed(() => {
   if (satellites.value.length === 0) return "Aucun restaurant satellite renseigné"
   else if (satellites.value.length === 1) return "1 restaurant satellite renseigné"
   else return `${satellites.value.length} restaurants satellites renseignés`
-})
-
-const canManageSatellites = computed(() => {
-  const allowedProductionTypes = ["central", "central_serving", "groupe"]
-  return allowedProductionTypes.includes(canteen.value.productionType)
 })
 
 /* Table */
@@ -98,18 +92,8 @@ const removeRow = (id) => {
 </script>
 <template>
   <section class="gestionnaire-cantine-groupe-satellites">
-    <div class="fr-col-12 fr-col-md-7">
-      <h1>{{ route.meta.title }}</h1>
-      <p v-if="!canManageSatellites">
-        Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de restaurants satellites. Pour
-        modifier votre mode de production
-        <AppLinkRouter
-          title="cliquez-ici"
-          :to="{ name: 'GestionnaireCantineRestaurantModifier', params: route.canteenUrlComponent }"
-        />
-      </p>
-    </div>
-    <div v-if="canManageSatellites" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+    <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}</h1>
+    <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
       <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
       </div>
