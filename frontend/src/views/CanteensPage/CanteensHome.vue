@@ -758,7 +758,11 @@ export default {
       if (enabledProductionTypes.indexOf("site") > -1 || enabledProductionTypes.indexOf("site_cooked_elsewhere") > -1) {
         whitelistedProductionTypes.push(siteQuery)
       }
-      if (enabledProductionTypes.indexOf("central") > -1 || enabledProductionTypes.indexOf("central_serving") > -1) {
+      if (
+        enabledProductionTypes.indexOf("central") > -1 ||
+        enabledProductionTypes.indexOf("central_serving") > -1 ||
+        enabledProductionTypes.indexOf("groupe") > -1
+      ) {
         whitelistedProductionTypes.push(centralQuery)
       }
       this.productionTypes = Constants.ProductionTypes.map((x) =>
