@@ -1,18 +1,19 @@
-from rest_framework.generics import ListAPIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from api.permissions import (
-    IsAuthenticatedOrTokenHasResourceScope,
-    IsCanteenManagerUrlParam,
-)
+from rest_framework.generics import ListAPIView
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.http import JsonResponse
 
+from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
+from api.serializers import SatelliteCanteenSerializer, FullCanteenSerializer
 from data.models import Canteen
-from api.serializers import SatelliteCanteenSerializer
 
 
 @extend_schema_view(
     get=extend_schema(summary="Lister les restaurants satellites d'un groupe."),
 )
-class CanteenGroupeSatellitesView(ListAPIView):
+class CanteenGroupeSatellitesListView(ListAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     # required_scopes = ["canteen"]
     model = Canteen
@@ -21,3 +22,59 @@ class CanteenGroupeSatellitesView(ListAPIView):
     def get_queryset(self):
         canteen_pk = self.kwargs["canteen_pk"]
         return Canteen.objects.filter(groupe_id=canteen_pk)
+
+
+@extend_schema_view(
+    post=extend_schema(summary="Ajouter un restaurant satellite à un groupe."),
+)
+class CanteenGroupeSatelliteLinkView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    serializer_class = FullCanteenSerializer
+
+    def post(self, request, canteen_pk, satellite_pk):
+        canteen_groupe = Canteen.objects.get(pk=canteen_pk)
+
+        try:
+            canteen_satellite = Canteen.objects.get(pk=satellite_pk)
+        except Canteen.DoesNotExist:
+            return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
+        if not canteen_satellite.is_satellite:
+            return JsonResponse(
+                {"error": "Only satellites can be linked to a groupe."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if canteen_satellite.groupe_id:
+            return JsonResponse(
+                {"error": "This satellite is already linked to a groupe."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        canteen_satellite.groupe = canteen_groupe
+        canteen_satellite.save()
+        return Response(FullCanteenSerializer(canteen_groupe).data, status=status.HTTP_200_OK)
+
+
+@extend_schema_view(
+    post=extend_schema(summary="Enlever un restaurant satellite d'un groupe."),
+)
+class CanteenGroupeSatelliteUnlinkView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    serializer_class = FullCanteenSerializer
+
+    def post(self, request, canteen_pk, satellite_pk):
+        canteen_groupe = Canteen.objects.get(pk=canteen_pk)
+
+        try:
+            canteen_satellite = Canteen.objects.get(pk=satellite_pk)
+        except Canteen.DoesNotExist:
+            return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
+
+        if canteen_satellite.groupe_id != canteen_groupe.id:
+            return JsonResponse(
+                {"error": "This satellite is not linked to this groupe."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        canteen_satellite.groupe = None
+        canteen_satellite.save()
+        return Response(FullCanteenSerializer(canteen_groupe).data, status=status.HTTP_200_OK)
