@@ -54,10 +54,8 @@ const filterEditableInfos = (canteenInfos) => {
   if (isCentral || isCentralServing) fieldsName.push("satelliteCanteensCount")
   if (isSatellite || isGroup) fieldsName.push("centralProducerSiret")
   // Geolocation
-  if(hasSiren && !isGroup) {
-    fieldsName.push("city", "city")
-    fieldsName.push("city", "postalCode")
-  }
+  if(hasSiren && !isGroup) fieldsName.push("city", "postalCode")
+  // Get canteen fields value
   fieldsName.forEach((name) => {
     filteredInfos.push({ name: name, value: canteenInfos[name] })
   })
