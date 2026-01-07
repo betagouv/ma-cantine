@@ -19,6 +19,10 @@
             SIREN :
             <span class="font-weight-medium">{{ canteen.sirenUniteLegale }}</span>
           </p>
+          <p class="mb-0">
+            ID :
+            <span class="font-weight-medium">{{ canteen.id }}</span>
+          </p>
         </v-card-text>
         <v-spacer v-if="isSatellite"></v-spacer>
         <v-card v-if="isSatellite" class="mx-4 mb-4 mt-2 py-4 px-5" color="grey lighten-4">
