@@ -23,6 +23,7 @@ from .canteen import (  # noqa: F401
     UserCanteenSummaries,
     UserCanteensView,
 )
+from .canteen_groupe import CanteenGroupeSatellitesView  # noqa: F401
 from .canteen_import import CanteensImportView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401

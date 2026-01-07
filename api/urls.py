@@ -71,6 +71,7 @@ from api.views import (  # ImportCompleteCentralKitchenView,; ImportCompleteDiag
     VideoTutorialListView,
     WasteActionsView,
     WasteActionView,
+    CanteenGroupeSatellitesView,
 )
 
 urlpatterns = {
@@ -129,9 +130,14 @@ urlpatterns = {
         name="canteen_waste_measurement_detail",
     ),
     path(
-        "canteens/<int:canteen_pk>/satellites/",
+        "canteens/<int:canteen_pk>/satellites-old/",
         SatelliteListCreateView.as_view(),
         name="list_create_update_satellite",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/satellites/",
+        CanteenGroupeSatellitesView.as_view(),
+        name="canteen_groupe_satellites_list",
     ),
     path(
         "canteens/<int:canteen_pk>/satellites/<int:satellite_pk>/unlink/",
