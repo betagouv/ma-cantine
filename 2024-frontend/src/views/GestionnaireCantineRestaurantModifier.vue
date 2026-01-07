@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
 import urlService from "@/services/urls"
-import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
+import CanteenRestaurantForm from "@/components/CanteenRestaurantForm.vue"
 import AppLoader from "@/components/AppLoader.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
@@ -56,7 +56,7 @@ const goToCanteenPage = (canteen) => {
   <section class="fr-grid-row fr-grid-row--bottom">
     <h1>{{ route.meta.title }}</h1>
     <AppLoader v-if="loading" />
-    <CanteenEstablishmentForm
+    <CanteenRestaurantForm
       v-else-if="!loading && canteenData.id"
       :establishment-data="canteenData"
       :showCancelButton="true"

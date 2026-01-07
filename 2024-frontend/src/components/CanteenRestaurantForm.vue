@@ -316,11 +316,9 @@ if (props.establishmentData) {
 </script>
 
 <template>
-  <section
-    class="canteen-establishment-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
-  >
+  <section class="canteen-restaurant-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center">
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
+      <fieldset class="fr-mb-4w canteen-restaurant-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">1. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Modèle économique *"
@@ -359,7 +357,7 @@ if (props.establishmentData) {
           :error-message="formatError(v$.satelliteCanteensCount)"
         />
       </fieldset>
-      <fieldset class="fr-mb-4w canteen-establishment-form__reduce-margin-bottom">
+      <fieldset class="fr-mb-4w canteen-restaurant-form__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">2. Identification de l’établissement</legend>
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
@@ -549,7 +547,7 @@ if (props.establishmentData) {
 </template>
 
 <style lang="scss">
-.canteen-establishment-form {
+.canteen-restaurant-form {
   .hide {
     display: none !important;
   }
