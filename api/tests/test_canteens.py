@@ -57,7 +57,7 @@ class CanteenListApiTest(APITestCase):
             CanteenFactory(),
         ]
         for canteen in user_canteens:
-            canteen.managers.set([authenticate.user])
+            canteen.managers.add(authenticate.user)
 
         response = self.client.get(reverse("user_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -220,6 +220,17 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(body["id"], user_canteen.id)
         self.assertEqual(body["groupe"]["id"], canteen_groupe.id)
         self.assertEqual(body["groupe"]["name"], canteen_groupe.name)
+        self.assertEqual(body["satellitesCount"], 0)
+
+        # make user the manager of the groupe canteen as well
+        canteen_groupe.managers.add(authenticate.user)
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_groupe.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], canteen_groupe.id)
+        self.assertIsNone(body["groupe"])
+        self.assertEqual(body["satellitesCount"], 1)
 
     @authenticate
     def test_get_numeric_appro_values(self):
