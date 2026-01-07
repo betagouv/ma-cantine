@@ -23,7 +23,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         )
         cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
 
-    def test_canteen_groupe_satellites_list_unauthenticated(self):
+    def test_cannot_list_if_unauthenticated(self):
         url = reverse(
             "canteen_groupe_satellites_list",
             kwargs={"canteen_pk": self.canteen_groupe_1.id},
@@ -33,7 +33,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_canteen_groupe_satellites_list_user_not_manager(self):
+    def test_cannot_list_if_user_not_group_manager(self):
         url = reverse(
             "canteen_groupe_satellites_list",
             kwargs={"canteen_pk": self.canteen_groupe_1.id},
@@ -69,3 +69,130 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(len(body), 0)
+
+
+class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe_1 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_0 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        cls.canteen_satellite_11 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=cls.canteen_groupe_1,
+        )
+        cls.canteen_satellite_12 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=cls.canteen_groupe_1,
+        )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+    def test_cannot_link_unlink_satellite_if_unauthenticated(self):
+        # self.canteen_satellite_0 is not linked yet
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # self.canteen_satellite_11 is linked to groupe_1
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_link_unlink_satellite_if_user_not_group_manager(self):
+        # self.canteen_satellite_0 is not linked yet
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # self.canteen_satellite_11 is linked to groupe_1
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_link_non_satellite(self):
+        # set user as manager of canteen group 1
+        self.canteen_groupe_1.managers.add(authenticate.user)
+        # try to link a non-satellite canteen
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_site.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_cannot_link_already_linked_satellite(self):
+        # set user as manager of canteen group 2
+        self.canteen_groupe_2.managers.add(authenticate.user)
+        # try to link a satellite already linked to groupe_1
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_2.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_cannot_unlink_satellite_not_in_group(self):
+        # set user as manager of canteen group 2
+        self.canteen_groupe_2.managers.add(authenticate.user)
+        # try to unlink a satellite linked to groupe_1 from groupe_2
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_2.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_canteen_groupe_satellite_link_unlink(self):
+        # set user as manager of canteen groups
+        self.canteen_groupe_1.managers.add(authenticate.user)
+        self.canteen_groupe_2.managers.add(authenticate.user)
+
+        # Link self.canteen_satellite_0 to groupe_1
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.canteen_groupe_1.id)
+        self.canteen_satellite_0.refresh_from_db()
+        self.assertEqual(self.canteen_satellite_0.groupe_id, self.canteen_groupe_1.id)
+
+        # Unlink self.canteen_satellite_11 from groupe_1
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.canteen_groupe_1.id)
+        self.canteen_satellite_11.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite_11.groupe_id)
