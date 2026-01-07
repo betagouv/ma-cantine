@@ -155,7 +155,7 @@ const routes = [
         path: "groupe/",
         children: [
           {
-            path: "gerer",
+            path: "satellites",
             name: "GestionnaireCantineGroupeSatellites",
             component: GestionnaireCantineGroupeSatellites,
             meta: {
