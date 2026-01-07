@@ -25,21 +25,39 @@ const canteenInfos = computedAsync(
 )
 
 const filterEditableInfos = (canteenInfos) => {
+  // Canteen
+  const hasSiren = canteenInfos.sirenUniteLegale
+  const hasSiret = canteenInfos.siret
+  const isGroup = canteenInfos.productionType === "groupe"
+  const isSite = canteenInfos.productionType === "site"
+  const isSatellite = canteenInfos.productionType === "site_cooked_elsewhere"
+  const isCentral = canteenInfos.productionType === "central"
+  const isCentralServing = canteenInfos.productionType === "central_serving"
+  const hasLineMinistry = canteenInfos.lineMinistry
+  const hasRestaurant = isSite || isSatellite || isCentralServing
+  // Infos
   const filteredInfos = []
   // Required field for all canteen
-  const fieldsName = ["name"]
-  // SIRET is the default
-  if (canteenInfos.sirenUniteLegale) fieldsName.push("sirenUniteLegale", "postalCode", "city")
-  else fieldsName.push("siret")
-  // Next required field for all canteen
-  fieldsName.push("economicModel", "managementType", "productionType", "dailyMealCount", "yearlyMealCount")
-  // Required fields for canteen with site
-  if (canteenInfos.productionType !== "central") fieldsName.push("sectorList")
-  if (canteenInfos.lineMinistry) fieldsName.push("lineMinistry")
-  // Required field for satellite
-  if (canteenInfos.isSatellite) fieldsName.push("centralProducerSiret")
-  // Required field for central
-  if (canteenInfos.isCentralCuisine) fieldsName.push("satelliteCanteensCount")
+  const fieldsName = ["name", "id"]
+  // SIRET or SIREN
+  if (hasSiren) fieldsName.push("sirenUniteLegale")
+  if (hasSiret) fieldsName.push("siret")
+  // Types
+  fieldsName.push("productionType", "managementType")
+  if (!isGroup) fieldsName.push("economicModel")
+  // Meals
+  fieldsName.push("dailyMealCount", "yearlyMealCount")
+  // Sectors
+  if (hasRestaurant) fieldsName.push("sectorList")
+  if (hasLineMinistry) fieldsName.push("lineMinistry")
+  // Satellites and Central infos
+  if (isCentral || isCentralServing) fieldsName.push("satelliteCanteensCount")
+  if (isSatellite || isGroup) fieldsName.push("centralProducerSiret")
+  // Geolocation
+  if(hasSiren && !isGroup) {
+    fieldsName.push("city", "city")
+    fieldsName.push("city", "postalCode")
+  }
   fieldsName.forEach((name) => {
     filteredInfos.push({ name: name, value: canteenInfos[name] })
   })
