@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed } from "vue"
+import { ref, computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens.js"
 
@@ -32,12 +32,12 @@ const radioOptions = [
 const search = ref('')
 const errorNotFound = ref('')
 const numberName = computed(() => hasSiret.value === 'oui' ? "SIRET" : "SIREN")
-const canteen = reactive({})
+const canteens = ref([])
 
 const resetSearch = () => {
   search.value = ''
   errorNotFound.value = ''
-  canteen.found = false
+  canteens.value = []
 }
 
 const searchByNumber = () => {
@@ -49,22 +49,22 @@ const searchByNumber = () => {
     .then((response) => {
       const noCanteenSiretFound = !response.id && !response.siren
       const noCanteenSirenFound = !response.id && response.siren && response.canteens.length === 0
+      let hasCanteen = false
       switch (true) {
         case response instanceof Error:
-          canteen.found = false
+          hasCanteen = false
           errorNotFound.value = "Une erreur est survenue lors de la recherche de l'établissement, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr"
           break
         case response.length === 0:
-          canteen.found = false
+          hasCanteen = false
           errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanNumber} » ne correspond à aucun établissement`
           break
         case noCanteenSiretFound || noCanteenSirenFound:
-          canteen.found = false
+          hasCanteen = false
           errorNotFound.value = `Aucune cantine enregistrée avec le numéro ${numberName.value} « ${cleanNumber} » sur la plateforme`
           break
-        // TODO : n'est pas une SAT
-        // TODO : est déjà rattaché à un groupe
-        // TODO : est rattachable à mon groupe
+        default:
+          hasCanteen = true
       }
     })
     .catch((e) => store.notifyServerError(e))
