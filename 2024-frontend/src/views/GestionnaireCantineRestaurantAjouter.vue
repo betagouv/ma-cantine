@@ -6,7 +6,7 @@ import canteensService from "@/services/canteens"
 import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import CanteenEstablishmentForm from "@/components/CanteenEstablishmentForm.vue"
+import CanteenRestaurantForm from "@/components/CanteenRestaurantForm.vue"
 
 /* Router and Store */
 const route = useRoute()
@@ -73,11 +73,6 @@ const resetForm = (name) => {
         : étape préalable à la déclaration des informations nécessaires à la réalisation du bilan statistique national.
         Veuillez remplir ce formulaire pour l’ensemble des restaurants collectifs dont vous avez la charge.
       </p>
-      <p class="fr-mb-0 fr-text--bold">
-        Tout restaurant satellite doit être rattaché à la cuisine centrale qui livre les repas. Ainsi, la cuisine
-        centrale doit être préalablement inscrite sur
-        <em>ma cantine.</em>
-      </p>
     </div>
     <div class="fr-col-offset-md-1"></div>
     <AppRessources>
@@ -99,7 +94,7 @@ const resetForm = (name) => {
       </li>
     </AppRessources>
   </section>
-  <CanteenEstablishmentForm
+  <CanteenRestaurantForm
     :showCreateButton="true"
     :key="forceRerender"
     @sendForm="(payload) => saveCanteen(payload)"
