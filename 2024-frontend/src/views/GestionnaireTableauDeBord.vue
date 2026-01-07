@@ -29,6 +29,10 @@ const links = [
     label: "Ajouter une cantine",
   },
   {
+    to: { name: "GestionnaireCantineGroupeAjouter" },
+    label: "Ajouter un groupe de restaurants satellites",
+  },
+  {
     to: { name: "GestionnaireImportCantines" },
     label: "Importer des cantines",
   },
