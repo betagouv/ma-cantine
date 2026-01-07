@@ -160,6 +160,10 @@ const getTeledeclareButton = (canteen) => {
                 {{ cell.name }}
               </router-link>
             </p>
+            <p v-if="cell.satellitesCountSentence" class="fr-text-title--blue-france fr-mb-0 fr-text--sm">
+              <VIcon name="ri-node-tree" class="fr-pb-0-5v" />
+              {{ cell.satellitesCountSentence }}
+            </p>
           </template>
           <template v-else-if="colKey === 'diagnostic'">
             <router-link
