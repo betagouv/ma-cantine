@@ -1,20 +1,56 @@
 <script setup>
 import { ref } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
+import { useRootStore } from "@/stores/root"
+import canteenService from "@/services/canteens.js"
+import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
+import AppLoader from "@/components/AppLoader.vue"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import CanteenGroupForm from "@/components/CanteenGroupForm.vue"
 
 /* Router and Store */
 const route = useRoute()
+const router = useRouter()
+const store = useRootStore()
 
 /* Component */
 const forceRerender = ref(0)
 
-/* API */
+/* Get establishemnt infos */
+const canteenData = ref({})
+const loading = ref(true)
+const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
+
+canteenService
+  .fetchCanteen(canteenId)
+  .then((response) => {
+    loading.value = false
+    if (response.id) canteenData.value = response
+    else store.notifyServerError()
+  })
+  .catch((e) => store.notifyServerError(e))
+
+/* Save group */
 const saveGroup = (props) => {
-  const { form, action } = props
-  console.log(form)
-  console.log(action)
+  const { form } = props
+  canteenService
+    .updateCanteen(form, canteenId)
+    .then((canteen) => {
+      if(canteen.id) goToCanteenPage(canteen)
+      else store.notifyServerError()
+    })
+    .catch((e) => { store.notifyServerError(e) })
+}
+
+/* Page redirection */
+const goToCanteenPage = (canteen) => {
+  const canteenPage = {
+    name: "GestionnaireCantineGerer",
+    params: { canteenUrlComponent: urlService.getCanteenUrl(canteen) },
+  }
+  const redirectPage = route.query['redirection']
+  router.replace(redirectPage || canteenPage)
 }
 </script>
 
@@ -35,8 +71,17 @@ const saveGroup = (props) => {
       </li>
     </AppRessources>
   </section>
+  <AppLoader v-if="loading" />
   <CanteenGroupForm
+    v-else-if="!loading && canteenData.id"
     :key="forceRerender"
+    :showCancelButton="true"
+    :establishment-data="canteenData"
     @sendForm="(payload) => saveGroup(payload)"
+    @cancel="goToCanteenPage(canteenData)"
   />
+  <p v-else>
+    Une erreur est survenue,
+    <AppLinkRouter :to="{ name: 'DashboardManager' }" title="revenir à la page précédente" />
+  </p>
 </template>

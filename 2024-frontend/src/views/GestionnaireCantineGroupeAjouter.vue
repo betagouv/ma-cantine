@@ -1,20 +1,49 @@
 <script setup>
 import { ref } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
+import { useRootStore } from "@/stores/root"
+import canteensService from "@/services/canteens"
+import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
 import CanteenGroupForm from "@/components/CanteenGroupForm.vue"
 
 /* Router and Store */
 const route = useRoute()
+const router = useRouter()
+const store = useRootStore()
 
 /* Component */
 const forceRerender = ref(0)
 
-/* API */
+/* Save group */
 const saveGroup = (props) => {
   const { form, action } = props
-  console.log(form)
-  console.log(action)
+  form.siret = null // SIRET is required to create a canteen
+  canteensService
+    .createCanteen(form)
+    .then((canteenCreated) => {
+      const stayOnCreationPage = canteenCreated.id && action === "stay-on-creation-page"
+      const redirect = canteenCreated.id && action === "go-to-canteen-page"
+      if (!canteenCreated.id) store.notifyServerError()
+      if (stayOnCreationPage) resetForm(canteenCreated.name)
+      if (redirect) goToNewCanteenPage(canteenCreated)
+    })
+    .catch((e) => { store.notifyServerError(e) })
+}
+
+/* After canteen is saved */
+const goToNewCanteenPage = (canteen) => {
+  const canteenUrl = urlService.getCanteenUrl(canteen)
+  router.replace({
+    name: "DashboardManager",
+    params: { canteenUrlComponent: canteenUrl },
+  })
+}
+
+const resetForm = (name) => {
+  store.notify({ message: `Groupe ${name} créé avec succès.` })
+  window.scrollTo(0, 0)
+  forceRerender.value++
 }
 </script>
 
