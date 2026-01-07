@@ -35,11 +35,11 @@ const unlinkSatellite = () => {
 
 <template>
   <DsfrButton
-    secondary
-    label="Retirer de mes satellites"
+    tertiary
+    label="Retirer"
     @click="toggleModal()"
     :disabled="loading"
-    icon="fr-icon-close-line"
+    icon="fr-icon-delete-fill"
     class="canteen-button-unlink"
   />
   <DsfrModal
@@ -87,8 +87,6 @@ const unlinkSatellite = () => {
 
 <style lang="scss">
 .canteen-button-unlink {
-  color: var(--text-action-high-red-marianne) !important;
-  box-shadow: inset 0 0 0 1px var(--text-action-high-red-marianne) !important;
 
   &__modal {
     white-space: initial !important;
