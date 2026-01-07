@@ -33,6 +33,7 @@ const canManageSatellites = computed(() => {
 })
 
 /* Table */
+const lastYear = new Date().getFullYear() - 1
 const tableHeaders = [
   {
     key: "name",
@@ -45,6 +46,10 @@ const tableHeaders = [
   {
     key: "dailyMealCount",
     label: "Couverts par jour",
+  },
+  {
+    key: "diagnostic",
+    label: `Bilan ${lastYear}`,
   },
   {
     key: "edit",
@@ -64,6 +69,7 @@ const tableRows = computed(() => {
           name: sat.name,
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
+          diagnostic: "",
           edit: {
             userCan: sat.userCanView,
             satelliteComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
