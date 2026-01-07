@@ -20,6 +20,7 @@
   ],
   "economicModelName": "Modèle économique",
   "epciLib": "Établissement Public de Coopération Intercommunale (EPCI)",
+  "id": "ID, identifiant de l'établissement sur la plateforme",
   "lineMinistry": "Ministère de tutelle",
   "managementType": [
     {
@@ -82,7 +83,7 @@
     "social": "Social / Médico-social"
   },
   "sectorList": "Secteurs d'activité",
-  "sirenUniteLegale": "Numéro SIREN",
-  "siret": "Numéro SIRET",
+  "sirenUniteLegale": "SIREN",
+  "siret": "SIRET",
   "yearlyMealCount": "Couverts par an"
 }
