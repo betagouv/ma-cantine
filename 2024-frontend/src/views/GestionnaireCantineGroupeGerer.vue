@@ -127,7 +127,7 @@ const removeRow = (id) => {
             :to="{ name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
             class="ma-cantine--unstyled-link"
           >
-            <DsfrButton tertiary label="Modifier" />
+            <DsfrButton tertiary label="Modifier" icon="fr-icon-pencil-fill" />
           </router-link>
           <CanteenButtonJoin v-else :id="cell.satellite.id" :name="cell.satellite.name" />
         </template>
