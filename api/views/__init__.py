@@ -23,7 +23,11 @@ from .canteen import (  # noqa: F401
     UserCanteenSummaries,
     UserCanteensView,
 )
-from .canteen_groupe import CanteenGroupeSatellitesView  # noqa: F401
+from .canteen_groupe import (  # noqa: F401
+    CanteenGroupeSatellitesListView,
+    CanteenGroupeSatelliteLinkView,
+    CanteenGroupeSatelliteUnlinkView,
+)  # noqa: F401
 from .canteen_import import CanteensImportView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
@@ -39,9 +43,7 @@ from .diagnostic import (  # noqa: F401
 #     ImportSimpleCentralKitchenView,
 #     ImportSimpleDiagnosticsView,
 # )
-from .diagnostic_import import (  # noqa: F401
-    DiagnosticsSimpleImportView,
-)
+from .diagnostic_import import DiagnosticsSimpleImportView  # noqa: F401
 from .diagnostic_teledeclaration import (  # noqa: F401
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
@@ -84,4 +86,7 @@ from .user import (  # noqa: F401
 from .vegetarianexpe import VegetarianExpeView  # noqa: F401
 from .videotutorial import VideoTutorialListView  # noqa: F401
 from .wasteaction import WasteActionsView, WasteActionView  # noqa: F401
-from .wastemeasurement import CanteenWasteMeasurementsView, CanteenWasteMeasurementView  # noqa: F401
+from .wastemeasurement import (  # noqa: F401
+    CanteenWasteMeasurementsView,
+    CanteenWasteMeasurementView,
+)
