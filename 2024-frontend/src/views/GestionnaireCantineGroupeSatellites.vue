@@ -3,8 +3,9 @@ import { computed, ref } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
+import diagnosticService from "@/services/diagnostics.js"
+import campaignService from "@/services/campaigns.js"
 import urlService from "@/services/urls.js"
-import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppLoader from "@/components/AppLoader.vue"
 import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
 import CanteenButtonUnlink from "@/components/CanteenButtonUnlink.vue"
@@ -13,6 +14,12 @@ const route = useRoute()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteen = computedAsync(async () => await canteenService.fetchCanteen(canteenId), {})
 const loading = ref(true)
+
+/* CAMPAIGN */
+const campaign = computedAsync(async () => {
+  const lastYear = new Date().getFullYear() - 1
+  return await campaignService.getYearCampaignDates(lastYear)
+}, false)
 
 /* Satellites  */
 const satellites = ref([])
@@ -27,11 +34,6 @@ const satellitesCountSentence = computed(() => {
   else return `${satellites.value.length} restaurants satellites renseignés`
 })
 
-const canManageSatellites = computed(() => {
-  const allowedProductionTypes = ["central", "central_serving", "groupe"]
-  return allowedProductionTypes.includes(canteen.value.productionType)
-})
-
 /* Table */
 const lastYear = new Date().getFullYear() - 1
 const tableHeaders = [
@@ -41,7 +43,7 @@ const tableHeaders = [
   },
   {
     key: "siretSiren",
-    label: "Siret / Siren",
+    label: "SIRET / SIREN",
   },
   {
     key: "dailyMealCount",
@@ -69,7 +71,7 @@ const tableRows = computed(() => {
           name: sat.name,
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
-          diagnostic: "",
+          diagnostic: diagnosticService.getBadge(sat.action, campaign),
           edit: {
             userCan: sat.userCanView,
             satelliteComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
@@ -90,18 +92,8 @@ const removeRow = (id) => {
 </script>
 <template>
   <section class="gestionnaire-cantine-groupe-satellites">
-    <div class="fr-col-12 fr-col-md-7">
-      <h1>{{ route.meta.title }}</h1>
-      <p v-if="!canManageSatellites">
-        Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de restaurants satellites. Pour
-        modifier votre mode de production
-        <AppLinkRouter
-          title="cliquez-ici"
-          :to="{ name: 'GestionnaireCantineRestaurantModifier', params: route.canteenUrlComponent }"
-        />
-      </p>
-    </div>
-    <div v-if="canManageSatellites" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+    <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}</h1>
+    <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
       <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
       </div>
@@ -121,7 +113,10 @@ const removeRow = (id) => {
       class="gestionnaire-cantine-groupe-satellites__table"
     >
       <template #cell="{ colKey, cell }">
-        <template v-if="colKey === 'edit'">
+        <template v-if="colKey === 'diagnostic'">
+          <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
+        </template>
+        <template v-else-if="colKey === 'edit'">
           <router-link
             v-if="cell.userCan"
             :to="{ name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
