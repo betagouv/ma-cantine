@@ -98,15 +98,6 @@ const removeRow = (id) => {
     <div v-if="canManageSatellites" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
       <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
-        <router-link
-          :to="{
-            name: 'GestionnaireImportCantines',
-            params: { canteenUrlComponent: route.canteenUrlComponent },
-          }"
-          class="ma-cantine--unstyled-link fr-m-1v"
-        >
-          <DsfrButton secondary label="Importer des restaurants satellites" icon="fr-icon-file-add-line" />
-        </router-link>
       </div>
     </div>
     <AppLoader v-if="loading" />
