@@ -103,10 +103,14 @@ def has_missing_data_query():
 
 class CanteenQuerySet(SoftDeletionQuerySet):
     def publicly_visible(self):
-        return self.exclude(line_ministry=Canteen.Ministries.ARMEE)
+        return self.exclude(production_type=Canteen.ProductionType.GROUPE).exclude(
+            line_ministry=Canteen.Ministries.ARMEE
+        )
 
     def publicly_hidden(self):
-        return self.filter(line_ministry=Canteen.Ministries.ARMEE)
+        return self.filter(
+            Q(production_type=Canteen.ProductionType.GROUPE) | Q(line_ministry=Canteen.Ministries.ARMEE)
+        )
 
     def created_before_year_campaign_end_date(self, year):
         canteen_created_before_date = get_year_campaign_end_date_or_today_date(year)
@@ -745,7 +749,7 @@ class Canteen(SoftDeletionModel):
 
     @property
     def publication_status_display_to_public(self):
-        if self.line_ministry == Canteen.Ministries.ARMEE:
+        if self.is_groupe or self.line_ministry == Canteen.Ministries.ARMEE:
             return Canteen.PublicationStatus.DRAFT
         return Canteen.PublicationStatus.PUBLISHED
 
