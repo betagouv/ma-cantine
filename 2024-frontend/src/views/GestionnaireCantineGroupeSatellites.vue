@@ -3,6 +3,8 @@ import { computed, ref } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
+import diagnosticService from "@/services/diagnostics.js"
+import campaignService from "@/services/campaigns.js"
 import urlService from "@/services/urls.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppLoader from "@/components/AppLoader.vue"
@@ -13,6 +15,12 @@ const route = useRoute()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteen = computedAsync(async () => await canteenService.fetchCanteen(canteenId), {})
 const loading = ref(true)
+
+/* CAMPAIGN */
+const campaign = computedAsync(async () => {
+  const lastYear = new Date().getFullYear() - 1
+  return await campaignService.getYearCampaignDates(lastYear)
+}, false)
 
 /* Satellites  */
 const satellites = ref([])
@@ -69,7 +77,7 @@ const tableRows = computed(() => {
           name: sat.name,
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
-          diagnostic: "",
+          diagnostic: diagnosticService.getBadge(sat.action, campaign),
           edit: {
             userCan: sat.userCanView,
             satelliteComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
@@ -121,7 +129,10 @@ const removeRow = (id) => {
       class="gestionnaire-cantine-groupe-satellites__table"
     >
       <template #cell="{ colKey, cell }">
-        <template v-if="colKey === 'edit'">
+        <template v-if="colKey === 'diagnostic'">
+          <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
+        </template>
+        <template v-else-if="colKey === 'edit'">
           <router-link
             v-if="cell.userCan"
             :to="{ name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
