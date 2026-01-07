@@ -346,7 +346,7 @@ class CanteenModelSaveTest(TransactionTestCase):
                 with self.subTest(groupe=TUPLE_OK[0]):
                     canteen = CanteenFactory(production_type=production_type, groupe=TUPLE_OK[0])
                     self.assertEqual(canteen.groupe, TUPLE_OK[1])
-            for VALUE_NOT_OK in [canteen_groupe.id, canteen_site.id, "", 123, "invalid"]:
+            for VALUE_NOT_OK in [canteen_groupe.id, canteen_site.id, 999, "", "invalid"]:
                 with self.subTest(groupe=VALUE_NOT_OK):
                     self.assertRaises(ValueError, CanteenFactory, production_type=production_type, groupe=VALUE_NOT_OK)
         for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL]:
@@ -358,10 +358,10 @@ class CanteenModelSaveTest(TransactionTestCase):
                 with self.subTest(groupe_id=TUPLE_OK[0]):
                     canteen = CanteenFactory(production_type=production_type, groupe_id=TUPLE_OK[0])
                     self.assertEqual(canteen.groupe, TUPLE_OK[1])
-            for VALUE_NOT_OK in [canteen_site.id, "", 123, "invalid"]:
+            for VALUE_NOT_OK in [canteen_site.id, 999, "", "invalid"]:
                 with self.subTest(groupe=VALUE_NOT_OK):
                     self.assertRaises(ValueError, CanteenFactory, production_type=production_type, groupe=VALUE_NOT_OK)
-            for VALUE_NOT_OK in [canteen_site.id, 123]:
+            for VALUE_NOT_OK in [canteen_site.id, 999]:
                 with self.subTest(groupe_id=VALUE_NOT_OK):
                     self.assertRaises(
                         ValidationError, CanteenFactory, production_type=production_type, groupe_id=VALUE_NOT_OK

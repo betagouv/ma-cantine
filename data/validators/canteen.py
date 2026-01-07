@@ -198,28 +198,27 @@ def validate_canteen_groupe_field(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the groupe field is a valid Canteen or empty
     - extra validation:
-        - if groupe: must not be self
         - if groupe: canteen must be a satellite
         - if groupe: related canteen must be a groupe
+        - if groupe: must not be self
     """
     errors = {}
     field_name = "groupe"
     try:
         value = getattr(instance, field_name)
         if value:
-            print(value, value.id, value.is_groupe)
-            if instance.id and value.id == instance.id:
-                utils_utils.add_validation_error(
-                    errors, field_name, "Le champ ne peut pas être égal à la cantine elle-même."
-                )
-            elif not instance.is_satellite:
+            if not instance.is_satellite:
                 utils_utils.add_validation_error(
                     errors, field_name, "Le champ ne peut être rempli que pour les restaurants satellites."
                 )
-            else:
-                if not value.is_groupe:
+            elif not value.is_groupe:
+                utils_utils.add_validation_error(
+                    errors, field_name, "Le champ doit être une cantine de type 'Groupe'."
+                )
+            elif instance.id:
+                if value.id == instance.id:
                     utils_utils.add_validation_error(
-                        errors, field_name, "Le champ doit être une cantine de type 'Groupe'."
+                        errors, field_name, "Le champ ne peut pas être égal à la cantine elle-même."
                     )
     except instance.DoesNotExist:
         utils_utils.add_validation_error(errors, field_name, "Cette cantine groupe n'existe pas.")
