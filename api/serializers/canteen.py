@@ -311,6 +311,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "central_kitchen",
             "central_kitchen_diagnostics",
             "satellites",
+            "satellites_count",
             "is_central_cuisine",
             "is_satellite",
             "modification_date",
@@ -344,6 +345,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "central_kitchen",
             "central_kitchen_diagnostics",
             "satellites",
+            "satellites_count",  # property
             "management_type",
             "production_type",
             "diagnostics",
