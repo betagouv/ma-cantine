@@ -40,6 +40,8 @@ const searchByNumber = () => {
   canteensService
     .canteenStatus(searchBy, cleanNumber)
     .then((response) => {
+      const noCanteenSiretFound = !response.id && !response.siren
+      const noCanteenSirenFound = !response.id && response.siren && response.canteens.length === 0
       switch (true) {
         case response instanceof Error:
           canteen.found = false
@@ -49,11 +51,10 @@ const searchByNumber = () => {
           canteen.found = false
           errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanNumber} » ne correspond à aucun établissement`
           break
-        case !response.id:
+        case noCanteenSiretFound || noCanteenSirenFound:
           canteen.found = false
           errorNotFound.value = `Aucune cantine enregistrée avec le numéro ${numberName.value} « ${cleanNumber} » sur la plateforme`
           break
-        // TODO : n'existe pas sur ma-cantine
         // TODO : n'est pas une SAT
         // TODO : est déjà rattaché à un groupe
         // TODO : est rattachable à mon groupe
