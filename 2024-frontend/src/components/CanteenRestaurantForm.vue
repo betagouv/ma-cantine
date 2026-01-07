@@ -166,13 +166,14 @@ const resetFields = () => {
 }
 
 const prefillFields = () => {
+  const isCentral = props.establishmentData.productionType === "central" || props.establishmentData.productionType === "central_serving"
   form.hasSiret = props.establishmentData.siret ? "has-siret" : "no-siret"
   form.siret = props.establishmentData.siret
   form.sirenUniteLegale = props.establishmentData.sirenUniteLegale
   form.name = props.establishmentData.name
   form.economicModel = props.establishmentData.economicModel
   form.managementType = props.establishmentData.managementType
-  form.productionType = props.establishmentData.productionType
+  form.productionType = !isCentral ? props.establishmentData.productionType : null
   form.sectorList = props.establishmentData.sectorList
   form.lineMinistry = props.establishmentData.lineMinistry
   form.dailyMealCount = props.establishmentData.dailyMealCount
