@@ -61,6 +61,12 @@
       "hint": "Livre des repas et accueille aussi des convives sur place",
       "label": "Cuisine centrale et site",
       "value": "central_serving"
+    },
+    {
+      "apiName": "groupe",
+      "hint": "Groupe de restaurants satellites",
+      "label": "Groupe",
+      "value": "groupe"
     }
   ],
   "productionTypeName": "Mode de production",

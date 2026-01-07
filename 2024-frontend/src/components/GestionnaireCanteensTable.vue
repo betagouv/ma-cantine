@@ -55,10 +55,19 @@ const rows = computed(() => {
 })
 
 const getNameInfos = (canteen) => {
+  const satellitesCount = "" // TODO : get value from canteen
+  const satellitesCountSentence = satellitesCount !== "" ? getSatellitesCountSentence(satellitesCount) : null
   return {
     name: canteen.name,
     url: urlService.getCanteenUrl(canteen),
+    satellitesCountSentence,
   }
+}
+
+const getSatellitesCountSentence = (satellitesCount) => {
+  const number = satellitesCount === 0 ? "Aucun" : satellitesCount
+  const name = satellitesCount <= 1 ? "restaurant satellite" : "restaurants satellites"
+  return `${number} ${name}`
 }
 
 const getSiretOrSirenInfos = (canteen) => {
@@ -108,10 +117,10 @@ const getDropdownLinks = (canteen) => {
     },
   ]
 
-  if (canteen.productionType === "central" || canteen.productionType === "central_serving") {
+  if (canteen.productionType === "central" || canteen.productionType === "central_serving" || canteen.productionType === "groupe") {
     links.push({
       to: { name: "GestionnaireCantineGroupeGerer", params: { canteenUrlComponent: canteenUrlComponent } },
-      label: "Gérer les satellites",
+      label: "Gérer les restaurants satellites",
     })
   }
   return links
@@ -150,6 +159,10 @@ const getTeledeclareButton = (canteen) => {
               >
                 {{ cell.name }}
               </router-link>
+            </p>
+            <p v-if="cell.satellitesCountSentence" class="fr-text-title--blue-france fr-mb-0 fr-text--sm">
+              <VIcon name="ri-node-tree" class="fr-pb-0-5v" />
+              {{ cell.satellitesCountSentence }}
             </p>
           </template>
           <template v-else-if="colKey === 'diagnostic'">
