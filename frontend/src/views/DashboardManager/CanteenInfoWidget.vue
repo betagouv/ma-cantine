@@ -16,7 +16,7 @@
             <span class="font-weight-medium">{{ canteen.siret || "inconnu" }}</span>
           </p>
           <p v-if="canteen.sirenUniteLegale" class="mb-0">
-            SIREN de l'unité légale :
+            SIREN :
             <span class="font-weight-medium">{{ canteen.sirenUniteLegale }}</span>
           </p>
         </v-card-text>
