@@ -98,36 +98,12 @@ export default {
       return this.canteen.productionType === "site_cooked_elsewhere"
     },
     centralKitchenDisplayName() {
-      if (this.canteen.centralKitchen?.name) {
-        return this.canteen.centralKitchen.name
+      if (this.canteen.groupe?.name) {
+        return `le groupe « ${this.canteen.groupe.name} »`
       }
       return this.canteen.centralProducerSiret
         ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
-        : "un établissement inconnu"
-    },
-  },
-  methods: {
-    getCentralKitchen() {
-      this.centralKitchen = null
-      if (
-        this.canteen &&
-        this.canteen.centralProducerSiret &&
-        this.canteen.siret !== this.canteen.centralProducerSiret
-      ) {
-        fetch("/api/v1/canteenStatus/siret/" + this.canteen.centralProducerSiret)
-          .then((response) => response.json())
-          .then((response) => (this.centralKitchen = response))
-      }
-    },
-  },
-  mounted() {
-    this.getCentralKitchen()
-  },
-  watch: {
-    canteen(newCanteen, oldCanteen) {
-      if (newCanteen && newCanteen.id !== oldCanteen?.id) {
-        this.getCentralKitchen()
-      }
+        : "non renseigné"
     },
   },
 }
