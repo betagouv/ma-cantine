@@ -38,7 +38,7 @@ const filterEditableInfos = (canteenInfos) => {
   // Infos
   const filteredInfos = []
   // Required field for all canteen
-  const fieldsName = ["name", "id"]
+  const fieldsName = ["name"]
   // SIRET or SIREN
   if (hasSiren) fieldsName.push("sirenUniteLegale")
   if (hasSiret) fieldsName.push("siret")
