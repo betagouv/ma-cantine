@@ -26,6 +26,13 @@ const search = ref('')
 const errorNotFound = ref('')
 const numberName = computed(() => hasSiret.value === 'oui' ? "SIRET" : "SIREN")
 const canteen = reactive({})
+
+const resetSearch = () => {
+  search.value = ''
+  errorNotFound.value = ''
+  canteen.found = false
+}
+
 const searchByNumber = () => {
   const cleanNumber = search.value.replaceAll(" ", "")
   if (cleanNumber.length === 0) return
@@ -60,6 +67,7 @@ const searchByNumber = () => {
     <p>Pour ajouter une cantine à votre groupe cette dernière doit : être enregistrée sur la plateforme, être de type "Restaurant satellite", ne doit pas déjà être associée à un groupe.</p>
     <DsfrRadioButtonSet
       v-model="hasSiret"
+      @change="resetSearch"
       legend="Le restaurant satellite a-t-il un numéro SIRET ?"
       :options="radioOptions"
       name="hasSiret"
