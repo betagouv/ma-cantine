@@ -15,7 +15,7 @@
         title="Ajouter un groupe de restaurants satellites"
         :link="{ name: 'GestionnaireCantineGroupeAjouter' }"
         endDetail="Ajouter votre groupe"
-        description="Les groupes de restaurants satellites vous permettent de gérer plusieurs établissements ensemble. Vous disposez d’une vue consolidée et pouvez réaliser une déclaration unique."
+        description="Les groupes de restaurants satellites vous permettent de gérer plusieurs cantines ensemble et réaliser une déclaration unique."
       />
     </li>
     <li class="fr-col-12 fr-col-md-4">
