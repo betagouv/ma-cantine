@@ -40,7 +40,7 @@ const tableHeaders = [
   },
   {
     key: "siretSiren",
-    label: "SIRET ou SIREN",
+    label: "SIRET / SIREN",
   },
   {
     key: "dailyMealCount",
