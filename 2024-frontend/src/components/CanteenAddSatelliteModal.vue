@@ -42,6 +42,10 @@ const searchByNumber = () => {
           canteen.found = false
           errorNotFound.value = `D’après l'annuaire-des-entreprises le numéro ${numberName.value} « ${cleanNumber} » ne correspond à aucun établissement`
           break
+        case !response.id:
+          canteen.found = false
+          errorNotFound.value = `Aucune cantine enregistrée avec le numéro ${numberName.value} « ${cleanNumber} » sur la plateforme`
+          break
         // TODO : n'existe pas sur ma-cantine
         // TODO : n'est pas une SAT
         // TODO : est déjà rattaché à un groupe
