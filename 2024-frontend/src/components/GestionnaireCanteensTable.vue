@@ -55,12 +55,10 @@ const rows = computed(() => {
 })
 
 const getNameInfos = (canteen) => {
-  const satellitesCount = "" // TODO : get value from canteen
-  const satellitesCountSentence = satellitesCount !== "" ? getSatellitesCountSentence(satellitesCount) : null
   return {
     name: canteen.name,
     url: urlService.getCanteenUrl(canteen),
-    satellitesCountSentence,
+    satellitesCountSentence: canteen.productionType === "groupe" ? getSatellitesCountSentence(canteen.satellitesCount) : null,
   }
 }
 
