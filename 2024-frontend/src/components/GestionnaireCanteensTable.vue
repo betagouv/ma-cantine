@@ -117,10 +117,10 @@ const getDropdownLinks = (canteen) => {
     },
   ]
 
-  if (canteen.productionType === "central" || canteen.productionType === "central_serving") {
+  if (canteen.productionType === "central" || canteen.productionType === "central_serving" || canteen.productionType === "groupe") {
     links.push({
       to: { name: "GestionnaireCantineGroupeGerer", params: { canteenUrlComponent: canteenUrlComponent } },
-      label: "Gérer les satellites",
+      label: "Gérer les restaurants satellites",
     })
   }
   return links
