@@ -4,7 +4,7 @@ import { sectionId } from "@/constants/site-map.js"
 import GestionnaireCantineGerer from "@/views/GestionnaireCantineGerer.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
-import GestionnaireCantineGroupeGerer from "@/views/GestionnaireCantineGroupeGerer.vue"
+import GestionnaireCantineGroupeSatellites from "@/views/GestionnaireCantineGroupeSatellites.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
@@ -156,8 +156,8 @@ const routes = [
         children: [
           {
             path: "gerer",
-            name: "GestionnaireCantineGroupeGerer",
-            component: GestionnaireCantineGroupeGerer,
+            name: "GestionnaireCantineGroupeSatellites",
+            component: GestionnaireCantineGroupeSatellites,
             meta: {
               title: "Gérer les restaurants satellites de mon groupe",
               breadcrumbs: [

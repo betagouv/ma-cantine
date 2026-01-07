@@ -89,7 +89,7 @@ const removeRow = (id) => {
 }
 </script>
 <template>
-  <section class="gestionnaire-cantine-satellites-gerer">
+  <section class="gestionnaire-cantine-groupe-satellites">
     <div class="fr-col-12 fr-col-md-8">
       <h1>{{ route.meta.title }}</h1>
       <p v-if="!canManageSatellites">
@@ -118,7 +118,7 @@ const removeRow = (id) => {
       :pagination-options="[50, 100, 200]"
       :rows-per-page="50"
       pagination-wrapper-class="fr-mt-3w"
-      class="gestionnaire-cantine-satellites-gerer__table"
+      class="gestionnaire-cantine-groupe-satellites__table"
     >
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'edit'">
@@ -147,13 +147,8 @@ const removeRow = (id) => {
 </template>
 
 <style lang="scss">
-.gestionnaire-cantine-satellites-gerer {
+.gestionnaire-cantine-groupe-satellites {
   &__table {
-    td {
-      width: 20% !important;
-      white-space: initial !important;
-    }
-
     .fr-select {
       width: 10rem !important;
     }
