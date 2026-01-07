@@ -5,7 +5,7 @@ import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
 import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
-import CanteenGroupForm from "@/components/CanteenGroupForm.vue"
+import CanteenFormGroup from "@/components/CanteenFormGroup.vue"
 
 /* Router and Store */
 const route = useRoute()
@@ -64,7 +64,7 @@ const resetForm = (name) => {
       </li>
     </AppRessources>
   </section>
-  <CanteenGroupForm
+  <CanteenFormGroup
     :key="forceRerender"
     @sendForm="(payload) => saveGroup(payload)"
   />

@@ -7,7 +7,7 @@ import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
 import AppLoader from "@/components/AppLoader.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import CanteenGroupForm from "@/components/CanteenGroupForm.vue"
+import CanteenFormGroup from "@/components/CanteenFormGroup.vue"
 
 /* Router and Store */
 const route = useRoute()
@@ -72,7 +72,7 @@ const goToCanteenPage = (canteen) => {
     </AppRessources>
   </section>
   <AppLoader v-if="loading" />
-  <CanteenGroupForm
+  <CanteenFormGroup
     v-else-if="!loading && canteenData.id"
     :key="forceRerender"
     :showCancelButton="true"

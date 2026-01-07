@@ -5,7 +5,7 @@ import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import options from "@/constants/canteen-establishment-form-options"
-import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
+import CanteenFormSearch from "@/components/CanteenFormSearch.vue"
 
 /* Data */
 const props = defineProps(["establishmentData", "showCancelButton"])
@@ -97,7 +97,7 @@ if (props.establishmentData) {
           :label-visible="true"
           :error-message="formatError(v$.centralProducerSiret)"
         />
-        <CanteenEstablishmentSearch
+        <CanteenFormSearch
           :key="forceRerender"
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
           :error-required="formatError(v$.sirenUniteLegale)"

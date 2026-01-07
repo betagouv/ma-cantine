@@ -10,7 +10,7 @@ import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
 import arraysService from "@/services/arrays.js"
 import options from "@/constants/canteen-establishment-form-options"
-import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
+import CanteenFormSearch from "@/components/CanteenFormSearch.vue"
 
 /* Data */
 const store = useRootStore()
@@ -316,9 +316,9 @@ if (props.establishmentData) {
 </script>
 
 <template>
-  <section class="canteen-restaurant-form fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center">
+  <section class="canteen-form-restaurant fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center">
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <fieldset class="fr-mb-4w canteen-restaurant-form__reduce-margin-bottom">
+      <fieldset class="fr-mb-4w canteen-form-restaurant__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">1. Caractéristiques</legend>
         <DsfrRadioButtonSet
           legend="Modèle économique *"
@@ -357,7 +357,7 @@ if (props.establishmentData) {
           :error-message="formatError(v$.satelliteCanteensCount)"
         />
       </fieldset>
-      <fieldset class="fr-mb-4w canteen-restaurant-form__reduce-margin-bottom">
+      <fieldset class="fr-mb-4w canteen-form-restaurant__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">2. Identification de l’établissement</legend>
         <DsfrRadioButtonSet
           v-model="form.hasSiret"
@@ -367,7 +367,7 @@ if (props.establishmentData) {
           :options="hasSiretOptions"
           @update:modelValue="changeHasSiret()"
         />
-        <CanteenEstablishmentSearch
+        <CanteenFormSearch
           v-if="form.hasSiret"
           :key="forceRerender"
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
@@ -547,7 +547,7 @@ if (props.establishmentData) {
 </template>
 
 <style lang="scss">
-.canteen-restaurant-form {
+.canteen-form-restaurant {
   .hide {
     display: none !important;
   }
