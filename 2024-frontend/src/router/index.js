@@ -15,7 +15,7 @@ routes.push(...vue2routes)
 /* Redirects */
 routes.push({
   path: "/v2/tableau-de-bord/cantines/:canteenUrlComponent/satellites/ajouter",
-  redirect: { name: "GestionnaireCantineGroupeGerer" },
+  redirect: { name: "GestionnaireCantineGroupeSatellites" },
 })
 
 /* Create router */
