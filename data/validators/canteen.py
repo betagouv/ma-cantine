@@ -52,8 +52,8 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
         from data.models import Canteen
 
         canteen_with_siret_qs = Canteen.objects.filter(siret=siret)
-        if instance.pk:
-            canteen_with_siret_qs = canteen_with_siret_qs.exclude(pk=instance.pk)
+        if instance.id:
+            canteen_with_siret_qs = canteen_with_siret_qs.exclude(pk=instance.id)
         if canteen_with_siret_qs.exists():
             utils_utils.add_validation_error(errors, "siret", "Le SIRET est déjà utilisé par une autre cantine.")
     return errors
@@ -191,6 +191,38 @@ def validate_canteen_satellite_count(instance):
     else:
         if value not in [None, ""]:
             utils_utils.add_validation_error(errors, field_name, "Le champ doit être vide.")
+    return errors
+
+
+def validate_canteen_groupe_field(instance):
+    """
+    - clean_fields() (called by full_clean()) already checks that the groupe field is a valid Canteen or empty
+    - extra validation:
+        - if groupe: must not be self
+        - if groupe: canteen must be a satellite
+        - if groupe: related canteen must be a groupe
+    """
+    errors = {}
+    field_name = "groupe"
+    try:
+        value = getattr(instance, field_name)
+        if value:
+            print(value, value.id, value.is_groupe)
+            if instance.id and value.id == instance.id:
+                utils_utils.add_validation_error(
+                    errors, field_name, "Le champ ne peut pas être égal à la cantine elle-même."
+                )
+            elif not instance.is_satellite:
+                utils_utils.add_validation_error(
+                    errors, field_name, "Le champ ne peut être rempli que pour les restaurants satellites."
+                )
+            else:
+                if not value.is_groupe:
+                    utils_utils.add_validation_error(
+                        errors, field_name, "Le champ doit être une cantine de type 'Groupe'."
+                    )
+    except instance.DoesNotExist:
+        utils_utils.add_validation_error(errors, field_name, "Cette cantine groupe n'existe pas.")
     return errors
 
 
