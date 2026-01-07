@@ -4,7 +4,7 @@ import { helpers } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
-import options from "@/constants/canteen-establishment-form-options"
+import options from "@/constants/canteen-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
 
 /* Data */
