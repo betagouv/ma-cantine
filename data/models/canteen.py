@@ -444,6 +444,13 @@ class Canteen(SoftDeletionModel):
         verbose_name="nombre de restaurants satellites dépendants (si cuisine centrale)",
     )
 
+    groupe = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        verbose_name="Groupe",
+        on_delete=models.SET_NULL,
+    )
     central_producer_siret = models.TextField(
         null=True,
         blank=True,
@@ -577,6 +584,7 @@ class Canteen(SoftDeletionModel):
             canteen_validators.validate_canteen_meal_count_fields(self),
             canteen_validators.validate_canteen_sector_list_field(self),
             canteen_validators.validate_canteen_satellite_count(self),
+            canteen_validators.validate_canteen_groupe_field(self),
             canteen_validators.validate_canteen_central_producer_siret_field(self),
         )
         if validation_errors:
