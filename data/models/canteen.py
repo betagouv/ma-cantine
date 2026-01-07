@@ -444,6 +444,13 @@ class Canteen(SoftDeletionModel):
         verbose_name="nombre de restaurants satellites dépendants (si cuisine centrale)",
     )
 
+    groupe = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        verbose_name="Groupe",
+        on_delete=models.SET_NULL,
+    )
     central_producer_siret = models.TextField(
         null=True,
         blank=True,
