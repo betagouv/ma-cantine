@@ -55,10 +55,19 @@ const rows = computed(() => {
 })
 
 const getNameInfos = (canteen) => {
+  const satellitesCount = 2 // TODO : get value from canteen
+  const satellitesCountSentence = satellitesCount !== "" ? getSatellitesCountSentence(satellitesCount) : null
   return {
     name: canteen.name,
     url: urlService.getCanteenUrl(canteen),
+    satellitesCountSentence,
   }
+}
+
+const getSatellitesCountSentence = (satellitesCount) => {
+  const number = satellitesCount === 0 ? "Aucun" : satellitesCount
+  const name = satellitesCount <= 1 ? "restaurant satellite" : "restaurants satellites"
+  return `${number} ${name}`
 }
 
 const getSiretOrSirenInfos = (canteen) => {
