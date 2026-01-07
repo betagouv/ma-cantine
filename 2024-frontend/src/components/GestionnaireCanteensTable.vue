@@ -15,7 +15,7 @@ const header = [
   },
   {
     key: "siret",
-    label: "Siret / Siren",
+    label: "SIRET / SIREN",
   },
   {
     key: "city",
