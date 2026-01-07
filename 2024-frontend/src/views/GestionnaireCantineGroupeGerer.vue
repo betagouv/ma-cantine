@@ -27,6 +27,11 @@ const satellitesCountSentence = computed(() => {
   else return `${satellites.value.length} restaurants satellites renseignés`
 })
 
+const canManageSatellites = computed(() => {
+  const allowedProductionTypes = ["central", "central_serving", "groupe"]
+  return allowedProductionTypes.includes(canteen.value.productionType)
+})
+
 /* Table */
 const tableHeaders = [
   {
@@ -81,7 +86,7 @@ const removeRow = (id) => {
   <section class="gestionnaire-cantine-satellites-gerer">
     <div class="fr-col-12 fr-col-md-8">
       <h1>{{ route.meta.title }}</h1>
-      <p v-if="!canteen.isCentralCuisine">
+      <p v-if="!canManageSatellites">
         Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de restaurants satellites. Pour
         modifier votre mode de production
         <AppLinkRouter
@@ -90,7 +95,7 @@ const removeRow = (id) => {
         />
       </p>
     </div>
-    <div v-if="canteen.isCentralCuisine" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
+    <div v-if="canManageSatellites" class="fr-grid-row fr-grid-row--middle fr-mb-2w">
       <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
         <router-link
