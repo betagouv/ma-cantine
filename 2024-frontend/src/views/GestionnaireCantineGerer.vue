@@ -15,29 +15,47 @@ const canteenInfos = computedAsync(
   async () => {
     const id = urlService.getCanteenId(route.params.canteenUrlComponent)
     const infos = await canteenService.fetchCanteen(id)
+    const isGroup = infos.productionType === "groupe"
     const editableInfos = filterEditableInfos(infos)
-    const notEditableInfos = filterNotEditableInfos(infos)
-    return { editable: editableInfos, notEditable: notEditableInfos }
+    const notEditableInfos = !isGroup ? filterNotEditableInfos(infos) : null
+    const editPageName = isGroup ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier"
+    return { editable: editableInfos, notEditable: notEditableInfos, editPage: editPageName }
   },
-  { editable: [], notEditable: [] }
+  { editable: [], notEditable: [], editPage: "" }
 )
 
 const filterEditableInfos = (canteenInfos) => {
+  // Canteen
+  const hasSiren = canteenInfos.sirenUniteLegale
+  const hasSiret = canteenInfos.siret
+  const isGroup = canteenInfos.productionType === "groupe"
+  const isSite = canteenInfos.productionType === "site"
+  const isSatellite = canteenInfos.productionType === "site_cooked_elsewhere"
+  const isCentral = canteenInfos.productionType === "central"
+  const isCentralServing = canteenInfos.productionType === "central_serving"
+  const hasLineMinistry = canteenInfos.lineMinistry
+  const hasRestaurant = isSite || isSatellite || isCentralServing
+  // Infos
   const filteredInfos = []
   // Required field for all canteen
   const fieldsName = ["name"]
-  // SIRET is the default
-  if (canteenInfos.sirenUniteLegale) fieldsName.push("sirenUniteLegale", "postalCode", "city")
-  else fieldsName.push("siret")
-  // Next required field for all canteen
-  fieldsName.push("economicModel", "managementType", "productionType", "dailyMealCount", "yearlyMealCount")
-  // Required fields for canteen with site
-  if (canteenInfos.productionType !== "central") fieldsName.push("sectorList")
-  if (canteenInfos.lineMinistry) fieldsName.push("lineMinistry")
-  // Required field for satellite
-  if (canteenInfos.isSatellite) fieldsName.push("centralProducerSiret")
-  // Required field for central
-  if (canteenInfos.isCentralCuisine) fieldsName.push("satelliteCanteensCount")
+  // SIRET or SIREN
+  if (hasSiren) fieldsName.push("sirenUniteLegale")
+  if (hasSiret) fieldsName.push("siret")
+  // Types
+  fieldsName.push("productionType", "managementType")
+  if (!isGroup) fieldsName.push("economicModel")
+  // Meals
+  fieldsName.push("dailyMealCount", "yearlyMealCount")
+  // Sectors
+  if (hasRestaurant) fieldsName.push("sectorList")
+  if (hasLineMinistry) fieldsName.push("lineMinistry")
+  // Satellites and Central infos
+  if (isCentral || isCentralServing) fieldsName.push("satelliteCanteensCount")
+  if (isSatellite || isGroup) fieldsName.push("centralProducerSiret")
+  // Geolocation
+  if(hasSiren && !isGroup) fieldsName.push("city", "postalCode")
+  // Get canteen fields value
   fieldsName.forEach((name) => {
     filteredInfos.push({ name: name, value: canteenInfos[name] })
   })
@@ -121,7 +139,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
       <h1>{{ route.meta.title }}</h1>
     </div>
     <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-12 fr-col-md-6">
+      <div class="fr-col-12" :class="{'fr-col-md-6': canteenInfos.notEditable}">
         <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Informations renseignées</h2>
           <p>Informations renseignées lors de la création de votre établissement.</p>
@@ -137,7 +155,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
             <router-link
               class="ma-cantine--unstyled-link"
               :to="{
-                name: 'GestionnaireCantineRestaurantModifier',
+                name: canteenInfos.editPage,
                 params: { canteenUrlComponent: route.params.canteenUrlComponent },
               }"
             >
@@ -146,7 +164,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
           </div>
         </div>
       </div>
-      <div class="fr-col-12 fr-col-md-6">
+      <div v-if="canteenInfos.notEditable" class="fr-col-12 fr-col-md-6">
         <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Informations générées</h2>
           <p>
