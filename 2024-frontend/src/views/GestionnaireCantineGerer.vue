@@ -17,9 +17,10 @@ const canteenInfos = computedAsync(
     const infos = await canteenService.fetchCanteen(id)
     const editableInfos = filterEditableInfos(infos)
     const notEditableInfos = filterNotEditableInfos(infos)
-    return { editable: editableInfos, notEditable: notEditableInfos }
+    const editPageName = infos.productionType === "groupe" ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier"
+    return { editable: editableInfos, notEditable: notEditableInfos, editPage: editPageName }
   },
-  { editable: [], notEditable: [] }
+  { editable: [], notEditable: [], editPage: "" }
 )
 
 const filterEditableInfos = (canteenInfos) => {
@@ -137,7 +138,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
             <router-link
               class="ma-cantine--unstyled-link"
               :to="{
-                name: 'GestionnaireCantineRestaurantModifier',
+                name: canteenInfos.editPage,
                 params: { canteenUrlComponent: route.params.canteenUrlComponent },
               }"
             >
