@@ -652,9 +652,16 @@ class Canteen(SoftDeletionModel):
 
     @property
     def satellites(self):
-        if self.siret:
-            return Canteen.objects.get_satellites(self.siret)
+        if self.is_central_cuisine:
+            if self.siret:
+                return Canteen.objects.get_satellites(self.siret)
+        elif self.is_groupe:
+            return self.canteen_set.all()
         return Canteen.objects.none()
+
+    @property
+    def satellites_count(self):
+        return self.satellites.count()
 
     @property
     def is_satellite(self) -> bool:
