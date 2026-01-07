@@ -14,17 +14,18 @@ const route = useRoute()
 const canteenInfos = computedAsync(
   async () => {
     const id = urlService.getCanteenId(route.params.canteenUrlComponent)
-    const infos = await canteenService.fetchCanteen(id)
-    const isGroup = infos.productionType === "groupe"
-    const editableInfos = filterEditableInfos(infos)
-    const notEditableInfos = !isGroup ? filterNotEditableInfos(infos) : null
+    const canteen = await canteenService.fetchCanteen(id)
+    const isGroup = canteen.productionType === "groupe"
+    const editableInfos = getEditableInfos(canteen)
+    const notEditableInfos = !isGroup ? getNotEditableInfos(canteen) : null
+    const groupRelatedInfos = canteen.groupe ? getGroupRelatedInfos(canteen) : null
     const editPageName = isGroup ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier"
-    return { editable: editableInfos, notEditable: notEditableInfos, editPage: editPageName, id: id }
+    return { editable: editableInfos, notEditable: notEditableInfos, groupRelated: groupRelatedInfos, editPage: editPageName, id: id }
   },
-  { editable: [], notEditable: [], editPage: "" }
+  { editable: [], notEditable: [], groupRelated: [], editPage: "", id: "" }
 )
 
-const filterEditableInfos = (canteenInfos) => {
+const getEditableInfos = (canteenInfos) => {
   // Canteen
   const hasSiren = canteenInfos.sirenUniteLegale
   const hasSiret = canteenInfos.siret
@@ -36,7 +37,7 @@ const filterEditableInfos = (canteenInfos) => {
   const hasLineMinistry = canteenInfos.lineMinistry
   const hasRestaurant = isSite || isSatellite || isCentralServing
   // Infos
-  const filteredInfos = []
+  const infos = []
   // Required field for all canteen
   const fieldsName = ["name"]
   // SIRET or SIREN
@@ -57,23 +58,33 @@ const filterEditableInfos = (canteenInfos) => {
   if(hasSiren && !isGroup) fieldsName.push("city", "postalCode")
   // Get canteen fields value
   fieldsName.forEach((name) => {
-    filteredInfos.push({ name: name, value: canteenInfos[name] })
+    infos.push({ name: name, value: canteenInfos[name] })
   })
-  return filteredInfos
+  return infos
 }
 
-const filterNotEditableInfos = (canteenInfos) => {
-  const filteredInfos = []
+const getNotEditableInfos = (canteenInfos) => {
+  const infos = []
   const fieldsName = []
   // Fields auto for SIRET canteen only
   if (canteenInfos.siret) fieldsName.push("city", "postalCode")
   // Fields auto for all canteen
   fieldsName.push("cityInseeCode", "patLibList", "epciLib", "departmentLib", "regionLib")
   fieldsName.forEach((name) => {
-    filteredInfos.push({ name: name, value: canteenInfos[name] })
+    infos.push({ name: name, value: canteenInfos[name] })
   })
-  return filteredInfos
+  return infos
 }
+
+const getGroupRelatedInfos = (canteenInfos) => {
+  const infos = []
+  const fieldsName = ["name", "sirenUniteLegale"]
+  fieldsName.forEach((name) => {
+    infos.push({ name: name, value: canteenInfos.groupe[name] })
+  })
+  return infos
+}
+
 
 /* Prettify */
 const getPrettyName = (name) => {
@@ -185,6 +196,27 @@ const getMinistrieName = (canteenMinistrySlug) => {
           <DsfrHighlight
             class="fr-ml-0 fr-mb-0 fr-mt-2w ma-cantine--no-mb-p"
             text="Ces informations ne sont pas modifiables, si vous remarquez une erreur merci de nous contacter."
+          />
+        </div>
+      </div>
+      <div v-if="canteenInfos.groupRelated" class="fr-col-12">
+        <div class="fr-card fr-p-2w fr-p-md-6w">
+          <h2 class="fr-h6">Groupe de restaurants satellites</h2>
+          <p>
+            Le responsable de la cuisine centrale a ajouté votre établissement à son groupe de restaurants satellites.<br/>
+            Cela lui permet de réaliser une déclaration unique pour laquelle le montant total des achats du groupe est ensuite réparti automatiquement entre chaque restaurant satellite, au prorata de son nombre de couverts annuels.<br/>
+          </p>
+          <ul class="ma-cantine--flex-grow">
+            <li v-for="info in canteenInfos.groupRelated" :key="info.name">
+              <p class="fr-mb-0">
+                <span class="fr-text--bold">{{ getPrettyName(info.name) }} :</span>
+                {{ getPrettyValue(info) }}
+              </p>
+            </li>
+          </ul>
+          <DsfrHighlight
+            class="fr-ml-0 fr-mb-0 fr-mt-2w ma-cantine--no-mb-p"
+            text="Si vous remarquez une erreur ou souhaitez ne plus être associer au groupe, merci de nous contacter."
           />
         </div>
       </div>
