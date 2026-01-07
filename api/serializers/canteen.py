@@ -585,6 +585,7 @@ class CanteenActionsLightSerializer(serializers.ModelSerializer):
             "city",
             "postal_code",
             "production_type",
+            "satellites_count",
             "action",  # annotate
         )
         read_only_fields = fields
