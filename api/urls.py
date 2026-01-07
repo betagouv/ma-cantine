@@ -7,6 +7,9 @@ from api.views import (  # ImportCompleteCentralKitchenView,; ImportCompleteDiag
     AddManagerView,
     BlogPostsView,
     BlogPostView,
+    CanteenGroupeSatellitesListView,
+    CanteenGroupeSatelliteLinkView,
+    CanteenGroupeSatelliteUnlinkView,
     CanteenMinistriesView,
     CanteenPurchasesPercentageSummaryView,
     CanteenPurchasesSummaryView,
@@ -71,7 +74,6 @@ from api.views import (  # ImportCompleteCentralKitchenView,; ImportCompleteDiag
     VideoTutorialListView,
     WasteActionsView,
     WasteActionView,
-    CanteenGroupeSatellitesView,
 )
 
 urlpatterns = {
@@ -135,14 +137,24 @@ urlpatterns = {
         name="list_create_update_satellite",
     ),
     path(
+        "canteens/<int:canteen_pk>/satellites/<int:satellite_pk>/unlink-old/",
+        UnlinkSatelliteView.as_view(),
+        name="unlink_satellite",
+    ),
+    path(
         "canteens/<int:canteen_pk>/satellites/",
-        CanteenGroupeSatellitesView.as_view(),
+        CanteenGroupeSatellitesListView.as_view(),
         name="canteen_groupe_satellites_list",
     ),
     path(
+        "canteens/<int:canteen_pk>/satellites/<int:satellite_pk>/link/",
+        CanteenGroupeSatelliteLinkView.as_view(),
+        name="canteen_groupe_satellite_link",
+    ),
+    path(
         "canteens/<int:canteen_pk>/satellites/<int:satellite_pk>/unlink/",
-        UnlinkSatelliteView.as_view(),
-        name="unlink_satellite",
+        CanteenGroupeSatelliteUnlinkView.as_view(),
+        name="canteen_groupe_satellite_unlink",
     ),
     path("canteenStatistics/", CanteenStatisticsView.as_view(), name="canteen_statistics"),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),
