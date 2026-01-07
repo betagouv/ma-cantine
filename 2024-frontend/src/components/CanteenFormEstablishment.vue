@@ -134,7 +134,7 @@ const unselectCanteen = () => {
 </script>
 
 <template>
-  <div class="canteen-form-search">
+  <div class="canteen-form-establishment">
     <p class="fr-label fr-mb-0">{{ title }} *</p>
     <p class="fr-hint-text">
       Nous utilisons le site
@@ -177,14 +177,14 @@ const unselectCanteen = () => {
       label="Rechercher un nouvel établissement"
       icon="fr-icon-search-line"
       icon-right
-      class="canteen-form-search__back fr-mt-1w"
+      class="canteen-form-establishment__back fr-mt-1w"
       @click="unselectCanteen()"
     />
   </div>
 </template>
 
 <style lang="scss">
-.canteen-form-search {
+.canteen-form-establishment {
   &__back {
     width: 100%;
     justify-content: center;

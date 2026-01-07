@@ -10,7 +10,7 @@ import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
 import arraysService from "@/services/arrays.js"
 import options from "@/constants/canteen-establishment-form-options"
-import CanteenFormSearch from "@/components/CanteenFormSearch.vue"
+import CanteenFormEstablishment from "@/components/CanteenFormEstablishment.vue"
 
 /* Data */
 const store = useRootStore()
@@ -367,7 +367,7 @@ if (props.establishmentData) {
           :options="hasSiretOptions"
           @update:modelValue="changeHasSiret()"
         />
-        <CanteenFormSearch
+        <CanteenFormEstablishment
           v-if="form.hasSiret"
           :key="forceRerender"
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
