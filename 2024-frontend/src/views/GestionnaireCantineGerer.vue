@@ -201,11 +201,10 @@ const getMinistrieName = (canteenMinistrySlug) => {
       </div>
       <div v-if="canteenInfos.groupRelated" class="fr-col-12">
         <div class="fr-card fr-p-2w fr-p-md-6w">
-          <h2 class="fr-h6">Cuisine centrale</h2>
+          <h2 class="fr-h6">Groupe de restaurants satellites</h2>
           <p>
-            En tant que restaurant satelitte vous avez la possibilité de faire votre télédéclaration en autonomie ou alors via votre cuisine centrale.<br/>
-            Le responsable de la cuisine centrale a ajouté votre établissement à son groupe de télédéclaration.<br/>
-            Informations du groupe :
+            Le responsable de la cuisine centrale a ajouté votre établissement à son groupe de restaurants satellites.<br/>
+            Cela lui permet de réaliser une déclaration unique pour laquelle le montant total des achats du groupe est ensuite réparti automatiquement entre chaque restaurant satellite, au prorata de son nombre de couverts annuels.<br/>
           </p>
           <ul class="ma-cantine--flex-grow">
             <li v-for="info in canteenInfos.groupRelated" :key="info.name">
