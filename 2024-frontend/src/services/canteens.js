@@ -66,8 +66,8 @@ const fetchSatellites = (canteenId) => {
     .catch((e) => e)
 }
 
-const unlinkSatellite = (centralId, satelliteId) => {
-  return fetch(`/api/v1/canteens/${centralId}/satellites/${satelliteId}/unlink/`, {
+const unlinkSatellite = (canteenId, satelliteId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/satellites/${satelliteId}/unlink/`, {
     method: "POST",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
