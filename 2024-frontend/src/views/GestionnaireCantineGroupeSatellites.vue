@@ -90,7 +90,7 @@ const removeRow = (id) => {
 </script>
 <template>
   <section class="gestionnaire-cantine-groupe-satellites">
-    <div class="fr-col-12 fr-col-md-8">
+    <div class="fr-col-12 fr-col-md-7">
       <h1>{{ route.meta.title }}</h1>
       <p v-if="!canManageSatellites">
         Votre établissement n'est pas une cuisine centrale, vous ne pouvez pas associer de restaurants satellites. Pour
