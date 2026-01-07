@@ -64,7 +64,7 @@
     },
     {
       "apiName": "groupe",
-      "hint": "Livre des repas à des restaurants satellites",
+      "hint": "Groupe de restaurants satellites",
       "label": "Groupe",
       "value": "groupe"
     }
