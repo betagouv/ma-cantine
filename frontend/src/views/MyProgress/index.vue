@@ -19,7 +19,7 @@
         <h1 class="fr-h3 mt-1 mb-2" v-if="canteen">{{ canteen.name }} : Télédéclaration</h1>
         <p class="mb-0">SIRET : {{ canteen.siret || "inconnu" }}</p>
         <p v-if="canteen.sirenUniteLegale" class="mb-0">
-          <span>SIREN de l'unité légale : {{ canteen.sirenUniteLegale }}</span>
+          <span>SIREN : {{ canteen.sirenUniteLegale }}</span>
         </p>
       </v-col>
       <v-col cols="12" md="3" lg="2">

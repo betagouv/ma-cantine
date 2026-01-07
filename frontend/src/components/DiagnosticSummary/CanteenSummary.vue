@@ -10,9 +10,7 @@
           <p class="my-0">{{ canteen.name }}</p>
           <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">SIRET</p>
           <p class="my-0">{{ canteen.siret || "inconnu" }}</p>
-          <p v-if="canteen.sirenUniteLegale" class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">
-            SIREN de l'unité légale
-          </p>
+          <p v-if="canteen.sirenUniteLegale" class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">SIREN</p>
           <p class="my-0">{{ canteen.sirenUniteLegale }}</p>
         </div>
       </v-col>

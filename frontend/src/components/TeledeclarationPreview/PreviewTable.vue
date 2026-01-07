@@ -136,7 +136,7 @@ export default {
       let items = [
         { value: this.canteen.name, label: "Nom de la cantine" },
         { value: this.canteen.siret || "inconnu", label: "Numéro SIRET" },
-        { value: this.canteen.sirenUniteLegale, label: "Numéro SIREN de l'unité légale" },
+        { value: this.canteen.sirenUniteLegale, label: "Numéro SIREN" },
         { value: this.canteen.city, label: "Ville" },
         { value: economicModelDetail ? economicModelDetail.text : "", label: "Modèle économique" },
         { value: managementTypeDetail ? managementTypeDetail.text : "", label: "Mode de gestion" },
