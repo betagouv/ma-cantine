@@ -349,7 +349,7 @@ if (props.establishmentData) {
               class="fr-mb-0"
               v-model="form.citySelector"
               label="Ville *"
-              description="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
+              hint="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
               :label-visible="true"
               :error-message="emptyCity || formatError(v$.citySelector)"
               :options="citiesOptions"
@@ -384,7 +384,7 @@ if (props.establishmentData) {
           v-if="showLineMinistry"
           v-model="form.lineMinistry"
           label="Administration générale de tutelle (ministère ou ATE) *"
-          description="Hors fonction publique territoriale et hospitalière"
+          hint="Hors fonction publique territoriale et hospitalière"
           labelVisible
           :options="lineMinistryOptions"
           :error-message="formatError(v$.lineMinistry)"
