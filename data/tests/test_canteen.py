@@ -334,8 +334,11 @@ class CanteenModelSaveTest(TransactionTestCase):
 
     def test_canteen_groupe_validation(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_groupe_deleted = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_groupe_deleted.delete()
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
 
+        # not a satellite: must be empty
         for production_type in [
             Canteen.ProductionType.GROUPE,
             Canteen.ProductionType.CENTRAL,
@@ -346,9 +349,10 @@ class CanteenModelSaveTest(TransactionTestCase):
                 with self.subTest(groupe=TUPLE_OK[0]):
                     canteen = CanteenFactory(production_type=production_type, groupe=TUPLE_OK[0])
                     self.assertEqual(canteen.groupe, TUPLE_OK[1])
-            for VALUE_NOT_OK in [canteen_groupe.id, canteen_site.id, 999, "", "invalid"]:
+            for VALUE_NOT_OK in [canteen_groupe.id, canteen_groupe_deleted.id, canteen_site.id, 999, "", "invalid"]:
                 with self.subTest(groupe=VALUE_NOT_OK):
                     self.assertRaises(ValueError, CanteenFactory, production_type=production_type, groupe=VALUE_NOT_OK)
+        # satellite: can be filled
         for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL]:
             for TUPLE_OK in [(None, None), (canteen_groupe, canteen_groupe)]:
                 with self.subTest(groupe=TUPLE_OK[0]):
@@ -358,7 +362,7 @@ class CanteenModelSaveTest(TransactionTestCase):
                 with self.subTest(groupe_id=TUPLE_OK[0]):
                     canteen = CanteenFactory(production_type=production_type, groupe_id=TUPLE_OK[0])
                     self.assertEqual(canteen.groupe, TUPLE_OK[1])
-            for VALUE_NOT_OK in [canteen_site.id, 999, "", "invalid"]:
+            for VALUE_NOT_OK in [canteen_site.id, canteen_groupe_deleted.id, 999, "", "invalid"]:
                 with self.subTest(groupe=VALUE_NOT_OK):
                     self.assertRaises(ValueError, CanteenFactory, production_type=production_type, groupe=VALUE_NOT_OK)
             for VALUE_NOT_OK in [canteen_site.id, 999]:
