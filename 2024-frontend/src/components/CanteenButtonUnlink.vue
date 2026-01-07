@@ -20,7 +20,7 @@ const unlinkSatellite = () => {
     .then(() => {
       store.notify({
         title: "Retrait de la cantine effectué",
-        message: `La cantine ${props.satellite.name} ne fait plus partie de vos restaurantssatellites.`,
+        message: `La cantine ${props.satellite.name} ne fait plus partie de vos restaurants satellites.`,
       })
       loading.value = false
       toggleModal()
