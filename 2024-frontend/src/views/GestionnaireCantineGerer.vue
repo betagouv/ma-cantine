@@ -18,10 +18,11 @@ const canteenInfos = computedAsync(
     const isGroup = canteen.productionType === "groupe"
     const editableInfos = getEditableInfos(canteen)
     const notEditableInfos = !isGroup ? getNotEditableInfos(canteen) : null
+    const groupRelatedInfos = canteen.groupe ? getGroupRelatedInfos(canteen) : null
     const editPageName = isGroup ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier"
-    return { editable: editableInfos, notEditable: notEditableInfos, editPage: editPageName, id: id }
+    return { editable: editableInfos, notEditable: notEditableInfos, groupRelated: groupRelatedInfos, editPage: editPageName, id: id }
   },
-  { editable: [], notEditable: [], editPage: "" }
+  { editable: [], notEditable: [], groupRelated: [], editPage: "", id: "" }
 )
 
 const getEditableInfos = (canteenInfos) => {
@@ -74,7 +75,16 @@ const getNotEditableInfos = (canteenInfos) => {
   })
   return infos
 }
+
+const getGroupRelatedInfos = (canteenInfos) => {
+  const infos = []
+  const fieldsName = ["name", "sirenUniteLegale"]
+  fieldsName.forEach((name) => {
+    infos.push({ name: name, value: canteenInfos.groupe[name] })
+  })
+  return infos
 }
+
 
 /* Prettify */
 const getPrettyName = (name) => {
@@ -186,6 +196,28 @@ const getMinistrieName = (canteenMinistrySlug) => {
           <DsfrHighlight
             class="fr-ml-0 fr-mb-0 fr-mt-2w ma-cantine--no-mb-p"
             text="Ces informations ne sont pas modifiables, si vous remarquez une erreur merci de nous contacter."
+          />
+        </div>
+      </div>
+      <div v-if="canteenInfos.groupRelated" class="fr-col-12">
+        <div class="fr-card fr-p-2w fr-p-md-6w">
+          <h2 class="fr-h6">Cuisine centrale</h2>
+          <p>
+            En tant que restaurant satelitte vous avez la possibilité de faire votre télédéclaration en autonomie ou alors via votre cuisine centrale.<br/>
+            Le responsable de la cuisine centrale a ajouté votre établissement à son groupe de télédéclaration.<br/>
+            Informations du groupe :
+          </p>
+          <ul class="ma-cantine--flex-grow">
+            <li v-for="info in canteenInfos.groupRelated" :key="info.name">
+              <p class="fr-mb-0">
+                <span class="fr-text--bold">{{ getPrettyName(info.name) }} :</span>
+                {{ getPrettyValue(info) }}
+              </p>
+            </li>
+          </ul>
+          <DsfrHighlight
+            class="fr-ml-0 fr-mb-0 fr-mt-2w ma-cantine--no-mb-p"
+            text="Si vous remarquez une erreur ou souhaitez ne plus être associer au groupe, merci de nous contacter."
           />
         </div>
       </div>
