@@ -1,30 +1,32 @@
 <script setup>
   import { ref } from "vue"
-  import { useRootStore } from "@/stores/root"
   import canteensService from "@/services/canteens"
 
   const props = defineProps(["satId", "groupId"])
   const emit = defineEmits(["satelliteAdded"])
   const loading = ref(false)
-  const store = useRootStore()
+  const error = ref(false)
 
   /* Add Satellite */
   const label = ref("Ajouter ce restaurant satellite à mon groupe")
   const addSatellite = () => {
     loading.value = true
+    error.value = false
     label.value = "Ajout en cours..."
     canteensService
       .linkSatellite(props.groupId, props.satId)
-      .then(() => {
+      .then((response) => {
+        if (response instanceof Error) throw Error()
         emit("satelliteAdded")
       })
-      .catch((e) => {
-        loading.value = false
-        store.notifyServerError(e)
+      .catch(() => {
+        loading.value = true
+        error.value = true
       })
   }
 </script>
 
 <template>
-  <DsfrButton secondary :label="label" @click="addSatellite()" :disabled="loading" />
+  <div v-if="error" class="fr-error-text">Une erreur est survenue lors de l'ajout du restaurant satellite à votre groupe, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr</div>
+  <DsfrButton v-else secondary :label="label" @click="addSatellite()" :disabled="loading" />
 </template>
