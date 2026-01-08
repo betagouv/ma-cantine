@@ -113,6 +113,23 @@ const linkedCanteensLabel = computed(() => {
       </div>
       <CanteenButtonJoin :id="props.id" :name="props.name" />
     </div>
+    <div v-else-if="status === 'not-a-satellite'" class="fr-mt-1w">
+      <DsfrBadge type="error" label="La cantine n'est pas un restaurant satellite" small />
+    </div>
+    <div v-else-if="status === 'other-group'" class="fr-mt-1w">
+      <DsfrBadge type="error" label="La cantine est déjà dans un autre groupe" small />
+    </div>
+    <div v-else-if="status === 'my-group'" class="fr-mt-1w">
+      <DsfrBadge type="success" label="La cantine est déjà dans votre groupe" small />
+    </div>
+    <div v-else-if="status === 'add-satellite'" class="fr-mt-1w">
+      <DsfrButton
+        label="Ajouter ce restaurant satellite à mon groupe"
+        icon="fr-icon-add-circle-fill"
+        secondary
+        @click="$emit('select')"
+      />
+    </div>
   </div>
 </template>
 
