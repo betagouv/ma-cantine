@@ -92,6 +92,9 @@ const tableRows = computed(() => {
 const removeRow = (id) => {
   satellites.value = satellites.value.filter((sat) => sat.id !== id)
 }
+const addRow = (satelliteInfos) => {
+  satellites.value.push(satelliteInfos)
+}
 </script>
 <template>
   <section class="gestionnaire-cantine-groupe-satellites">
@@ -101,7 +104,7 @@ const removeRow = (id) => {
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
         <DsfrButton primary label="Ajouter un restaurant satellite" icon="fr-icon-add-circle-fill" @click="modalOpened = true" />
       </div>
-      <CanteenAddSatelliteModal :open="modalOpened" :groupId="canteenId" @close="modalOpened = false" />
+      <CanteenAddSatelliteModal :open="modalOpened" :groupId="canteenId" @close="modalOpened = false" @addedSatellite="(satelliteInfos) => addRow(satelliteInfos)" />
     </div>
     <AppLoader v-if="loading" />
     <DsfrDataTable

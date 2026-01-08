@@ -6,7 +6,7 @@ import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Setup */
 const props = defineProps(["open", "groupId"])
-const emit = defineEmits(["close"])
+const emit = defineEmits(["close", "addedSatellite"])
 const store = useRootStore()
 
 /* Close */
@@ -103,8 +103,9 @@ const getCanteenStatus = (canteen) => {
   return ""
 }
 
-const updateCanteen = (index) => {
+const updateCanteen = (index, canteenInfos) => {
   canteens.value[index].status = "my-group"
+  emit('addedSatellite', canteenInfos)
 }
 </script>
 <template>
@@ -143,7 +144,7 @@ const updateCanteen = (index) => {
           :id="canteen.id"
           :linked-canteens="canteen.linkedCanteens"
           :groupId="groupId"
-          @select="updateCanteen(index)"
+          @select="(canteenInfos) => updateCanteen(index, canteenInfos)"
         />
       </li>
     </ul>

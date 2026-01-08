@@ -1,29 +1,33 @@
 <script setup>
-  import { ref } from "vue"
-  import canteensService from "@/services/canteens"
+import { ref } from "vue"
+import canteensService from "@/services/canteens"
 
-  const props = defineProps(["satId", "groupId"])
-  const emit = defineEmits(["satelliteAdded"])
-  const loading = ref(false)
-  const error = ref(false)
+const props = defineProps(["satId", "groupId"])
+const emit = defineEmits(["satelliteAdded"])
+const loading = ref(false)
+const error = ref(false)
 
-  /* Add Satellite */
-  const label = ref("Ajouter ce restaurant satellite à mon groupe")
-  const addSatellite = () => {
-    loading.value = true
-    error.value = false
-    label.value = "Ajout en cours..."
-    canteensService
-      .linkSatellite(props.groupId, props.satId)
-      .then((response) => {
-        if (response instanceof Error) throw Error()
-        emit("satelliteAdded")
-      })
-      .catch(() => {
-        loading.value = true
-        error.value = true
-      })
-  }
+/* Add Satellite */
+const label = ref("Ajouter ce restaurant satellite à mon groupe")
+const addSatellite = () => {
+  loading.value = true
+  error.value = false
+  label.value = "Ajout en cours..."
+  canteensService
+    .linkSatellite(props.groupId, props.satId)
+    .then((response) => {
+      if (response instanceof Error) throw Error()
+      else success()
+    })
+    .catch(() => {
+      loading.value = true
+      error.value = true
+    })
+}
+const success = async () => {
+  const satelliteInfos = await canteensService.fetchCanteen(props.satId)
+  emit("satelliteAdded", satelliteInfos)
+}
 </script>
 
 <template>
