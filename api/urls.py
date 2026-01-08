@@ -53,7 +53,6 @@ from api.views import (  # ImportCompleteCentralKitchenView,; ImportCompleteDiag
     ResourceActionView,
     RetrieveUpdateUserCanteenView,
     ReviewView,
-    SatelliteListCreateView,
     SectorListView,
     SendCanteenNotFoundEmail,
     SubscribeNewsletter,
@@ -62,7 +61,6 @@ from api.views import (  # ImportCompleteCentralKitchenView,; ImportCompleteDiag
     TeledeclarationCampaignDatesRetrieveView,
     TerritoryCanteensListView,
     UndoClaimCanteenView,
-    UnlinkSatelliteView,
     UpdateUserView,
     UserCanteenActions,
     UserCanteenPreviews,
@@ -130,16 +128,6 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/wasteMeasurements/<int:pk>",
         CanteenWasteMeasurementView.as_view(),
         name="canteen_waste_measurement_detail",
-    ),
-    path(
-        "canteens/<int:canteen_pk>/satellites-old/",
-        SatelliteListCreateView.as_view(),
-        name="list_create_update_satellite",
-    ),
-    path(
-        "canteens/<int:canteen_pk>/satellites/<int:satellite_pk>/unlink-old/",
-        UnlinkSatelliteView.as_view(),
-        name="unlink_satellite",
     ),
     path(
         "canteens/<int:canteen_pk>/satellites/",
