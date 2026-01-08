@@ -25,7 +25,8 @@ const addSatellite = () => {
     })
 }
 const success = async () => {
-  const satelliteInfos = await canteensService.fetchCanteen(props.satId)
+  // TODO: get SAT information to update table outside modal
+  const satelliteInfos = await canteensService.fetchSatellite(props.groupId, props.satId)
   emit("satelliteAdded", satelliteInfos)
 }
 </script>
