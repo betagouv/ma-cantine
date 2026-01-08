@@ -2,9 +2,10 @@
 import { ref, computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens.js"
+import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Setup */
-defineProps(["open"])
+const props = defineProps(["open", "groupId"])
 const emit = defineEmits(["close"])
 const store = useRootStore()
 
@@ -66,8 +67,44 @@ const searchByNumber = () => {
         default:
           hasCanteen = true
       }
+      if (hasCanteen) updateCanteenResult(response)
     })
     .catch((e) => store.notifyServerError(e))
+}
+
+const updateCanteenResult = (response) => {
+  let list = []
+  const canteensInfo = response.siret ? [response] : response.canteens
+  for (const canteen of canteensInfo) list.push(getCanteenInfos(canteen))
+  canteens.value = list
+}
+
+const getCanteenInfos = (canteen) => {
+  const infos = {
+    id: canteen.id,
+    name: canteen.name,
+    city: canteen.city,
+    department: canteen.department,
+    status: getCanteenStatus(canteen),
+  }
+  if (canteen.siren) infos.siren = canteen.siren
+  if (canteen.siret) infos.siret = canteen.siret
+  return infos
+}
+
+const getCanteenStatus = (canteen) => {
+  const isSatellite = canteen.productionType === "site_cooked_elsewhere"
+  const hasGroup = canteen.groupe !== null
+  const inMyGroup = hasGroup && canteen.groupe== props.groupId
+  if (!isSatellite) return "not-a-satellite"
+  if (isSatellite && !hasGroup) return "add-satellite"
+  if (isSatellite && hasGroup && inMyGroup) return "my-group"
+  if (isSatellite && hasGroup && !inMyGroup) return "other-group"
+  return ""
+}
+
+const addSatellite = (canteen) => {
+  console.log('addSatellite', canteen)
 }
 </script>
 <template>
@@ -94,5 +131,20 @@ const searchByNumber = () => {
         />
       </template>
     </DsfrInputGroup>
+    <ul v-if="canteens.length > 0" class="ma-cantine--unstyled-list">
+      <li class="fr-mb-1w" v-for="canteen in canteens" :key="canteen.id">
+        <CanteenEstablishmentCard
+          :name="canteen.name"
+          :siret="canteen.siret"
+          :siren="canteen.siren"
+          :city="canteen.city"
+          :department="canteen.department"
+          :status="canteen.status"
+          :id="canteen.id"
+          :linked-canteens="canteen.linkedCanteens"
+          @select="addSatellite(canteen)"
+        />
+      </li>
+    </ul>
   </DsfrModal>
 </template>
