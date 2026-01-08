@@ -606,6 +606,7 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
             "is_managed_by_user",
             "can_be_claimed",
             "production_type",
+            "groupe",
         )
         read_only_fields = fields
 
