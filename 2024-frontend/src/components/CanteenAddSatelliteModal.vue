@@ -103,8 +103,8 @@ const getCanteenStatus = (canteen) => {
   return ""
 }
 
-const addSatellite = (canteen) => {
-  console.log('addSatellite', canteen)
+const updateCanteen = (index) => {
+  canteens.value[index].status = "my-group"
 }
 </script>
 <template>
@@ -132,7 +132,7 @@ const addSatellite = (canteen) => {
       </template>
     </DsfrInputGroup>
     <ul v-if="canteens.length > 0" class="ma-cantine--unstyled-list">
-      <li class="fr-mb-1w" v-for="canteen in canteens" :key="canteen.id">
+      <li class="fr-mb-1w" v-for="(canteen, index) in canteens" :key="canteen.id">
         <CanteenEstablishmentCard
           :name="canteen.name"
           :siret="canteen.siret"
@@ -142,7 +142,8 @@ const addSatellite = (canteen) => {
           :status="canteen.status"
           :id="canteen.id"
           :linked-canteens="canteen.linkedCanteens"
-          @select="addSatellite(canteen)"
+          :groupId="groupId"
+          @select="updateCanteen(index)"
         />
       </li>
     </ul>
