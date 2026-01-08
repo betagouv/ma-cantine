@@ -101,7 +101,7 @@ const removeRow = (id) => {
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
         <DsfrButton primary label="Ajouter un restaurant satellite" icon="fr-icon-add-circle-fill" @click="modalOpened = true" />
       </div>
-      <CanteenAddSatelliteModal :open="modalOpened" @close="modalOpened = false" />
+      <CanteenAddSatelliteModal :open="modalOpened" :groupId="canteenId" @close="modalOpened = false" />
     </div>
     <AppLoader v-if="loading" />
     <DsfrDataTable
