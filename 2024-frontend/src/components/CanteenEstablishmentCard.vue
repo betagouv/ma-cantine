@@ -4,9 +4,10 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import CanteenButtonClaim from "@/components/CanteenButtonClaim.vue"
 import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
+import CanteenButtonLink from "@/components/CanteenButtonLink.vue"
 
 /* Props */
-const props = defineProps(["name", "siret", "city", "department", "status", "id", "siren", "linkedCanteens"])
+const props = defineProps(["name", "siret", "city", "department", "status", "id", "siren", "linkedCanteens", "groupId"])
 
 /* Content */
 const linkedCanteensLabel = computed(() => {
@@ -112,6 +113,18 @@ const linkedCanteensLabel = computed(() => {
         </p>
       </div>
       <CanteenButtonJoin :id="props.id" :name="props.name" />
+    </div>
+    <div v-else-if="status === 'not-a-satellite'" class="fr-mt-1w">
+      <DsfrBadge type="error" label="La cantine n'est pas un restaurant satellite" small />
+    </div>
+    <div v-else-if="status === 'other-group'" class="fr-mt-1w">
+      <DsfrBadge type="error" label="La cantine est déjà dans un autre groupe" small />
+    </div>
+    <div v-else-if="status === 'my-group'" class="fr-mt-1w">
+      <DsfrBadge type="success" label="La cantine est dans votre groupe" small />
+    </div>
+    <div v-else-if="status === 'add-satellite'" class="fr-mt-1w">
+      <CanteenButtonLink :satId="id" :groupId="groupId" @satelliteAdded="$emit('select')" />
     </div>
   </div>
 </template>
