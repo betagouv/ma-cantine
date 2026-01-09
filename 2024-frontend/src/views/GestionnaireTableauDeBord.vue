@@ -84,10 +84,11 @@ const lastYear = new Date().getFullYear() - 1
 const filteredCanteens = ref([])
 const canteensGroup = computed(() => {
   const count = allCanteens.value.filter((canteen) => canteen.productionType === "groupe").length
-  if (count === 0) return { count: 0 }
+  const title = count > 1 ? `Vos ${count} cuisines centrales ont été transformées en groupes` : "Votre cuisine centrale a été transformée en groupe"
   return {
+    displayBanner: count > 0,
     count,
-    title: count > 1 ? `Vos ${count} cuisines centrales ont été transformées en groupes` : "Votre cuisine centrale a été transformée en groupe"
+    title,
   }
 })
 const allCanteens = computedAsync(async () => {
@@ -110,7 +111,7 @@ const campaign = computedAsync(async () => {
       <AppDropdownMenu label="Gérer mes cantines" :links="links" size="medium" />
     </div>
   </section>
-  <DsfrAlert v-if="canteensGroup.count > 0" :title="canteensGroup.title" class="fr-mb-4w">
+  <DsfrAlert v-if="canteensGroup.displayBanner > 0" :title="canteensGroup.title" class="fr-mb-4w">
     <p>Vous pouvez requalifier vos groupes directement depuis ce tableau de bord, <a href="https://ma-cantine.crisp.help/fr/article/les-groupes-de-restaurants-satellites-definition-et-gestion-82qt51/?bust=1767947700084" target="_blank">découvrez comment faire</a></p>
   </DsfrAlert>
   <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
