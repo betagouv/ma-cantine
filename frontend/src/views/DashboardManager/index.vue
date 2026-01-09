@@ -34,10 +34,10 @@
           <v-col v-if="canteen.productionType === 'groupe'" cols="12">
             <SatellitesWidget :canteen="canteen" />
           </v-col>
-          <v-col cols="12" md="8">
+          <v-col cols="12" :md="`${canteen.productionType === 'groupe' ? 12 : 8}`">
             <PurchasesWidget :canteen="canteen" />
           </v-col>
-          <v-col cols="12" md="4">
+          <v-col v-if="canteen.productionType !== 'groupe'" cols="12" md="4">
             <PublicationWidget :canteen="canteen" />
           </v-col>
           <v-col cols="12" md="8">

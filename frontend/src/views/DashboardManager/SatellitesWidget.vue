@@ -112,8 +112,7 @@ export default {
       return canteen.publicationStatus === "published"
     },
     fetchCampaignDates() {
-      const year = new Date().getFullYear()
-      fetch(`/api/v1/campaignDates/${year}`)
+      fetch(`/api/v1/campaignDates/${this.lastYear}`)
         .then((response) => response.json())
         .then((response) => {
           this.inTeledeclarationCampaign = response.inTeledeclaration
