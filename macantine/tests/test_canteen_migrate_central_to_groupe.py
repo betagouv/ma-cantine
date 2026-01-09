@@ -22,12 +22,16 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
             central_producer_siret=cls.canteen_central_1.siret,
         )
         cls.canteen_satellite_1_2.delete()
-        # canteen_central_2 is deleted (0 satellites)
+        # canteen_central_2 is deleted (1 satellite)
         cls.canteen_central_2_deleted = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=1,
+            satellite_canteens_count=2,
         )
         cls.canteen_central_2_deleted.delete()
+        cls.canteen_satellite_2_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=cls.canteen_central_2_deleted.siret,
+        )
         # canteen_central_serving_3 has 1 satellite
         cls.canteen_central_serving_3 = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
@@ -68,38 +72,57 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         )
 
     def test_canteen_migrate_central_to_groupe_dry_run(self):
-        self.assertEqual(Canteen.objects.count(), 10)
-        self.assertEqual(Canteen.all_objects.count(), 12)
+        self.assertEqual(Canteen.objects.count(), 11)
+        self.assertEqual(Canteen.all_objects.count(), 13)  # 11 + 2 deleted
         # Run command (Dry run)
         call_command("canteen_migrate_central_to_groupe")
         # Check that counts were NOT changed
-        self.assertEqual(Canteen.objects.count(), 10)
-        self.assertEqual(Canteen.all_objects.count(), 12)
+        self.assertEqual(Canteen.objects.count(), 11)
+        self.assertEqual(Canteen.all_objects.count(), 13)  # 11 + 2 deleted
         # Refresh from db
         self.canteen_central_1.refresh_from_db()
+        self.canteen_central_2_deleted.refresh_from_db()
+        self.canteen_central_serving_3.refresh_from_db()
         self.canteen_central_serving_4.refresh_from_db()
         self.canteen_groupe_1.refresh_from_db()
         # Check that canteens were NOT changed
         self.assertEqual(self.canteen_central_1.production_type, Canteen.ProductionType.CENTRAL)
         self.assertEqual(self.canteen_central_1.satellites.count(), 1)  # 1 is deleted
+        self.assertEqual(self.canteen_central_2_deleted.production_type, Canteen.ProductionType.CENTRAL)
+        self.assertEqual(self.canteen_central_2_deleted.satellites.count(), 1)
+        self.assertEqual(self.canteen_central_serving_3.production_type, Canteen.ProductionType.CENTRAL_SERVING)
+        self.assertEqual(self.canteen_central_serving_3.satellites.count(), 1)
         self.assertEqual(self.canteen_central_serving_4.production_type, Canteen.ProductionType.CENTRAL_SERVING)
         self.assertEqual(self.canteen_central_serving_4.satellites.count(), 0)
 
     def test_canteen_migrate_central_to_groupe_apply(self):
-        self.assertEqual(Canteen.objects.count(), 10)
-        self.assertEqual(Canteen.all_objects.count(), 12)
+        self.assertEqual(Canteen.objects.count(), 11)
+        self.assertEqual(Canteen.all_objects.count(), 13)  # 11 + 2 deleted
         # Run command (Apply changes)
         call_command("canteen_migrate_central_to_groupe", apply=True)
         # Check that counts were changed
-        self.assertEqual(Canteen.objects.count(), 10 + 2)
-        self.assertEqual(Canteen.all_objects.count(), 12 + 2)
+        self.assertEqual(Canteen.objects.count(), 11 + 2)  # 11 + 2 new satellites
+        self.assertEqual(Canteen.all_objects.count(), 13 + 2)  # 11 + 2 deleted + 2 new satellites
         # Refresh from db
         self.canteen_central_1.refresh_from_db()
+        self.canteen_central_2_deleted.refresh_from_db()
+        self.canteen_central_serving_3.refresh_from_db()
         self.canteen_central_serving_4.refresh_from_db()
         self.canteen_groupe_1.refresh_from_db()
         # Check that canteens were changed/created
         self.assertEqual(self.canteen_central_1.production_type, Canteen.ProductionType.GROUPE)
         self.assertEqual(self.canteen_central_1.satellites.count(), 1)  # 1 is deleted
         self.assertEqual(Canteen.all_objects.filter(groupe_id=self.canteen_central_1.id).count(), 2)  # 2 satellites
+        self.assertEqual(
+            self.canteen_central_2_deleted.production_type, Canteen.ProductionType.GROUPE
+        )  # changed even if deleted
+        self.assertEqual(
+            self.canteen_central_2_deleted.satellites.count(), 0
+        )  # non-deleted satellites were not linked
+        self.assertEqual(Canteen.all_objects.filter(groupe_id=self.canteen_central_2_deleted.id).count(), 0)
+        self.assertEqual(self.canteen_central_serving_3.production_type, Canteen.ProductionType.GROUPE)
+        self.assertEqual(self.canteen_central_serving_3.satellites.count(), 1 + 1)  # 1 new satellite
+        self.assertEqual(Canteen.all_objects.filter(groupe_id=self.canteen_central_serving_3.id).count(), 2)
         self.assertEqual(self.canteen_central_serving_4.production_type, Canteen.ProductionType.GROUPE)
-        self.assertEqual(self.canteen_central_serving_4.satellites.count(), 1)  # new satellite
+        self.assertEqual(self.canteen_central_serving_4.satellites.count(), 1)  # 1 new satellite
+        self.assertEqual(Canteen.all_objects.filter(groupe_id=self.canteen_central_serving_4.id).count(), 1)
