@@ -108,7 +108,7 @@ export default {
           })
         } else if (this.canteenForTD.satellitesCount > this.maxSatellitesExpected) {
           unusualData.push({
-            text: `Votre établissement livre des repas à plus de ${this.maxSatellitesExpected} sites (${this.canteenForTD.satellitesCount} au total)`,
+            text: `Votre groupe livre des repas à plus de ${this.maxSatellitesExpected} restaurants satellites (${this.canteenForTD.satellitesCount} au total)`,
             id: `td-satellite-count-over-${this.maxSatellitesExpected}`,
             value: this.canteenForTD.satellitesCount,
           })
