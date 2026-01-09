@@ -69,6 +69,11 @@ export default Object.freeze({
         "Mon établissement produit des repas qu'il livre à des lieux de restauration et accueille aussi des convives sur place",
       value: "central_serving",
     },
+    {
+      title: "groupe de restaurants satellites",
+      body: "Groupe de restaurants satellites",
+      value: "groupe",
+    },
   ],
   EconomicModels: [
     { text: "Public", value: "public" },
