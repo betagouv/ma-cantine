@@ -445,33 +445,43 @@ class CanteenModelSaveTest(TransactionTestCase):
 
 
 class CanteenModelDeleteTest(TestCase):
-    def test_canteen_pre_delete_signal(self):
-        canteen_groupe_1_without_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
-        canteen_groupe_2_with_active_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
-        CanteenFactory(
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe_1_without_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_groupe_2_with_active_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_21 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            groupe=canteen_groupe_2_with_active_satellites,
+            groupe=cls.canteen_groupe_2_with_active_satellites,
         )
-        canteen_groupe_3_with_deleted_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
-        canteen_satellite_31 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            groupe=canteen_groupe_3_with_deleted_satellites,
-        )
+
+    def test_canteen_soft_delete(self):
+        self.assertEqual(Canteen.objects.count(), 3)
 
         # ok to delete satellite canteen
-        canteen_satellite_31.delete()
-
+        self.canteen_satellite_21.delete()
         # ok to delete groupe without satellites
-        self.assertEqual(canteen_groupe_1_without_satellites.satellites.count(), 0)
-        canteen_groupe_1_without_satellites.delete()
+        self.assertEqual(self.canteen_groupe_1_without_satellites.satellites.count(), 0)
+        self.canteen_groupe_1_without_satellites.delete()
 
-        # not ok to delete groupe with active satellites
-        self.assertEqual(canteen_groupe_2_with_active_satellites.satellites.count(), 1)
-        self.assertRaises(ValidationError, canteen_groupe_2_with_active_satellites.delete)
+        self.assertEqual(Canteen.objects.count(), 1)
+        self.assertEqual(Canteen.all_objects.count(), 3)
 
+    def test_can_soft_delete_groupe_with_no_active_satellites(self):
+        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(self.canteen_groupe_2_with_active_satellites.satellites.count(), 1)
+
+        # first delete satellites
+        self.canteen_satellite_21.delete()
         # ok to delete groupe with deleted satellites
-        self.assertEqual(canteen_groupe_3_with_deleted_satellites.satellites.count(), 0)
-        canteen_groupe_3_with_deleted_satellites.delete()
+        self.assertEqual(self.canteen_groupe_2_with_active_satellites.satellites.count(), 0)
+        self.canteen_groupe_2_with_active_satellites.delete()
+
+        self.assertEqual(Canteen.objects.count(), 1)
+        self.assertEqual(Canteen.all_objects.count(), 3)
+
+    def test_cannot_soft_delete_groupe_with_active_satellites(self):
+        self.assertEqual(self.canteen_groupe_2_with_active_satellites.satellites.count(), 1)
+        self.assertRaises(ValidationError, self.canteen_groupe_2_with_active_satellites.delete)
 
 
 class CanteenDeleteQuerySetAndPropertyTest(TestCase):
