@@ -31,7 +31,7 @@
       </v-card-text>
       <v-card-text class="fill-height d-flex flex-column" style="position: relative;">
         <v-spacer />
-        <v-card class="py-4 px-5" color="grey lighten-4">
+        <v-card class="py-4 px-5 mb-4" color="grey lighten-4">
           <p class="mb-0 grey--text text--darken-2">
             Votre cantine sert des repas préparés par
             <strong>{{ centralKitchenDisplayName }}</strong>
@@ -217,15 +217,15 @@ export default {
     },
     hasCentralKitchen() {
       if (this.canteen.productionType !== "site_cooked_elsewhere") return false
-      return this.diagnostic && this.diagnostic.canteenId === this.canteen.centralKitchen?.id
+      return this.diagnostic && this.canteen.groupe?.id
     },
     centralKitchenDisplayName() {
-      if (this.canteen.centralKitchen?.name) {
-        return this.canteen.centralKitchen.name
+      if (this.canteen.groupe?.name) {
+        return `le groupe « ${this.canteen.groupe.name} »`
       }
       return this.canteen.centralProducerSiret
         ? `l'établissement avec le SIRET ${this.canteen.centralProducerSiret}`
-        : "un établissement inconnu"
+        : "non renseigné"
     },
     rules() {
       return applicableDiagnosticRules(this.canteen)
