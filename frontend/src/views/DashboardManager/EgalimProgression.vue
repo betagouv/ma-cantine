@@ -85,7 +85,7 @@
       class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
       <p>
-        {{ satelliteInconsistencyMessage }}
+        Vous avez déclaré que votre établissement livrait des repas mais aucun n'a été enregistré
         <br />
         Veuillez ajouter vos restaurants satellites avant télédéclarer.
       </p>
@@ -254,11 +254,6 @@ export default {
     },
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
-    },
-    satelliteInconsistencyMessage() {
-      const satelliteCount = this.canteen.satelliteCanteensCount
-      const declared = satelliteCount === 1 ? `un restaurant` : `${satelliteCount} restaurants`
-      return `Vous avez déclaré que votre établissement livrait des repas à ${declared} mais aucun n'a été enregistré.`
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store.state.sectors)
