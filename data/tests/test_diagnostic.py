@@ -287,7 +287,7 @@ class Diagnostic2025ModelSaveTest(TransactionTestCase):
 class DiagnosticQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_valid_1 = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_valid_1 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         cls.canteen_valid_2 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.canteen_valid_3 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.canteen_valid_4 = CanteenFactory(siret="40419443300078")
@@ -299,7 +299,7 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_valid_sat = CanteenFactory(
             siret="21380185500015",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=cls.canteen_valid_1.siret,
+            groupe=cls.canteen_valid_1,
         )
         cls.canteen_valid_6_armee = CanteenFactory(siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE)
         cls.canteen_missing_siret = CanteenFactory()
@@ -337,7 +337,7 @@ class DiagnosticQuerySetTest(TestCase):
                 valeur_egalim_autres=100.00,
             )
             with freeze_time(date_in_teledeclaration_campaign):
-                diagnostic.teledeclare(applicant=UserFactory())
+                diagnostic.teledeclare(applicant=UserFactory(), run_validations=False)
             diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data - 1,
@@ -347,7 +347,7 @@ class DiagnosticQuerySetTest(TestCase):
                 valeur_bio=200.00,
             )
             with freeze_time(date_in_last_teledeclaration_campaign):
-                diagnostic_last_year.teledeclare(applicant=UserFactory())
+                diagnostic_last_year.teledeclare(applicant=UserFactory(), run_validations=False)
             setattr(cls, f"diagnostic_canteen_valid_{index + 1}", diagnostic)
 
         cls.diagnostic_canteen_missing_siret = DiagnosticFactory(
@@ -359,7 +359,7 @@ class DiagnosticQuerySetTest(TestCase):
             valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory(), run_validations=False)
 
         cls.diagnostic_canteen_meal_price_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -468,7 +468,7 @@ class DiagnosticQuerySetTest(TestCase):
 
     def test_publicly_visible(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
-        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 15)  # 2 belong to canteen_army
+        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 13)  # groupe & army excluded
 
     def test_with_appro_percent_stats(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
@@ -585,13 +585,9 @@ class DiagnosticModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen_central = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
-        cls.canteen_sat = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=cls.canteen_central.siret,
-        )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
         cls.diagnostic = DiagnosticFactory(
-            canteen=cls.canteen_central,
+            canteen=cls.canteen_site,
             year=year_data,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
@@ -602,11 +598,11 @@ class DiagnosticModelTest(TestCase):
     def test_delete_canteen(self):
         self.assertIsNotNone(self.diagnostic.canteen)
         # soft delete
-        self.canteen_central.delete()
+        self.canteen_site.delete()
         self.diagnostic.refresh_from_db()
         self.assertIsNotNone(self.diagnostic.canteen)
         # hard delete
-        self.canteen_central.hard_delete()
+        self.canteen_site.hard_delete()
         self.diagnostic.refresh_from_db()
         self.assertIsNone(self.diagnostic.canteen)
 
@@ -624,80 +620,102 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen_central = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
-        cls.canteen_sat = CanteenFactory(
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=cls.canteen_central.siret,
+            groupe=cls.canteen_groupe,
             sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL],
         )
-        cls.diagnostic = DiagnosticFactory(
-            canteen=cls.canteen_central,
+        cls.diagnostic_groupe = DiagnosticFactory(
+            canteen=cls.canteen_groupe,
             year=year_data,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
             valeur_totale=0,
         )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        cls.diagnostic_site = DiagnosticFactory(
+            canteen=cls.canteen_site,
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+        )
 
     @freeze_time(date_in_last_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_outside_of_campaign(self):
         with self.assertRaises(ValidationError):
-            self.diagnostic.teledeclare(applicant=self.user)
+            self.diagnostic_groupe.teledeclare(applicant=self.user)
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_cannot_teledeclare_a_diagnostic_already_teledeclared(self):
+        # teledeclare once
+        self.diagnostic_site.teledeclare(applicant=self.user)
+        # try to teledeclare again
+        with self.assertRaises(ValidationError):
+            self.diagnostic_site.teledeclare(applicant=UserFactory())
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_not_filled(self):
-        self.assertEqual(self.diagnostic.valeur_totale, 0)
+        self.assertEqual(self.diagnostic_groupe.valeur_totale, 0)
         with self.assertRaises(ValidationError):
-            self.diagnostic.teledeclare(applicant=self.user)
+            self.diagnostic_groupe.teledeclare(applicant=self.user)
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_cannot_teledeclare_a_diagnostic_if_canteen_not_filled(self):
+        Canteen.objects.filter(id=self.canteen_site.id).update(yearly_meal_count=None)  # incomplete
+        self.canteen_site.refresh_from_db()
+        with self.assertRaises(ValidationError):
+            self.diagnostic_site.teledeclare(applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_teledeclare(self):
-        self.assertIsNone(self.diagnostic.applicant)
-        self.assertIsNone(self.diagnostic.canteen_snapshot)
-        self.assertIsNone(self.diagnostic.satellites_snapshot)
-        self.assertIsNone(self.diagnostic.applicant_snapshot)
-        self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
-        self.assertIsNone(self.diagnostic.teledeclaration_date)
-        self.assertIsNone(self.diagnostic.teledeclaration_mode)
-        self.assertIsNone(self.diagnostic.teledeclaration_version)
-        self.assertIsNone(self.diagnostic.teledeclaration_id)
+        self.assertIsNone(self.diagnostic_groupe.applicant)
+        self.assertIsNone(self.diagnostic_groupe.canteen_snapshot)
+        self.assertIsNone(self.diagnostic_groupe.satellites_snapshot)
+        self.assertIsNone(self.diagnostic_groupe.applicant_snapshot)
+        self.assertEqual(self.diagnostic_groupe.status, Diagnostic.DiagnosticStatus.DRAFT)
+        self.assertIsNone(self.diagnostic_groupe.teledeclaration_date)
+        self.assertIsNone(self.diagnostic_groupe.teledeclaration_mode)
+        self.assertIsNone(self.diagnostic_groupe.teledeclaration_version)
+        self.assertIsNone(self.diagnostic_groupe.teledeclaration_id)
         # fill the diagnostic
-        self.diagnostic.valeur_totale = 1000
-        self.diagnostic.valeur_bio = 200
-        self.diagnostic.valeur_siqo = 100
-        self.diagnostic.valeur_externalites_performance = 100
-        self.diagnostic.valeur_egalim_autres = 100
-        self.diagnostic.save()
+        self.diagnostic_groupe.valeur_totale = 1000
+        self.diagnostic_groupe.valeur_bio = 200
+        self.diagnostic_groupe.valeur_siqo = 100
+        self.diagnostic_groupe.valeur_externalites_performance = 100
+        self.diagnostic_groupe.valeur_egalim_autres = 100
+        self.diagnostic_groupe.save()
         # teledeclare
-        self.diagnostic.teledeclare(applicant=self.user)
-        self.assertEqual(self.diagnostic.applicant, self.user)
-        self.assertIsNotNone(self.diagnostic.canteen_snapshot)
-        self.assertEqual(self.diagnostic.valeur_bio_agg, 200)
-        self.assertEqual(self.diagnostic.valeur_siqo_agg, 100)
-        self.assertEqual(self.diagnostic.valeur_externalites_performance_agg, 100)
-        self.assertEqual(self.diagnostic.valeur_egalim_autres_agg, 100)
-        self.assertEqual(self.diagnostic.valeur_egalim_hors_bio_agg, 300)
-        self.assertEqual(self.diagnostic.valeur_egalim_agg, 500)
-        self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
-        self.assertIsNotNone(self.diagnostic.teledeclaration_date)
-        self.assertEqual(self.diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
-        self.assertEqual(self.diagnostic.teledeclaration_version, 16)
-        self.assertIsNone(self.diagnostic.teledeclaration_id)
+        self.diagnostic_groupe.teledeclare(applicant=self.user)
+        self.assertEqual(self.diagnostic_groupe.applicant, self.user)
+        self.assertIsNotNone(self.diagnostic_groupe.canteen_snapshot)
+        self.assertEqual(self.diagnostic_groupe.valeur_bio_agg, 200)
+        self.assertEqual(self.diagnostic_groupe.valeur_siqo_agg, 100)
+        self.assertEqual(self.diagnostic_groupe.valeur_externalites_performance_agg, 100)
+        self.assertEqual(self.diagnostic_groupe.valeur_egalim_autres_agg, 100)
+        self.assertEqual(self.diagnostic_groupe.valeur_egalim_hors_bio_agg, 300)
+        self.assertEqual(self.diagnostic_groupe.valeur_egalim_agg, 500)
+        self.assertEqual(self.diagnostic_groupe.status, Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertIsNotNone(self.diagnostic_groupe.teledeclaration_date)
+        self.assertEqual(self.diagnostic_groupe.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
+        self.assertEqual(self.diagnostic_groupe.teledeclaration_version, 16)
+        self.assertIsNone(self.diagnostic_groupe.teledeclaration_id)
         # for snapshots, see tests below
         # try to teledeclare again
         with self.assertRaises(ValidationError):
-            self.diagnostic.teledeclare(applicant=UserFactory())
+            self.diagnostic_groupe.teledeclare(applicant=UserFactory())
 
 
 class DiagnosticModelCancelMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_central = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
-        cls.canteen_sat = CanteenFactory(
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=cls.canteen_central.siret,
+            groupe=cls.canteen_groupe,
         )
         cls.diagnostic = DiagnosticFactory(
-            canteen=cls.canteen_central,
+            canteen=cls.canteen_groupe,
             year=year_data,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
@@ -738,14 +756,14 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        # central + sat
-        cls.canteen_central = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
-        cls.canteen_sat = CanteenFactory(
+        # groupe + satellite
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=cls.canteen_central.siret,
+            groupe=cls.canteen_groupe,
         )
-        cls.diagnostic_central = DiagnosticFactory(
-            canteen=cls.canteen_central,
+        cls.diagnostic_groupe = DiagnosticFactory(
+            canteen=cls.canteen_groupe,
             year=year_data,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
@@ -766,16 +784,16 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
             valeur_bio=200,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_central.teledeclare(applicant=cls.user)
+            cls.diagnostic_groupe.teledeclare(applicant=cls.user)
             cls.diagnostic_site.teledeclare(applicant=cls.user)
 
     def test_diagnostic_canteen_snapshot(self):
-        # central
-        self.assertIsNotNone(self.diagnostic_central.canteen_snapshot)
-        self.assertEqual(self.diagnostic_central.canteen_snapshot["id"], self.canteen_central.id)
-        self.assertEqual(self.diagnostic_central.canteen_snapshot["production_type"], Canteen.ProductionType.CENTRAL)
-        self.assertEqual(self.diagnostic_central.canteen_snapshot["sector_list"], [])
-        self.assertEqual(self.diagnostic_central.canteen_snapshot_sector_list_display, None)
+        # groupe
+        self.assertIsNotNone(self.diagnostic_groupe.canteen_snapshot)
+        self.assertEqual(self.diagnostic_groupe.canteen_snapshot["id"], self.canteen_groupe.id)
+        self.assertEqual(self.diagnostic_groupe.canteen_snapshot["production_type"], Canteen.ProductionType.GROUPE)
+        self.assertEqual(self.diagnostic_groupe.canteen_snapshot["sector_list"], [])
+        self.assertEqual(self.diagnostic_groupe.canteen_snapshot_sector_list_display, None)
         # site
         self.assertIsNotNone(self.diagnostic_site.canteen_snapshot)
         self.assertEqual(self.diagnostic_site.canteen_snapshot["id"], self.canteen_site.id)
@@ -788,18 +806,18 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         )
 
     def test_diagnostic_satellites_snapshot(self):
-        # central
-        self.assertIsNotNone(self.diagnostic_central.satellites_snapshot)
-        self.assertEqual(len(self.diagnostic_central.satellites_snapshot), 1)
-        self.assertEqual(self.diagnostic_central.satellites_snapshot[0]["id"], self.canteen_sat.id)
+        # groupe
+        self.assertIsNotNone(self.diagnostic_groupe.satellites_snapshot)
+        self.assertEqual(len(self.diagnostic_groupe.satellites_snapshot), 1)
+        self.assertEqual(self.diagnostic_groupe.satellites_snapshot[0]["id"], self.canteen_satellite.id)
         # site
         self.assertIsNone(self.diagnostic_site.satellites_snapshot)
 
     def test_diagnostic_applicant_snapshot(self):
-        # central
-        self.assertIsNotNone(self.diagnostic_central.applicant_snapshot)
-        self.assertEqual(self.diagnostic_central.applicant_snapshot["id"], self.user.id)
-        self.assertEqual(self.diagnostic_central.applicant_snapshot["email"], self.user.email)
+        # groupe
+        self.assertIsNotNone(self.diagnostic_groupe.applicant_snapshot)
+        self.assertEqual(self.diagnostic_groupe.applicant_snapshot["id"], self.user.id)
+        self.assertEqual(self.diagnostic_groupe.applicant_snapshot["email"], self.user.email)
         # site
         self.assertIsNotNone(self.diagnostic_site.applicant_snapshot)
         self.assertEqual(self.diagnostic_site.applicant_snapshot["id"], self.user.id)
