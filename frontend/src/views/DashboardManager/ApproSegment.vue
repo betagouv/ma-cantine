@@ -40,8 +40,8 @@
         <v-spacer />
         <div v-if="!hasApproData">
           <p>
-            Les données d’approvisionnement apparaîtront directement ici lorsque votre cuisine centrale les aura
-            renseignées.
+            Les données d’approvisionnement apparaîtront directement ici lorsque votre groupe de restaurants satellites
+            les aura renseignées.
           </p>
           <p v-if="!diagnostic || diagnostic.centralKitchenDiagnosticMode !== 'ALL'">
             En attendant, déclarez vos actions concernant les autres volets de la loi EGalim.

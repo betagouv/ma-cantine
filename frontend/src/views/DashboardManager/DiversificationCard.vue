@@ -69,7 +69,7 @@ export default {
       if (this.delegatedToSatellite) {
         return "Les données associées à cette mesure EGalim sont renseignées au niveau des restaurants satellites de votre groupe."
       } else if (this.delegatedToCentralKitchen) {
-        return "Votre cuisine centrale a renseigné les données de cette mesure à votre place."
+        return "Votre groupe de restaurants satellites a renseigné les données de cette mesure à votre place."
       }
       const rules = applicableDiagnosticRules(this.canteen)
       if (rules.hasDiversificationPlan) {
