@@ -1726,18 +1726,23 @@ class Diagnostic(models.Model):
                 return Diagnostic.TeledeclarationMode.CENTRAL_APPRO
         return Diagnostic.TeledeclarationMode.SITE
 
-    def teledeclare(self, applicant):
+    def teledeclare(self, applicant, run_validations=True):
         """
         Teledeclare the diagnostic
+        - applicant is mandatory (User instance)
+        - run_validations: if False, skip validation checks (USE WITH CAUTION) (only for tests)
         """
-        if not is_in_teledeclaration_or_correction():
-            raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
-        if not is_in_teledeclaration_or_correction(self.year):
-            raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
-        if self.is_teledeclared:
-            raise ValidationError("Ce diagnostic a déjà été télédéclaré")
-        if not self.is_filled:
-            raise ValidationError("Ce diagnostic n'est pas rempli")
+        if run_validations:
+            if not is_in_teledeclaration_or_correction():
+                raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
+            if not is_in_teledeclaration_or_correction(self.year):
+                raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
+            if self.is_teledeclared:
+                raise ValidationError("Ce diagnostic a déjà été télédéclaré")
+            if not self.is_filled:
+                raise ValidationError("Ce diagnostic n'est pas rempli")
+            if not self.canteen.is_filled:
+                raise ValidationError("La cantine associée à ce diagnostic n'est pas remplie")
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 
