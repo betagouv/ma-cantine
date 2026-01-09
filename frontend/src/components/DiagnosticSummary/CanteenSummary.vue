@@ -16,39 +16,6 @@
       </v-col>
       <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
-          <v-icon color="primary" x-large>$france-line</v-icon>
-        </div>
-        <div class="mt-n1">
-          <p class="my-0 fr-text-sm grey--text text--darken-1">Commune</p>
-          <p class="my-0">{{ canteen.city && canteen.cityInseeCode ? canteen.city : "—" }}</p>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
-        <div class="mx-8">
-          <v-icon color="primary" x-large>$team-line</v-icon>
-        </div>
-        <div class="mt-n1">
-          <p class="my-0 fr-text-sm grey--text text--darken-1">Modèle économique</p>
-          <p class="my-0">{{ economicModel || "—" }}</p>
-          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Mode de gestion</p>
-          <p class="my-0">{{ managementType || "—" }}</p>
-          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Type de production</p>
-          <p class="my-0">{{ productionType || "—" }}</p>
-          <div v-if="isSatellite">
-            <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">SIRET de la cuisine centrale</p>
-            <p class="my-0">
-              <span v-if="canteen.centralKitchen && canteen.centralKitchen.name">
-                « {{ canteen.centralKitchen.name }} » :
-              </span>
-              {{ canteen.centralProducerSiret || "—" }}
-            </p>
-          </div>
-        </div>
-      </v-col>
-      <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
-        <div class="mx-8">
           <v-icon color="primary" x-large>$restaurant-line</v-icon>
         </div>
         <div class="mt-n1">
@@ -62,16 +29,55 @@
           <p class="my-0">
             {{ canteen.yearlyMealCount ? parseInt(canteen.yearlyMealCount).toLocaleString("fr-FR") : "—" }}
           </p>
-          <div v-if="canteen.isCentralCuisine">
+          <div v-if="canteen.productionType === 'groupe'">
             <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">
-              Nombre de cantines à qui je fournis des repas
+              Nombre de restaurants satellites à qui je fournis des repas
             </p>
             <p class="my-0">
-              {{
-                canteen.satelliteCanteensCount ? parseInt(canteen.satelliteCanteensCount).toLocaleString("fr-FR") : "—"
-              }}
+              {{ canteen.satellitesCount ? parseInt(canteen.satellitesCount).toLocaleString("fr-FR") : "—" }}
             </p>
           </div>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
+        <div class="mx-8">
+          <v-icon color="primary" x-large>$team-line</v-icon>
+        </div>
+        <div class="mt-n1">
+          <div v-if="canteen.productionType !== 'groupe'">
+            <p class="my-0 fr-text-sm grey--text text--darken-1">Modèle économique</p>
+            <p class="my-0">{{ economicModel || "—" }}</p>
+          </div>
+          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Mode de gestion</p>
+          <p class="my-0">{{ managementType || "—" }}</p>
+          <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">Type de production</p>
+          <p class="my-0">{{ productionType || "—" }}</p>
+          <div v-if="canteen.groupe">
+            <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">
+              Appartient au groupe de restaurants satellites :
+            </p>
+            <p class="my-0">« {{ canteen.groupe.name }} » :</p>
+          </div>
+          <div v-if="canteen.centralProducerSiret">
+            <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">SIRET de la cuisine centrale</p>
+            <p class="my-0">{{ canteen.centralProducerSiret }}</p>
+          </div>
+        </div>
+      </v-col>
+      <v-col
+        v-if="canteen.productionType !== 'groupe'"
+        cols="12"
+        md="6"
+        class="d-flex align-center pa-0 my-4 my-md-0 left-border"
+      >
+        <div class="mx-8">
+          <v-icon color="primary" x-large>$france-line</v-icon>
+        </div>
+        <div class="mt-n1">
+          <p class="my-0 fr-text-sm grey--text text--darken-1">Commune</p>
+          <p class="my-0">{{ canteen.city && canteen.cityInseeCode ? canteen.city : "—" }}</p>
         </div>
       </v-col>
     </v-row>
@@ -92,12 +98,12 @@
         </div>
       </v-col>
     </v-row>
-    <v-row v-if="canteen.isCentralCuisine">
+    <v-row v-if="canteen.productionType === 'groupe'">
       <v-col cols="12" class="pb-0">
         <h3 class="fr-h6">Mes restaurants satellites</h3>
         <p class="fr-text-sm mb-1 d-flex align-center" :class="{ 'dark-orange': hasSatelliteInconsistency }">
           <v-icon v-if="hasSatelliteInconsistency" small class="mr-1 dark-orange">$alert-line</v-icon>
-          {{ satelliteCountEmpty }}
+          {{ satelliteCountSentence }}
         </p>
       </v-col>
       <v-col cols="12" md="8">
@@ -176,16 +182,14 @@ export default {
     hasSite() {
       return this.canteen.productionType !== "central" && this.canteen.productionType !== "groupe"
     },
-    isSatellite() {
-      return this.canteen?.productionType === "site_cooked_elsewhere"
-    },
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
     },
-    satelliteCountEmpty() {
-      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "restaurants satellites" : "restaurant satellite"
-      const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
-      return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
+    satelliteCountSentence() {
+      const count = this.canteen.satellitesCount
+      if (count === 0) return "Aucun restaurant satellite renseigné"
+      else if (count === 1) return "1 restaurant satellite renseigné"
+      else return `${count} restaurants satellites renseignés`
     },
   },
 }
