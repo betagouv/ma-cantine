@@ -68,7 +68,14 @@
         </span>
       </p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-        <v-btn :to="{ name: 'CanteenForm' }" color="primary" class="fr-text font-weight-medium">
+        <v-btn
+          :to="{
+            name: 'GestionnaireCantineGerer',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+          color="primary"
+          class="fr-text font-weight-medium"
+        >
           Mettre à jour mon établissement
         </v-btn>
       </v-card-actions>

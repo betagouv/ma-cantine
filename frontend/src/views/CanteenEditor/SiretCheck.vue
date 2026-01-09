@@ -117,6 +117,7 @@ import validators from "@/validators"
 import DsfrTextField from "@/components/DsfrTextField"
 import DsfrTextarea from "@/components/DsfrTextarea"
 
+// File not used anymore
 export default {
   name: "SiretCheck",
   components: { DsfrTextField, DsfrTextarea },
@@ -193,7 +194,7 @@ export default {
         .then((response) => {
           this.$router
             .push({
-              name: "CanteenForm",
+              name: "GestionnaireCantineGerer",
               params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(response) },
             })
             .then(() => {
