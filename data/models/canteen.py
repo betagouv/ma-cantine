@@ -590,16 +590,18 @@ class Canteen(SoftDeletionModel):
         if validation_errors:
             raise ValidationError(validation_errors)
 
-    def save(self, **kwargs):
+    def save(self, run_validations=True, **kwargs):
         """
         - cleanup some fields (siret, siren_unite_legale, epci, central_producer_siret, logo)
         - set region from department
         - full_clean(): run validations (with extra validations in clean())
+            - this can be skipped with run_validations=False (USE WITH CAUTION)
         """
         self.normalize_fields()
         self.optimize_logo()
         self.set_region_from_department()
-        self.full_clean()
+        if run_validations:
+            self.full_clean()
         super().save(**kwargs)
 
     @property
