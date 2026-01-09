@@ -2,7 +2,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from data.models import Canteen, Teledeclaration
+from data.models import Canteen, Diagnostic
 
 logger = logging.getLogger(__name__)
 
@@ -33,16 +33,14 @@ class Command(BaseCommand):
         Canteen.all_objects.all().update(**{field_name: False})
 
         logger.info("Step 2: find the canteens that have a teledeclaration for the specified year")
-        teledeclarations = Teledeclaration.objects.submitted_for_year(year)
-        logger.info(f"Found {len(teledeclarations)} teledeclarations for year {year}")
-        # v1: filter only on the canteen_id of Teledeclarations
-        # canteens_with_teledeclarations = teledeclarations.values_list("canteen_id", flat=True).distinct()
+        diagnostics_teledeclared = Diagnostic.objects.teledeclared_for_year(year)
+        logger.info(f"Found {len(diagnostics_teledeclared)} teledeclarations for year {year}")
         # v2: filter on the canteen_id & declared_data (satellites) of Teledeclarations
         canteens_with_teledeclarations = []
-        for td in teledeclarations.values("canteen_id", "declared_data"):
-            canteens_with_teledeclarations.append(td["canteen_id"])
-            if "satellites" in td["declared_data"]:
-                for satellite in td["declared_data"]["satellites"]:
+        for dtd in diagnostics_teledeclared.values("canteen_snapshot", "satellites_snapshot"):
+            canteens_with_teledeclarations.append(dtd["canteen_snapshot"]["id"])
+            if len(dtd["satellites_snapshot"]) > 0:
+                for satellite in dtd["satellites_snapshot"]:
                     canteens_with_teledeclarations.append(satellite["id"])
 
         logger.info("Step 3: update the field")
