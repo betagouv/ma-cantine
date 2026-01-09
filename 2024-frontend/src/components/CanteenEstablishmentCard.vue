@@ -23,7 +23,7 @@ const linkedCanteensLabel = computed(() => {
     <div class="fr-grid-row fr-grid-row--top fr-grid-row--left">
       <div class="fr-col-5">
         <p class="fr-h6 fr-mb-1v">{{ name }}</p>
-        <DsfrBadge v-if="status === 'selected'" type="success" :label="siret ? 'sélectionné' : 'rattaché'" small />
+        <DsfrBadge v-if="status === 'selected'" type="success" label="sélectionné" small />
       </div>
       <div class="fr-col-offset-1"></div>
       <ul class="ma-cantine--unstyled-list fr-my-0 fr-col-6">
