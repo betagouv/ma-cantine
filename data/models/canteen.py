@@ -629,6 +629,7 @@ class Canteen(SoftDeletionModel):
     @property
     def is_central_cuisine(self) -> bool:
         return self.production_type and self.production_type in [
+            Canteen.ProductionType.GROUPE,
             Canteen.ProductionType.CENTRAL,
             Canteen.ProductionType.CENTRAL_SERVING,
         ]
@@ -643,11 +644,11 @@ class Canteen(SoftDeletionModel):
 
     @property
     def satellites(self):
-        if self.is_central_cuisine:
+        if self.is_groupe:
+            return self.canteen_set.all()
+        elif self.is_central_cuisine:
             if self.siret:
                 return Canteen.objects.get_satellites(self.siret)
-        elif self.is_groupe:
-            return self.canteen_set.all()
         return Canteen.objects.none()
 
     @property
