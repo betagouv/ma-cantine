@@ -115,11 +115,12 @@ export default {
     },
     showAdditionalItems() {
       const isSatellite = this.canteen.productionType === "site_cooked_elsewhere"
+      const isGroupe = this.canteen.productionType === "groupe"
 
       if (isSatellite) {
         const centralKitchenDeclaresAll = this.centralKitchenDiagostic?.centralKitchenDiagnosticMode === "ALL"
         return !centralKitchenDeclaresAll
-      } else if (this.canteen.isCentralCuisine) {
+      } else if (isGroupe) {
         const onlyDeclaresApproData = this.diagnostic.centralKitchenDiagnosticMode === "APPRO"
         return !onlyDeclaresApproData
       }
@@ -142,12 +143,12 @@ export default {
         { value: managementTypeDetail ? managementTypeDetail.text : "", label: "Mode de gestion" },
         { value: productionTypeDetail ? productionTypeDetail.body : "", label: "Mode de production" },
       ]
-      if (this.usesCentralProducer)
+      if (this.canteen.centralProducerSiret)
         items.push({ value: this.canteen.centralProducerSiret, label: "SIRET de la cuisine centrale" })
       if (this.showSatelliteCanteensCount)
         items.push({
-          value: this.canteen.satelliteCanteensCount,
-          label: "Nombre de cantines à qui je fournis des repas",
+          value: this.canteen.satellitesCount,
+          label: "Nombre de restaurants satellites du groupe",
           isNumber: true,
         })
       items.push({ value: this.canteen.dailyMealCount, label: "Nombre moyen de couverts par jour", isNumber: true })
@@ -645,14 +646,15 @@ export default {
     sectors() {
       return sectorDisplayString(this.canteen.sectorList, this.$store.state.sectors)
     },
-    usesCentralProducer() {
-      return this.canteen.productionType === "site_cooked_elsewhere"
-    },
     showSectors() {
-      return this.canteen.productionType !== "central"
+      return this.canteen.productionType !== "groupe"
     },
     showSatelliteCanteensCount() {
-      return this.canteen.productionType === "central" || this.canteen.productionType === "central_serving"
+      return (
+        this.canteen.productionType === "central" ||
+        this.canteen.productionType === "central_serving" ||
+        this.canteen.productionType === "groupe"
+      )
     },
     showMinistryField() {
       const sectors = sectorsSelectList(this.$store.state.sectors)

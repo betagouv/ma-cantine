@@ -14,7 +14,16 @@
     {% if satellites %}
         Cette télédéclaration concerne les restaurants satellites :
         <ul>
-            {% for satellite in satellites %}<li>{{ satellite.name }} (SIRET : {{ satellite.siret }})</li>{% endfor %}
+            {% for satellite in satellites %}
+            <li>{{ satellite.name }}
+                {% if satellite.siret %}
+                (SIRET : {{ satellite.siret }})
+                {% endif %}
+                {% if satellite.siren_unite_legale %}
+                (SIREN : {{ satellite.siren_unite_legale }})
+                {% endif %}
+            </li>
+            {% endfor %}
         </ul>
     {% endif %}
 {% endif %}
