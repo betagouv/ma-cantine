@@ -75,7 +75,10 @@ const tableRows = computed(() => {
     ? []
     : satellites.value.map((sat) => {
         return {
-          name: sat.name,
+          name: {
+            canteen: sat.name,
+            url: urlService.getCanteenUrl(sat),
+          },
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
           diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
@@ -122,7 +125,15 @@ const removeRow = (id) => {
       class="gestionnaire-cantine-groupe-satellites__table"
     >
       <template #cell="{ colKey, cell }">
-        <template v-if="colKey === 'diagnostic'">
+        <template v-if="colKey === 'name'">
+          <router-link
+            :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+            class="fr-text-title--blue-france fr-text--bold"
+          >
+            {{ cell.canteen }}
+          </router-link>
+        </template>
+        <template v-else-if="colKey === 'diagnostic'">
           <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
         </template>
         <template v-else-if="colKey === 'edit'">
