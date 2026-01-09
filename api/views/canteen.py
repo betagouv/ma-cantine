@@ -20,7 +20,6 @@ from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIV
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.utils import timezone
 
 from api.exceptions import DuplicateException
 from api.filters.utils import MaCantineOrderingFilter, UnaccentSearchFilter
@@ -28,7 +27,6 @@ from api.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManager,
-    IsCanteenManagerUrlParam,
     IsElectedOfficial,
 )
 from api.serializers import (
@@ -46,7 +44,6 @@ from api.serializers import (
     MinimalCanteenSerializer,
     PublicCanteenPreviewSerializer,
     PublicCanteenSerializer,
-    SatelliteCanteenSerializer,
 )
 from api.views.utils import update_change_reason_with_auth
 from common.api.adresse import fetch_geo_data_from_code
@@ -717,98 +714,6 @@ class UndoClaimCanteenView(APIView):
         canteen.has_been_claimed = False
         canteen.save()
         return JsonResponse({}, status=status.HTTP_200_OK)
-
-
-@extend_schema_view(
-    get=extend_schema(
-        summary="Lister les restaurants satellites pour une cuisine centrale.",
-        description="Si la cantine en question est une cuisine centrale, cet endpoint permet de lister toutes les restaurants satellites attachés à elle.",
-    ),
-    post=extend_schema(
-        summary="Ajouter un restaurant satellite à la cuisine centrale.",
-        description="Si la cantine en question est une cuisine centrale, cet endpoint permet d'ajouter un restaurant satellite.",
-    ),
-)
-class SatelliteListCreateView(ListCreateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
-    required_scopes = ["canteen"]
-    model = Canteen
-    serializer_class = SatelliteCanteenSerializer
-
-    def get_queryset(self):
-        year = timezone.now().year - 1
-        canteen_pk = self.kwargs["canteen_pk"]
-        return Canteen.objects.get(pk=canteen_pk).satellites.annotate_with_action_for_year(year)
-
-    def post(self, request, canteen_pk):
-        canteen = Canteen.objects.get(pk=canteen_pk)
-        siret_satellite = request.data.get("siret")
-        created = False
-
-        if not canteen.is_central_cuisine:
-            raise PermissionDenied("Votre cantine n'est pas une cuisine centrale")
-
-        if request.user not in canteen.managers.all():
-            raise PermissionDenied("Vous n'êtes pas gestionnaire de cette cantine")
-
-        try:
-            if siret_satellite and Canteen.objects.filter(siret=siret_satellite).exists():
-                satellite = Canteen.objects.filter(siret=siret_satellite).first()
-
-                if satellite.is_central_cuisine:
-                    raise PermissionDenied("La cantine renseignée est une cuisine centrale")
-
-                if satellite.central_producer_siret and satellite.central_producer_siret != canteen.siret:
-                    raise PermissionDenied("Cette cantine est déjà fourni par une autre cuisine centrale")
-
-                satellite.central_producer_siret = canteen.siret
-                satellite.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
-                satellite.save()
-                update_change_reason_with_auth(self, satellite)
-            else:
-                new_satellite = FullCanteenSerializer(data=request.data)
-                new_satellite.is_valid(raise_exception=True)
-                created = True
-
-                satellite = new_satellite.save(
-                    central_producer_siret=canteen.siret,
-                    import_source=f"Cuisine centrale : {canteen.siret}",
-                    production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-                )
-                update_change_reason_with_auth(self, satellite)
-            if created or satellite.managers.count() == 0:
-                for manager in canteen.managers.all():
-                    satellite.managers.add(manager)
-            return_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
-            return Response(FullCanteenSerializer(satellite).data, status=return_status)
-        except SectorM2M.DoesNotExist:
-            raise BadRequest()
-
-
-@extend_schema_view(
-    post=extend_schema(
-        summary="Enlever un restaurant satellite à la cuisine centrale.",
-        description="Cet endpoint permet d'enlever un restaurant satellite d'une cuisine centrale",
-    ),
-)
-class UnlinkSatelliteView(APIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
-    serializer_class = FullCanteenSerializer
-
-    def post(self, request, canteen_pk, satellite_pk):
-        central_kitchen = Canteen.objects.get(pk=canteen_pk)
-
-        try:
-            satellite = Canteen.objects.get(pk=satellite_pk)
-        except Canteen.DoesNotExist:
-            return Response(FullCanteenSerializer(central_kitchen).data, status=status.HTTP_200_OK)
-
-        if satellite.central_producer_siret != central_kitchen.siret:
-            return Response(FullCanteenSerializer(central_kitchen).data, status=status.HTTP_200_OK)
-
-        satellite.central_producer_siret = None
-        satellite.save()
-        return Response(FullCanteenSerializer(central_kitchen).data, status=status.HTTP_200_OK)
 
 
 class ActionableCanteensListView(ListAPIView):
