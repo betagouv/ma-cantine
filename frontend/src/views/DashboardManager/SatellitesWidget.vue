@@ -73,7 +73,7 @@ export default {
         { text: "Nom", value: "name" },
         { text: `Bilan ${lastYear()}`, value: "action" },
       ],
-      currentYear: false, // Table always display for previous year
+      isCurrentYear: false, // Table always display for previous year
       inTeledeclarationCampaign: false,
       inCorrectionCampaign: false,
     }
