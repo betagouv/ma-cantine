@@ -152,34 +152,29 @@ const routes = [
         },
       },
       {
-        path: "groupe/",
-        children: [
-          {
-            path: "satellites",
-            name: "GestionnaireCantineGroupeSatellites",
-            component: GestionnaireCantineGroupeSatellites,
-            meta: {
-              title: "Gérer les restaurants satellites de mon groupe",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "DashboardManager" }, useCanteenName: true },
-              ],
-            },
-          },
-          {
-            path: "modifier",
-            name: "GestionnaireCantineGroupeModifier",
-            component: GestionnaireCantineGroupeModifier,
-            meta: {
-              title: "Modifier mon groupe de restaurants satellites",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "DashboardManager" }, useCanteenName: true },
-                { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
-              ],
-            },
-          }
-        ],
+        path: "satellites",
+        name: "GestionnaireCantineGroupeSatellites",
+        component: GestionnaireCantineGroupeSatellites,
+        meta: {
+          title: "Gérer les restaurants satellites de mon groupe",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "DashboardManager" }, useCanteenName: true },
+          ],
+        },
+      },
+      {
+        path: "modifier-groupe",
+        name: "GestionnaireCantineGroupeModifier",
+        component: GestionnaireCantineGroupeModifier,
+        meta: {
+          title: "Modifier mon groupe de restaurants satellites",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
+          ],
+        },
       },
     ],
   },

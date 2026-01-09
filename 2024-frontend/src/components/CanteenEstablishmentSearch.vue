@@ -5,7 +5,7 @@ import canteensService from "@/services/canteens.js"
 import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Props */
-const props = defineProps(["errorRequired", "hasSiret", "establishmentData", "title"])
+const props = defineProps(["errorRequired", "hasSiret", "establishmentData", "title", 'type'])
 
 /* Store */
 const store = useRootStore()
@@ -83,6 +83,14 @@ const searchByNumber = () => {
         case !response.id && !response.siren:
           canteen.found = true
           canteen.status = "can-be-created"
+          break
+        case !response.id && response.siren !== "" && props.type === "group":
+          canteen.found = true
+          canteen.status = "can-be-created"
+          break
+        case !response.id && response.siren !== "" && props.type !== "group":
+          canteen.found = true
+          canteen.status = "can-be-linked"
           break
         case !response.id && response.siren !== "":
           canteen.found = true

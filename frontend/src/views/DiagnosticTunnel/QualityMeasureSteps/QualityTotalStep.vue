@@ -162,10 +162,14 @@ export default {
   },
   methods: {
     modifyYearlyMealCount() {
+      const editPageName =
+        this.canteen.productionType === "groupe"
+          ? "GestionnaireCantineGroupeModifier"
+          : "GestionnaireCantineRestaurantModifier"
       this.$emit("save-diagnostic-and-go-to-page", {
         payload: this.payload,
         nextPage: {
-          name: "GestionnaireCantineRestaurantModifier",
+          name: editPageName,
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
           query: { redirection: this.$router.currentRoute.path },
         },
