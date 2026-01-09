@@ -35,7 +35,11 @@ export default {
       return this.isAppro && this.isSatellite && !this.isFilled
     },
     isCentralKitchen() {
-      return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
+      return (
+        this.canteen?.productionType === "central" ||
+        this.canteen?.productionType === "central_serving" ||
+        this.canteen?.productionType === "groupe"
+      )
     },
     missingDeclarationMode() {
       return this.isCentralKitchen && !this.diagnostic?.centralKitchenDiagnosticMode
@@ -61,6 +65,7 @@ export default {
   },
   methods: {
     verifyEstablishmentFilled() {
+      console.log("this.isCentralKitchen", this.isCentralKitchen)
       return this.isCentralKitchen ? this.isCentralKitchenFilled : !this.missingCanteenData
     },
     verifyApproFilled() {
