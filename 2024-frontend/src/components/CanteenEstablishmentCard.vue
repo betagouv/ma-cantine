@@ -23,7 +23,7 @@ const linkedCanteensLabel = computed(() => {
     <div class="fr-grid-row fr-grid-row--top fr-grid-row--left">
       <div class="fr-col-5">
         <p class="fr-h6 fr-mb-1v">{{ name }}</p>
-        <DsfrBadge v-if="status === 'selected'" type="success" :label="siret ? 'sélectionné' : 'rattaché'" small />
+        <DsfrBadge v-if="status === 'selected'" type="success" label="sélectionné" small />
       </div>
       <div class="fr-col-offset-1"></div>
       <ul class="ma-cantine--unstyled-list fr-my-0 fr-col-6">
@@ -115,10 +115,12 @@ const linkedCanteensLabel = computed(() => {
       <CanteenButtonJoin :id="props.id" :name="props.name" />
     </div>
     <div v-else-if="status === 'not-a-satellite'" class="fr-mt-1w">
-      <DsfrBadge type="error" label="La cantine n'est pas un restaurant satellite" small />
+      <DsfrBadge type="error" label="Erreur" small />
+      <p class="fr-mb-0 fr-mt-1v fr-text--sm">Ce restaurant satellite est déjà intégré dans un groupe, veuillez vous rapprocher du gestionnaire.</p>
     </div>
     <div v-else-if="status === 'other-group'" class="fr-mt-1w">
-      <DsfrBadge type="error" label="La cantine est déjà dans un autre groupe" small />
+      <DsfrBadge type="error" label="Erreur" small />
+      <p class="fr-mb-0 fr-mt-1v fr-text--sm">Ce restaurant satellite est déjà intégré dans un groupe, veuillez vous rapprocher du gestionnaire.</p>
     </div>
     <div v-else-if="status === 'my-group'" class="fr-mt-1w">
       <DsfrBadge type="success" label="La cantine est dans votre groupe" small />

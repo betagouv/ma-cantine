@@ -211,9 +211,13 @@ export default {
       return this.diagnostic?.isTeledeclared
     },
     modificationLink() {
+      const editPageName =
+        this.canteen.productionType === "groupe"
+          ? "GestionnaireCantineGroupeModifier"
+          : "GestionnaireCantineRestaurantModifier"
       return this.isCanteenTab
         ? {
-            name: "GestionnaireCantineRestaurantModifier",
+            name: editPageName,
             params: { canteenUrlComponent: this.canteenUrlComponent },
             query: { redirection: this.$router.currentRoute.path },
           }
