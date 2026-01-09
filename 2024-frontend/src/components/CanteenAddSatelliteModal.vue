@@ -46,6 +46,7 @@ const searchByNumber = () => {
   if (cleanNumber.length === 0) return
   const searchBy = numberName.value.toLowerCase()
   canteens.value = []
+  errorNotFound.value = ''
   canteensService
     .canteenStatus(searchBy, cleanNumber)
     .then((response) => {
