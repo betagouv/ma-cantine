@@ -24,9 +24,14 @@
         :class="`dsfr-table grey--table ${satellites.length && 'table-preview'}`"
         dense
       >
-        <!-- TODO: does it still make sense to include the publication status? Maybe TD status is better -->
-        <template v-slot:[`item.publicationStatus`]="{ item }">
-          <PublicationBadge :isPublished="isSatellitePublished(item)" />
+        <template v-slot:[`item.action`]="{ item }">
+          <DataInfoBadge
+            :currentYear="isCurrentYear"
+            :inTeledeclaration="inTeledeclarationCampaign"
+            :inCorrection="inCorrectionCampaign"
+            :canteenAction="item.action"
+            class="my-2"
+          />
         </template>
       </v-data-table>
     </v-card-text>
@@ -49,12 +54,12 @@
 </template>
 
 <script>
-import PublicationBadge from "@/components/PublicationBadge"
-import { hasSatelliteInconsistency } from "@/utils"
+import DataInfoBadge from "@/components/DataInfoBadge"
+import { hasSatelliteInconsistency, lastYear } from "@/utils"
 
 export default {
   name: "SatellitesWidget",
-  components: { PublicationBadge },
+  components: { DataInfoBadge },
   props: {
     canteen: {
       type: Object,
@@ -63,12 +68,16 @@ export default {
   },
   data() {
     return {
+      lastYear: lastYear(),
       satellites: [],
       satelliteHeaders: [
         { text: "Nom", value: "name" },
-        { text: "Statut", value: "publicationStatus" },
+        { text: `Bilan ${lastYear()}`, value: "action" },
       ],
       satelliteCount: null,
+      currentYear: false, // Table always display for previous year
+      inTeledeclarationCampaign: false,
+      inCorrectionCampaign: false,
     }
   },
   computed: {
@@ -83,21 +92,40 @@ export default {
   },
   methods: {
     updateSatelliteCount() {
-      if (!this.canteen.isCentralCuisine) return
-      const url = `/api/v1/canteens/${this.canteen.id}/satellites?limit=3`
+      if (this.canteen.productionType !== "groupe") return
+      const url = `/api/v1/canteens/${this.canteen.id}/satellites/`
       fetch(url)
         .then((response) => response.json())
         .then((response) => {
           this.satelliteCount = response.length
-          this.satellites = response.slice(0, 3)
+          let satellitesIncomplete = []
+          let satellitesTeledeclared = []
+          let satellitesOther = []
+          for (const sat of response) {
+            if (sat.action === "35_fill_canteen_data") satellitesIncomplete.push(sat)
+            else if (sat.action === "95_nothing") satellitesTeledeclared.push(sat)
+            else satellitesOther.push(sat)
+          }
+          const satellitesOrders = [...satellitesIncomplete, ...satellitesTeledeclared, ...satellitesOther]
+          this.satellites = satellitesOrders.slice(0, 3)
         })
     },
     isSatellitePublished(canteen) {
       return canteen.publicationStatus === "published"
     },
+    fetchCampaignDates() {
+      const year = new Date().getFullYear()
+      fetch(`/api/v1/campaignDates/${year}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.inTeledeclarationCampaign = response.inTeledeclaration
+          this.inCorrectionCampaign = response.inCorrection
+        })
+    },
   },
   mounted() {
     this.updateSatelliteCount()
+    this.fetchCampaignDates()
   },
   watch: {
     canteen(newCanteen, oldCanteen) {
