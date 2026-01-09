@@ -30,24 +30,10 @@
         <p class="fr-text-sm">
           Accédez ci-dessous aux différents outils de gestion de votre établissement sur la plateforme « ma cantine ».
         </p>
-        <v-row v-if="canteen.isCentralCuisine">
-          <v-col cols="12" md="6">
+        <v-row>
+          <v-col v-if="canteen.productionType === 'groupe'" cols="12">
             <SatellitesWidget :canteen="canteen" />
           </v-col>
-          <v-col cols="12" md="6">
-            <PublicationWidget :canteen="canteen" />
-          </v-col>
-          <v-col cols="12">
-            <PurchasesWidget :canteen="canteen" />
-          </v-col>
-          <v-col cols="12" md="8">
-            <CanteenInfoWidget :canteen="canteen" />
-          </v-col>
-          <v-col cols="12" md="4">
-            <TeamWidget :canteen="canteen" />
-          </v-col>
-        </v-row>
-        <v-row v-else>
           <v-col cols="12" md="8">
             <PurchasesWidget :canteen="canteen" />
           </v-col>
