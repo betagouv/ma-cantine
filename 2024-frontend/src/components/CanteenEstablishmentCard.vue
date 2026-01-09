@@ -123,7 +123,7 @@ const linkedCanteensLabel = computed(() => {
       <p class="fr-mb-0 fr-mt-1v fr-text--sm">Ce restaurant satellite est déjà intégré dans un groupe, veuillez vous rapprocher du gestionnaire.</p>
     </div>
     <div v-else-if="status === 'my-group'" class="fr-mt-1w">
-      <DsfrBadge type="success" label="Ce restaurant satellite est dans votre groupe" small />
+      <DsfrBadge type="success" label="Ce restaurant satellite est dans le groupe" small />
     </div>
     <div v-else-if="status === 'add-satellite'" class="fr-mt-1w">
       <CanteenButtonLink :satId="id" :groupId="groupId" @satelliteAdded="$emit('select')" />
