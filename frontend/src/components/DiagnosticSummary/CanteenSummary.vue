@@ -16,7 +16,7 @@
       </v-col>
       <v-col cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
-          <v-icon color="primary" x-large>$restaurant-line</v-icon>
+          <v-icon color="primary" x-large>$france-line</v-icon>
         </div>
         <div class="mt-n1">
           <div>
