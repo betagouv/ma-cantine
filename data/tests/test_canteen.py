@@ -444,18 +444,29 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.siret, None)
 
 
-class CanteenQuerySetTest(TestCase):
-    def test_soft_delete_canteen(self):
+class CanteenDeleteQuerySetAndPropertyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+
+    def test_all_objects_queryset(self):
         """
         The delete method should "soft delete" a canteen and have it hidden by default
         from querysets, unless specifically asked for
         """
-        canteen = CanteenFactory()
-        canteen.delete()
-        qs = Canteen.objects.all()
-        self.assertEqual(qs.count(), 0, "Soft deleted canteen is not visible in default queryset")
-        qs = Canteen.all_objects.all()
-        self.assertEqual(qs.count(), 1, "Soft deleted canteens can be accessed in custom queryset")
+        self.assertEqual(Canteen.objects.count(), 1)
+
+        self.canteen.delete()
+
+        self.assertEqual(Canteen.objects.all().count(), 0)
+        self.assertEqual(Canteen.all_objects.all().count(), 1)
+
+    def test_is_deleted_property(self):
+        self.assertFalse(self.canteen.is_deleted)
+
+        self.canteen.delete()
+
+        self.assertTrue(self.canteen.is_deleted)
 
 
 class CanteenVisibleQuerySetAndPropertyTest(TestCase):
