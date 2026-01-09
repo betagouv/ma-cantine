@@ -2,16 +2,15 @@
   <v-card outlined class="fill-height d-flex flex-column dsfr no-hover pa-sm-6">
     <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes restaurants satellites</h3></v-card-title>
     <v-card-text v-if="!satellites.length" class="fr-text-xs grey--text text--darken-2 mt-3 pb-0">
-      <p class="mb-0">Ajoutez les restaurants que vous livrez</p>
+      <p class="mb-0">Ajoutez les restaurants satellites à mon groupe</p>
     </v-card-text>
     <v-spacer v-if="!satellites.length" />
     <v-card-text
       :class="`fr-text-xs mt-3 pb-0 ${hasSatelliteInconsistency ? 'dark-orange' : 'grey--text text--darken-2'}`"
-      v-if="canteen.satelliteCanteensCount"
     >
       <p class="mb-0 d-flex">
         <v-icon small v-if="hasSatelliteInconsistency" class="mr-1 dark-orange">$alert-line</v-icon>
-        {{ satelliteCountEmpty }}
+        {{ satelliteCountSentence }}
       </p>
     </v-card-text>
     <v-spacer v-if="satellites.length" />
@@ -24,9 +23,14 @@
         :class="`dsfr-table grey--table ${satellites.length && 'table-preview'}`"
         dense
       >
-        <!-- TODO: does it still make sense to include the publication status? Maybe TD status is better -->
-        <template v-slot:[`item.publicationStatus`]="{ item }">
-          <PublicationBadge :isPublished="isSatellitePublished(item)" />
+        <template v-slot:[`item.action`]="{ item }">
+          <DataInfoBadge
+            :currentYear="isCurrentYear"
+            :inTeledeclaration="inTeledeclarationCampaign"
+            :inCorrection="inCorrectionCampaign"
+            :canteenAction="item.action"
+            class="my-2"
+          />
         </template>
       </v-data-table>
     </v-card-text>
@@ -49,12 +53,12 @@
 </template>
 
 <script>
-import PublicationBadge from "@/components/PublicationBadge"
-import { hasSatelliteInconsistency } from "@/utils"
+import DataInfoBadge from "@/components/DataInfoBadge"
+import { hasSatelliteInconsistency, lastYear } from "@/utils"
 
 export default {
   name: "SatellitesWidget",
-  components: { PublicationBadge },
+  components: { DataInfoBadge },
   props: {
     canteen: {
       type: Object,
@@ -63,46 +67,67 @@ export default {
   },
   data() {
     return {
+      lastYear: lastYear(),
       satellites: [],
       satelliteHeaders: [
         { text: "Nom", value: "name" },
-        { text: "Statut", value: "publicationStatus" },
+        { text: `Bilan ${lastYear()}`, value: "action" },
       ],
-      satelliteCount: null,
+      isCurrentYear: false, // Table always display for previous year
+      inTeledeclarationCampaign: false,
+      inCorrectionCampaign: false,
     }
   },
   computed: {
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
     },
-    satelliteCountEmpty() {
-      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "restaurants satellites" : "restaurant satellite"
-      const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
-      return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
+    satelliteCountSentence() {
+      const count = this.canteen.satellitesCount
+      if (count === 0) return "Aucun restaurant satellite renseigné"
+      else if (count === 1) return "1 restaurant satellite renseigné"
+      else return `${count} restaurants satellites renseignés`
     },
   },
   methods: {
-    updateSatelliteCount() {
-      if (!this.canteen.isCentralCuisine) return
-      const url = `/api/v1/canteens/${this.canteen.id}/satellites?limit=3`
+    updateSatellites() {
+      if (this.canteen.productionType !== "groupe") return
+      const url = `/api/v1/canteens/${this.canteen.id}/satellites/`
       fetch(url)
         .then((response) => response.json())
         .then((response) => {
-          this.satelliteCount = response.length
-          this.satellites = response.slice(0, 3)
+          let satellitesIncomplete = []
+          let satellitesTeledeclared = []
+          let satellitesOther = []
+          for (const sat of response) {
+            if (sat.action === "35_fill_canteen_data") satellitesIncomplete.push(sat)
+            else if (sat.action === "95_nothing") satellitesTeledeclared.push(sat)
+            else satellitesOther.push(sat)
+          }
+          const satellitesOrders = [...satellitesIncomplete, ...satellitesTeledeclared, ...satellitesOther]
+          this.satellites = satellitesOrders.slice(0, 3)
         })
     },
     isSatellitePublished(canteen) {
       return canteen.publicationStatus === "published"
     },
+    fetchCampaignDates() {
+      fetch(`/api/v1/campaignDates/${this.lastYear}`)
+        .then((response) => response.json())
+        .then((response) => {
+          this.inTeledeclarationCampaign = response.inTeledeclaration
+          this.inCorrectionCampaign = response.inCorrection
+        })
+    },
   },
   mounted() {
-    this.updateSatelliteCount()
+    this.updateSatellites()
+    this.fetchCampaignDates()
   },
   watch: {
     canteen(newCanteen, oldCanteen) {
       if (newCanteen && newCanteen.id !== oldCanteen?.id) {
-        this.updateSatelliteCount()
+        this.updateSatellites()
       }
     },
   },

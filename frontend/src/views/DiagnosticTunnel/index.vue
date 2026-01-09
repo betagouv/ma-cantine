@@ -206,7 +206,7 @@ export default {
       return this.nextTunnel?.shortTitle
     },
     declaringApproOnly() {
-      return this.canteen?.isCentralCuisine && this.diagnostic.centralKitchenDiagnosticMode === "APPRO"
+      return this.canteen?.productionType === "groupe" && this.diagnostic.centralKitchenDiagnosticMode === "APPRO"
     },
     isLastTunnel() {
       return !this.nextTunnel || this.declaringApproOnly

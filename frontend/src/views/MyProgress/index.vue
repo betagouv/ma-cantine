@@ -108,26 +108,26 @@
                 {{ tab.text }}
               </p>
               <KeyMeasureBadge :diagnostic="diagnostic" :year="selectedYear" :canteen="canteen" :id="tab.id" />
-            </li>
-          </ul>
-          <ul>
-            <li v-if="hasSatelliteInconsistency" class="mb-1">
-              <router-link
-                :to="{
-                  name: 'GestionnaireCantineGroupeSatellites',
-                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                }"
-              >
-                Mettre à jour vos restaurants satellites
-              </router-link>
-            </li>
-            <li v-if="missingCanteenData" class="mb-1">
-              <router-link :to="editLinkTo">
-                Mettre à jour votre établissement
-              </router-link>
-            </li>
-            <li v-if="missingDeclarationMode">
-              Choisir comment les données sont saisies pour vos restaurants satellites
+              <ul v-if="tab.id === 'etablissement'">
+                <li v-if="hasSatelliteInconsistency" class="mb-1">
+                  <router-link
+                    :to="{
+                      name: 'GestionnaireCantineGroupeSatellites',
+                      params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                    }"
+                  >
+                    Mettre à jour vos restaurants satellites
+                  </router-link>
+                </li>
+                <li v-if="missingCanteenData" class="mb-1">
+                  <router-link :to="editLinkTo">
+                    Mettre à jour votre établissement
+                  </router-link>
+                </li>
+                <li v-if="missingDeclarationMode">
+                  Choisir comment les données sont saisies pour vos restaurants satellites
+                </li>
+              </ul>
             </li>
           </ul>
           <v-btn
