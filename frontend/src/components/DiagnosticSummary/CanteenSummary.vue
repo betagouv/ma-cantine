@@ -101,16 +101,6 @@
           {{ satelliteCountSentence }}
         </p>
       </v-col>
-      <v-col cols="12" md="8">
-        <v-data-table
-          :items="canteen.satellites"
-          :headers="satelliteHeaders"
-          :hide-default-footer="true"
-          :disable-sort="true"
-          :class="`dsfr-table grey--table`"
-          dense
-        />
-      </v-col>
       <v-col cols="12">
         <p>
           <v-btn
@@ -130,7 +120,7 @@
 
 <script>
 import Constants from "@/constants"
-import { lastYear, sectorDisplayString, hasSatelliteInconsistency, lineMinistryRequired } from "@/utils"
+import { sectorDisplayString, hasSatelliteInconsistency, lineMinistryRequired } from "@/utils"
 
 export default {
   name: "CanteenSummary",
@@ -139,15 +129,6 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      satelliteHeaders: [
-        { text: "Nom", value: "name" },
-        { text: "SIRET", value: "siret" },
-      ],
-      lastYear: lastYear(),
-    }
   },
   computed: {
     isGroupe() {
