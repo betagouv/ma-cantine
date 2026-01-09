@@ -21,14 +21,9 @@ const saveCanteen = (props) => {
   canteensService
     .createCanteen(form)
     .then((canteenCreated) => {
-      const centralType = ["central", "central_serving"]
-      const stayOnCreationPage = canteenCreated.id && action === "stay-on-creation-page"
-      const redirect = canteenCreated.id && action === "go-to-canteen-page"
-      const isCentral = centralType.includes(form.productionType)
-      if (!canteenCreated.id) store.notifyServerError()
-      if (stayOnCreationPage) resetForm(canteenCreated.name)
-      if (redirect && !isCentral) goToNewCanteenPage(canteenCreated)
-      if (redirect && isCentral) goToSatellitesPage(canteenCreated)
+      if (!canteenCreated.id) throw new Error()
+      if (action === "stay-on-creation-page") resetForm(canteenCreated.name)
+      if (action === "go-to-canteen-page") goToNewCanteenPage(canteenCreated)
     })
     .catch((e) => {
       store.notifyServerError(e)
@@ -40,14 +35,6 @@ const goToNewCanteenPage = (canteen) => {
   const canteenUrl = urlService.getCanteenUrl(canteen)
   router.replace({
     name: "DashboardManager",
-    params: { canteenUrlComponent: canteenUrl },
-  })
-}
-
-const goToSatellitesPage = (canteen) => {
-  const canteenUrl = urlService.getCanteenUrl(canteen)
-  router.replace({
-    name: "GestionnaireCantineGroupeSatellites",
     params: { canteenUrlComponent: canteenUrl },
   })
 }

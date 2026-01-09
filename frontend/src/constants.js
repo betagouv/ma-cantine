@@ -40,7 +40,7 @@ export default Object.freeze({
   ProductionTypes: [
     {
       text: "Cuisines centrales",
-      value: "central,central_serving",
+      value: "central,central_serving,groupe",
     },
     {
       text: "Restaurants satellites et autogérés",

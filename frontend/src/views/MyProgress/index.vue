@@ -383,7 +383,11 @@ export default {
       return this.diagnostic?.isTeledeclared
     },
     isCentralKitchen() {
-      return this.canteen?.productionType === "central" || this.canteen?.productionType === "central_serving"
+      return (
+        this.canteen?.productionType === "central" ||
+        this.canteen?.productionType === "central_serving" ||
+        this.canteen?.productionType === "groupe"
+      )
     },
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
