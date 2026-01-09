@@ -574,7 +574,7 @@ export const getCharacteristicFromField = (fieldName, fieldPrefix, tdGroup) => {
 }
 
 export const hasSatelliteInconsistency = (canteen) => {
-  if (!canteen || !canteen.isCentralCuisine) return false
+  if (!canteen || canteen.productionType !== "groupe") return false
   if (!canteen.satellites || canteen.satellites.length === 0) return true
   return false
 }
