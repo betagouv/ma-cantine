@@ -597,34 +597,29 @@ export const missingCanteenData = (canteen, sectors) => {
   // some canteens might not have a SIRET
   if (siretOrSirenUniteLegaleRequired(canteen)) return true
 
-  // basic canteen fields
-  // TODO: what location data do we require at minimum?
-  const requiredFields = ["name", "cityInseeCode", "productionType", "managementType"] // "economicModel" ??
   const missingFieldLambda = (f) => !canteen[f] || canteen[f].length === 0
+
+  // all canteens
+  const requiredFields = ["name", "productionType", "yearlyMealCount", "dailyMealCount"]
   const missingSharedRequiredData = requiredFields.some(missingFieldLambda)
   if (missingSharedRequiredData) return true
+
   // sectors checks
   if (lineMinistryRequired(canteen, sectors) && !canteen.lineMinistry) return true
-  if ((canteen.sectorList.length === 0 && canteen.productionType !== "central") || canteen.sectorList.length > 3)
-    return true
-
-  // production type specific checks
-  const yearlyMealCountKey = "yearlyMealCount"
-  const dailyMealCountKey = "dailyMealCount"
-  const onSiteFields = [dailyMealCountKey, yearlyMealCountKey, "sectorList"]
-  const centralKitchenFields = [dailyMealCountKey, yearlyMealCountKey, "satelliteCanteensCount"]
-  const satelliteFields = ["centralProducerSiret"]
-
-  if (canteen.productionType === "central") {
-    return centralKitchenFields.some(missingFieldLambda)
-  } else if (canteen.productionType === "central_serving") {
-    return centralKitchenFields.some(missingFieldLambda) || onSiteFields.some(missingFieldLambda)
-  } else if (canteen.productionType === "site_cooked_elsewhere") {
-    return onSiteFields.some(missingFieldLambda) || satelliteFields.some(missingFieldLambda)
-  } else if (canteen.productionType === "site") {
-    return onSiteFields.some(missingFieldLambda)
+  if (canteen.productionType !== "central" && canteen.productionType !== "groupe") {
+    if (canteen.sectorList.length === 0 || canteen.sectorList.length > 3) return true
   }
-  return true // shouldn't get to here, indicates a bug in our logic/data
+
+  // Groupe checkes
+  if (canteen.productionType !== "groupe" && canteen.satelliteCount === 0) return true
+
+  // Production type specific checks
+  const onSiteFields = ["sectorList", "economicModel", "managementType"]
+  const groupeFields = ["sirenUniteLegale"]
+  if (canteen.productionType === "site" || canteen.productionType === "site_cooked_elsewhere")
+    return onSiteFields.some(missingFieldLambda)
+  else if (canteen.productionType === "groupe") return groupeFields.some(missingFieldLambda)
+  else return true // shouldn't get to here, indicates a bug in our logic/data
 }
 
 export const inTeledeclarationCampaign = (year) => {
