@@ -58,6 +58,11 @@ const resetForm = (name) => {
     <div class="fr-col-offset-md-1"></div>
     <AppRessources>
       <li>
+        <a href="https://ma-cantine.crisp.help/fr/article/les-groupes-de-restaurants-satellites-definition-et-gestion-82qt51/?bust=1767947700084" target="_blank">
+          Les groupes de restaurants satellites : définition et gestion
+        </a>
+      </li>
+      <li>
         <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">
           Annuaire des entreprises pour trouver le SIREN
         </a>
