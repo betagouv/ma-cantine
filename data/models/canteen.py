@@ -629,10 +629,13 @@ class Canteen(SoftDeletionModel):
     @property
     def is_central_cuisine(self) -> bool:
         return self.production_type and self.production_type in [
-            Canteen.ProductionType.GROUPE,
             Canteen.ProductionType.CENTRAL,
             Canteen.ProductionType.CENTRAL_SERVING,
         ]
+
+    @property
+    def is_groupe_or_central_cuisine(self) -> bool:
+        return self.is_groupe or self.is_central_cuisine
 
     @property
     def is_serving(self):

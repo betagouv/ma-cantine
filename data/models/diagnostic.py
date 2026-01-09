@@ -1745,7 +1745,7 @@ class Diagnostic(models.Model):
         self.canteen_snapshot = serialized_canteen
 
         # satellites data
-        if self.canteen.is_central_cuisine:
+        if self.canteen.is_groupe_or_central_cuisine:
             serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in self.canteen.satellites]
             self.satellites_snapshot = serialized_satellites
 
