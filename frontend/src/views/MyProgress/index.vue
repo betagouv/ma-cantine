@@ -417,7 +417,6 @@ export default {
       return this.canteen?.productionType === "site_cooked_elsewhere"
     },
     isSatelliteWithCompleteCentralDiagnostic() {
-      console.log("centralDiagnostic", this.centralDiagnostic?.centralKitchenDiagnosticMode)
       return this.isSatellite && this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
     },
     isSatelliteWithApproCentralDiagnostic() {
@@ -485,7 +484,6 @@ export default {
       const diag = this.canteen.diagnostics?.find((x) => +x.year === +this.year)
       this.$set(this, "diagnostic", diag)
       if (this.canteen.productionType === "site_cooked_elsewhere") {
-        console.log("canteen", this.canteen.centralKitchenDiagnostics)
         const centralDiag = this.canteen.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
         this.$set(this, "centralDiagnostic", centralDiag)
       }
