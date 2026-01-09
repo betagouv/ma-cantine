@@ -109,12 +109,6 @@ export default {
     canteenPreviews() {
       return this.$store.state.userCanteenPreviews
     },
-    welcomesGuests() {
-      return this.canteen?.productionType !== "central"
-    },
-    isCentralWithSite() {
-      return this.canteen?.productionType === "central_serving"
-    },
   },
   methods: {
     updateCanteen() {

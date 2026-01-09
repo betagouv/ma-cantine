@@ -174,7 +174,7 @@ export default {
       return managementType?.text
     },
     hasSite() {
-      return this.canteen.productionType !== "central"
+      return this.canteen.productionType !== "central" && this.canteen.productionType !== "groupe"
     },
     isSatellite() {
       return this.canteen?.productionType === "site_cooked_elsewhere"
