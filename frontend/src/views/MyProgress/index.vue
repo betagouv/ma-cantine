@@ -122,12 +122,7 @@
               </router-link>
             </li>
             <li v-if="missingCanteenData" class="mb-1">
-              <router-link
-                :to="{
-                  name: 'GestionnaireCantineRestaurantModifier',
-                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                }"
-              >
+              <router-link :to="editLinkTo">
                 Mettre à jour votre établissement
               </router-link>
             </li>
@@ -431,6 +426,17 @@ export default {
     },
     yearOptions() {
       return this.years.map((year) => ({ text: year, value: year }))
+    },
+    editLinkTo() {
+      const editPageName =
+        this.canteen.productionType === "groupe"
+          ? "GestionnaireCantineGroupeModifier"
+          : "GestionnaireCantineRestaurantModifier"
+      return {
+        name: editPageName,
+        params: { canteenUrlComponent: this.canteenUrlComponent },
+        query: { redirection: this.$router.currentRoute.path },
+      }
     },
   },
   methods: {
