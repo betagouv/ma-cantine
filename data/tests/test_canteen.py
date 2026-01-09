@@ -436,6 +436,13 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(creation_source=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, creation_source=VALUE_NOT_OK)
 
+    def test_canteen_save_skip_validations(self):
+        canteen = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
+        canteen.siret = None
+        # should not raise
+        canteen.save(run_validations=False)
+        self.assertEqual(canteen.siret, None)
+
 
 class CanteenQuerySetTest(TestCase):
     def test_soft_delete_canteen(self):
