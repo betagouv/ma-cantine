@@ -69,20 +69,14 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        read_only_fields = (
-            "id",
-            "name",
-            "siret",
-            "siren_unite_legale",
-            "publication_status",
-        )
         fields = (
             "id",
             "name",
             "siret",
             "siren_unite_legale",
-            "publication_status",
+            "publication_status",  # property
         )
+        read_only_fields = fields
 
 
 class BadgesSerializer(serializers.ModelSerializer):
@@ -240,7 +234,7 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
             "information_comments",
             "is_managed_by_user",
             "central_kitchen_diagnostics",
-            "publication_status",
+            "publication_status",  # property
         )
 
     def get_is_managed_by_user(self, obj):
@@ -266,7 +260,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "siren_unite_legale",
             "daily_meal_count",
             "user_can_view",
-            "publication_status",
+            "publication_status",  # property
             "action",  # annotate
         )
 
@@ -296,7 +290,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-
         read_only_fields = (
             "id",
             "epci",
@@ -356,7 +349,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "images",
             "managers",
             "manager_invitations",
-            "publication_status",
+            "publication_status",  # property
             "redacted_appro_years",
             "publication_comments",
             "quality_comments",
@@ -450,7 +443,7 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        my_fields = (
+        fields = (
             "id",
             "name",
             "city",
@@ -471,7 +464,7 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
             "siren_unite_legale",
             "management_type",
             "production_type",
-            "publication_status",
+            "publication_status",  # property
             "economic_model",
             "is_central_cuisine",
             "is_satellite",
@@ -481,8 +474,7 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
             "diagnostics",
             "central_kitchen_diagnostics",  # can return a TD status instead of diagnostics
         )
-        fields = my_fields
-        read_only_fields = my_fields
+        read_only_fields = fields
 
     def get_central_kitchen_diagnostics(self, obj):
         # Ideally we would also check the status of the satellite canteen and
@@ -510,14 +502,11 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
 class CanteenPreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Canteen
-        read_only_fields = (
-            "id",
-            "name",
-        )
         fields = (
             "id",
             "name",
         )
+        read_only_fields = fields
 
 
 class ManagingTeamSerializer(serializers.ModelSerializer):
@@ -585,7 +574,7 @@ class CanteenActionsLightSerializer(serializers.ModelSerializer):
             "city",
             "postal_code",
             "production_type",
-            "satellites_count",
+            "satellites_count",  # property
             "action",  # annotate
         )
         read_only_fields = fields
