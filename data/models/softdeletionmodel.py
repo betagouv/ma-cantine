@@ -41,3 +41,7 @@ class SoftDeletionModel(models.Model):
 
     def hard_delete(self):
         super().delete()
+
+    @property
+    def is_deleted(self):
+        return self.deletion_date is not None
