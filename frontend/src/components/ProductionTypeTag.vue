@@ -4,7 +4,7 @@
     v-if="isCentralKitchen || isSatellite"
     :class="`${position}`"
     :icon="isCentralKitchen ? '$community-fill' : '$restaurant-fill'"
-    :text="isCentralKitchen ? 'Cuisine centrale' : 'Restaurant satellite'"
+    :text="isCentralKitchen ? 'Groupe de restaurants satellites' : 'Restaurant satellite'"
   />
 </template>
 
@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     isCentralKitchen() {
-      return this.canteen.isCentralCuisine
+      return this.canteen.productionType === "groupe"
     },
     isSatellite() {
       return this.canteen.isSatellite

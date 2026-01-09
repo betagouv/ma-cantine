@@ -36,7 +36,7 @@
               {{ approSummary }}
             </td>
             <td class="text-left font-weight-bold" v-else colspan="2">
-              Données d'approvisonnement renseignées par la cuisine centrale
+              Données d'approvisonnement renseignées par le groupe de restaurants satellites
             </td>
           </tr>
           <tr
