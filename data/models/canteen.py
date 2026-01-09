@@ -214,6 +214,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             .filter(has_missing_data_query())
         )
 
+    def annotate_with_has_missing_data(self):
+        return self.annotate(
+            has_missing_data=Case(When(has_missing_data_query(), then=Value(True)), default=Value(False))
+        )
+
     def filled(self):
         return (
             self.annotate_with_requires_line_ministry()
@@ -239,8 +244,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         from data.models import Diagnostic
 
         # prep missing data action
-        self = self.annotate_with_requires_line_ministry()
-        self = self.annotate_with_sector_list_count()
+        self = self.annotate_with_has_missing_data()
         # prep add satellites action
         self = self.annotate_with_satellites_in_db_count()
         self = self.annotate_with_central_kitchen_id()
@@ -283,7 +287,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
                 (is_central_cuisine_query() & Q(diagnostic_for_year_cc_mode=None)),
                 then=Value(Canteen.Actions.FILL_DIAGNOSTIC),
             ),
-            When(has_missing_data_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
+            When(has_missing_data=True, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if is_in_correction():
             # TODO: figure out a way to detect that the canteen has indeed teledeclared during the teledeclaration campaign
@@ -731,6 +735,9 @@ class Canteen(SoftDeletionModel):
                 is_filled = (
                     Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
                 )
+        # groupe-specific rules
+        if is_filled and self.is_groupe:
+            is_filled = self.canteen_set.exists()
         # line_ministry
         if is_filled and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
             is_filled = bool(self.line_ministry)
