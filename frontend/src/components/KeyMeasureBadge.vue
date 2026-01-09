@@ -65,7 +65,6 @@ export default {
   },
   methods: {
     verifyEstablishmentFilled() {
-      console.log("this.isCentralKitchen", this.isCentralKitchen)
       return this.isCentralKitchen ? this.isCentralKitchenFilled : !this.missingCanteenData
     },
     verifyApproFilled() {
