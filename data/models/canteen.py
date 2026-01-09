@@ -604,6 +604,19 @@ class Canteen(SoftDeletionModel):
             self.full_clean()
         super().save(**kwargs)
 
+    def delete(self):
+        """
+        Override the SoftDeletionModel delete method
+        - if groupe: make sure no satellite cantines are linked to it
+        """
+        if self.is_groupe:
+            satellites_count = self.satellites.count()
+            if satellites_count > 0:
+                raise ValidationError(
+                    f"Impossible de supprimer ce groupe car il a encore {satellites_count} satellites(s) de rattaché(s)."
+                )
+        super().delete()
+
     @property
     def url_slug(self):
         return f"{self.id}--{quote(self.name)}"

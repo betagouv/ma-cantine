@@ -444,6 +444,36 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.siret, None)
 
 
+class CanteenModelDeleteTest(TestCase):
+    def test_canteen_pre_delete_signal(self):
+        canteen_groupe_1_without_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_groupe_2_with_active_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe_2_with_active_satellites,
+        )
+        canteen_groupe_3_with_deleted_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite_31 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe_3_with_deleted_satellites,
+        )
+
+        # ok to delete satellite canteen
+        canteen_satellite_31.delete()
+
+        # ok to delete groupe without satellites
+        self.assertEqual(canteen_groupe_1_without_satellites.satellites.count(), 0)
+        canteen_groupe_1_without_satellites.delete()
+
+        # not ok to delete groupe with active satellites
+        self.assertEqual(canteen_groupe_2_with_active_satellites.satellites.count(), 1)
+        self.assertRaises(ValidationError, canteen_groupe_2_with_active_satellites.delete)
+
+        # ok to delete groupe with deleted satellites
+        self.assertEqual(canteen_groupe_3_with_deleted_satellites.satellites.count(), 0)
+        canteen_groupe_3_with_deleted_satellites.delete()
+
+
 class CanteenDeleteQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
