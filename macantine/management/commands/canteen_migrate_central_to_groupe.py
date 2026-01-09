@@ -1,4 +1,5 @@
 import logging
+from collections import Counter
 
 from django.core.management.base import BaseCommand
 from simple_history.utils import update_change_reason
@@ -65,10 +66,10 @@ class Command(BaseCommand):
         if not apply:
             print("Dry run mode, no changes will be applied.")
 
+        # stats before
         canteen_central_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL)
         canteen_central_serving_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL_SERVING)
         canteen_groupe_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.GROUPE)
-
         logger.info(f"Found {canteen_central_qs.count()} CENTRAL canteens to migrate to GROUPE")
         logger.info(f"Found {canteen_central_serving_qs.count()} CENTRAL_SERVING canteens to migrate to GROUPE")
         logger.info(f"Found {canteen_groupe_qs.count()} existing GROUPE canteens")
@@ -76,7 +77,7 @@ class Command(BaseCommand):
         if apply:
             # Step 1: migrate CENTRAL to GROUPE
             for canteen_central in canteen_central_qs:
-                # Before: copy data to create satellite after updating canteen
+                # Before: copy data to allow updating satellites after updating the central to groupe
                 canteen_central_dict_copy = canteen_central.__dict__.copy()
                 # Step 1.1: update canteen fields
                 for field_name, value in canteen_central_to_groupe(canteen_central).items():
@@ -95,7 +96,7 @@ class Command(BaseCommand):
 
             # Step 2: migrate CENTRAL_SERVING to GROUPE
             for canteen_central_serving in canteen_central_serving_qs:
-                # Before: copy data to create satellite after updating canteen
+                # Before: copy data to allow creating & updating satellites after updating the central_serving to groupe
                 canteen_central_serving_dict_copy = canteen_central_serving.__dict__.copy()
                 # Step 2.1: update canteen fields
                 for field_name, value in canteen_central_to_groupe(canteen_central_serving).items():
@@ -116,3 +117,12 @@ class Command(BaseCommand):
                     satellite.groupe = canteen_central_serving
                     satellite.save(run_validations=False)
                     update_change_reason(satellite, "Script: canteen_migrate_central_to_groupe")
+
+        # stats after
+        canteen_central_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL)
+        canteen_central_serving_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL_SERVING)
+        canteen_groupe_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.GROUPE)
+        logger.info(f"Found {canteen_central_qs.count()} CENTRAL canteens to migrate to GROUPE")
+        logger.info(f"Found {canteen_central_serving_qs.count()} CENTRAL_SERVING canteens to migrate to GROUPE")
+        logger.info(f"Found {canteen_groupe_qs.count()} existing GROUPE canteens")
+        print(Counter(Canteen.all_objects.exclude(groupe=None).values_list("production_type", flat=True)))
