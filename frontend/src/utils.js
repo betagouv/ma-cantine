@@ -600,7 +600,7 @@ export const missingCanteenData = (canteen, sectors) => {
   const missingFieldLambda = (f) => !canteen[f] || canteen[f].length === 0
 
   // all canteens
-  const requiredFields = ["name", "productionType", "yearlyMealCount", "dailyMealCount"]
+  const requiredFields = ["name", "productionType", "yearlyMealCount", "dailyMealCount", "managementType"]
   const missingSharedRequiredData = requiredFields.some(missingFieldLambda)
   if (missingSharedRequiredData) return true
 
@@ -614,7 +614,7 @@ export const missingCanteenData = (canteen, sectors) => {
   if (canteen.productionType !== "groupe" && canteen.satellitesCount === 0) return true
 
   // Production type specific checks
-  const onSiteFields = ["sectorList", "economicModel", "managementType"]
+  const onSiteFields = ["sectorList", "economicModel"]
   const groupeFields = ["sirenUniteLegale"]
   if (canteen.productionType === "site" || canteen.productionType === "site_cooked_elsewhere")
     return onSiteFields.some(missingFieldLambda)
