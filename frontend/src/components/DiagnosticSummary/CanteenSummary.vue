@@ -29,7 +29,7 @@
           <p class="my-0">
             {{ canteen.yearlyMealCount ? parseInt(canteen.yearlyMealCount).toLocaleString("fr-FR") : "—" }}
           </p>
-          <div v-if="canteen.productionType === 'groupe'">
+          <div v-if="isGroupe">
             <p class="mb-0 mt-2 fr-text-sm grey--text text--darken-1">
               Nombre de restaurants satellites à qui je fournis des repas
             </p>
@@ -46,7 +46,7 @@
           <v-icon color="primary" x-large>$team-line</v-icon>
         </div>
         <div class="mt-n1">
-          <div v-if="canteen.productionType !== 'groupe'">
+          <div v-if="!isGroupe">
             <p class="my-0 fr-text-sm grey--text text--darken-1">Modèle économique</p>
             <p class="my-0">{{ economicModel || "—" }}</p>
           </div>
@@ -66,12 +66,7 @@
           </div>
         </div>
       </v-col>
-      <v-col
-        v-if="canteen.productionType !== 'groupe'"
-        cols="12"
-        md="6"
-        class="d-flex align-center pa-0 my-4 my-md-0 left-border"
-      >
+      <v-col v-if="!isGroupe" cols="12" md="6" class="d-flex align-center pa-0 my-4 my-md-0 left-border">
         <div class="mx-8">
           <v-icon color="primary" x-large>$france-line</v-icon>
         </div>
@@ -98,7 +93,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-row v-if="canteen.productionType === 'groupe'">
+    <v-row v-if="isGroupe">
       <v-col cols="12" class="pb-0">
         <h3 class="fr-h6">Mes restaurants satellites</h3>
         <p class="fr-text-sm mb-1 d-flex align-center" :class="{ 'dark-orange': hasSatelliteInconsistency }">
@@ -155,6 +150,9 @@ export default {
     }
   },
   computed: {
+    isGroupe() {
+      return this.canteen.productionType === "groupe"
+    },
     productionType() {
       const productionType = Constants.ProductionTypesDetailed.find((x) => x.value === this.canteen.productionType)
       return productionType?.body
@@ -180,7 +178,7 @@ export default {
       return managementType?.text
     },
     hasSite() {
-      return this.canteen.productionType !== "central" && this.canteen.productionType !== "groupe"
+      return this.canteen.productionType !== "central" && !this.isGroupe
     },
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
