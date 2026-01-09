@@ -619,7 +619,7 @@ export const missingCanteenData = (canteen, sectors) => {
   if (canteen.productionType === "site" || canteen.productionType === "site_cooked_elsewhere")
     return onSiteFields.some(missingFieldLambda)
   else if (canteen.productionType === "groupe") return groupeFields.some(missingFieldLambda)
-  else return true // shouldn't get to here, indicates a bug in our logic/data
+  return true // shouldn't get to here, indicates a bug in our logic/data
 }
 
 export const inTeledeclarationCampaign = (year) => {
