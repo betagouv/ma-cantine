@@ -294,7 +294,7 @@ export const applicableDiagnosticRules = (canteen, year) => {
     }
   }
   // extra questions should correspond to the rules in teledeclaration view : _get_applicable_diagnostic_rules
-  const shouldHaveDailyMealCount = canteen && canteen.productionType !== "central"
+  const shouldHaveDailyMealCount = canteen && canteen.productionType !== "groupe"
   return {
     hasDonationAgreement: shouldHaveDailyMealCount ? canteen.dailyMealCount >= 3000 : true,
     hasDiversificationPlan: shouldHaveDailyMealCount && year < 2025 ? canteen.dailyMealCount >= 200 : true,
@@ -646,7 +646,11 @@ export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {
       return canSubmitOtherData && hasOtherData
     }
     // satellites can still TD if CCs haven't
-  } else if (canteen.productionType === "central" || canteen.productionType === "central_serving") {
+  } else if (
+    canteen.productionType === "central" ||
+    canteen.productionType === "central_serving" ||
+    canteen.productionType === "groupe"
+  ) {
     return !!diagnostic.centralKitchenDiagnosticMode
   }
 
@@ -677,6 +681,6 @@ export const regionDisplayName = (regionCode) => {
 
 export const delegatedToCentralKitchen = (canteen, diagnostic) => {
   const isSatellite = canteen.productionType === "site_cooked_elsewhere"
-  const usesCentralDiag = isSatellite && diagnostic?.canteenId === canteen.centralKitchen?.id
-  return usesCentralDiag && diagnostic?.centralKitchenDiagnosticMode === "ALL"
+  const hasGroup = canteen.groupe?.id
+  return isSatellite && hasGroup && diagnostic?.centralKitchenDiagnosticMode === "ALL"
 }
