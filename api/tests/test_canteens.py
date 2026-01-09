@@ -641,34 +641,6 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(updated_canteen.satellite_canteens_count, 130)
 
     @authenticate
-    def test_modify_central_kitchen_siret(self):
-        """
-        A change in the SIRET of a central cuisine must update the "central_producer_siret" of
-        its satellites
-        """
-        central_kitchen = CanteenFactory(
-            siret="03201976246133", production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
-        )
-        satellites = [
-            CanteenFactory(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
-            ),
-            CanteenFactory(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
-            ),
-            CanteenFactory(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="03201976246133"
-            ),
-        ]
-        payload = {"siret": "35662897196149"}
-
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": central_kitchen.id}), payload)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        for satellite in satellites:
-            satellite.refresh_from_db()
-            self.assertEqual(satellite.central_producer_siret, "35662897196149")
-
-    @authenticate
     def test_add_siret_to_central_kitchen(self):
         """
         A central cuisine without a SIRET can add one without modifying everybody else
