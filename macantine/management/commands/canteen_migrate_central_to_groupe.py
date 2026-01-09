@@ -33,6 +33,7 @@ def satellite_from_central_dict(canteen_central_dict):
         "groupe_id": canteen_central_dict["id"],
         # "central_producer_siret": canteen_central_dict["siret"],  # would make an error because same as 'siret'
         "sector_list": canteen_central_dict["sector_list"],
+        "deletion_date": canteen_central_dict["deletion_date"] if canteen_central_dict["deletion_date"] else None,
     }
 
 
@@ -67,16 +68,18 @@ class Command(BaseCommand):
             print("Dry run mode, no changes will be applied.")
 
         # stats before
-        canteen_central_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL)
-        canteen_central_serving_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL_SERVING)
-        canteen_groupe_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.GROUPE)
-        logger.info(f"Found {canteen_central_qs.count()} CENTRAL canteens to migrate to GROUPE")
-        logger.info(f"Found {canteen_central_serving_qs.count()} CENTRAL_SERVING canteens to migrate to GROUPE")
-        logger.info(f"Found {canteen_groupe_qs.count()} existing GROUPE canteens")
+        canteen_central_all_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL)
+        canteen_central_serving_all_qs = Canteen.all_objects.filter(
+            production_type=Canteen.ProductionType.CENTRAL_SERVING
+        )
+        canteen_groupe_all_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.GROUPE)
+        logger.info(f"Found {canteen_central_all_qs.count()} CENTRAL canteens to migrate to GROUPE")
+        logger.info(f"Found {canteen_central_serving_all_qs.count()} CENTRAL_SERVING canteens to migrate to GROUPE")
+        logger.info(f"Found {canteen_groupe_all_qs.count()} existing GROUPE canteens")
 
         if apply:
             # Step 1: migrate CENTRAL to GROUPE
-            for canteen_central in canteen_central_qs:
+            for canteen_central in canteen_central_all_qs:
                 # Before: copy data to allow updating satellites after updating the central to groupe
                 canteen_central_dict_copy = canteen_central.__dict__.copy()
                 # Step 1.1: update canteen fields
@@ -84,18 +87,19 @@ class Command(BaseCommand):
                     setattr(canteen_central, field_name, value)
                 canteen_central.save(run_validations=False)
                 update_change_reason(canteen_central, "Script: canteen_migrate_central_to_groupe")
-                # Step 1.2: update canteen satellites
-                canteen_central_satellites_qs = Canteen.all_objects.filter(
-                    production_type__in=[Canteen.ProductionType.ON_SITE_CENTRAL],
-                    central_producer_siret=canteen_central_dict_copy["siret"],
-                )
-                for satellite in canteen_central_satellites_qs:
-                    satellite.groupe = canteen_central
-                    satellite.save(run_validations=False)
-                    update_change_reason(satellite, "Script: canteen_migrate_central_to_groupe")
+                # Step 1.2: link canteen satellites (only if central not deleted)
+                if not canteen_central.is_deleted:
+                    canteen_central_satellites_all_qs = Canteen.all_objects.filter(
+                        production_type__in=[Canteen.ProductionType.ON_SITE_CENTRAL],
+                        central_producer_siret=canteen_central_dict_copy["siret"],
+                    )
+                    for satellite in canteen_central_satellites_all_qs:
+                        satellite.groupe = canteen_central
+                        satellite.save(run_validations=False)
+                        update_change_reason(satellite, "Script: canteen_migrate_central_to_groupe")
 
             # Step 2: migrate CENTRAL_SERVING to GROUPE
-            for canteen_central_serving in canteen_central_serving_qs:
+            for canteen_central_serving in canteen_central_serving_all_qs:
                 # Before: copy data to allow creating & updating satellites after updating the central_serving to groupe
                 canteen_central_serving_dict_copy = canteen_central_serving.__dict__.copy()
                 # Step 2.1: update canteen fields
@@ -103,26 +107,31 @@ class Command(BaseCommand):
                     setattr(canteen_central_serving, field_name, value)
                 canteen_central_serving.save(run_validations=False)
                 update_change_reason(canteen_central_serving, "Script: canteen_migrate_central_to_groupe")
-                # Step 2.2: create new satellite from central_serving
+                # Step 2.2: create (and link) new satellite from central_serving
                 satellite_canteen = Canteen(**satellite_from_central_dict(canteen_central_serving_dict_copy))
                 satellite_canteen.save(run_validations=False)
                 update_change_reason(satellite_canteen, "Script: canteen_migrate_central_to_groupe")
                 satellite_canteen.managers.set(canteen_central_serving.managers.all())
-                # Step 2.3: update canteen satellites
-                canteen_central_serving_satellites_qs = Canteen.all_objects.filter(
-                    production_type__in=[Canteen.ProductionType.ON_SITE_CENTRAL],
-                    central_producer_siret=canteen_central_serving_dict_copy["siret"],
-                )
-                for satellite in canteen_central_serving_satellites_qs:
-                    satellite.groupe = canteen_central_serving
-                    satellite.save(run_validations=False)
-                    update_change_reason(satellite, "Script: canteen_migrate_central_to_groupe")
+                # Step 2.3: link canteen satellites (if central_serving not deleted)
+                if not canteen_central_serving.is_deleted:
+                    canteen_central_serving_satellites_all_qs = Canteen.all_objects.filter(
+                        production_type__in=[Canteen.ProductionType.ON_SITE_CENTRAL],
+                        central_producer_siret=canteen_central_serving_dict_copy["siret"],
+                    )
+                    for satellite in canteen_central_serving_satellites_all_qs:
+                        satellite.groupe = canteen_central_serving
+                        satellite.save(run_validations=False)
+                        update_change_reason(satellite, "Script: canteen_migrate_central_to_groupe")
 
-        # stats after
-        canteen_central_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL)
-        canteen_central_serving_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL_SERVING)
-        canteen_groupe_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.GROUPE)
-        logger.info(f"Found {canteen_central_qs.count()} CENTRAL canteens to migrate to GROUPE")
-        logger.info(f"Found {canteen_central_serving_qs.count()} CENTRAL_SERVING canteens to migrate to GROUPE")
-        logger.info(f"Found {canteen_groupe_qs.count()} existing GROUPE canteens")
-        print(Counter(Canteen.all_objects.exclude(groupe=None).values_list("production_type", flat=True)))
+            # stats after
+            canteen_central_all_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL)
+            canteen_central_serving_all_qs = Canteen.all_objects.filter(
+                production_type=Canteen.ProductionType.CENTRAL_SERVING
+            )
+            canteen_groupe_all_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.GROUPE)
+            logger.info(f"Found {canteen_central_all_qs.count()} CENTRAL canteens to migrate to GROUPE")
+            logger.info(
+                f"Found {canteen_central_serving_all_qs.count()} CENTRAL_SERVING canteens to migrate to GROUPE"
+            )
+            logger.info(f"Found {canteen_groupe_all_qs.count()} existing GROUPE canteens")
+            print(Counter(Canteen.all_objects.exclude(groupe=None).values_list("production_type", flat=True)))
