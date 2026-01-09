@@ -42,6 +42,7 @@ export default {
       )
     },
     missingDeclarationMode() {
+      if (!this.diagnostic) return false
       return this.isCentralKitchen && !this.diagnostic?.centralKitchenDiagnosticMode
     },
     isCentralKitchenFilled() {
