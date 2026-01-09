@@ -32,7 +32,7 @@ export default {
       else return this.verifyMeasureFilled()
     },
     isWaitingCentralKitchen() {
-      return this.isAppro && this.isSatellite && !this.isFilled
+      return this.isAppro && this.isSatellite && this.canteen.groupe?.id && !this.isFilled
     },
     isCentralKitchen() {
       return (
