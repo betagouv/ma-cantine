@@ -178,7 +178,11 @@ export default {
     },
     isCentralCuisine() {
       // cannot use this.canteen.isCentralCuisine because that field may not be updated with latest canteen changes
-      return this.canteenForTD.productionType === "central" || this.canteenForTD.productionType === "central_serving"
+      return (
+        this.canteenForTD.productionType === "central" ||
+        this.canteenForTD.productionType === "central_serving" ||
+        this.canteenForTD.productionType === "groupe"
+      )
     },
   },
   methods: {

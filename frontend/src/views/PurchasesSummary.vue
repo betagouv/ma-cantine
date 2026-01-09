@@ -248,7 +248,7 @@ export default {
       return this.summary.valeurTotale / this.yearlyMealCount
     },
     isCentralCanteen() {
-      return ["central", "central_serving"].includes(this.vizCanteen?.productionType)
+      return ["central", "central_serving", "groupe"].includes(this.vizCanteen?.productionType)
     },
     applicableRules() {
       return applicableDiagnosticRules(this.vizCanteen)
