@@ -873,7 +873,7 @@ class CanteenDeleteApiTest(APITestCase):
         canteen = CanteenFactory(managers=[authenticate.user])
 
         response = self.client.delete(reverse("single_canteen", kwargs={"pk": canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         # Model was only soft-deleted but remains in the DB
         self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
