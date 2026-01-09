@@ -73,7 +73,6 @@ export default {
         { text: "Nom", value: "name" },
         { text: `Bilan ${lastYear()}`, value: "action" },
       ],
-      satelliteCount: null,
       currentYear: false, // Table always display for previous year
       inTeledeclarationCampaign: false,
       inCorrectionCampaign: false,
@@ -91,13 +90,12 @@ export default {
     },
   },
   methods: {
-    updateSatelliteCount() {
+    updateSatellites() {
       if (this.canteen.productionType !== "groupe") return
       const url = `/api/v1/canteens/${this.canteen.id}/satellites/`
       fetch(url)
         .then((response) => response.json())
         .then((response) => {
-          this.satelliteCount = response.length
           let satellitesIncomplete = []
           let satellitesTeledeclared = []
           let satellitesOther = []
@@ -124,13 +122,13 @@ export default {
     },
   },
   mounted() {
-    this.updateSatelliteCount()
+    this.updateSatellites()
     this.fetchCampaignDates()
   },
   watch: {
     canteen(newCanteen, oldCanteen) {
       if (newCanteen && newCanteen.id !== oldCanteen?.id) {
-        this.updateSatelliteCount()
+        this.updateSatellites()
       }
     },
   },
