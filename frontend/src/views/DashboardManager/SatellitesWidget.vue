@@ -2,7 +2,7 @@
   <v-card outlined class="fill-height d-flex flex-column dsfr no-hover pa-sm-6">
     <v-card-title class="pb-0"><h3 class="fr-h4 mb-0">Mes restaurants satellites</h3></v-card-title>
     <v-card-text v-if="!satellites.length" class="fr-text-xs grey--text text--darken-2 mt-3 pb-0">
-      <p class="mb-0">Ajoutez les restaurants que vous livrez</p>
+      <p class="mb-0">Ajoutez les restaurants satellites à mon groupe</p>
     </v-card-text>
     <v-spacer v-if="!satellites.length" />
     <v-card-text

@@ -103,7 +103,7 @@ export default {
       if (this.isCentralCuisine) {
         if (this.canteenForTD.satellitesCount === 1) {
           unusualData.push({
-            text: "Votre établissement livre des repas à un seul site",
+            text: "Votre groupe livre des repas à un seul restaurant satellite",
             id: "td-satellite-count-is-1",
           })
         } else if (this.canteenForTD.satellitesCount > this.maxSatellitesExpected) {
