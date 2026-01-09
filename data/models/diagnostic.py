@@ -1750,6 +1750,8 @@ class Diagnostic(models.Model):
             raise ValidationError("Ce diagnostic a déjà été télédéclaré")
         if not self.is_filled:
             raise ValidationError("Ce diagnostic n'est pas rempli")
+        if not self.canteen.is_filled:
+            raise ValidationError("La cantine associée à ce diagnostic n'est pas complète")
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 
