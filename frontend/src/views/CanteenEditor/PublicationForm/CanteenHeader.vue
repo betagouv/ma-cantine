@@ -12,7 +12,12 @@
     <v-spacer></v-spacer>
     <div :class="{ 'fr-text-sm': true, 'text-right': hasLongCanteenName }">
       <p class="mb-0">Vous remarquez une erreur ?</p>
-      <router-link :to="{ name: 'CanteenForm' }">
+      <router-link
+        :to="{
+          name: 'GestionnaireCantineGerer',
+          params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+        }"
+      >
         <v-icon class="mr-1" small>mdi-pencil</v-icon>
         Modifier mon établissement
       </router-link>

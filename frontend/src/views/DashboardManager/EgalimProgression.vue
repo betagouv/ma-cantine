@@ -68,7 +68,14 @@
         </span>
       </p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-        <v-btn :to="{ name: 'CanteenForm' }" color="primary" class="fr-text font-weight-medium">
+        <v-btn
+          :to="{
+            name: 'GestionnaireCantineGerer',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+          color="primary"
+          class="fr-text font-weight-medium"
+        >
           Mettre à jour mon établissement
         </v-btn>
       </v-card-actions>
@@ -78,9 +85,9 @@
       class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
       <p>
-        {{ satelliteInconsistencyMessage }}
+        Vous avez déclaré que votre groupe livrait des repas mais aucun restaurant satellite n'a été enregistré.
         <br />
-        Veuillez ajouter vos restaurants satellites avant télédéclarer.
+        Veuillez les ajouter avant de télédéclarer.
       </p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
         <v-btn
@@ -247,11 +254,6 @@ export default {
     },
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
-    },
-    satelliteInconsistencyMessage() {
-      const satelliteCount = this.canteen.satelliteCanteensCount
-      const declared = satelliteCount === 1 ? `un restaurant` : `${satelliteCount} restaurants`
-      return `Vous avez déclaré que votre établissement livrait des repas à ${declared} mais aucun n'a été enregistré.`
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store.state.sectors)

@@ -78,7 +78,7 @@ const tableRows = computed(() => {
           name: sat.name,
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
-          diagnostic: diagnosticService.getBadge(sat.action, campaign),
+          diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
           edit: {
             userCan: sat.userCanView,
             satelliteComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",

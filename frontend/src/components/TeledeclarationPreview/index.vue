@@ -101,16 +101,16 @@ export default {
     unusualData() {
       const unusualData = []
       if (this.isCentralCuisine) {
-        if (this.canteenForTD.satelliteCanteensCount === 1) {
+        if (this.canteenForTD.satellitesCount === 1) {
           unusualData.push({
-            text: "Votre établissement livre des repas à un seul site",
+            text: "Votre groupe livre des repas à un seul restaurant satellite",
             id: "td-satellite-count-is-1",
           })
-        } else if (this.canteenForTD.satelliteCanteensCount > this.maxSatellitesExpected) {
+        } else if (this.canteenForTD.satellitesCount > this.maxSatellitesExpected) {
           unusualData.push({
-            text: `Votre établissement livre des repas à plus de ${this.maxSatellitesExpected} sites (${this.canteenForTD.satelliteCanteensCount} au total)`,
+            text: `Votre groupe livre des repas à plus de ${this.maxSatellitesExpected} restaurants satellites (${this.canteenForTD.satellitesCount} au total)`,
             id: `td-satellite-count-over-${this.maxSatellitesExpected}`,
-            value: this.canteenForTD.satelliteCanteensCount,
+            value: this.canteenForTD.satellitesCount,
           })
         }
       }
@@ -169,7 +169,7 @@ export default {
     daysOpenPerYear() {
       if (!this.canteenForTD.dailyMealCount || !this.canteenForTD.yearlyMealCount) return
       // can't easily estimate days open for even central_serving without taking into account all satellites
-      if (this.canteenForTD.isCentralCuisine) return
+      if (this.canteenForTD.productionType === "groupe") return
       return Number(this.canteenForTD.yearlyMealCount / this.canteenForTD.dailyMealCount).toFixed(0)
     },
     costPerMeal() {
