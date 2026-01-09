@@ -453,31 +453,44 @@ class CanteenModelDeleteTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=cls.canteen_groupe_2_with_active_satellites,
         )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
 
     def test_canteen_soft_delete(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.all_objects.count(), 4)
 
         # ok to delete satellite canteen
         self.canteen_satellite_21.delete()
-        # ok to delete groupe without satellites
+        # ok to delete site canteen
+        self.canteen_site.delete()
+
+        self.assertEqual(Canteen.objects.count(), 4 - 2)
+        self.assertEqual(Canteen.all_objects.count(), 4)
+
+    def test_can_soft_delete_groupe_without_satellites(self):
+        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.all_objects.count(), 4)
         self.assertEqual(self.canteen_groupe_1_without_satellites.satellites.count(), 0)
+
+        # ok to delete groupe without satellites
         self.canteen_groupe_1_without_satellites.delete()
 
-        self.assertEqual(Canteen.objects.count(), 1)
-        self.assertEqual(Canteen.all_objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 4 - 1)
+        self.assertEqual(Canteen.all_objects.count(), 4)
 
-    def test_can_soft_delete_groupe_with_no_active_satellites(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+    def test_can_soft_delete_groupe_with_only_deleted_satellites(self):
+        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.all_objects.count(), 4)
         self.assertEqual(self.canteen_groupe_2_with_active_satellites.satellites.count(), 1)
 
         # first delete satellites
         self.canteen_satellite_21.delete()
-        # ok to delete groupe with deleted satellites
         self.assertEqual(self.canteen_groupe_2_with_active_satellites.satellites.count(), 0)
+        # ok to delete groupe with deleted satellites
         self.canteen_groupe_2_with_active_satellites.delete()
 
-        self.assertEqual(Canteen.objects.count(), 1)
-        self.assertEqual(Canteen.all_objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 4 - 2)
+        self.assertEqual(Canteen.all_objects.count(), 4)
 
     def test_cannot_soft_delete_groupe_with_active_satellites(self):
         self.assertEqual(self.canteen_groupe_2_with_active_satellites.satellites.count(), 1)
