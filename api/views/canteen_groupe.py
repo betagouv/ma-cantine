@@ -53,7 +53,7 @@ class CanteenGroupeSatelliteLinkView(APIView):
             )
 
         canteen_satellite.groupe = canteen_groupe
-        canteen_satellite.save()
+        canteen_satellite.save(run_validations=False)
         return Response(FullCanteenSerializer(canteen_groupe).data, status=status.HTTP_200_OK)
 
 
@@ -80,5 +80,5 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
             )
 
         canteen_satellite.groupe = None
-        canteen_satellite.save()
+        canteen_satellite.save(run_validations=False)
         return Response(FullCanteenSerializer(canteen_groupe).data, status=status.HTTP_200_OK)
