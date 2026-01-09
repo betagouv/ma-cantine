@@ -67,7 +67,7 @@ export default {
       if (this.delegatedToSatellite) {
         return "Les données associées à cette mesure EGalim sont renseignées au niveau des restaurants satellites de votre groupe."
       } else if (this.delegatedToCentralKitchen) {
-        return "Votre cuisine centrale a renseigné les données de cette mesure à votre place."
+        return "Votre groupe de restaurants satellites a renseigné les données de cette mesure à votre place."
       }
       return "Analyser votre situation, mettre en place des solutions comme la réservation de repas, et valoriser les restes par des dons aux associations."
     },
