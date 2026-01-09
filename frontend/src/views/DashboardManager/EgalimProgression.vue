@@ -85,9 +85,9 @@
       class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
       <p>
-        Vous avez déclaré que votre établissement livrait des repas mais aucun n'a été enregistré
+        Vous avez déclaré que votre groupe livrait des repas mais aucun restaurant satellite n'a été enregistré.
         <br />
-        Veuillez ajouter vos restaurants satellites avant télédéclarer.
+        Veuillez les ajouter avant de télédéclarer.
       </p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
         <v-btn
