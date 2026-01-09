@@ -7,11 +7,10 @@
     <v-spacer v-if="!satellites.length" />
     <v-card-text
       :class="`fr-text-xs mt-3 pb-0 ${hasSatelliteInconsistency ? 'dark-orange' : 'grey--text text--darken-2'}`"
-      v-if="canteen.satelliteCanteensCount"
     >
       <p class="mb-0 d-flex">
         <v-icon small v-if="hasSatelliteInconsistency" class="mr-1 dark-orange">$alert-line</v-icon>
-        {{ satelliteCountEmpty }}
+        {{ satelliteCountSentence }}
       </p>
     </v-card-text>
     <v-spacer v-if="satellites.length" />
@@ -84,10 +83,11 @@ export default {
     hasSatelliteInconsistency() {
       return hasSatelliteInconsistency(this.canteen)
     },
-    satelliteCountEmpty() {
-      const satPluralize = this.canteen.satelliteCanteensCount > 1 ? "restaurants satellites" : "restaurant satellite"
-      const fillPluralize = this.canteen.satellites.length > 1 ? "renseignés" : "renseigné"
-      return `${this.canteen.satellites.length} sur ${this.canteen.satelliteCanteensCount} ${satPluralize} ${fillPluralize}`
+    satelliteCountSentence() {
+      const count = this.canteen.satellitesCount
+      if (count === 0) return "Aucun restaurant satellite renseigné"
+      else if (count === 1) return "1 restaurant satellite renseigné"
+      else return `${count} restaurants satellites renseignés`
     },
   },
   methods: {

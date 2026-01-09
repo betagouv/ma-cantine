@@ -93,37 +93,18 @@
         </div>
       </v-col>
     </v-row>
-    <v-row v-if="isGroupe">
-      <v-col cols="12" class="pb-0">
-        <h3 class="fr-h6">Mes restaurants satellites</h3>
-        <p class="fr-text-sm mb-1 d-flex align-center" :class="{ 'dark-orange': hasSatelliteInconsistency }">
-          <v-icon v-if="hasSatelliteInconsistency" small class="mr-1 dark-orange">$alert-line</v-icon>
-          {{ satelliteCountSentence }}
-        </p>
-      </v-col>
-      <v-col cols="12">
-        <p>
-          <v-btn
-            :to="{ name: 'GestionnaireCantineGroupeSatellites' }"
-            outlined
-            small
-            color="primary"
-            class="fr-btn--tertiary px-2"
-          >
-            Gérer mes restaurants satellites
-          </v-btn>
-        </p>
-      </v-col>
-    </v-row>
+    <SatellitesWidget v-if="isGroupe" :canteen="canteen" />
   </div>
 </template>
 
 <script>
 import Constants from "@/constants"
-import { sectorDisplayString, hasSatelliteInconsistency, lineMinistryRequired } from "@/utils"
+import SatellitesWidget from "@/views/DashboardManager/SatellitesWidget.vue"
+import { sectorDisplayString, lineMinistryRequired } from "@/utils"
 
 export default {
   name: "CanteenSummary",
+  components: { SatellitesWidget },
   props: {
     canteen: {
       type: Object,
@@ -160,15 +141,6 @@ export default {
     },
     hasSite() {
       return this.canteen.productionType !== "central" && !this.isGroupe
-    },
-    hasSatelliteInconsistency() {
-      return hasSatelliteInconsistency(this.canteen)
-    },
-    satelliteCountSentence() {
-      const count = this.canteen.satellitesCount
-      if (count === 0) return "Aucun restaurant satellite renseigné"
-      else if (count === 1) return "1 restaurant satellite renseigné"
-      else return `${count} restaurants satellites renseignés`
     },
   },
 }
