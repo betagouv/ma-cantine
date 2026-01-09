@@ -1701,24 +1701,37 @@ class Diagnostic(models.Model):
             return False
 
     def _should_use_central_kitchen_appro(self):
-        if self.canteen.is_satellite and self.canteen.central_producer_siret:
-            try:
-                central_kitchen = Canteen.objects.get(siret=self.canteen.central_producer_siret)
-                existing_diagnostic = central_kitchen.diagnostics.get(year=self.year)
-                handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
-                    Diagnostic.CentralKitchenDiagnosticMode.APPRO,
-                    Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                ]
-                return central_kitchen.is_central_cuisine and handles_satellite_data
-            except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
-                pass
+        if self.canteen.is_satellite:
+            if self.canteen.groupe_id:
+                try:
+                    groupe = self.canteen.groupe
+                    existing_diagnostic = groupe.diagnostics.get(year=self.year)
+                    handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
+                        Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                        Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                    ]
+                    return groupe.is_groupe and handles_satellite_data
+                except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
+                    pass
+            # TODO: remove (deprecated)
+            elif self.canteen.central_producer_siret:
+                try:
+                    central_kitchen = Canteen.objects.get(siret=self.canteen.central_producer_siret)
+                    existing_diagnostic = central_kitchen.diagnostics.get(year=self.year)
+                    handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
+                        Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                        Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                    ]
+                    return central_kitchen.is_central_cuisine and handles_satellite_data
+                except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
+                    pass
         return False
 
     def _get_teledeclaration_mode(self):
         uses_central_kitchen_appro = self._should_use_central_kitchen_appro()
         if uses_central_kitchen_appro:
             return Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
-        if self.canteen.is_central_cuisine:
+        if self.canteen.is_groupe_or_central_cuisine:
             if self.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL:
                 return Diagnostic.TeledeclarationMode.CENTRAL_ALL
             if self.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
