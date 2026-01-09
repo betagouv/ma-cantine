@@ -83,14 +83,15 @@
         </div>
         <div v-else-if="isSatelliteWithCompleteCentralDiagnostic">
           <p>
-            Votre cuisine centrale {{ isSatelliteWithCentralDiagnosticTeledeclared ? "a déclaré" : "va déclarer" }} le
-            bilan pour votre établissement.
+            Votre groupe de restaurants satellites
+            {{ isSatelliteWithCentralDiagnosticTeledeclared ? "a déclaré" : "va déclarer" }} le bilan pour votre
+            établissement.
           </p>
         </div>
         <div v-else-if="inTeledeclarationCampaign || hasTeledeclarationToCorrect">
           <div v-if="isSatelliteWithApproCentralDiagnostic">
             <p>
-              Votre cuisine centrale
+              Votre groupe de restaurants satellites
               {{ isSatelliteWithCentralDiagnosticTeledeclared ? "a déclaré" : "va déclarer" }} les données
               d'approvisionnement pour votre établissement.
             </p>
@@ -416,6 +417,7 @@ export default {
       return this.canteen?.productionType === "site_cooked_elsewhere"
     },
     isSatelliteWithCompleteCentralDiagnostic() {
+      console.log("centralDiagnostic", this.centralDiagnostic?.centralKitchenDiagnosticMode)
       return this.isSatellite && this.centralDiagnostic?.centralKitchenDiagnosticMode === "ALL"
     },
     isSatelliteWithApproCentralDiagnostic() {
@@ -483,6 +485,7 @@ export default {
       const diag = this.canteen.diagnostics?.find((x) => +x.year === +this.year)
       this.$set(this, "diagnostic", diag)
       if (this.canteen.productionType === "site_cooked_elsewhere") {
+        console.log("canteen", this.canteen.centralKitchenDiagnostics)
         const centralDiag = this.canteen.centralKitchenDiagnostics?.find((x) => +x.year === +this.year)
         this.$set(this, "centralDiagnostic", centralDiag)
       }
