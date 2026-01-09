@@ -39,7 +39,7 @@ class Command(BaseCommand):
         canteens_with_teledeclarations = []
         for dtd in diagnostics_teledeclared.values("canteen_snapshot", "satellites_snapshot"):
             canteens_with_teledeclarations.append(dtd["canteen_snapshot"]["id"])
-            if len(dtd["satellites_snapshot"]) > 0:
+            if dtd["satellites_snapshot"] and len(dtd["satellites_snapshot"]) > 0:
                 for satellite in dtd["satellites_snapshot"]:
                     canteens_with_teledeclarations.append(satellite["id"])
 
