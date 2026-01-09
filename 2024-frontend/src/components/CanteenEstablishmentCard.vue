@@ -124,7 +124,7 @@ const linkedCanteensLabel = computed(() => {
       <DsfrBadge type="success" label="La cantine est dans votre groupe" small />
     </div>
     <div v-else-if="status === 'add-satellite'" class="fr-mt-1w">
-      <CanteenButtonLink :satId="id" :groupId="groupId" @satelliteAdded="(satelliteInfos) => $emit('select', satelliteInfos)" />
+      <CanteenButtonLink :satId="id" :groupId="groupId" @satelliteAdded="$emit('select')" />
     </div>
   </div>
 </template>

@@ -102,11 +102,6 @@ const getCanteenStatus = (canteen) => {
   if (isSatellite && hasGroup && !inMyGroup) return "other-group"
   return ""
 }
-
-const updateCanteen = (index, canteenInfos) => {
-  canteens.value[index].status = "my-group"
-  emit('addedSatellite', canteenInfos)
-}
 </script>
 <template>
   <DsfrModal :opened="open" title="Ajouter un restaurant satellite" @close="closeModal()" size="lg">
@@ -133,7 +128,7 @@ const updateCanteen = (index, canteenInfos) => {
       </template>
     </DsfrInputGroup>
     <ul v-if="canteens.length > 0" class="ma-cantine--unstyled-list">
-      <li class="fr-mb-1w" v-for="(canteen, index) in canteens" :key="canteen.id">
+      <li class="fr-mb-1w" v-for="canteen in canteens" :key="canteen.id">
         <CanteenEstablishmentCard
           :name="canteen.name"
           :siret="canteen.siret"
@@ -144,7 +139,7 @@ const updateCanteen = (index, canteenInfos) => {
           :id="canteen.id"
           :linked-canteens="canteen.linkedCanteens"
           :groupId="groupId"
-          @select="(canteenInfos) => updateCanteen(index, canteenInfos)"
+          @select="$emit('updateSatellites')"
         />
       </li>
     </ul>

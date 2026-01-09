@@ -17,16 +17,12 @@ const addSatellite = () => {
     .linkSatellite(props.groupId, props.satId)
     .then((response) => {
       if (response instanceof Error) throw Error()
-      else success()
+      else emit("satelliteAdded")
     })
     .catch(() => {
       loading.value = true
       error.value = true
     })
-}
-const success = async () => {
-  const satelliteInfos = await canteensService.fetchCanteen(props.satId)
-  emit("satelliteAdded", satelliteInfos)
 }
 </script>
 

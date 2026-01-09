@@ -26,10 +26,14 @@ const campaign = computedAsync(async () => {
 
 /* Satellites  */
 const satellites = ref([])
-canteenService.fetchSatellites(canteenId).then((response) => {
-  loading.value = false
-  satellites.value = response
-})
+const updateSatellites = () => {
+  loading.value = true
+  canteenService.fetchSatellites(canteenId).then((response) => {
+    loading.value = false
+    satellites.value = response
+  })
+}
+updateSatellites()
 
 const satellitesCountSentence = computed(() => {
   if (satellites.value.length === 0) return "Aucun restaurant satellite renseigné"
@@ -92,9 +96,6 @@ const tableRows = computed(() => {
 const removeRow = (id) => {
   satellites.value = satellites.value.filter((sat) => sat.id !== id)
 }
-const addRow = (satelliteInfos) => {
-  satellites.value.push(satelliteInfos)
-}
 </script>
 <template>
   <section class="gestionnaire-cantine-groupe-satellites">
@@ -104,7 +105,7 @@ const addRow = (satelliteInfos) => {
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
         <DsfrButton primary label="Ajouter un restaurant satellite" icon="fr-icon-add-circle-fill" @click="modalOpened = true" />
       </div>
-      <CanteenAddSatelliteModal :open="modalOpened" :groupId="canteenId" @close="modalOpened = false" @addedSatellite="(satelliteInfos) => addRow(satelliteInfos)" />
+      <CanteenAddSatelliteModal :open="modalOpened" :groupId="canteenId" @close="modalOpened = false" @updateSatellites="updateSatellites()" />
     </div>
     <AppLoader v-if="loading" />
     <DsfrDataTable
