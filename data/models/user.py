@@ -29,6 +29,7 @@ class UserQuerySet(models.QuerySet):
                 "canteens",
                 filter=Q(
                     canteens__production_type__in=[
+                        Canteen.ProductionType.GROUPE,
                         Canteen.ProductionType.CENTRAL,
                         Canteen.ProductionType.CENTRAL_SERVING,
                     ]

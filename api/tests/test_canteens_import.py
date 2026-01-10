@@ -304,7 +304,7 @@ class CanteensImportApiErrorTest(APITestCase):
         )
         self.assertTrue(
             errors.pop(0)["message"].startswith(
-                "Champ 'siret de la cuisine centrale' : Le champ ne peut être rempli que pour les restaurants satellites."
+                "Champ 'siret de la cuisine centrale' : Le champ ne peut être rempli que pour les groupes ou les restaurants satellites."
             ),
         )
         self.assertTrue(
@@ -530,7 +530,6 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
-        print(errors)
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(errors), 0, errors)
         self.assertEqual(len(body["canteens"]), 1)

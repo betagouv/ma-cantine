@@ -15,6 +15,12 @@ class UserModelTest(TestCase):
         Canteen.objects.filter(id=cls.canteen_empty.id).update(
             production_type=None, management_type=None, economic_model=None
         )
+        cls.canteen_groupe = CanteenFactory(
+            production_type=Canteen.ProductionType.GROUPE,
+            management_type=Canteen.ManagementType.DIRECT,
+            economic_model=None,
+            managers=[cls.user_with_canteens],
+        )
         cls.canteen_centrale = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
             management_type=Canteen.ManagementType.DIRECT,
@@ -68,8 +74,8 @@ class UserModelTest(TestCase):
         user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
         user_without_canteens = user_qs.get(id=self.user_without_canteens.id)
 
-        self.assertEqual(user_with_canteens.nb_cantines, 5)
-        self.assertEqual(user_with_canteens.nb_cantines_groupe, 1)
+        self.assertEqual(user_with_canteens.nb_cantines, 6)
+        self.assertEqual(user_with_canteens.nb_cantines_groupe, 1 + 1)
         self.assertEqual(user_with_canteens.nb_cantines_site, 2)
         self.assertEqual(user_with_canteens.nb_cantines_satellite, 1)
         self.assertEqual(user_with_canteens.nb_cantines_gestion_concedee, 1)
@@ -88,8 +94,8 @@ class UserModelTest(TestCase):
         self.user_with_canteens.update_data()
         self.user_with_canteens.refresh_from_db()
 
-        self.assertEqual(self.user_with_canteens.data["nb_cantines"], 5)
-        self.assertEqual(self.user_with_canteens.data["nb_cantines_groupe"], 1)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines"], 6)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines_groupe"], 1 + 1)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_site"], 2)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_satellite"], 1)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_gestion_concedee"], 1)
