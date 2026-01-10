@@ -6,6 +6,7 @@ from django.core.validators import ValidationError
 from django.db import models
 from django.db.models import BooleanField, Case, Count, Exists, F, OuterRef, Q, Subquery, Value, When, Func
 from django.utils import timezone
+from django.db.models.functions import Coalesce
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 from simple_history.utils import update_change_reason
@@ -82,16 +83,14 @@ def has_missing_data_query():
         | (Q(yearly_meal_count=None) | Q(yearly_meal_count=0))
         | (Q(daily_meal_count=None) | Q(daily_meal_count=0))
         | Q(~has_siret_or_siren_unite_legale_query())
-        | Q(production_type=None)
         | Q(management_type=None)
-        | Q(economic_model=None)
+        | Q(production_type=None)
+        # non-groupe-specific rules
+        | (~is_groupe_query() & Q(economic_model=None))
         # serving-specific rules (with annotate_with_sector_list_count)
         | (is_serving_query() & (Q(sector_list_count=0) | Q(sector_list_count__gt=3)))
-        # satellite-specific rules
-        | (is_satellite_query() & has_charfield_missing_query("central_producer_siret"))
-        | (is_satellite_query() & Q(central_producer_siret=F("siret")))
-        # cc-specific rules
-        | (is_central_cuisine_query() & (Q(satellite_canteens_count=None) | Q(satellite_canteens_count=0)))
+        # groupe-specific rules (with annotate_with_satellites_in_db_count)
+        | (is_groupe_query() & Q(satellites_in_db_count=0))
         # line_ministry (with annotate_with_requires_line_ministry)
         | (Q(economic_model=Canteen.EconomicModel.PUBLIC) & Q(requires_line_ministry=True) & Q(line_ministry=None))
     )
@@ -126,25 +125,31 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def is_satellite(self):
         return self.filter(is_satellite_query())
 
-    def annotate_with_central_kitchen_id(self):
-        central_kitchen = Canteen.objects.filter(siret=OuterRef("central_producer_siret")).values("id")
-        return self.annotate(
-            central_kitchen_id=Case(When(is_satellite_query(), Subquery(central_kitchen[:1])), default=None)
-        )
-
-    def get_satellites(self, central_producer_siret):
+    def get_satellites_old(self, central_producer_siret):
         return self.filter(is_satellite_query(), central_producer_siret=central_producer_siret)
 
-    def annotate_with_satellites_in_db_count(self):
+    def annotate_with_satellites_in_db_old_count(self):
         # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
-        satellites = (
+        satellites_old = (
             Canteen.objects.filter(central_producer_siret=OuterRef("siret"))
             .order_by()
             .values("central_producer_siret")
         )  # sets the groupBy for the aggregation
+        satellites_old_count = satellites_old.annotate(count=Count("id")).values("count")
+        return self.annotate(
+            satellites_in_db_old_count=Case(
+                When(is_central_cuisine_query(), then=Subquery(satellites_old_count)), default=0
+            )
+        )
+
+    def annotate_with_satellites_in_db_count(self):
+        # TODO: improve with a related_name on the groupe FK
+        satellites = Canteen.objects.filter(groupe_id=OuterRef("pk")).order_by().values("groupe_id")
         satellites_count = satellites.annotate(count=Count("id")).values("count")
         return self.annotate(
-            satellites_in_db_count=Case(When(is_central_cuisine_query(), then=Subquery(satellites_count)), default=0)
+            satellites_in_db_count=Case(
+                When(is_groupe_query(), then=Coalesce(Subquery(satellites_count), 0)), default=0
+            )
         )
 
     def annotate_with_purchases_for_year(self, year):
@@ -156,10 +161,8 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_diagnostic_for_year(self, year):
         from data.models import Diagnostic
 
-        self = self.annotate_with_central_kitchen_id()
-
         diagnostics = Diagnostic.objects.filter(
-            Q(canteen=OuterRef("central_kitchen_id")) | Q(canteen=OuterRef("pk")), year=year
+            Q(canteen=OuterRef("groupe_id")) | Q(canteen=OuterRef("pk")), year=year
         )
         diagnostics_filled = diagnostics.filled()
         diagnostic_for_year_with_cc_mode = Diagnostic.objects.filter(
@@ -209,19 +212,24 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def has_missing_data(self):
         return (
-            self.annotate_with_requires_line_ministry()
+            self.annotate_with_satellites_in_db_count()
+            .annotate_with_requires_line_ministry()
             .annotate_with_sector_list_count()
             .filter(has_missing_data_query())
         )
 
     def annotate_with_has_missing_data(self):
-        return self.annotate(
-            has_missing_data=Case(When(has_missing_data_query(), then=Value(True)), default=Value(False))
+        return (
+            self.annotate_with_satellites_in_db_count()
+            .annotate_with_requires_line_ministry()
+            .annotate_with_sector_list_count()
+            .annotate(has_missing_data=Case(When(has_missing_data_query(), then=Value(True)), default=Value(False)))
         )
 
     def filled(self):
         return (
-            self.annotate_with_requires_line_ministry()
+            self.annotate_with_satellites_in_db_count()
+            .annotate_with_requires_line_ministry()
             .annotate_with_sector_list_count()
             .exclude(has_missing_data_query())
         )
@@ -246,8 +254,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         # prep missing data action
         self = self.annotate_with_has_missing_data()
         # prep add satellites action
-        self = self.annotate_with_satellites_in_db_count()
-        self = self.annotate_with_central_kitchen_id()
+        self = self.annotate_with_satellites_in_db_old_count()
         # prep add diag & TD actions
         self = self.annotate_with_purchases_for_year(year)
         self = self.annotate_with_diagnostic_for_year(year)
@@ -274,7 +281,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
                 then=Value(Canteen.Actions.NOTHING),
             ),
             When(
-                is_central_cuisine_query() & Q(satellites_in_db_count=None),
+                is_central_cuisine_query() & Q(satellites_in_db_old_count=None),
+                then=Value(Canteen.Actions.ADD_SATELLITES),
+            ),
+            When(
+                is_groupe_query() & Q(satellites_in_db_count=0),
                 then=Value(Canteen.Actions.ADD_SATELLITES),
             ),
             When(
@@ -668,7 +679,7 @@ class Canteen(SoftDeletionModel):
             return self.canteen_set.all()
         elif self.is_central_cuisine:
             if self.siret:
-                return Canteen.objects.get_satellites(self.siret)
+                return Canteen.objects.get_satellites_old(self.siret)
         return Canteen.objects.none()
 
     @property
@@ -717,13 +728,12 @@ class Canteen(SoftDeletionModel):
             and bool(self.daily_meal_count)
             and bool(self.yearly_meal_count)
             and bool(self.siret or self.siren_unite_legale)
-            and bool(self.production_type)
             and bool(self.management_type)
-            and bool(self.economic_model)
+            and bool(self.production_type)
         )
         # serving-specific rules
         if is_filled and self.is_serving:
-            is_filled = bool(self.sector_list)
+            is_filled = bool(self.economic_model) and bool(self.sector_list)
         # satellite-specific rules
         if is_filled and self.is_satellite:
             is_filled = bool(self.central_producer_siret and self.central_producer_siret != self.siret)
