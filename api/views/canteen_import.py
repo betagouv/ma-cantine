@@ -40,7 +40,7 @@ class CanteensImportView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     manager_column_idx = 9  # gestionnaires_additionnels
-    silent_manager_idx = 9 + 3  # admin_gestionnaires_additionnels
+    silent_manager_idx = 9 + 2  # admin_gestionnaires_additionnels
 
     def __init__(self, **kwargs):
         self.canteens = {}
@@ -304,8 +304,8 @@ class CanteensImportView(APIView):
         canteen.central_producer_siret = central_producer_siret
         if self.is_admin_import:
             canteen.line_ministry = (
-                next((value for value, label in Canteen.Ministries.choices if label == row[11].strip()), None)
-                if row[11]
+                next((value for value, label in Canteen.Ministries.choices if label == row[10].strip()), None)
+                if row[10]
                 else None
             )
             canteen.import_source = import_source
