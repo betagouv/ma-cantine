@@ -304,7 +304,7 @@ class CanteensImportApiErrorTest(APITestCase):
         )
         self.assertTrue(
             errors.pop(0)["message"].startswith(
-                "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
+                "Champ 'siret de la cuisine centrale' : Le champ ne peut être rempli que pour les restaurants satellites."
             ),
         )
         self.assertTrue(
@@ -391,7 +391,6 @@ class CanteensImportApiErrorTest(APITestCase):
     @authenticate
     def test_sectors_error(self):
         """
-        - Sectors are required if canteen production_type is site, site_cooked_elsewhere, central_serving
         - Canteen can't have more than 3 sectors
         """
         self.assertEqual(Canteen.objects.count(), 0)
@@ -405,14 +404,11 @@ class CanteensImportApiErrorTest(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
-        error_message_central = "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
         error_message_min_max = "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs."
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 3, errors)
-        self.assertEqual(errors.pop(0)["message"], error_message_central)
-        self.assertEqual(errors.pop(0)["message"], error_message_min_max)
-        self.assertEqual(errors.pop(0)["message"], error_message_min_max)
+        self.assertEqual(len(errors), 1, errors)
+        self.assertEqual(errors[0]["message"], error_message_min_max)
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
