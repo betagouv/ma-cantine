@@ -1,10 +1,10 @@
 <template>
   <DsfrTag
     :clickable="false"
-    v-if="isCentralKitchen || isSatellite"
+    v-if="isGroupe || isSatellite"
     :class="`${position}`"
-    :icon="isCentralKitchen ? '$community-fill' : '$restaurant-fill'"
-    :text="isCentralKitchen ? 'Cuisine centrale' : 'Restaurant satellite'"
+    :icon="isGroupe ? '$community-fill' : '$restaurant-fill'"
+    :text="isGroupe ? 'Groupe de restaurants satellites' : 'Restaurant satellite'"
   />
 </template>
 
@@ -24,8 +24,8 @@ export default {
     },
   },
   computed: {
-    isCentralKitchen() {
-      return this.canteen.isCentralCuisine
+    isGroupe() {
+      return this.canteen.productionType === "groupe"
     },
     isSatellite() {
       return this.canteen.isSatellite

@@ -83,14 +83,15 @@
         </div>
         <div v-else-if="isSatelliteWithCompleteCentralDiagnostic">
           <p>
-            Votre cuisine centrale {{ isSatelliteWithCentralDiagnosticTeledeclared ? "a déclaré" : "va déclarer" }} le
-            bilan pour votre établissement.
+            Votre groupe de restaurants satellites
+            {{ isSatelliteWithCentralDiagnosticTeledeclared ? "a déclaré" : "va déclarer" }} le bilan pour votre
+            établissement.
           </p>
         </div>
         <div v-else-if="inTeledeclarationCampaign || hasTeledeclarationToCorrect">
           <div v-if="isSatelliteWithApproCentralDiagnostic">
             <p>
-              Votre cuisine centrale
+              Votre groupe de restaurants satellites
               {{ isSatelliteWithCentralDiagnosticTeledeclared ? "a déclaré" : "va déclarer" }} les données
               d'approvisionnement pour votre établissement.
             </p>

@@ -72,7 +72,8 @@ export default {
       return this.canteen.sectorList.map((sectorValue) => sectors.find((s) => s.value === sectorValue))
     },
     satelliteCount() {
-      return this.canteen.isCentralCuisine ? this.canteen.satelliteCanteensCount : undefined
+      // TODO : still used ?
+      return this.canteen.productionType === "groupe" ? this.canteen.satellitesCount : undefined
     },
     hasDailyMealCount() {
       return this.canteen.dailyMealCount

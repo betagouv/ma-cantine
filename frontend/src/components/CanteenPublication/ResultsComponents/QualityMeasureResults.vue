@@ -268,7 +268,7 @@ export default {
       )
     },
     usesCentralKitchenDiagnostics() {
-      if (!this.canteen.centralKitchen) return
+      if (this.canteen.productionType !== "site_cooked_elsewhere") return
       const hasCentralDiagnostic = this.approData.some((diagnostic) => diagnostic.canteenId !== this.canteen.id)
       return hasCentralDiagnostic
     },
