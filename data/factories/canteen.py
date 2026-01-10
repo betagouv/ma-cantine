@@ -247,8 +247,13 @@ class CanteenFactory(factory.django.DjangoModelFactory):
         if obj.production_type == Canteen.ProductionType.GROUPE
         else None
     )
-    city = factory.Faker("city")
-    city_insee_code = factory.Faker("postcode")
+    # city & city_insee_code
+    city = factory.LazyAttribute(
+        lambda obj: factory.Faker("city") if obj.production_type != Canteen.ProductionType.GROUPE else None
+    )
+    city_insee_code = factory.LazyAttribute(
+        lambda obj: factory.Faker("postcode") if obj.production_type != Canteen.ProductionType.GROUPE else None
+    )
     daily_meal_count = 12
     yearly_meal_count = 1000
     management_type = random.choice(Canteen.ManagementType.values)
