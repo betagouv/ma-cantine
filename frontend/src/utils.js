@@ -682,5 +682,6 @@ export const regionDisplayName = (regionCode) => {
 export const delegatedToCentralKitchen = (canteen, diagnostic) => {
   const isSatellite = canteen.productionType === "site_cooked_elsewhere"
   const hasGroup = canteen.groupe?.id
-  return isSatellite && hasGroup && diagnostic?.centralKitchenDiagnosticMode === "ALL"
+  const modeIsAll = diagnostic?.centralKitchenDiagnosticMode === "ALL"
+  return isSatellite && hasGroup && modeIsAll
 }
