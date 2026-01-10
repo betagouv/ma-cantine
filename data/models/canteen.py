@@ -79,14 +79,13 @@ def has_missing_data_query():
     return (
         # basic rules
         Q(name=None)
-        | has_charfield_missing_query("city_insee_code")
         | (Q(yearly_meal_count=None) | Q(yearly_meal_count=0))
         | (Q(daily_meal_count=None) | Q(daily_meal_count=0))
         | Q(~has_siret_or_siren_unite_legale_query())
         | Q(management_type=None)
         | Q(production_type=None)
         # non-groupe-specific rules
-        | (~is_groupe_query() & Q(economic_model=None))
+        | (~is_groupe_query() & (Q(has_charfield_missing_query("city_insee_code")) | Q(economic_model=None)))
         # serving-specific rules (with annotate_with_sector_list_count)
         | (is_serving_query() & (Q(sector_list_count=0) | Q(sector_list_count__gt=3)))
         # groupe-specific rules (with annotate_with_satellites_in_db_count)
@@ -122,6 +121,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def is_central_cuisine(self):
         return self.filter(is_central_cuisine_query())
 
+    def is_serving(self):
+        return self.filter(is_serving_query())
+
     def is_satellite(self):
         return self.filter(is_satellite_query())
 
@@ -129,6 +131,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.filter(is_satellite_query(), central_producer_siret=central_producer_siret)
 
     def annotate_with_satellites_in_db_count(self):
+        # # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
         # TODO: improve with a related_name on the groupe FK
         satellites = Canteen.objects.filter(groupe_id=OuterRef("pk")).order_by().values("groupe_id")
         satellites_count = satellites.annotate(count=Count("id")).values("count")
@@ -704,7 +707,6 @@ class Canteen(SoftDeletionModel):
         # basic rules
         is_filled = (
             bool(self.name)
-            and bool(self.city_insee_code)
             and bool(self.daily_meal_count)
             and bool(self.yearly_meal_count)
             and bool(self.siret or self.siren_unite_legale)
@@ -713,7 +715,7 @@ class Canteen(SoftDeletionModel):
         )
         # serving-specific rules
         if is_filled and self.is_serving:
-            is_filled = bool(self.economic_model) and bool(self.sector_list)
+            is_filled = bool(self.city_insee_code) and bool(self.economic_model) and bool(self.sector_list)
         # satellite-specific rules
         if is_filled and self.is_satellite:
             is_filled = bool(self.central_producer_siret and self.central_producer_siret != self.siret)

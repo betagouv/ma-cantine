@@ -231,7 +231,8 @@ def _covered_by_central_kitchen(canteen):
 
 def _get_candidate_canteens_for_insee_code_geobot():
     return (
-        Canteen.objects.has_city_insee_code()
+        Canteen.objects.is_serving()
+        .has_city_insee_code()
         .filter(
             has_charfield_missing_query("city")
             | has_charfield_missing_query("postal_code")
@@ -252,7 +253,7 @@ def _get_candidate_canteens_for_insee_code_geobot():
 
 
 def _get_candidate_canteens_for_siret_to_insee_code_bot():
-    return Canteen.objects.has_siret().has_city_insee_code_missing().order_by("-creation_date")
+    return Canteen.objects.is_serving().has_siret().has_city_insee_code_missing().order_by("-creation_date")
 
 
 def _update_canteen_geo_data_from_siret(canteen):
