@@ -128,20 +128,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def get_satellites_old(self, central_producer_siret):
         return self.filter(is_satellite_query(), central_producer_siret=central_producer_siret)
 
-    def annotate_with_satellites_in_db_old_count(self):
-        # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
-        satellites_old = (
-            Canteen.objects.filter(central_producer_siret=OuterRef("siret"))
-            .order_by()
-            .values("central_producer_siret")
-        )  # sets the groupBy for the aggregation
-        satellites_old_count = satellites_old.annotate(count=Count("id")).values("count")
-        return self.annotate(
-            satellites_in_db_old_count=Case(
-                When(is_central_cuisine_query(), then=Subquery(satellites_old_count)), default=0
-            )
-        )
-
     def annotate_with_satellites_in_db_count(self):
         # TODO: improve with a related_name on the groupe FK
         satellites = Canteen.objects.filter(groupe_id=OuterRef("pk")).order_by().values("groupe_id")
@@ -253,8 +239,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
         # prep missing data action
         self = self.annotate_with_has_missing_data()
-        # prep add satellites action
-        self = self.annotate_with_satellites_in_db_old_count()
         # prep add diag & TD actions
         self = self.annotate_with_purchases_for_year(year)
         self = self.annotate_with_diagnostic_for_year(year)
@@ -279,10 +263,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             When(
                 has_diagnostic_teledeclared_for_year=True,
                 then=Value(Canteen.Actions.NOTHING),
-            ),
-            When(
-                is_central_cuisine_query() & Q(satellites_in_db_old_count=None),
-                then=Value(Canteen.Actions.ADD_SATELLITES),
             ),
             When(
                 is_groupe_query() & Q(satellites_in_db_count=0),

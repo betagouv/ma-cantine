@@ -663,30 +663,6 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
             0,
         )
 
-    def test_annotate_with_satellites_in_db_old_count(self):
-        self.assertEqual(Canteen.objects.count(), 8)
-        self.assertEqual(
-            Canteen.objects.annotate_with_satellites_in_db_old_count()
-            .filter(id=self.canteen_central_1.id)
-            .first()
-            .satellites_in_db_old_count,
-            1,
-        )
-        self.assertEqual(
-            Canteen.objects.annotate_with_satellites_in_db_old_count()
-            .filter(id=self.canteen_central_2.id)
-            .first()
-            .satellites_in_db_old_count,
-            2,
-        )
-        self.assertEqual(
-            Canteen.objects.annotate_with_satellites_in_db_old_count()
-            .filter(id=self.canteen_on_site_central_1.id)
-            .first()
-            .satellites_in_db_old_count,
-            0,
-        )
-
 
 class CanteenPurchaseQuerySetTest(TestCase):
     @classmethod
