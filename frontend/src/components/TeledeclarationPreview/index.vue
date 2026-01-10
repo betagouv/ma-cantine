@@ -132,9 +132,9 @@ export default {
       return this.diagnostic
     },
     satWithTD() {
-      console.log("TODO !!!")
-      const count = 1
-      return count
+      if (!this.canteenForTD.productionType === "groupe") return null
+      // TODO : get satellites count already declared for this year
+      return null
     },
     unusualData() {
       const unusualData = []
