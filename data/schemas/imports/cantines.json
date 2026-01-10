@@ -102,16 +102,15 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(Cuisine centrale|Restaurant avec cuisine sur place|Restaurant satellite|central|site|site_cooked_elsewhere) *$",
+        "pattern": "^ *(Restaurant avec cuisine sur place|Restaurant satellite|site|site_cooked_elsewhere) *$",
         "required": true
       },
-      "description": "Il existe 4 types différents : 'Cuisine centrale' sans lieu de consommation, 'Restaurant avec cuisine sur place' qui produit les repas sur place, 'Restaurant satellite' qui sert des repas preparés par une cuisine centrale. Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de restaurants satellites.",
+      "description": "Il existe 2 types différents : 'Restaurant avec cuisine sur place' qui produit les repas sur place, 'Restaurant satellite' qui sert des repas preparés par une cuisine centrale.",
       "doc_enum": [
-        "Cuisine centrale",
         "Restaurant avec cuisine sur place",
         "Restaurant satellite"
       ],
-      "example": "Cuisine centrale",
+      "example": "Restaurant avec cuisine sur place",
       "format": "default",
       "name": "type_production",
       "title": "Lieu de production et de service des repas",
