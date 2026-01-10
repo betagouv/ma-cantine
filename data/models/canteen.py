@@ -674,18 +674,9 @@ class Canteen(SoftDeletionModel):
         return self.production_type and self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
 
     @property
-    def central_kitchen(self):
-        if self.is_satellite and self.central_producer_siret:
-            central_types = [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
-            try:
-                return Canteen.objects.get(siret=self.central_producer_siret, production_type__in=central_types)
-            except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
-                return None
-
-    @property
     def central_kitchen_diagnostics(self):
-        if self.central_kitchen:
-            return self.central_kitchen.diagnostics.filter(central_kitchen_diagnostic_mode__isnull=False)
+        if self.groupe_id:
+            return self.groupe.diagnostics.filter(central_kitchen_diagnostic_mode__isnull=False)
 
     @property
     def category_list_from_sector_list(self):
@@ -736,26 +727,19 @@ class Canteen(SoftDeletionModel):
         return is_filled
 
     def has_diagnostic_for_year(self, year):
-        has_diagnostics = self.diagnostics.filter(year=year).exists()
+        has_diagnostic = self.diagnostics.filter(year=year).exists()
         has_central_kitchen_diagnostic = (
             self.central_kitchen_diagnostics and self.central_kitchen_diagnostics.filter(year=year).exists()
         )
-        return has_diagnostics or has_central_kitchen_diagnostic
+        return has_diagnostic or has_central_kitchen_diagnostic
 
-    def has_teledeclaration_for_year(self, year):
-        from data.models.teledeclaration import Teledeclaration
-
-        has_canteen_td = self.teledeclaration_set.filter(
-            year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
-        ).exists()
-        has_central_kitchen_td = (
-            self.central_kitchen.teledeclaration_set.filter(
-                year=year, status=Teledeclaration.TeledeclarationStatus.SUBMITTED
-            ).exists()
-            if self.central_kitchen
-            else False
+    def has_diagnostic_teledeclared_for_year(self, year):
+        has_diagnostics_teledeclared = self.diagnostics.filter(year=year).teledeclared().exists()
+        has_central_kitchen_diagnostic_teledeclared = (
+            self.central_kitchen_diagnostics
+            and self.central_kitchen_diagnostics.filter(year=year).teledeclared().exists()
         )
-        return has_canteen_td or has_central_kitchen_td
+        return has_diagnostics_teledeclared or has_central_kitchen_diagnostic_teledeclared
 
     def get_declaration_donnees_year_display(self, year):
         from data.models.teledeclaration import Teledeclaration
