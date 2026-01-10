@@ -614,7 +614,7 @@ export const missingCanteenData = (canteen, sectors) => {
   if (canteen.productionType === "groupe" && canteen.satellitesCount === 0) return true
 
   // Production type specific checks
-  const onSiteFields = ["sectorList", "economicModel"]
+  const onSiteFields = ["sectorList", "economicModel", "cityInseeCode"]
   const groupeFields = ["sirenUniteLegale"]
   if (canteen.productionType === "site" || canteen.productionType === "site_cooked_elsewhere")
     return onSiteFields.some(missingFieldLambda)
