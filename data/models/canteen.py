@@ -709,23 +709,12 @@ class Canteen(SoftDeletionModel):
             and bool(self.management_type)
             and bool(self.production_type)
         )
-        # serving-specific rules
-        if is_filled and self.is_serving:
-            is_filled = bool(self.city_insee_code) and bool(self.economic_model) and bool(self.sector_list)
-        # satellite-specific rules
-        if is_filled and self.is_satellite:
-            is_filled = bool(self.central_producer_siret and self.central_producer_siret != self.siret)
-        # cc-specific rules
-        if is_filled and self.is_central_cuisine:
-            is_filled = bool(self.satellite_canteens_count)
-            # We check again to avoid useless DB hits
-            if is_filled:
-                is_filled = (
-                    Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
-                )
         # groupe-specific rules
         if is_filled and self.is_groupe:
             is_filled = self.canteen_set.exists()
+        # serving-specific rules
+        if is_filled and self.is_serving:
+            is_filled = bool(self.city_insee_code) and bool(self.economic_model) and bool(self.sector_list)
         # line_ministry
         if is_filled and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
             is_filled = bool(self.line_ministry)
