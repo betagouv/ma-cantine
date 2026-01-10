@@ -49,6 +49,7 @@ class MaCanteenUserAdmin(UserAdmin):
     )
     search_help_text = "La recherche est faite sur les champs : ID, prénom, nom, email, nom d'utilisateur."
     readonly_fields = (
+        "brevo_last_update_date",
         *User.MATOMO_FIELDS,
         "data_pretty",
         "last_login",
@@ -99,7 +100,8 @@ class MaCanteenUserAdmin(UserAdmin):
                     "opt_out_reminder_emails",
                     "email_no_canteen_first_reminder",
                     "email_no_canteen_second_reminder",
-                    "last_brevo_update",
+                    "brevo_last_update_date",
+                    "brevo_deleted",
                 ),
             },
         ),
