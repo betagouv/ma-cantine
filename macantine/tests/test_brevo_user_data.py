@@ -4,8 +4,8 @@ from unittest import mock
 from django.test import TestCase
 from freezegun import freeze_time
 
-from data.factories import CanteenFactory, DiagnosticFactory, TeledeclarationFactory, UserFactory
-from data.models import Canteen, Diagnostic, Teledeclaration
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models import Canteen, Diagnostic
 from macantine import tasks
 
 
@@ -73,9 +73,9 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_diag(self, batch_update_mock, create_contact_mock):
         user = UserFactory()
-        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[user])
-        DiagnosticFactory(year=2021, canteen=canteen)
-        DiagnosticFactory(year=2022, canteen=canteen)
+        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[user])
+        DiagnosticFactory(year=2021, canteen=canteen_site)
+        DiagnosticFactory(year=2022, canteen=canteen_site)
 
         tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
@@ -98,25 +98,11 @@ class TestBrevoUserData(TestCase):
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_canteen_with_td(self, batch_update_mock, create_contact_mock):
         user = UserFactory()
-        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[user])
-        diag_2021 = DiagnosticFactory(year=2021, canteen=canteen)
-        diag_2022 = DiagnosticFactory(year=2022, canteen=canteen)
-        TeledeclarationFactory(
-            diagnostic=diag_2021,
-            year=2021,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-            declared_data={"year": 2021},
-            canteen=canteen,
-            applicant=user,
-        )
-        TeledeclarationFactory(
-            diagnostic=diag_2022,
-            year=2022,
-            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
-            declared_data={"year": 2022},
-            canteen=canteen,
-            applicant=user,
-        )
+        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[user])
+        with freeze_time("2022-08-30"):  # during the 2021 campaign
+            DiagnosticFactory(year=2021, canteen=canteen_site)  # not teledeclared
+        with freeze_time("2023-03-30"):  # during the 2022 campaign
+            DiagnosticFactory(year=2022, canteen=canteen_site).teledeclare(applicant=user)
 
         tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
@@ -131,29 +117,23 @@ class TestBrevoUserData(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2023"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), False)
+        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), False)
+        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_has_sat_canteen_with_cc_diag(self, batch_update_mock, create_contact_mock):
         user = UserFactory()
-        central_kitchen = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874", managers=[user]
-        )
-        CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central_kitchen.siret,
-            managers=[user],
-        )
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[])
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[user])
         DiagnosticFactory(
             year=2021,
-            canteen=central_kitchen,
+            canteen=canteen_groupe,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
         DiagnosticFactory(
             year=2022,
-            canteen=central_kitchen,
+            canteen=canteen_groupe,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
@@ -164,8 +144,8 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 2)
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_GROUPE"), 1)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 1)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_GROUPE"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_SATELLITE"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
@@ -176,42 +156,22 @@ class TestBrevoUserData(TestCase):
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
-    def test_user_has_sat_canteen_with_cc_td(self, batch_update_mock, create_contact_mock):
+    def test_user_has_groupe_canteen_with_td(self, batch_update_mock, create_contact_mock):
         user = UserFactory()
-        central_kitchen = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, siret="65815950319874", managers=[user]
-        )
-        CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central_kitchen.siret,
-            managers=[user],
-        )
-        diag_2021 = DiagnosticFactory(
-            year=2021,
-            canteen=central_kitchen,
-            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
-        )
-        diag_2022 = DiagnosticFactory(
-            year=2022,
-            canteen=central_kitchen,
-            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
-        )
-        TeledeclarationFactory(
-            diagnostic=diag_2021,
-            year=2021,
-            status=Teledeclaration.TeledeclarationStatus.SUBMITTED,
-            declared_data={"year": 2021},
-            canteen=central_kitchen,
-            applicant=user,
-        )
-        TeledeclarationFactory(
-            diagnostic=diag_2022,
-            year=2022,
-            status=Teledeclaration.TeledeclarationStatus.CANCELLED,
-            declared_data={"year": 2022},
-            canteen=central_kitchen,
-            applicant=user,
-        )
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[user])
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[])
+        with freeze_time("2022-08-30"):  # during the 2021 campaign
+            DiagnosticFactory(
+                year=2021,
+                canteen=canteen_groupe,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+            )  # not teledeclared
+        with freeze_time("2023-03-30"):  # during the 2022 campaign
+            DiagnosticFactory(
+                year=2022,
+                canteen=canteen_groupe,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+            ).teledeclare(applicant=user)
 
         tasks.update_user_data()  # needed to fill the User.data field
         tasks.update_brevo_contacts()
@@ -220,12 +180,12 @@ class TestBrevoUserData(TestCase):
 
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 2)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_GROUPE"), 1)
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_SATELLITE"), 1)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_SATELLITE"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2023"), True)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2022"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_BILAN_DONNEES_2021"), False)
         self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2023"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), True)
-        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), False)
+        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2022"), False)
+        self.assertEqual(attributes.get("MA_CANTINE_MANQUE_TD_DONNEES_2021"), True)

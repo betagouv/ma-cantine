@@ -590,18 +590,18 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         cls.canteen_central_2 = CanteenFactory(
             siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
         )
-        cls.canteen_on_site_central_1 = CanteenFactory(
+        cls.canteen_satellite_1 = CanteenFactory(
             siret="92341284500011",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central_1.siret,
             groupe=cls.canteen_groupe_with_satellite,
         )
-        cls.canteen_on_site_central_2 = CanteenFactory(
+        cls.canteen_satellite_2 = CanteenFactory(
             siret="40419443300078",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central_2.siret,
         )
-        cls.canteen_on_site_central_3 = CanteenFactory(
+        cls.canteen_satellite_3 = CanteenFactory(
             siret="83014132100034",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central_2.siret,
@@ -626,28 +626,26 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
     def test_is_serving(self):
         self.assertEqual(Canteen.objects.count(), 9)
         self.assertEqual(Canteen.objects.is_serving().count(), 5)
-        self.assertTrue(self.canteen_on_site_central_1.is_serving)
+        self.assertTrue(self.canteen_satellite_1.is_serving)
         self.assertTrue(self.canteen_central_serving_1.is_serving)
         self.assertTrue(self.canteen_site.is_serving)
 
     def test_is_satellite(self):
         self.assertEqual(Canteen.objects.count(), 9)
         self.assertEqual(Canteen.objects.is_satellite().count(), 3)
-        self.assertTrue(self.canteen_on_site_central_1.is_satellite)
+        self.assertTrue(self.canteen_satellite_1.is_satellite)
 
     def test_satellites_property(self):
-        self.assertEqual(Canteen.objects.count(), 9)
         self.assertEqual(self.canteen_groupe_with_satellite.satellites.count(), 1)
         self.assertEqual(self.canteen_central_1.satellites.count(), 1)
         self.assertEqual(self.canteen_central_2.satellites.count(), 2)
-        self.assertEqual(self.canteen_on_site_central_1.satellites.count(), 0)
+        self.assertEqual(self.canteen_satellite_1.satellites.count(), 0)
 
     def test_satellites_count_property(self):
-        self.assertEqual(Canteen.objects.count(), 9)
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_count, 1)
         self.assertEqual(self.canteen_central_1.satellites_count, 1)
         self.assertEqual(self.canteen_central_2.satellites_count, 2)
-        self.assertEqual(self.canteen_on_site_central_1.satellites_count, 0)
+        self.assertEqual(self.canteen_satellite_1.satellites_count, 0)
 
     def test_get_satellites_old(self):
         self.assertEqual(Canteen.objects.count(), 9)
@@ -655,7 +653,6 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         self.assertEqual(Canteen.objects.get_satellites_old(self.canteen_central_2.siret).count(), 2)
 
     def test_annotate_with_satellites_in_db_count(self):
-        self.assertEqual(Canteen.objects.count(), 9)
         self.assertEqual(
             Canteen.objects.annotate_with_satellites_in_db_count()
             .filter(id=self.canteen_groupe_with_satellite.id)
@@ -670,6 +667,11 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
             .satellites_in_db_count,
             0,
         )
+
+    def test_central_kitchen(self):
+        self.assertEqual(self.canteen_groupe_with_satellite.central_kitchen, None)
+        self.assertEqual(self.canteen_satellite_1.central_kitchen, self.canteen_groupe_with_satellite)
+        self.assertEqual(self.canteen_site.central_kitchen, None)
 
 
 class CanteenPurchaseQuerySetTest(TestCase):
@@ -912,7 +914,7 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_groupe_with_satellite = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
-        cls.canteen_on_site_central_in_groupe = CanteenFactory(
+        cls.canteen_satellite_in_groupe = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=cls.canteen_groupe_with_satellite,
             central_producer_siret="21340172201787",
@@ -944,26 +946,26 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             sector_list=[Sector.ADMINISTRATION_PRISON],
             line_ministry=None,  # incomplete
         )
-        cls.canteen_on_site_central = CanteenFactory(
+        cls.canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="21340172201787"
         )
-        cls.canteen_on_site_central_incomplete = CanteenFactory(
+        cls.canteen_satellite_incomplete = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             # economic_model=Canteen.EconomicModel.PRIVATE,  # incomplete
         )
-        Canteen.objects.filter(id=cls.canteen_on_site_central_incomplete.id).update(economic_model=None)  # incomplete
+        Canteen.objects.filter(id=cls.canteen_satellite_incomplete.id).update(economic_model=None)  # incomplete
         cls.canteen_filled_list = [
             cls.canteen_groupe_with_satellite,
-            cls.canteen_on_site_central_in_groupe,
+            cls.canteen_satellite_in_groupe,
             cls.canteen_on_site,
-            cls.canteen_on_site_central,
+            cls.canteen_satellite,
         ]
         cls.canteen_missing_data_list = [
             cls.canteen_groupe_without_satellite,
             cls.canteen_on_site_incomplete_1,
             cls.canteen_on_site_incomplete_2,
             cls.canteen_on_site_incomplete_3,
-            cls.canteen_on_site_central_incomplete,
+            cls.canteen_satellite_incomplete,
         ]
 
     def test_filled_queryset(self):
@@ -1012,7 +1014,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             daily_meal_count=12,
             sector_list=[Sector.EDUCATION_SECONDAIRE_LYCEE, Sector.AUTRES_AUTRE],
         )
-        cls.canteen_on_site_central = CanteenFactory(
+        cls.canteen_satellite = CanteenFactory(
             siret="96766910375238",
             management_type=Canteen.ManagementType.CONCEDED,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
