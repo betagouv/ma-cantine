@@ -6,6 +6,18 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.50.0](https://github.com/betagouv/ma-cantine/compare/v2025.49.0...v2025.50.0) (2026-01-10)
+
+
+### Nouveautés
+
+* **Import:** Cantines: supprime le type de production "central" et met à jour les champs liés ([#6172](https://github.com/betagouv/ma-cantine/issues/6172)) ([3577dba](https://github.com/betagouv/ma-cantine/commit/3577dba87889823fb41b0d93f1ad17585b55b890))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration détaillée:** corrige le message d'erreur des totaux suite à un problème d'arrondis ([#6173](https://github.com/betagouv/ma-cantine/issues/6173)) ([951fad9](https://github.com/betagouv/ma-cantine/commit/951fad9d6a6a5c2979d6637f64afebb0f42cdcc0))
+
 ## [2025.49.0](https://github.com/betagouv/ma-cantine/compare/v2025.48.0...v2025.49.0) (2026-01-06)
 
 
