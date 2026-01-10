@@ -674,6 +674,11 @@ class Canteen(SoftDeletionModel):
         return self.production_type and self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
 
     @property
+    def central_kitchen(self):
+        if self.groupe_id:
+            return self.groupe
+
+    @property
     def central_kitchen_diagnostics(self):
         if self.groupe_id:
             return self.groupe.diagnostics.filter(central_kitchen_diagnostic_mode__isnull=False)
@@ -827,12 +832,12 @@ class Canteen(SoftDeletionModel):
 
     @cached_property
     def published_appro_diagnostics(self):
-        diagnostics_to_redact = []
+        diagnostics_to_redact_id_list = []
         for year in self.redacted_appro_years:
             diag = self.appro_diagnostics.filter(year=year).first()
             if diag and not diag.is_teledeclared:
-                diagnostics_to_redact.append(diag.id)
-        return self.appro_diagnostics.exclude(id__in=diagnostics_to_redact)
+                diagnostics_to_redact_id_list.append(diag.id)
+        return self.appro_diagnostics.exclude(id__in=diagnostics_to_redact_id_list)
 
     @cached_property
     def published_service_diagnostics(self):

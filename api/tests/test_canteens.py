@@ -308,19 +308,19 @@ class CanteenDetailApiTest(APITestCase):
 
     @authenticate
     def test_get_central_kitchen(self):
-        central_kitchen = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="96953195898254")
-        satellite = CanteenFactory(
-            central_producer_siret=central_kitchen.siret,
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
             managers=[authenticate.user],
         )
 
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_satellite.id}))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
-        self.assertEqual(body["centralKitchen"]["name"], central_kitchen.name)
-        self.assertEqual(body["centralKitchen"]["id"], central_kitchen.id)
+        self.assertEqual(body["centralKitchen"]["name"], canteen_groupe.name)
+        self.assertEqual(body["centralKitchen"]["id"], canteen_groupe.id)
 
     @authenticate
     @freeze_time("2024-01-20")
@@ -406,30 +406,29 @@ class CanteenDetailApiTest(APITestCase):
         """
         Test whether the canteen returns the latest year it has data for
         """
-        central = CanteenFactory(siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory(
-            central_producer_siret="21340172201787",
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
             managers=[authenticate.user],
         )
-
         DiagnosticFactory(
-            canteen=satellite,
+            canteen=canteen_satellite,
             year=2021,
             valeur_totale=100,
             valeur_bio=0,
             valeur_siqo=30,
         )
         DiagnosticFactory(
-            canteen=central,
+            canteen=canteen_groupe,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
             year=2022,
         )
 
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": satellite.id}))
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_satellite.id}))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
         self.assertEqual(body["badges"]["year"], 2022)
 
 
@@ -619,7 +618,7 @@ class CanteenUpdateApiTest(APITestCase):
         updated_canteen = Canteen.objects.get(pk=canteen.id)
         self.assertEqual(updated_canteen.city, "Lyon")
         self.assertEqual(updated_canteen.siret, "21340172201787")
-        self.assertEqual(updated_canteen.management_type, "direct")
+        self.assertEqual(updated_canteen.management_type, Canteen.ManagementType.DIRECT)
         self.assertEqual(updated_canteen.reservation_expe_participant, True)
 
     @authenticate
@@ -627,50 +626,20 @@ class CanteenUpdateApiTest(APITestCase):
         """
         Users can modify the production type and related fields of the canteens they manage
         """
-        canteen = CanteenFactory(city="Paris", managers=[authenticate.user])
-        payload = {
-            "productionType": Canteen.ProductionType.CENTRAL,
-            "sectorList": [],
-            "satelliteCanteensCount": 130,
-        }
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        updated_canteen = Canteen.objects.get(pk=canteen.id)
-        self.assertEqual(updated_canteen.production_type, "central")
-        self.assertEqual(len(updated_canteen.sector_list), 0)
-        self.assertEqual(updated_canteen.satellite_canteens_count, 130)
-
-    @authenticate
-    def test_add_siret_to_central_kitchen(self):
-        """
-        A central cuisine without a SIRET can add one without modifying everybody else
-        """
-        central_kitchen_without_siret = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user]
-        )
         canteen_satellite = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central_kitchen_without_siret.siret,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, managers=[authenticate.user]
         )
-        Canteen.objects.filter(id=central_kitchen_without_siret.id).update(siret=None)
-        central_kitchen_without_siret.refresh_from_db()
-        Canteen.objects.filter(id=canteen_satellite.id).update(central_producer_siret=None)
-        canteen_satellite.refresh_from_db()
-        canteen_central_serving = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL_SERVING, central_producer_siret=None
-        )
-        canteen_on_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, central_producer_siret=None)
-        other_canteens = [canteen_satellite, canteen_central_serving, canteen_on_site]
-        payload = {"siret": "35662897196149"}
 
+        payload = {
+            "productionType": Canteen.ProductionType.ON_SITE,
+        }
         response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": central_kitchen_without_siret.id}), payload
+            reverse("single_canteen", kwargs={"pk": canteen_satellite.id}), payload, format="json"
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        for canteen in other_canteens:
-            canteen.refresh_from_db()
-            self.assertIsNone(canteen.central_producer_siret)
+        updated_canteen = Canteen.objects.get(pk=canteen_satellite.id)
+        self.assertEqual(updated_canteen.production_type, Canteen.ProductionType.ON_SITE)
 
     @authenticate
     def test_refuse_patch_without_siret(self):
