@@ -57,7 +57,7 @@ class CanteenListApiTest(APITestCase):
             CanteenFactory(),
         ]
         for canteen in user_canteens:
-            canteen.managers.add(authenticate.user)
+            canteen.managers.set([authenticate.user])
 
         response = self.client.get(reverse("user_canteens"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
