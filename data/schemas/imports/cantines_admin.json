@@ -29,7 +29,7 @@
       "constraints": {
         "required": false
       },
-      "description": "Ce SIRET peut être vide ou utilisé pour plusieurs lignes, dans le cas où c'est le gestionnaire de la cuisine centrale qui remplit les lignes pour chaque restaurant satellite.",
+      "description": "Ce champ est uniquement pour les cantines de type 'Restaurant satellite'. Ce SIRET peut être vide ou utilisé pour plusieurs lignes.",
       "example": "29969025300230",
       "format": "default",
       "name": "siret_livreur_repas",
@@ -52,7 +52,7 @@
         "required": true
       },
       "description": "Minimum 420, y compris les couverts livrés.",
-      "example": "67000",
+      "example": "42000",
       "format": "default",
       "name": "nombre_repas_an",
       "title": "Nombre de repas servis, en moyenne, par an dans la cantine",
@@ -61,9 +61,9 @@
     {
       "constraints": {
         "pattern": "(^ *$)|(^ *(Crèche|Etablissements de la PJJ|Secondaire lycée \\(hors agricole\\)|Etablissements d[’']enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d[’']entreprises|Restaurants inter-entreprises|Autres structures d[’']enseignement|Ecole primaire \\(maternelle et élémentaire\\)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP|ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d[’']Etat \\(RA\\)|Restaurants des armées / police / gendarmerie|Etablissements publics d[’']Etat \\(EPA ou EPIC\\)|Supérieur et Universitaire|Restaurants inter-administratifs d[’']État \\(RIA\\))( *\\, *(Crèche|Etablissements de la PJJ|Secondaire lycée \\(hors agricole\\)|Etablissements d[’']enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d[’']entreprises|Restaurants inter-entreprises|Autres structures d[’']enseignement|Ecole primaire \\(maternelle et élémentaire\\)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP|ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d[’']Etat \\(RA\\)|Restaurants des armées / police / gendarmerie|Etablissements publics d[’']Etat \\(EPA ou EPIC\\)|Supérieur et Universitaire|Restaurants inter-administratifs d[’']État \\(RIA\\)))* *)$",
-        "required": false
+        "required": true
       },
-      "description": "3 secteurs maximum. Ce champ est obligatoire sauf si le type de production est 'Cuisine centrale'",
+      "description": "3 secteurs maximum.",
       "doc_enum": [
         "Crèche",
         "Etablissements de la PJJ",
@@ -102,16 +102,15 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(Cuisine centrale|Restaurant avec cuisine sur place|Restaurant satellite|central|site|site_cooked_elsewhere) *$",
+        "pattern": "^ *(Restaurant avec cuisine sur place|Restaurant satellite|site|site_cooked_elsewhere) *$",
         "required": true
       },
-      "description": "Il existe 4 types différents : 'Cuisine centrale' sans lieu de consommation, 'Restaurant avec cuisine sur place' qui produit les repas sur place, 'Restaurant satellite' qui sert des repas preparés par une cuisine centrale. Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de restaurants satellites.",
+      "description": "Il existe 2 types différents : 'Restaurant avec cuisine sur place' qui produit les repas sur place, 'Restaurant satellite' qui sert des repas preparés par une cuisine centrale.",
       "doc_enum": [
-        "Cuisine centrale",
         "Restaurant avec cuisine sur place",
         "Restaurant satellite"
       ],
-      "example": "Cuisine centrale",
+      "example": "Restaurant avec cuisine sur place",
       "format": "default",
       "name": "type_production",
       "title": "Lieu de production et de service des repas",
@@ -161,17 +160,6 @@
       "name": "gestionnaires_additionnels",
       "title": "Adresses mél de gestionnaires additionnels",
       "type": "string"
-    },
-    {
-      "constraints": {
-        "required": false
-      },
-      "description": "Ce champ est obligatoire pour le type de production 'Cuisine centrale'",
-      "example": "12",
-      "format": "default",
-      "name": "nombre_satellites",
-      "title": "Nombre de restaurants satellites.",
-      "type": "integer"
     },
     {
       "constraints": {

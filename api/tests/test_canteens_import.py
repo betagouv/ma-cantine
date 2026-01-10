@@ -50,10 +50,6 @@ class CanteensSchemaTest(TestCase):
     def test_type_production_regex(self):
         pattern = self.get_pattern(self.schema, "type_production")
         for VALUE_OK in [
-            "Cuisine centrale",
-            " Cuisine centrale",
-            "Cuisine centrale ",
-            " Cuisine centrale ",
             "Restaurant avec cuisine sur place",
             " Restaurant avec cuisine sur place",
             "Restaurant avec cuisine sur place ",
@@ -62,22 +58,26 @@ class CanteensSchemaTest(TestCase):
             " Restaurant satellite",
             "Restaurant satellite ",
             " Restaurant satellite ",
-            "central",
             "site_cooked_elsewhere",
             "site",
-            " central",
             " site_cooked_elsewhere",
             " site",
-            "central ",
             "site_cooked_elsewhere ",
             "site ",
-            " central ",
             " site_cooked_elsewhere ",
             " site ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in [
+            "Cuisine centrale",
+            " Cuisine centrale",
+            "Cuisine centrale ",
+            " Cuisine centrale ",
+            "central",
+            " central",
+            "central ",
+            " central ",
             "type de production inconnu",
             "",
             "     ",
@@ -304,7 +304,7 @@ class CanteensImportApiErrorTest(APITestCase):
         )
         self.assertTrue(
             errors.pop(0)["message"].startswith(
-                "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
+                "Champ 'siret de la cuisine centrale' : Le champ ne peut être rempli que pour les restaurants satellites."
             ),
         )
         self.assertTrue(
@@ -391,7 +391,6 @@ class CanteensImportApiErrorTest(APITestCase):
     @authenticate
     def test_sectors_error(self):
         """
-        - Sectors are required if canteen production_type is site, site_cooked_elsewhere, central_serving
         - Canteen can't have more than 3 sectors
         """
         self.assertEqual(Canteen.objects.count(), 0)
@@ -405,14 +404,11 @@ class CanteensImportApiErrorTest(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
         body = response.json()
         errors = body["errors"]
-        error_message_central = "Champ 'secteurs d'activité' : Cuisine centrale : le champ doit être vide."
         error_message_min_max = "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs."
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 3, errors)
-        self.assertEqual(errors.pop(0)["message"], error_message_central)
-        self.assertEqual(errors.pop(0)["message"], error_message_min_max)
-        self.assertEqual(errors.pop(0)["message"], error_message_min_max)
+        self.assertEqual(len(errors), 1, errors)
+        self.assertEqual(errors[0]["message"], error_message_min_max)
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
@@ -448,12 +444,12 @@ class CanteensImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.objects.count(), 3)
         self.assertFalse(ImportFailure.objects.exists())
         body = response.json()
         errors = body["errors"]
-        self.assertEqual(body["count"], 4)
-        self.assertEqual(len(body["canteens"]), 4)
+        self.assertEqual(body["count"], 3)
+        self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(errors), 0, errors)
 
     @authenticate
@@ -477,24 +473,6 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 1)
         self.assertEqual(len(errors), 0, errors)
         self.assertIn(manager, Canteen.objects.first().managers.all())
-
-    @authenticate
-    def test_empty_sectors_central_canteen(self):
-        """
-        Sectors are not required if canteen production_type is central
-        """
-        self.assertEqual(Canteen.objects.count(), 0)
-
-        file_path = "./api/tests/files/canteens/canteen_good_empty_sectors.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 1)
-
-        canteen = Canteen.objects.get(siret="16463707389922")
-        self.assertEqual(canteen.production_type, "central")
-        self.assertEqual(len(canteen.sector_list), 0)
 
     @authenticate
     def test_sectors_apostrophes(self):
@@ -552,6 +530,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
+        print(errors)
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(errors), 0, errors)
         self.assertEqual(len(body["canteens"]), 1)
@@ -573,12 +552,12 @@ class CanteensImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.objects.count(), 3)
         self.assertFalse(ImportFailure.objects.exists())
         body = response.json()
         errors = body["errors"]
-        self.assertEqual(body["count"], 4)
-        self.assertEqual(len(body["canteens"]), 4)
+        self.assertEqual(body["count"], 3)
+        self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(errors), 0, errors)
 
     @authenticate

@@ -40,7 +40,7 @@ class CanteensImportView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
     manager_column_idx = 9  # gestionnaires_additionnels
-    silent_manager_idx = 9 + 3  # admin_gestionnaires_additionnels
+    silent_manager_idx = 9 + 2  # admin_gestionnaires_additionnels
 
     def __init__(self, **kwargs):
         self.canteens = {}
@@ -253,11 +253,9 @@ class CanteensImportView(APIView):
         name = row[1].strip()
         daily_meal_count = row[3]
         yearly_meal_count = row[4]
-        file_sector_list = row[5].strip() if row[5] else ""
         sector_list = [
             next(value for value, label in Sector.choices if label == sector.strip().replace("’", "'"))
-            for sector in file_sector_list.split(",")
-            if sector
+            for sector in row[5].strip().split(",")
         ]
         production_type = next(
             (value for value, label in Canteen.ProductionType.choices if row[6].strip() in [label, value]), None
@@ -269,7 +267,6 @@ class CanteensImportView(APIView):
             (value for value, label in Canteen.EconomicModel.choices if row[8].strip() in [label, value]), None
         )
         central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
-        satellite_canteens_count = row[10] if row[10] else None
 
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
@@ -285,7 +282,6 @@ class CanteensImportView(APIView):
                 production_type=production_type,
                 economic_model=economic_model,
                 central_producer_siret=central_producer_siret,
-                satellite_canteens_count=satellite_canteens_count,
                 creation_source=CreationSource.IMPORT,
             )
         )
@@ -304,11 +300,10 @@ class CanteensImportView(APIView):
         canteen.management_type = management_type
         canteen.economic_model = economic_model
         canteen.central_producer_siret = central_producer_siret
-        canteen.satellite_canteens_count = satellite_canteens_count
         if self.is_admin_import:
             canteen.line_ministry = (
-                next((value for value, label in Canteen.Ministries.choices if label == row[11].strip()), None)
-                if row[11]
+                next((value for value, label in Canteen.Ministries.choices if label == row[10].strip()), None)
+                if row[10]
                 else None
             )
             canteen.import_source = import_source
