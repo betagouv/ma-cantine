@@ -54,7 +54,7 @@ def update_existing_brevo_contacts(users_to_update, today):
         try:
             contacts_api_instance.update_batch_contacts(update_object)
             for user in chunk:
-                user.last_brevo_update = today
+                user.brevo_last_update_date = today
                 user.save()
         except requests.exceptions.HTTPError as e:
             logger.warning(f"Bulk updating Brevo users: One or more of the users don't exist. {e}")
@@ -68,7 +68,7 @@ def create_new_brevo_contacts(users_to_create, today):
         try:
             contact = user_to_brevo_payload(user, bulk=False)
             contacts_api_instance.create_contact(contact)
-            user.last_brevo_update = today
+            user.brevo_last_update_date = today
             user.save()
         except Exception as e:
             logger.exception(f"Error creating/updating an individual Brevo user {e}", stack_info=True)
