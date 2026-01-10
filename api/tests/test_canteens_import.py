@@ -50,10 +50,6 @@ class CanteensSchemaTest(TestCase):
     def test_type_production_regex(self):
         pattern = self.get_pattern(self.schema, "type_production")
         for VALUE_OK in [
-            "Cuisine centrale",
-            " Cuisine centrale",
-            "Cuisine centrale ",
-            " Cuisine centrale ",
             "Restaurant avec cuisine sur place",
             " Restaurant avec cuisine sur place",
             "Restaurant avec cuisine sur place ",
@@ -62,22 +58,26 @@ class CanteensSchemaTest(TestCase):
             " Restaurant satellite",
             "Restaurant satellite ",
             " Restaurant satellite ",
-            "central",
             "site_cooked_elsewhere",
             "site",
-            " central",
             " site_cooked_elsewhere",
             " site",
-            "central ",
             "site_cooked_elsewhere ",
             "site ",
-            " central ",
             " site_cooked_elsewhere ",
             " site ",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in [
+            "Cuisine centrale",
+            " Cuisine centrale",
+            "Cuisine centrale ",
+            " Cuisine centrale ",
+            "central",
+            " central",
+            "central ",
+            " central ",
             "type de production inconnu",
             "",
             "     ",
