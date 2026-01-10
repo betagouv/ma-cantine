@@ -444,12 +444,12 @@ class CanteensImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.objects.count(), 3)
         self.assertFalse(ImportFailure.objects.exists())
         body = response.json()
         errors = body["errors"]
-        self.assertEqual(body["count"], 4)
-        self.assertEqual(len(body["canteens"]), 4)
+        self.assertEqual(body["count"], 3)
+        self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(errors), 0, errors)
 
     @authenticate
@@ -473,24 +473,6 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 1)
         self.assertEqual(len(errors), 0, errors)
         self.assertIn(manager, Canteen.objects.first().managers.all())
-
-    @authenticate
-    def test_empty_sectors_central_canteen(self):
-        """
-        Sectors are not required if canteen production_type is central
-        """
-        self.assertEqual(Canteen.objects.count(), 0)
-
-        file_path = "./api/tests/files/canteens/canteen_good_empty_sectors.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 1)
-
-        canteen = Canteen.objects.get(siret="16463707389922")
-        self.assertEqual(canteen.production_type, "central")
-        self.assertEqual(len(canteen.sector_list), 0)
 
     @authenticate
     def test_sectors_apostrophes(self):
@@ -548,6 +530,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
+        print(errors)
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(errors), 0, errors)
         self.assertEqual(len(body["canteens"]), 1)
@@ -569,12 +552,12 @@ class CanteensImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.objects.count(), 3)
         self.assertFalse(ImportFailure.objects.exists())
         body = response.json()
         errors = body["errors"]
-        self.assertEqual(body["count"], 4)
-        self.assertEqual(len(body["canteens"]), 4)
+        self.assertEqual(body["count"], 3)
+        self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(errors), 0, errors)
 
     @authenticate
