@@ -969,19 +969,22 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             sector_list=[Sector.ADMINISTRATION_PRISON],
             line_ministry=None,  # incomplete
         )
-        cls.canteen_satellite = CanteenFactory(
+        cls.canteen_satellite_not_in_groupe_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="21340172201787"
         )
+        cls.canteen_satellite_not_in_groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
         cls.canteen_satellite_incomplete = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             # economic_model=Canteen.EconomicModel.PRIVATE,  # incomplete
         )
         Canteen.objects.filter(id=cls.canteen_satellite_incomplete.id).update(economic_model=None)  # incomplete
+        cls.canteen_satellite_incomplete.refresh_from_db()
         cls.canteen_filled_list = [
             cls.canteen_groupe_with_satellite,
             cls.canteen_satellite_in_groupe,
             cls.canteen_on_site,
-            cls.canteen_satellite,
+            cls.canteen_satellite_not_in_groupe_1,
+            cls.canteen_satellite_not_in_groupe_2,
         ]
         cls.canteen_missing_data_list = [
             cls.canteen_groupe_without_satellite,
@@ -992,7 +995,7 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         ]
 
     def test_filled_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 9)
+        self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.filled().count(), len(self.canteen_filled_list))
 
     def test_is_filled_property(self):
@@ -1004,7 +1007,7 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
                 self.assertFalse(canteen.is_filled)
 
     def test_has_missing_data_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 9)
+        self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.has_missing_data().count(), len(self.canteen_missing_data_list))
 
 
