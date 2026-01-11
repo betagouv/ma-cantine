@@ -36,7 +36,7 @@
               {{ approSummary }}
             </td>
             <td class="text-left font-weight-bold" v-else colspan="2">
-              Données d'approvisonnement renseignées par la cuisine centrale
+              Données d'approvisonnement renseignées par le groupe de restaurants satellites
             </td>
           </tr>
           <tr
@@ -135,7 +135,7 @@ export default {
       const economicModelDetail = Constants.EconomicModels.find((x) => x.value === this.canteen.economicModel)
       const ministryDetail = this.$store.state.lineMinistries.find((x) => x.value === this.canteen.lineMinistry)
       let items = [
-        { value: this.canteen.name, label: "Nom de la cantine" },
+        { value: this.canteen.name, label: "Nom" },
         { value: this.canteen.siret || "inconnu", label: "Numéro SIRET" },
         { value: this.canteen.sirenUniteLegale, label: "Numéro SIREN" },
         { value: this.canteen.city, label: "Ville" },

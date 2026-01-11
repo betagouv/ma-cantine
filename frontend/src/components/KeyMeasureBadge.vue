@@ -1,9 +1,9 @@
 <template>
   <DsfrBadge v-if="isFilled" :showIcon="false" mode="SUCCESS">
-    {{ isAppro && isSatellite ? "Complété (par votre cuisine centrale)" : "Complété" }}
+    {{ isAppro && isSatellite ? "Complété (par votre groupe)" : "Complété" }}
   </DsfrBadge>
   <DsfrBadge v-else-if="isWaitingCentralKitchen" :showIcon="false" mode="NEUTRAL">
-    À compléter (par votre cuisine centrale)
+    À compléter (par votre groupe)
   </DsfrBadge>
   <DsfrBadge v-else-if="isRequired" :showIcon="false" mode="ERROR">À compléter (obligatoire)</DsfrBadge>
   <DsfrBadge v-else :showIcon="false" mode="WARNING">À compléter (optionnel)</DsfrBadge>
@@ -32,7 +32,7 @@ export default {
       else return this.verifyMeasureFilled()
     },
     isWaitingCentralKitchen() {
-      return this.isAppro && this.isSatellite && !this.isFilled
+      return this.isAppro && this.isSatellite && this.canteen.groupe?.id && !this.isFilled
     },
     isCentralKitchen() {
       return (

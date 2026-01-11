@@ -203,7 +203,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
         <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Groupe de restaurants satellites</h2>
           <p>
-            Le responsable de la cuisine centrale a ajouté votre établissement à son groupe de restaurants satellites.<br/>
+            Le gestionnaire du groupe de restaurants satellites a ajouté votre établissement.<br/>
             Cela lui permet de réaliser une déclaration unique pour laquelle le montant total des achats du groupe est ensuite réparti automatiquement entre chaque restaurant satellite, au prorata de son nombre de couverts annuels.<br/>
           </p>
           <ul class="ma-cantine--flex-grow">
