@@ -6,6 +6,78 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2025.50.0](https://github.com/betagouv/ma-cantine/compare/v2025.49.0...v2025.50.0) (2026-01-11)
+
+
+### Nouveautés
+
+* **Cantine:** afficher l'id de l'établissement dans la page "Gérer mon établissement" ([#6135](https://github.com/betagouv/ma-cantine/issues/6135)) ([09aee98](https://github.com/betagouv/ma-cantine/commit/09aee981628ef0d99d85a9daec1813f2472ee743))
+* **Cantines:** nouveau champ 'groupe' pour lier les cantines entre elles ([#6133](https://github.com/betagouv/ma-cantine/issues/6133)) ([fc297a8](https://github.com/betagouv/ma-cantine/commit/fc297a84ea92b6f09d998380fb08941c18777e1c))
+* **Cantines:** nouveau type de production 'groupe' ([#6125](https://github.com/betagouv/ma-cantine/issues/6125)) ([994dcd7](https://github.com/betagouv/ma-cantine/commit/994dcd718e8f74a2b72854985bdbe67aef32da92))
+* **Cantine:** supprime central et central serving du formulaire d'ajout et de modification de cantine ([#6147](https://github.com/betagouv/ma-cantine/issues/6147)) ([040756b](https://github.com/betagouv/ma-cantine/commit/040756b832a2ec7de3035b0a185a75b6784e5e7c))
+* **Gérer mes satellites:** petites corrections sur la page et affichage du badge des satellites ([#6146](https://github.com/betagouv/ma-cantine/issues/6146)) ([cac25fd](https://github.com/betagouv/ma-cantine/commit/cac25fda25782b4a1ff24deeca7756b87ec0afad))
+* **Groupe:** affiche la page de création de groupe ([#6144](https://github.com/betagouv/ma-cantine/issues/6144)) ([731c030](https://github.com/betagouv/ma-cantine/commit/731c030242d46cbd416b2edaf9b5c6a7140d378f))
+* **Groupe:** affiche le nombre de satellites liés depuis le tableau de bord ([#6145](https://github.com/betagouv/ma-cantine/issues/6145)) ([7553ab0](https://github.com/betagouv/ma-cantine/commit/7553ab0fb3d90b93349ea9fe03c9b614d6e88945))
+* **Groupe:** affiche les informations du nouveau type dans la page "Tableau de bord" ([#6132](https://github.com/betagouv/ma-cantine/issues/6132)) ([e426c4d](https://github.com/betagouv/ma-cantine/commit/e426c4ddc0cf98a2d3821e2c2a56221668eb5d67))
+* **Groupe:** afficher le badge "A compléter" si un SAT du groupe a des données incomplètes ([#6185](https://github.com/betagouv/ma-cantine/issues/6185)) ([40689b8](https://github.com/betagouv/ma-cantine/commit/40689b8a3e5523d46bf8ebbebf03a04d533e7058))
+* **Groupe:** afficher les informations du groupe pour un restaurant satellite ([#6143](https://github.com/betagouv/ma-cantine/issues/6143)) ([eb32b8b](https://github.com/betagouv/ma-cantine/commit/eb32b8befffc7eec8a9ad977208a5432e6292a9c))
+* **Groupe:** afficher les ressources Crisp ([#6157](https://github.com/betagouv/ma-cantine/issues/6157)) ([3d0c62d](https://github.com/betagouv/ma-cantine/commit/3d0c62d21ace471625218d139f6e8a380f66011d))
+* **Groupe:** ajout de la page de création avec les informations en statique ([#6126](https://github.com/betagouv/ma-cantine/issues/6126)) ([f011129](https://github.com/betagouv/ma-cantine/commit/f011129a4896145b4210b45e18ad4872f7373a8b))
+* **Groupe:** ajouter un satellite à son groupe depuis la page "Gérer mes satellites" ([#6149](https://github.com/betagouv/ma-cantine/issues/6149)) ([cb25bb4](https://github.com/betagouv/ma-cantine/commit/cb25bb476a65a1fb7e97568848c1af4a6a9d02e6))
+* **Groupe:** connecte les pages de création et modification de groupe à l'api ([#6130](https://github.com/betagouv/ma-cantine/issues/6130)) ([9fb6157](https://github.com/betagouv/ma-cantine/commit/9fb6157ec7e886e3b2d8c369961cbf4c5909adf4))
+* **Groupe:** migrer les 'central' & 'central_serving' en 'groupe' ([#6152](https://github.com/betagouv/ma-cantine/issues/6152)) ([287f18f](https://github.com/betagouv/ma-cantine/commit/287f18ffda2bf5c8a06876b75df0cc5c42939750))
+* **Groupe:** mise à jour de la page "Gérer mon établissement" ([#6134](https://github.com/betagouv/ma-cantine/issues/6134)) ([8d02074](https://github.com/betagouv/ma-cantine/commit/8d02074a5dccea398a42cafa3e7d025b5be9b191))
+* **Groupe:** mise à jour du parcours de création de bilan et télédéclaration ([#6164](https://github.com/betagouv/ma-cantine/issues/6164)) ([7cdaefa](https://github.com/betagouv/ma-cantine/commit/7cdaefa4354c3b8cca5e7fa2a1719de74b04c688))
+* **Groupe:** Refonte des checks "données manquantes" ([#6155](https://github.com/betagouv/ma-cantine/issues/6155)) ([daa3ec2](https://github.com/betagouv/ma-cantine/commit/daa3ec27d1725b1a872a242b4e93a3a0cd02820e))
+* **Groupe:** remplace "SIREN de l'unité légale" par "SIREN" ([#6131](https://github.com/betagouv/ma-cantine/issues/6131)) ([6818a02](https://github.com/betagouv/ma-cantine/commit/6818a02017df7c88f0573902e7e2710ed66781f3))
+* **Groupe:** supprime l'ancienne page de création des cantines satellites reliées à une cuisine centrale ([#6128](https://github.com/betagouv/ma-cantine/issues/6128)) ([3c9a7a9](https://github.com/betagouv/ma-cantine/commit/3c9a7a94cb7115cde65195b599409bdf01c22a98))
+* **Groupe:** Télédéclaration: bloquer si les données de la cantine ne sont pas complètes ([#6165](https://github.com/betagouv/ma-cantine/issues/6165)) ([34b8b0a](https://github.com/betagouv/ma-cantine/commit/34b8b0a0de20689163ccc1f02da3728a09ab4e7b))
+* **Import:** Cantines: supprime le type de production "central" et met à jour les champs liés ([#6172](https://github.com/betagouv/ma-cantine/issues/6172)) ([3577dba](https://github.com/betagouv/ma-cantine/commit/3577dba87889823fb41b0d93f1ad17585b55b890))
+* **Restaurants Satellites:** parcours lors qu'un SAT est rattaché à un groupe ([#6180](https://github.com/betagouv/ma-cantine/issues/6180)) ([1442edc](https://github.com/betagouv/ma-cantine/commit/1442edc9e1f830804ba5e37f2a2a428813741634))
+
+
+### Améliorations
+
+* **Cantine:** renomme les fichiers pour distinguer les groupes des autres établissements ([#6127](https://github.com/betagouv/ma-cantine/issues/6127)) ([0b5d278](https://github.com/betagouv/ma-cantine/commit/0b5d27870f875c3aeef5090c650da5ecb88c48af))
+* **Cantines:** API: ne plus autoriser la création de cantines central & central_serving ([#6188](https://github.com/betagouv/ma-cantine/issues/6188)) ([7d72910](https://github.com/betagouv/ma-cantine/commit/7d729105904e8fe714bff85f2c05afb9a4954f8c))
+* **Cantines:** cacher les groupes de 'Trouver une cantine' & de l'Open Data ([#6129](https://github.com/betagouv/ma-cantine/issues/6129)) ([94faf9d](https://github.com/betagouv/ma-cantine/commit/94faf9d09a45476b2082305d588f2c212031d49a))
+* **Gérer mes satellites:** petits correctifs et améliorations de la page ([#6138](https://github.com/betagouv/ma-cantine/issues/6138)) ([a324ecd](https://github.com/betagouv/ma-cantine/commit/a324ecd9469887d71db683ad582713eba3b336da))
+* **Groupe:** affiche le badge "À compléter" si un groupe a des satellites incomplets ([#6184](https://github.com/betagouv/ma-cantine/issues/6184)) ([ba9dae8](https://github.com/betagouv/ma-cantine/commit/ba9dae8c038665d757b4e14684209aaf2e1e60f0))
+* **Groupe:** empecher de rattacher (ou enlever) un satellite si le groupe a une TD ([#6186](https://github.com/betagouv/ma-cantine/issues/6186)) ([1966568](https://github.com/betagouv/ma-cantine/commit/1966568896e2c456a7528f41c24ec6e0f86a16a3))
+* **Groupes:** API: endpoint pour ajouter (et enlever) des satellites ([#6137](https://github.com/betagouv/ma-cantine/issues/6137)) ([1bd47ad](https://github.com/betagouv/ma-cantine/commit/1bd47ad82b4054ee0a1788f34c6aee28bd8e88d5))
+* **Groupes:** API: endpoint pour récupérer la liste des cantines rattachées ([#6136](https://github.com/betagouv/ma-cantine/issues/6136)) ([d7f7eca](https://github.com/betagouv/ma-cantine/commit/d7f7eca78be059c85a7f3008cda0fd8219026f47))
+* **Groupes:** API: renvoyer l'action à effectuer pour chacun des satellites ([#6141](https://github.com/betagouv/ma-cantine/issues/6141)) ([a0f6f5f](https://github.com/betagouv/ma-cantine/commit/a0f6f5f5009a78ace126d24a0f5265f0cb74d898))
+* **Groupes:** API: renvoyer les infos du groupe dans l'endpoint 'single_canteen' ([#6139](https://github.com/betagouv/ma-cantine/issues/6139)) ([5af4add](https://github.com/betagouv/ma-cantine/commit/5af4add2a286dc27c539af0f2b408b189d184429))
+* **Groupes:** API: renvoyer les infos du nombre de satellites dans l'endpoint 'single_canteen' ([#6140](https://github.com/betagouv/ma-cantine/issues/6140)) ([0bd9f35](https://github.com/betagouv/ma-cantine/commit/0bd9f35a7406bd9e7b32e92c68c237baabd94725))
+* **Groupes:** Bilans: renvoyer les bilans du groupe si satellite ([#6175](https://github.com/betagouv/ma-cantine/issues/6175)) ([ea09242](https://github.com/betagouv/ma-cantine/commit/ea092429065a1ca3bd65bf52d6c3834c2acc1c40))
+* **Groupes:** permettre leur suppression seulement si aucun satellite rattaché ([#6162](https://github.com/betagouv/ma-cantine/issues/6162)) ([37afd53](https://github.com/betagouv/ma-cantine/commit/37afd53c9daaa5f44fd0911ea49f58692d5b399f))
+* **Groupes:** Télédéclaration: faire aussi un snapshot de leur satellites + remplir correctement teledeclaration_mode ([#6158](https://github.com/betagouv/ma-cantine/issues/6158)) ([5d49ceb](https://github.com/betagouv/ma-cantine/commit/5d49ceba578214ff0b7136136e8e0ef4fa669492))
+* **Groupe:** Télédéclaration: empêcher la TD si un des satellites a des données manquantes ([#6182](https://github.com/betagouv/ma-cantine/issues/6182)) ([c7f1e86](https://github.com/betagouv/ma-cantine/commit/c7f1e868860343dd4759c979edfafff82ce7624a))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** Règles métiers: les ministères de tutelle sont uniquement obligatoires pour les établissements public ([#6179](https://github.com/betagouv/ma-cantine/issues/6179)) ([c226bf6](https://github.com/betagouv/ma-cantine/commit/c226bf657e08e8b67182c76e6b012eee563c249b))
+* **Groupe:** API: pouvoir ajouter (et enlever) des satellites qui ont des infos manquantes ([#6167](https://github.com/betagouv/ma-cantine/issues/6167)) ([d04f547](https://github.com/betagouv/ma-cantine/commit/d04f547d77f8e7272c8c5cde0fa9127ab2d23335))
+* **Groupe:** corrections suite au recettage ([#6166](https://github.com/betagouv/ma-cantine/issues/6166)) ([a57bb1c](https://github.com/betagouv/ma-cantine/commit/a57bb1cb29c10f5a92c5dd7fdd37af8b6a5b7c23))
+* **Groupe:** diverses améliorations pour la page "Gérer mes satellites" ([#6170](https://github.com/betagouv/ma-cantine/issues/6170)) ([5850e91](https://github.com/betagouv/ma-cantine/commit/5850e91f6a40874f8ce45a7a9170a537ccf3bcc0))
+* **Groupe:** diverses corrections frontend ([#6148](https://github.com/betagouv/ma-cantine/issues/6148)) ([1db838e](https://github.com/betagouv/ma-cantine/commit/1db838e1231014242146f5c041de090cbbfa825f))
+* **Groupe:** diverses corrections frontend ([#6159](https://github.com/betagouv/ma-cantine/issues/6159)) ([7a67566](https://github.com/betagouv/ma-cantine/commit/7a675664ab21614710e4b6cf47758fbbea57da73))
+* **Groupe:** le champ central_producer_siret d'un satellite n'est plus obligatoire ([#6178](https://github.com/betagouv/ma-cantine/issues/6178)) ([c7a271e](https://github.com/betagouv/ma-cantine/commit/c7a271ea1275fdc1a3688978f00f828eb4768bbc))
+* **Groupe:** permettre aux satellites avec des groupes en "APPRO" de télédéclarer les autres volets ([#6183](https://github.com/betagouv/ma-cantine/issues/6183)) ([2a29655](https://github.com/betagouv/ma-cantine/commit/2a296551705509333c995dec6cc68219553d4690))
+* **Télédéclaration détaillée:** corrige le message d'erreur des totaux suite à un problème d'arrondis ([#6173](https://github.com/betagouv/ma-cantine/issues/6173)) ([951fad9](https://github.com/betagouv/ma-cantine/commit/951fad9d6a6a5c2979d6637f64afebb0f42cdcc0))
+
+
+### Technique
+
+* **Cantines:** ajoute une property is_deleted pour les cantines soft-deleted ([#6161](https://github.com/betagouv/ma-cantine/issues/6161)) ([da5bcfe](https://github.com/betagouv/ma-cantine/commit/da5bcfe619d26f802d162aa247687b6a827f32b0))
+* **Cantines:** API: enlever les anciens endpoints CC-CSAT ([#6153](https://github.com/betagouv/ma-cantine/issues/6153)) ([526899f](https://github.com/betagouv/ma-cantine/commit/526899fc00e4b68c593d57886f2b087666e8e160))
+* **Cantines:** enlève le signal post-modification de central (plus besoin) ([#6160](https://github.com/betagouv/ma-cantine/issues/6160)) ([6190e44](https://github.com/betagouv/ma-cantine/commit/6190e44e35cacbfe53b17c39871b640076a41a6c))
+* **Cantines:** permettre d'ignorer les règles métiers grâce à run_validations=False ([#6156](https://github.com/betagouv/ma-cantine/issues/6156)) ([cd7edf7](https://github.com/betagouv/ma-cantine/commit/cd7edf7bbe1e09a39167385e28fab2178ce1ee35))
+* **Groupe:** API: ajout de tests supplémentaires sur les nouveaux endpoints ([#6142](https://github.com/betagouv/ma-cantine/issues/6142)) ([4579dcd](https://github.com/betagouv/ma-cantine/commit/4579dcdba1b9004e6ec5ea7ff2364c8f1c8f805f))
+* **Groupe:** nouvelle property satellites_missing_data_count pour connaitre le nombre de satellites avec des données manquantes ([#6181](https://github.com/betagouv/ma-cantine/issues/6181)) ([cf11577](https://github.com/betagouv/ma-cantine/commit/cf115776b1b79640b85d845ea2014cac4b5f4048))
+* **Groupes:** Brevo: corrige le nb_cantines_groupe ([#6176](https://github.com/betagouv/ma-cantine/issues/6176)) ([be900f8](https://github.com/betagouv/ma-cantine/commit/be900f81fcbf77eb5520246527efcfa69f57ee8a))
+
 ## [2025.49.0](https://github.com/betagouv/ma-cantine/compare/v2025.48.0...v2025.49.0) (2026-01-06)
 
 
