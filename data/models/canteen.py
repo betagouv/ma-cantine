@@ -70,7 +70,7 @@ def is_satellite_query():
     return Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
 
 
-def is_public_canteen_query():
+def is_public_query():
     return Q(economic_model=Canteen.EconomicModel.PUBLIC)
 
 
@@ -131,8 +131,8 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def get_satellites(self, central_producer_siret):
         return self.filter(is_satellite_query(), central_producer_siret=central_producer_siret)
 
-    def is_public_canteen(self):
-        return self.filter(is_public_canteen_query())
+    def is_public(self):
+        return self.filter(is_public_query())
 
     def annotate_with_satellites_in_db_count(self):
         # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
@@ -182,9 +182,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         """
         return self.annotate(
             requires_line_ministry=Case(
-                When(
-                    is_public_canteen_query() & Q(sector_list__overlap=SECTOR_HAS_LINE_MINISTRY_LIST), then=Value(True)
-                ),
+                When(is_public_query() & Q(sector_list__overlap=SECTOR_HAS_LINE_MINISTRY_LIST), then=Value(True)),
                 default=Value(False),
                 output_field=BooleanField(),
             )
@@ -696,7 +694,7 @@ class Canteen(SoftDeletionModel):
                     Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
                 )
         # line_ministry
-        if is_filled and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST) and bool(self.is_public):
+        if is_filled and bool(self.is_public) and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
             is_filled = bool(self.line_ministry)
         return is_filled
 

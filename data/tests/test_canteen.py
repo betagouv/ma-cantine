@@ -504,22 +504,19 @@ class CanteenCentralAndSatelliteQuerySetTest(TestCase):
         self.assertEqual(Canteen.objects.count(), 6)
         self.assertEqual(
             Canteen.objects.annotate_with_satellites_in_db_count()
-            .filter(id=self.canteen_central_1.id)
-            .first()
+            .get(id=self.canteen_central_1.id)
             .satellites_in_db_count,
             1,
         )
         self.assertEqual(
             Canteen.objects.annotate_with_satellites_in_db_count()
-            .filter(id=self.canteen_central_2.id)
-            .first()
+            .get(id=self.canteen_central_2.id)
             .satellites_in_db_count,
             2,
         )
         self.assertEqual(
             Canteen.objects.annotate_with_satellites_in_db_count()
-            .filter(id=self.canteen_on_site_central_1.id)
-            .first()
+            .get(id=self.canteen_on_site_central_1.id)
             .satellites_in_db_count,
             0,
         )
@@ -664,12 +661,14 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
         cls.canteen_central = CanteenFactory(
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             satellite_canteens_count=2,
             sector_list=[],
         )
         cls.canteen_central_serving = CanteenFactory(
             siret="11007001800012",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[
                 Sector.EDUCATION_SECONDAIRE_COLLEGE,
                 Sector.EDUCATION_SECONDAIRE_LYCEE,
@@ -679,70 +678,71 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
         cls.canteen_satellite_spe = CanteenFactory(
             siret="92341284500011",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             central_producer_siret=cls.canteen_central.siret,
             sector_list=[Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC],
             line_ministry=Canteen.Ministries.CULTURE,
-            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         cls.canteen_private = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            economic_model=Canteen.EconomicModel.PRIVATE,
             central_producer_siret=cls.canteen_central.siret,
             sector_list=[Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC],
             line_ministry=None,
-            economic_model=Canteen.EconomicModel.PRIVATE,
         )
+
+    def test_is_public_queryset(self):
+        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.objects.is_public().count(), 3)
+        self.assertFalse(self.canteen_private in Canteen.objects.is_public())
+
+    def test_is_public_property(self):
+        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertTrue(self.canteen_central.is_public)
+        self.assertTrue(self.canteen_central_serving.is_public)
+        self.assertTrue(self.canteen_satellite_spe.is_public)
+        self.assertFalse(self.canteen_private.is_public)
 
     def test_annotate_with_requires_line_ministry_queryset(self):
         self.assertEqual(Canteen.objects.count(), 4)
         self.assertFalse(
             Canteen.objects.annotate_with_requires_line_ministry()
-            .filter(id=self.canteen_central.id)
-            .first()
+            .get(id=self.canteen_central.id)
             .requires_line_ministry
         )
         self.assertFalse(
             Canteen.objects.annotate_with_requires_line_ministry()
-            .filter(id=self.canteen_central_serving.id)
-            .first()
+            .get(id=self.canteen_central_serving.id)
             .requires_line_ministry
         )
         self.assertTrue(
             Canteen.objects.annotate_with_requires_line_ministry()
-            .filter(id=self.canteen_satellite_spe.id)
-            .first()
+            .get(id=self.canteen_satellite_spe.id)
             .requires_line_ministry
         )
-
-    def test_annotate_with_requires_line_ministry_if_public_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 4)
         self.assertFalse(
             Canteen.objects.annotate_with_requires_line_ministry()
-            .filter(id=self.canteen_private.id)
-            .first()
+            .get(id=self.canteen_private.id)
             .requires_line_ministry
         )
+        # change economic_model to public
         self.canteen_private.economic_model = Canteen.EconomicModel.PUBLIC
         self.canteen_private.save()
         self.assertTrue(
             Canteen.objects.annotate_with_requires_line_ministry()
-            .filter(id=self.canteen_private.id)
-            .first()
+            .get(id=self.canteen_private.id)
             .requires_line_ministry
         )
 
     def test_annotate_with_sector_list_count_queryset(self):
         self.assertEqual(Canteen.objects.count(), 4)
         self.assertEqual(
-            Canteen.objects.annotate_with_sector_list_count()
-            .filter(id=self.canteen_central.id)
-            .first()
-            .sector_list_count,
+            Canteen.objects.annotate_with_sector_list_count().get(id=self.canteen_central.id).sector_list_count,
             0,
         )
         self.assertEqual(
             Canteen.objects.annotate_with_sector_list_count()
-            .filter(id=self.canteen_central_serving.id)
-            .first()
+            .get(id=self.canteen_central_serving.id)
             .sector_list_count,
             3,
         )
@@ -750,25 +750,20 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
     def test_annotate_with_sector_category_list_queryset(self):
         self.assertEqual(Canteen.objects.count(), 4)
         self.assertEqual(
-            Canteen.objects.annotate_with_sector_category_list()
-            .filter(id=self.canteen_central.id)
-            .first()
-            .sector_category_list,
+            Canteen.objects.annotate_with_sector_category_list().get(id=self.canteen_central.id).sector_category_list,
             [],
         )
         self.assertEqual(
             len(
                 Canteen.objects.annotate_with_sector_category_list()
-                .filter(id=self.canteen_central_serving.id)
-                .first()
+                .get(id=self.canteen_central_serving.id)
                 .sector_category_list
             ),
             2,
         )
         self.assertEqual(
             Canteen.objects.annotate_with_sector_category_list()
-            .filter(id=self.canteen_satellite_spe.id)
-            .first()
+            .get(id=self.canteen_satellite_spe.id)
             .sector_category_list,
             [SectorCategory.ADMINISTRATION.value],
         )
@@ -778,12 +773,14 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.canteen_central.category_list_from_sector_list, [])
         self.assertEqual(len(self.canteen_central_serving.category_list_from_sector_list), 2)
         self.assertEqual(self.canteen_satellite_spe.category_list_from_sector_list, [SectorCategory.ADMINISTRATION])
+        self.assertEqual(self.canteen_private.category_list_from_sector_list, [SectorCategory.ADMINISTRATION])
 
     def test_is_spe_property(self):
         self.assertEqual(Canteen.objects.count(), 4)
         self.assertFalse(self.canteen_central.is_spe)
         self.assertFalse(self.canteen_central_serving.is_spe)
         self.assertTrue(self.canteen_satellite_spe.is_spe)
+        self.assertFalse(self.canteen_private.is_spe)
 
 
 class CanteenCompleteQuerySetAndPropertyTest(TestCase):
@@ -1018,9 +1015,5 @@ class CanteenModelPropertiesTest(TestCase):
         self.assertEqual(canteen.appro_diagnostics.count(), 2)
         self.assertEqual(canteen.appro_diagnostics.first().year, 2023)
         self.assertEqual(canteen.service_diagnostics.count(), 2)
-        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
-        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.latest_published_year, 2023)
         self.assertEqual(canteen.service_diagnostics.first().year, 2023)
         self.assertEqual(canteen.latest_published_year, 2023)
