@@ -30,13 +30,13 @@ const getBadge = (name, campaignDates, satellitesMissingDataCount) => {
       label = "À télédéclarer"
       type = "error"
       break
-    case isInCampaign && waitingCentral: // If central did not teledeclare its diagnostic
-      label = "En attente"
-      type = "warning"
-      break
     case isInCampaign && needsFill: // If diagnostic or canteen is missing data to teledeclare
       label = "À compléter"
       type = "error"
+      break
+    case isInCampaign && waitingCentral: // If central did not teledeclare its diagnostic
+      label = "En attente"
+      type = "warning"
       break
   }
   return {
