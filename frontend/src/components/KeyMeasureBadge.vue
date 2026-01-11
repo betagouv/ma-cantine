@@ -55,7 +55,7 @@ export default {
       return !this.canteen || hasSatelliteInconsistency(this.canteen)
     },
     isSatellite() {
-      return this.canteen?.productionType === "site_cooked_elsewhere"
+      return this.canteen?.productionType === "site_cooked_elsewhere" && this.canteen.groupe?.id
     },
     isAppro() {
       return this.id === "qualite-des-produits"
