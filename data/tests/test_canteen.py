@@ -682,6 +682,7 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
             central_producer_siret=cls.canteen_central.siret,
             sector_list=[Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC],
             line_ministry=Canteen.Ministries.CULTURE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
         )
         cls.canteen_private = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
