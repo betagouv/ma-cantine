@@ -30,6 +30,7 @@
             :inTeledeclaration="inTeledeclarationCampaign"
             :inCorrection="inCorrectionCampaign"
             :canteenAction="item.action"
+            :satellitesMissingDataCount="canteen.satellitesMissingDataCount"
             class="my-2"
           />
         </template>

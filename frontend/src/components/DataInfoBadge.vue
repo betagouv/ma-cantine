@@ -30,6 +30,10 @@ export default {
       type: String,
       default: null,
     },
+    satellitesMissingDataCount: {
+      default: 0,
+      type: Number,
+    },
   },
   computed: {
     badge() {
@@ -37,7 +41,11 @@ export default {
         inCorrection: this.inCorrection,
         inTeledeclaration: this.inTeledeclaration,
       }
-      const badgeFromAction = diagnosticService.getBadge(this.canteenAction, campaignDates)
+      const badgeFromAction = diagnosticService.getBadge(
+        this.canteenAction,
+        campaignDates,
+        this.satellitesMissingDataCount
+      )
       const mode = this.currentYear ? "INFO" : badgeFromAction.type
       const body = this.currentYear ? "Année en cours" : badgeFromAction.label
       return {
