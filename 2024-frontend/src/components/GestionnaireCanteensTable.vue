@@ -88,7 +88,7 @@ const getProductionTypeInfos = (canteen) => {
 
 const getDiagnosticInfos = (canteen) => {
   const action = canteen.action
-  const badge = diagnosticService.getBadge(action, props.campaign)
+  const badge = diagnosticService.getBadge(action, props.campaign, canteen.satellitesMissingDataCount)
   const button = getTeledeclareButton(canteen)
   return { badge, button }
 }
@@ -125,6 +125,7 @@ const getDropdownLinks = (canteen) => {
 }
 
 const getTeledeclareButton = (canteen) => {
+  if (canteen.satellitesMissingDataCount > 0) return false
   const button = diagnosticService.getTeledeclareButton(canteen.action)
   if (!button) return false
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
