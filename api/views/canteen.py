@@ -308,10 +308,28 @@ class UserCanteensView(ListCreateAPIView):
         update_change_reason_with_auth(self, canteen)
 
     def create(self, request, *args, **kwargs):
+        """
+        Custom API checks
+        - duplicate SIRET are not allowed
+        - users cannot create CENTRAL or CENTRAL_SERVING canteens  # TODO: move to validators/canteen.py
+        """
         canteen_siret = request.data.get("siret")
         error_response = get_cantine_from_siret(canteen_siret, request)
         if error_response:
             raise DuplicateException(additional_data=error_response)
+        production_type = request.data.get("production_type")
+        if production_type in [
+            Canteen.ProductionType.CENTRAL,
+            Canteen.ProductionType.CENTRAL_SERVING,
+        ]:
+            return JsonResponse(
+                {
+                    "production_type": [
+                        "La création de cantines de type CENTRAL ou CENTRAL_SERVING n'est plus autorisée."
+                    ]
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         return super().create(request, *args, **kwargs)
 
 

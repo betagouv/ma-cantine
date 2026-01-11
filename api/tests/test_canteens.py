@@ -435,7 +435,7 @@ class CanteenDetailApiTest(APITestCase):
 class CanteenCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.DEFAULT_PAYLOAD = {
+        cls.CANTEEN_SITE_DEFAULT_PAYLOAD = {
             "name": "My canteen",
             "city": "Lyon",
             "siret": "21340172201787",
@@ -447,9 +447,27 @@ class CanteenCreateApiTest(APITestCase):
             "sectorList": [Sector.EDUCATION_PRIMAIRE, Sector.ENTERPRISE_ENTREPRISE],
         }
 
+    def test_cannot_create_canteen_unauthenticated(self):
+        response = self.client.post(reverse("user_canteens"), self.CANTEEN_SITE_DEFAULT_PAYLOAD)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_create_canteen_central(self):
+        response = self.client.post(
+            reverse("user_canteens"),
+            {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "productionType": Canteen.ProductionType.CENTRAL},
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(
+            body["production_type"],
+            ["La création de cantines de type CENTRAL ou CENTRAL_SERVING n'est plus autorisée."],
+        )
+
     @authenticate
     def test_create_canteen(self):
-        response = self.client.post(reverse("user_canteens"), self.DEFAULT_PAYLOAD)
+        response = self.client.post(reverse("user_canteens"), self.CANTEEN_SITE_DEFAULT_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -458,7 +476,9 @@ class CanteenCreateApiTest(APITestCase):
     @authenticate
     def test_create_canteen_creation_source(self):
         # from the APP
-        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "creation_source": "APP"})
+        response = self.client.post(
+            reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "APP"}
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -466,7 +486,7 @@ class CanteenCreateApiTest(APITestCase):
         created_canteen.hard_delete()
 
         # defaults to API
-        response = self.client.post(reverse("user_canteens"), self.DEFAULT_PAYLOAD)
+        response = self.client.post(reverse("user_canteens"), self.CANTEEN_SITE_DEFAULT_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -474,12 +494,14 @@ class CanteenCreateApiTest(APITestCase):
         created_canteen.hard_delete()
 
         # returns a 404 if the creation_source is not valid
-        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "creation_source": "UNKNOWN"})
+        response = self.client.post(
+            reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "UNKNOWN"}
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_create_canteen_missing_siret(self):
-        payload = self.DEFAULT_PAYLOAD.copy()
+    def test_cannot_create_canteen_without_siret(self):
+        payload = self.CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
         del payload["siret"]
 
         response = self.client.post(reverse("user_canteens"), payload)
@@ -488,13 +510,15 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(body["siret"], ["Ce champ est obligatoire."])
 
     @authenticate
-    def test_create_canteen_bad_siret(self):
-        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": "0123"})
+    def test_cannot_create_canteen_with_bad_siret(self):
+        response = self.client.post(reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "0123"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["14 caractères numériques sont attendus"])
 
-        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": "01234567891011"})
+        response = self.client.post(
+            reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "01234567891011"}
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["Le numéro SIRET n'est pas valide."])
@@ -502,7 +526,7 @@ class CanteenCreateApiTest(APITestCase):
         response = self.client.post(
             reverse("user_canteens"),
             {
-                **self.DEFAULT_PAYLOAD,
+                **self.CANTEEN_SITE_DEFAULT_PAYLOAD,
                 "siret": "01234567891011",
                 "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
                 "centralProducerSiret": "01234567891011",
@@ -513,37 +537,31 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(body["centralProducerSiret"], ["Le numéro SIRET n'est pas valide."])
 
     @authenticate
-    def test_create_canteen_duplicate_siret_managed(self):
+    def test_cannot_create_canteen_with_duplicate_siret(self):
         """
         If attempt to create a canteen with the same SIRET as one that I manage already, give
         me 400 with canteen name and id
         """
         siret = "26566234910966"
-        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
-
-        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": siret})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        body = response.json()
-        self.assertEqual(body["name"], canteen.name)
-        self.assertEqual(body["id"], canteen.id)
-        self.assertTrue(body["isManagedByUser"])
-        self.assertEqual(Canteen.objects.count(), 1)
-
-    @authenticate
-    def test_create_canteen_duplicate_siret_unmanaged(self):
-        """
-        If attempt to create a canteen with the same SIRET as one that I don't manage, give
-        me 400 with canteen name
-        """
-        siret = "26566234910966"
         canteen = CanteenFactory(siret=siret)
 
-        response = self.client.post(reverse("user_canteens"), {**self.DEFAULT_PAYLOAD, "siret": siret})
+        response = self.client.post(reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
         self.assertEqual(body["id"], canteen.id)
         self.assertFalse(body["isManagedByUser"])
+        self.assertEqual(Canteen.objects.count(), 1)
+
+        # make the user the manager of the canteen
+        canteen.managers.add(authenticate.user)
+
+        response = self.client.post(reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertEqual(body["name"], canteen.name)
+        self.assertEqual(body["id"], canteen.id)
+        self.assertTrue(body["isManagedByUser"])
         self.assertEqual(Canteen.objects.count(), 1)
 
     @authenticate
@@ -556,7 +574,7 @@ class CanteenCreateApiTest(APITestCase):
         with open(image_path, "rb") as image:
             image_base_64 = base64.b64encode(image.read()).decode("utf-8")
 
-        payload = self.DEFAULT_PAYLOAD.copy()
+        payload = self.CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
         payload["images"] = [
             {
                 "image": "data:image/jpeg;base64," + image_base_64,
@@ -574,7 +592,7 @@ class CanteenCreateApiTest(APITestCase):
         """
         The app should store the mtm parameters on creation
         """
-        payload = self.DEFAULT_PAYLOAD.copy()
+        payload = self.CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
         payload["creation_mtm_source"] = "mtm_source_value"
         payload["creation_mtm_campaign"] = "mtm_campaign_value"
         payload["creation_mtm_medium"] = "mtm_medium_value"
