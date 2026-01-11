@@ -201,7 +201,7 @@ export default {
       return +this.selectedYear
     },
     canteenDiagnostic() {
-      return this.canteen.diagnostics.find((x) => x.year === this.year)
+      return this.centralDiagnostic || this.canteen.diagnostics.find((x) => x.year === this.year)
     },
     hasActiveTeledeclaration() {
       return this.canteenDiagnostic?.isTeledeclared
