@@ -135,7 +135,7 @@ export default {
       const economicModelDetail = Constants.EconomicModels.find((x) => x.value === this.canteen.economicModel)
       const ministryDetail = this.$store.state.lineMinistries.find((x) => x.value === this.canteen.lineMinistry)
       let items = [
-        { value: this.canteen.name, label: "Nom de la cantine" },
+        { value: this.canteen.name, label: "Nom" },
         { value: this.canteen.siret || "inconnu", label: "Numéro SIRET" },
         { value: this.canteen.sirenUniteLegale, label: "Numéro SIREN" },
         { value: this.canteen.city, label: "Ville" },
