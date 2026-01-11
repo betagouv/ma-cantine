@@ -605,6 +605,10 @@ class Canteen(SoftDeletionModel):
         return self.siret or self.siren_unite_legale or ""
 
     @property
+    def is_public(self) -> bool:
+        return self.economic_model == Canteen.EconomicModel.PUBLIC
+
+    @property
     def is_central(self) -> bool:
         return self.production_type and self.production_type in [
             Canteen.ProductionType.CENTRAL,
@@ -692,7 +696,7 @@ class Canteen(SoftDeletionModel):
                     Canteen.objects.filter(central_producer_siret=self.siret).count() == self.satellite_canteens_count
                 )
         # line_ministry
-        if is_filled and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
+        if is_filled and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST) and bool(self.is_public):
             is_filled = bool(self.line_ministry)
         return is_filled
 
