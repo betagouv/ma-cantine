@@ -9,6 +9,7 @@ from django.utils import timezone
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
 from api.serializers import SatelliteCanteenSerializer, FullCanteenSerializer
 from data.models import Canteen
+from macantine.utils import is_in_teledeclaration_or_correction
 
 
 @extend_schema_view(
@@ -51,6 +52,14 @@ class CanteenGroupeSatelliteLinkView(APIView):
                 {"error": "This satellite is already linked to a groupe."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if is_in_teledeclaration_or_correction():
+            if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
+                return JsonResponse(
+                    {
+                        "error": "Cannot link satellite to groupe during a campaign if the groupe has a diagnostic teledeclared."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         canteen_satellite.groupe = canteen_groupe
         canteen_satellite.save(run_validations=False)
@@ -72,12 +81,19 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
             canteen_satellite = Canteen.objects.get(pk=satellite_pk)
         except Canteen.DoesNotExist:
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
-
         if canteen_satellite.groupe_id != canteen_groupe.id:
             return JsonResponse(
                 {"error": "This satellite is not linked to this groupe."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if is_in_teledeclaration_or_correction():
+            if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
+                return JsonResponse(
+                    {
+                        "error": "Cannot unlink satellite from groupe during a campaign if the groupe has a diagnostic teledeclared."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         canteen_satellite.groupe = None
         canteen_satellite.save(run_validations=False)

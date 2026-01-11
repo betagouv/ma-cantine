@@ -1,9 +1,10 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
+from freezegun import freeze_time
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory
+from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen
 
 
@@ -208,7 +209,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
 
     @authenticate
     def test_cannot_link_non_satellite(self):
-        # set user as manager of canteen group 1
+        # set user as manager of group_1
         self.canteen_groupe_1.managers.add(authenticate.user)
         # try to link a non-satellite canteen
         url = reverse(
@@ -221,7 +222,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
 
     @authenticate
     def test_cannot_link_already_linked_satellite(self):
-        # set user as manager of canteen group 2
+        # set user as manager of group_2
         self.canteen_groupe_2.managers.add(authenticate.user)
         # try to link a satellite already linked to groupe_1
         url = reverse(
@@ -234,7 +235,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
 
     @authenticate
     def test_cannot_unlink_satellite_not_in_group(self):
-        # set user as manager of canteen group 2
+        # set user as manager of group_2
         self.canteen_groupe_2.managers.add(authenticate.user)
         # try to unlink a satellite linked to groupe_1 from groupe_2
         url = reverse(
@@ -246,8 +247,36 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_cannot_link_unlink_during_teledeclaration_if_groupe_has_diagnostic_teledeclared(self):
+        # set user as manager of group_1
+        self.canteen_groupe_1.managers.add(authenticate.user)
+        # create a diagnostic teledeclared for groupe_1 for year 2024
+        DiagnosticFactory(canteen=self.canteen_groupe_1, year=2024, valeur_totale=100).teledeclare(
+            applicant=authenticate.user
+        )
+
+        # try to link a satellite to groupe_1
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # try to unlink a satellite from groupe_1
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
     def test_canteen_groupe_satellite_link_unlink(self):
-        # set user as manager of canteen groups
+        # set user as manager of group_1 and group_2
         self.canteen_groupe_1.managers.add(authenticate.user)
         self.canteen_groupe_2.managers.add(authenticate.user)
 
