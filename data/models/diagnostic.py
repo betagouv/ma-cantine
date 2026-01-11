@@ -1739,7 +1739,8 @@ class Diagnostic(models.Model):
                 raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
             if self.is_teledeclared:
                 raise ValidationError("Ce diagnostic a déjà été télédéclaré")
-            if not self.is_filled:
+            uses_central_kitchen_appro = self._should_use_central_kitchen_appro()
+            if not self.is_filled and not uses_central_kitchen_appro:
                 raise ValidationError("Ce diagnostic n'est pas rempli")
             if not self.canteen.is_filled:
                 raise ValidationError("La cantine associée à ce diagnostic n'est pas remplie")

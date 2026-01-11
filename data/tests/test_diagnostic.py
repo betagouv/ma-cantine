@@ -682,7 +682,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
             self.diagnostic_groupe.teledeclare(applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
-    def test_teledeclare(self):
+    def test_groupe_can_teledeclare(self):
         self.assertIsNone(self.diagnostic_groupe.applicant)
         self.assertIsNone(self.diagnostic_groupe.canteen_snapshot)
         self.assertIsNone(self.diagnostic_groupe.satellites_snapshot)
@@ -718,6 +718,21 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         # try to teledeclare again
         with self.assertRaises(ValidationError):
             self.diagnostic_groupe.teledeclare(applicant=UserFactory())
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_satellite_in_group_can_teledeclare_non_appro_fields_if_groupe_mode_appro(self):
+        # change diagnostic_groupe mode to APPRO
+        self.diagnostic_groupe.central_kitchen_diagnostic_mode = Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        self.diagnostic_groupe.save()
+        diagnostic_satellite = DiagnosticFactory(
+            canteen=self.canteen_satellite,
+            year=year_data,
+            diagnostic_type=None,  # Groupe appro teledeclaration
+            has_waste_diagnostic=True,
+            has_waste_plan=False,
+        )
+        # teledeclare
+        diagnostic_satellite.teledeclare(applicant=self.user)
 
 
 class DiagnosticModelCancelMethodTest(TestCase):
