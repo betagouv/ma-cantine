@@ -70,6 +70,10 @@ def is_satellite_query():
     return Q(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
 
 
+def is_public_canteen_query():
+    return Q(economic_model=Canteen.EconomicModel.PUBLIC)
+
+
 def has_missing_data_query():
     return (
         # basic rules
@@ -127,6 +131,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def get_satellites(self, central_producer_siret):
         return self.filter(is_satellite_query(), central_producer_siret=central_producer_siret)
 
+    def is_public_canteen(self):
+        return self.filter(is_public_canteen_query())
+
     def annotate_with_satellites_in_db_count(self):
         # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
         satellites = (
@@ -175,7 +182,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         """
         return self.annotate(
             requires_line_ministry=Case(
-                When(sector_list__overlap=SECTOR_HAS_LINE_MINISTRY_LIST, then=Value(True)),
+                When(
+                    is_public_canteen_query() & Q(sector_list__overlap=SECTOR_HAS_LINE_MINISTRY_LIST), then=Value(True)
+                ),
                 default=Value(False),
                 output_field=BooleanField(),
             )

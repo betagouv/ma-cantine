@@ -683,9 +683,16 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
             sector_list=[Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC],
             line_ministry=Canteen.Ministries.CULTURE,
         )
+        cls.canteen_private = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=cls.canteen_central.siret,
+            sector_list=[Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC],
+            line_ministry=None,
+            economic_model=Canteen.EconomicModel.PRIVATE,
+        )
 
     def test_annotate_with_requires_line_ministry_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 4)
         self.assertFalse(
             Canteen.objects.annotate_with_requires_line_ministry()
             .filter(id=self.canteen_central.id)
@@ -705,8 +712,25 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
             .requires_line_ministry
         )
 
+    def test_annotate_with_requires_line_ministry_if_public_queryset(self):
+        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertFalse(
+            Canteen.objects.annotate_with_requires_line_ministry()
+            .filter(id=self.canteen_private.id)
+            .first()
+            .requires_line_ministry
+        )
+        self.canteen_private.economic_model = Canteen.EconomicModel.PUBLIC
+        self.canteen_private.save()
+        self.assertTrue(
+            Canteen.objects.annotate_with_requires_line_ministry()
+            .filter(id=self.canteen_private.id)
+            .first()
+            .requires_line_ministry
+        )
+
     def test_annotate_with_sector_list_count_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 4)
         self.assertEqual(
             Canteen.objects.annotate_with_sector_list_count()
             .filter(id=self.canteen_central.id)
@@ -723,7 +747,7 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
         )
 
     def test_annotate_with_sector_category_list_queryset(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 4)
         self.assertEqual(
             Canteen.objects.annotate_with_sector_category_list()
             .filter(id=self.canteen_central.id)
@@ -749,13 +773,13 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
         )
 
     def test_category_list_from_sector_list_property(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 4)
         self.assertEqual(self.canteen_central.category_list_from_sector_list, [])
         self.assertEqual(len(self.canteen_central_serving.category_list_from_sector_list), 2)
         self.assertEqual(self.canteen_satellite_spe.category_list_from_sector_list, [SectorCategory.ADMINISTRATION])
 
     def test_is_spe_property(self):
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 4)
         self.assertFalse(self.canteen_central.is_spe)
         self.assertFalse(self.canteen_central_serving.is_spe)
         self.assertTrue(self.canteen_satellite_spe.is_spe)
