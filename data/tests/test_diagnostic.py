@@ -661,11 +661,25 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
             self.diagnostic_groupe.teledeclare(applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
-    def test_cannot_teledeclare_a_diagnostic_if_canteen_not_filled(self):
+    def test_cannot_teledeclare_a_diagnostic_if_canteen_missing_data(self):
         Canteen.objects.filter(id=self.canteen_site.id).update(yearly_meal_count=None)  # incomplete
         self.canteen_site.refresh_from_db()
         with self.assertRaises(ValidationError):
             self.diagnostic_site.teledeclare(applicant=self.user)
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_cannot_teledeclare_a_diagnostic_if_canteen_groupe_has_satellite_missing_data(self):
+        Canteen.objects.filter(id=self.canteen_satellite.id).update(yearly_meal_count=None)  # incomplete
+        self.canteen_satellite.refresh_from_db()
+        # fill the diagnostic
+        self.diagnostic_groupe.valeur_totale = 1000
+        self.diagnostic_groupe.valeur_bio = 200
+        self.diagnostic_groupe.valeur_siqo = 100
+        self.diagnostic_groupe.valeur_externalites_performance = 100
+        self.diagnostic_groupe.valeur_egalim_autres = 100
+        self.diagnostic_groupe.save()
+        with self.assertRaises(ValidationError):
+            self.diagnostic_groupe.teledeclare(applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_teledeclare(self):

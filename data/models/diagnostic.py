@@ -1743,6 +1743,10 @@ class Diagnostic(models.Model):
                 raise ValidationError("Ce diagnostic n'est pas rempli")
             if not self.canteen.is_filled:
                 raise ValidationError("La cantine associée à ce diagnostic n'est pas remplie")
+            if self.canteen.is_groupe and self.canteen.satellites_missing_data_count > 0:
+                raise ValidationError(
+                    f"{self.canteen.satellites_missing_data_count} satellites de la cantine associée à ce diagnostic ne sont pas remplis"
+                )
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 
