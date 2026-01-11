@@ -284,6 +284,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
+    satellites_missing_data_count = serializers.IntegerField(read_only=True)
     badges = BadgesSerializer(source="*", read_only=True)
     resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
     publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
@@ -307,6 +308,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "central_kitchen_diagnostics",
             "satellites",
             "satellites_count",
+            "satellites_missing_data_count",
             "is_central_cuisine",
             "is_satellite",
             "modification_date",
@@ -341,6 +343,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "central_kitchen_diagnostics",
             "satellites",
             "satellites_count",  # property
+            "satellites_missing_data_count",  # property
             "management_type",
             "production_type",
             "diagnostics",

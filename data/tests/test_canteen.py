@@ -584,9 +584,9 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         cls.canteen_central_1 = CanteenFactory(
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=2,
+            satellite_canteens_count=2,  # 1 missing
             sector_list=[],
-        )  # 1 missing
+        )
         cls.canteen_central_2 = CanteenFactory(
             siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
         )
@@ -646,6 +646,17 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.canteen_central_1.satellites_count, 1)
         self.assertEqual(self.canteen_central_2.satellites_count, 2)
         self.assertEqual(self.canteen_satellite_1.satellites_count, 0)
+
+    def test_satellites_missing_data_count_property(self):
+        self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 0)
+        self.assertEqual(self.canteen_groupe_without_satellite.satellites_missing_data_count, 0)
+        # add to groupe a satellite with missing data
+        Canteen.objects.filter(id=self.canteen_satellite_3.id).update(
+            groupe=self.canteen_groupe_with_satellite, siret=None
+        )
+        self.canteen_groupe_with_satellite.refresh_from_db()
+        # check again
+        self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 1)
 
     def test_get_satellites_old(self):
         self.assertEqual(Canteen.objects.count(), 9)
