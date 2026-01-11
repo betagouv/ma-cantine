@@ -259,6 +259,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
                 & Q(
                     diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                     has_diagnostic_teledeclared_for_year=False,
+                    has_missing_data=False,
                 ),
                 then=Value(Canteen.Actions.NOTHING_SATELLITE),
             ),
