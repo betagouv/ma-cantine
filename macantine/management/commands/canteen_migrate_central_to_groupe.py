@@ -14,9 +14,21 @@ def canteen_central_to_groupe(canteen_central):
         "production_type": Canteen.ProductionType.GROUPE,
         "siret": None,
         "siren_unite_legale": canteen_central.siret[:9] if canteen_central.siret else None,
+        "city": None,
+        "city_insee_code": None,
+        "postal_code": None,
+        "epci": None,
+        "epci_lib": None,
+        "pat_list": [],
+        "pat_lib_list": [],
+        "department": None,
+        "department_lib": None,
+        "region": None,
+        "region_lib": None,
         "economic_model": None,
         "satellite_canteens_count": None,
         "sector_list": [],
+        "line_ministry": None,
     }
 
 
@@ -25,6 +37,17 @@ def satellite_from_central_dict(canteen_central_dict):
         "name": canteen_central_dict["name"] + " - Satellite",
         "siret": canteen_central_dict["siret"],
         "siren_unite_legale": canteen_central_dict["siren_unite_legale"],
+        "city": canteen_central_dict["city"],
+        "city_insee_code": canteen_central_dict["city_insee_code"],
+        "postal_code": canteen_central_dict["postal_code"],
+        "epci": canteen_central_dict["epci"],
+        "epci_lib": canteen_central_dict["epci_lib"],
+        "pat_list": canteen_central_dict["pat_list"],
+        "pat_lib_list": canteen_central_dict["pat_lib_list"],
+        "department": canteen_central_dict["department"],
+        "department_lib": canteen_central_dict["department_lib"],
+        "region": canteen_central_dict["region"],
+        "region_lib": canteen_central_dict["region_lib"],
         "management_type": canteen_central_dict["management_type"],
         "production_type": Canteen.ProductionType.ON_SITE_CENTRAL,
         "economic_model": canteen_central_dict["economic_model"],
@@ -33,6 +56,7 @@ def satellite_from_central_dict(canteen_central_dict):
         "groupe_id": canteen_central_dict["id"],
         # "central_producer_siret": canteen_central_dict["siret"],  # would make an error because same as 'siret'
         "sector_list": canteen_central_dict["sector_list"],
+        "line_ministry": canteen_central_dict["line_ministry"],
         "deletion_date": canteen_central_dict["deletion_date"] if canteen_central_dict["deletion_date"] else None,
     }
 
