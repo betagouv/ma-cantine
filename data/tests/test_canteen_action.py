@@ -213,6 +213,27 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.NOTHING_SATELLITE,
         )
 
+        # group with appro mode ALL and satellite with incomplete data
+        canteen_groupe_with_satellites_incorrect = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite_incorrect = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe_with_satellites_incorrect,
+            # daily_meal_count=None  #incomplete data
+        )
+        Canteen.objects.filter(id=canteen_satellite_incorrect.id).update(daily_meal_count=None)
+        DiagnosticFactory(
+            canteen=canteen_groupe_with_satellites_incorrect,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            year=2024,
+        )
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(
+            canteen_qs.get(id=canteen_satellite_incorrect.id).action,
+            Canteen.Actions.FILL_CANTEEN_DATA,
+        )
+
         # groupe with satellites and has diagnostic filled
         canteen_groupe_diagnostic_2024.valeur_totale = 100
         canteen_groupe_diagnostic_2024.save()
