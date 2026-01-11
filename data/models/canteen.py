@@ -716,7 +716,11 @@ class Canteen(SoftDeletionModel):
         if is_filled and self.is_serving:
             is_filled = bool(self.city_insee_code) and bool(self.economic_model) and bool(self.sector_list)
         # line_ministry
-        if is_filled and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
+        if (
+            is_filled
+            and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST)
+            and self.management_type == Canteen.EconomicModel.PUBLIC
+        ):
             is_filled = bool(self.line_ministry)
         return is_filled
 
