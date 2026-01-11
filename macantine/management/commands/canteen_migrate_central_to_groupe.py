@@ -5,6 +5,7 @@ from django.core.management.base import BaseCommand
 from simple_history.utils import update_change_reason
 
 from data.models import Canteen
+from api.serializers import SatelliteTeledeclarationSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -132,11 +133,23 @@ class Command(BaseCommand):
                 canteen_central_serving.save(run_validations=False)
                 update_change_reason(canteen_central_serving, "Script: canteen_migrate_central_to_groupe")
                 # Step 2.2: create (and link) new satellite from central_serving
-                satellite_canteen = Canteen(**satellite_from_central_dict(canteen_central_serving_dict_copy))
-                satellite_canteen.save(run_validations=False)
-                update_change_reason(satellite_canteen, "Script: canteen_migrate_central_to_groupe")
-                satellite_canteen.managers.set(canteen_central_serving.managers.all())
-                # Step 2.3: link canteen satellites (if central_serving not deleted)
+                new_satellite = Canteen(**satellite_from_central_dict(canteen_central_serving_dict_copy))
+                new_satellite.save(run_validations=False)
+                update_change_reason(new_satellite, "Script: canteen_migrate_central_to_groupe")
+                new_satellite.managers.set(canteen_central_serving.managers.all())
+                # Step 2.3: if central_serving has diagnostics teledeclared, update the satellites_snapshot with the new_satellite
+                for diagnostic_teledeclared in canteen_central_serving.diagnostics.teledeclared():
+                    diagnostic_teledeclared_satellites_snapshot = diagnostic_teledeclared.satellites_snapshot or []
+                    diagnostic_teledeclared_satellites_snapshot.append(
+                        SatelliteTeledeclarationSerializer(new_satellite).data
+                    )
+                    diagnostic_teledeclared.satellites_snapshot = diagnostic_teledeclared_satellites_snapshot
+                    diagnostic_teledeclared.save()
+                    update_change_reason(
+                        diagnostic_teledeclared,
+                        "Script: canteen_migrate_central_to_groupe - added new satellite to satellites_snapshot",
+                    )
+                # Step 2.4: link canteen satellites (if central_serving not deleted)
                 if not canteen_central_serving.is_deleted:
                     canteen_central_serving_satellites_all_qs = Canteen.all_objects.filter(
                         production_type__in=[Canteen.ProductionType.ON_SITE_CENTRAL],
