@@ -1713,18 +1713,6 @@ class Diagnostic(models.Model):
                     return groupe.is_groupe and handles_satellite_data
                 except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
                     pass
-            # TODO: remove (deprecated)
-            elif self.canteen.central_producer_siret:
-                try:
-                    central_kitchen = Canteen.objects.get(siret=self.canteen.central_producer_siret)
-                    existing_diagnostic = central_kitchen.diagnostics.get(year=self.year)
-                    handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
-                        Diagnostic.CentralKitchenDiagnosticMode.APPRO,
-                        Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                    ]
-                    return central_kitchen.is_central_cuisine and handles_satellite_data
-                except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
-                    pass
         return False
 
     def _get_teledeclaration_mode(self):

@@ -30,9 +30,10 @@ class CanteenPublishedListApiTest(APITestCase):
             CanteenFactory(line_ministry=Canteen.Ministries.ARMEE),
             CanteenFactory(line_ministry=Canteen.Ministries.ARMEE),
         ]
-        response = self.client.get(reverse("published_canteens"))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        response = self.client.get(reverse("published_canteens"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body.get("count"), 3)
 
@@ -644,9 +645,12 @@ class PublishedCanteenDetailApiTest(APITestCase):
         A 404 is raised if we try to get a single published canteen
         that has not been published by the manager.
         """
-        private_canteen = CanteenFactory(line_ministry=Canteen.Ministries.ARMEE)
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": private_canteen.id}))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_armee = CanteenFactory(line_ministry=Canteen.Ministries.ARMEE)
+
+        for canteen in [canteen_groupe, canteen_armee]:
+            response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+            self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_canteen_image_serialization(self):
@@ -675,15 +679,13 @@ class PublishedCanteenDetailApiTest(APITestCase):
         self.assertEqual(len(body.get("images")), 3)
 
     def test_satellite_published(self):
-        central_siret = "22730656663081"
-        central_kitchen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory(
-            central_producer_siret=central_siret,
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
         )
-
         diagnostic = DiagnosticFactory(
-            canteen=central_kitchen,
+            canteen=canteen_groupe,
             year=2020,
             valeur_totale=1200,
             valeur_bio=600,
@@ -691,29 +693,26 @@ class PublishedCanteenDetailApiTest(APITestCase):
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
-        body = response.json()
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen_satellite.id}))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        self.assertEqual(body.get("id"), satellite.id)
+        body = response.json()
+        self.assertEqual(body.get("id"), canteen_satellite.id)
         self.assertEqual(len(body.get("approDiagnostics")), 1)
-        self.assertEqual(body.get("centralKitchen").get("id"), central_kitchen.id)
-
+        self.assertEqual(body.get("centralKitchen").get("id"), canteen_groupe.id)
         serialized_diagnostic = body.get("approDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
         self.assertEqual(serialized_diagnostic["percentageValeurTotale"], 1)
         self.assertEqual(serialized_diagnostic["percentageValeurBio"], 0.5)
 
     def test_satellite_published_without_bio(self):
-        central_siret = "22730656663081"
-        central_kitchen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory(
-            central_producer_siret=central_siret,
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
         )
-
         diagnostic = DiagnosticFactory(
-            canteen=central_kitchen,
+            canteen=canteen_groupe,
             year=2020,
             valeur_totale=1200,
             valeur_bio=None,
@@ -721,13 +720,12 @@ class PublishedCanteenDetailApiTest(APITestCase):
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
-        body = response.json()
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen_satellite.id}))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        self.assertEqual(body.get("id"), satellite.id)
+        body = response.json()
+        self.assertEqual(body.get("id"), canteen_satellite.id)
         self.assertEqual(len(body.get("approDiagnostics")), 1)
-
         serialized_diagnostic = body.get("approDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
         self.assertEqual(serialized_diagnostic["percentageValeurTotale"], 1)
@@ -738,14 +736,13 @@ class PublishedCanteenDetailApiTest(APITestCase):
         Central cuisine diagnostics should only be returned if their central_kitchen_diagnostic_mode
         is set. Otherwise it may be an old diagnostic that is not meant for the satellites
         """
-        central_siret = "22730656663081"
-        central_kitchen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory(
-            central_producer_siret=central_siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
         )
-
         DiagnosticFactory(
-            canteen=central_kitchen,
+            canteen=canteen_groupe,
             year=2020,
             valeur_totale=1200,
             valeur_bio=600,
@@ -753,11 +750,11 @@ class PublishedCanteenDetailApiTest(APITestCase):
             central_kitchen_diagnostic_mode=None,
         )
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
-        body = response.json()
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen_satellite.id}))
 
-        self.assertEqual(body.get("id"), satellite.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body.get("id"), canteen_satellite.id)
         self.assertEqual(len(body.get("approDiagnostics")), 0)
 
     def test_satellite_published_needed_fields(self):
@@ -765,14 +762,13 @@ class PublishedCanteenDetailApiTest(APITestCase):
         If the central kitchen diag is set to APPRO, only the appro fields should be included.
         If the central kitchen diag is set to ALL, every fields should be included.
         """
-        central_siret = "22730656663081"
-        central_kitchen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory(
-            central_producer_siret=central_siret, production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
         )
-
         DiagnosticFactory(
-            canteen=central_kitchen,
+            canteen=canteen_groupe,
             year=2020,
             valeur_totale=1200,
             valeur_bio=600,
@@ -781,7 +777,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         )
 
         DiagnosticFactory(
-            canteen=central_kitchen,
+            canteen=canteen_groupe,
             year=2021,
             valeur_totale=1200,
             valeur_bio=600,
@@ -791,20 +787,19 @@ class PublishedCanteenDetailApiTest(APITestCase):
             valeur_produits_de_la_mer_egalim=80,
         )
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
-        body = response.json()
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen_satellite.id}))
 
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body.get("id"), canteen_satellite.id)
         self.assertEqual(len(body.get("approDiagnostics")), 2)
         self.assertEqual(len(body.get("serviceDiagnostics")), 1)
         appro_diagnostics = body.get("approDiagnostics")
         appro_diag_2020 = next(filter(lambda x: x["year"] == 2020, appro_diagnostics))
         appro_diag_2021 = next(filter(lambda x: x["year"] == 2021, appro_diagnostics))
         service_diag_2021 = body.get("serviceDiagnostics")[0]
-
         self.assertIn("percentageValeurTotale", appro_diag_2020)
         self.assertNotIn("hasWasteDiagnostic", appro_diag_2020)
-
         self.assertIn("percentageValeurTotale", appro_diag_2021)
         self.assertIn("hasWasteDiagnostic", service_diag_2021)
         self.assertNotIn("valeurViandesVolaillesEgalim", appro_diag_2021)
@@ -913,131 +908,142 @@ class PublishedCanteenDetailApiTest(APITestCase):
         self.assertIn("percentageValeurTotale", serialized_appro_diags[0])
         self.assertNotIn("valeurTotale", serialized_appro_diags[0])
 
-    def test_satellites_can_redact_cc_appro_data(self):
+    def test_satellites_can_redact_group_appro_data(self):
         """
-        Satellites should be able to redact the appro data provided by a CC, regardless of diagostic mode,
-        without impacting other satellites or the CC
+        Satellites should be able to redact the appro data provided by a group, regardless of diagostic mode,
+        without impacting other satellites or the group
         """
-        central = CanteenFactory(
-            siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL, redacted_appro_years=[]
-        )
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, redacted_appro_years=[])
         fully_redacted_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central.siret,
+            groupe=canteen_groupe,
             redacted_appro_years=[2022, 2023],
         )
         partially_redacted_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central.siret,
+            groupe=canteen_groupe,
             redacted_appro_years=[2022],
         )
         other_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central.siret,
+            groupe=canteen_groupe,
             redacted_appro_years=[],
         )
-
         DiagnosticFactory(
-            canteen=central, year=2022, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL
+            canteen=canteen_groupe,
+            year=2022,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
         )
         DiagnosticFactory(
-            canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+            canteen=canteen_groupe,
+            year=2023,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
         self.assertEqual(fully_redacted_satellite.central_kitchen_diagnostics.count(), 2)
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": fully_redacted_satellite.id}))
+
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 0)
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": partially_redacted_satellite.id}))
+
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 1)
         self.assertEqual(body.get("approDiagnostics")[0]["year"], 2023)
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": other_satellite.id}))
+
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 2)
 
     def test_cc_can_redact_appro_data(self):
         """
-        CCs should be able to redact the appro data without impacting their satellites
+        Groups should be able to redact the appro data without impacting their satellites
         """
-        central = CanteenFactory(
-            siret="96766910375238",
-            production_type=Canteen.ProductionType.CENTRAL,
+        canteen_groupe = CanteenFactory(
+            production_type=Canteen.ProductionType.GROUPE,
             redacted_appro_years=[2023],
         )
-        satellite = CanteenFactory(
+        canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central.siret,
+            groupe=canteen_groupe,
             redacted_appro_years=[],
         )
-
         DiagnosticFactory(
-            canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+            canteen=canteen_groupe,
+            year=2023,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": central.id}))
-        body = response.json()
-        self.assertEqual(len(body.get("approDiagnostics")), 0)
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen_satellite.id}))
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 1)
 
     def test_satellites_get_correct_appro_diagnostic(self):
         """
-        Satellites that have their own diagnostic for one year, and CC diagnostics for another,
-        should receive the CC diagnostic where it exists
+        Satellites that have their own diagnostic for one year, and group diagnostics for another,
+        should receive the group diagnostic where it exists
         """
-        central = CanteenFactory(siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe
         )
-
-        DiagnosticFactory(canteen=satellite, year=2021)
+        DiagnosticFactory(canteen=canteen_satellite, year=2021)
         DiagnosticFactory(
-            canteen=central, year=2022, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+            canteen=canteen_groupe,
+            year=2022,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
         DiagnosticFactory(
-            canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+            canteen=canteen_groupe,
+            year=2023,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
-        DiagnosticFactory(canteen=satellite, year=2023)
+        DiagnosticFactory(canteen=canteen_satellite, year=2023)
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen_satellite.id}))
+
         body = response.json()
         serialized_diagnostics = body.get("approDiagnostics")
         self.assertEqual(len(serialized_diagnostics), 3)
         for diagnostic in serialized_diagnostics:
             if diagnostic["year"] == 2021:
                 self.assertEqual(
-                    diagnostic["canteenId"], satellite.id, "return satellite diagnostic when only diag for year"
+                    diagnostic["canteenId"],
+                    canteen_satellite.id,
+                    "return satellite diagnostic when only diag for year",
                 )
             elif diagnostic["year"] == 2022:
-                self.assertEqual(diagnostic["canteenId"], central.id, "return CC diagnostic when only diag for year")
+                self.assertEqual(
+                    diagnostic["canteenId"], canteen_groupe.id, "return group diagnostic when only diag for year"
+                )
             elif diagnostic["year"] == 2023:
                 self.assertEqual(
-                    diagnostic["canteenId"], central.id, "priority to central diagnostic where there are both"
+                    diagnostic["canteenId"], canteen_groupe.id, "priority to group diagnostic where there are both"
                 )
 
     def test_satellites_can_redact_own_appro_data(self):
         """
         Satellites that have their own diagnostic should be able to redact their appro data
-        without their CC's diagnostic appro data taking it's place
+        without their group's diagnostic appro data taking it's place
         """
-        central = CanteenFactory(siret="96766910375238", production_type=Canteen.ProductionType.CENTRAL)
-        satellite = CanteenFactory(
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central.siret,
+            groupe=canteen_groupe,
             redacted_appro_years=[2023],
         )
-
         DiagnosticFactory(
-            canteen=central, year=2023, central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO
+            canteen=canteen_groupe,
+            year=2023,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
         )
-        DiagnosticFactory(canteen=satellite, year=2023)
+        DiagnosticFactory(canteen=canteen_satellite, year=2023)
 
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": satellite.id}))
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen_satellite.id}))
+
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 0)
 
