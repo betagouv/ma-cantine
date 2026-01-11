@@ -5,12 +5,13 @@
       <p class="mb-0">Ajoutez les restaurants satellites à mon groupe</p>
     </v-card-text>
     <v-spacer v-if="!satellites.length" />
-    <v-card-text
-      :class="`fr-text-xs mt-3 pb-0 ${hasSatelliteInconsistency ? 'dark-orange' : 'grey--text text--darken-2'}`"
-    >
-      <p class="mb-0 d-flex">
-        <v-icon small v-if="hasSatelliteInconsistency" class="mr-1 dark-orange">$alert-line</v-icon>
+    <v-card-text class="fr-text-xs mt-3 pb-0 grey--text text--darken-2">
+      <p class="mb-2 d-flex">
         {{ satelliteCountSentence }}
+      </p>
+      <p v-if="canteen.satellitesMissingDataCount > 0" class="dark-orange">
+        <v-icon small class="mr-1 dark-orange">$alert-line</v-icon>
+        {{ satelliteMissingDataCountSentence }}
       </p>
     </v-card-text>
     <v-spacer v-if="satellites.length" />
@@ -29,6 +30,7 @@
             :inTeledeclaration="inTeledeclarationCampaign"
             :inCorrection="inCorrectionCampaign"
             :canteenAction="item.action"
+            :satellitesMissingDataCount="canteen.satellitesMissingDataCount"
             class="my-2"
           />
         </template>
@@ -87,6 +89,10 @@ export default {
       if (count === 0) return "Aucun restaurant satellite renseigné"
       else if (count === 1) return "1 restaurant satellite renseigné"
       else return `${count} restaurants satellites renseignés`
+    },
+    satelliteMissingDataCountSentence() {
+      const count = this.canteen.satellitesMissingDataCount
+      return count === 1 ? `1 restaurant satellite incomplet` : `${count} restaurants satellites incomplets`
     },
   },
   methods: {
