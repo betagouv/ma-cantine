@@ -330,6 +330,35 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
         diagnostic.refresh_from_db()
         self.assertTrue(diagnostic.is_teledeclared)
 
+    @authenticate
+    @freeze_time("2025-04-20")  # during the 2024 correction campaign
+    def test_satellite_in_group_can_teledeclare_non_appro_fields(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
+            managers=[authenticate.user],
+        )
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(canteen_satellite.groupe.id, canteen_groupe.id)
+        diagnostic_groupe = DiagnosticFactory(
+            canteen=canteen_groupe,
+            year=2024,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+        diagnostic_groupe.teledeclare(authenticate.user)
+        self.assertEqual(Diagnostic.objects.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED).count(), 1)
+        diagnostic_satellite = DiagnosticFactory(
+            canteen=canteen_satellite,
+            year=2024,
+            diagnostic_type=None,  # Groupe appro teledeclaration
+            has_waste_diagnostic=True,
+            has_waste_plan=False,
+        )
+        diagnostic_satellite.teledeclare(authenticate.user)
+        self.assertEqual(Diagnostic.objects.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED).count(), 2)
+
 
 class DiagnosticTeledeclarationCancelView(APITestCase):
     @freeze_time("2025-03-30")  # during the 2024 campaign
