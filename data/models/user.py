@@ -108,6 +108,11 @@ class User(AbstractUser):
         "creation_mtm_medium",
     ]
 
+    BREVO_FIELDS = [
+        "brevo_last_update_date",
+        "brevo_is_deleted",
+    ]
+
     DATA_CANTEEN_FIELDS = [
         "nb_cantines",
         "nb_cantines_site",
@@ -121,8 +126,6 @@ class User(AbstractUser):
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
     email = models.EmailField(_("email address"), unique=True)
     email_confirmed = models.BooleanField(default="False", verbose_name="adresse email confirmée")
-
-    opt_out_reminder_emails = models.BooleanField(default="False", verbose_name="Désactiver les emails de rappel")
 
     law_awareness = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=LawAwareness.choices),
@@ -140,13 +143,6 @@ class User(AbstractUser):
     mcp_id = models.TextField(blank=True, null=True, verbose_name="ID MonComptePro")
     mcp_organizations = models.JSONField(blank=True, null=True, verbose_name="Organisations sous MonComptePro")
 
-    # Email campaigns
-    email_no_canteen_first_reminder = models.DateTimeField(
-        null=True, blank=True, verbose_name="Date d'envoi du premier email pour manque de cantines"
-    )
-    email_no_canteen_second_reminder = models.DateTimeField(
-        null=True, blank=True, verbose_name="Date d'envoi du second email pour manque de cantines"
-    )
     phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
 
     job = models.CharField(
@@ -195,6 +191,14 @@ class User(AbstractUser):
         verbose_name="departements où l'élu·e peut regarder les cantines",
     )
 
+    # Emails
+    opt_out_reminder_emails = models.BooleanField(default="False", verbose_name="Désactiver les emails de rappel")
+    email_no_canteen_first_reminder = models.DateTimeField(
+        null=True, blank=True, verbose_name="Date d'envoi du premier email pour manque de cantines"
+    )
+    email_no_canteen_second_reminder = models.DateTimeField(
+        null=True, blank=True, verbose_name="Date d'envoi du second email pour manque de cantines"
+    )
     brevo_last_update_date = models.DateTimeField(
         null=True, blank=True, verbose_name="Date de la dernière mise à jour Brevo"
     )
