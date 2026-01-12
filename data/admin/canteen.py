@@ -86,6 +86,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "production_type",
         "groupe",
         "central_producer_siret",
+        "is_filled",
         "declaration_donnees_2021",
         "declaration_donnees_2022",
         "declaration_donnees_2023",
@@ -104,6 +105,8 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "deletion_date",
     )
     readonly_fields = (
+        "creation_date",
+        "creation_source",
         "epci",
         "epci_lib",
         "pat_list",
@@ -112,8 +115,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "department_lib",
         "region",
         "region_lib",
-        "creation_date",
-        "creation_source",
+        "is_filled",
         "publication_status_display",
         "declaration_donnees_2021",
         "declaration_donnees_2022",
