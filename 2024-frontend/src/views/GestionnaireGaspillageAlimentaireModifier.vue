@@ -90,7 +90,7 @@ const continueAction = () => {
       scrollTop()
       Object.assign(originalPayload, hotPayload.value)
     })
-    .catch(handleServerError)
+    .catch(store.notifyServerError)
 }
 
 const navigateBack = () => {
@@ -108,7 +108,7 @@ const goBack = () => {
   if (!formIsValid()) return
   saveDiagnostic()
     .then(navigateBack)
-    .catch(handleServerError)
+    .catch(store.notifyServerError)
 }
 
 const goToFirstStep = () => {
@@ -129,7 +129,7 @@ const saveAndQuit = () => {
   if (!formIsValid()) return
   saveDiagnostic()
     .then(quit)
-    .catch(handleServerError)
+    .catch(store.notifyServerError)
 }
 
 const returnHref = ref(route.query?.return)
@@ -153,14 +153,6 @@ const updatePayloadFromChild = (childPayload) => {
   Object.assign(hotPayload.value, childPayload)
 }
 
-const handleServerError = (error) => {
-  if (error.name === "BadRequestError") {
-    const messages = Object.values(error.errorsList)
-    const message = messages && messages.length ? messages[0] : []
-    store.notify({ message: message[0], status: "error" })
-  }
-  else store.notifyServerError(error)
-}
 
 const isNew = computed(() => !props.id)
 
