@@ -414,20 +414,20 @@ class TestETLAnalysisTD(TestCase):
 
     def test_flatten_td(self):
         data = {
-            "id": {2: 1, 3: 2, 4: 3},
-            "year": {2: 2024, 3: 2024, 4: 2024},
-            "canteen_id": {2: 1, 3: 2, 4: 3},
-            "name": {2: "Cantine A", 3: "Cantine B", 4: "Cantine C"},
-            "siret": {2: "siretA", 3: "siretB", 4: "siretC"},
-            "daily_meal_count": {2: 38.0, 3: None, 4: None},
-            "yearly_meal_count": {2: 10, 3: 100, 4: 300},
-            "production_type": {2: "site", 3: "central", 4: "central_serving"},
-            "cuisine_centrale": {2: "B) non", 3: "A) oui", 4: "A) oui"},
-            "central_producer_siret": {2: None, 3: None, 4: None},
-            "diagnostic_type": {2: None, 3: None, 4: None},
-            "satellite_canteens_count": {2: None, 3: 206.0, 4: 2},
-            "valeur_totale": {2: 100, 3: 1000, 4: 1500},
-            "valeur_bio": {2: None, 3: 100, 4: 0},
+            "id": {2: 1, 3: 2, 4: 3, 5: 4},
+            "year": {2: 2024, 3: 2024, 4: 2024, 5: 2025},
+            "canteen_id": {2: 1, 3: 2, 4: 3, 5: 4},
+            "name": {2: "Cantine A", 3: "Cantine B", 4: "Cantine C", 5: "Cantine D"},
+            "siret": {2: "siretA", 3: "siretB", 4: "siretC", 5: "siretD"},
+            "daily_meal_count": {2: 38.0, 3: None, 4: None, 5: None},
+            "yearly_meal_count": {2: 10, 3: 100, 4: 300, 5: 400},
+            "production_type": {2: "site", 3: "central", 4: "central_serving", 5: "groupe"},
+            "cuisine_centrale": {2: "B) non", 3: "A) oui", 4: "A) oui", 5: "B) oui"},
+            "central_producer_siret": {2: None, 3: None, 4: None, 5: None},
+            "diagnostic_type": {2: None, 3: None, 4: None, 5: None},
+            "satellite_canteens_count": {2: None, 3: 206.0, 4: 2, 5: 1},
+            "valeur_totale": {2: 100, 3: 1000, 4: 1500, 5: 2000},
+            "valeur_bio": {2: None, 3: 100, 4: 0, 5: 0},
             "tmp_satellites": {
                 2: None,
                 3: [
@@ -459,24 +459,38 @@ class TestETLAnalysisTD(TestCase):
                         "yearly_meal_count": None,
                     },
                 ],
+                5: [
+                    {
+                        "id": 40,
+                        "name": "SATELLITE 1",
+                        "siret": "21340172201787",
+                        "yearly_meal_count": 120,
+                    },
+                ],
             },
         }
 
         etl = ETL_ANALYSIS_TELEDECLARATIONS()
         etl.df = pd.DataFrame.from_dict(data)
         etl.flatten_central_kitchen_td()
-        self.assertEqual(len(etl.df[etl.df.canteen_id == 2]), 0)  # Central kitchen filtered out
-        self.assertEqual(len(etl.df[etl.df.canteen_id == 20]), 1)  # Satellite created
-        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].valeur_totale, 500)  # Appro value split
-        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].secteur, "Secteurs multiples")  # Appro value split
-        self.assertEqual(len(etl.df[etl.df.canteen_id == 3]), 1)  # Central kitchen filtered out
-        self.assertEqual(etl.df[etl.df.canteen_id == 3].iloc[0].valeur_totale, 500)  # Appro value split
-        self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].valeur_totale, 500)  # Appro value split
-        self.assertEqual(etl.df[etl.df.canteen_id == 31].iloc[0].yearly_meal_count, 300 / 3)
+        # site
         self.assertTrue(np.isnan(etl.df[etl.df.canteen_id == 1].iloc[0].valeur_bio))  # Nulls are processed as nulls
         self.assertEqual(
-            etl.df[etl.df.canteen_id == 3].iloc[0].valeur_bio, 0
+            len(etl.df[etl.df.canteen_id.isin([2, 3, 4])]), 0
+        )  # groupe, central & central_serving filtered out
+        # central
+        self.assertEqual(len(etl.df[etl.df.canteen_id == 20]), 1)
+        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].valeur_totale, 500)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].secteur, "Secteurs multiples")  # Appro value split
+        # central_serving
+        self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].valeur_totale, 750)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 31].iloc[0].valeur_totale, 750)  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 31].iloc[0].yearly_meal_count, 300 / 2)
+        self.assertEqual(
+            etl.df[etl.df.canteen_id == 30].iloc[0].valeur_bio, 0
         )  # Zeros are processed as zeros and not nulls
+        # groupe
+        self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].valeur_totale, 2000)  # 1 satellite, no split
 
     def test_delete_duplicates_cc_csat_with_duplicates(self):
         etl_instance = ETL_ANALYSIS_TELEDECLARATIONS()
