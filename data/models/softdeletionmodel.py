@@ -35,9 +35,17 @@ class SoftDeletionModel(models.Model):
     class Meta:
         abstract = True
 
-    def delete(self):
+    def delete(self, skip_validations=False):
+        """
+        Allow skipping validations when soft deleting an object
+        Works only on models that implement custom save() method with skip_validations parameter
+        Thus we need the try/except...
+        """
         self.deletion_date = timezone.now()
-        self.save()
+        try:
+            self.save(skip_validations=skip_validations)
+        except TypeError:
+            self.save()
 
     def hard_delete(self):
         super().delete()

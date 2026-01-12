@@ -1,13 +1,13 @@
 from decimal import Decimal
 
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, TestCase
 from django.core.exceptions import ValidationError
 
 from data.factories import PurchaseFactory
 from data.models import Purchase
 
 
-class CanteenModelSaveTest(TransactionTestCase):
+class PurchaseModelSaveTest(TransactionTestCase):
     @classmethod
     def setUpTestData(cls):
         pass
@@ -114,3 +114,27 @@ class CanteenModelSaveTest(TransactionTestCase):
         for VALUE_NOT_OK in [None, -100, "", "invalid"]:
             with self.subTest(price_ht=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, PurchaseFactory, price_ht=VALUE_NOT_OK)
+
+
+class PurchaseModelDeleteTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.purchase = PurchaseFactory()
+
+    def test_purchase_soft_delete(self):
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.all_objects.count(), 1)
+
+        self.purchase.delete()
+
+        self.assertEqual(Purchase.objects.count(), 0)
+        self.assertEqual(Purchase.all_objects.count(), 1)
+
+    def test_purchase_hard_delete(self):
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.all_objects.count(), 1)
+
+        self.purchase.hard_delete()
+
+        self.assertEqual(Purchase.objects.count(), 0)
+        self.assertEqual(Purchase.all_objects.count(), 0)
