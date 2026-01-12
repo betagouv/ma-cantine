@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { ref, reactive } from "vue"
 import { useFetch } from "@vueuse/core"
-import { verifyResponse, AuthenticationError } from "@/services/api.js"
+import { verifyResponse, getDefaultErrorMessage } from "@/services/api.js"
 
 const headers = {
   "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -44,10 +44,7 @@ export const useRootStore = defineStore("root", () => {
   }
   const notifyServerError = (error) => {
     const title = "Oops !"
-    const message =
-      error instanceof AuthenticationError
-        ? "Votre session a expiré. Rechargez la page et reconnectez-vous pour continuer."
-        : "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr"
+    const message = error.name === "AuthenticationError" ? error.message : getDefaultErrorMessage()
     const status = "error"
     notify({ title, message, status })
   }

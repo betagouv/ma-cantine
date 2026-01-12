@@ -3,7 +3,6 @@ import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
 import WasteMeasurementSteps from "@/components/WasteMeasurementSteps/index.vue"
 import WasteSummary from "@/components/WasteSummary.vue"
-import { BadRequestError } from "@/services/api.js"
 import { useRoute } from "vue-router"
 
 import { useRootStore } from "@/stores/root"
@@ -155,16 +154,12 @@ const updatePayloadFromChild = (childPayload) => {
 }
 
 const handleServerError = (error) => {
-  if (error instanceof BadRequestError) {
-    return error.jsonPromise
-      .then((errorDetail) => {
-        const messages = Object.values(errorDetail)
-        const message = messages && messages.length ? messages[0] : []
-        store.notify({ message: message[0], status: "error" })
-      })
-      .catch(store.notifyServerError)
+  if (error.name === "BadRequestError") {
+    const messages = Object.values(error.errorsList)
+    const message = messages && messages.length ? messages[0] : []
+    store.notify({ message: message[0], status: "error" })
   }
-  store.notifyServerError(error)
+  else store.notifyServerError(error)
 }
 
 const isNew = computed(() => !props.id)
