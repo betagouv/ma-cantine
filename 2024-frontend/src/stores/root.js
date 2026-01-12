@@ -43,9 +43,9 @@ export const useRootStore = defineStore("root", () => {
     notify({ title, message, status })
   }
   const notifyServerError = (error) => {
-    const title = "Oops !"
-    const message = error.name === "AuthenticationError" ? error.message : getDefaultErrorMessage()
-    const status = "error"
+    const title = error.title || "Erreur"
+    const message = error.message || getDefaultErrorMessage()
+    const status = error.status || "error"
     notify({ title, message, status })
   }
   const removeNotification = (notification) => {
