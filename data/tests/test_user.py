@@ -50,24 +50,26 @@ class UserModelTest(TestCase):
 
     def test_queryset_brevo_to_create(self):
         self.assertEqual(User.objects.count(), 2)
-
         self.assertEqual(User.objects.brevo_to_create().count(), 2)
 
     def test_queryset_brevo_to_update(self):
+        # No users have brevo_last_update_date set yet
         self.assertEqual(User.objects.count(), 2)
-
-        # No users have last_brevo_update set yet
         self.assertEqual(User.objects.brevo_to_update().count(), 0)
 
-        # Set last_brevo_update for one user to now
+        # Set brevo_last_update_date for the first user
         now = timezone.now()
-        User.objects.filter(id=self.user_with_canteens.id).update(last_brevo_update=now)
+        User.objects.filter(id=self.user_with_canteens.id).update(brevo_last_update_date=now)
         self.assertEqual(User.objects.brevo_to_update().count(), 0)
 
-        # Set last_brevo_update for the other user to 2 days ago
+        # Set brevo_last_update_date for the other user to 2 days ago
         two_days_ago = timezone.now() - timezone.timedelta(days=2)
-        User.objects.filter(id=self.user_without_canteens.id).update(last_brevo_update=two_days_ago)
+        User.objects.filter(id=self.user_without_canteens.id).update(brevo_last_update_date=two_days_ago)
         self.assertEqual(User.objects.brevo_to_update().count(), 1)
+
+        # delete the other user from brevo
+        User.objects.filter(id=self.user_without_canteens.id).update(brevo_is_deleted=True)
+        self.assertEqual(User.objects.brevo_to_update().count(), 0)
 
     def test_queryset_with_canteen_stats(self):
         user_qs = User.objects.with_canteen_stats()
