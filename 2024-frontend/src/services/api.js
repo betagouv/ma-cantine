@@ -18,6 +18,7 @@ const badRequestError = (error) => {
 const verifyResponse = async (response) => {
   const contentType = response.headers.get("content-type")
   const hasJSON = contentType && contentType.startsWith("application/json")
+  let error = null
 
   switch (true) {
     case response.ok && hasJSON:
@@ -27,7 +28,7 @@ const verifyResponse = async (response) => {
     case !response.ok && response.status === 403:
       throw authenticationError()
     case !response.ok && response.status === 400:
-      const error = hasJSON ? await response.json() : response.text()
+      error = hasJSON ? await response.json() : response.text()
       throw badRequestError(error)
     case !response.ok:
       throw badRequestError()
