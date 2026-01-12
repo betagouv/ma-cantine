@@ -305,7 +305,7 @@ class DiagnosticQuerySetTest(TestCase):
         )
         cls.canteen_valid_6_armee = CanteenFactory(siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE)
         cls.canteen_missing_siret = CanteenFactory()
-        cls.canteen_missing_siret.siret = ""  # siret missing
+        cls.canteen_missing_siret.siret = ""  # missing data
         cls.canteen_missing_siret.save(skip_validations=True)
         cls.canteen_missing_siret.refresh_from_db()
         cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
@@ -670,6 +670,15 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.canteen_site.refresh_from_db()
         with self.assertRaises(ValidationError):
             self.diagnostic_site.teledeclare(applicant=self.user)
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_cannot_teledeclare_a_diagnostic_if_canteen_groupe_without_satellites(self):
+        self.canteen_satellite.groupe = None  # remove from groupe
+        self.canteen_satellite.save()
+        self.canteen_groupe.refresh_from_db()
+        self.assertEqual(self.canteen_groupe.satellites.count(), 0)
+        with self.assertRaises(ValidationError):
+            self.diagnostic_groupe.teledeclare(applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_if_canteen_groupe_has_satellite_missing_data(self):

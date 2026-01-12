@@ -998,34 +998,45 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         cls.canteen_satellite_missing_data.refresh_from_db()
         cls.canteen_filled_list = [
             cls.canteen_groupe_with_satellite,
+            cls.canteen_groupe_without_satellite,
             cls.canteen_satellite_in_groupe,
             cls.canteen_on_site,
             cls.canteen_satellite_not_in_groupe_1,
             cls.canteen_satellite_not_in_groupe_2,
         ]
         cls.canteen_missing_data_list = [
-            cls.canteen_groupe_without_satellite,
             cls.canteen_on_site_missing_data_1,
             cls.canteen_on_site_missing_data_2,
             cls.canteen_on_site_missing_data_3,
             cls.canteen_satellite_missing_data,
         ]
 
-    def test_filled_queryset(self):
+    def test_is_filled_queryset(self):
         self.assertEqual(Canteen.objects.count(), 10)
-        self.assertEqual(Canteen.objects.filled().count(), len(self.canteen_filled_list))
+        self.assertEqual(Canteen.objects.is_filled().count(), len(self.canteen_filled_list))
 
-    def test_is_filled_property(self):
+    def test_is_filled_field_true(self):
         for index, canteen in enumerate(self.canteen_filled_list):
             with self.subTest(index=index, canteen=canteen):
                 self.assertTrue(canteen.is_filled)
-        for index, canteen in enumerate(self.canteen_missing_data_list):
+
+    def test_is_filled_property_true(self):
+        for index, canteen in enumerate(self.canteen_filled_list):
             with self.subTest(index=index, canteen=canteen):
-                self.assertFalse(canteen.is_filled)
+                self.assertTrue(canteen._is_filled())
 
     def test_has_missing_data_queryset(self):
         self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.has_missing_data().count(), len(self.canteen_missing_data_list))
+
+    def test_is_filled_field_false(self):
+        self.assertEqual(Canteen.objects.count(), 10)
+        self.assertEqual(Canteen.objects.filter(is_filled=False).count(), len(self.canteen_missing_data_list))
+
+    def test_is_filled_property_false(self):
+        for index, canteen in enumerate(self.canteen_missing_data_list):
+            with self.subTest(index=index, canteen=canteen):
+                self.assertFalse(canteen._is_filled())
 
 
 class CanteenAggregateQuerySetTest(TestCase):
