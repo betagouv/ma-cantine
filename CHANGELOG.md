@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.0.0](https://github.com/betagouv/ma-cantine/compare/v2025.50.0...v2026.0.0) (2026-01-12)
+
+
+### Nouveautés
+
+* **Groupe:** afficher le badge "à compléter" pour les satellites peut importe le type de déclaration du groupe ([#6187](https://github.com/betagouv/ma-cantine/issues/6187)) ([fd61c4c](https://github.com/betagouv/ma-cantine/commit/fd61c4c590de8a435a53231481483016814a6d71))
+
+
+### Améliorations
+
+* **Metabase:** exporter les TD avec le même nom de table (désactiver le versionnage) ([#6195](https://github.com/betagouv/ma-cantine/issues/6195)) ([f1d5d03](https://github.com/betagouv/ma-cantine/commit/f1d5d037d0e2f79aad353d6d622945dd17e8f515))
+* **Metabase:** exporter les TD toutes les 6h ([#6194](https://github.com/betagouv/ma-cantine/issues/6194)) ([bcc1839](https://github.com/betagouv/ma-cantine/commit/bcc18396135d14c13c8b8f7ec68432405dfb9fb1))
+* **Metabase:** Groupes: ajuster les exports TD ([#6193](https://github.com/betagouv/ma-cantine/issues/6193)) ([438e056](https://github.com/betagouv/ma-cantine/commit/438e056367aa85615949b6e2c44bfd15dafe6498))
+
+
+### Technique
+
+* **Cantines:** renommer le flag run_validations en skip_validations ([#6191](https://github.com/betagouv/ma-cantine/issues/6191)) ([b6f0024](https://github.com/betagouv/ma-cantine/commit/b6f00244f41c737be23e1d70000d62e7ff974c8d))
+* **Cantines:** stocker le champ is_filled + le mettre à jour à chaque save ([#6190](https://github.com/betagouv/ma-cantine/issues/6190)) ([79db688](https://github.com/betagouv/ma-cantine/commit/79db68812f20be19b488c651a2b006c6c7745da7))
+* **Cantines:** utiliser save(skip_validations=True) au lieu de .filter().update() ([#6192](https://github.com/betagouv/ma-cantine/issues/6192)) ([450b973](https://github.com/betagouv/ma-cantine/commit/450b97336288b9e5e808c36238e794775b5b1fa7))
+* **Groupes:** désactiver le test sur la migration maintenant qu'elle est derrière nous ([#6196](https://github.com/betagouv/ma-cantine/issues/6196)) ([5084396](https://github.com/betagouv/ma-cantine/commit/5084396713936da13ce5da2ec15db4003f6b6148))
+* release 2026.0.0 ([bb3e085](https://github.com/betagouv/ma-cantine/commit/bb3e08564cdb5e59645216f496d3ba90bbc77c48))
+
 ## [2025.50.0](https://github.com/betagouv/ma-cantine/compare/v2025.49.0...v2025.50.0) (2026-01-11)
 
 
