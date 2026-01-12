@@ -213,6 +213,8 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_action_for_year(self, year):
         from data.models import Diagnostic
 
+        # prep groupe rules
+        self = self.annotate_with_satellites_in_db_count()
         # prep add diag & TD actions
         self = self.annotate_with_purchases_for_year(year)
         self = self.annotate_with_diagnostic_for_year(year)
@@ -220,10 +222,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         conditions = [
             When(
                 is_satellite_query()
+                & is_filled_query()
                 & Q(
                     diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                     has_diagnostic_teledeclared_for_year=False,
-                    has_missing_data=False,
                 ),
                 then=Value(Canteen.Actions.NOTHING_SATELLITE),
             ),
