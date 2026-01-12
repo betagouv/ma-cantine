@@ -410,6 +410,11 @@ def delete_old_historical_records():
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
 
 
+@app.task()
+def canteen_fill_declaration_donnees_year_field():
+    call_command("canteen_fill_declaration_donnees_year_field", year=2025)
+
+
 def export_datasets(datasets: dict):
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
