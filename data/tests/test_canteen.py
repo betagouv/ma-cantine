@@ -440,7 +440,7 @@ class CanteenModelSaveTest(TransactionTestCase):
         canteen = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
         canteen.siret = None
         # should not raise
-        canteen.save(run_validations=False)
+        canteen.save(skip_validations=True)
         self.assertEqual(canteen.siret, None)
 
 

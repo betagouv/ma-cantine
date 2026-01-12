@@ -1726,13 +1726,13 @@ class Diagnostic(models.Model):
                 return Diagnostic.TeledeclarationMode.CENTRAL_APPRO
         return Diagnostic.TeledeclarationMode.SITE
 
-    def teledeclare(self, applicant, run_validations=True):
+    def teledeclare(self, applicant, skip_validations=False):
         """
         Teledeclare the diagnostic
         - applicant is mandatory (User instance)
-        - run_validations: if False, skip validation checks (USE WITH CAUTION) (only for tests)
+        - skip_validations: if True, skip validation checks (USE WITH CAUTION) (only for tests)
         """
-        if run_validations:
+        if not skip_validations:
             if not is_in_teledeclaration_or_correction():
                 raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
             if not is_in_teledeclaration_or_correction(self.year):

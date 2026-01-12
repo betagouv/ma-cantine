@@ -112,7 +112,7 @@ class TestETLAnalysisTD(TestCase):
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 teledeclaration_id=3,
             )
-            diagnostic_canteen_without_siret.teledeclare(applicant=applicant, run_validations=False)
+            diagnostic_canteen_without_siret.teledeclare(applicant=applicant, skip_validations=True)
 
         etl_stats = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_stats.extract_dataset()
@@ -305,7 +305,7 @@ class TestETLAnalysisTD(TestCase):
             Canteen.objects.filter(id=canteen_invalid_yearly_meal_count.id).update(yearly_meal_count=0)
             canteen_invalid_yearly_meal_count.refresh_from_db()
             diagnostic = DiagnosticFactory(canteen=canteen_invalid_yearly_meal_count, year=2021, valeur_totale=1000)
-            diagnostic.teledeclare(applicant=UserFactory(), run_validations=False)
+            diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
 
             self.serializer_data = {
                 "yearly_meal_count": canteen_invalid_yearly_meal_count.yearly_meal_count,

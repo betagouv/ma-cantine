@@ -110,7 +110,7 @@ class Command(BaseCommand):
                 # Step 1.1: update canteen fields
                 for field_name, value in canteen_central_to_groupe(canteen_central).items():
                     setattr(canteen_central, field_name, value)
-                canteen_central.save(run_validations=False)
+                canteen_central.save(skip_validations=True)
                 update_change_reason(canteen_central, "Script: canteen_migrate_central_to_groupe")
                 # Step 1.2: link canteen satellites (only if central not deleted)
                 if not canteen_central.is_deleted:
@@ -120,7 +120,7 @@ class Command(BaseCommand):
                     )
                     for satellite in canteen_central_satellites_all_qs:
                         satellite.groupe = canteen_central
-                        satellite.save(run_validations=False)
+                        satellite.save(skip_validations=True)
                         update_change_reason(satellite, "Script: canteen_migrate_central_to_groupe")
 
             # Step 2: migrate CENTRAL_SERVING to GROUPE
@@ -130,11 +130,11 @@ class Command(BaseCommand):
                 # Step 2.1: update canteen fields
                 for field_name, value in canteen_central_to_groupe(canteen_central_serving).items():
                     setattr(canteen_central_serving, field_name, value)
-                canteen_central_serving.save(run_validations=False)
+                canteen_central_serving.save(skip_validations=True)
                 update_change_reason(canteen_central_serving, "Script: canteen_migrate_central_to_groupe")
                 # Step 2.2: create (and link) new satellite from central_serving
                 new_satellite = Canteen(**satellite_from_central_dict(canteen_central_serving_dict_copy))
-                new_satellite.save(run_validations=False)
+                new_satellite.save(skip_validations=True)
                 update_change_reason(new_satellite, "Script: canteen_migrate_central_to_groupe")
                 new_satellite.managers.set(canteen_central_serving.managers.all())
                 # Step 2.3: if central_serving has diagnostics teledeclared, update the satellites_snapshot with the new_satellite
@@ -157,7 +157,7 @@ class Command(BaseCommand):
                     )
                     for satellite in canteen_central_serving_satellites_all_qs:
                         satellite.groupe = canteen_central_serving
-                        satellite.save(run_validations=False)
+                        satellite.save(skip_validations=True)
                         update_change_reason(satellite, "Script: canteen_migrate_central_to_groupe")
 
             # stats after
