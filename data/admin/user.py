@@ -101,7 +101,7 @@ class MaCanteenUserAdmin(UserAdmin):
                     "email_no_canteen_first_reminder",
                     "email_no_canteen_second_reminder",
                     "brevo_last_update_date",
-                    "brevo_deleted",
+                    "brevo_is_deleted",
                 ),
             },
         ),

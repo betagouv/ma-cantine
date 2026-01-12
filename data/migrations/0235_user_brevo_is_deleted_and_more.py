@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0231_alter_user_managers_canteen_declaration_donnees_2025_and_more"),
+        ("data", "0234_canteen_is_filled_historicalcanteen_is_filled"),
     ]
 
     operations = [
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="user",
-            name="brevo_deleted",
+            name="brevo_is_deleted",
             field=models.BooleanField(
                 default=False,
                 verbose_name="Indique si le contact a été supprimé de Brevo",

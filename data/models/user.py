@@ -18,7 +18,7 @@ class UserQuerySet(models.QuerySet):
 
     def brevo_to_update(self):
         one_day_ago = timezone.now() - timezone.timedelta(days=brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD_DAYS)
-        return self.exclude(brevo_deleted=True).filter(brevo_last_update_date__lte=one_day_ago)
+        return self.exclude(brevo_is_deleted=True).filter(brevo_last_update_date__lte=one_day_ago)
 
     def with_canteen_stats(self):
         from data.models import Canteen
@@ -198,7 +198,7 @@ class User(AbstractUser):
     brevo_last_update_date = models.DateTimeField(
         null=True, blank=True, verbose_name="Date de la dernière mise à jour Brevo"
     )
-    brevo_deleted = models.BooleanField(default=False, verbose_name="Indique si le contact a été supprimé de Brevo")
+    brevo_is_deleted = models.BooleanField(default=False, verbose_name="Indique si le contact a été supprimé de Brevo")
 
     data = models.JSONField(blank=True, null=True, verbose_name="Données calculées")
 

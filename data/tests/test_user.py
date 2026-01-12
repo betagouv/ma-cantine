@@ -68,7 +68,7 @@ class UserModelTest(TestCase):
         self.assertEqual(User.objects.brevo_to_update().count(), 1)
 
         # delete the other user from brevo
-        User.objects.filter(id=self.user_without_canteens.id).update(brevo_deleted=True)
+        User.objects.filter(id=self.user_without_canteens.id).update(brevo_is_deleted=True)
         self.assertEqual(User.objects.brevo_to_update().count(), 0)
 
     def test_queryset_with_canteen_stats(self):
