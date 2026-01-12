@@ -72,12 +72,12 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.delete_old_historical_records",
         "schedule": nightly_3,
     },
-    # Campaign-related (needed for canteen_opendata)
+    # Campaign-related (needed for analysis & opendata)
     "canteen_fill_declaration_donnees_year_field": {
         "task": "macantine.tasks.canteen_fill_declaration_donnees_year_field",
         "schedule": nightly_4_30,
     },
-    # Teledeclarations
+    # Campaign-related (needed for analysis)
     "export_dataset_td_analysis": {
         "task": "macantine.tasks.export_dataset_td_analysis",
         "schedule": every_6_hours,

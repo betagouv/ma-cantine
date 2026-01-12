@@ -9,6 +9,13 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     """
+    Rules:
+    - every canteen that has a diagnostic teledeclared for the given year
+    - if the diagnostic has satellites, those satellites are also considered teledeclared
+
+    Prerequisite:
+    - the declaration_donnees_YEAR BooleanField must exist on the Canteen model
+
     Usage:
     - python manage.py canteen_fill_declaration_donnees_year_field --year 2025
     """
@@ -35,7 +42,6 @@ class Command(BaseCommand):
         logger.info("Step 2: find the canteens that have a teledeclaration for the specified year")
         diagnostics_teledeclared = Diagnostic.objects.teledeclared_for_year(year)
         logger.info(f"Found {len(diagnostics_teledeclared)} teledeclarations for year {year}")
-        # v2: filter on the canteen_id & declared_data (satellites) of Teledeclarations
         canteens_with_teledeclarations = []
         for dtd in diagnostics_teledeclared.values("canteen_snapshot", "satellites_snapshot"):
             canteens_with_teledeclarations.append(dtd["canteen_snapshot"]["id"])
