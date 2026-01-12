@@ -1,5 +1,26 @@
-// À supprimer ensuite du store
-import { AuthenticationError, BadRequestError } from "@/utils.js"
+class AuthenticationError extends Error {
+  constructor(...params) {
+    super(...params)
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, AuthenticationError)
+    }
+    this.name = "AuthenticationError"
+  }
+}
+
+class BadRequestError extends Error {
+  constructor(jsonPromise, ...params) {
+    super(...params)
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, BadRequestError)
+    }
+    this.name = "BadRequestError"
+    this.jsonPromise = jsonPromise
+  }
+}
+
 
 const verifyResponse = function(response) {
   const contentType = response.headers.get("content-type")
@@ -19,4 +40,4 @@ const verifyResponse = function(response) {
   return hasJSON ? response.json() : response.text()
 }
 
-export { verifyResponse }
+export { verifyResponse, AuthenticationError, BadRequestError }
