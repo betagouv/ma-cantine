@@ -337,7 +337,7 @@ class DiagnosticQuerySetTest(TestCase):
                 valeur_egalim_autres=100.00,
             )
             with freeze_time(date_in_teledeclaration_campaign):
-                diagnostic.teledeclare(applicant=UserFactory(), run_validations=False)
+                diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
             diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data - 1,
@@ -347,7 +347,7 @@ class DiagnosticQuerySetTest(TestCase):
                 valeur_bio=200.00,
             )
             with freeze_time(date_in_last_teledeclaration_campaign):
-                diagnostic_last_year.teledeclare(applicant=UserFactory(), run_validations=False)
+                diagnostic_last_year.teledeclare(applicant=UserFactory(), skip_validations=True)
             setattr(cls, f"diagnostic_canteen_valid_{index + 1}", diagnostic)
 
         cls.diagnostic_canteen_missing_siret = DiagnosticFactory(
@@ -359,7 +359,7 @@ class DiagnosticQuerySetTest(TestCase):
             valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory(), run_validations=False)
+            cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory(), skip_validations=True)
 
         cls.diagnostic_canteen_meal_price_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
