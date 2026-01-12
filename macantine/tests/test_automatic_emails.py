@@ -296,8 +296,9 @@ class TestAutomaticEmails(TestCase):
         canteen_no_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[anna, jean],
-            creation_date=today - timedelta(weeks=2),
         )
+        canteen_no_diagnostics.creation_date = today - timedelta(weeks=2)
+        canteen_no_diagnostics.save()
 
         # We create another canteen with no diagnostics managed by
         # Sophie, but this time no email should be sent since the
@@ -306,9 +307,11 @@ class TestAutomaticEmails(TestCase):
             first_name="Sophie",
             last_name="Stiqué",
         )
-        CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE, managers=[sophie], creation_date=today - timedelta(days=3)
+        canteen_no_diagnostics_recent = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE, managers=[sophie]
         )
+        canteen_no_diagnostics_recent.creation_date = today - timedelta(days=3)
+        canteen_no_diagnostics_recent.save()
 
         # We create a canteen with diagnostics. Because of this,
         # managers should not be notified.
@@ -317,9 +320,9 @@ class TestAutomaticEmails(TestCase):
             last_name="Ulcorant",
         )
 
-        canteen_with_diagnostics = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE, managers=[fred], creation_date=today - timedelta(weeks=2)
-        )
+        canteen_with_diagnostics = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[fred])
+        canteen_with_diagnostics.creation_date = today - timedelta(weeks=2)
+        canteen_with_diagnostics.save()
         DiagnosticFactory(canteen=canteen_with_diagnostics)
 
         # Finally, we create a canteen with no diagnostics for which
@@ -330,12 +333,13 @@ class TestAutomaticEmails(TestCase):
             last_name="Godard",
             email="lena.godard@example.com",
         )
-        CanteenFactory(
+        canteen_no_diagnostics_contacted = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             email_no_diagnostic_first_reminder=(today - timedelta(weeks=1)),
             managers=[lena],
-            creation_date=today - timedelta(weeks=2),
         )
+        canteen_no_diagnostics_contacted.creation_date = today - timedelta(weeks=2)
+        canteen_no_diagnostics_contacted.save()
 
         # From all of these managers, only jean and anna should be notified.
         tasks.no_diagnostic_first_reminder()
@@ -369,9 +373,9 @@ class TestAutomaticEmails(TestCase):
             email="jean.serien@example.com",
             is_dev=True,
         )
-        canteen_no_diagnostics = CanteenFactory(
-            managers=[jean], production_type=Canteen.ProductionType.ON_SITE, creation_date=today - timedelta(weeks=2)
-        )
+        canteen_no_diagnostics = CanteenFactory(managers=[jean], production_type=Canteen.ProductionType.ON_SITE)
+        canteen_no_diagnostics.creation_date = today - timedelta(weeks=2)
+        canteen_no_diagnostics.save()
 
         tasks.no_diagnostic_first_reminder()
         brevo.send_sib_template.assert_not_called()
@@ -455,8 +459,9 @@ class TestAutomaticEmails(TestCase):
         canteen_no_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[anna, jean],
-            creation_date=today - timedelta(weeks=2),
         )
+        canteen_no_diagnostics.creation_date = today - timedelta(weeks=2)
+        canteen_no_diagnostics.save()
 
         tasks.no_diagnostic_first_reminder()
 
@@ -500,8 +505,9 @@ class TestAutomaticEmails(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="32441387130915",
             managers=[jean],
-            creation_date=today - timedelta(weeks=2),
         )
+        canteen_no_diagnostics.creation_date = today - timedelta(weeks=2)
+        canteen_no_diagnostics.save()
 
         # From all of these managers, only jean and anna should be notified.
         tasks.no_diagnostic_first_reminder()

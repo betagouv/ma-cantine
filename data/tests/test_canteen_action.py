@@ -216,14 +216,15 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.NOTHING_SATELLITE,
         )
 
-        # group with appro mode ALL and satellite with incomplete data
+        # group with appro mode ALL and satellite with missing data
         canteen_groupe_with_satellites_incorrect = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         canteen_satellite_incorrect = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=canteen_groupe_with_satellites_incorrect,
-            # daily_meal_count=None  #incomplete data
+            # daily_meal_count=None,  # missing data
         )
-        Canteen.objects.filter(id=canteen_satellite_incorrect.id).update(daily_meal_count=None)
+        canteen_satellite_incorrect.yearly_meal_count = None
+        canteen_satellite_incorrect.save(skip_validations=True)
         DiagnosticFactory(
             canteen=canteen_groupe_with_satellites_incorrect,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
