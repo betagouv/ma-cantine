@@ -2,17 +2,47 @@ const getDefaultErrorMessage = () => 'Une erreur est survenue, vous pouvez rées
 
 const authenticationError = () => {
   return {
+    status: "error",
     name: "AuthenticationError",
-    message: 'Votre session a expiré. Rechargez la page et reconnectez-vous pour continuer.',
+    title: "Votre session a expirée",
+    message: "Rechargez la page et reconnectez-vous pour continuer.",
   }
 }
 
 const badRequestError = (error) => {
+  const list = getErrorList(error)
+  const message = list.map(error => error.message).join(". ")
+
   return {
+    status: "error",
     name: "BadRequestError",
-    errorsList: error || [],
-    errorDefaultMessage: getDefaultErrorMessage(),
+    list,
+    message,
   }
+}
+
+const getErrorList = (error) => {
+  let errorList = []
+
+  const isNull = !error
+  const isArray = Array.isArray(error)
+  const isString = typeof error === "string"
+  const isObject = typeof error === "object"
+
+  if(isNull) errorList = [getDefaultErrorMessage()]
+  else if (isString) errorList = [error]
+  else if (isArray) errorList = error
+  else if (isObject) {
+    const keys = Object.keys(error)
+    keys.forEach(key => {
+      errorList.push({
+        field: key,
+        message: error[key],
+      })
+    })
+  }
+
+  return errorList
 }
 
 const verifyResponse = async (response) => {
