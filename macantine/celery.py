@@ -24,6 +24,7 @@ app.config_from_object(dict(worker_hijack_root_logger=False, result_extended=Tru
 
 every_minute = crontab(minute="*/1")  # For testing purposes
 hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
+every_6_hours = crontab(hour="*/6", minute=0, day_of_week="*")  # Every 6 hours
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
 nightly_0 = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
 nightly_0_30 = crontab(hour=0, minute=30, day_of_week="*")  # Every day at 12:30AM
@@ -58,6 +59,11 @@ app.conf.beat_schedule = {
     "delete_old_historical_records": {
         "task": "macantine.tasks.delete_old_historical_records",
         "schedule": nightly_5,
+    },
+    # Teledeclarations
+    "export_dataset_td_analysis": {
+        "task": "macantine.tasks.export_dataset_td_analysis",
+        "schedule": every_6_hours,
     },
     # Dataset exports
     "export_dataset_canteen_analysis": {
