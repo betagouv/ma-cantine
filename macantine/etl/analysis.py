@@ -126,18 +126,18 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
     def flatten_central_kitchen_td(self):
         """
         Split rows of central kitchen into a row for each satellite
+        NOTE: following the migration to groupes, we added the central_serving extra satellite in their snapshots
         """
         self.df = self.df.set_index("id", drop=False)
         satellite_rows = []
 
         for _, row in self.df.iterrows():
             if row["production_type"] in {
+                Canteen.ProductionType.GROUPE,
                 Canteen.ProductionType.CENTRAL,
                 Canteen.ProductionType.CENTRAL_SERVING,
             }:
-                nbre_satellites = len(row["tmp_satellites"] or []) + (
-                    1 if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING else 0
-                )
+                nbre_satellites = len(row["tmp_satellites"] or [])
                 for satellite in row["tmp_satellites"] or []:
                     satellite_row = row.copy()
                     satellite_row["canteen_id"] = satellite["id"]
@@ -153,15 +153,16 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     satellite_row = self.split_cc_values(satellite_row, nbre_satellites)
                     satellite_rows.append(satellite_row)
 
-                if row["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
-                    self.df.loc[row["id"]] = self.split_cc_values(row, nbre_satellites)
-
         # Append all new rows at once
         if satellite_rows:
             self.df = pd.concat([self.df, pd.DataFrame(satellite_rows)], ignore_index=True)
 
         # Delete lines of central kitchen
-        self.df = self.df[self.df.production_type != Canteen.ProductionType.CENTRAL]
+        self.df = self.df[
+            ~self.df.production_type.isin(
+                [Canteen.ProductionType.GROUPE, Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
+            )
+        ]
 
     def split_cc_values(self, row, nbre_satellites):
         """
