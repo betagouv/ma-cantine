@@ -79,24 +79,8 @@ def is_public_query():
     return Q(economic_model=Canteen.EconomicModel.PUBLIC)
 
 
-def has_missing_data_query():
-    return (
-        # basic rules
-        Q(name=None)
-        | (Q(yearly_meal_count=None) | Q(yearly_meal_count=0))
-        | (Q(daily_meal_count=None) | Q(daily_meal_count=0))
-        | Q(~has_siret_or_siren_unite_legale_query())
-        | Q(management_type=None)
-        | Q(production_type=None)
-        # non-groupe-specific rules
-        | (~is_groupe_query() & (Q(has_charfield_missing_query("city_insee_code")) | Q(economic_model=None)))
-        # serving-specific rules (with annotate_with_sector_list_count)
-        | (is_serving_query() & (Q(sector_list_count=0) | Q(sector_list_count__gt=3)))
-        # # groupe-specific rules (with annotate_with_satellites_in_db_count)
-        # | (is_groupe_query() & Q(satellites_in_db_count=0))
-        # line_ministry (with annotate_with_requires_line_ministry)
-        | (Q(economic_model=Canteen.EconomicModel.PUBLIC) & Q(requires_line_ministry=True) & Q(line_ministry=None))
-    )
+def is_filled_query():
+    return Q(is_filled=True)
 
 
 class CanteenQuerySet(SoftDeletionQuerySet):
@@ -207,28 +191,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.filter(has_charfield_missing_query("city_insee_code"))
 
     def has_missing_data(self):
-        return (
-            self.annotate_with_satellites_in_db_count()
-            .annotate_with_requires_line_ministry()
-            .annotate_with_sector_list_count()
-            .filter(has_missing_data_query())
-        )
+        return self.exclude(is_filled_query())
 
-    def annotate_with_has_missing_data(self):
-        return (
-            self.annotate_with_satellites_in_db_count()
-            .annotate_with_requires_line_ministry()
-            .annotate_with_sector_list_count()
-            .annotate(has_missing_data=Case(When(has_missing_data_query(), then=Value(True)), default=Value(False)))
-        )
-
-    def filled(self):
-        return (
-            self.annotate_with_satellites_in_db_count()
-            .annotate_with_requires_line_ministry()
-            .annotate_with_sector_list_count()
-            .exclude(has_missing_data_query())
-        )
+    def is_filled(self):
+        return self.filter(is_filled_query())
 
     def group_and_count_by_field(self, field):
         """
@@ -247,8 +213,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_action_for_year(self, year):
         from data.models import Diagnostic
 
-        # prep missing data action
-        self = self.annotate_with_has_missing_data()
         # prep add diag & TD actions
         self = self.annotate_with_purchases_for_year(year)
         self = self.annotate_with_diagnostic_for_year(year)
@@ -289,7 +253,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
                 (is_central_cuisine_query() & Q(diagnostic_for_year_cc_mode=None)),
                 then=Value(Canteen.Actions.FILL_DIAGNOSTIC),
             ),
-            When(has_missing_data=True, then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
+            When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
         ]
         if is_in_correction():
             # TODO: figure out a way to detect that the canteen has indeed teledeclared during the teledeclaration campaign

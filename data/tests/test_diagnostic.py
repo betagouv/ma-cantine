@@ -305,7 +305,7 @@ class DiagnosticQuerySetTest(TestCase):
         )
         cls.canteen_valid_6_armee = CanteenFactory(siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE)
         cls.canteen_missing_siret = CanteenFactory()
-        cls.canteen_missing_siret.siret = ""  # siret missing
+        cls.canteen_missing_siret.siret = ""  # missing data
         cls.canteen_missing_siret.save(skip_validations=True)
         cls.canteen_missing_siret.refresh_from_db()
         cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)

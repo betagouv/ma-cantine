@@ -46,7 +46,7 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
         complete_diag = DiagnosticFactory(canteen=canteen_with_complete_diag, year=last_year, valeur_totale=10000)
 
         # siret needs to be filled for the diag to be teledeclarable
-        canteen_with_incomplete_data = CanteenFactory(
+        canteen_with_missing_data = CanteenFactory(
             # siret=None,
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
@@ -54,10 +54,10 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        canteen_with_incomplete_data.siret = None
-        canteen_with_incomplete_data.save(skip_validations=True)
-        canteen_with_incomplete_data.refresh_from_db()
-        DiagnosticFactory(canteen=canteen_with_incomplete_data, year=last_year, valeur_totale=10000)
+        canteen_with_missing_data.siret = None
+        canteen_with_missing_data.save(skip_validations=True)
+        canteen_with_missing_data.refresh_from_db()
+        DiagnosticFactory(canteen=canteen_with_missing_data, year=last_year, valeur_totale=10000)
 
         canteen_without_line_ministry = CanteenFactory(
             siret="31285246765507",

@@ -1011,9 +1011,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             cls.canteen_satellite_missing_data,
         ]
 
-    def test_filled_queryset(self):
+    def test_is_filled_queryset(self):
         self.assertEqual(Canteen.objects.count(), 10)
-        self.assertEqual(Canteen.objects.filled().count(), len(self.canteen_filled_list))
+        self.assertEqual(Canteen.objects.is_filled().count(), len(self.canteen_filled_list))
 
     def test_is_filled_field_true(self):
         for index, canteen in enumerate(self.canteen_filled_list):
@@ -1029,10 +1029,9 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.has_missing_data().count(), len(self.canteen_missing_data_list))
 
-    # Won't work, be bulk updated some canteens to have missing data, so the is_filled field was not updated
-    # def test_is_filled_field_false(self):
-    #     self.assertEqual(Canteen.objects.count(), 10)
-    #     self.assertEqual(Canteen.objects.filter(is_filled=False).count(), len(self.canteen_missing_data_list))
+    def test_is_filled_field_false(self):
+        self.assertEqual(Canteen.objects.count(), 10)
+        self.assertEqual(Canteen.objects.filter(is_filled=False).count(), len(self.canteen_missing_data_list))
 
     def test_is_filled_property_false(self):
         for index, canteen in enumerate(self.canteen_missing_data_list):
