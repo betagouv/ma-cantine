@@ -707,8 +707,12 @@ class Canteen(SoftDeletionModel):
                 and len(self.sector_list) <= 3
             )
         # serving-specific rules: line_ministry
-        # line_ministry
-        if is_filled and self.is_serving and set(self.sector_list or []).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
+        if (
+            is_filled
+            and self.is_serving
+            and self.is_public
+            and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST)
+        ):
             is_filled = bool(self.line_ministry)
         return is_filled
 
