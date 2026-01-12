@@ -1,4 +1,5 @@
 from freezegun import freeze_time
+from unittest import skip
 
 from django.core.management import call_command
 from django.test import TestCase
@@ -7,6 +8,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen
 
 
+@skip("The migration was run, we don't need to test it anymore")
 class CanteenMigrateCentralToGroupeCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
