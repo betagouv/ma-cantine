@@ -1780,6 +1780,7 @@ class Diagnostic(models.Model):
         self.teledeclaration_date = timezone.now()
         self.teledeclaration_mode = self._get_teledeclaration_mode()
         self.teledeclaration_version = TELEDECLARATION_CURRENT_VERSION
+        self.teledeclaration_id = self.id
 
         # save
         self.save()
@@ -1802,5 +1803,6 @@ class Diagnostic(models.Model):
         self.teledeclaration_date = None
         self.teledeclaration_mode = None
         self.teledeclaration_version = None
+        self.teledeclaration_id = None
 
         self.save()
