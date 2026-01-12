@@ -47,26 +47,3 @@ export const formatDate = (
   const date = new Date(parseInt(dateSegments[0]), parseInt(dateSegments[1]) - 1, parseInt(dateSegments[2]))
   return date.toLocaleString("fr", options)
 }
-
-export class AuthenticationError extends Error {
-  constructor(...params) {
-    super(...params)
-    // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, AuthenticationError)
-    }
-    this.name = "AuthenticationError"
-  }
-}
-
-export class BadRequestError extends Error {
-  constructor(jsonPromise, ...params) {
-    super(...params)
-    // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, BadRequestError)
-    }
-    this.name = "BadRequestError"
-    this.jsonPromise = jsonPromise
-  }
-}
