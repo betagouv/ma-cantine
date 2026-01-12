@@ -12,9 +12,10 @@ class UserModelTest(TestCase):
         cls.user_without_canteens = UserFactory()
 
         cls.canteen_empty = CanteenFactory(managers=[cls.user_with_canteens])
-        Canteen.objects.filter(id=cls.canteen_empty.id).update(
-            production_type=None, management_type=None, economic_model=None
-        )
+        cls.canteen_empty.management_type = None
+        cls.canteen_empty.production_type = None
+        cls.canteen_empty.economic_model = None
+        cls.canteen_empty.save(skip_validations=True)
         cls.canteen_groupe = CanteenFactory(
             production_type=Canteen.ProductionType.GROUPE,
             management_type=Canteen.ManagementType.DIRECT,

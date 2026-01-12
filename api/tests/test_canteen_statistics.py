@@ -130,9 +130,11 @@ class CanteenStatsApiTest(APITestCase):
                 # production_type=None,
                 # economic_model=None,
             )
-            Canteen.objects.filter(id=cls.canteen_5_empty.id).update(
-                sector_list=[], management_type=None, production_type=None, economic_model=None
-            )
+            cls.canteen_5_empty.sector_list = []
+            cls.canteen_5_empty.management_type = None
+            cls.canteen_5_empty.production_type = None
+            cls.canteen_5_empty.economic_model = None
+            cls.canteen_5_empty.save(skip_validations=True)
         with freeze_time("1990-01-01"):
             cls.canteen_old_armee = CanteenFactory(
                 siret="21730065600014",

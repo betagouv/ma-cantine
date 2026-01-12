@@ -20,7 +20,8 @@ class TeledeclarationQuerySetTest(TestCase):
         cls.valid_canteen_2 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.valid_canteen_3 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.valid_canteen_4 = CanteenFactory(siret="40419443300078")
-        Canteen.objects.filter(id=cls.valid_canteen_4.id).update(yearly_meal_count=0)  # not aberrant
+        cls.valid_canteen_4.yearly_meal_count = 0  # not aberrant
+        cls.valid_canteen_4.save(skip_validations=True)
         cls.valid_canteen_4.refresh_from_db()
         cls.valid_canteen_sat = CanteenFactory(
             siret="21380185500015",
@@ -32,7 +33,8 @@ class TeledeclarationQuerySetTest(TestCase):
             line_ministry=Canteen.Ministries.ARMEE,
         )
         cls.invalid_canteen = CanteenFactory(deletion_date=None)
-        Canteen.objects.filter(id=cls.invalid_canteen.id).update(siret="")  # siret missing
+        cls.invalid_canteen.siret = ""  # siret missing
+        cls.invalid_canteen.save(skip_validations=True)
         cls.invalid_canteen.refresh_from_db()
         cls.deleted_canteen = CanteenFactory(
             siret="21730065600014",

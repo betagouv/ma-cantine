@@ -291,10 +291,12 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_valid_2 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.canteen_valid_3 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.canteen_valid_4 = CanteenFactory(siret="40419443300078")
-        Canteen.objects.filter(id=cls.canteen_valid_4.id).update(yearly_meal_count=0)  # not aberrant
+        cls.canteen_valid_4.yearly_meal_count = 0  # not aberrant
+        cls.canteen_valid_4.save(skip_validations=True)
         cls.canteen_valid_4.refresh_from_db()
         cls.canteen_valid_5 = CanteenFactory(siret="21340172201787")
-        Canteen.objects.filter(id=cls.canteen_valid_5.id).update(yearly_meal_count=None)  # not aberrant
+        cls.canteen_valid_5.yearly_meal_count = None  # not aberrant
+        cls.canteen_valid_5.save(skip_validations=True)
         cls.canteen_valid_5.refresh_from_db()
         cls.canteen_valid_sat = CanteenFactory(
             siret="21380185500015",
@@ -303,7 +305,8 @@ class DiagnosticQuerySetTest(TestCase):
         )
         cls.canteen_valid_6_armee = CanteenFactory(siret="21640122400011", line_ministry=Canteen.Ministries.ARMEE)
         cls.canteen_missing_siret = CanteenFactory()
-        Canteen.objects.filter(id=cls.canteen_missing_siret.id).update(siret="")  # siret missing
+        cls.canteen_missing_siret.siret = ""  # siret missing
+        cls.canteen_missing_siret.save(skip_validations=True)
         cls.canteen_missing_siret.refresh_from_db()
         cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
         cls.canteen_valeur_totale_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
@@ -662,14 +665,16 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_if_canteen_missing_data(self):
-        Canteen.objects.filter(id=self.canteen_site.id).update(yearly_meal_count=None)  # incomplete
+        self.canteen_site.yearly_meal_count = None  # missing data
+        self.canteen_site.save(skip_validations=True)
         self.canteen_site.refresh_from_db()
         with self.assertRaises(ValidationError):
             self.diagnostic_site.teledeclare(applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_if_canteen_groupe_has_satellite_missing_data(self):
-        Canteen.objects.filter(id=self.canteen_satellite.id).update(yearly_meal_count=None)  # incomplete
+        self.canteen_satellite.yearly_meal_count = None  # missing data
+        self.canteen_satellite.save(skip_validations=True)
         self.canteen_satellite.refresh_from_db()
         # fill the diagnostic
         self.diagnostic_groupe.valeur_totale = 1000
