@@ -82,7 +82,7 @@ class CanteenActionTestCase(TestCase):
         )
 
         # has diagnostic and data filled
-        self.canteen_site.sector_list = [Sector.ADMINISTRATION_ARMEE]
+        self.canteen_site.sector_list = [Sector.EDUCATION_PRIMAIRE]
         self.canteen_site.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
