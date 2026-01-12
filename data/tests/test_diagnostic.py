@@ -672,6 +672,15 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
             self.diagnostic_site.teledeclare(applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
+    def test_cannot_teledeclare_a_diagnostic_if_canteen_groupe_without_satellites(self):
+        self.canteen_satellite.groupe = None  # remove from groupe
+        self.canteen_satellite.save()
+        self.canteen_groupe.refresh_from_db()
+        self.assertEqual(self.canteen_groupe.satellites.count(), 0)
+        with self.assertRaises(ValidationError):
+            self.diagnostic_groupe.teledeclare(applicant=self.user)
+
+    @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_if_canteen_groupe_has_satellite_missing_data(self):
         self.canteen_satellite.yearly_meal_count = None  # missing data
         self.canteen_satellite.save(skip_validations=True)

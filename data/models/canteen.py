@@ -694,9 +694,8 @@ class Canteen(SoftDeletionModel):
             and bool(self.management_type)
             and bool(self.production_type)
         )
-        # # groupe-specific rules
-        # if is_filled and self.is_groupe:
-        #     is_filled = self.canteen_set.exists()
+        # groupe-specific rules
+        # - the check on satellites_count is only done in teledeclare()
         # serving-specific rules
         if is_filled and self.is_serving:
             is_filled = bool(self.city_insee_code) and bool(self.economic_model) and bool(self.sector_list)

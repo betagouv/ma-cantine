@@ -1745,7 +1745,7 @@ class Diagnostic(models.Model):
             if not self.canteen.is_filled:
                 raise ValidationError("La cantine associée à ce diagnostic n'est pas remplie")
             if self.canteen.is_groupe:
-                if self.canteen.canteen_set.count() == 0:
+                if self.canteen.satellites_count == 0:
                     raise ValidationError("Le groupe associe à ce diagnostic n'a pas de cantine satellite")
                 if self.canteen.satellites_missing_data_count > 0:
                     raise ValidationError(
