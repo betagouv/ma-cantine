@@ -700,7 +700,12 @@ class Canteen(SoftDeletionModel):
         # - the check on satellites_count is only done in teledeclare()
         # serving-specific rules
         if is_filled and self.is_serving:
-            is_filled = bool(self.city_insee_code) and bool(self.economic_model) and bool(self.sector_list)
+            is_filled = (
+                bool(self.city_insee_code)
+                and bool(self.economic_model)
+                and bool(self.sector_list)
+                and len(self.sector_list) <= 3
+            )
         # line_ministry
         if is_filled and self.is_public and set(self.sector_list or []).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
             is_filled = bool(self.line_ministry)
