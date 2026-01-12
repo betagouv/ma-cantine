@@ -296,8 +296,8 @@ class TestAutomaticEmails(TestCase):
         canteen_no_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[anna, jean],
+            creation_date=today - timedelta(weeks=2),
         )
-        Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
         # We create another canteen with no diagnostics managed by
         # Sophie, but this time no email should be sent since the
@@ -306,11 +306,9 @@ class TestAutomaticEmails(TestCase):
             first_name="Sophie",
             last_name="Stiqué",
         )
-        canteen_no_diagnostics_recent = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE,
-            managers=[sophie],
+        CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE, managers=[sophie], creation_date=today - timedelta(days=3)
         )
-        Canteen.objects.filter(pk=canteen_no_diagnostics_recent.id).update(creation_date=(today - timedelta(days=3)))
 
         # We create a canteen with diagnostics. Because of this,
         # managers should not be notified.
@@ -320,10 +318,8 @@ class TestAutomaticEmails(TestCase):
         )
 
         canteen_with_diagnostics = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE,
-            managers=[fred],
+            production_type=Canteen.ProductionType.ON_SITE, managers=[fred], creation_date=today - timedelta(weeks=2)
         )
-        Canteen.objects.filter(pk=canteen_with_diagnostics.id).update(creation_date=(today - timedelta(weeks=3)))
         DiagnosticFactory(canteen=canteen_with_diagnostics)
 
         # Finally, we create a canteen with no diagnostics for which
@@ -334,13 +330,11 @@ class TestAutomaticEmails(TestCase):
             last_name="Godard",
             email="lena.godard@example.com",
         )
-        canteen_no_diagnostics_contacted = CanteenFactory(
+        CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             email_no_diagnostic_first_reminder=(today - timedelta(weeks=1)),
             managers=[lena],
-        )
-        Canteen.objects.filter(pk=canteen_no_diagnostics_contacted.id).update(
-            creation_date=(today - timedelta(weeks=2))
+            creation_date=today - timedelta(weeks=2),
         )
 
         # From all of these managers, only jean and anna should be notified.
@@ -375,8 +369,9 @@ class TestAutomaticEmails(TestCase):
             email="jean.serien@example.com",
             is_dev=True,
         )
-        canteen_no_diagnostics = CanteenFactory(managers=[jean], production_type=Canteen.ProductionType.ON_SITE)
-        Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
+        canteen_no_diagnostics = CanteenFactory(
+            managers=[jean], production_type=Canteen.ProductionType.ON_SITE, creation_date=today - timedelta(weeks=2)
+        )
 
         tasks.no_diagnostic_first_reminder()
         brevo.send_sib_template.assert_not_called()
@@ -460,8 +455,8 @@ class TestAutomaticEmails(TestCase):
         canteen_no_diagnostics = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
             managers=[anna, jean],
+            creation_date=today - timedelta(weeks=2),
         )
-        Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
         tasks.no_diagnostic_first_reminder()
 
@@ -505,8 +500,8 @@ class TestAutomaticEmails(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="32441387130915",
             managers=[jean],
+            creation_date=today - timedelta(weeks=2),
         )
-        Canteen.objects.filter(pk=canteen_no_diagnostics.id).update(creation_date=(today - timedelta(weeks=2)))
 
         # From all of these managers, only jean and anna should be notified.
         tasks.no_diagnostic_first_reminder()

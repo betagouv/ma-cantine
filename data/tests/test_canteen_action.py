@@ -29,7 +29,8 @@ class CanteenActionTestCase(TestCase):
     def test_canteen_missing_data_actions(self):
         # has diagnostic, but missing data (yearly_meal_count)
         DiagnosticFactory(canteen=self.canteen_site, year=2024, valeur_totale=100)
-        Canteen.objects.filter(id=self.canteen_site.id).update(yearly_meal_count=None)
+        self.canteen_site.yearly_meal_count = None
+        self.canteen_site.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 
@@ -39,12 +40,11 @@ class CanteenActionTestCase(TestCase):
         )
 
         # has diagnostic, but still missing data (line_ministry)
-        Canteen.objects.filter(id=self.canteen_site.id).update(
-            yearly_meal_count=1000,
-            economic_model=Canteen.EconomicModel.PUBLIC,
-            sector_list=[Sector.ADMINISTRATION_ARMEE],
-            line_ministry=None,
-        )
+        self.canteen_site.yearly_meal_count = 1000
+        self.canteen_site.economic_model = Canteen.EconomicModel.PUBLIC
+        self.canteen_site.sector_list = [Sector.ADMINISTRATION_ARMEE]
+        self.canteen_site.line_ministry = None
+        self.canteen_site.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 
@@ -54,9 +54,9 @@ class CanteenActionTestCase(TestCase):
         )
 
         # has diagnostic, but still missing data (sector)
-        Canteen.objects.filter(id=self.canteen_site.id).update(
-            economic_model=Canteen.EconomicModel.PRIVATE, sector_list=[]
-        )
+        self.canteen_site.economic_model = Canteen.EconomicModel.PRIVATE
+        self.canteen_site.sector_list = []
+        self.canteen_site.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 
@@ -66,14 +66,13 @@ class CanteenActionTestCase(TestCase):
         )
 
         # has diagnostic, but still missing data (too many sectors)
-        Canteen.objects.filter(id=self.canteen_site.id).update(
-            sector_list=[
-                Sector.SANTE_HOPITAL,
-                Sector.EDUCATION_PRIMAIRE,
-                Sector.ENTERPRISE_ENTREPRISE,
-                Sector.ADMINISTRATION_ARMEE,
-            ]
-        )
+        self.canteen_site.sector_list = [
+            Sector.SANTE_HOPITAL,
+            Sector.EDUCATION_PRIMAIRE,
+            Sector.ENTERPRISE_ENTREPRISE,
+            Sector.ADMINISTRATION_ARMEE,
+        ]
+        self.canteen_site.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 
@@ -83,7 +82,8 @@ class CanteenActionTestCase(TestCase):
         )
 
         # has diagnostic and data filled
-        Canteen.objects.filter(id=self.canteen_site.id).update(sector_list=[Sector.ADMINISTRATION_ARMEE])
+        self.canteen_site.sector_list = [Sector.ADMINISTRATION_ARMEE]
+        self.canteen_site.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 
@@ -149,8 +149,10 @@ class CanteenActionTestCase(TestCase):
         )
 
         # add satellite, but no diagnostic and missing data
-        Canteen.objects.filter(id=self.canteen_satellite.id).update(groupe=self.canteen_groupe_2_without_satellites)
-        Canteen.objects.filter(id=self.canteen_groupe_2_without_satellites.id).update(yearly_meal_count=None)
+        self.canteen_satellite.groupe = self.canteen_groupe_2_without_satellites
+        self.canteen_satellite.save(skip_validations=True)
+        self.canteen_groupe_2_without_satellites.yearly_meal_count = None
+        self.canteen_groupe_2_without_satellites.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 
@@ -183,7 +185,8 @@ class CanteenActionTestCase(TestCase):
         )
 
         # has satellite, diagnostic filled (2024) and data filled
-        Canteen.objects.filter(id=self.canteen_groupe_2_without_satellites.id).update(yearly_meal_count=1000)
+        self.canteen_groupe_2_without_satellites.yearly_meal_count = 1000
+        self.canteen_groupe_2_without_satellites.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 

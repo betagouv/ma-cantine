@@ -651,9 +651,9 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 0)
         self.assertEqual(self.canteen_groupe_without_satellite.satellites_missing_data_count, 0)
         # add to groupe a satellite with missing data
-        Canteen.objects.filter(id=self.canteen_satellite_3.id).update(
-            groupe=self.canteen_groupe_with_satellite, siret=None
-        )
+        self.canteen_satellite_3.groupe = self.canteen_groupe_with_satellite
+        self.canteen_satellite_3.siret = None  # missing data
+        self.canteen_satellite_3.save(skip_validations=True)
         self.canteen_groupe_with_satellite.refresh_from_db()
         # check again
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 1)
@@ -797,10 +797,13 @@ class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
         cls.canteen_siren_1 = CanteenFactory(siret="", siren_unite_legale="756656218")  # OK
         cls.canteen_siren_2 = CanteenFactory(siret=None, siren_unite_legale="756656218")  # OK
         cls.canteen_none_1 = CanteenFactory()
-        cls.canteen_none_2 = CanteenFactory()
-        Canteen.objects.filter(id=cls.canteen_none_1.id).update(siret="")
+        cls.canteen_none_1.siret = ""  # missing data
+        cls.canteen_none_1.save(skip_validations=True)
         cls.canteen_none_1.refresh_from_db()
-        Canteen.objects.filter(id=cls.canteen_none_2.id).update(siret=None, siren_unite_legale="")
+        cls.canteen_none_2 = CanteenFactory()
+        cls.canteen_none_2.siret = None
+        cls.canteen_none_2.siren_unite_legale = ""  # missing
+        cls.canteen_none_2.save(skip_validations=True)
         cls.canteen_none_2.refresh_from_db()
 
     def has_siret_or_siren_unite_legale_queryset(self):
@@ -964,21 +967,23 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             # daily_meal_count=12,
         )
-        Canteen.objects.filter(id=cls.canteen_on_site_incomplete_1.id).update(daily_meal_count=0)  # incomplete
+        cls.canteen_on_site_incomplete_1.daily_meal_count = 0  # missing data
+        cls.canteen_on_site_incomplete_1.save(skip_validations=True)
         cls.canteen_on_site_incomplete_1.refresh_from_db()
         cls.canteen_on_site_incomplete_2 = CanteenFactory(
             siret="21670482500019",
             production_type=Canteen.ProductionType.ON_SITE,
-            # sector_list=[],  # incomplete
+            # sector_list=[],  # missing data
         )
-        Canteen.objects.filter(id=cls.canteen_on_site_incomplete_2.id).update(sector_list=[])  # incomplete
+        cls.canteen_on_site_incomplete_2.sector_list = []  # missing data
+        cls.canteen_on_site_incomplete_2.save(skip_validations=True)
         cls.canteen_on_site_incomplete_2.refresh_from_db()
         cls.canteen_on_site_incomplete_3 = CanteenFactory(
             siret="21640122400011",
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.ADMINISTRATION_PRISON],
-            line_ministry=None,  # incomplete
+            line_ministry=None,  # missing data
         )
         cls.canteen_satellite_not_in_groupe_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="21340172201787"
@@ -986,9 +991,10 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         cls.canteen_satellite_not_in_groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
         cls.canteen_satellite_incomplete = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            # economic_model=Canteen.EconomicModel.PRIVATE,  # incomplete
+            # economic_model=Canteen.EconomicModel.PRIVATE,  # missing data
         )
-        Canteen.objects.filter(id=cls.canteen_satellite_incomplete.id).update(economic_model=None)  # incomplete
+        cls.canteen_satellite_incomplete.economic_model = None  # missing data
+        cls.canteen_satellite_incomplete.save(skip_validations=True)
         cls.canteen_satellite_incomplete.refresh_from_db()
         cls.canteen_filled_list = [
             cls.canteen_groupe_with_satellite,

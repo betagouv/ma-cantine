@@ -54,7 +54,8 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        Canteen.objects.filter(id=canteen_with_incomplete_data.id).update(siret=None)
+        canteen_with_incomplete_data.siret = None
+        canteen_with_incomplete_data.save(skip_validations=True)
         canteen_with_incomplete_data.refresh_from_db()
         DiagnosticFactory(canteen=canteen_with_incomplete_data, year=last_year, valeur_totale=10000)
 

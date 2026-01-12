@@ -263,13 +263,17 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         canteen_daily_meal_count_none = CanteenFactory(
             name="Shiso",
             creation_date=(timezone.now() - datetime.timedelta(days=10)),
+            # daily_meal_count=None
         )
-        Canteen.objects.filter(id=canteen_daily_meal_count_none.id).update(daily_meal_count=None)
+        canteen_daily_meal_count_none.daily_meal_count = None
+        canteen_daily_meal_count_none.save(skip_validations=True)
         canteen_daily_meal_count_0 = CanteenFactory(
             name="Wasabi",
             creation_date=(timezone.now() - datetime.timedelta(days=8)),
+            # daily_meal_count=0
         )
-        Canteen.objects.filter(id=canteen_daily_meal_count_0.id).update(daily_meal_count=0)
+        canteen_daily_meal_count_0.daily_meal_count = 0
+        canteen_daily_meal_count_0.save(skip_validations=True)
         CanteenFactory(
             daily_meal_count=3,
             name="Mochi",
@@ -329,11 +333,19 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             siret="",
             siren_unite_legale="123456789",
         )
-        good_canteen_empty_siret = CanteenFactory(name="Cantine avec bilan mais siret vide")
-        Canteen.objects.filter(id=good_canteen_empty_siret.id).update(siret="")
+        good_canteen_empty_siret = CanteenFactory(
+            name="Cantine avec bilan mais siret vide",
+            # siret="",
+        )
+        good_canteen_empty_siret.siret = ""
+        good_canteen_empty_siret.save(skip_validations=True)
         good_canteen_empty_siret.refresh_from_db()
-        good_canteen_siret_none = CanteenFactory(name="Cantine avec bilan mais siret null")
-        Canteen.objects.filter(id=good_canteen_siret_none.id).update(siret=None)
+        good_canteen_siret_none = CanteenFactory(
+            name="Cantine avec bilan mais siret null",
+            # siret=None,
+        )
+        good_canteen_siret_none.siret = None
+        good_canteen_siret_none.save(skip_validations=True)
         good_canteen_siret_none.refresh_from_db()
         CanteenFactory(
             name="Cantine sans bilan avec siret cuisine centrale vide",

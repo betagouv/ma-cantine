@@ -7,7 +7,6 @@ from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import DECOUPAGE_ADMINISTRATIF_API_URL
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.factories import CanteenFactory, UserFactory
-from data.models import Canteen
 from data.models.geo import Department
 from macantine import tasks
 
@@ -205,7 +204,8 @@ class TestGeolocationBotUsingSiret(TestCase):
         candidate_canteen = CanteenFactory(city_insee_code=None, siret="89394682276911")
         CanteenFactory(city_insee_code=29890)  # canteen with city_insee_code
         canteen_without_siret = CanteenFactory(city_insee_code=None)
-        Canteen.objects.filter(id=canteen_without_siret.id).update(siret=None)  # override validations
+        canteen_without_siret.siret = None  # missing data
+        canteen_without_siret.save(skip_validations=True)
 
         result = list(tasks._get_candidate_canteens_for_siret_to_insee_code_bot())
         self.assertEqual(len(result), 1)
