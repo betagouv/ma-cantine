@@ -92,8 +92,8 @@ def has_missing_data_query():
         | (~is_groupe_query() & (Q(has_charfield_missing_query("city_insee_code")) | Q(economic_model=None)))
         # serving-specific rules (with annotate_with_sector_list_count)
         | (is_serving_query() & (Q(sector_list_count=0) | Q(sector_list_count__gt=3)))
-        # groupe-specific rules (with annotate_with_satellites_in_db_count)
-        | (is_groupe_query() & Q(satellites_in_db_count=0))
+        # # groupe-specific rules (with annotate_with_satellites_in_db_count)
+        # | (is_groupe_query() & Q(satellites_in_db_count=0))
         # line_ministry (with annotate_with_requires_line_ministry)
         | (Q(economic_model=Canteen.EconomicModel.PUBLIC) & Q(requires_line_ministry=True) & Q(line_ministry=None))
     )
@@ -485,6 +485,8 @@ class Canteen(SoftDeletionModel):
         verbose_name="Modèle économique",
     )
 
+    is_filled = models.BooleanField(default=False, verbose_name="cantine complète (champ calculé)")
+
     # TDs (rempli grâce à canteen_fill_declaration_donnees_year_field)
     declaration_donnees_2021 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2021")
     declaration_donnees_2022 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2022")
@@ -581,6 +583,9 @@ class Canteen(SoftDeletionModel):
         if self.department:
             self.region = self._get_region()
 
+    def set_is_filled(self):
+        self.is_filled = self._is_filled()
+
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
             canteen_validators.validate_canteen_siret_or_siren_unite_legale(self),
@@ -608,6 +613,7 @@ class Canteen(SoftDeletionModel):
         self.set_region_from_department()
         if not skip_validations:
             self.full_clean()
+        self.set_is_filled()
         super().save(**kwargs)
 
     def delete(self):
@@ -714,8 +720,7 @@ class Canteen(SoftDeletionModel):
     def can_be_claimed(self):
         return not self.managers.exists()
 
-    @property
-    def is_filled(self) -> bool:
+    def _is_filled(self) -> bool:
         # basic rules
         is_filled = (
             bool(self.name)
@@ -725,14 +730,14 @@ class Canteen(SoftDeletionModel):
             and bool(self.management_type)
             and bool(self.production_type)
         )
-        # groupe-specific rules
-        if is_filled and self.is_groupe:
-            is_filled = self.canteen_set.exists()
+        # # groupe-specific rules
+        # if is_filled and self.is_groupe:
+        #     is_filled = self.canteen_set.exists()
         # serving-specific rules
         if is_filled and self.is_serving:
             is_filled = bool(self.city_insee_code) and bool(self.economic_model) and bool(self.sector_list)
         # line_ministry
-        if is_filled and self.is_public and set(self.sector_list).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
+        if is_filled and self.is_public and set(self.sector_list or []).intersection(SECTOR_HAS_LINE_MINISTRY_LIST):
             is_filled = bool(self.line_ministry)
         return is_filled
 
