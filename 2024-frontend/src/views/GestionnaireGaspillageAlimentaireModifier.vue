@@ -3,7 +3,7 @@ import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
 import WasteMeasurementSteps from "@/components/WasteMeasurementSteps/index.vue"
 import WasteSummary from "@/components/WasteSummary.vue"
-import { BadRequestError } from "@/utils"
+import { BadRequestError } from "@/services/api.js"
 import { useRoute } from "vue-router"
 
 import { useRootStore } from "@/stores/root"
