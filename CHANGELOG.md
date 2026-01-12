@@ -6,6 +6,18 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.0.1](https://github.com/betagouv/ma-cantine/compare/v2026.0.0...v2026.0.1) (2026-01-12)
+
+
+### Améliorations
+
+* **TD:** Cantines: remplir le champ declaration_donnees_2025 toutes les nuits (pour Open Data & Metabase) ([#6163](https://github.com/betagouv/ma-cantine/issues/6163)) ([685d4af](https://github.com/betagouv/ma-cantine/commit/685d4af4039b6990ab7d5aa923328c95dcb5d8d5))
+
+
+### Corrections (bugs, typos...)
+
+* **Utilisateurs:** Brevo: nouveau champ pour indiquer si l'utilisateur a été supprimé de Brevo (et éviter les erreurs de synchro) ([#6177](https://github.com/betagouv/ma-cantine/issues/6177)) ([0861201](https://github.com/betagouv/ma-cantine/commit/08612014f40b68e05fba3ab3a737c5a3196414ac))
+
 ## [2026.0.0](https://github.com/betagouv/ma-cantine/compare/v2025.50.0...v2026.0.0) (2026-01-12)
 
 
