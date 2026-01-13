@@ -18,7 +18,7 @@ class TestETLOpenData(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user_manager = UserFactory()
-        cls.canteen = CanteenFactory(
+        cls.canteen_site = CanteenFactory(
             name="Cantine",
             siret="19382111300027",
             city_insee_code="38185",
@@ -43,58 +43,62 @@ class TestETLOpenData(TestCase):
             declaration_donnees_2023=False,
             declaration_donnees_2024=True,
         )
-        cls.canteen_2 = CanteenFactory(
+        cls.canteen_satellite = CanteenFactory(
             name="Cantine 2",
-            siret="19382111300035",
+            siret="21340172201787",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             managers=[cls.user_manager],
             declaration_donnees_2022=True,
         )
         with freeze_time("2023-05-14"):  # during the 2022 campaign
-            diagnostic = DiagnosticFactory(
-                canteen=cls.canteen, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            diagnostic_site_2022 = DiagnosticFactory(
+                canteen=cls.canteen_site, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             diagnostic_2 = DiagnosticFactory(
-                canteen=cls.canteen_2, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+                canteen=cls.canteen_satellite, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             diagnostic_2.teledeclare(cls.user_manager)
         with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
-            diagnostic.teledeclare(cls.user_manager)
+            diagnostic_site_2022.teledeclare(cls.user_manager)
         with freeze_time("2024-04-01"):  # during the 2023 campaign
-            diagnostic = DiagnosticFactory(
-                canteen=cls.canteen, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            diagnostic_site_2023 = DiagnosticFactory(
+                canteen=cls.canteen_site, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
-            diagnostic.teledeclare(cls.user_manager)
-            diagnostic.cancel()  # will not appear in the exports
+            diagnostic_site_2023.teledeclare(cls.user_manager)
+            diagnostic_site_2023.cancel()  # will not appear in the exports
         with freeze_time("2025-04-20"):  # after the 2024 campaign
-            diagnostic = DiagnosticFactory(
-                canteen=cls.canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            diagnostic_site_2024 = DiagnosticFactory(
+                canteen=cls.canteen_site, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
-            diagnostic.teledeclare(cls.user_manager)
+            diagnostic_site_2024.teledeclare(cls.user_manager)
 
-        cls.canteen_central_without_manager = CanteenFactory(
-            siret="21590350100017", sector_list=[], production_type=Canteen.ProductionType.CENTRAL
+        cls.canteen_satellite_without_manager = CanteenFactory(
+            siret="21380185500015",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            sector_list=[Sector.SANTE_HOPITAL],
+            managers=[],
         )
-        cls.canteen_central_without_manager.managers.clear()
 
     def test_teledeclaration_extract(self, mock):
         # Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
         etl_td_2022 = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
+        self.assertEqual(etl_td_2022.len_dataset(), 0, "There shoud be an empty dataframe before extraction")
         etl_td_2022.extract_dataset()
-        self.assertEqual(etl_td_2022.len_dataset(), 2, "2 TDs in the 2022 campaign")
+        self.assertEqual(etl_td_2022.len_dataset(), 2)
         self.assertEqual(
             etl_td_2022.get_dataset().iloc[0]["canteen_id"],
-            self.canteen_2.id,
+            self.canteen_satellite.id,
             "Order by teledeclaration date ascending",
         )
 
         # Only non-cancelled teledeclarations should be extracted
         etl_td_2023 = ETL_OPEN_DATA_TELEDECLARATIONS(2023)
         etl_td_2023.extract_dataset()
-        self.assertEqual(etl_td_2023.len_dataset(), 0, "The only TD in the 2023 campaign has the CANCELLED status")
+        self.assertEqual(etl_td_2023.len_dataset(), 0)  # the only TD was cancelled
 
         etl_td_2024 = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
         etl_td_2024.extract_dataset()
-        self.assertEqual(etl_td_2024.len_dataset(), 1, "Only 1 TD in the 2024 campaign")
+        self.assertEqual(etl_td_2024.len_dataset(), 1)
 
     def test_teledeclaration_transform(self, mock):
         mock.get(
@@ -114,21 +118,24 @@ class TestETLOpenData(TestCase):
         etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
         etl_td.extract_dataset()
         etl_td.transform_dataset()
+        teledeclarations = etl_td.get_dataset()
 
-        self.assertEqual(len(etl_td.get_dataset().columns), len(schema_cols), "The columns should match the schema")
-        self.assertEqual(etl_td.len_dataset(), 1, "Only 1 TD in the 2024 campaign")
-        self.assertEqual(etl_td.get_dataset().iloc[0]["applicant_id"], self.user_manager.id)
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_siret"], "19382111300027")
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_name"], "Cantine")
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_central_kitchen_siret"], None)
-        self.assertEqual(str(etl_td.get_dataset().iloc[0]["canteen_satellite_canteens_count"]), "<NA>")
+        self.assertEqual(len(teledeclarations.columns), len(schema_cols), "The columns should match the schema")
+        self.assertEqual(len(teledeclarations), 1, "Only 1 TD in the 2024 campaign")
+
+        teledeclaration_first = teledeclarations.iloc[0]
+        self.assertEqual(teledeclaration_first["applicant_id"], self.user_manager.id)
+        self.assertEqual(teledeclaration_first["canteen_siret"], "19382111300027")
+        self.assertEqual(teledeclaration_first["canteen_name"], "Cantine")
+        self.assertEqual(teledeclaration_first["canteen_central_kitchen_siret"], None)
+        self.assertEqual(str(teledeclaration_first["canteen_satellite_canteens_count"]), "<NA>")
         self.assertEqual(
-            etl_td.get_dataset().iloc[0]["canteen_sector_list"],
+            teledeclaration_first["canteen_sector_list"],
             "Ecole primaire (maternelle et élémentaire),Secondaire collège",
         )
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "Agriculture, Alimentation et Forêts")
+        self.assertEqual(teledeclaration_first["canteen_line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertGreater(
-            etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"],
+            teledeclaration_first["teledeclaration_ratio_bio"],
             0,
             "The bio value is aggregated from bio fields and should be greater than 0",
         )
@@ -139,17 +146,45 @@ class TestETLOpenData(TestCase):
 
         etl_canteen.extract_dataset()
         self.assertEqual(len(etl_canteen.df.id.unique()), 3, "There should be three different canteens")
-        self.assertEqual(etl_canteen.get_dataset().iloc[0]["id"], self.canteen.id, "Order by created date ascending")
+        self.assertEqual(
+            etl_canteen.get_dataset().iloc[0]["id"], self.canteen_site.id, "Order by created date ascending"
+        )
 
-        # Only non-deleted canteens should be extracted
-        self.canteen.delete()
-        etl_canteen.extract_dataset()
-        self.assertEqual(len(etl_canteen.df.id.unique()), 2, "There should be one canteen less after soft deletion")
-
-        self.canteen_central_without_manager.hard_delete()
+    def test_canteen_extract_publicly_visible(self, mock):
+        """
+        Only publicly visible canteens should be extracted (hide deleted, army & groupe)
+        """
         etl_canteen = ETL_OPEN_DATA_CANTEEN()
         etl_canteen.extract_dataset()
-        self.assertEqual(etl_canteen.len_dataset(), 1, "There should be one canteen less after hard deletion")
+        self.assertEqual(len(etl_canteen.df.id.unique()), 3)
+
+        # soft delete one canteen
+        self.canteen_site.delete()
+        etl_canteen.extract_dataset()
+        self.assertEqual(len(etl_canteen.df.id.unique()), 2)
+
+        # change another canteen to army
+        self.canteen_satellite_without_manager.sector_list = [Sector.ADMINISTRATION_ARMEE]
+        self.canteen_satellite_without_manager.line_ministry = Canteen.Ministries.ARMEE
+        self.canteen_satellite_without_manager.save()
+        etl_canteen.extract_dataset()
+        self.assertEqual(len(etl_canteen.df.id.unique()), 1)
+
+        # change the canteen again, to groupe
+        self.canteen_satellite_without_manager.production_type = Canteen.ProductionType.GROUPE
+        self.canteen_satellite_without_manager.economic_model = None
+        self.canteen_satellite_without_manager.sector_list = []
+        self.canteen_satellite_without_manager.line_ministry = None
+        self.canteen_satellite_without_manager.siret = None
+        self.canteen_satellite_without_manager.siren_unite_legale = "213801855"
+        self.canteen_satellite_without_manager.save()
+        etl_canteen.extract_dataset()
+        self.assertEqual(len(etl_canteen.df.id.unique()), 1)
+
+        # hard delete the last canteen
+        self.canteen_satellite.hard_delete()
+        etl_canteen.extract_dataset()
+        self.assertEqual(etl_canteen.len_dataset(), 0)
 
     def test_canteen_transform(self, mock):
         schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
@@ -174,8 +209,9 @@ class TestETLOpenData(TestCase):
 
         # Check the schema matching
         self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
+        self.assertEqual(len(canteens), 3)
 
-        canteen = canteens[canteens.id == self.canteen.id].iloc[0]
+        canteen = canteens[canteens.id == self.canteen_site.id].iloc[0]
         self.assertEqual(canteen["epci"], "200040715")
         self.assertEqual(canteen["epci_lib"], "Grenoble-Alpes-Métropole")
         self.assertEqual(canteen["pat_list"], "1294,1295")
@@ -183,20 +219,20 @@ class TestETLOpenData(TestCase):
             canteen["pat_lib_list"],
             "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
         )
-        self.assertEqual(canteen["line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertEqual(canteen["management_type"], "direct")
         self.assertEqual(canteen["production_type"], "site")
         self.assertEqual(canteen["economic_model"], "public")
         self.assertEqual(canteen["sector_list"], "Ecole primaire (maternelle et élémentaire),Secondaire collège")
+        self.assertEqual(canteen["line_ministry"], "Agriculture, Alimentation et Forêts")
         self.assertTrue(canteen["declaration_donnees_2022"])
         self.assertFalse(canteen["declaration_donnees_2023"])
         self.assertTrue(canteen["declaration_donnees_2024"])
-        self.assertTrue(canteen["active_on_ma_cantine"])
+        self.assertTrue(canteen["active_on_ma_cantine"])  # has a manager
 
-        canteen_central_without_manager = canteens[canteens.id == self.canteen_central_without_manager.id].iloc[0]
-        self.assertEqual(canteen_central_without_manager["line_ministry"], None)
-        self.assertEqual(canteen_central_without_manager["sector_list"], "")
-        self.assertFalse(canteen_central_without_manager["active_on_ma_cantine"])
+        canteen_satellite_without_manager = canteens[canteens.id == self.canteen_satellite_without_manager.id].iloc[0]
+        self.assertEqual(canteen_satellite_without_manager["sector_list"], "Hôpitaux")
+        self.assertEqual(canteen_satellite_without_manager["line_ministry"], None)
+        self.assertFalse(canteen_satellite_without_manager["active_on_ma_cantine"])  # no manager
 
     @freeze_time("2023-05-14")  # during the 2022 campaign
     def test_update_ressource(self, mock):
