@@ -178,7 +178,6 @@ export default {
       this.totalFamiliesErrorMessage = null
 
       const d = this.payload
-      const sumFish = d.valeurProduitsDeLaMerEgalim + d.valeurProduitsDeLaMerFrance
       const total = d.valeurTotale
       const totalFish = d.valeurProduitsDeLaMer
       const totalMeatPoultry = d.valeurViandesVolailles
@@ -194,11 +193,6 @@ export default {
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
         this.errorHelperFields.push(...["valeurTotale", "valeurViandesVolailles"])
-      }
-      if (sumFish > totalFish) {
-        this.produitsDeLaMerErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
-          totalFish
-        )}) doit être supérieur à la somme des valeurs par label (${toCurrency(sumFish)})`
       }
     },
   },
