@@ -53,6 +53,7 @@ class PublicationStatusFilter(admin.SimpleListFilter):
 class CanteenAdmin(SoftDeletionHistoryAdmin):
     form = CanteenForm
     # inlines = (UserInline, DiagnosticInline,)
+    autocomplete_fields = ("groupe",)
     fields = (
         "name",
         "siret",
