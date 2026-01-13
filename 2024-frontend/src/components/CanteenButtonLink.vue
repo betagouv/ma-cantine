@@ -16,17 +16,19 @@ const addSatellite = () => {
   canteensService
     .linkSatellite(props.groupId, props.satId)
     .then((response) => {
-      if (response instanceof Error) throw Error()
+      if (response.status === "error") displayError(response)
       else emit("satelliteAdded")
     })
-    .catch(() => {
-      loading.value = true
-      error.value = true
-    })
+    .catch(displayError)
+}
+
+const displayError = (serverError) => {
+  loading.value = true
+  error.value = serverError.message
 }
 </script>
 
 <template>
-  <div v-if="error" class="fr-error-text">Une erreur est survenue lors de l'ajout du restaurant satellite à votre groupe, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr</div>
+  <div v-if="error" class="fr-error-text">{{ error }}</div>
   <DsfrButton v-else secondary :label="label" @click="addSatellite()" :disabled="loading" />
 </template>
