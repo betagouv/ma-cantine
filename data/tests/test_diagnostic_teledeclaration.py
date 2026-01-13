@@ -58,30 +58,26 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
 
     @freeze_time(date_in_last_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_outside_of_campaign(self):
-        with self.assertRaises(ValidationError):
-            self.diagnostic_groupe.teledeclare(applicant=self.user)
+        self.assertRaises(ValidationError, self.diagnostic_groupe.teledeclare, applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_already_teledeclared(self):
         # teledeclare once
         self.diagnostic_site.teledeclare(applicant=self.user)
         # try to teledeclare again
-        with self.assertRaises(ValidationError):
-            self.diagnostic_site.teledeclare(applicant=UserFactory())
+        self.assertRaises(ValidationError, self.diagnostic_site.teledeclare, applicant=UserFactory())
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_not_filled(self):
         self.assertEqual(self.diagnostic_groupe.valeur_totale, 0)
-        with self.assertRaises(ValidationError):
-            self.diagnostic_groupe.teledeclare(applicant=self.user)
+        self.assertRaises(ValidationError, self.diagnostic_groupe.teledeclare, applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_if_canteen_missing_data(self):
         self.canteen_site.yearly_meal_count = None  # missing data
         self.canteen_site.save(skip_validations=True)
         self.canteen_site.refresh_from_db()
-        with self.assertRaises(ValidationError):
-            self.diagnostic_site.teledeclare(applicant=self.user)
+        self.assertRaises(ValidationError, self.diagnostic_site.teledeclare, applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_if_canteen_groupe_without_satellites(self):
@@ -89,8 +85,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.canteen_satellite.save()
         self.canteen_groupe.refresh_from_db()
         self.assertEqual(self.canteen_groupe.satellites.count(), 0)
-        with self.assertRaises(ValidationError):
-            self.diagnostic_groupe.teledeclare(applicant=self.user)
+        self.assertRaises(ValidationError, self.diagnostic_groupe.teledeclare, applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_teledeclare_a_diagnostic_if_canteen_groupe_has_satellite_missing_data(self):
@@ -104,8 +99,7 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.diagnostic_groupe.valeur_externalites_performance = 100
         self.diagnostic_groupe.valeur_egalim_autres = 100
         self.diagnostic_groupe.save()
-        with self.assertRaises(ValidationError):
-            self.diagnostic_groupe.teledeclare(applicant=self.user)
+        self.assertRaises(ValidationError, self.diagnostic_groupe.teledeclare, applicant=self.user)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_groupe_can_teledeclare(self):
@@ -139,11 +133,10 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertIsNotNone(self.diagnostic_groupe.teledeclaration_date)
         self.assertEqual(self.diagnostic_groupe.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
         self.assertEqual(self.diagnostic_groupe.teledeclaration_version, 16)
-        self.assertIsNone(self.diagnostic_groupe.teledeclaration_id)
+        self.assertEqual(self.diagnostic_groupe.teledeclaration_id, self.diagnostic_groupe.id)
         # for snapshots, see tests below
         # try to teledeclare again
-        with self.assertRaises(ValidationError):
-            self.diagnostic_groupe.teledeclare(applicant=UserFactory())
+        self.assertRaises(ValidationError, self.diagnostic_groupe.teledeclare, applicant=UserFactory())
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_satellite_in_group_can_teledeclare_non_appro_fields_if_groupe_mode_appro(self):
@@ -179,13 +172,11 @@ class DiagnosticModelCancelMethodTest(TestCase):
 
     @freeze_time(date_in_last_teledeclaration_campaign)
     def test_cannot_cancel_a_diagnostic_outside_of_campaign(self):
-        with self.assertRaises(ValidationError):
-            self.diagnostic.cancel()
+        self.assertRaises(ValidationError, self.diagnostic.cancel)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_cancel_a_diagnostic_not_teledeclared(self):
-        with self.assertRaises(ValidationError):
-            self.diagnostic.cancel()
+        self.assertRaises(ValidationError, self.diagnostic.cancel)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cancel(self):
@@ -196,9 +187,11 @@ class DiagnosticModelCancelMethodTest(TestCase):
         self.assertIsNotNone(self.diagnostic.teledeclaration_date)
         self.assertIsNotNone(self.diagnostic.teledeclaration_mode)
         self.assertIsNotNone(self.diagnostic.teledeclaration_version)
-        self.assertIsNone(self.diagnostic.teledeclaration_id)
+        self.assertIsNotNone(self.diagnostic.teledeclaration_id)
+
         # cancel
         self.diagnostic.cancel()
+
         self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
         self.assertIsNone(self.diagnostic.applicant)
         self.assertIsNone(self.diagnostic.teledeclaration_date)
