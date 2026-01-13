@@ -8,8 +8,8 @@ from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
 from common.api.datagouv import update_dataset_resources
-from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
-from data.models import Canteen, Sector, SectorM2M, Diagnostic
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models import Canteen, Sector, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 
 
@@ -17,12 +17,6 @@ from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDEC
 class TestETLOpenData(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector_education_primaire = SectorM2MFactory(
-            name="Ecole primaire (maternelle et élémentaire)", category=SectorM2M.Categories.EDUCATION
-        )
-        cls.sector_education_secondaire_college = SectorM2MFactory(
-            name="Secondaire collège", category=SectorM2M.Categories.EDUCATION
-        )
         cls.user_manager = UserFactory()
         cls.canteen = CanteenFactory(
             name="Cantine",
@@ -40,7 +34,6 @@ class TestETLOpenData(TestCase):
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
             sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.EDUCATION_SECONDAIRE_COLLEGE],
-            sectors_m2m=[cls.sector_education_primaire, cls.sector_education_secondaire_college],
             line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
@@ -79,7 +72,7 @@ class TestETLOpenData(TestCase):
             diagnostic.teledeclare(cls.user_manager)
 
         cls.canteen_central_without_manager = CanteenFactory(
-            siret="21590350100017", sector_list=[], sectors_m2m=[], production_type=Canteen.ProductionType.CENTRAL
+            siret="21590350100017", sector_list=[], production_type=Canteen.ProductionType.CENTRAL
         )
         cls.canteen_central_without_manager.managers.clear()
 
