@@ -594,6 +594,7 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             "economic_model",
             "satellite_canteens_count",
             "central_producer_siret",
+            "groupe_id",
         )
 
     def get_central_producer_siret(self, obj):
@@ -619,6 +620,9 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
             "name",
             "siret",
             "siren_unite_legale",
+            "city_insee_code",
+            "department",
+            "region",
             "daily_meal_count",
             "yearly_meal_count",
             "sector_list",
@@ -626,6 +630,8 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
             "production_type",
             "management_type",
             "economic_model",
+            "central_producer_siret",
+            "groupe_id",
         )
 
 
