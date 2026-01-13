@@ -117,7 +117,7 @@ const removeRow = (id) => {
       no-caption
       :headers-row="tableHeaders"
       :rows="tableRows"
-      :sortable-rows="['name', 'siretSiren', 'dailyMealCount']"
+      :sortable-rows="['name', 'diagnostic']"
       :pagination="true"
       :pagination-options="[50, 100, 200]"
       :rows-per-page="50"
