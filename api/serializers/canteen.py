@@ -595,6 +595,7 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "central_producer_siret",
             "groupe_id",
+            "is_filled",
         )
 
     def get_central_producer_siret(self, obj):
@@ -632,6 +633,7 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
             "economic_model",
             "central_producer_siret",
             "groupe_id",
+            "is_filled",
         )
 
 
