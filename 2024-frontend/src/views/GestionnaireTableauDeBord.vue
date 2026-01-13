@@ -91,12 +91,25 @@ const canteensGroup = computed(() => {
     title,
   }
 })
+
 const allCanteens = computedAsync(async () => {
-  return await canteenService.fetchCanteensActions(lastYear)
+  const canteens = await canteenService.fetchCanteensActions(lastYear)
+  const canteensFiltered = removeSatellitesFromMyGroups(canteens)
+  return canteensFiltered
 }, [])
+
 const canteensTable = computed(() => {
   return filteredCanteens.value.length > 0 ? filteredCanteens.value : allCanteens.value
 })
+
+const removeSatellitesFromMyGroups = (canteens) => {
+  const myGroups = canteens.filter((canteen) => canteen.productionType === "groupe").map((canteen) => canteen.id)
+  const canteensSatFiltered = canteens.filter((canteen) => {
+    const isInMyGroup = canteen.productionType === "site_cooked_elsewhere" && myGroups.includes(canteen.groupe)
+    return !isInMyGroup
+  })
+  return canteensSatFiltered
+}
 
 /* CAMPAIGN */
 const campaign = computedAsync(async () => {
