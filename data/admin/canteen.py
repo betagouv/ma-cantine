@@ -137,11 +137,11 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "télédéclarée",
         "groupe",
         "central_producer_siret",
+        "management_type",
         "production_type",
+        "source_des_données",
         "creation_date",
         "modification_date",
-        "source_des_données",
-        "management_type",
         "deleted",
     )
     filter_vertical = ("managers",)
@@ -167,7 +167,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.prefetch_related("teledeclaration_set")
+        qs = qs.select_related("groupe")
         return qs
 
     def get_actions(self, request):
@@ -199,9 +199,12 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     def siret_or_siren_unite_legale_display(self, obj):
         return obj.siret_or_siren_unite_legale
 
-    @admin.display(description=f"Télédéclarée ({last_year})")
+    # TODO: update every year
+    @admin.display(description="Télédéclarée (2025)")
     def télédéclarée(self, obj):
-        return obj.get_declaration_donnees_year_display(last_year)
+        return obj.declaration_donnees_2025
+
+    télédéclarée.boolean = True
 
     @admin.display(description="Visible au public")
     def publication_status_display(self, obj):
