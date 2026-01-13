@@ -6,6 +6,16 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.0.3](https://github.com/betagouv/ma-cantine/compare/v2026.0.2...v2026.0.3) (2026-01-13)
+
+
+### Améliorations
+
+* **Admin:** Cantines: accélérer la page 'détail d'une cantine' ([#6212](https://github.com/betagouv/ma-cantine/issues/6212)) ([22fe5f9](https://github.com/betagouv/ma-cantine/commit/22fe5f989f1e18821ebb6de00277081a8b2c73f5))
+* **Admin:** Cantines: accélérer la page 'liste des cantines' ([#6211](https://github.com/betagouv/ma-cantine/issues/6211)) ([066396d](https://github.com/betagouv/ma-cantine/commit/066396dc4f8065b05a1903e91cccb2a58dbd01dc))
+* **Cantines:** API: permettre de supprimer une cantine qui aurait des données manquantes ([#6198](https://github.com/betagouv/ma-cantine/issues/6198)) ([89447d8](https://github.com/betagouv/ma-cantine/commit/89447d83fdb31c7b6ff5a8e9686507a43b1e4e76))
+* **Groupe:** utiliser le message d'erreur du serveur pour l'ajout ou le retrait d'un SAT avec un bilan télédéclaré ([#6210](https://github.com/betagouv/ma-cantine/issues/6210)) ([1ca1525](https://github.com/betagouv/ma-cantine/commit/1ca152515daefb9f1bfd08555a6c707a06ae395e))
+
 ## [2026.0.2](https://github.com/betagouv/ma-cantine/compare/v2026.0.1...v2026.0.2) (2026-01-13)
 
 
