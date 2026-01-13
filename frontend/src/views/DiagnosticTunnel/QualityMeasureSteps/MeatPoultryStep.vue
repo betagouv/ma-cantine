@@ -218,7 +218,7 @@ export default {
         if (d.valeurViandesVolaillesFrance > totalMeatPoultry) {
           this.totalFranceViandesVolaillesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
             totalMeatPoultry
-          )}) doit être supérieur au total origine France en viandes et volaillese (${toCurrency(
+          )}) doit être supérieur au total origine France en viandes et volailles (${toCurrency(
             d.valeurViandesVolaillesFrance
           )})`
         }
