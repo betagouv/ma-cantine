@@ -17,14 +17,17 @@ const unlinkSatellite = () => {
   loading.value = true
   canteensService
     .unlinkSatellite(props.canteen.id, props.satellite.id)
-    .then(() => {
-      store.notify({
-        title: "Retrait de la cantine effectué",
-        message: `La cantine ${props.satellite.name} ne fait plus partie de vos restaurants satellites.`,
-      })
-      loading.value = false
+    .then((response) => {
+      if (response.status === "error") store.notifyServerError(response)
+      else {
+        store.notify({
+          title: "Retrait de la cantine effectué",
+          message: `La cantine ${props.satellite.name} ne fait plus partie de vos restaurants satellites.`,
+        })
+        emit("satelliteRemoved")
+      }
       toggleModal()
-      emit("satelliteRemoved")
+      loading.value = false
     })
     .catch((e) => {
       loading.value = false

@@ -56,7 +56,7 @@ class CanteenGroupeSatelliteLinkView(APIView):
             if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
                 return JsonResponse(
                     {
-                        "error": "Cannot link satellite to groupe during a campaign if the groupe has a diagnostic teledeclared."
+                        "error": "Vous ne pouvez pas ajouter de restaurant satellite à votre groupe, car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir ajouter le restaurant satellite.",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -90,7 +90,7 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
             if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
                 return JsonResponse(
                     {
-                        "error": "Cannot unlink satellite from groupe during a campaign if the groupe has a diagnostic teledeclared."
+                        "error": "Vous ne pouvez pas retirer de restaurant satellite à votre groupe, car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir retirer le restaurant satellite.",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
