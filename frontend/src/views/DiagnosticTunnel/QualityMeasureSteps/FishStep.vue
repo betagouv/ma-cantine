@@ -193,6 +193,21 @@ export default {
           totalFamilies
         )}) ne doit pas dépasser le total de tous les achats (${toCurrency(total)})`
         this.errorHelperFields.push(...["valeurTotale", "valeurViandesVolailles"])
+      } else {
+        if (d.valeurProduitsDeLaMerEgalim > totalFish) {
+          this.produitsDeLaMerTotalErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+            totalFish
+          )}) doit être supérieur au total EGalim en poissons, produits de la mer et de l'aquaculture (${toCurrency(
+            d.valeurProduitsDeLaMerEgalim
+          )})`
+        }
+        if (d.valeurProduitsDeLaMerFrance > totalFish) {
+          this.produitsDeLaMerTotalErrorMessage = `Le total des achats poissons, produits de la mer et de l'aquaculture (${toCurrency(
+            totalFish
+          )}) doit être supérieur au total origine France en poissons, produits de la mer et de l'aquaculture (${toCurrency(
+            d.valeurProduitsDeLaMerFrance
+          )})`
+        }
       }
     },
   },
