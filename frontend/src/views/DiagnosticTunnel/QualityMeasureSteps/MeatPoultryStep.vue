@@ -216,12 +216,16 @@ export default {
         if (d.valeurViandesVolaillesEgalim > totalMeatPoultry) {
           this.totalEgalimViandesVolaillesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
             totalMeatPoultry
-          )}) doit être supérieur au champ EGalim (${toCurrency(d.valeurViandesVolaillesEgalim)})`
+          )}) doit être supérieur au total EGalim en viandes et volailles (${toCurrency(
+            d.valeurViandesVolaillesEgalim
+          )})`
         }
         if (d.valeurViandesVolaillesFrance > totalMeatPoultry) {
           this.totalFranceViandesVolaillesErrorMessage = `Le total des achats viandes et volailles (${toCurrency(
             totalMeatPoultry
-          )}) doit être supérieur au champ origine France (${toCurrency(d.valeurViandesVolaillesFrance)})`
+          )}) doit être supérieur au total origine France en viandes et volaillese (${toCurrency(
+            d.valeurViandesVolaillesFrance
+          )})`
         }
       }
     },
