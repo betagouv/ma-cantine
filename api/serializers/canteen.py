@@ -740,7 +740,6 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
 class CanteenOpenDataSerializer(serializers.ModelSerializer):
     logo = serializers.SerializerMethodField(read_only=True)
     sector_list = serializers.SerializerMethodField(source="sector_list", read_only=True)
-    sectors = serializers.SerializerMethodField(source="sectors_m2m", read_only=True)
     active_on_ma_cantine = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -773,7 +772,6 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
             "modification_date",
             "logo",
             "sector_list",
-            "sectors",  # from "sectors_m2m"
             "declaration_donnees_2021",
             "declaration_donnees_2022",
             "declaration_donnees_2023",
@@ -792,9 +790,6 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
 
     def get_sector_list(self, obj):
         return [Sector(sector).label for sector in obj.sector_list]
-
-    def get_sectors(self, obj):
-        return [sector.name for sector in obj.sectors_m2m.all()]
 
     def get_active_on_ma_cantine(self, obj):
         return obj.managers.exists()
