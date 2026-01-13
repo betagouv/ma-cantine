@@ -201,3 +201,4 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self.transform_canteen_arrayfields(prefix="canteen_")
         logger.info("TD campagne: Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
+        # TODO: self.flatten_central_kitchen_td()

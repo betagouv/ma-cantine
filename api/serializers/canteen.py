@@ -16,7 +16,6 @@ from .diagnostic import (
 )
 from .managerinvitation import ManagerInvitationSerializer
 from .resourceaction import ResourceActionFullSerializer
-from .sector import SectorM2MSerializer
 from .user import CanteenManagerSerializer
 
 logger = logging.getLogger(__name__)
@@ -566,7 +565,6 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
-    sectors = SectorM2MSerializer(source="sectors_m2m", many=True, read_only=True)
     central_producer_siret = serializers.SerializerMethodField(read_only=True)
     satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
 
@@ -587,7 +585,6 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
             # "department_lib",
             "region",
             # "region_lib",
-            "sectors",  # from "sectors_m2m"
             "sector_list",
             "line_ministry",
             "daily_meal_count",
@@ -615,8 +612,6 @@ class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
 
 # remember to update TD version if you update this
 class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
-    sectors = SectorM2MSerializer(source="sectors_m2m", many=True, read_only=True)
-
     class Meta:
         model = Canteen
         fields = (
@@ -626,7 +621,6 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
             "siren_unite_legale",
             "daily_meal_count",
             "yearly_meal_count",
-            "sectors",  # from "sectors_m2m"
             "sector_list",
             "line_ministry",
             "production_type",
