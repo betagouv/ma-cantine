@@ -87,7 +87,7 @@
       <p>
         Certaines données de votre établissement manquent.
         <span v-if="inTeledeclarationCampaign">
-          Veuillez compléter ces informations avant télédéclarer.
+          Veuillez compléter ces informations avant de télédéclarer.
         </span>
       </p>
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
