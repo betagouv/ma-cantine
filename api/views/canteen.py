@@ -426,6 +426,9 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
         canteen = serializer.save()
         update_change_reason_with_auth(self, canteen)
 
+    def perform_destroy(self, instance):
+        instance.delete(skip_validations=True)
+
 
 class CanteenStatusBySiretView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]

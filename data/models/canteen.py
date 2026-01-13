@@ -582,9 +582,10 @@ class Canteen(SoftDeletionModel):
         self.set_is_filled()
         super().save(**kwargs)
 
-    def delete(self):
+    def delete(self, skip_validations=False, **kwargs):
         """
         Override the SoftDeletionModel delete method
+        - add the skip_validations parameter to skip validations (USE WITH CAUTION)
         - if groupe: make sure no satellite cantines are linked to it
         """
         if self.is_groupe:
@@ -593,7 +594,7 @@ class Canteen(SoftDeletionModel):
                 raise ValidationError(
                     f"Impossible de supprimer ce groupe car il a encore {satellites_count} satellites(s) de rattaché(s)."
                 )
-        super().delete()
+        super().delete(skip_validations=skip_validations, **kwargs)
 
     @property
     def url_slug(self):

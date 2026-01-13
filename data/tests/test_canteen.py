@@ -467,6 +467,16 @@ class CanteenModelDeleteTest(TestCase):
         self.assertEqual(Canteen.objects.count(), 4 - 2)
         self.assertEqual(Canteen.all_objects.count(), 4)
 
+    def test_can_soft_delete_if_missing_data_using_skip_validations(self):
+        self.canteen_site.daily_meal_count = None
+        self.canteen_site.save(skip_validations=True)
+
+        # without skip_validations
+        self.assertRaises(ValidationError, self.canteen_site.delete)
+
+        # with skip_validations
+        self.canteen_site.delete(skip_validations=True)
+
     def test_can_soft_delete_groupe_without_satellites(self):
         self.assertEqual(Canteen.objects.count(), 4)
         self.assertEqual(Canteen.all_objects.count(), 4)
@@ -495,6 +505,17 @@ class CanteenModelDeleteTest(TestCase):
     def test_cannot_soft_delete_groupe_with_active_satellites(self):
         self.assertEqual(self.canteen_groupe_2_with_active_satellites.satellites.count(), 1)
         self.assertRaises(ValidationError, self.canteen_groupe_2_with_active_satellites.delete)
+        # even with skip_validations
+        self.assertRaises(ValidationError, self.canteen_groupe_2_with_active_satellites.delete, skip_validations=True)
+
+    def test_canteen_hard_delete(self):
+        self.assertEqual(Canteen.objects.count(), 4)
+        self.assertEqual(Canteen.all_objects.count(), 4)
+
+        self.canteen_site.hard_delete()
+
+        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.all_objects.count(), 3)
 
 
 class CanteenDeleteQuerySetAndPropertyTest(TestCase):
