@@ -78,6 +78,7 @@ const tableRows = computed(() => {
           name: {
             canteen: sat.name,
             url: urlService.getCanteenUrl(sat),
+            isManager: sat.userCanView,
           },
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
@@ -126,12 +127,17 @@ const removeRow = (id) => {
     >
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'name'">
-          <router-link
-            :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
-            class="fr-text-title--blue-france fr-text--bold"
-          >
-            {{ cell.canteen }}
-          </router-link>
+          <p class="fr-text-title--blue-france fr-text--bold">
+            <router-link
+              v-if="cell.isManager"
+              :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+            >
+              {{ cell.canteen }}
+            </router-link>
+            <span v-else>
+              {{ cell.canteen }}
+            </span>
+          </p>
         </template>
         <template v-else-if="colKey === 'diagnostic'">
           <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
