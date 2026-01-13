@@ -29,9 +29,9 @@ const getErrorList = (error) => {
   const isString = typeof error === "string"
   const isObject = typeof error === "object"
 
-  if(isNull) errorList = [getDefaultErrorMessage()]
-  else if (isString) errorList = [error]
-  else if (isArray) errorList = error
+  if(isNull) errorList = [{field: null, message: getDefaultErrorMessage()}]
+  else if (isString) errorList = [{field: null, message: error}]
+  else if (isArray) errorList = error.map(error => ({field: null, message: error}))
   else if (isObject) {
     const keys = Object.keys(error)
     keys.forEach(key => {
