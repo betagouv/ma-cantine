@@ -61,28 +61,8 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-card v-if="missingCanteenData" class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block">
-      <p>
-        Certaines données de votre établissement manquent.
-        <span v-if="inTeledeclarationCampaign">
-          Veuillez compléter ces informations avant télédéclarer.
-        </span>
-      </p>
-      <v-card-actions class="px-0 pt-0 pb-0 justify-center">
-        <v-btn
-          :to="{
-            name: 'GestionnaireCantineGerer',
-            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-          }"
-          color="primary"
-          class="fr-text font-weight-medium"
-        >
-          Mettre à jour mon établissement
-        </v-btn>
-      </v-card-actions>
-    </v-card>
     <v-card
-      v-else-if="inTeledeclarationCampaign && hasSatelliteInconsistency"
+      v-if="inTeledeclarationCampaign && canteen.satellites.length === 0"
       class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
       <p>
@@ -100,6 +80,26 @@
           class="fr-text font-weight-medium"
         >
           Gérer mes restaurants satellites
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    <v-card v-else-if="missingCanteenData" class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block">
+      <p>
+        Certaines données de votre établissement manquent.
+        <span v-if="inTeledeclarationCampaign">
+          Veuillez compléter ces informations avant télédéclarer.
+        </span>
+      </p>
+      <v-card-actions class="px-0 pt-0 pb-0 justify-center">
+        <v-btn
+          :to="{
+            name: 'GestionnaireCantineGerer',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+          color="primary"
+          class="fr-text font-weight-medium"
+        >
+          Mettre à jour mon établissement
         </v-btn>
       </v-card-actions>
     </v-card>
