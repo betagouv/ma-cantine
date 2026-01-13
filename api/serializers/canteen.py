@@ -532,6 +532,7 @@ class CanteenActionsLightSerializer(serializers.ModelSerializer):
             "city",
             "postal_code",
             "production_type",
+            "groupe",
             "satellites_count",  # property
             "satellites_missing_data_count",  # property
             "action",  # annotate
