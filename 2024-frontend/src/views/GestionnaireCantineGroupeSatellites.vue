@@ -102,7 +102,7 @@ const removeRow = (id) => {
 </script>
 <template>
   <section class="gestionnaire-cantine-groupe-satellites">
-    <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}</h1>
+    <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}<br/> de {{ canteen.name }}</h1>
     <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
       <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
