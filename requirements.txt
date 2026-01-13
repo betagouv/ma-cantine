@@ -672,7 +672,7 @@ vine==5.1.0
     #   celery
     #   kombu
     #   ma-cantine
-virtualenv==20.26.6
+virtualenv==20.36.1
     # via
     #   ma-cantine
     #   pre-commit
