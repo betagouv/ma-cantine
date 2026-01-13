@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.0.2](https://github.com/betagouv/ma-cantine/compare/v2026.0.1...v2026.0.2) (2026-01-13)
+
+
+### Améliorations
+
+* **Open Data:** Télédéclaration: améliorer la gestion des secteurs ([#6209](https://github.com/betagouv/ma-cantine/issues/6209)) ([41becd5](https://github.com/betagouv/ma-cantine/commit/41becd5e65bcc977f7cc2a206e184ad424cbd121))
+
+
+### Corrections (bugs, typos...)
+
+* **Groupe:** corrige l'affichage du bloc 'Restaurants Satellites non renseigné' ([#6207](https://github.com/betagouv/ma-cantine/issues/6207)) ([b7e1b91](https://github.com/betagouv/ma-cantine/commit/b7e1b91ef9ac1c45d6fc5f66f60709dfe2795a2f))
+* **Télédéclaration:** corrige les vérifications sur les totaux des familles de la version simplifiée ([#6205](https://github.com/betagouv/ma-cantine/issues/6205)) ([92e1750](https://github.com/betagouv/ma-cantine/commit/92e175050a7b407302af4c379e20c88d3abec212))
+* **Télédéclaration:** remplir le teledeclaration_id avec celle du bilan ([#6200](https://github.com/betagouv/ma-cantine/issues/6200)) ([c2938ac](https://github.com/betagouv/ma-cantine/commit/c2938ac1537ec23a431af71eae1f453462c8d596))
+
+
+### Technique
+
+* **API:** nouvelle organisation pour la gestion des erreurs renvoyées par l'API  ([#6199](https://github.com/betagouv/ma-cantine/issues/6199)) ([fa225af](https://github.com/betagouv/ma-cantine/commit/fa225af7837d1db7fda891fb4793e9f0565f9b87))
+* **Diagnostics:** Tests: bouger les tests lié à la télédéclaration dans un fichier dédié ([#6203](https://github.com/betagouv/ma-cantine/issues/6203)) ([dd79f63](https://github.com/betagouv/ma-cantine/commit/dd79f632fb65d92d065b6ffab58f7dc6f411a7bd))
+* **Open Data:** Cantines: retirer toute mention à sector_m2m (ancienne relation) ([#6204](https://github.com/betagouv/ma-cantine/issues/6204)) ([e26dd01](https://github.com/betagouv/ma-cantine/commit/e26dd0151b6fe39ba939d5db756283650a41aaa0))
+
 ## [2026.0.1](https://github.com/betagouv/ma-cantine/compare/v2026.0.0...v2026.0.1) (2026-01-12)
 
 
