@@ -376,7 +376,7 @@ class UserCanteenActions(ListAPIView):
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
         user_canteen_queryset = self.request.user.canteens.order_by("name")
-        return user_canteen_queryset.annotate_with_action_for_year(year)
+        return user_canteen_queryset.select_related("groupe").annotate_with_action_for_year(year)
 
 
 @extend_schema_view(
