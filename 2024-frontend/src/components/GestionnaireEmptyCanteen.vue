@@ -1,8 +1,8 @@
 <template>
-  <ul class="gestionnaire-canteens-create ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters fr-my-4w">
+  <ul class="gestionnaire-empty-canteen ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters fr-my-4w">
     <li class="fr-col-12 fr-col-md-4">
       <DsfrCard
-        class="gestionnaire-canteens-create__card"
+        class="gestionnaire-empty-canteen__card"
         title="Ajouter une cantine via le formulaire"
         :link="{ name: 'GestionnaireCantineRestaurantAjouter' }"
         endDetail="Ajouter votre cantine"
@@ -11,7 +11,7 @@
     </li>
     <li class="fr-col-12 fr-col-md-4">
       <DsfrCard
-        class="gestionnaire-canteens-create__card"
+        class="gestionnaire-empty-canteen__card"
         title="Ajouter un groupe de restaurants satellites"
         :link="{ name: 'GestionnaireCantineGroupeAjouter' }"
         endDetail="Ajouter votre groupe"
@@ -20,7 +20,7 @@
     </li>
     <li class="fr-col-12 fr-col-md-4">
       <DsfrCard
-        class="gestionnaire-canteens-create__card"
+        class="gestionnaire-empty-canteen__card"
         title="Créer plus de 5 cantines via import de fichier"
         :link="{ name: 'GestionnaireImportCantines' }"
         endDetail="Importer toutes vos cantines"
@@ -31,7 +31,7 @@
 </template>
 
 <style lang="scss">
-.gestionnaire-canteens-create {
+.gestionnaire-empty-canteen {
   &__card {
     .fr-card__header {
       padding-top: 1rem !important;
