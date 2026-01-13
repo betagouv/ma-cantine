@@ -153,7 +153,6 @@ import {
   customDiagnosticYears,
   readyToTeledeclare,
   missingCanteenData,
-  hasSatelliteInconsistency,
   hasFinishedMeasureTunnel,
   actionIsTeledeclare,
   diagnosticCanBeTeledeclared,
@@ -252,9 +251,6 @@ export default {
     },
     missingCanteenData() {
       return missingCanteenData(this.canteen, this.$store.state.sectors)
-    },
-    hasSatelliteInconsistency() {
-      return hasSatelliteInconsistency(this.canteen)
     },
     readyToTeledeclare() {
       return readyToTeledeclare(this.canteen, this.canteenDiagnostic, this.$store.state.sectors)
