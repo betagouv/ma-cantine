@@ -167,6 +167,10 @@ const removeRow = (id) => {
     .fr-select {
       width: 10rem !important;
     }
+
+    tr td:first-child {
+      white-space: normal !important;
+    }
   }
 }
 </style>
