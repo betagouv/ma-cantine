@@ -94,7 +94,7 @@ const canteensGroup = computed(() => {
 
 const allCanteens = computedAsync(async () => {
   const canteens = await canteenService.fetchCanteensActions(lastYear)
-  const canteensFiltered = removeSatellitesFromMyGroups(canteens)
+  const canteensFiltered = hideSatellites(canteens)
   return canteensFiltered
 }, [])
 
@@ -102,11 +102,11 @@ const canteensTable = computed(() => {
   return filteredCanteens.value.length > 0 ? filteredCanteens.value : allCanteens.value
 })
 
-const removeSatellitesFromMyGroups = (canteens) => {
-  const myGroups = canteens.filter((canteen) => canteen.productionType === "groupe").map((canteen) => canteen.id)
+const hideSatellites = (canteens) => {
+  const canteensGroup = canteens.filter((canteen) => canteen.productionType === "groupe").map((canteen) => canteen.id)
   const canteensSatFiltered = canteens.filter((canteen) => {
-    const isInMyGroup = canteen.productionType === "site_cooked_elsewhere" && myGroups.includes(canteen.groupe)
-    return !isInMyGroup
+    const inMyGroup = canteen.productionType === "site_cooked_elsewhere" && canteensGroup.includes(canteen.groupe)
+    return inMyGroup ? false : true
   })
   return canteensSatFiltered
 }
