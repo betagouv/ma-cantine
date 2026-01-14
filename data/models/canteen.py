@@ -6,7 +6,7 @@ from django.core.validators import ValidationError
 from django.db import models
 from django.db.models import BooleanField, Case, Count, Exists, F, OuterRef, Q, Subquery, Value, When, Func
 from django.utils import timezone
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Length
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 from simple_history.utils import update_change_reason
@@ -27,6 +27,7 @@ from data.utils import (
     get_diagnostic_lowest_limit_year,
     get_diagnostic_upper_limit_year,
     has_charfield_missing_query,
+    has_arrayfield_missing_query,
     optimize_image,
 )
 from data.validators import canteen as canteen_validators
@@ -121,6 +122,32 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def is_public(self):
         return self.filter(is_public_query())
 
+    def has_geo_data_missing(self):
+        return self.filter(
+            has_charfield_missing_query("city")
+            | has_charfield_missing_query("postal_code")
+            | has_charfield_missing_query("epci")
+            | has_charfield_missing_query("epci_lib")
+            | has_arrayfield_missing_query("pat_list")
+            | has_arrayfield_missing_query("pat_lib_list")
+            | has_charfield_missing_query("department")
+            | has_charfield_missing_query("department_lib")
+            | has_charfield_missing_query("region")
+            | has_charfield_missing_query("region_lib")
+        )
+
+    def candidates_for_siret_to_city_insee_code_bot(self):
+        return self.is_serving().has_siret().has_city_insee_code_missing().order_by("-creation_date")
+
+    def candidates_for_city_insee_code_to_geo_data_bot(self):
+        return (
+            self.is_serving()
+            .has_city_insee_code_and_length_5()
+            .has_geo_data_missing()
+            .filter(geolocation_bot_attempts__lt=20)
+            .order_by("creation_date")
+        )
+
     def annotate_with_satellites_in_db_count(self):
         # # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
         # TODO: improve with a related_name on the groupe FK
@@ -189,6 +216,13 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def has_city_insee_code_missing(self):
         return self.filter(has_charfield_missing_query("city_insee_code"))
+
+    def has_city_insee_code_and_length_5(self):
+        return (
+            self.has_city_insee_code()
+            .annotate(city_insee_code_len=Length("city_insee_code"))
+            .filter(city_insee_code_len=5)
+        )
 
     def has_missing_data(self):
         return self.exclude(is_filled_query())

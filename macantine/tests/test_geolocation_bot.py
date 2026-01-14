@@ -9,6 +9,7 @@ from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.factories import CanteenFactory, UserFactory
 from data.models.geo import Department
 from macantine import tasks
+from data.models import Canteen
 
 
 @requests_mock.Mocker()
@@ -168,7 +169,7 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
             ),
         ]
 
-        result = list(tasks._get_candidate_canteens_for_insee_code_geobot())
+        result = list(Canteen.objects.candidates_for_city_insee_code_to_geo_data_bot())
 
         self.assertEqual(len(result), 3)
         for canteen in candidate_canteens:
@@ -207,7 +208,8 @@ class TestGeolocationBotUsingSiret(TestCase):
         canteen_without_siret.siret = None  # missing data
         canteen_without_siret.save(skip_validations=True)
 
-        result = list(tasks._get_candidate_canteens_for_siret_to_insee_code_bot())
+        result = list(Canteen.objects.candidates_for_siret_to_city_insee_code_bot())
+
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].id, candidate_canteen.id)
 

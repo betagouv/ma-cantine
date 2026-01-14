@@ -6,7 +6,6 @@ import redis as r
 from django.conf import settings
 from django.core.management import call_command
 from django.db.models import F
-from django.db.models.functions import Length
 from django.utils import timezone
 from sib_api_v3_sdk.rest import ApiException
 
@@ -26,7 +25,6 @@ from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from common.utils import siret as utils_siret
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 from data.models import Canteen, User
-from data.utils import has_arrayfield_missing_query, has_charfield_missing_query
 
 from .celery import app
 from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
@@ -229,33 +227,6 @@ def _covered_by_central_kitchen(canteen):
     return False
 
 
-def _get_candidate_canteens_for_insee_code_geobot():
-    return (
-        Canteen.objects.is_serving()
-        .has_city_insee_code()
-        .filter(
-            has_charfield_missing_query("city")
-            | has_charfield_missing_query("postal_code")
-            | has_charfield_missing_query("epci")
-            | has_charfield_missing_query("epci_lib")
-            | has_arrayfield_missing_query("pat_list")
-            | has_arrayfield_missing_query("pat_lib_list")
-            | has_charfield_missing_query("department")
-            | has_charfield_missing_query("department_lib")
-            | has_charfield_missing_query("region")
-            | has_charfield_missing_query("region_lib")
-        )
-        .filter(geolocation_bot_attempts__lt=20)
-        .annotate(city_insee_code_len=Length("city_insee_code"))
-        .filter(city_insee_code_len=5)
-        .order_by("creation_date")
-    )
-
-
-def _get_candidate_canteens_for_siret_to_insee_code_bot():
-    return Canteen.objects.is_serving().has_siret().has_city_insee_code_missing().order_by("-creation_date")
-
-
 def _update_canteen_geo_data_from_siret(canteen):
     if utils_siret.is_valid_length_siret(canteen.siret):
         response = fetch_geo_data_from_siret(canteen.siret)
@@ -279,7 +250,7 @@ def fill_missing_insee_code_using_siret():
     Processing: API Recherche Entreprises
     Output: Fill canteen's city_insee_code field
     """
-    candidate_canteens = _get_candidate_canteens_for_siret_to_insee_code_bot()
+    candidate_canteens = Canteen.objects.candidates_for_siret_to_city_insee_code_bot()
     logger.info(f"Siret to insee_code Bot: found {candidate_canteens.count()} canteens")
     counter = 0
 
@@ -377,7 +348,7 @@ def fill_missing_geolocation_data_using_insee_code():
     Processing: API Découpage Administratif
     Output: Fill canteen's postal_code, city, epci, department & region fields
     """
-    candidate_canteens = _get_candidate_canteens_for_insee_code_geobot()
+    candidate_canteens = Canteen.objects.candidates_for_city_insee_code_to_geo_data_bot()
     candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
     logger.info(f"INSEE Geolocation Bot: found {candidate_canteens.count()} canteens")
     counter = 0

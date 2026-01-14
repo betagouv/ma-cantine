@@ -11,6 +11,8 @@ Le modèle `Canteen` stock un certain nombre de données géographiques.
 |postal_code|chaîne de caractères|Code postal de la ville dans laquelle se trouve la cantine|38000|
 |epci|chaîne de caractères|Code EPCI dans lequel se trouve la cantine|200040715|
 |epci_lib|chaîne de caractères|Libellé de l'EPCI dans lequel se trouve la cantine|Grenoble-Alpes-Métropole|
+|pat_list|liste de chaînes de caractères|||
+|pat_lib_list|liste de chaînes de caractères|||
 |department|chaîne de caractères|Code Insee du département dans lequel se trouve la cantine|38|
 |department_lib|chaîne de caractères|Libellé du département dans lequel se trouve la cantine|Isère|
 |region|chaîne de caractères|Code Insee de la région dans lequel se trouve la cantine|84|
