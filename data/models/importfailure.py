@@ -18,3 +18,9 @@ class ImportFailure(models.Model):
     )
     details = models.TextField(null=True, blank=True, verbose_name="détails")
     import_type = models.TextField(null=True, blank=True, choices=ImportType.choices, verbose_name="type d'import")
+
+    @property
+    def details_short(self):
+        if self.details and len(self.details) > 75:
+            return self.details[:75] + "..."
+        return self.details
