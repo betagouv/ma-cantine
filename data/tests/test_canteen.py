@@ -704,6 +704,20 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.canteen_site.central_kitchen, None)
 
 
+class CanteenUserManagerQuerySetTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.manager = UserFactory()
+        cls.canteen_with_manager = CanteenFactory(managers=[cls.manager])
+        cls.canteen_without_manager = CanteenFactory(managers=[])
+
+    def test_annotate_with_is_managed_by_user(self):
+        self.assertEqual(Canteen.objects.count(), 2)
+        qs = Canteen.objects.annotate_with_is_managed_by_user(self.manager)
+        self.assertTrue(qs.get(id=self.canteen_with_manager.id).is_managed_by_user)
+        self.assertFalse(qs.get(id=self.canteen_without_manager.id).is_managed_by_user)
+
+
 class CanteenPurchaseQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):

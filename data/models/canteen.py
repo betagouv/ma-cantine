@@ -159,6 +159,13 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             )
         )
 
+    def annotate_with_is_managed_by_user(self, user):
+        return self.annotate(
+            is_managed_by_user=Exists(
+                self.filter(managers__id=user.id, pk=OuterRef("pk")),
+            )
+        )
+
     def annotate_with_purchases_for_year(self, year):
         from data.models import Purchase
 

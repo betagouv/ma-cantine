@@ -24,7 +24,13 @@ class CanteenGroupeSatellitesListView(ListAPIView):
     def get_queryset(self):
         year = timezone.now().year - 1
         canteen_pk = self.kwargs["canteen_pk"]
-        return Canteen.objects.get(pk=canteen_pk).satellites.annotate_with_action_for_year(year).order_by("name")
+        user = self.request.user
+        return (
+            Canteen.objects.get(pk=canteen_pk)
+            .satellites.annotate_with_is_managed_by_user(user)
+            .annotate_with_action_for_year(year)
+            .order_by("name")
+        )
 
 
 @extend_schema_view(
