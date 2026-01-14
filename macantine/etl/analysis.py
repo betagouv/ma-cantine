@@ -142,6 +142,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     satellite_row = row.copy()
                     satellite_row["canteen_id"] = satellite["id"]
                     satellite_row["name"] = satellite["name"]
+                    # in the past some satellites may have been teledeclared as ON_SITE or other types
                     satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
                     satellite_row["siret"] = satellite["siret"]
                     satellite_row["satellite_canteens_count"] = 0
@@ -149,6 +150,18 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     sectors_dict = satellite["sectors"] if "sectors" in satellite else []
                     satellite_row["secteur"] = extract_sector_from_dict_sectors(sectors_dict)
                     satellite_row["categorie"] = extract_category_from_dict_sectors(sectors_dict)
+
+                    # new fields (2025)
+                    for field_name in [
+                        "city_insee_code",
+                        "department",
+                        "region",
+                        "management_type",
+                        "economic_model",
+                        "central_producer_siret",
+                    ]:
+                        if field_name in satellite:
+                            satellite_row[field_name] = satellite[field_name]
 
                     satellite_row = self.split_cc_values(satellite_row, nbre_satellites)
                     satellite_rows.append(satellite_row)
