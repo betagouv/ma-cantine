@@ -716,6 +716,12 @@ class CanteenUserManagerQuerySetTest(TestCase):
         qs = Canteen.objects.annotate_with_is_managed_by_user(self.manager)
         self.assertTrue(qs.get(id=self.canteen_with_manager.id).is_managed_by_user)
         self.assertFalse(qs.get(id=self.canteen_without_manager.id).is_managed_by_user)
+        qs = Canteen.objects.annotate_with_is_managed_by_user(UserFactory())
+        self.assertFalse(qs.get(id=self.canteen_with_manager.id).is_managed_by_user)
+        self.assertFalse(qs.get(id=self.canteen_without_manager.id).is_managed_by_user)
+        qs = Canteen.objects.annotate_with_is_managed_by_user(None)
+        self.assertFalse(qs.get(id=self.canteen_with_manager.id).is_managed_by_user)
+        self.assertFalse(qs.get(id=self.canteen_without_manager.id).is_managed_by_user)
 
 
 class CanteenPurchaseQuerySetTest(TestCase):

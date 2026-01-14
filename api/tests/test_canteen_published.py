@@ -664,6 +664,46 @@ class PublishedCanteenDetailApiTest(APITestCase):
             response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_canteen_is_managed_by_user_and_can_be_claimed(self):
+        user = UserFactory()
+        canteen = CanteenFactory(managers=[user])
+
+        # unauthenticated and canteen with manager
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertFalse(body.get("isManagedByUser"))
+        self.assertFalse(body.get("canBeClaimed"))
+
+        # unauthenticated and canteen without manager
+        canteen.managers.clear()
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertFalse(body.get("isManagedByUser"))
+        self.assertTrue(body.get("canBeClaimed"))
+
+        # authenticated and canteen without manager
+        self.client.force_authenticate(user=user)
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertFalse(body.get("isManagedByUser"))
+        self.assertTrue(body.get("canBeClaimed"))
+
+        # authenticated and canteen with manager (but not the user)
+        canteen.managers.add(UserFactory())
+        self.client.force_login(user=user)
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertFalse(body.get("isManagedByUser"))
+        self.assertFalse(body.get("canBeClaimed"))
+
+        # authenticated and canteen with the user as manager
+        canteen.managers.add(user)
+        self.client.force_login(user=user)
+        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
+        body = response.json()
+        self.assertTrue(body.get("isManagedByUser"))
+        self.assertFalse(body.get("canBeClaimed"))
+
     @authenticate
     def test_canteen_image_serialization(self):
         """
@@ -1078,20 +1118,6 @@ class PublishedCanteenDetailApiTest(APITestCase):
 
 
 class TestPublishedCanteenClaimApiTest(APITestCase):
-    def test_canteen_claim_value(self):
-        canteen = CanteenFactory()
-
-        # The factory creates canteens with managers
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
-        body = response.json()
-        self.assertFalse(body.get("canBeClaimed"))
-
-        # Now we will remove the manager to change the claim API value
-        canteen.managers.clear()
-        response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
-        body = response.json()
-        self.assertTrue(body.get("canBeClaimed"))
-
     @authenticate
     def test_canteen_claim_request(self):
         canteen = CanteenFactory()

@@ -160,9 +160,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         )
 
     def annotate_with_is_managed_by_user(self, user):
+        if not user or user.is_anonymous:
+            return self.annotate(is_managed_by_user=Value(False, output_field=BooleanField()))
         return self.annotate(
             is_managed_by_user=Exists(
-                self.filter(managers__id=user.id, pk=OuterRef("pk")),
+                self.exclude(managers=None).filter(managers__id=user.id, pk=OuterRef("pk")),
             )
         )
 

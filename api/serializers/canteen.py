@@ -147,7 +147,7 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
-    is_managed_by_user = serializers.SerializerMethodField(read_only=True)
+    is_managed_by_user = serializers.BooleanField(read_only=True)
     badges = BadgesSerializer(source="*", read_only=True)
     resource_actions = ResourceActionFullSerializer(many=True, read_only=True)
 
@@ -183,23 +183,19 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "diversification_comments",
             "plastics_comments",
             "information_comments",
-            "can_be_claimed",
-            "is_managed_by_user",
+            "can_be_claimed",  # property
+            "is_managed_by_user",  # annotate
             "central_kitchen",
             "badges",
             "resource_actions",
         )
-
-    def get_is_managed_by_user(self, obj):
-        user = self.context["request"].user
-        return user in obj.managers.all()
 
 
 class ElectedCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     diagnostics = PublicDiagnosticSerializer(many=True, read_only=True)
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
-    is_managed_by_user = serializers.SerializerMethodField(read_only=True)
+    is_managed_by_user = serializers.BooleanField(read_only=True)
     publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
 
     class Meta:
@@ -231,14 +227,10 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
             "diversification_comments",
             "plastics_comments",
             "information_comments",
-            "is_managed_by_user",
+            "is_managed_by_user",  # annotate
             "central_kitchen_diagnostics",
             "publication_status",  # property
         )
-
-    def get_is_managed_by_user(self, obj):
-        user = self.context["request"].user
-        return user in obj.managers.all()
 
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
@@ -536,7 +528,7 @@ class CanteenActionsLightSerializer(serializers.ModelSerializer):
 
 
 class CanteenStatusSerializer(serializers.ModelSerializer):
-    is_managed_by_user = serializers.SerializerMethodField(read_only=True)
+    is_managed_by_user = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Canteen
@@ -547,16 +539,12 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
             "city",
             "postal_code",
             "department",
-            "is_managed_by_user",
-            "can_be_claimed",
             "production_type",
             "groupe",
+            "can_be_claimed",  # property
+            "is_managed_by_user",  # annotate
         )
         read_only_fields = fields
-
-    def get_is_managed_by_user(self, obj):
-        user = self.context["request"].user
-        return user in obj.managers.all()
 
 
 CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS = (
