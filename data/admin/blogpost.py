@@ -14,6 +14,14 @@ class BlogPostForm(forms.ModelForm):
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "display_date",
+        "author",
+        "published_state",
+    )
+    list_filter = ("published",)
+
     form = BlogPostForm
     fields = (
         "title",
@@ -25,13 +33,6 @@ class BlogPostAdmin(admin.ModelAdmin):
         "tags",
     )
     filter_vertical = ("tags",)
-    list_display = (
-        "title",
-        "display_date",
-        "author",
-        "published_state",
-    )
-    list_filter = ("published",)
 
     def published_state(self, obj):
         return "✅ Publié" if obj.published else "🔒 Non publié"

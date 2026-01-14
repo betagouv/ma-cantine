@@ -13,10 +13,11 @@ class PartnerTypeForm(forms.ModelForm):
 
 @admin.register(PartnerType)
 class PartnerTypeAdmin(admin.ModelAdmin):
-    form = PartnerTypeForm
-    fields = ("name",)
     list_display = (
         "name",
         "creation_date",
     )
     list_filter = ("name",)
+
+    form = PartnerTypeForm
+    fields = ("name",)

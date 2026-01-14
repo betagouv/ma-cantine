@@ -11,10 +11,7 @@ class ImportFailureAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "user",
         "import_type",
     )
-
-    def has_delete_permission(self, request, obj=None):
-        return True
-
+    list_filter = ["creation_date", "import_type"]
     search_fields = (
         "user__first_name",
         "user__last_name",
@@ -23,4 +20,5 @@ class ImportFailureAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "creation_date",
     )
 
-    list_filter = ["creation_date", "import_type"]
+    def has_delete_permission(self, request, obj=None):
+        return True

@@ -5,16 +5,6 @@ from data.models import Review
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    fields = (
-        "rating",
-        "suggestion",
-        "page",
-        "hasCanteen",
-        "hasDiagnostic",
-        "creation_date",
-        "user",
-    )
-    readonly_fields = fields
     list_display = (
         "user",
         "page",
@@ -28,3 +18,14 @@ class ReviewAdmin(admin.ModelAdmin):
         "rating",
         "page",
     )
+
+    fields = (
+        "rating",
+        "suggestion",
+        "page",
+        "hasCanteen",
+        "hasDiagnostic",
+        "creation_date",
+        "user",
+    )
+    readonly_fields = fields
