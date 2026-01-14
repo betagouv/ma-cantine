@@ -62,7 +62,7 @@
       </v-col>
     </v-row>
     <v-card
-      v-if="inTeledeclarationCampaign && canteen.satellites.length === 0"
+      v-if="inTeledeclarationCampaign && canteen.satellites.length === 0 && canteen.productionType === 'groupe'"
       class="pa-6 my-6 fr-text grey--text text--darken-3 text-center cta-block"
     >
       <p>
