@@ -9,10 +9,10 @@ from data.admin.utils import ReadOnlyAdminMixin
 @admin.register(ImportFailure)
 class ImportFailureAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = (
-        "creation_date",
-        "user_with_link",
+        "creation_date",  # clickable link to change page
+        "user_with_link",  # clickable link to user change page
         "import_type",
-        "details",
+        "details_short",
     )
     list_filter = ["creation_date", "import_type"]
     search_fields = (
@@ -21,7 +21,6 @@ class ImportFailureAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "user__last_name",
         "user__email",
         "user__username",
-        "creation_date",
     )
     search_help_text = "La recherche est faite sur les champs : utilisateur (ID, nom, prénom, email)"
 
@@ -51,3 +50,8 @@ class ImportFailureAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         return format_html(f'<a href="{url}">{obj.user}</a>')
 
     user_with_link.short_description = ImportFailure._meta.get_field("user").verbose_name
+
+    def details_short(self, obj):
+        return obj.details_short
+
+    details_short.short_description = ImportFailure._meta.get_field("details").verbose_name
