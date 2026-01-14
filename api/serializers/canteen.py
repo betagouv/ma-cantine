@@ -564,70 +564,40 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
         return user in obj.managers.all()
 
 
+CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS = (
+    "id",
+    "name",
+    "siret",
+    "siren_unite_legale",
+    "city_insee_code",
+    "department",
+    "region",
+    "daily_meal_count",
+    "yearly_meal_count",
+    "sector_list",
+    "line_ministry",
+    "production_type",
+    "management_type",
+    "economic_model",
+    "satellite_canteens_count",
+    "central_producer_siret",
+    "groupe_id",
+    "is_filled",
+)
+
+
 # remember to update TD version if you update this
 class CanteenTeledeclarationSerializer(serializers.ModelSerializer):
-    central_producer_siret = serializers.SerializerMethodField(read_only=True)
-    satellite_canteens_count = serializers.SerializerMethodField(read_only=True)
-
     class Meta:
         model = Canteen
-        fields = (
-            "id",
-            "name",
-            "siret",
-            "siren_unite_legale",
-            "city_insee_code",
-            # "postal_code",
-            # "epci",
-            # "epci_lib",
-            # "pat",
-            # "pat_lib",
-            "department",
-            # "department_lib",
-            "region",
-            # "region_lib",
-            "sector_list",
-            "line_ministry",
-            "daily_meal_count",
-            "yearly_meal_count",
-            "production_type",
-            "management_type",
-            "economic_model",
-            "satellite_canteens_count",
-            "central_producer_siret",
-        )
-
-    def get_central_producer_siret(self, obj):
-        if not obj.production_type == Canteen.ProductionType.ON_SITE_CENTRAL:
-            return None
-        return obj.central_producer_siret
-
-    def get_satellite_canteens_count(self, obj):
-        if (
-            not obj.production_type == Canteen.ProductionType.CENTRAL
-            and not obj.production_type == Canteen.ProductionType.CENTRAL_SERVING
-        ):
-            return None
-        return obj.satellite_canteens_count
+        fields = CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS
 
 
 # remember to update TD version if you update this
 class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Canteen
-        fields = (
-            "id",
-            "name",
-            "siret",
-            "siren_unite_legale",
-            "daily_meal_count",
-            "yearly_meal_count",
-            "sector_list",
-            "line_ministry",
-            "production_type",
-            "management_type",
-            "economic_model",
-        )
+        fields = CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS
 
 
 class CanteenAnalysisSerializer(serializers.ModelSerializer):
