@@ -91,12 +91,25 @@ const canteensGroup = computed(() => {
     title,
   }
 })
+
 const allCanteens = computedAsync(async () => {
-  return await canteenService.fetchCanteensActions(lastYear)
+  const canteens = await canteenService.fetchCanteensActions(lastYear)
+  const canteensFiltered = hideSatellites(canteens)
+  return canteensFiltered
 }, [])
+
 const canteensTable = computed(() => {
   return filteredCanteens.value.length > 0 ? filteredCanteens.value : allCanteens.value
 })
+
+const hideSatellites = (canteens) => {
+  const canteensGroup = canteens.filter((canteen) => canteen.productionType === "groupe").map((canteen) => canteen.id)
+  const canteensSatFiltered = canteens.filter((canteen) => {
+    const inMyGroup = canteen.productionType === "site_cooked_elsewhere" && canteensGroup.includes(canteen.groupe)
+    return inMyGroup ? false : true
+  })
+  return canteensSatFiltered
+}
 
 /* CAMPAIGN */
 const campaign = computedAsync(async () => {
