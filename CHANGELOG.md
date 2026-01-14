@@ -6,6 +6,24 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.1.0](https://github.com/betagouv/ma-cantine/compare/v2026.0.3...v2026.1.0) (2026-01-14)
+
+
+### Nouveautés
+
+* **Tableau de bord:** cache les restaurants satellites des groupes et ajoute un lien vers la page de gestion ([#6214](https://github.com/betagouv/ma-cantine/issues/6214)) ([3a2fc82](https://github.com/betagouv/ma-cantine/commit/3a2fc8219ac5aa528caad46954de37690a919151))
+
+
+### Améliorations
+
+* **Gérer mes satellites:** petites améliorations d'interfaces (ordonner par nom, largeur colonnes..) ([#6216](https://github.com/betagouv/ma-cantine/issues/6216)) ([0b333b2](https://github.com/betagouv/ma-cantine/commit/0b333b2d0fd5d61e67d4d56e6d298db6de99c470))
+* **Télédéclaration:** ajouter des champs supplémentaires (géo en particulier) dans les snapshots cantines & satellites ([#6202](https://github.com/betagouv/ma-cantine/issues/6202)) ([61a766c](https://github.com/betagouv/ma-cantine/commit/61a766ccff26fecb7849f2d7030c96b922b5680b))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantine:** corrige le message d'erreur satellite manquant affiché sur des cantines non groupe ([#6215](https://github.com/betagouv/ma-cantine/issues/6215)) ([783e4f6](https://github.com/betagouv/ma-cantine/commit/783e4f6a012a8df36f6da4627d7ce30ff35ef98d))
+
 ## [2026.0.3](https://github.com/betagouv/ma-cantine/compare/v2026.0.2...v2026.0.3) (2026-01-13)
 
 
