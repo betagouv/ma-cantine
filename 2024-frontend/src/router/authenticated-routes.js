@@ -156,7 +156,7 @@ const routes = [
         name: "GestionnaireCantineGroupeSatellites",
         component: GestionnaireCantineGroupeSatellites,
         meta: {
-          title: "Gérer les restaurants satellites de mon groupe",
+          title: "Gérer les restaurants satellites",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },

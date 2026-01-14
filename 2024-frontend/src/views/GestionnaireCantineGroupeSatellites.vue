@@ -78,6 +78,7 @@ const tableRows = computed(() => {
           name: {
             canteen: sat.name,
             url: urlService.getCanteenUrl(sat),
+            isManager: sat.userCanView,
           },
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
@@ -102,7 +103,7 @@ const removeRow = (id) => {
 </script>
 <template>
   <section class="gestionnaire-cantine-groupe-satellites">
-    <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}</h1>
+    <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}<br/> de {{ canteen.name }}</h1>
     <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
       <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
@@ -117,7 +118,7 @@ const removeRow = (id) => {
       no-caption
       :headers-row="tableHeaders"
       :rows="tableRows"
-      :sortable-rows="['name', 'siretSiren', 'dailyMealCount']"
+      :sortable-rows="['name', 'diagnostic']"
       :pagination="true"
       :pagination-options="[50, 100, 200]"
       :rows-per-page="50"
@@ -126,12 +127,17 @@ const removeRow = (id) => {
     >
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'name'">
-          <router-link
-            :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
-            class="fr-text-title--blue-france fr-text--bold"
-          >
-            {{ cell.canteen }}
-          </router-link>
+          <p class="fr-text-title--blue-france fr-text--bold">
+            <router-link
+              v-if="cell.isManager"
+              :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+            >
+              {{ cell.canteen }}
+            </router-link>
+            <span v-else>
+              {{ cell.canteen }}
+            </span>
+          </p>
         </template>
         <template v-else-if="colKey === 'diagnostic'">
           <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
@@ -166,6 +172,10 @@ const removeRow = (id) => {
   &__table {
     .fr-select {
       width: 10rem !important;
+    }
+
+    tr td:first-child {
+      white-space: normal !important;
     }
   }
 }

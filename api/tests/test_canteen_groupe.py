@@ -15,10 +15,12 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         cls.canteen_groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         cls.canteen_satellite_0 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
         cls.canteen_satellite_11 = CanteenFactory(
+            name="Last",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=cls.canteen_groupe_1,
         )
         cls.canteen_satellite_12 = CanteenFactory(
+            name="First",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=cls.canteen_groupe_1,
         )
@@ -68,11 +70,10 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_canteen_groupe_satellites_list(self):
-        # set user as manager of canteen groups
+    def test_canteen_groupe_satellites_list_for_groupe_with_satellites(self):
+        # set user as manager of canteen_groupe_1
         self.canteen_groupe_1.managers.add(authenticate.user)
-        self.canteen_groupe_2.managers.add(authenticate.user)
-        # groupe_1 has 2 satellites
+        # canteen_groupe_1 has 2 satellites
         url = reverse(
             "canteen_groupe_satellites_list",
             kwargs={"canteen_pk": self.canteen_groupe_1.id},
@@ -82,8 +83,27 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(len(body), 2)
+        self.assertEqual(body[0]["id"], self.canteen_satellite_12.id)  # ordered by name
+        self.assertFalse(body[0]["userCanView"])  # user not manager of satellite canteens
+        self.assertIn("action", body[0])
 
-        # groupe_2 has 0 satellites
+        # set user as manager of canteen_satellite_12
+        self.canteen_satellite_12.managers.add(authenticate.user)
+        # call again
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 2)
+        self.assertEqual(body[0]["id"], self.canteen_satellite_12.id)  # ordered by name
+        self.assertTrue(body[0]["userCanView"])  # user is now manager of satellite canteen
+        self.assertIn("action", body[0])
+
+    @authenticate
+    def test_canteen_groupe_satellites_list_for_groupe_without_satellites(self):
+        # set user as manager of canteen_groupe_2
+        self.canteen_groupe_2.managers.add(authenticate.user)
+        # canteen_groupe_2 has 0 satellites
         url = reverse(
             "canteen_groupe_satellites_list",
             kwargs={"canteen_pk": self.canteen_groupe_2.id},
@@ -94,7 +114,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body), 0)
 
-    def test_canteen_groupe_satellites_list_correct_token(self):
+    def test_canteen_groupe_satellites_list_with_oauth2_token(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen_groupe_1.managers.add(user)
         self.client.credentials(Authorization=f"Bearer {token}")
