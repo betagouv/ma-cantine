@@ -234,7 +234,7 @@ def _update_canteen_geo_data_from_siret(canteen):
             try:
                 if "cityInseeCode" in response.keys():
                     canteen.city_insee_code = response["cityInseeCode"]
-                    canteen.save()
+                    canteen.save(skip_validations=True)
                     update_change_reason(canteen, "Code Insee MAJ par bot, via SIRET")
                     logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
                     return True
@@ -336,7 +336,7 @@ def _update_canteen_geo_data_from_insee_code(  # noqa C901
         update = True
     # save
     if update:
-        canteen.save()
+        canteen.save(skip_validations=True)
         update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
         return True
 

@@ -215,7 +215,7 @@ class CanteensImportView(APIView):
                     canteen.postal_code = row[4]
                     canteen.city = row[5]
                     canteen.department = row[6].split(",")[0]
-                    canteen.save()
+                    canteen.save(skip_validations=True)
                     update_change_reason(canteen, f"Mass CSV import - Geo data. {self.__class__.__name__[:100]}")
         except Exception as e:
             logger.exception(f"Error while updating location data : {repr(e)} - {e}")
