@@ -356,12 +356,12 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.RUP])
-        self.assertEqual(purchase.local_definition, "")
+        self.assertEqual(purchase.local_definition, None)
         # purchase with characteristics empty
         purchase = Purchase.objects.filter(description="Pommes, vertes 4").first()
         self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.family, Purchase.Family.AUTRES)
-        self.assertEqual(purchase.characteristics, [""])
+        self.assertEqual(purchase.characteristics, [])
         # Test that the purchase import source contains the complete file digest
         filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
