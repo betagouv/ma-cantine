@@ -10,6 +10,7 @@ import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 /* Settings */
 const props = defineProps(["satellites", "groupe"])
+const emit = defineEmits(["showModalRemoveSatellite"])
 const lastYear = new Date().getFullYear() - 1
 const store = useRootStore()
 
@@ -89,7 +90,7 @@ const getActions = (sat) => {
 
   actions.push({
     label: "Retirer de mon groupe",
-    emitEvent: 'removeSatellite',
+    emitEvent: 'showModalRemoveSatellite',
   })
 
   return actions
@@ -97,6 +98,7 @@ const getActions = (sat) => {
 
 const clickAction = (emitEvent, canteen) => {
   if (emitEvent === 'joinCanteen') joinCanteen(canteen)
+  else if (emitEvent === 'showModalRemoveSatellite') emit('showModalRemoveSatellite', canteen)
 }
 
 const joinCanteen = (canteen) => {
