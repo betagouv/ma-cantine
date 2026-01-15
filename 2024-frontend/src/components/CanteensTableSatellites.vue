@@ -6,6 +6,7 @@ import campaignService from "@/services/campaigns.js"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
+/* Settings */
 const props = defineProps(["satellites", "groupe"])
 const lastYear = new Date().getFullYear() - 1
 
@@ -13,7 +14,6 @@ const lastYear = new Date().getFullYear() - 1
 const campaign = computedAsync(async () => {
   return await campaignService.getYearCampaignDates(lastYear)
 }, false)
-
 
 /* Table */
 const tableHeaders = [
@@ -52,12 +52,12 @@ const tableRows = computed(() => {
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
           diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
-          actions: getSatelliteActions(sat),
+          actions: getActions(sat),
         }
       })
 })
 
-const getSatelliteActions = (sat) => {
+const getActions = (sat) => {
   const actions = []
   switch (true) {
     case sat.isManagedByUser:
