@@ -71,12 +71,13 @@ const tableRows = computed(() => {
       })
 })
 
-
 const getCityInfos = (canteen) => {
-  console.log(canteen)
-  return "aaa"
+  let city = ""
+  if (canteen.city) city += canteen.city
+  if (canteen.postalCode) city += ` (${canteen.postalCode})`
+  if (!canteen.city && !canteen.postalCode) city = "Non renseigné"
+  return city
 }
-
 
 /* Actions */
 const getActions = (sat) => {
