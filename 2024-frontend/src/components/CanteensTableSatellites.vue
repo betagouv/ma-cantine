@@ -37,7 +37,7 @@ const tableHeaders = [
   },
   {
     key: "dailyMealCount",
-    label: "Couverts par jour",
+    label: "Couverts </br> par jour",
   },
   {
     key: "diagnostic",
