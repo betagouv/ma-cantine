@@ -4,7 +4,7 @@ import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
 
 const store = useRootStore()
-const props = defineProps(["canteen", "satellite"])
+const props = defineProps(["groupe", "satellite"])
 const emit = defineEmits(["satelliteRemoved"])
 const loading = ref(false)
 const opened = ref(false)
@@ -16,7 +16,7 @@ const toggleModal = () => {
 const unlinkSatellite = () => {
   loading.value = true
   canteensService
-    .unlinkSatellite(props.canteen.id, props.satellite.id)
+    .unlinkSatellite(props.groupe.id, props.satellite.id)
     .then((response) => {
       if (response.status === "error") store.notifyServerError(response)
       else {
