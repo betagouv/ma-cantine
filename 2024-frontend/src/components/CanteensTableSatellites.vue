@@ -5,6 +5,7 @@ import { useRootStore } from "@/stores/root"
 import diagnosticService from "@/services/diagnostics.js"
 import campaignService from "@/services/campaigns.js"
 import canteensService from "@/services/canteens"
+import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppRawHTML from "@/components/AppRawHTML.vue"
@@ -53,34 +54,29 @@ const tableRows = computed(() => {
   return !props.satellites
     ? []
     : props.satellites.map((sat) => {
+        const name = canteensTableService.getSatelliteNameInfos(sat)
+        const siretSiren = canteensTableService.getSiretOrSirenInfos(sat)
+        const city = canteensTableService.getCityInfos(sat)
+        const dailyMealCount = canteensTableService.getDailyMealCountInfos(sat)
+        const diagnostic = diagnosticService.getBadge(sat.action, campaign.value)
+        const actions =  {
+          links: getDropdownLinks(sat),
+          canteen: sat,
+        }
+
         return {
-          name: {
-            canteen: sat.name,
-            url: urlService.getCanteenUrl(sat),
-            isManagedByUser: sat.isManagedByUser,
-          },
-          siretSiren: sat.siret || sat.sirenUniteLegale,
-          city: getCityInfos(sat),
-          dailyMealCount: sat.dailyMealCount,
-          diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
-          actions: {
-            links: getActions(sat),
-            canteen: sat,
-          },
+          name,
+          siretSiren,
+          city,
+          dailyMealCount,
+          diagnostic,
+          actions,
         }
       })
 })
 
-const getCityInfos = (canteen) => {
-  let city = ""
-  if (canteen.city) city += canteen.city
-  if (canteen.postalCode) city += ` (${canteen.postalCode})`
-  if (!canteen.city && !canteen.postalCode) city = "Non renseigné"
-  return city
-}
-
 /* Actions */
-const getActions = (sat) => {
+const getDropdownLinks = (sat) => {
   const actions = []
   switch (true) {
     case sat.isManagedByUser:
