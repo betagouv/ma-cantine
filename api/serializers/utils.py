@@ -50,8 +50,10 @@ def appro_to_percentages(representation, instance, remove_values=True):
     representation["percentage_valeur_totale"] = 1
     if remove_values:
         representation.pop("valeur_totale", None)
+        representation.pop("valeur_viandes_volailles", None)
         representation.pop("valeur_viandes_volailles_egalim", None)
         representation.pop("valeur_viandes_volailles_france", None)
+        representation.pop("valeur_produits_de_la_mer", None)
         representation.pop("valeur_produits_de_la_mer_egalim", None)
         representation.pop("valeur_produits_de_la_mer_france", None)
 
