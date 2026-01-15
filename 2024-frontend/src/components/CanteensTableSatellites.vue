@@ -7,6 +7,7 @@ import campaignService from "@/services/campaigns.js"
 import canteensService from "@/services/canteens"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
+import AppRawHTML from "@/components/AppRawHTML.vue"
 import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
 
 /* Settings */
@@ -29,6 +30,10 @@ const tableHeaders = [
   {
     key: "siretSiren",
     label: "SIRET / SIREN",
+  },
+  {
+    key: "city",
+    label: "Commune </br> (code postal)",
   },
   {
     key: "dailyMealCount",
@@ -55,6 +60,7 @@ const tableRows = computed(() => {
             isManagedByUser: sat.isManagedByUser,
           },
           siretSiren: sat.siret || sat.sirenUniteLegale,
+          city: getCityInfos(sat),
           dailyMealCount: sat.dailyMealCount,
           diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
           actions: {
@@ -64,6 +70,13 @@ const tableRows = computed(() => {
         }
       })
 })
+
+
+const getCityInfos = (canteen) => {
+  console.log(canteen)
+  return "aaa"
+}
+
 
 /* Actions */
 const getActions = (sat) => {
@@ -149,6 +162,9 @@ const claimCanteen = (canteen) => {
       :rows-per-page="50"
       pagination-wrapper-class="fr-mt-4w"
     >
+      <template #header="{ label }">
+        <AppRawHTML :html="label" />
+      </template>
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'name'">
           <p class="fr-text-title--blue-france fr-text--bold">
