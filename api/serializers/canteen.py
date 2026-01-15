@@ -250,6 +250,9 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "siret",
             "siren_unite_legale",
             "daily_meal_count",
+            "city",
+            "postal_code",
+            "can_be_claimed",
             "publication_status",  # property
             "is_managed_by_user",  # annotate
             "action",  # annotate
