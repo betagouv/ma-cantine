@@ -84,6 +84,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 
   &__link {
     min-height: 1rem !important;
+    font-weight: initial !important;
     border-bottom: solid 1px var(--background-contrast-grey);
   }
 }
