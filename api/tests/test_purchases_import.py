@@ -374,6 +374,22 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
 
     @authenticate
+    def test_import_good_purchases_with_empty_columns(self):
+        """
+        Tests that can import a purchases file with no characteristics or local definition
+        """
+        CanteenFactory(siret="65449096241683", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_with_empty_columns.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 2)
+        self.assertFalse(ImportFailure.objects.exists())
+
+    @authenticate
     def test_import_comma_separated_numbers(self):
         """
         Tests that can import a file with comma-separated numbers
