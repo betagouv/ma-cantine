@@ -70,7 +70,7 @@ const unlinkSatellite = () => {
     <template #default>
       <p class="fr-mb-2w">
         En confirmant cette demande « {{ satellite.name }} » ne fera plus parti des restaurants fournis par votre
-        établissement « {{ canteen.name }} » et donc :
+        groupe « {{ canteen.name }} » et donc :
       </p>
       <ul>
         <li>
