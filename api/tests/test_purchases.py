@@ -1244,12 +1244,12 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         # total 2024 viandes volailles egalim: 30
         # total 2024 viandes volailles france: 20
         self.assertEqual(body["percentageValeurViandesVolaillesEgalim"], 0.75)
-        self.assertEqual(body["percentageValeurViandesVolaillesFrance"], 0.2)  # TODO: double check
+        self.assertEqual(body["percentageValeurViandesVolaillesFrance"], 0.5)
         # total 2024 produits de la mer: 20
         # total 2024 produits de la mer egalim: 10
         # total 2024 produits de la mer france: 10
         self.assertEqual(body["percentageValeurProduitsDeLaMerEgalim"], 0.5)
-        self.assertEqual(body["percentageValeurProduitsDeLaMerFrance"], 0.1)  # TODO: double check
+        self.assertEqual(body["percentageValeurProduitsDeLaMerFrance"], 0.5)
 
     def test_cannot_get_redacted_purchases_summary(self):
         """

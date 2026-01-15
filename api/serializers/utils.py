@@ -34,9 +34,12 @@ def appro_to_percentages(representation, instance, remove_values=True):
         "valeur_siqo",
         "valeur_externalites_performance",
         "valeur_egalim_autres",
-    ] + Diagnostic.COMPLETE_APPRO_FIELDS  # meat and fish totals included in COMPLETE
-    total = representation.get("valeur_totale")
+    ]
 
+    if representation.get("diagnostic_type") is Diagnostic.DiagnosticType.COMPLETE:
+        appro_fields.append(Diagnostic.COMPLETE_APPRO_FIELDS)  # meat and fish totals included in COMPLETE
+
+    total = representation.get("valeur_totale")
     for field in appro_fields:
         new_field_name = f"percentage_{field}"
         if total and representation.get(field) is not None:
@@ -47,8 +50,10 @@ def appro_to_percentages(representation, instance, remove_values=True):
     representation["percentage_valeur_totale"] = 1
     if remove_values:
         representation.pop("valeur_totale", None)
+        representation.pop("valeur_viandes_volailles", None)
         representation.pop("valeur_viandes_volailles_egalim", None)
         representation.pop("valeur_viandes_volailles_france", None)
+        representation.pop("valeur_produits_de_la_mer", None)
         representation.pop("valeur_produits_de_la_mer_egalim", None)
         representation.pop("valeur_produits_de_la_mer_france", None)
 
