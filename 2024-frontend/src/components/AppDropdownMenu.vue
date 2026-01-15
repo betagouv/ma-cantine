@@ -15,6 +15,12 @@ const arrow = computed(() => {
   return `fr-icon-arrow-${direction}-s-line`
 })
 
+/* Click emit */
+const clickEmitLink = (emitEvent) => {
+  isOpened.value = false
+  emit("click", emitEvent)
+}
+
 /* Click outside */
 const opener = useTemplateRef("opener")
 const content = useTemplateRef("content")
@@ -54,7 +60,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
         <a v-else
           href="#"
           class="app-dropdown-menu__link ma-cantine--unstyled-link fr-text-title--blue-france fr-py-1v fr-px-3v fr-nav__link fr-text--sm ma-cantine--text-right fr-col-12"
-          @click.prevent="emit('click', link.emitEvent)">
+          @click.prevent="clickEmitLink(link.emitEvent)">
           {{ link.label }}
         </a>
       </li>
