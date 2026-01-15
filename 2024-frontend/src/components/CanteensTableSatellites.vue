@@ -7,6 +7,7 @@ import campaignService from "@/services/campaigns.js"
 import canteensService from "@/services/canteens"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
+import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
 
 /* Settings */
 const props = defineProps(["satellites", "groupe"])
@@ -136,47 +137,44 @@ const claimCanteen = (canteen) => {
 </script>
 
 <template>
-  <div class="ma-cantine--big-table">
-    <div class="ma-cantine--big-table__scrollable">
-      <DsfrDataTable
-        class="ma-cantine--big-table__content"
-        title="Vos restaurants satellites"
-        no-caption
-        :headers-row="tableHeaders"
-        :rows="tableRows"
-        :sortable-rows="['name', 'diagnostic']"
-        :pagination="true"
-        :pagination-options="[50, 100, 200]"
-        :rows-per-page="50"
-        pagination-wrapper-class="fr-mt-4w"
-      >
-        <template #cell="{ colKey, cell }">
-          <template v-if="colKey === 'name'">
-            <p class="fr-text-title--blue-france fr-text--bold">
-              <router-link
-                v-if="cell.isManagedByUser"
-                :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
-              >
-                {{ cell.canteen }}
-              </router-link>
-              <span v-else>
-                {{ cell.canteen }}
-              </span>
-            </p>
-          </template>
-          <template v-else-if="colKey === 'diagnostic'">
-            <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
-          </template>
-          <template v-else-if="colKey === 'actions'">
-            <div class="fr-grid-row fr-grid-row--right">
-              <AppDropdownMenu label="Actions" :links="cell.links" size="small" @click="(event) => clickAction(event, cell.canteen)" />
-            </div>
-          </template>
-          <template v-else>
-            {{ cell }}
-          </template>
+  <LayoutBigTable>
+    <DsfrDataTable
+      title="Vos restaurants satellites"
+      no-caption
+      :headers-row="tableHeaders"
+      :rows="tableRows"
+      :sortable-rows="['name', 'diagnostic']"
+      :pagination="true"
+      :pagination-options="[50, 100, 200]"
+      :rows-per-page="50"
+      pagination-wrapper-class="fr-mt-4w"
+    >
+      <template #cell="{ colKey, cell }">
+        <template v-if="colKey === 'name'">
+          <p class="fr-text-title--blue-france fr-text--bold">
+            <router-link
+              v-if="cell.isManagedByUser"
+              :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+            >
+              {{ cell.canteen }}
+            </router-link>
+            <span v-else>
+              {{ cell.canteen }}
+            </span>
+          </p>
         </template>
-      </DsfrDataTable>
-    </div>
-  </div>
+        <template v-else-if="colKey === 'diagnostic'">
+          <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
+        </template>
+        <template v-else-if="colKey === 'actions'">
+          <div class="fr-grid-row fr-grid-row--right">
+            <AppDropdownMenu label="Actions" :links="cell.links" size="small" @click="(event) => clickAction(event, cell.canteen)" />
+          </div>
+        </template>
+        <template v-else>
+          {{ cell }}
+        </template>
+      </template>
+    </DsfrDataTable>
+  </LayoutBigTable>
 </template>
