@@ -4,12 +4,10 @@ import { computedAsync } from "@vueuse/core"
 import diagnosticService from "@/services/diagnostics.js"
 import campaignService from "@/services/campaigns.js"
 import urlService from "@/services/urls.js"
-import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
-import CanteenButtonUnlink from "@/components/CanteenButtonUnlink.vue"
+import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 const props = defineProps(["satellites", "groupe"])
 const lastYear = new Date().getFullYear() - 1
-const emit = defineEmits(["removeSatellite"])
 
 /* Campaign */
 const campaign = computedAsync(async () => {
@@ -36,12 +34,8 @@ const tableHeaders = [
     label: `Bilan ${lastYear}`,
   },
   {
-    key: "edit",
-    label: "Modifier",
-  },
-  {
-    key: "remove",
-    label: "Retirer",
+    key: "actions",
+    label: "Actions",
   },
 ]
 
@@ -58,18 +52,41 @@ const tableRows = computed(() => {
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
           diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
-          edit: {
-            isManagedByUser: sat.isManagedByUser,
-            satelliteComponentUrl: sat.isManagedByUser ? urlService.getCanteenUrl(sat) : "",
-            satellite: sat,
-          },
-          remove: {
-            satellite: sat,
-            groupe: props.groupe,
-          },
+          actions: getSatelliteActions(sat),
         }
       })
 })
+
+const getSatelliteActions = (sat) => {
+  const actions = []
+  switch (true) {
+    case sat.isManagedByUser:
+      actions.push({
+        label: "Modifier",
+        to: { name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: sat.userCanView ? urlService.getCanteenUrl(sat) : "" } },
+      })
+      break
+    case sat.canBeClaimed:
+      actions.push({
+        label: "Revendiquer la cantine",
+        emitEvent: 'claimCanteen',
+      })
+      break
+    case !sat.isManagedByUser && !sat.canBeClaimed:
+      actions.push({
+        label: "Demander à rejoindre",
+        emitEvent: 'removeSatellite',
+      })
+      break
+  }
+
+  actions.push({
+    label: "Retirer de mon groupe",
+    emitEvent: 'removeSatellite',
+  })
+
+  return actions
+}
 </script>
 
 <template>
@@ -102,22 +119,10 @@ const tableRows = computed(() => {
       <template v-else-if="colKey === 'diagnostic'">
         <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
       </template>
-      <template v-else-if="colKey === 'edit'">
-        <router-link
-          v-if="cell.isManagedByUser"
-          :to="{ name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
-          class="ma-cantine--unstyled-link"
-        >
-          <DsfrButton tertiary label="Modifier" icon="fr-icon-pencil-fill" />
-        </router-link>
-        <CanteenButtonJoin v-else :id="cell.satellite.id" :name="cell.satellite.name" />
-      </template>
-      <template v-else-if="colKey === 'remove'">
-        <CanteenButtonUnlink
-          :groupe="cell.groupe"
-          :satellite="cell.satellite"
-          @satelliteRemoved="emit('removeSatellite', cell.satellite.id)"
-        />
+      <template v-else-if="colKey === 'actions'">
+        <div class="fr-grid-row fr-grid-row--right">
+          <AppDropdownMenu label="Actions" :links="cell" size="small" />
+        </div>
       </template>
       <template v-else>
         {{ cell }}
