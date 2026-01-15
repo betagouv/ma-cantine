@@ -192,9 +192,8 @@ class PurchasesImportView(APIView):
             pass
 
         family = row[5]
-        characteristics = row[6]
-        characteristics = [c.strip() for c in characteristics.split(",")]
-        local_definition = row[7]
+        characteristics = [c.strip() for c in row[6].split(",")] if row[6] else []
+        local_definition = row[7].strip() if row[7] else None
 
         purchase = Purchase(
             canteen=canteen,
@@ -204,7 +203,7 @@ class PurchasesImportView(APIView):
             price_ht=price,
             family=family.strip(),
             characteristics=characteristics,
-            local_definition=local_definition.strip(),
+            local_definition=local_definition,
             import_source=self.tmp_id,
             creation_source=CreationSource.IMPORT,
         )
