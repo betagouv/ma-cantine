@@ -40,7 +40,7 @@ const rows = computed(() => {
     const city = canteensTableService.getCityInfos(canteen)
     const productionType = canteensTableService.getProductionTypeInfos(canteen)
     const diagnostic = canteensTableService.getDiagnosticInfos(canteen, props.campaign)
-    const actions = getActionsInfos(canteen)
+    const actions = getDropdownLinks(canteen)
 
     rows.push({
       name,
@@ -53,11 +53,6 @@ const rows = computed(() => {
   })
   return rows
 })
-
-const getActionsInfos = (canteen) => {
-  const dropdownLinks = getDropdownLinks(canteen)
-  return dropdownLinks
-}
 
 const getDropdownLinks = (canteen) => {
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
