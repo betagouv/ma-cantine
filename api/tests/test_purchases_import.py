@@ -193,7 +193,11 @@ class PurchasesImportApiErrorTest(APITestCase):
             "La date doit être écrite sous la forme `aaaa-mm-jj`",
         )
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # price
-        self.assertTrue(errors.pop(0)["message"].startswith("A price ne respecte pas le motif imposé"))
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal"
+            )
+        )
         self.assertTrue(
             errors.pop(0)["message"].startswith("NOPE ne respecte pas le motif imposé"),
         )
