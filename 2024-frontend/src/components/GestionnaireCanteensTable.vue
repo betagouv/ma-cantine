@@ -136,7 +136,6 @@ const getTeledeclareButton = (canteen) => {
 <template>
   <LayoutBigTable>
     <DsfrDataTable
-      class="gestionnaire-canteens-table"
       title="Vos cantines"
       no-caption
       :headers-row="header"
@@ -201,17 +200,3 @@ const getTeledeclareButton = (canteen) => {
     </DsfrDataTable>
   </LayoutBigTable>
 </template>
-
-<style lang="scss">
-.gestionnaire-canteens-table {
-
-  th:nth-child(1) {
-    width: 35% !important;
-  }
-
-  td:nth-child(1),
-  td:nth-child(4) {
-    white-space: pre-wrap !important;
-  }
-}
-</style>

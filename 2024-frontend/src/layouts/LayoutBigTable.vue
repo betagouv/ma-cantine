@@ -9,6 +9,15 @@
 <style lang="scss">
 .layout-big-table {
   overflow-x: hidden;
+
+  th:nth-child(1) {
+    width: 35% !important;
+  }
+
+  td:nth-child(1),
+  td:nth-child(4) {
+    white-space: pre-wrap !important;
+  }
 }
 
 .layout-big-table__scrollable {
