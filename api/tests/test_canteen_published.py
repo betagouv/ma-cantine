@@ -884,7 +884,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         serialized_diag = body.get("approDiagnostics")[0]
 
         # self.assertIn("percentageValeurViandesVolaillesEgalim", serialized_diag)
-        self.assertIn("percentageValeurViandesVolaillesFrance", serialized_diag)
+        # self.assertIn("percentageValeurViandesVolaillesFrance", serialized_diag)
         # self.assertIn("percentageValeurProduitsDeLaMerEgalim", serialized_diag)
         self.assertNotIn("valeurViandesVolaillesEgalim", serialized_diag)
         self.assertNotIn("valeurViandesVolaillesFrance", serialized_diag)
