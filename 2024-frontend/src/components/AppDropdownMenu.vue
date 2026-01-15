@@ -6,6 +6,7 @@
 import { computed, ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
 defineProps(["label", "icon", "links", "size"])
+const emit = defineEmits(["click"])
 
 /* Icon */
 const isOpened = ref(false)
@@ -42,13 +43,20 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
       class="app-dropdown-menu__content fr-background-default--grey ma-cantine--shadow-raised ma-cantine--unstyled-list fr-my-0"
       ref="content"
     >
-      <li v-for="link in links" :key="link.to" class="fr-pb-0">
+      <li v-for="link, index in links" :key="index" class="fr-pb-0">
         <router-link
+          v-if="link.to"
           :to="link.to"
           class="app-dropdown-menu__link ma-cantine--unstyled-link fr-text-title--blue-france fr-py-1v fr-px-3v fr-nav__link"
         >
           <p class="fr-text--sm ma-cantine--text-right fr-col-12 fr-mb-0">{{ link.label }}</p>
         </router-link>
+        <a v-else
+          href="#"
+          class="app-dropdown-menu__link ma-cantine--unstyled-link fr-text-title--blue-france fr-py-1v fr-px-3v fr-nav__link fr-text--sm ma-cantine--text-right fr-col-12"
+          @click.prevent="emit('click', link.emitEvent)">
+          {{ link.label }}
+        </a>
       </li>
     </ul>
   </div>
