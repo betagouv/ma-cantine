@@ -381,8 +381,8 @@ class PurchasesImportApiSuccessTest(APITestCase):
         CanteenFactory(siret="65449096241683", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good_with_empty_columns.csv"
-        with open(file_path) as purchase_file:
+        file_path = "./api/tests/files/achats/purchases_good_with_empty_columns.xlsx"
+        with open(file_path, "rb") as purchase_file:
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
