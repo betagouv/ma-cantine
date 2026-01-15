@@ -10,6 +10,14 @@ const getNameInfos = (canteen) => {
   }
 }
 
+const getSatelliteNameInfos = (canteen) => {
+  return {
+    canteen: canteen.name,
+    url: urlService.getCanteenUrl(canteen),
+    isManager: canteen.userCanView,
+  }
+}
+
 const getSatellitesCountSentence = (satellitesCount) => {
   const number = satellitesCount === 0 ? "Aucun" : satellitesCount
   const name = satellitesCount <= 1 ? "restaurant satellite" : "restaurants satellites"
@@ -50,10 +58,16 @@ const getTeledeclareButton = (canteen) => {
   return { ...button, canteenUrlComponent, year: lastYear }
 }
 
+const getDailyMealCountInfos = (canteen) => {
+  return canteen.dailyMealCount
+}
+
 export default {
   getNameInfos,
+  getSatelliteNameInfos,
   getSiretOrSirenInfos,
   getCityInfos,
   getProductionTypeInfos,
   getDiagnosticInfos,
+  getDailyMealCountInfos,
 }
