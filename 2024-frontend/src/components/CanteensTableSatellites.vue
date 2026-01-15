@@ -10,7 +10,7 @@ import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 /* Settings */
 const props = defineProps(["satellites", "groupe"])
-const emit = defineEmits(["showModalRemoveSatellite"])
+const emit = defineEmits(["showModalRemoveSatellite", "updateSatellites"])
 const lastYear = new Date().getFullYear() - 1
 const store = useRootStore()
 
@@ -98,6 +98,7 @@ const getActions = (sat) => {
 
 const clickAction = (emitEvent, canteen) => {
   if (emitEvent === 'joinCanteen') joinCanteen(canteen)
+  else if (emitEvent === 'claimCanteen') claimCanteen(canteen)
   else if (emitEvent === 'showModalRemoveSatellite') emit('showModalRemoveSatellite', canteen)
 }
 
@@ -113,6 +114,22 @@ const joinCanteen = (canteen) => {
         title: "Demande envoyée",
         message: `Nous avons contacté l'équipe de la cantine ${canteen.name}. Ces derniers reviendront vers vous pour accepter ou non votre demande.`,
       })
+    })
+    .catch(store.notifyServerError)
+}
+
+/* Claim a canteen */
+const claimCanteen = (canteen) => {
+  canteensService
+    .claimCanteen(canteen.id)
+    .then((response) => {
+      if (response.id) {
+        store.notify({
+          title: "Cantine revendiquée",
+          message: `Vous êtes maintenant gestionnaire de la cantine ${canteen.name}.`,
+        })
+        emit('updateSatellites')
+      } else store.notifyServerError(response)
     })
     .catch(store.notifyServerError)
 }

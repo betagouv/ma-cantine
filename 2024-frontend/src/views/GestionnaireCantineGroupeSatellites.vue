@@ -59,6 +59,7 @@ const showModalRemoveSatellite = (satellite) => {
       v-if="satellites.length > 0"
       :satellites="satellites"
       :groupe="canteen"
+      @updateSatellites="updateSatellites"
       @showModalRemoveSatellite="showModalRemoveSatellite" />
     <CanteenModalSatelliteRemove
       v-if="satelliteToRemove"
