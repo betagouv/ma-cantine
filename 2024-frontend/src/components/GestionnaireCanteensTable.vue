@@ -133,10 +133,10 @@ const getTeledeclareButton = (canteen) => {
 }
 </script>
 <template>
-  <div class="gestionnaire-canteens-table">
-    <div class="gestionnaire-canteens-table__scrollable">
+  <div class="ma-cantine--big-table">
+    <div class="ma-cantine--big-table__scrollable">
       <DsfrDataTable
-        class="gestionnaire-canteens-table__content"
+        class="gestionnaire-canteens-table ma-cantine--big-table__content"
         title="Vos cantines"
         no-caption
         :headers-row="header"
@@ -144,7 +144,7 @@ const getTeledeclareButton = (canteen) => {
         :pagination="true"
         :pagination-options="[50, 100, 200]"
         :rows-per-page="50"
-        pagination-wrapper-class="fr-mt-2w"
+        pagination-wrapper-class="fr-mt-4w"
       >
         <template #header="{ label }">
           <AppRawHTML :html="label" />
@@ -205,19 +205,7 @@ const getTeledeclareButton = (canteen) => {
 
 <style lang="scss">
 .gestionnaire-canteens-table {
-  overflow-x: hidden;
 
-  &__scrollable {
-    overflow: scroll;
-  }
-
-  &__content {
-    min-width: 75rem; // Calculated from fr-container { max-width 78rem, padding-left: 1.5rem, padding-right: 1.5rem }
-  }
-
-  .fr-table__container {
-    overflow: initial !important;
-  }
 
   th:nth-child(1) {
     width: 35% !important;

@@ -124,6 +124,22 @@ address {
     background-size: 100% 2px !important
 }
 
+.ma-cantine--big-table {
+    overflow-x: hidden;
+}
+
+.ma-cantine--big-table__scrollable {
+    overflow: scroll;
+}
+
+.ma-cantine--big-table .fr-table__container {
+    overflow: initial !important;
+}
+
+.ma-cantine--big-table__content {
+    min-width: 75rem;
+}
+
 
 /* ICON */
 .ma-cantine--icon-xs::before {
