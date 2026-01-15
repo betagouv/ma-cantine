@@ -6,6 +6,24 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.2.0](https://github.com/betagouv/ma-cantine/compare/v2026.1.0...v2026.2.0) (2026-01-15)
+
+
+### Nouveautés
+
+* **Ressources:** ajout des supports webinaire 14/01/26 ([#6233](https://github.com/betagouv/ma-cantine/issues/6233)) ([83867db](https://github.com/betagouv/ma-cantine/commit/83867db296c77321b0c7e3be5b7055cf96b0ef2f))
+
+
+### Améliorations
+
+* **Ressources:** ajout de l'antiseche ([#6221](https://github.com/betagouv/ma-cantine/issues/6221)) ([f9ac776](https://github.com/betagouv/ma-cantine/commit/f9ac77629326428885ef44effe7307d66e1beeb8))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** Données géographiques: pouvoir enregistrer les modifications même si la cantine a des données manquantes par ailleurs ([#6229](https://github.com/betagouv/ma-cantine/issues/6229)) ([afea7d6](https://github.com/betagouv/ma-cantine/commit/afea7d66b62f521a1779eeb64136b2d6a7a233bb))
+* **Graphique synthèse des achats:** corrige la différence entre le pourcentage renvoyé depuis le bilan et celui de la page publique de la cantine ([#6231](https://github.com/betagouv/ma-cantine/issues/6231)) ([7e2729f](https://github.com/betagouv/ma-cantine/commit/7e2729fd71e30cea6334847713880b2127442a7e))
+
 ## [2026.1.0](https://github.com/betagouv/ma-cantine/compare/v2026.0.3...v2026.1.0) (2026-01-14)
 
 
