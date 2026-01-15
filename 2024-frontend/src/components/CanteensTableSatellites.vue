@@ -1,14 +1,17 @@
 <script setup>
 import { computed } from "vue"
 import { computedAsync } from "@vueuse/core"
+import { useRootStore } from "@/stores/root"
 import diagnosticService from "@/services/diagnostics.js"
 import campaignService from "@/services/campaigns.js"
+import canteensService from "@/services/canteens"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 /* Settings */
 const props = defineProps(["satellites", "groupe"])
 const lastYear = new Date().getFullYear() - 1
+const store = useRootStore()
 
 /* Campaign */
 const campaign = computedAsync(async () => {
@@ -52,11 +55,15 @@ const tableRows = computed(() => {
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
           diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
-          actions: getActions(sat),
+          actions: {
+            links: getActions(sat),
+            canteen: sat,
+          },
         }
       })
 })
 
+/* Actions */
 const getActions = (sat) => {
   const actions = []
   switch (true) {
@@ -75,7 +82,7 @@ const getActions = (sat) => {
     case !sat.isManagedByUser && !sat.canBeClaimed:
       actions.push({
         label: "Demander à rejoindre",
-        emitEvent: 'removeSatellite',
+        emitEvent: 'joinCanteen',
       })
       break
   }
@@ -86,6 +93,26 @@ const getActions = (sat) => {
   })
 
   return actions
+}
+
+const clickAction = (emitEvent, canteen) => {
+  if (emitEvent === 'joinCanteen') joinCanteen(canteen)
+}
+
+const joinCanteen = (canteen) => {
+  const userInfos = {
+    email: store.loggedUser.email,
+    name: `${store.loggedUser.firstName} ${store.loggedUser.lastName}`,
+  }
+  canteensService
+    .teamJoinRequest(canteen.id, userInfos)
+    .then(() => {
+      store.notify({
+        title: "Demande envoyée",
+        message: `Nous avons contacté l'équipe de la cantine ${canteen.name}. Ces derniers reviendront vers vous pour accepter ou non votre demande.`,
+      })
+    })
+    .catch(store.notifyServerError)
 }
 </script>
 
@@ -121,7 +148,7 @@ const getActions = (sat) => {
       </template>
       <template v-else-if="colKey === 'actions'">
         <div class="fr-grid-row fr-grid-row--right">
-          <AppDropdownMenu label="Actions" :links="cell" size="small" />
+          <AppDropdownMenu label="Actions" :links="cell.links" size="small" @click="(event) => clickAction(event, cell.canteen)" />
         </div>
       </template>
       <template v-else>
