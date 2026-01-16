@@ -5,8 +5,10 @@ import { useRootStore } from "@/stores/root"
 import diagnosticService from "@/services/diagnostics.js"
 import campaignService from "@/services/campaigns.js"
 import canteensService from "@/services/canteens"
+import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
+import AppRawHTML from "@/components/AppRawHTML.vue"
 import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
 
 /* Settings */
@@ -31,8 +33,12 @@ const tableHeaders = [
     label: "SIRET / SIREN",
   },
   {
+    key: "city",
+    label: "Commune </br> (code postal)",
+  },
+  {
     key: "dailyMealCount",
-    label: "Couverts par jour",
+    label: "Couverts </br> par jour",
   },
   {
     key: "diagnostic",
@@ -48,25 +54,29 @@ const tableRows = computed(() => {
   return !props.satellites
     ? []
     : props.satellites.map((sat) => {
+        const name = canteensTableService.getSatelliteNameInfos(sat)
+        const siretSiren = canteensTableService.getSiretOrSirenInfos(sat)
+        const city = canteensTableService.getCityInfos(sat)
+        const dailyMealCount = canteensTableService.getDailyMealCountInfos(sat)
+        const diagnostic = diagnosticService.getBadge(sat.action, campaign.value)
+        const actions =  {
+          links: getDropdownLinks(sat),
+          canteen: sat,
+        }
+
         return {
-          name: {
-            canteen: sat.name,
-            url: urlService.getCanteenUrl(sat),
-            isManagedByUser: sat.isManagedByUser,
-          },
-          siretSiren: sat.siret || sat.sirenUniteLegale,
-          dailyMealCount: sat.dailyMealCount,
-          diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
-          actions: {
-            links: getActions(sat),
-            canteen: sat,
-          },
+          name,
+          siretSiren,
+          city,
+          dailyMealCount,
+          diagnostic,
+          actions,
         }
       })
 })
 
 /* Actions */
-const getActions = (sat) => {
+const getDropdownLinks = (sat) => {
   const actions = []
   switch (true) {
     case sat.isManagedByUser:
@@ -149,6 +159,9 @@ const claimCanteen = (canteen) => {
       :rows-per-page="50"
       pagination-wrapper-class="fr-mt-4w"
     >
+      <template #header="{ label }">
+        <AppRawHTML :html="label" />
+      </template>
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'name'">
           <p class="fr-text-title--blue-france fr-text--bold">

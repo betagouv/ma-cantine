@@ -1,8 +1,7 @@
 <script setup>
 import { computed } from "vue"
-import diagnosticService from "@/services/diagnostics.js"
 import urlService from "@/services/urls.js"
-import cantines from "@/data/cantines.json"
+import canteensTableService from "@/services/canteensTable.js"
 import AppRawHTML from "@/components/AppRawHTML.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
@@ -36,12 +35,12 @@ const header = [
 const rows = computed(() => {
   const rows = []
   props.canteens.forEach((canteen) => {
-    const name = getNameInfos(canteen)
-    const siret = getSiretOrSirenInfos(canteen)
-    const city = getCityInfos(canteen)
-    const productionType = getProductionTypeInfos(canteen)
-    const diagnostic = getDiagnosticInfos(canteen)
-    const actions = getActionsInfos(canteen)
+    const name = canteensTableService.getNameInfos(canteen)
+    const siret = canteensTableService.getSiretOrSirenInfos(canteen)
+    const city = canteensTableService.getCityInfos(canteen)
+    const productionType = canteensTableService.getProductionTypeInfos(canteen)
+    const diagnostic = canteensTableService.getDiagnosticInfos(canteen, props.campaign)
+    const actions = getDropdownLinks(canteen)
 
     rows.push({
       name,
@@ -54,50 +53,6 @@ const rows = computed(() => {
   })
   return rows
 })
-
-const getNameInfos = (canteen) => {
-  return {
-    name: canteen.name,
-    url: urlService.getCanteenUrl(canteen),
-    satellitesCountSentence: canteen.productionType === "groupe" ? getSatellitesCountSentence(canteen.satellitesCount) : null,
-  }
-}
-
-const getSatellitesCountSentence = (satellitesCount) => {
-  const number = satellitesCount === 0 ? "Aucun" : satellitesCount
-  const name = satellitesCount <= 1 ? "restaurant satellite" : "restaurants satellites"
-  return `${number} ${name}`
-}
-
-const getSiretOrSirenInfos = (canteen) => {
-  return canteen.siret || canteen.sirenUniteLegale
-}
-
-const getCityInfos = (canteen) => {
-  let city = ""
-  if (canteen.city) city += canteen.city
-  if (canteen.postalCode) city += ` (${canteen.postalCode})`
-  if (!canteen.city && !canteen.postalCode) city = "Non renseigné"
-  return city
-}
-
-const getProductionTypeInfos = (canteen) => {
-  const slug = canteen.productionType
-  const index = cantines.productionType.findIndex((type) => type.value === slug)
-  return cantines.productionType[index].label
-}
-
-const getDiagnosticInfos = (canteen) => {
-  const action = canteen.action
-  const badge = diagnosticService.getBadge(action, props.campaign, canteen.satellitesMissingDataCount)
-  const button = getTeledeclareButton(canteen)
-  return { badge, button }
-}
-
-const getActionsInfos = (canteen) => {
-  const dropdownLinks = getDropdownLinks(canteen)
-  return dropdownLinks
-}
 
 const getDropdownLinks = (canteen) => {
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
@@ -123,14 +78,6 @@ const getDropdownLinks = (canteen) => {
     })
   }
   return links
-}
-
-const getTeledeclareButton = (canteen) => {
-  if (canteen.satellitesMissingDataCount > 0) return false
-  const button = diagnosticService.getTeledeclareButton(canteen.action)
-  if (!button) return false
-  const canteenUrlComponent = urlService.getCanteenUrl(canteen)
-  return { ...button, canteenUrlComponent, year: lastYear }
 }
 </script>
 <template>
