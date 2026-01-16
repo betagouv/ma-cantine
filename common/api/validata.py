@@ -64,7 +64,7 @@ def check_if_has_errors_header(report):
     return False
 
 
-def has_invalid_columns_names(user_file_header, expected_header):
+def process_header_errors(user_file_header, expected_header):
     header_errors = []
     diff_header_length = len(user_file_header) - len(expected_header)
 
