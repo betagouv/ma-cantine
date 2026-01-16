@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
+import json
 
 from api.permissions import IsAuthenticated
 from api.serializers import PurchaseSerializer
@@ -49,6 +50,11 @@ class PurchasesImportView(APIView):
         self.start_time = time.time()
         logger.info("Purchase bulk import started")
         try:
+            # Header from schema
+            schema_file = open(PURCHASE_SCHEMA_FILE_PATH)
+            json_data = json.load(schema_file)
+            expected_header = [field["name"] for field in json_data["fields"]]
+
             # File validation
             self.file = request.data["file"]
             file_import.validate_file_size(self.file)
