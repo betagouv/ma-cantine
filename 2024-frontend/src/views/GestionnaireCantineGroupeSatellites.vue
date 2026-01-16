@@ -3,13 +3,10 @@ import { computed, ref } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
-import diagnosticService from "@/services/diagnostics.js"
-import campaignService from "@/services/campaigns.js"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
-import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
-import CanteenButtonUnlink from "@/components/CanteenButtonUnlink.vue"
 import CanteenModalSatelliteAdd from "@/components/CanteenModalSatelliteAdd.vue"
+import CanteensTableSatellites from "@/components/CanteensTableSatellites.vue"
 
 /* Data */
 const route = useRoute()
@@ -17,12 +14,6 @@ const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteen = computedAsync(async () => await canteenService.fetchCanteen(canteenId), {})
 const loading = ref(true)
 const modalOpened = ref(false)
-
-/* Campaign */
-const campaign = computedAsync(async () => {
-  const lastYear = new Date().getFullYear() - 1
-  return await campaignService.getYearCampaignDates(lastYear)
-}, false)
 
 /* Satellites  */
 const satellites = ref([])
@@ -41,63 +32,7 @@ const satellitesCountSentence = computed(() => {
   else return `${satellites.value.length} restaurants satellites renseignés`
 })
 
-/* Table */
-const lastYear = new Date().getFullYear() - 1
-const tableHeaders = [
-  {
-    key: "name",
-    label: "Nom",
-  },
-  {
-    key: "siretSiren",
-    label: "SIRET / SIREN",
-  },
-  {
-    key: "dailyMealCount",
-    label: "Couverts par jour",
-  },
-  {
-    key: "diagnostic",
-    label: `Bilan ${lastYear}`,
-  },
-  {
-    key: "edit",
-    label: "Modifier",
-  },
-  {
-    key: "remove",
-    label: "Retirer",
-  },
-]
-
-const tableRows = computed(() => {
-  return !satellites.value
-    ? []
-    : satellites.value.map((sat) => {
-        return {
-          name: {
-            canteen: sat.name,
-            url: urlService.getCanteenUrl(sat),
-            isManager: sat.isManagedByUser,
-          },
-          siretSiren: sat.siret || sat.sirenUniteLegale,
-          dailyMealCount: sat.dailyMealCount,
-          diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
-          edit: {
-            userCan: sat.isManagedByUser,
-            satelliteComponentUrl: sat.isManagedByUser ? urlService.getCanteenUrl(sat) : "",
-            satellite: sat,
-          },
-          remove: {
-            satellite: sat,
-            canteen: canteen.value,
-          },
-        }
-      })
-})
-
-/* Rows */
-const removeRow = (id) => {
+const removeSatellite = (id) => {
   satellites.value = satellites.value.filter((sat) => sat.id !== id)
 }
 </script>
@@ -112,58 +47,7 @@ const removeRow = (id) => {
       <CanteenModalSatelliteAdd :open="modalOpened" :groupId="canteenId" @close="modalOpened = false" @updateSatellites="updateSatellites()" />
     </div>
     <AppLoader v-if="loading" />
-    <DsfrDataTable
-      v-if="tableRows.length > 0"
-      title="Vos restaurants satellites"
-      no-caption
-      :headers-row="tableHeaders"
-      :rows="tableRows"
-      :sortable-rows="['name', 'diagnostic']"
-      :pagination="true"
-      :pagination-options="[50, 100, 200]"
-      :rows-per-page="50"
-      pagination-wrapper-class="fr-mt-3w"
-      class="gestionnaire-cantine-groupe-satellites__table"
-    >
-      <template #cell="{ colKey, cell }">
-        <template v-if="colKey === 'name'">
-          <p class="fr-text-title--blue-france fr-text--bold">
-            <router-link
-              v-if="cell.isManager"
-              :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
-            >
-              {{ cell.canteen }}
-            </router-link>
-            <span v-else>
-              {{ cell.canteen }}
-            </span>
-          </p>
-        </template>
-        <template v-else-if="colKey === 'diagnostic'">
-          <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
-        </template>
-        <template v-else-if="colKey === 'edit'">
-          <router-link
-            v-if="cell.userCan"
-            :to="{ name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
-            class="ma-cantine--unstyled-link"
-          >
-            <DsfrButton tertiary label="Modifier" icon="fr-icon-pencil-fill" />
-          </router-link>
-          <CanteenButtonJoin v-else :id="cell.satellite.id" :name="cell.satellite.name" />
-        </template>
-        <template v-else-if="colKey === 'remove'">
-          <CanteenButtonUnlink
-            :canteen="cell.canteen"
-            :satellite="cell.satellite"
-            @satelliteRemoved="removeRow(cell.satellite.id)"
-          />
-        </template>
-        <template v-else>
-          {{ cell }}
-        </template>
-      </template>
-    </DsfrDataTable>
+    <CanteensTableSatellites v-if="satellites.length > 0" :satellites="satellites" :groupe="canteen" @removeSatellite="removeSatellite" />
   </section>
 </template>
 
