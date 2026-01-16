@@ -7,7 +7,7 @@ import stringService from "@/services/strings.js"
 import campaignService from "@/services/campaigns.js"
 
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
-import GestionnaireCanteensCreate from "@/components/GestionnaireCanteensCreate.vue"
+import GestionnaireEmptyCanteen from "@/components/GestionnaireEmptyCanteen.vue"
 import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppLoader from "@/components/AppLoader.vue"
@@ -127,7 +127,7 @@ const campaign = computedAsync(async () => {
   <DsfrAlert v-if="canteensGroup.displayBanner > 0" :title="canteensGroup.title" class="fr-mb-4w">
     <p>Vous pouvez requalifier vos groupes directement depuis ce tableau de bord, <a href="https://ma-cantine.crisp.help/fr/article/les-groupes-de-restaurants-satellites-definition-et-gestion-82qt51/?bust=1767947700084" target="_blank">découvrez comment faire</a></p>
   </DsfrAlert>
-  <GestionnaireCanteensCreate v-if="store.canteenPreviews.length === 0" />
+  <GestionnaireEmptyCanteen v-if="store.canteenPreviews.length === 0" />
   <section v-else-if="store.canteenPreviews.length > 0 && campaign">
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-md-6">

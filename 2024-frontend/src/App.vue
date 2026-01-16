@@ -4,7 +4,7 @@ import { reactive, computed, watch } from "vue"
 import AppHeader from "@/components/AppHeader.vue"
 import AppBanner from "@/components/AppBanner.vue"
 import AppFooter from "@/components/AppFooter.vue"
-import BreadcrumbsNav from "@/components/BreadcrumbsNav.vue"
+import AppBreadcrumb from "@/components/AppBreadcrumb.vue"
 import NotificationCenter from "@/components/NotificationCenter.vue"
 
 const layout = reactive({ fullscreen: false })
@@ -25,7 +25,7 @@ watch(route, (to) => {
     <AppBanner v-if="!layout.fullscreen" />
 
     <main :class="routerViewClass">
-      <BreadcrumbsNav v-if="!layout.fullscreen" />
+      <AppBreadcrumb v-if="!layout.fullscreen" />
       <RouterView />
     </main>
 
