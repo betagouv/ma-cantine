@@ -96,11 +96,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(
-            errors[0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
+        self.assertEqual(len(errors), 8)
+        for error in errors:
+            self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
         # wrong header
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header.csv"
@@ -113,11 +111,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(
-            errors[0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
+        self.assertEqual(len(errors), 5)
+        for error in errors:
+            self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
         # partial header
         file_path = "./api/tests/files/achats/purchases_bad_partial_header.csv"
@@ -132,8 +128,12 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 1)
         self.assertEqual(
-            errors[0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+            errors[0]["field"],
+            "Première ligne du fichier incorrecte",
+        )
+        self.assertEqual(
+            errors[0]["title"],
+            "Elle doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
     @authenticate
