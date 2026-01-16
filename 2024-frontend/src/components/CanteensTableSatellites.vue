@@ -53,14 +53,14 @@ const tableRows = computed(() => {
           name: {
             canteen: sat.name,
             url: urlService.getCanteenUrl(sat),
-            isManager: sat.userCanView,
+            isManagedByUser: sat.isManagedByUser,
           },
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
           diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
           edit: {
-            userCan: sat.userCanView,
-            satelliteComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
+            isManagedByUser: sat.isManagedByUser,
+            satelliteComponentUrl: sat.isManagedByUser ? urlService.getCanteenUrl(sat) : "",
             satellite: sat,
           },
           remove: {
@@ -89,7 +89,7 @@ const tableRows = computed(() => {
       <template v-if="colKey === 'name'">
         <p class="fr-text-title--blue-france fr-text--bold">
           <router-link
-            v-if="cell.isManager"
+            v-if="cell.isManagedByUser"
             :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
           >
             {{ cell.canteen }}
@@ -104,7 +104,7 @@ const tableRows = computed(() => {
       </template>
       <template v-else-if="colKey === 'edit'">
         <router-link
-          v-if="cell.userCan"
+          v-if="cell.isManagedByUser"
           :to="{ name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
           class="ma-cantine--unstyled-link"
         >
