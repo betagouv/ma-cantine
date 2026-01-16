@@ -66,22 +66,21 @@ def check_if_has_errors_header(report):
 
 def has_invalid_columns_names(user_file_header, expected_header):
     header_errors = []
-    diff_header_length = len(expected_header) - len(user_file_header)
+    diff_header_length = len(user_file_header) - len(expected_header)
 
     # Missing columns
     if diff_header_length < 0:
-        diff_absolute = abs(diff_header_length)
-        field = f"{diff_absolute} colonnes manquantes" if diff_absolute > 1 else "1 colonne manquante"
-        title = "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus."
         header_errors.append(
             {
-                "field": field,
+                "field": "Première ligne du fichier incorrecte",
                 # "column": "",
                 # "cell": "",
                 "has_doc": False,
-                "title": title,
+                "title": "Elle doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
             }
         )
+        # Stop here because the header is invalid
+        return header_errors
 
     # Extra columns
     if diff_header_length > 0:
