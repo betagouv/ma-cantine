@@ -38,6 +38,13 @@ class VegetarianExpeParticipantFilter(admin.SimpleListFilter):
 
 @admin.register(VegetarianExpe)
 class VegetarianExpeAdmin(admin.ModelAdmin):
+    list_display = (
+        "canteen_name",
+        "creation_date",
+        "has_daily_vegetarian_offer",
+    )
+    list_filter = (VegetarianExpeParticipantFilter,)
+
     fieldsets = (
         (
             "",
@@ -139,14 +146,6 @@ class VegetarianExpeAdmin(admin.ModelAdmin):
             },
         ),
     )
-
-    list_display = (
-        "canteen_name",
-        "creation_date",
-        "has_daily_vegetarian_offer",
-    )
-
-    list_filter = (VegetarianExpeParticipantFilter,)
 
     def canteen_name(self, obj):
         return obj.canteen.name

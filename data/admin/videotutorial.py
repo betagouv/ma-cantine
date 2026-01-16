@@ -52,8 +52,6 @@ class AccessibilityStatusFilter(admin.SimpleListFilter):
 
 @admin.register(VideoTutorial)
 class VideoTutorial(admin.ModelAdmin):
-    form = VideoTutorialForm
-
     list_display = (
         "title",
         "description",
@@ -62,8 +60,9 @@ class VideoTutorial(admin.ModelAdmin):
         "creation_date",
         "modification_date",
     )
-
     list_filter = (
         "published",
         AccessibilityStatusFilter,
     )
+
+    form = VideoTutorialForm

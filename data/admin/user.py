@@ -25,7 +25,6 @@ class UserForm(UserChangeForm):
 
 @admin.register(User)
 class MaCanteenUserAdmin(UserAdmin):
-    form = UserForm
     list_display = (
         "username",
         "first_name",
@@ -48,14 +47,9 @@ class MaCanteenUserAdmin(UserAdmin):
         "username",
     )
     search_help_text = "La recherche est faite sur les champs : ID, prénom, nom, email, nom d'utilisateur."
-    readonly_fields = (
-        "brevo_last_update_date",
-        *User.MATOMO_FIELDS,
-        "data_pretty",
-        "last_login",
-        "date_joined",
-    )
 
+    form = UserForm
+    inlines = (CanteenInline,)
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (
@@ -123,6 +117,13 @@ class MaCanteenUserAdmin(UserAdmin):
         ("Données calculées", {"fields": ("data_pretty",)}),
         ("Metadonnées", {"fields": ("last_login", "date_joined")}),
     )
+    readonly_fields = (
+        "brevo_last_update_date",
+        *User.MATOMO_FIELDS,
+        "data_pretty",
+        "last_login",
+        "date_joined",
+    )
 
     add_fieldsets = (
         (
@@ -133,7 +134,6 @@ class MaCanteenUserAdmin(UserAdmin):
             },
         ),
     )
-    inlines = (CanteenInline,)
 
     def data_pretty(self, obj):
         data = json.dumps(obj.data, indent=2)

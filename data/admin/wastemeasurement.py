@@ -19,10 +19,6 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
         "canteen__siret",
         "canteen__siren_unite_legale",
     )
-    readonly_fields = (
-        "creation_date",
-        "modification_date",
-    )
 
     fieldsets = (
         (
@@ -80,4 +76,8 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
                 )
             },
         ),
+    )
+    readonly_fields = (
+        "creation_date",
+        "modification_date",
     )
