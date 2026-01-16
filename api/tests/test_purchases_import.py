@@ -137,6 +137,34 @@ class PurchasesImportApiErrorTest(APITestCase):
         )
 
     @authenticate
+    def test_validata_header_error_with_extra_columns(self):
+        """
+        A file should not be valid if it contains more columns
+        """
+        CanteenFactory(siret="99775491534896", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_bad_extra_columns.csv"
+        with open(file_path, "rb") as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(
+            errors[0]["field"],
+            "4 colonnes supplémentaires",
+        )
+        self.assertEqual(
+            errors[0]["title"],
+            "Supprimer les 4 colonnes en excès et toutes les données présentes dans ces dernières. Il se peut qu'un espace ou un symbole invisible soit présent dans votre fichier, en cas de doute faite un copier-coller des données dans un nouveau document.",
+        )
+
+    @authenticate
     def test_validata_empty_rows_error(self):
         """
         A file should not be valid if it contains empty rows (Validata)
