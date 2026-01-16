@@ -1,6 +1,7 @@
 import urlService from "@/services/urls.js"
 import diagnosticService from "@/services/diagnostics.js"
 import cantines from "@/data/cantines.json"
+import stringService from "@/services/strings.js"
 
 const getNameInfos = (canteen) => {
   return {
@@ -62,6 +63,18 @@ const getDailyMealCountInfos = (canteen) => {
   return canteen.dailyMealCount
 }
 
+const searchCanteensBySiretOrSirenOrName = (search, allCanteens) => {
+  if (!search) return allCanteens
+  const searchValue = search.trim()
+  const searchWithoutSpaces = searchValue.replace(/\s/g, "")
+  const filteredCanteens = allCanteens.filter((canteen) => {
+    if (canteen.siret && canteen.siret.indexOf(searchWithoutSpaces) === 0) return true
+    if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchWithoutSpaces) === 0) return true
+    if (stringService.checkIfContains(canteen.name, searchValue)) return true
+  })
+  return filteredCanteens
+}
+
 export default {
   getNameInfos,
   getSatelliteNameInfos,
@@ -70,4 +83,5 @@ export default {
   getProductionTypeInfos,
   getDiagnosticInfos,
   getDailyMealCountInfos,
+  searchCanteensBySiretOrSirenOrName,
 }

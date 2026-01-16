@@ -3,9 +3,8 @@ import { ref, computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
-import stringService from "@/services/strings.js"
 import campaignService from "@/services/campaigns.js"
-
+import canteensTableService from "@/services/canteensTable.js"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireEmptyCanteen from "@/components/GestionnaireEmptyCanteen.vue"
 import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
@@ -69,13 +68,7 @@ const updateSearch = () => {
 
 const searchCanteens = () => {
   if (!search.value) return
-  const searchValue = search.value.trim()
-  const searchWithoutSpaces = searchValue.replace(/\s/g, "")
-  filteredCanteens.value = allCanteens.value.filter((canteen) => {
-    if (canteen.siret && canteen.siret.indexOf(searchWithoutSpaces) === 0) return true
-    if (canteen.sirenUniteLegale && canteen.sirenUniteLegale.indexOf(searchWithoutSpaces) === 0) return true
-    if (stringService.checkIfContains(canteen.name, searchValue)) return true
-  })
+  filteredCanteens.value = canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, allCanteens.value)
   if (filteredCanteens.value.length === 0) searchIsEmpty.value = true
 }
 
