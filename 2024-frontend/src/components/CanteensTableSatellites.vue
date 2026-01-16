@@ -72,7 +72,7 @@ const getActions = (sat) => {
     case sat.isManagedByUser:
       actions.push({
         label: "Modifier",
-        to: { name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: sat.userCanView ? urlService.getCanteenUrl(sat) : "" } },
+        to: { name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: sat.isManagedByUser ? urlService.getCanteenUrl(sat) : "" } },
       })
       break
     case sat.canBeClaimed:
