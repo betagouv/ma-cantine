@@ -3,6 +3,7 @@ import { computed, ref } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
+import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
 import CanteensTableSatellites from "@/components/CanteensTableSatellites.vue"
@@ -20,6 +21,8 @@ const satelliteToRemove = ref()
 
 /* Satellites  */
 const satellites = ref([])
+const satellitesDisplayed = computed(() => isSearching.value ? canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, satellites.value) : satellites.value)
+
 const updateSatellites = () => {
   loading.value = true
   canteenService.fetchSatellites(canteenId).then((response) => {
@@ -46,14 +49,14 @@ const showModalRemoveSatellite = (satellite) => {
 
 /* Search */
 const search = ref()
+const isSearching = ref(false)
 
 const updateSearch = () => {
-  if(search.value.trim() === "") console.log("search is empty")
-  console.log("updatesearcg")
+  if(search.value.trim() === "") isSearching.value = false
 }
 
 const clickSearch = () => {
-  console.log("clickSearch")
+  isSearching.value = true
 }
 </script>
 <template>
@@ -81,8 +84,8 @@ const clickSearch = () => {
       </div>
     </div>
     <CanteensTableSatellites
-      v-if="satellites.length > 0"
-      :satellites="satellites"
+      v-if="satellitesDisplayed.length > 0"
+      :satellites="satellitesDisplayed"
       :groupe="canteen"
       @updateSatellites="updateSatellites"
       @showModalRemoveSatellite="showModalRemoveSatellite" />
