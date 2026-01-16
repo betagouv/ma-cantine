@@ -10,6 +10,10 @@
 .layout-big-table {
   overflow-x: hidden;
 
+  &__scrollable {
+    overflow: scroll;
+  }
+
   th:nth-child(1) {
     width: 35% !important;
   }
@@ -18,18 +22,13 @@
   td:nth-child(4) {
     white-space: pre-wrap !important;
   }
-}
 
-.layout-big-table__scrollable {
-  overflow: scroll;
-}
+  .fr-table__container {
+    overflow: initial !important;
+  }
 
-.layout-big-table .fr-table__container {
-  overflow: initial !important;
+  .fr-table {
+    min-width: 75rem;
+  }
 }
-
-.layout-big-table .fr-table {
-  min-width: 75rem;
-}
-
 </style>
