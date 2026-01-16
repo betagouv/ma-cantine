@@ -247,7 +247,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
       </h2>
       <p class="fr-mb-0">
         Vous ne souhaitez plus faire apparaître cet établissement sur la plateforme ma-cantine, vous pouvez le supprimer
-        <AppLinkRouter :to="{ name: 'CanteenDeletion' }" title="en cliquant ici" />
+        <AppLinkRouter :to="{ name: 'GestionnaireCantineSupprimer' }" title="en cliquant ici" />
       </p>
     </div>
   </section>
