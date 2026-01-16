@@ -5,8 +5,8 @@ import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
-import CanteenModalSatelliteAdd from "@/components/CanteenModalSatelliteAdd.vue"
 import CanteensTableSatellites from "@/components/CanteensTableSatellites.vue"
+import CanteenModalSatelliteAdd from "@/components/CanteenModalSatelliteAdd.vue"
 import CanteenModalSatelliteRemove from "@/components/CanteenModalSatelliteRemove.vue"
 
 /* Data */
@@ -46,21 +46,32 @@ const showModalRemoveSatellite = (satellite) => {
 </script>
 <template>
   <section class="gestionnaire-cantine-groupe-satellites">
-    <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}<br/> de {{ canteen.name }}</h1>
-    <div class="fr-grid-row fr-grid-row--middle fr-mb-2w">
-      <p class="fr-col-12 fr-col-md-4 fr-mb-md-0">{{ satellitesCountSentence }}</p>
-      <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
+    <div class="fr-grid-row fr-grid-row--middle fr-mb-4w">
+      <h1 class="fr-col-7 fr-mb-0">{{ route.meta.title }}<br/> de {{ canteen.name }}</h1>
+      <div class="fr-col-md-5 fr-grid-row fr-grid-row--right">
         <DsfrButton primary label="Ajouter un restaurant satellite" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
       </div>
-      <CanteenModalSatelliteAdd :open="modalAddSatelliteOpened" :groupId="canteenId" @close="modalAddSatelliteOpened = false" @updateSatellites="updateSatellites()" />
     </div>
     <AppLoader v-if="loading" />
+    <div class="fr-grid-row fr-mb-2w fr-grid-row--middle">
+      <div class="fr-col-12 fr-col-md-6">
+        <p class="fr-mb-0">{{ satellitesCountSentence }}</p>
+      </div>
+      <div class="fr-col-12 fr-col-md-6">
+        Barre de recherche
+      </div>
+    </div>
     <CanteensTableSatellites
       v-if="satellites.length > 0"
       :satellites="satellites"
       :groupe="canteen"
       @updateSatellites="updateSatellites"
       @showModalRemoveSatellite="showModalRemoveSatellite" />
+    <CanteenModalSatelliteAdd
+      :open="modalAddSatelliteOpened"
+      :groupId="canteenId"
+      @close="modalAddSatelliteOpened = false"
+      @updateSatellites="updateSatellites()" />
     <CanteenModalSatelliteRemove
       v-if="satelliteToRemove"
       :opened="modalRemoveSatelliteOpened"
