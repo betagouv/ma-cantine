@@ -43,6 +43,18 @@ const showModalRemoveSatellite = (satellite) => {
   satelliteToRemove.value = satellite
   modalRemoveSatelliteOpened.value = true
 }
+
+/* Search */
+const search = ref()
+
+const updateSearch = () => {
+  if(search.value.trim() === "") console.log("search is empty")
+  console.log("updatesearcg")
+}
+
+const clickSearch = () => {
+  console.log("clickSearch")
+}
 </script>
 <template>
   <section class="gestionnaire-cantine-groupe-satellites">
@@ -58,7 +70,14 @@ const showModalRemoveSatellite = (satellite) => {
         <p class="fr-mb-0">{{ satellitesCountSentence }}</p>
       </div>
       <div class="fr-col-12 fr-col-md-6">
-        Barre de recherche
+        <DsfrSearchBar
+          v-model="search"
+          label="Rechercher"
+          button-text="Rechercher"
+          placeholder="Rechercher par le nom, siret ou siren de l'établissement"
+          @update:modelValue="updateSearch"
+          @search="clickSearch"
+        />
       </div>
     </div>
     <CanteensTableSatellites
