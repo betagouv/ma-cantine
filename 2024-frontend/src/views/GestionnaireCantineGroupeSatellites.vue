@@ -78,14 +78,14 @@ const tableRows = computed(() => {
           name: {
             canteen: sat.name,
             url: urlService.getCanteenUrl(sat),
-            isManager: sat.userCanView,
+            isManager: sat.isManagedByUser,
           },
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
           diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
           edit: {
-            userCan: sat.userCanView,
-            satelliteComponentUrl: sat.userCanView ? urlService.getCanteenUrl(sat) : "",
+            userCan: sat.isManagedByUser,
+            satelliteComponentUrl: sat.isManagedByUser ? urlService.getCanteenUrl(sat) : "",
             satellite: sat,
           },
           remove: {

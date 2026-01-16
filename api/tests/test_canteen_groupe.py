@@ -84,7 +84,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body), 2)
         self.assertEqual(body[0]["id"], self.canteen_satellite_12.id)  # ordered by name
-        self.assertFalse(body[0]["userCanView"])  # user not manager of satellite canteens
+        self.assertFalse(body[0]["isManagedByUser"])  # user not manager of satellite canteens
         self.assertIn("action", body[0])
 
         # set user as manager of canteen_satellite_12
@@ -96,7 +96,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body), 2)
         self.assertEqual(body[0]["id"], self.canteen_satellite_12.id)  # ordered by name
-        self.assertTrue(body[0]["userCanView"])  # user is now manager of satellite canteen
+        self.assertTrue(body[0]["isManagedByUser"])  # user is now manager of satellite canteen
         self.assertIn("action", body[0])
 
     @authenticate

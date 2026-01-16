@@ -60,7 +60,9 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 class PublishedCanteenSingleView(RetrieveAPIView):
     model = Canteen
     serializer_class = PublicCanteenSerializer
-    queryset = Canteen.objects.publicly_visible()
+
+    def get_queryset(self):
+        return Canteen.objects.annotate_with_is_managed_by_user(self.request.user).publicly_visible()
 
 
 class ProductionTypeInFilter(BaseInFilter, CharFilter):
@@ -463,7 +465,7 @@ class CanteenStatusBySirenView(APIView):
 
 def get_cantine_from_siret(siret, request):
     if siret:
-        canteens = Canteen.objects.filter(siret=siret)
+        canteens = Canteen.objects.annotate_with_is_managed_by_user(request.user).filter(siret=siret)
         if canteens.exists():
             canteen = canteens.first()
             return CanteenStatusSerializer(canteen, context={"request": request}).data
@@ -471,7 +473,11 @@ def get_cantine_from_siret(siret, request):
 
 def get_cantine_list_from_siren_unite_legale(siren, request):
     if siren:
-        canteens = Canteen.objects.filter(siren_unite_legale=siren).order_by("name")
+        canteens = (
+            Canteen.objects.annotate_with_is_managed_by_user(request.user)
+            .filter(siren_unite_legale=siren)
+            .order_by("name")
+        )
         return CanteenStatusSerializer(canteens, many=True, context={"request": request}).data
 
 
@@ -785,7 +791,7 @@ class TerritoryCanteensListView(ListAPIView):
 
     def get_queryset(self):
         departments = self.request.user.departments
-        return Canteen.objects.filter(department__in=departments)
+        return Canteen.objects.annotate_with_is_managed_by_user(self.request.user).filter(department__in=departments)
 
 
 @extend_schema_view(
