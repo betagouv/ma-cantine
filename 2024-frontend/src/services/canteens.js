@@ -130,12 +130,25 @@ const fetchCanteensActions = (year) => {
     .catch((e) => e)
 }
 
+const deleteCanteen = (canteenId) => {
+ return fetch(`/api/v1/canteens/${canteenId}`, {
+    method: "DELETE",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    }
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 export default {
   createCanteen,
   canteenStatus,
   fetchCanteen,
   updateCanteen,
   claimCanteen,
+  deleteCanteen,
   teamJoinRequest,
   fetchSatellites,
   linkSatellite,
