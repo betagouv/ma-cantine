@@ -96,11 +96,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(
-            errors[0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
+        self.assertEqual(len(errors), 8)
+        for error in errors:
+            self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
         # wrong header
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header.csv"
@@ -113,11 +111,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(
-            errors[0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
+        self.assertEqual(len(errors), 5)
+        for error in errors:
+            self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
         # partial header
         file_path = "./api/tests/files/achats/purchases_bad_partial_header.csv"
@@ -132,8 +128,98 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 1)
         self.assertEqual(
-            errors[0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+            errors[0]["field"],
+            "Première ligne du fichier incorrecte",
+        )
+        self.assertEqual(
+            errors[0]["title"],
+            "Elle doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+        )
+
+    @authenticate
+    def test_validata_header_error_return_columns_correct_and_incorrect_values(self):
+        """
+        If a file has a wrong header we should display the incorrect and correct columns names
+        """
+        CanteenFactory(siret="99775491534896", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_bad_wrong_header_typo.csv"
+        with open(file_path, "rb") as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 8)
+        # siret
+        self.assertEqual(errors[0]["field"], "colonne siret")
+        self.assertEqual(errors[0]["title"], "Valeur incorrecte vous avez écrit « s_iret » au lieu de « siret »")
+        # description
+        self.assertEqual(errors[1]["field"], "colonne description")
+        self.assertEqual(
+            errors[1]["title"], "Valeur incorrecte vous avez écrit « description123 » au lieu de « description »"
+        )
+        # fournisseur
+        self.assertEqual(errors[2]["field"], "colonne fournisseur")
+        self.assertEqual(
+            errors[2]["title"],
+            "Valeur incorrecte vous avez écrit « fournisseur de la cantine » au lieu de « fournisseur »",
+        )
+        # date
+        self.assertEqual(errors[3]["field"], "colonne date")
+        self.assertEqual(errors[3]["title"], "Valeur incorrecte vous avez écrit « date! » au lieu de « date »")
+        # prix
+        self.assertEqual(errors[4]["field"], "colonne prix_ht")
+        self.assertEqual(errors[4]["title"], "Valeur incorrecte vous avez écrit « prix ht » au lieu de « prix_ht »")
+        # famille de produit
+        self.assertEqual(errors[5]["field"], "colonne famille_produits")
+        self.assertEqual(
+            errors[5]["title"],
+            "Valeur incorrecte vous avez écrit « famille de produits » au lieu de « famille_produits »",
+        )
+        # caractéristiques
+        self.assertEqual(errors[6]["field"], "colonne caracteristiques")
+        self.assertEqual(
+            errors[6]["title"],
+            "Valeur incorrecte vous avez écrit « caractéristiques » au lieu de « caracteristiques »",
+        )
+        # local
+        self.assertEqual(errors[7]["field"], "colonne definition_local")
+        self.assertEqual(
+            errors[7]["title"],
+            "Valeur incorrecte vous avez écrit « définition local » au lieu de « definition_local »",
+        )
+
+    @authenticate
+    def test_validata_header_error_with_extra_columns(self):
+        """
+        A file should not be valid if it contains more columns
+        """
+        CanteenFactory(siret="99775491534896", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_bad_extra_columns.csv"
+        with open(file_path, "rb") as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(
+            errors[0]["field"],
+            "4 colonnes supplémentaires",
+        )
+        self.assertEqual(
+            errors[0]["title"],
+            "Supprimer les 4 colonnes en excès et toutes les données présentes dans ces dernières. Il se peut qu'un espace ou un symbole invisible soit présent dans votre fichier, en cas de doute faite un copier-coller des données dans un nouveau document.",
         )
 
     @authenticate
@@ -313,8 +399,12 @@ class PurchasesImportApiErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(
-            errors.pop(0)["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+            errors[0]["field"],
+            "Première ligne du fichier incorrecte",
+        )
+        self.assertEqual(
+            errors[0]["title"],
+            "Elle doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
 
