@@ -3,15 +3,10 @@ import { ref } from "vue"
 import { useRootStore } from "@/stores/root"
 import canteensService from "@/services/canteens"
 
+const props = defineProps(["opened", "groupe", "satellite"])
+const emit = defineEmits(["satelliteRemoved", "close"])
 const store = useRootStore()
-const props = defineProps(["groupe", "satellite"])
-const emit = defineEmits(["satelliteRemoved"])
 const loading = ref(false)
-const opened = ref(false)
-
-const toggleModal = () => {
-  opened.value = !opened.value
-}
 
 const unlinkSatellite = () => {
   loading.value = true
@@ -26,7 +21,7 @@ const unlinkSatellite = () => {
         })
         emit("satelliteRemoved")
       }
-      toggleModal()
+      emit('close')
       loading.value = false
     })
     .catch((e) => {
@@ -37,20 +32,11 @@ const unlinkSatellite = () => {
 </script>
 
 <template>
-  <DsfrButton
-    tertiary
-    label="Retirer"
-    @click="toggleModal()"
-    :disabled="loading"
-    icon="fr-icon-delete-fill"
-    class="canteen-button-unlink"
-  />
   <DsfrModal
-    v-if="opened"
     :opened="opened"
     class="canteen-button-unlink__modal fr-modal--opened"
     :title="`Souhaitez-vous vraiment retirer «&nbsp;${satellite.name}&nbsp;» de vos restaurants satellites ?`"
-    @close="toggleModal()"
+    @close="emit('close')"
     :actions="[
       {
         label: 'Je confirme le retrait du restaurant',
@@ -62,7 +48,7 @@ const unlinkSatellite = () => {
         label: 'Annuler',
         secondary: true,
         onClick() {
-          toggleModal()
+          emit('close')
         },
       },
     ]"
@@ -87,12 +73,3 @@ const unlinkSatellite = () => {
     </template>
   </DsfrModal>
 </template>
-
-<style lang="scss">
-.canteen-button-unlink {
-
-  &__modal {
-    white-space: initial !important;
-  }
-}
-</style>

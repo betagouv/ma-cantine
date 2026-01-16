@@ -1,21 +1,24 @@
 <script setup>
 import { computed } from "vue"
 import { computedAsync } from "@vueuse/core"
+import { useRootStore } from "@/stores/root"
 import diagnosticService from "@/services/diagnostics.js"
 import campaignService from "@/services/campaigns.js"
+import canteensService from "@/services/canteens"
 import urlService from "@/services/urls.js"
-import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
-import CanteenButtonUnlink from "@/components/CanteenButtonUnlink.vue"
+import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
+import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
 
+/* Settings */
 const props = defineProps(["satellites", "groupe"])
+const emit = defineEmits(["showModalRemoveSatellite", "updateSatellites"])
 const lastYear = new Date().getFullYear() - 1
-const emit = defineEmits(["removeSatellite"])
+const store = useRootStore()
 
 /* Campaign */
 const campaign = computedAsync(async () => {
   return await campaignService.getYearCampaignDates(lastYear)
 }, false)
-
 
 /* Table */
 const tableHeaders = [
@@ -36,12 +39,8 @@ const tableHeaders = [
     label: `Bilan ${lastYear}`,
   },
   {
-    key: "edit",
-    label: "Modifier",
-  },
-  {
-    key: "remove",
-    label: "Retirer",
+    key: "actions",
+    label: "Actions",
   },
 ]
 
@@ -58,70 +57,124 @@ const tableRows = computed(() => {
           siretSiren: sat.siret || sat.sirenUniteLegale,
           dailyMealCount: sat.dailyMealCount,
           diagnostic: diagnosticService.getBadge(sat.action, campaign.value),
-          edit: {
-            isManagedByUser: sat.isManagedByUser,
-            satelliteComponentUrl: sat.isManagedByUser ? urlService.getCanteenUrl(sat) : "",
-            satellite: sat,
-          },
-          remove: {
-            satellite: sat,
-            groupe: props.groupe,
+          actions: {
+            links: getActions(sat),
+            canteen: sat,
           },
         }
       })
 })
+
+/* Actions */
+const getActions = (sat) => {
+  const actions = []
+  switch (true) {
+    case sat.isManagedByUser:
+      actions.push({
+        label: "Modifier",
+        to: { name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: sat.isManagedByUser ? urlService.getCanteenUrl(sat) : "" } },
+      })
+      break
+    case sat.canBeClaimed:
+      actions.push({
+        label: "Revendiquer la cantine",
+        emitEvent: 'claimCanteen',
+      })
+      break
+    case !sat.isManagedByUser && !sat.canBeClaimed:
+      actions.push({
+        label: "Demander à rejoindre",
+        emitEvent: 'joinCanteen',
+      })
+      break
+  }
+
+  actions.push({
+    label: "Retirer de mon groupe",
+    emitEvent: 'showModalRemoveSatellite',
+  })
+
+  return actions
+}
+
+const clickAction = (emitEvent, canteen) => {
+  if (emitEvent === 'joinCanteen') joinCanteen(canteen)
+  else if (emitEvent === 'claimCanteen') claimCanteen(canteen)
+  else if (emitEvent === 'showModalRemoveSatellite') emit('showModalRemoveSatellite', canteen)
+}
+
+const joinCanteen = (canteen) => {
+  const userInfos = {
+    email: store.loggedUser.email,
+    name: `${store.loggedUser.firstName} ${store.loggedUser.lastName}`,
+  }
+  canteensService
+    .teamJoinRequest(canteen.id, userInfos)
+    .then(() => {
+      store.notify({
+        title: "Demande envoyée",
+        message: `Nous avons contacté l'équipe de la cantine ${canteen.name}. Ces derniers reviendront vers vous pour accepter ou non votre demande.`,
+      })
+    })
+    .catch(store.notifyServerError)
+}
+
+/* Claim a canteen */
+const claimCanteen = (canteen) => {
+  canteensService
+    .claimCanteen(canteen.id)
+    .then((response) => {
+      if (response.id) {
+        store.notify({
+          title: "Cantine revendiquée",
+          message: `Vous êtes maintenant gestionnaire de la cantine ${canteen.name}.`,
+        })
+        emit('updateSatellites')
+      } else store.notifyServerError(response)
+    })
+    .catch(store.notifyServerError)
+}
 </script>
 
 <template>
-  <DsfrDataTable
-    title="Vos restaurants satellites"
-    no-caption
-    :headers-row="tableHeaders"
-    :rows="tableRows"
-    :sortable-rows="['name', 'diagnostic']"
-    :pagination="true"
-    :pagination-options="[50, 100, 200]"
-    :rows-per-page="50"
-    pagination-wrapper-class="fr-mt-3w"
-    class="gestionnaire-cantine-groupe-satellites__table"
-  >
-    <template #cell="{ colKey, cell }">
-      <template v-if="colKey === 'name'">
-        <p class="fr-text-title--blue-france fr-text--bold">
-          <router-link
-            v-if="cell.isManagedByUser"
-            :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
-          >
-            {{ cell.canteen }}
-          </router-link>
-          <span v-else>
-            {{ cell.canteen }}
-          </span>
-        </p>
+  <LayoutBigTable>
+    <DsfrDataTable
+      title="Vos restaurants satellites"
+      no-caption
+      :headers-row="tableHeaders"
+      :rows="tableRows"
+      :sortable-rows="['name', 'diagnostic']"
+      :pagination="true"
+      :pagination-options="[50, 100, 200]"
+      :rows-per-page="50"
+      pagination-wrapper-class="fr-mt-4w"
+    >
+      <template #cell="{ colKey, cell }">
+        <template v-if="colKey === 'name'">
+          <p class="fr-text-title--blue-france fr-text--bold">
+            <router-link
+              v-if="cell.isManagedByUser"
+              :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+            >
+              {{ cell.canteen }}
+            </router-link>
+            <span v-else>
+              {{ cell.canteen }}
+            </span>
+          </p>
+        </template>
+        <template v-else-if="colKey === 'diagnostic'">
+          <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
+        </template>
+        <template v-else-if="colKey === 'actions'">
+          <div class="fr-grid-row fr-grid-row--right">
+            <AppDropdownMenu label="Actions" :links="cell.links" size="small" @click="(event) => clickAction(event, cell.canteen)" />
+          </div>
+        </template>
+        <template v-else>
+          {{ cell }}
+        </template>
       </template>
-      <template v-else-if="colKey === 'diagnostic'">
-        <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
-      </template>
-      <template v-else-if="colKey === 'edit'">
-        <router-link
-          v-if="cell.isManagedByUser"
-          :to="{ name: 'GestionnaireCantineRestaurantModifier', params: { canteenUrlComponent: cell.satelliteComponentUrl } }"
-          class="ma-cantine--unstyled-link"
-        >
-          <DsfrButton tertiary label="Modifier" icon="fr-icon-pencil-fill" />
-        </router-link>
-        <CanteenButtonJoin v-else :id="cell.satellite.id" :name="cell.satellite.name" />
-      </template>
-      <template v-else-if="colKey === 'remove'">
-        <CanteenButtonUnlink
-          :groupe="cell.groupe"
-          :satellite="cell.satellite"
-          @satelliteRemoved="emit('removeSatellite', cell.satellite.id)"
-        />
-      </template>
-      <template v-else>
-        {{ cell }}
-      </template>
-    </template>
-  </DsfrDataTable>
+    </DsfrDataTable>
+  </LayoutBigTable>
 </template>
