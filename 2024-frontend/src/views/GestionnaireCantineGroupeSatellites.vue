@@ -33,10 +33,23 @@ const updateSatellites = () => {
 updateSatellites()
 
 const satellitesCountSentence = computed(() => {
-  if (satellites.value.length === 0) return "Aucun restaurant satellite renseigné"
-  else if (satellites.value.length === 1) return "1 restaurant satellite renseigné"
-  else return `${satellites.value.length} restaurants satellites renseignés`
+  const number = getSatellitesPrettCount(satellitesDisplayed.value.length)
+  const type = getSatellitesPrettyType(satellitesDisplayed.value.length)
+  return `${number} ${type}`
 })
+
+const getSatellitesPrettCount = (count) => {
+  if (count === 0) return "Aucun restaurant satellite"
+  else if (count === 1) return "1 restaurant satellite"
+  else return `${count} restaurants satellites`
+}
+
+const getSatellitesPrettyType = (count) => {
+  if (isSearching.value && count <= 1 ) return `trouvé pour la recherche « ${search.value} »`
+  if (isSearching.value && count > 1 ) return `trouvés pour la recherche « ${search.value} »`
+  if (!isSearching.value && count <= 1) return "renseignés"
+  if (!isSearching.value && count > 1) return "renseignés"
+}
 
 const removeSatellite = (id) => {
   satellites.value = satellites.value.filter((sat) => sat.id !== id)
