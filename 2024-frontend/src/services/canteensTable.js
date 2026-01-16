@@ -14,7 +14,7 @@ const getSatelliteNameInfos = (canteen) => {
   return {
     canteen: canteen.name,
     url: urlService.getCanteenUrl(canteen),
-    isManager: canteen.userCanView,
+    isManagedByUser: canteen.isManagedByUser,
   }
 }
 
