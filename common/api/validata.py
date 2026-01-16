@@ -64,6 +64,64 @@ def check_if_has_errors_header(report):
     return False
 
 
+def has_invalid_columns_names(user_file_header, expected_header):
+    header_errors = []
+    diff_header_length = len(expected_header) - len(user_file_header)
+
+    # Missing columns
+    if diff_header_length < 0:
+        diff_absolute = abs(diff_header_length)
+        field = f"{diff_absolute} colonnes manquantes" if diff_absolute > 1 else "1 colonne manquante"
+        title = "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus."
+        header_errors.append(
+            {
+                "field": field,
+                # "column": "",
+                # "cell": "",
+                "has_doc": False,
+                "title": title,
+            }
+        )
+
+    # Extra columns
+    if diff_header_length > 0:
+        field = (
+            f"{diff_header_length} colonnes supplémentaires" if diff_header_length > 1 else "1 colonne supplémentaire"
+        )
+        title = (
+            f"Supprimer les {diff_header_length} colonnes en excès et toutes les données présentes dans ces dernières."
+            if diff_header_length > 1
+            else "Supprimer la colonne en excès et toutes les données présentes dans cette dernière."
+        )
+        title += " Il se peut qu'un espace ou un symbole invisible soit présent dans votre fichier, en cas de doute faite un copier-coller des données dans un nouveau document."
+        header_errors.append(
+            {
+                "field": field,
+                # "column": "",
+                # "cell": "",
+                "has_doc": False,
+                "title": title,
+            }
+        )
+
+    # Incorrect column names
+    for index, expected_column_name in enumerate(expected_header):
+        if index >= len(user_file_header):
+            break
+        if expected_column_name != user_file_header[index]:
+            header_errors.append(
+                {
+                    "field": f"colonne {expected_column_name}",
+                    # "column": index,
+                    # "cell": 0,
+                    "has_doc": False,
+                    "title": f"Valeur incorrecte vous avez écrit « {user_file_header[index]} » au lieu de « {expected_column_name} »",
+                }
+            )
+
+    return header_errors
+
+
 def get_common_error_informations(error):
     return {
         "row": error["rowNumber"],
