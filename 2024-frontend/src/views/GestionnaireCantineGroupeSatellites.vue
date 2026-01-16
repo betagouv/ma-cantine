@@ -9,7 +9,7 @@ import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
 import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
 import CanteenButtonUnlink from "@/components/CanteenButtonUnlink.vue"
-import CanteenModalSatellitesAdd from "@/components/CanteenModalSatellitesAdd.vue"
+import CanteenModalSatelliteAdd from "@/components/CanteenModalSatelliteAdd.vue"
 
 /* Data */
 const route = useRoute()
@@ -108,7 +108,7 @@ const removeRow = (id) => {
       <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--right">
         <DsfrButton primary label="Ajouter un restaurant satellite" icon="fr-icon-add-circle-fill" @click="modalOpened = true" />
       </div>
-      <CanteenModalSatellitesAdd :open="modalOpened" :groupId="canteenId" @close="modalOpened = false" @updateSatellites="updateSatellites()" />
+      <CanteenModalSatelliteAdd :open="modalOpened" :groupId="canteenId" @close="modalOpened = false" @updateSatellites="updateSatellites()" />
     </div>
     <AppLoader v-if="loading" />
     <DsfrDataTable
