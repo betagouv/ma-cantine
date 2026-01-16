@@ -5,6 +5,7 @@ import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import { trackEvent } from "@/services/matomo.js"
 import { importFile } from "@/services/imports.js"
+import AppLoader from "@/components/AppLoader.vue"
 
 /* Store and Router and Emit and Props */
 const store = useRootStore()
@@ -117,12 +118,13 @@ const showErrors = (count) => {
       <img :src="pictoDocument" alt="" />
     </div>
     <div class="import-file-upload fr-col-12 fr-col-xl-9 fr-py-3w fr-px-4w fr-card">
+      <AppLoader v-if="isProcessingFile" />
       <DsfrFileUpload
+        v-else
         label="Avant d’importer votre fichier, assurez-vous que vos données respectent le format ci-dessus"
         hint="Extensions de fichier autorisées : Excel (.xlsx), CSV (.csv), TSV (.tsv)"
         accept=".csv,.tsv,.xlsx"
         @change="upload"
-        :disabled="isProcessingFile"
       />
       <div v-if="hasErrors.status" class="fr-mt-2w">
         <div class="fr-grid-row fr-grid-row--middle">

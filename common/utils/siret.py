@@ -37,4 +37,6 @@ def validate_siret(siret):
     if not siret.isdigit() or not is_valid_length_siret(siret):
         raise ValidationError("14 caractères numériques sont attendus")
     if not is_valid_luhn_siret(siret):
-        raise ValidationError("Le numéro SIRET n'est pas valide.")
+        raise ValidationError(
+            "Le numéro SIRET est invalide et semble ne pas exister dans les registres officiels, vous pouvez vérifier sa validité depuis le site : https://annuaire-entreprises.data.gouv.fr"
+        )
