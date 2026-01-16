@@ -82,7 +82,7 @@ class PurchasesImportView(APIView):
             user_file_header = validata_response["resource_data"][0]
             self.errors = validata.has_invalid_columns_names(user_file_header, expected_header)
             if len(self.errors):
-                self._log_error(f"Echec lors de la validation du header du fichier (schema {schema_name} - Validata)")
+                self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
                 return self._get_success_response()
 
             # Rows validation
