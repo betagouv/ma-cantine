@@ -30,7 +30,6 @@ import NotFound from "@/views/NotFound"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
-import CanteenDeletion from "@/views/CanteenEditor/CanteenDeletion"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
@@ -274,15 +273,6 @@ const routes = [
         meta: {
           authenticationRequired: true,
           title: "Générer mon affiche",
-        },
-      },
-      {
-        path: "supprimer",
-        name: "CanteenDeletion",
-        component: CanteenDeletion,
-        meta: {
-          authenticationRequired: true,
-          title: "Supprimer ma cantine",
         },
       },
       {

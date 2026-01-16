@@ -7,6 +7,7 @@ import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupe
 import GestionnaireCantineGroupeSatellites from "@/views/GestionnaireCantineGroupeSatellites.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
+import GestionnaireCantineSupprimer from "@/views/GestionnaireCantineSupprimer.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImport from "@/views/GestionnaireImport.vue"
@@ -135,6 +136,19 @@ const routes = [
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },
+          ],
+        },
+      },
+      {
+        path: "supprimer",
+        name: "GestionnaireCantineSupprimer",
+        component: GestionnaireCantineSupprimer,
+        meta: {
+          title: "Supprimer mon établissement",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
           ],
         },
       },
