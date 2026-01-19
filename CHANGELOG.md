@@ -6,6 +6,33 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.3.0](https://github.com/betagouv/ma-cantine/compare/v2026.2.0...v2026.3.0) (2026-01-19)
+
+
+### Nouveautés
+
+* **Gérer mes satellites:** afficher la commune et le code postal dans le tableau ([#6236](https://github.com/betagouv/ma-cantine/issues/6236)) ([c646b65](https://github.com/betagouv/ma-cantine/commit/c646b653400f6bf4989f75a2bea3b3d0584ce207))
+* **Gérer mes satellites:** ajoute une barre de recherche ([#6239](https://github.com/betagouv/ma-cantine/issues/6239)) ([5004fe2](https://github.com/betagouv/ma-cantine/commit/5004fe278352a52a04e6a3e165571843bb83f444))
+* **Gérer mes satellites:** remplace les multiples actions en menu déroulant  ([#6234](https://github.com/betagouv/ma-cantine/issues/6234)) ([a3609e0](https://github.com/betagouv/ma-cantine/commit/a3609e077f178aef36356e3f208165c0dffe5073))
+* **Imports:** Achats: améliorations du message d'erreur pour une en-tête de fichier incorrecte ([#6242](https://github.com/betagouv/ma-cantine/issues/6242)) ([74f3fe3](https://github.com/betagouv/ma-cantine/commit/74f3fe30508b6cdd4f33965bc70bda13e9c7a18a))
+
+
+### Corrections (bugs, typos...)
+
+* **Imports:** diverses corrections ([#6237](https://github.com/betagouv/ma-cantine/issues/6237)) ([226fd6c](https://github.com/betagouv/ma-cantine/commit/226fd6c02663f6d1dba8e6609eab5a876eacbe23))
+* **Ressources:** supprime les espaces des noms de fichiers ([#6235](https://github.com/betagouv/ma-cantine/issues/6235)) ([67ef8e1](https://github.com/betagouv/ma-cantine/commit/67ef8e1e7884f5b4f99480fa4d054d2c37557dd1))
+
+
+### Technique
+
+* **Admin:** Echec d'import: améliorations (rendre l'utilisateur cliquable, afficher le message d'erreur) ([#6223](https://github.com/betagouv/ma-cantine/issues/6223)) ([ee590e7](https://github.com/betagouv/ma-cantine/commit/ee590e76e055e1614489f5c22ae2403062f33643))
+* **Admin:** ordonner les config par groupes (list/fields/add) ([#6222](https://github.com/betagouv/ma-cantine/issues/6222)) ([ded4809](https://github.com/betagouv/ma-cantine/commit/ded4809d0367225980c75e0840396ac0ebbfd0b2))
+* **Cantines:** API: utiliser un annotate pour is_managed_by_user (liste des satellites, page d'une cantine...) ([#6230](https://github.com/betagouv/ma-cantine/issues/6230)) ([a358990](https://github.com/betagouv/ma-cantine/commit/a35899092baf2312d78cd0108fa0097366b8b2f0))
+* **Composants:** renomme des composants pour les organiser dans le dossier ([#6217](https://github.com/betagouv/ma-cantine/issues/6217)) ([85c66c7](https://github.com/betagouv/ma-cantine/commit/85c66c70d070819cc3283537cb4408d892df2eee))
+* **Cuisines centrales:** supprime les références à ces anciens type de production dans le code vue3 ([#6241](https://github.com/betagouv/ma-cantine/issues/6241)) ([a1fb8f1](https://github.com/betagouv/ma-cantine/commit/a1fb8f13b502065bfb68fb48b2c30b091a3206d6))
+* **Groupe:** créer un composant dédié pour l'affichage du tableau des satellites ([#6232](https://github.com/betagouv/ma-cantine/issues/6232)) ([43b8785](https://github.com/betagouv/ma-cantine/commit/43b87856ccc4ca673581c75816fae1250682614e))
+* **Supprimer une cantine:** migration de la page en vue 3 ([#6240](https://github.com/betagouv/ma-cantine/issues/6240)) ([4813f7d](https://github.com/betagouv/ma-cantine/commit/4813f7d6dbb9b82f17088473b61c456c058bf8ff))
+
 ## [2026.2.0](https://github.com/betagouv/ma-cantine/compare/v2026.1.0...v2026.2.0) (2026-01-15)
 
 
