@@ -11,6 +11,7 @@ const getBadge = (name, campaignDates, satellitesMissingDataCount) => {
     "18_prefill_diagnostic",
     "20_create_diagnostic",
     "30_fill_diagnostic",
+    "36_fill_satellite_canteen_data",
   ].includes(name)
 
   switch (true) {
