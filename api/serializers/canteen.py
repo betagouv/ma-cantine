@@ -130,7 +130,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "satellite_canteens_count",
             "appro_diagnostic",
             "lead_image",
-            "is_central_cuisine",
             "is_satellite",
             "badges",
         )
@@ -298,7 +297,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "satellites",
             "satellites_count",
             "satellites_missing_data_count",
-            "is_central_cuisine",
             "is_satellite",
             "modification_date",
             "badges",
@@ -356,7 +354,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "creation_mtm_source",
             "creation_mtm_campaign",
             "creation_mtm_medium",
-            "is_central_cuisine",
             "is_satellite",
             "modification_date",
             "badges",
@@ -436,7 +433,6 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
             "production_type",
             "publication_status",  # property
             "economic_model",
-            "is_central_cuisine",
             "is_satellite",
             "modification_date",
             "lead_image",

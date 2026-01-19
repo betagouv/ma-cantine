@@ -383,7 +383,7 @@ class PurchaseCreateApiTest(APITestCase):
 
         payload = {
             "date": "2022-01-13",
-            "canteen": "999",
+            "canteen": "9999",
             "description": "Saumon",
             "provider": "Test provider",
             "family": "PRODUITS_DE_LA_MER",
@@ -1050,8 +1050,8 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         pre-filled with purchase totals for that year
         """
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
-        central_kitchen = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
-        canteens = [canteen_site, central_kitchen]
+        central_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
+        canteens = [canteen_site, central_groupe]
         # purchases to be included in totals
         PurchaseFactory(
             canteen=canteen_site,
@@ -1069,19 +1069,19 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
             characteristics=[],
         )
 
-        PurchaseFactory(canteen=central_kitchen, date="2021-01-01", price_ht=5)
-        PurchaseFactory(canteen=central_kitchen, date="2021-12-31", price_ht=15)
+        PurchaseFactory(canteen=central_groupe, date="2021-01-01", price_ht=5)
+        PurchaseFactory(canteen=central_groupe, date="2021-12-31", price_ht=15)
 
         # purchases to be filtered out from totals
         PurchaseFactory(canteen=canteen_site, date="2022-01-01", price_ht=666)
-        PurchaseFactory(canteen=central_kitchen, date="2020-12-31", price_ht=666)
+        PurchaseFactory(canteen=central_groupe, date="2020-12-31", price_ht=666)
 
         year = 2021
         self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=canteens).count(), 0)
 
         response = self.client.post(
             reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {"canteenIds": [canteen_site.id, central_kitchen.id]},
+            {"canteenIds": [canteen_site.id, central_groupe.id]},
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1097,7 +1097,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         self.assertEqual(diag_site.valeur_autres_aocaop_igp_stg, 0)
         self.assertEqual(diag_site.central_kitchen_diagnostic_mode, None)
         self.assertEqual(diag_site.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
-        diag_cc = Diagnostic.objects.get(year=year, canteen=central_kitchen)
+        diag_cc = Diagnostic.objects.get(year=year, canteen=central_groupe)
         self.assertIn(diag_cc.id, results)
         self.assertEqual(diag_cc.valeur_totale, 20)
         self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")

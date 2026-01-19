@@ -58,10 +58,6 @@ def is_central_query():
     return Q(production_type=Canteen.ProductionType.CENTRAL)
 
 
-def is_central_cuisine_query():
-    return Q(production_type__in=[Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING])
-
-
 def is_serving_query():
     return Q(
         production_type__in=[
@@ -106,9 +102,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def is_central(self):
         return self.filter(is_central_query())
-
-    def is_central_cuisine(self):
-        return self.filter(is_central_cuisine_query())
 
     def is_serving(self):
         return self.filter(is_serving_query())
@@ -295,7 +288,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_diagnostic_filled_for_year=False, then=Value(Canteen.Actions.FILL_DIAGNOSTIC)),
             When(
-                (is_central_cuisine_query() & Q(diagnostic_for_year_cc_mode=None)),
+                (is_groupe_query() & Q(diagnostic_for_year_cc_mode=None)),
                 then=Value(Canteen.Actions.FILL_DIAGNOSTIC),
             ),
             When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
