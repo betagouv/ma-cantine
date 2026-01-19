@@ -627,6 +627,10 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=cls.canteen_central_2.siret,
         )
+        cls.canteen_satellite_4 = CanteenFactory(
+            siret="80631004084476",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
         cls.canteen_central_serving_1 = CanteenFactory(
             siret="11007001800012",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
@@ -635,25 +639,25 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
 
     def test_is_groupe(self):
-        self.assertEqual(Canteen.objects.count(), 9)
+        self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.is_groupe().count(), 2)
         self.assertTrue(self.canteen_groupe_with_satellite.is_groupe)
 
     def test_is_central(self):
-        self.assertEqual(Canteen.objects.count(), 9)
+        self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.is_central().count(), 2)
         self.assertTrue(self.canteen_central_1.is_central)
 
     def test_is_serving(self):
-        self.assertEqual(Canteen.objects.count(), 9)
-        self.assertEqual(Canteen.objects.is_serving().count(), 5)
+        self.assertEqual(Canteen.objects.count(), 10)
+        self.assertEqual(Canteen.objects.is_serving().count(), 6)
         self.assertTrue(self.canteen_satellite_1.is_serving)
         self.assertTrue(self.canteen_central_serving_1.is_serving)
         self.assertTrue(self.canteen_site.is_serving)
 
     def test_is_satellite(self):
-        self.assertEqual(Canteen.objects.count(), 9)
-        self.assertEqual(Canteen.objects.is_satellite().count(), 3)
+        self.assertEqual(Canteen.objects.count(), 10)
+        self.assertEqual(Canteen.objects.is_satellite().count(), 4)
         self.assertTrue(self.canteen_satellite_1.is_satellite)
 
     def test_satellites_property(self):
@@ -680,7 +684,7 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 1)
 
     def test_get_satellites_old(self):
-        self.assertEqual(Canteen.objects.count(), 9)
+        self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.get_satellites_old(self.canteen_central_1.siret).count(), 1)
         self.assertEqual(Canteen.objects.get_satellites_old(self.canteen_central_2.siret).count(), 2)
 
