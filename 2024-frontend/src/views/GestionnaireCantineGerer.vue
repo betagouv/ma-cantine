@@ -32,10 +32,8 @@ const getEditableInfos = (canteenInfos) => {
   const isGroup = canteenInfos.productionType === "groupe"
   const isSite = canteenInfos.productionType === "site"
   const isSatellite = canteenInfos.productionType === "site_cooked_elsewhere"
-  const isCentral = canteenInfos.productionType === "central"
-  const isCentralServing = canteenInfos.productionType === "central_serving"
   const hasLineMinistry = canteenInfos.lineMinistry
-  const hasRestaurant = isSite || isSatellite || isCentralServing
+  const hasRestaurant = isSite || isSatellite
   // Infos
   const infos = []
   // Required field for all canteen
@@ -45,14 +43,13 @@ const getEditableInfos = (canteenInfos) => {
   if (hasSiret) fieldsName.push("siret")
   // Types
   fieldsName.push("productionType", "managementType")
-  if (!isGroup) fieldsName.push("economicModel")
+  if (hasRestaurant) fieldsName.push("economicModel")
   // Meals
   fieldsName.push("dailyMealCount", "yearlyMealCount")
   // Sectors
   if (hasRestaurant) fieldsName.push("sectorList")
   if (hasLineMinistry) fieldsName.push("lineMinistry")
-  // Satellites and Central infos
-  if (isCentral || isCentralServing) fieldsName.push("satelliteCanteensCount")
+  // Central producer SIRET
   if (isSatellite || isGroup) fieldsName.push("centralProducerSiret")
   // Geolocation
   if(hasSiren && !isGroup) fieldsName.push("city", "postalCode")
