@@ -706,8 +706,13 @@ class Canteen(SoftDeletionModel):
 
     @property
     def satellites_already_teledeclared_count(self):
-        # Next: implement count
-        return 1
+        if self.is_groupe:
+            year = timezone.now().year - 1
+            return (
+                self.satellites.annotate_with_action_for_year(year)
+                .filter(action__in=[Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED, Canteen.Actions.NOTHING])
+                .count()
+            )
 
     @property
     def is_satellite(self) -> bool:
