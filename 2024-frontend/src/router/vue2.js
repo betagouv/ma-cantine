@@ -127,10 +127,6 @@ const vue2routes = [
     },
   },
   {
-    path: "/modifier-ma-cantine/:canteenUrlComponent/supprimer",
-    name: "CanteenDeletion",
-  },
-  {
     path: "/modifier-ma-cantine/:canteenUrlComponent/gestionnaires",
     name: "CanteenManagers",
   },
