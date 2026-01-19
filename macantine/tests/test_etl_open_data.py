@@ -286,9 +286,8 @@ class TestETLOpenData(TestCase):
                 output_dataframe = pd.read_csv(csv_file, sep=";")
             self.assertEqual(tc["expected_length"], len(output_dataframe))
 
-            self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.parquet"))
             self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
 
             # Cleaning files
-            for file_extension in ["csv", "parquet", "xslx"]:
+            for file_extension in ["csv", "xlsx"]:
                 default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")
