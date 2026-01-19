@@ -521,7 +521,10 @@ class CanteenCreateApiTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
-        self.assertEqual(body["siret"], ["Le numéro SIRET n'est pas valide."])
+        self.assertEqual(
+            body["siret"][0],
+            "Le numéro SIRET est invalide et semble ne pas exister dans les registres officiels, vous pouvez vérifier sa validité depuis le site : https://annuaire-entreprises.data.gouv.fr",
+        )
 
         response = self.client.post(
             reverse("user_canteens"),
@@ -534,7 +537,10 @@ class CanteenCreateApiTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
-        self.assertEqual(body["centralProducerSiret"], ["Le numéro SIRET n'est pas valide."])
+        self.assertEqual(
+            body["centralProducerSiret"][0],
+            "Le numéro SIRET est invalide et semble ne pas exister dans les registres officiels, vous pouvez vérifier sa validité depuis le site : https://annuaire-entreprises.data.gouv.fr",
+        )
 
     @authenticate
     def test_cannot_create_canteen_with_duplicate_siret(self):

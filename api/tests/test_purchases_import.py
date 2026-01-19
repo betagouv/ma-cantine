@@ -27,16 +27,6 @@ class PurchasesSchemaTest(TestCase):
     def setUpTestData(cls):
         cls.schema = json.load(open(PURCHASE_SCHEMA_FILE_PATH))
 
-    def test_prix_ht_decimal(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "prix_ht"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in ["1234", "1234.0", "1234.99", "1234.99999", "1234,0", "1234,99", "1234,99999"]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", " ", "TEST", "1234.99.99", "1234,99,99"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
     def test_famille_produits_regex(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "famille_produits"), None)
         pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
@@ -203,7 +193,11 @@ class PurchasesImportApiErrorTest(APITestCase):
             "La date doit être écrite sous la forme `aaaa-mm-jj`",
         )
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # price
-        self.assertTrue(errors.pop(0)["message"].startswith("A price ne respecte pas le motif imposé"))
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal"
+            )
+        )
         self.assertTrue(
             errors.pop(0)["message"].startswith("NOPE ne respecte pas le motif imposé"),
         )
@@ -362,16 +356,32 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.RUP])
-        self.assertEqual(purchase.local_definition, "")
+        self.assertEqual(purchase.local_definition, None)
         # purchase with characteristics empty
         purchase = Purchase.objects.filter(description="Pommes, vertes 4").first()
         self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.family, Purchase.Family.AUTRES)
-        self.assertEqual(purchase.characteristics, [""])
+        self.assertEqual(purchase.characteristics, [])
         # Test that the purchase import source contains the complete file digest
         filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
+
+    @authenticate
+    def test_import_good_purchases_with_empty_columns(self):
+        """
+        Tests that can import a purchases file with no characteristics or local definition
+        """
+        CanteenFactory(siret="65449096241683", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_with_empty_columns.xlsx"
+        with open(file_path, "rb") as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 2)
+        self.assertFalse(ImportFailure.objects.exists())
 
     @authenticate
     def test_import_comma_separated_numbers(self):
