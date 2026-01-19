@@ -683,6 +683,22 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         # check again
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 1)
 
+    @freeze_time("2026-01-15")  # during the 2025 campaign the year is hardcoded in the query
+    def test_satellites_already_teledeclared_count_property(self):
+        self.assertEqual(self.canteen_groupe_with_satellite.satellites_already_teledeclared_count, 0)
+        self.assertEqual(self.canteen_groupe_with_satellite.satellites_count, 1)
+        # create a diagnostic for the autonomous satellite and teledeclare it
+        diagnostic_satellite_4 = DiagnosticFactory(canteen=self.canteen_satellite_4, year=2025)
+        diagnostic_satellite_4.teledeclare(applicant=UserFactory())
+        self.assertEqual(diagnostic_satellite_4.is_teledeclared, True)
+        # link satellite to groupe
+        self.canteen_satellite_4.groupe = self.canteen_groupe_with_satellite
+        self.canteen_satellite_4.save(skip_validations=True)
+        self.canteen_groupe_with_satellite.refresh_from_db()
+        # check again
+        self.assertEqual(self.canteen_groupe_with_satellite.satellites_count, 2)
+        self.assertEqual(self.canteen_groupe_with_satellite.satellites_already_teledeclared_count, 1)
+
     def test_get_satellites_old(self):
         self.assertEqual(Canteen.objects.count(), 10)
         self.assertEqual(Canteen.objects.get_satellites_old(self.canteen_central_1.siret).count(), 1)
