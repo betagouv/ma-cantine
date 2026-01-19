@@ -52,6 +52,12 @@ class UpcomingEventsFilter(admin.SimpleListFilter):
 
 @admin.register(CommunityEvent)
 class CommunityEventAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "start_date",
+    )
+    list_filter = (UpcomingEventsFilter,)
+
     form = CommunityEventForm
     fields = (
         "title",
@@ -60,8 +66,3 @@ class CommunityEventAdmin(admin.ModelAdmin):
         "end_date",
         "link",
     )
-    list_display = (
-        "title",
-        "start_date",
-    )
-    list_filter = (UpcomingEventsFilter,)

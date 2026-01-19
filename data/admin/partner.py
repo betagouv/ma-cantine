@@ -21,7 +21,17 @@ def publish(modeladmin, request, queryset):
 
 @admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "published_state",
+        "creation_date",
+        "modification_date",
+    )
+    list_filter = ("published", "types", "sector_categories")
+    actions = [publish]
+
     form = PartnerForm
+    filter_vertical = ("types",)
     fields = (
         "name",
         "categories",
@@ -41,15 +51,6 @@ class PartnerAdmin(admin.ModelAdmin):
         "contact_message",
         "contact_phone_number",
     )
-    filter_vertical = ("types",)
-    list_display = (
-        "name",
-        "published_state",
-        "creation_date",
-        "modification_date",
-    )
-    list_filter = ("published", "types", "sector_categories")
-    actions = [publish]
 
     def published_state(self, obj):
         return "✅ Publié" if obj.published else "🔒 Non publié"

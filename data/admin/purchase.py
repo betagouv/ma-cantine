@@ -10,6 +10,30 @@ from data.models.creation_source import CreationSource
 
 @admin.register(Purchase)
 class PurchaseAdmin(SoftDeletionAdmin):
+    list_display = (
+        "date",
+        "canteen_with_link",
+        "description",
+        "family",
+        "characteristics",
+        "price_ht",
+        "deleted",
+        "creation_date",
+    )
+    list_filter = (
+        "family",
+        get_arrayfield_list_filter("characteristics", "Caractéristique"),
+        SoftDeletionStatusFilter,
+        "deletion_date",
+    )
+    search_fields = (
+        "canteen__siret",
+        "canteen__siren_unite_legale",
+        "description",
+        "import_source",
+    )
+    search_help_text = f"Cherche sur les champs : Cantine (SIRET), {Purchase._meta.get_field('description').verbose_name.capitalize()}, {Purchase._meta.get_field('import_source').verbose_name.capitalize()}"
+
     fields = (
         "date",
         "canteen",
@@ -43,29 +67,6 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "creation_date",
         "modification_date",
     )
-    list_display = (
-        "date",
-        "canteen_with_link",
-        "description",
-        "family",
-        "characteristics",
-        "price_ht",
-        "deleted",
-        "creation_date",
-    )
-    list_filter = (
-        "family",
-        get_arrayfield_list_filter("characteristics", "Caractéristique"),
-        SoftDeletionStatusFilter,
-        "deletion_date",
-    )
-    search_fields = (
-        "canteen__siret",
-        "canteen__siren_unite_legale",
-        "description",
-        "import_source",
-    )
-    search_help_text = f"Cherche sur les champs : Cantine (SIRET), {Purchase._meta.get_field('description').verbose_name.capitalize()}, {Purchase._meta.get_field('import_source').verbose_name.capitalize()}"
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

@@ -13,10 +13,11 @@ class BlogTagForm(forms.ModelForm):
 
 @admin.register(BlogTag)
 class BlogTagAdmin(admin.ModelAdmin):
-    form = BlogTagForm
-    fields = ("name",)
     list_display = (
         "name",
         "creation_date",
     )
     list_filter = ("name",)
+
+    form = BlogTagForm
+    fields = ("name",)

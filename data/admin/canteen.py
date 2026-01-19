@@ -51,9 +51,44 @@ class PublicationStatusFilter(admin.SimpleListFilter):
 
 @admin.register(Canteen)
 class CanteenAdmin(SoftDeletionHistoryAdmin):
+    list_display = (
+        "name",
+        "siret_or_siren_unite_legale_display",
+        "city",
+        "télédéclarée",
+        "groupe",
+        "central_producer_siret",
+        "management_type",
+        "production_type",
+        "source_des_données",
+        "creation_date",
+        "modification_date",
+        "deleted",
+    )
+    list_filter = (
+        PublicationStatusFilter,
+        "management_type",
+        "production_type",
+        "economic_model",
+        SoftDeletionStatusFilter,
+        "sector_list",
+        "region",
+        "department",
+        "import_source",
+    )
+    search_fields = (
+        "id",
+        "name",
+        "siret__istartswith",
+        "siren_unite_legale__istartswith",
+        "central_producer_siret__istartswith",
+    )
+    search_help_text = "La recherche est faite sur les champs : ID, nom, siret, siren de l'unité légale, siret de la cuisine centrale."
+
     form = CanteenForm
-    # inlines = (UserInline, DiagnosticInline,)
+    # inlines = (UserInline, DiagnosticInline,)  # see get_inlines
     autocomplete_fields = ("groupe",)
+    filter_vertical = ("managers",)
     fields = (
         "name",
         "siret",
@@ -131,40 +166,6 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "has_been_claimed",
         "satellites_display",
     )
-    list_display = (
-        "name",
-        "siret_or_siren_unite_legale_display",
-        "city",
-        "télédéclarée",
-        "groupe",
-        "central_producer_siret",
-        "management_type",
-        "production_type",
-        "source_des_données",
-        "creation_date",
-        "modification_date",
-        "deleted",
-    )
-    filter_vertical = ("managers",)
-    list_filter = (
-        PublicationStatusFilter,
-        "management_type",
-        "production_type",
-        "economic_model",
-        SoftDeletionStatusFilter,
-        "sector_list",
-        "region",
-        "department",
-        "import_source",
-    )
-    search_fields = (
-        "id",
-        "name",
-        "siret__istartswith",
-        "siren_unite_legale__istartswith",
-        "central_producer_siret__istartswith",
-    )
-    search_help_text = "La recherche est faite sur les champs : ID, nom, siret, siren de l'unité légale, siret de la cuisine centrale."
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

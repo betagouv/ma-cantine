@@ -40,8 +40,6 @@ class DiagnosticInline(admin.TabularInline):
 
 @admin.register(Diagnostic)
 class DiagnosticAdmin(SimpleHistoryAdmin):
-    form = DiagnosticForm
-    inlines = (TeledeclarationInline,)
     list_display = (
         "canteen_name",
         "year",
@@ -51,19 +49,17 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "modification_date",
     )
     list_filter = ("year", "diagnostic_type", "status", "creation_source")
-    readonly_fields = (
-        "status",
-        *Diagnostic.MATOMO_FIELDS,
-        *Diagnostic.TUNNEL_PROGRESS_FIELDS,
-        *Diagnostic.TELEDECLARATION_FIELDS,
-        "applicant",
-        "canteen_snapshot_pretty",
-        "satellites_snapshot_pretty",
-        "applicant_snapshot_pretty",
-        *Diagnostic.CREATION_META_FIELDS,
+    search_fields = (
+        "id",
+        "canteen__name",
+        "canteen__siret",
+        "canteen__siren_unite_legale",
     )
-    raw_id_fields = ("canteen",)
+    search_help_text = "La recherche est faite sur les champs : ID, nom de la cantine, siret, siren de l'unité légale"
 
+    form = DiagnosticForm
+    inlines = (TeledeclarationInline,)
+    autocomplete_fields = ("canteen",)
     fieldsets = (
         (
             "",
@@ -154,13 +150,17 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             {"fields": Diagnostic.CREATION_META_FIELDS},
         ),
     )
-    search_fields = (
-        "id",
-        "canteen__name",
-        "canteen__siret",
-        "canteen__siren_unite_legale",
+    readonly_fields = (
+        "status",
+        *Diagnostic.MATOMO_FIELDS,
+        *Diagnostic.TUNNEL_PROGRESS_FIELDS,
+        *Diagnostic.TELEDECLARATION_FIELDS,
+        "applicant",
+        "canteen_snapshot_pretty",
+        "satellites_snapshot_pretty",
+        "applicant_snapshot_pretty",
+        *Diagnostic.CREATION_META_FIELDS,
     )
-    search_help_text = "La recherche est faite sur les champs : ID, nom de la cantine, siret, siren de l'unité légale"
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

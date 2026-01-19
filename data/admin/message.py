@@ -52,6 +52,16 @@ class MessageStatusFilter(admin.SimpleListFilter):
 
 @admin.register(Message)
 class MessageAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+    list_display = (
+        "body",
+        "sender_email",
+        "destinataire",
+        "recipients",
+        "statut",
+    )
+    list_filter = (MessageStatusFilter,)
+    actions = [send, block]
+
     fields = (
         "creation_date",
         "destination_canteen",
@@ -62,15 +72,6 @@ class MessageAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "sent_date",
     )
     read_only_fields = fields
-    list_display = (
-        "body",
-        "sender_email",
-        "destinataire",
-        "recipients",
-        "statut",
-    )
-    list_filter = (MessageStatusFilter,)
-    actions = [send, block]
 
     def destinataire(self, obj):
         return obj.canteen_name

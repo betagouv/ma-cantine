@@ -38,6 +38,13 @@ class ReservationExpeParticipantFilter(admin.SimpleListFilter):
 
 @admin.register(ReservationExpe)
 class ReservationExpeAdmin(admin.ModelAdmin):
+    list_display = (
+        "canteen_name",
+        "creation_date",
+        "has_reservation_system",
+    )
+    list_filter = (ReservationExpeParticipantFilter,)
+
     fieldsets = (
         (
             "",
@@ -109,14 +116,6 @@ class ReservationExpeAdmin(admin.ModelAdmin):
             },
         ),
     )
-
-    list_display = (
-        "canteen_name",
-        "creation_date",
-        "has_reservation_system",
-    )
-
-    list_filter = (ReservationExpeParticipantFilter,)
 
     def canteen_name(self, obj):
         return obj.canteen.name
