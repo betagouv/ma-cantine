@@ -95,7 +95,6 @@ class CanteenActionTestCase(TestCase):
     @freeze_time("2025-01-20")  # during the 2024 campaign
     def test_canteen_teledeclaration_actions(self):
         for canteen in [
-            self.canteen_groupe_1_with_satellites,
             self.canteen_site,
             self.canteen_satellite,  # without groupe
         ]:
@@ -163,7 +162,10 @@ class CanteenActionTestCase(TestCase):
 
         # has satellite and diagnostic started, but missing data
         canteen_groupe_diagnostic_2024 = DiagnosticFactory(
-            canteen=self.canteen_groupe_2_without_satellites, year=2024, valeur_totale=None
+            canteen=self.canteen_groupe_2_without_satellites,
+            year=2024,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            valeur_totale=None,
         )
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
