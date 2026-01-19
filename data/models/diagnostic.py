@@ -1719,7 +1719,7 @@ class Diagnostic(models.Model):
         uses_central_kitchen_appro = self._should_use_central_kitchen_appro()
         if uses_central_kitchen_appro:
             return Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
-        if self.canteen.is_groupe_or_central_cuisine:
+        if self.canteen.is_groupe:
             if self.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.ALL:
                 return Diagnostic.TeledeclarationMode.CENTRAL_ALL
             if self.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
@@ -1759,7 +1759,7 @@ class Diagnostic(models.Model):
         self.canteen_snapshot = serialized_canteen
 
         # satellites data
-        if self.canteen.is_groupe_or_central_cuisine:
+        if self.canteen.is_groupe:
             serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in self.canteen.satellites]
             self.satellites_snapshot = serialized_satellites
 

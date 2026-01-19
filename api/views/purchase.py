@@ -424,7 +424,7 @@ class DiagnosticsFromPurchasesView(APIView):
             if valeur_totale == 0 or valeur_totale is None:
                 errors.append(f"Aucun achat trouvé pour la cantine : {canteen_id}")
                 continue
-            if canteen.is_central_cuisine:
+            if canteen.is_groupe:
                 values_dict["central_kitchen_diagnostic_mode"] = Diagnostic.CentralKitchenDiagnosticMode.APPRO
             diagnostic = Diagnostic(canteen=canteen, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict)
             try:

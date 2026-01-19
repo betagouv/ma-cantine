@@ -12,7 +12,6 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
         - siret & siren_unite_legale: at least one must be filled
         - siret & siren_unite_legale: both cannot be filled at the same time
         - if groupe: only the siren_unite_legale field must be filled
-        - if central: only the siret field must be filled
         - if siret: must be unique (NOTE: check is done on all, NOT on all_objects)
     """
     errors = {}
@@ -41,13 +40,6 @@ def validate_canteen_siret_or_siren_unite_legale(instance):
             utils_utils.add_validation_error(errors, "siren_unite_legale", "Groupe : le champ ne peut pas être vide.")
         if siret:
             utils_utils.add_validation_error(errors, "siret", "Groupe : le champ ne peut pas être rempli.")
-    if instance.is_central_cuisine:
-        if not siret:
-            utils_utils.add_validation_error(errors, "siret", "Cuisine centrale : le champ ne peut pas être vide.")
-        if siren_unite_legale:
-            utils_utils.add_validation_error(
-                errors, "siren_unite_legale", "Cuisine centrale : le champ ne peut pas être rempli."
-            )
     if siret:
         from data.models import Canteen
 
@@ -150,47 +142,19 @@ def validate_canteen_sector_list_field(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the value is a list (empty or with Sectors)
     - extra validation:
-        - if groupe/central: the sector_list should be empty
-        - if not groupe/central: the sector_list should be between 1 & 3
+        - if groupe: the sector_list should be empty
+        - if not groupe: the sector_list should be between 1 & 3
     """
     errors = {}
     field_name = "sector_list"
     value = getattr(instance, field_name)
     if value is not None:  # check done in clean_fields()
-        if instance.is_groupe or instance.is_central:
+        if instance.is_groupe:
             if len(value):
-                utils_utils.add_validation_error(errors, field_name, "Cuisine centrale : le champ doit être vide.")
+                utils_utils.add_validation_error(errors, field_name, "Groupe : le champ doit être vide.")
         else:
             if (len(value) == 0) or (len(value) > 3):
                 utils_utils.add_validation_error(errors, field_name, "Le champ doit contenir entre 1 et 3 secteurs.")
-    return errors
-
-
-def validate_canteen_satellite_count(instance):
-    """
-    - extra validation:
-        - if central: satellite_canteens_count must be filled
-        - if central: satellite_canteens_count must be an integer
-        - if central: satellite_canteens_count must be > 0
-        - if not central: satellite_canteens_count must be empty
-    """
-    errors = {}
-    field_name = "satellite_canteens_count"
-    value = getattr(instance, field_name)
-    if instance.is_central_cuisine:
-        if value in [None, ""]:
-            utils_utils.add_validation_error(errors, field_name, "Cuisine centrale : le champ ne peut pas être vide.")
-        elif not (isinstance(value, int) or (isinstance(value, str) and value.isdigit())):
-            utils_utils.add_validation_error(
-                errors, field_name, "Cuisine centrale : le champ doit être un nombre entier."
-            )
-        elif int(value) <= 0:
-            utils_utils.add_validation_error(
-                errors, field_name, "Cuisine centrale : le champ doit être un nombre entier supérieur à 0."
-            )
-    else:
-        if value not in [None, ""]:
-            utils_utils.add_validation_error(errors, field_name, "Le champ doit être vide.")
     return errors
 
 
