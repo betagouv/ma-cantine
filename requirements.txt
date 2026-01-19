@@ -649,7 +649,7 @@ uritools==4.0.3
     # via
     #   ma-cantine
     #   pyhanko-certvalidator
-urllib3==2.2.3
+urllib3==2.6.3
     # via
     #   botocore
     #   django-anymail
