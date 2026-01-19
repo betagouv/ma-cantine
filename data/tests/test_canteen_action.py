@@ -137,7 +137,7 @@ class CanteenActionTestCase(TestCase):
 
     @freeze_time("2025-01-20")  # during the 2024 campaign
     def test_groupe_missing_data_actions(self):
-        # missing satellites
+        # missing satellites, no diagnostic, canteen missing data
         self.assertEqual(self.canteen_groupe_2_without_satellites.satellites.count(), 0)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
@@ -147,7 +147,7 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.ADD_SATELLITES,
         )
 
-        # add satellite, but no diagnostic and missing data
+        # add satellite, no diagnostic, canteen missing data
         self.canteen_satellite.groupe = self.canteen_groupe_2_without_satellites
         self.canteen_satellite.save(skip_validations=True)
         self.canteen_groupe_2_without_satellites.yearly_meal_count = None
@@ -160,11 +160,10 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.CREATE_DIAGNOSTIC,
         )
 
-        # has satellite and diagnostic started, but missing data
+        # has satellite, diagnostic started, canteen missing data
         canteen_groupe_diagnostic_2024 = DiagnosticFactory(
             canteen=self.canteen_groupe_2_without_satellites,
             year=2024,
-            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
             valeur_totale=None,
         )
 
@@ -175,7 +174,18 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.FILL_DIAGNOSTIC,
         )
 
-        # has satellite and diagnostic filled (2024), but missing data
+        # has satellite, diagnostic started, canteen missing data
+        canteen_groupe_diagnostic_2024.central_kitchen_diagnostic_mode = Diagnostic.CentralKitchenDiagnosticMode.ALL
+        canteen_groupe_diagnostic_2024.save()
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_groupe_2_without_satellites.id).action,
+            Canteen.Actions.FILL_DIAGNOSTIC,
+        )
+
+        # has satellite, diagnostic filled (2024), canteen missing data
         canteen_groupe_diagnostic_2024.valeur_totale = 100
         canteen_groupe_diagnostic_2024.save()
 
@@ -186,7 +196,7 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.FILL_CANTEEN_DATA,
         )
 
-        # has satellite, diagnostic filled (2024) and data filled
+        # has satellite, diagnostic filled (2024), canteen filled
         self.canteen_groupe_2_without_satellites.yearly_meal_count = 1000
         self.canteen_groupe_2_without_satellites.save(skip_validations=True)
 
