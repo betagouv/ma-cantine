@@ -99,12 +99,6 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
                 escapechar="\\",
             )
 
-    def _load_data_parquet(self, filename):
-        with default_storage.open(filename + ".parquet", "wb") as parquet_file:
-            if "sectors" in self.df.columns:
-                self.df.sectors = self.df.sectors_m2m.astype(str)
-            self.df.to_parquet(parquet_file)
-
     def _load_data_xlsx(self, filename):
         chunk_size = 1000
         start_row = 0
@@ -146,7 +140,6 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
                 return
         try:
             self._load_data_csv(filepath)
-            self._load_data_parquet(filepath)
             self._load_data_xlsx(filepath)
 
             update_dataset_resources(self.datagouv_dataset_id)
