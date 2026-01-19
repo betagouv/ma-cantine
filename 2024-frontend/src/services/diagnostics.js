@@ -1,4 +1,4 @@
-const getBadge = (name, campaignDates, satellitesMissingDataCount) => {
+const getBadge = (name, campaignDates) => {
   let label = null
   let type = null
   const isInCampaign = campaignDates.inCorrection || campaignDates.inTeledeclaration
@@ -22,10 +22,6 @@ const getBadge = (name, campaignDates, satellitesMissingDataCount) => {
     case !hasTeledeclared && !campaignDates.inTeledeclaration: // If not in teledeclaration campaign this is defaut badge for a diagnostic
       label = "Non télédéclaré"
       type = "neutral"
-      break
-    case isInCampaign && toTeledeclare && satellitesMissingDataCount > 0: // HACK: we need to wait for backend to handle satellites missing data
-      label = "À compléter"
-      type = "error"
       break
     case isInCampaign && toTeledeclare: // If diagnostic needs to be teledeclared
       label = "À télédéclarer"
