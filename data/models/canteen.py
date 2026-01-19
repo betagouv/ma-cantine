@@ -146,10 +146,15 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         # TODO: improve with a related_name on the groupe FK
         satellites = Canteen.objects.filter(groupe_id=OuterRef("pk")).order_by().values("groupe_id")
         satellites_count = satellites.annotate(count=Count("id")).values("count")
+        satellites_missing_data = satellites.has_missing_data()
+        satellites_missing_data_count = satellites_missing_data.annotate(count=Count("id")).values("count")
         return self.annotate(
             satellites_in_db_count=Case(
                 When(is_groupe_query(), then=Coalesce(Subquery(satellites_count), 0)), default=0
-            )
+            ),
+            satellites_in_db_missing_data_count=Case(
+                When(is_groupe_query(), then=Coalesce(Subquery(satellites_missing_data_count), 0)), default=0
+            ),
         )
 
     def annotate_with_is_managed_by_user(self, user):
@@ -292,6 +297,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
                 then=Value(Canteen.Actions.FILL_DIAGNOSTIC),
             ),
             When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
+            When(
+                is_groupe_query() & Q(satellites_in_db_missing_data_count__gt=0),
+                then=Value(Canteen.Actions.FILL_SATELLITE_CANTEEN_DATA),
+            ),
         ]
         if is_in_correction():
             # TODO: figure out a way to detect that the canteen has indeed teledeclared during the teledeclaration campaign
@@ -357,12 +366,13 @@ class Canteen(SoftDeletionModel):
         CREATE_DIAGNOSTIC = "20_create_diagnostic", "Créer le diagnostic"
         FILL_DIAGNOSTIC = "30_fill_diagnostic", "Compléter le diagnostic"
         FILL_CANTEEN_DATA = "35_fill_canteen_data", "Compléter les infos de la cantine"
+        FILL_SATELLITE_CANTEEN_DATA = "36_fill_satellite_canteen_data", "Compléter les infos des cantines satellites"
         TELEDECLARE = "40_teledeclare", "Télédéclarer"
         DID_NOT_TELEDECLARE = "45_did_not_teledeclare", "Non télédéclaré"
-        NOTHING_SATELLITE = "90_nothing_satellite", "En attente de la télédéclaration de votre cuisine centrale"
+        NOTHING_SATELLITE = "90_nothing_satellite", "En attente de la télédéclaration de votre groupe"
         NOTHING_SATELLITE_TELEDECLARED = (
             "91_nothing_satellite_teledeclared",
-            "Rien à faire (télédéclaré par votre cuisine centrale)",
+            "Rien à faire (télédéclaré par votre groupe)",
         )
         NOTHING = "95_nothing", "Rien à faire !"
 

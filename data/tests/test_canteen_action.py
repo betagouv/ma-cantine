@@ -196,9 +196,26 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.FILL_CANTEEN_DATA,
         )
 
-        # has satellite, diagnostic filled (2024), canteen filled
+        # has satellite, diagnostic filled (2024), canteen data filled, new satellite missing data
         self.canteen_groupe_2_without_satellites.yearly_meal_count = 1000
         self.canteen_groupe_2_without_satellites.save(skip_validations=True)
+        new_canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=self.canteen_groupe_2_without_satellites,
+        )
+        new_canteen_satellite.yearly_meal_count = None
+        new_canteen_satellite.save(skip_validations=True)
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_groupe_2_without_satellites.id).action,
+            Canteen.Actions.FILL_SATELLITE_CANTEEN_DATA,
+        )
+
+        # has satellites filled, diagnostic filled (2024), canteen data filled
+        new_canteen_satellite.yearly_meal_count = 1000
+        new_canteen_satellite.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 
