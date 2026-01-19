@@ -58,10 +58,6 @@ def is_central_query():
     return Q(production_type=Canteen.ProductionType.CENTRAL)
 
 
-def is_central_cuisine_query():
-    return Q(production_type__in=[Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING])
-
-
 def is_serving_query():
     return Q(
         production_type__in=[
@@ -104,20 +100,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def is_groupe(self):
         return self.filter(is_groupe_query())
 
-    def is_central(self):
-        return self.filter(is_central_query())
-
-    def is_central_cuisine(self):
-        return self.filter(is_central_cuisine_query())
-
     def is_serving(self):
         return self.filter(is_serving_query())
 
     def is_satellite(self):
         return self.filter(is_satellite_query())
-
-    def get_satellites_old(self, central_producer_siret):
-        return self.filter(is_satellite_query(), central_producer_siret=central_producer_siret)
 
     def is_public(self):
         return self.filter(is_public_query())
@@ -295,7 +282,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_diagnostic_filled_for_year=False, then=Value(Canteen.Actions.FILL_DIAGNOSTIC)),
             When(
-                (is_central_cuisine_query() & Q(diagnostic_for_year_cc_mode=None)),
+                (is_groupe_query() & Q(diagnostic_for_year_cc_mode=None)),
                 then=Value(Canteen.Actions.FILL_DIAGNOSTIC),
             ),
             When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
@@ -457,7 +444,7 @@ class Canteen(SoftDeletionModel):
         null=True,
         blank=True,
         verbose_name="nombre de restaurants satellites dépendants (si cuisine centrale)",
-    )
+    )  # not used anymore
 
     groupe = models.ForeignKey(
         "self",
@@ -603,7 +590,6 @@ class Canteen(SoftDeletionModel):
             canteen_validators.validate_canteen_economic_model_field(self),
             canteen_validators.validate_canteen_meal_count_fields(self),
             canteen_validators.validate_canteen_sector_list_field(self),
-            canteen_validators.validate_canteen_satellite_count(self),
             canteen_validators.validate_canteen_groupe_field(self),
             canteen_validators.validate_canteen_central_producer_siret_field(self),
         )
@@ -660,21 +646,11 @@ class Canteen(SoftDeletionModel):
         return self.production_type and self.production_type == Canteen.ProductionType.GROUPE
 
     @property
-    def is_central(self) -> bool:
-        return self.production_type and self.production_type in [
-            Canteen.ProductionType.CENTRAL,
-        ]
-
-    @property
     def is_central_cuisine(self) -> bool:
         return self.production_type and self.production_type in [
             Canteen.ProductionType.CENTRAL,
             Canteen.ProductionType.CENTRAL_SERVING,
         ]
-
-    @property
-    def is_groupe_or_central_cuisine(self) -> bool:
-        return self.is_groupe or self.is_central_cuisine
 
     @property
     def is_serving(self):
@@ -688,9 +664,6 @@ class Canteen(SoftDeletionModel):
     def satellites(self):
         if self.is_groupe:
             return self.canteen_set.all()
-        elif self.is_central_cuisine:
-            if self.siret:
-                return Canteen.objects.get_satellites_old(self.siret)
         return Canteen.objects.none()
 
     @property
