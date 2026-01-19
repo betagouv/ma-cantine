@@ -30,7 +30,7 @@
             <p v-if="satWithTD > 0" class="text-left px-6">
               En continuant, vous allez écraser les données du bilan par les vôtres. Si vous ne souhaitez pas écraser
               les données, vous devez retirer
-              {{ satWithTD > 1 ? "ce restaurant satellite" : "ces restaurants satellites" }} de votre groupe avant de
+              {{ satWithTD === 1 ? "ce restaurant satellite" : "ces restaurants satellites" }} de votre groupe avant de
               télédéclarer.
               <router-link
                 :to="{
@@ -132,9 +132,7 @@ export default {
       return this.diagnostic
     },
     satWithTD() {
-      console.log("TODO !!!")
-      const count = 1
-      return count
+      return this.canteenForTD.satellitesAlreadyTeledeclaredCount
     },
     unusualData() {
       const unusualData = []
