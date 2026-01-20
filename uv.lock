@@ -575,6 +575,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-dirtyfields"
+version = "1.9.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ac/ab/850295c9c9cc5aadd5ea5993716ee54641440e1bc3655129e202aa311399/django_dirtyfields-1.9.8.tar.gz", hash = "sha256:f18fd998bc891390f92c98a0a1a7a8140b8e8cc8defa5f6539ad416550c46559", size = 21746, upload-time = "2025-11-17T12:45:33.066Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/48/0478f21ae59ac5107c4f8901b827f66556781ca6e4137dd36f343a47abbb/django_dirtyfields-1.9.8-py3-none-any.whl", hash = "sha256:28e2de32df1385d7ccd33c23a6de90e3579e9b9644bc9bdfe6214e6c8b51a127", size = 7678, upload-time = "2025-11-17T12:45:32.145Z" },
+]
+
+[[package]]
 name = "django-extensions"
 version = "4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1343,6 +1355,7 @@ dependencies = [
     { name = "django-ckeditor" },
     { name = "django-csp" },
     { name = "django-debug-toolbar" },
+    { name = "django-dirtyfields" },
     { name = "django-extensions" },
     { name = "django-filter" },
     { name = "django-js-asset" },
@@ -1511,6 +1524,7 @@ requires-dist = [
     { name = "django-ckeditor", specifier = "==6.7.1" },
     { name = "django-csp", specifier = "==3.8" },
     { name = "django-debug-toolbar", specifier = "==4.4.6" },
+    { name = "django-dirtyfields", specifier = "==1.9.8" },
     { name = "django-extensions", specifier = "==4.1" },
     { name = "django-filter", specifier = "==24.3" },
     { name = "django-js-asset", specifier = "==2.2.0" },
