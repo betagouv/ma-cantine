@@ -15,6 +15,19 @@ from data.models.creation_source import CreationSource
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
+CANTEEN_SITE_DEFAULT_PAYLOAD = {
+    "name": "My canteen",
+    "city": "Lyon",
+    "siret": "21340172201787",
+    "daily_meal_count": 12,
+    "yearly_meal_count": 1000,
+    "management_type": Canteen.ManagementType.DIRECT,
+    "production_type": Canteen.ProductionType.ON_SITE,
+    "economic_model": Canteen.EconomicModel.PUBLIC,
+    "sector_list": [Sector.EDUCATION_PRIMAIRE, Sector.ENTERPRISE_ENTREPRISE],
+}
+
+
 class CanteenListApiTest(APITestCase):
     def test_get_canteens_unauthenticated(self):
         """
@@ -435,20 +448,10 @@ class CanteenDetailApiTest(APITestCase):
 class CanteenCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.CANTEEN_SITE_DEFAULT_PAYLOAD = {
-            "name": "My canteen",
-            "city": "Lyon",
-            "siret": "21340172201787",
-            "dailyMealCount": 12,
-            "yearlyMealCount": 1000,
-            "managementType": Canteen.ManagementType.DIRECT,
-            "productionType": Canteen.ProductionType.ON_SITE,
-            "economicModel": Canteen.EconomicModel.PUBLIC,
-            "sectorList": [Sector.EDUCATION_PRIMAIRE, Sector.ENTERPRISE_ENTREPRISE],
-        }
+        pass
 
     def test_cannot_create_canteen_unauthenticated(self):
-        response = self.client.post(reverse("user_canteens"), self.CANTEEN_SITE_DEFAULT_PAYLOAD)
+        response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -456,7 +459,7 @@ class CanteenCreateApiTest(APITestCase):
     def test_cannot_create_canteen_central(self):
         response = self.client.post(
             reverse("user_canteens"),
-            {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "productionType": Canteen.ProductionType.CENTRAL},
+            {**CANTEEN_SITE_DEFAULT_PAYLOAD, "productionType": Canteen.ProductionType.CENTRAL},
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -467,7 +470,7 @@ class CanteenCreateApiTest(APITestCase):
 
     @authenticate
     def test_create_canteen(self):
-        response = self.client.post(reverse("user_canteens"), self.CANTEEN_SITE_DEFAULT_PAYLOAD)
+        response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -477,7 +480,7 @@ class CanteenCreateApiTest(APITestCase):
     def test_create_canteen_creation_source(self):
         # from the APP
         response = self.client.post(
-            reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "APP"}
+            reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "APP"}
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -486,7 +489,7 @@ class CanteenCreateApiTest(APITestCase):
         created_canteen.hard_delete()
 
         # defaults to API
-        response = self.client.post(reverse("user_canteens"), self.CANTEEN_SITE_DEFAULT_PAYLOAD)
+        response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -495,13 +498,13 @@ class CanteenCreateApiTest(APITestCase):
 
         # returns a 404 if the creation_source is not valid
         response = self.client.post(
-            reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "UNKNOWN"}
+            reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "UNKNOWN"}
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
     def test_cannot_create_canteen_without_siret(self):
-        payload = self.CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
+        payload = CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
         del payload["siret"]
 
         response = self.client.post(reverse("user_canteens"), payload)
@@ -511,13 +514,13 @@ class CanteenCreateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_create_canteen_with_bad_siret(self):
-        response = self.client.post(reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "0123"})
+        response = self.client.post(reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "0123"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["14 caractères numériques sont attendus"])
 
         response = self.client.post(
-            reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "01234567891011"}
+            reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "01234567891011"}
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -529,7 +532,7 @@ class CanteenCreateApiTest(APITestCase):
         response = self.client.post(
             reverse("user_canteens"),
             {
-                **self.CANTEEN_SITE_DEFAULT_PAYLOAD,
+                **CANTEEN_SITE_DEFAULT_PAYLOAD,
                 "siret": "01234567891011",
                 "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
                 "centralProducerSiret": "01234567891011",
@@ -551,7 +554,7 @@ class CanteenCreateApiTest(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory(siret=siret)
 
-        response = self.client.post(reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
+        response = self.client.post(reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -562,7 +565,7 @@ class CanteenCreateApiTest(APITestCase):
         # make the user the manager of the canteen
         canteen.managers.add(authenticate.user)
 
-        response = self.client.post(reverse("user_canteens"), {**self.CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
+        response = self.client.post(reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -580,7 +583,7 @@ class CanteenCreateApiTest(APITestCase):
         with open(image_path, "rb") as image:
             image_base_64 = base64.b64encode(image.read()).decode("utf-8")
 
-        payload = self.CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
+        payload = CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
         payload["images"] = [
             {
                 "image": "data:image/jpeg;base64," + image_base_64,
@@ -598,7 +601,7 @@ class CanteenCreateApiTest(APITestCase):
         """
         The app should store the mtm parameters on creation
         """
-        payload = self.CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
+        payload = CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
         payload["creation_mtm_source"] = "mtm_source_value"
         payload["creation_mtm_campaign"] = "mtm_campaign_value"
         payload["creation_mtm_medium"] = "mtm_medium_value"
@@ -613,100 +616,93 @@ class CanteenCreateApiTest(APITestCase):
 
 
 class CanteenUpdateApiTest(APITestCase):
-    @authenticate
-    def test_modify_canteen_unauthorized(self):
-        """
-        Users can only modify the canteens they manage
-        """
-        canteen = CanteenFactory(city="Paris")
-        payload = {"city": "Lyon"}
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory(**CANTEEN_SITE_DEFAULT_PAYLOAD)
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
+    @authenticate
+    def test_cannot_update_canteen_with_put(self):
+        payload = {"city": "Paris"}
+        response = self.client.put(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_cannot_update_canteen_if_unauthenticated(self):
+        payload = {"city": "Paris"}
+
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_modify_canteen(self):
-        """
-        Users can modify the canteens they manage
-        """
-        canteen = CanteenFactory(city="Paris", managers=[authenticate.user])
+    def test_cannot_update_canteen_if_not_manager(self):
+        payload = {"city": "Paris"}
+
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_update_canteen(self):
+        self.assertEqual(self.canteen.city, "Lyon")
+        self.canteen.managers.add(authenticate.user)
+
         payload = {
-            "city": "Lyon",
-            "siret": "21340172201787",
-            "managementType": Canteen.ManagementType.DIRECT,
+            "city": "Paris",
+            "siret": "21380185500015",
+            "managementType": Canteen.ManagementType.CONCEDED,
             "reservationExpeParticipant": True,
         }
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        updated_canteen = Canteen.objects.get(pk=canteen.id)
-        self.assertEqual(updated_canteen.city, "Lyon")
-        self.assertEqual(updated_canteen.siret, "21340172201787")
-        self.assertEqual(updated_canteen.management_type, Canteen.ManagementType.DIRECT)
-        self.assertEqual(updated_canteen.reservation_expe_participant, True)
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.city, "Paris")
+        self.assertEqual(self.canteen.siret, "21380185500015")
+        self.assertEqual(self.canteen.management_type, Canteen.ManagementType.CONCEDED)
+        self.assertEqual(self.canteen.reservation_expe_participant, True)
 
     @authenticate
-    def test_modify_canteen_production_type(self):
-        """
-        Users can modify the production type and related fields of the canteens they manage
-        """
-        canteen_satellite = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, managers=[authenticate.user]
-        )
+    def test_update_canteen_production_type(self):
+        self.assertEqual(self.canteen.production_type, Canteen.ProductionType.ON_SITE)
+        self.canteen.managers.add(authenticate.user)
 
         payload = {
-            "productionType": Canteen.ProductionType.ON_SITE,
+            "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
         }
-        response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen_satellite.id}), payload, format="json"
-        )
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        updated_canteen = Canteen.objects.get(pk=canteen_satellite.id)
-        self.assertEqual(updated_canteen.production_type, Canteen.ProductionType.ON_SITE)
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.production_type, Canteen.ProductionType.ON_SITE_CENTRAL)
 
     @authenticate
-    def test_refuse_patch_without_siret(self):
-        """
-        A canteen modification shouldn't allow deleting a SIRET with sending blank or null value
-        """
-        siret = "26566234910966"
-        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
+    def test_cannot_update_canteen_with_new_empty_siret(self):
+        self.assertEqual(self.canteen.siret, "21340172201787")
+        self.canteen.managers.add(authenticate.user)
 
-        # Test with blank value
-        payload = {"siret": ""}
+        for siret in ["", None]:
+            payload = {"siret": siret}
+            response = self.client.patch(
+                reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json"
+            )
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        body = response.json()
-        self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.siret, siret)
-
-        # Test with missing value
-        payload = {"siret": None}
-
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        body = response.json()
-        self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.siret, siret)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            body = response.json()
+            self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
+            self.canteen.refresh_from_db()
+            self.assertEqual(self.canteen.siret, "21340172201787")
 
     @authenticate
-    def test_update_canteen_duplicate_siret_unmanaged(self):
-        """
-        If attempt to update a canteen with the same SIRET as one that I don't manage, give
-        me 400 with canteen name
-        """
+    def test_cannot_update_canteen_with_new_duplicate_siret(self):
         siret = "26566234910966"
         canteen = CanteenFactory(siret=siret)
-        canteen_to_test = CanteenFactory(managers=[authenticate.user])
-        payload = {"siret": siret}
+        self.assertEqual(self.canteen.siret, "21340172201787")
+        self.canteen.managers.add(authenticate.user)
 
-        response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen_to_test.id}), payload, format="json"
-        )
+        payload = {"siret": siret}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -714,70 +710,67 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(body["detail"], "La resource que vous souhaitez créer existe déjà")
         self.assertFalse(body["isManagedByUser"])
 
-    @authenticate
-    def test_update_canteen_duplicate_siret_managed(self):
-        """
-        If attempt to update a canteen with the same SIRET as one that I manage already, give
-        me 400 with canteen name and id
-        """
-        siret = "26566234910966"
-        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
-        canteen_to_test = CanteenFactory(managers=[authenticate.user])
-        payload = {"siret": siret}
+        # same if the user is manager of the other canteen
+        canteen.managers.add(authenticate.user)
 
-        response = self.client.patch(
-            reverse("single_canteen", kwargs={"pk": canteen_to_test.id}), payload, format="json"
-        )
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
         self.assertEqual(body["id"], canteen.id)
-        self.assertTrue(body["isManagedByUser"])
+        self.assertTrue(body["isManagedByUser"])  # changed
 
     @authenticate
-    def test_patch_with_own_siret(self):
-        """
-        A canteen modification should pass if the siret in the payload is already the canteen's siret
-        """
-        siret = "26566234910966"
-        canteen = CanteenFactory(siret=siret, managers=[authenticate.user])
-        payload = {"siret": siret}
+    def test_update_canteen_with_own_siret(self):
+        self.assertEqual(self.canteen.siret, "21340172201787")
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
+        self.canteen.managers.add(authenticate.user)
+
+        payload = {"siret": self.canteen.siret}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
-    def test_canteen_image_edition_unauthorized(self):
-        """
-        The API should not allow image modification for non-managers
-        """
-        canteen = CanteenFactory()
-        image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
-        image_base_64 = None
-        with open(image_path, "rb") as image:
-            image_base_64 = base64.b64encode(image.read()).decode("utf-8")
+    def test_update_canteen_with_new_siret(self):
+        self.assertEqual(self.canteen.siret, "21340172201787")
+        self.canteen.city_insee_code = "34172"
+        self.canteen.save()
+        self.canteen.managers.add(authenticate.user)
 
-        # Create image
-        payload = {
-            "images": [
-                {
-                    "image": "data:image/jpeg;base64," + image_base_64,
-                }
-            ]
-        }
+        payload = {"siret": "21380185500015"}
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.images.count(), 0)
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.siret, "21380185500015")
+        self.assertEqual(self.canteen.city_insee_code, "34172")  # TODO: needs to be updated!
 
     @authenticate
-    def test_canteen_image_modification(self):
-        """
-        The API should allow image addition and deletion for canteen managers
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        self.assertEqual(canteen.images.count(), 0)
+    def test_cannot_update_canteen_image_if_not_manager(self):
+        image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
+        image_base_64 = None
+        with open(image_path, "rb") as image:
+            image_base_64 = base64.b64encode(image.read()).decode("utf-8")
+
+        payload = {
+            "images": [
+                {
+                    "image": "data:image/jpeg;base64," + image_base_64,
+                }
+            ]
+        }
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.images.count(), 0)
+
+    @authenticate
+    def test_update_canteen_image_if_manager(self):
+        self.canteen.managers.add(authenticate.user)
+        self.assertEqual(self.canteen.images.count(), 0)
 
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
         image_base_64 = None
@@ -792,29 +785,28 @@ class CanteenUpdateApiTest(APITestCase):
                 }
             ]
         }
+        self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
-        self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.images.count(), 1)
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.images.count(), 1)
 
         # Delete image
         payload = {"images": []}
+        self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
-        self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.images.count(), 0)
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.images.count(), 0)
 
     @authenticate
     def test_update_canteen_tracking_info(self):
         """
         The app should not allow the tracking info to be updated
         """
-        canteen = CanteenFactory(
-            creation_mtm_source=None,
-            creation_mtm_campaign=None,
-            creation_mtm_medium=None,
-            managers=[authenticate.user],
-        )
+        self.assertEqual(self.canteen.creation_mtm_source, None)
+        self.assertEqual(self.canteen.creation_mtm_campaign, None)
+        self.assertEqual(self.canteen.creation_mtm_medium, None)
+        self.canteen.managers.add(authenticate.user)
+
         payload = {
             "name": "My canteen",
             "city": "Lyon",
@@ -823,13 +815,13 @@ class CanteenUpdateApiTest(APITestCase):
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
         }
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": canteen.id}), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        canteen.refresh_from_db()
-        self.assertIsNone(canteen.creation_mtm_source)
-        self.assertIsNone(canteen.creation_mtm_campaign)
-        self.assertIsNone(canteen.creation_mtm_medium)
+        self.canteen.refresh_from_db()
+        self.assertIsNone(self.canteen.creation_mtm_source)
+        self.assertIsNone(self.canteen.creation_mtm_campaign)
+        self.assertIsNone(self.canteen.creation_mtm_medium)
 
 
 class CanteenDeleteApiTest(APITestCase):
