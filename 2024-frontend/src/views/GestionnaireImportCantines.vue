@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { useRootStore } from "@/stores/root"
 import { useRoute } from "vue-router"
+import documentation from "@/data/documentation.json"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
@@ -26,6 +27,20 @@ const filePreviews = {
   error: "importer_des_cantines_exemple_fichier_rejete.jpg?v=2",
   altError: "Exemple de fichier rejeté pour importer des cantines, qui contient des erreurs dans les colonnes ou les valeurs",
 }
+const links = [
+  {
+    title: "Comment importer un fichier CSV dans Excel ?",
+    href: documentation.importCSVDansExcel,
+  },
+  {
+    title: "Comment enregistrer un fichier Excel en CSV ?",
+    href: documentation.enregistrerExcelEnCSV,
+  },
+  {
+    title: "Bien calculer son nombre de couverts",
+    href: documentation.calculerNombreCouverts,
+  },
+]
 
 /* Success */
 const showModal = ref(false)
@@ -46,7 +61,7 @@ const success = (count) => {
     <router-link :to="{ name: 'GestionnaireCantineRestaurantAjouter' }">notre formulaire</router-link>
     .
   </p>
-  <ImportExplanation :exampleFile />
+  <ImportExplanation :exampleFile :links />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />

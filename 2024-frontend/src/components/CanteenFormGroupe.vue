@@ -4,6 +4,7 @@ import { helpers } from "@vuelidate/validators"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
+import documentation from "@/data/documentation.json"
 import options from "@/constants/canteen-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
 
@@ -79,6 +80,7 @@ if (props.establishmentData) {
   <section class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center">
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
       <fieldset class="fr-mb-4w">
+        <legend class="fr-h5 fr-mb-2w">1. Informations générales</legend>
         <DsfrInputGroup
           v-model="form.name"
           label="Nom du groupe *"
@@ -108,7 +110,13 @@ if (props.establishmentData) {
           class="fr-mb-4w"
           type="group"
         />
+      </fieldset>
+      <fieldset class="fr-mb-4w">
+        <legend class="fr-h5 fr-mb-1w">2. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-12">
+            <p class="fr-mb-0 fr-hint-text">Pour bien calculer son nombre de couverts retrouvez <a :href="documentation.calculerNombreCouverts" target="_blank">notre documentation</a></p>
+          </div>
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.dailyMealCount"
@@ -116,7 +124,7 @@ if (props.establishmentData) {
               :label-visible="true"
               type="number"
               :error-message="formatError(v$.dailyMealCount)"
-            />
+              />
           </div>
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
@@ -125,7 +133,7 @@ if (props.establishmentData) {
               :label-visible="true"
               type="number"
               :error-message="formatError(v$.yearlyMealCount)"
-            />
+              />
           </div>
         </div>
       </fieldset>

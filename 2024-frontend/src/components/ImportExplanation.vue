@@ -1,6 +1,5 @@
 <script setup>
-import documentation from "@/data/documentation.json"
-defineProps(["exampleFile"])
+defineProps(["exampleFile", "links"])
 </script>
 
 <template>
@@ -59,20 +58,9 @@ defineProps(["exampleFile"])
             title="Télécharger notre fichier d’exemple CSV"
           />
         </li>
-        <li class="fr-mb-3v">
-          <a
-            :href="documentation.importCSVDansExcel"
-            target="_blank"
-          >
-            Comment importer un fichier CSV dans Excel&nbsp;?
-          </a>
-        </li>
-        <li class="fr-mb-3v">
-          <a
-            :href="documentation.enregistrerExcelEnCSV"
-            target="_blank"
-          >
-            Comment enregistrer mon fichier Excel en CSV&nbsp;?
+        <li v-for="link in links" :key="link.title">
+          <a :href="link.href" target="_blank">
+            {{ link.title }}
           </a>
         </li>
       </ul>

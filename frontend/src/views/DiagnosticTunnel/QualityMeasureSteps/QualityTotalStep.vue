@@ -46,13 +46,24 @@
           annuel
         </strong>
       </p>
-      <p>
+      <p class="mb-0">
         La fourchette en restauration collective est comprise entre 0,50 € et 20 €.
         <br />
         Le nombre de repas annuels renseigné est incorrect ?
         <button class="text-decoration-underline fr-link" @click="modifyYearlyMealCount">
-          Cliquez-ici pour le modifier.
+          Cliquez-ici pour le modifier
         </button>
+      </p>
+      <p>
+        Besoin d'aide pour calculer le nombre de couverts annuels ?
+        <a
+          class="text-decoration-underline fr-link"
+          style="color: inherit"
+          :href="documentation.calculerNombreCouverts"
+          target="_blank"
+        >
+          Consultez notre documentation
+        </a>
       </p>
       <p v-if="mealPriceError" class="color-warning">
         <v-icon class="color-warning">$error-warning-line</v-icon>
@@ -72,6 +83,7 @@ import DsfrCallout from "@/components/DsfrCallout"
 import { toCurrency } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
+import documentation from "../../../../../2024-frontend/src/data/documentation.json"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 
@@ -104,6 +116,7 @@ export default {
       errorHelperFields: [],
       minCostPerMealExpected: 0.5,
       maxCostPerMealExpected: 20,
+      documentation: documentation,
     }
   },
   computed: {

@@ -6,6 +6,7 @@ import { useVuelidate } from "@vuelidate/core"
 import { useRootStore } from "@/stores/root"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
+import documentation from "@/data/documentation.json"
 import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
 import options from "@/constants/canteen-form-options"
@@ -391,8 +392,11 @@ if (props.establishmentData) {
         />
       </fieldset>
       <fieldset class="fr-mb-4w">
-        <legend class="fr-h5 fr-mb-2w">5. Nombre de repas</legend>
+        <legend class="fr-h5 fr-mb-1v">5. Nombre de repas</legend>
         <div class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-12">
+            <p class="fr-mb-0 fr-hint-text">Pour bien calculer son nombre de couverts retrouvez <a :href="documentation.calculerNombreCouverts" target="_blank">notre documentation</a></p>
+          </div>
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.dailyMealCount"
