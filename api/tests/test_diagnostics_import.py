@@ -243,7 +243,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) des autres achats EGalim' : La valeur (HT) achats commerce équitable (hors bio), 150, est plus que la valeur totale (HT) des autres achats EGalim, 50",
         )
-        # Both totals meat are greater than the total retur error
+        # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
@@ -252,7 +252,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
-        # Both totals meat are greater than the total return error
+        # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
