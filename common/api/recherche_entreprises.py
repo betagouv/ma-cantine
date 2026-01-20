@@ -123,7 +123,7 @@ def fetch_geo_data_from_siret(siret):
                 response["name"] = get_enseigne_name(etablissement) or result["nom_complet"]
                 response["cityInseeCode"] = etablissement["commune"]
                 response["postalCode"] = etablissement["code_postal"]
-                response["city"] = etablissement["libelle_commune"]
+                response["city"] = etablissement["libelle_commune"]  # en majuscules
                 response["epci"] = etablissement["epci"]
                 # response["department"] = etablissement["departement"]  # not in response
                 response["region"] = etablissement["region"]
