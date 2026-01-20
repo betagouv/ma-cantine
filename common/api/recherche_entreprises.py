@@ -42,7 +42,7 @@ def validate_result(siret, response):
         return result
 
 
-def fetch_geo_data_from_siren(siren, response):
+def fetch_geo_data_from_siren(siren):
     """
     API rate limit : 400/min
     Pour l'utilisation de cette méthode dans un script, penser à ne pas dépasser plus que 400 appels/min.
@@ -57,6 +57,7 @@ def fetch_geo_data_from_siren(siren, response):
         logger.error(f"Api Recherche Entreprises: Le SIREN fourni est invalide : {siren}")
         return
 
+    response = {}
     response["siren"] = siren
     try:
         api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siren}"
