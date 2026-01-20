@@ -169,7 +169,7 @@ def validate_viandes_volailles_total(instance):
                 "valeur_viandes_volailles",
                 f"La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, {instance.valeur_viandes_volailles_egalim}, est plus que la valeur totale (HT) viandes et volailles, {instance.valeur_viandes_volailles}",
             )
-        elif (
+        if (
             instance.valeur_viandes_volailles_france is not None
             and instance.valeur_viandes_volailles_france > instance.valeur_viandes_volailles
         ):
@@ -198,7 +198,7 @@ def validate_produits_de_la_mer_total(instance):
                 "valeur_produits_de_la_mer",
                 f"La valeur totale (HT) poissons et produits aquatiques EGalim, {instance.valeur_produits_de_la_mer_egalim}, est plus que la valeur totale (HT) poissons et produits aquatiques, {instance.valeur_produits_de_la_mer}",
             )
-        elif (
+        if (
             instance.valeur_produits_de_la_mer_france is not None
             and instance.valeur_produits_de_la_mer_france > instance.valeur_produits_de_la_mer
         ):
