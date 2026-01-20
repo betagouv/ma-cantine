@@ -594,6 +594,15 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
 
+    def reset_geo_fields_if_siret_changed(self):
+        """
+        Cases where we need to reset geo fields:
+        - if siret has changed: reset all geo fields (including city_insee_code)
+        """
+        if self.id and self.is_dirty():
+            if "siret" in self.get_dirty_fields():
+                self.reset_geo_fields(with_city_insee_code=True, with_save=False)
+
     def set_region_from_department(self):
         if self.department:
             self.region = self._get_region()
@@ -625,6 +634,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         """
         self.normalize_fields()
         self.optimize_logo()
+        self.reset_geo_fields_if_siret_changed()
         self.set_region_from_department()
         if not skip_validations:
             self.full_clean()
@@ -815,7 +825,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def _get_region(self):
         return get_region_from_department(self.department)
 
-    def reset_geo_fields(self, with_city_insee_code=False):
+    def reset_geo_fields(self, with_city_insee_code=False, with_save=False):
         """
         Helper to reset geo fields
         The geolocation bot will then fill them again (from the siret)
@@ -833,8 +843,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.region = None
         self.region_lib = None
         self.geolocation_bot_attempts = 0
-        self.save(skip_validations=True)
-        update_change_reason(self, "Reset geo fields")
+        if with_save:
+            self.save(skip_validations=True)
+            update_change_reason(self, "Reset geo fields")
 
     @cached_property
     def appro_diagnostics(self):

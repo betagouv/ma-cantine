@@ -436,6 +436,18 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(creation_source=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, creation_source=VALUE_NOT_OK)
 
+    def test_canteen_reset_geo_fields_when_siret_change_on_save(self):
+        canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
+        self.assertEqual(canteen.city_insee_code, "34172")
+
+        canteen.siret = "21380185500015"
+        canteen.save()
+
+        self.assertEqual(canteen.city_insee_code, None)
+        self.assertEqual(canteen.department, None)
+        self.assertEqual(canteen.region, None)
+        # geobot will run again
+
     def test_canteen_skip_validations_on_save(self):
         canteen = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
         canteen.siret = None
@@ -448,7 +460,11 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertFalse(canteen.is_dirty())
         self.assertEqual(canteen.get_dirty_fields(), {})
 
-        canteen.siret = "21380185500015"
+        canteen.siret = "21340172201787"  # same siret
+        self.assertFalse(canteen.is_dirty())
+        self.assertEqual(canteen.get_dirty_fields(), {})
+
+        canteen.siret = "21380185500015"  # different siret
         self.assertTrue(canteen.is_dirty())
         self.assertEqual(canteen.get_dirty_fields(), {"siret": "21340172201787"})
 
