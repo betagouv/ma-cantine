@@ -157,7 +157,6 @@ def validate_viandes_volailles_total(instance):
     - extra validation:
         - valeur_viandes_volailles_egalim must be <= valeur_viandes_volailles
         - valeur_viandes_volailles_france must be <= valeur_viandes_volailles
-        - sum of valeur_viandes_volailles_egalim and valeur_viandes_volailles_france must be <= valeur_viandes_volailles
     """
     errors = {}
     if instance.valeur_viandes_volailles is not None:
@@ -179,17 +178,6 @@ def validate_viandes_volailles_total(instance):
                 "valeur_viandes_volailles",
                 f"La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, {instance.valeur_viandes_volailles_france}, est plus que la valeur totale (HT) viandes et volailles, {instance.valeur_viandes_volailles}",
             )
-        elif (
-            instance.valeur_viandes_volailles_egalim is not None
-            and instance.valeur_viandes_volailles_france is not None
-            and (instance.valeur_viandes_volailles_egalim + instance.valeur_viandes_volailles_france)
-            > instance.valeur_viandes_volailles
-        ):
-            utils_utils.add_validation_error(
-                errors,
-                "valeur_viandes_volailles",
-                f"La somme des valeurs totales (HT) viandes et volailles EGalim, {instance.valeur_viandes_volailles_egalim}, et provenance France, {instance.valeur_viandes_volailles_france}, est plus que la valeur totale (HT) viandes et volailles, {instance.valeur_viandes_volailles}",
-            )
     return errors
 
 
@@ -198,7 +186,6 @@ def validate_produits_de_la_mer_total(instance):
     - extra validation:
         - valeur_produits_de_la_mer_egalim must be <= valeur_produits_de_la_mer
         - valeur_produits_de_la_mer_france must be <= valeur_produits_de_la_mer
-        - sum of valeur_produits_de_la_mer_egalim and valeur_produits_de_la_mer_france must be <= valeur_produits_de_la_mer
     """
     errors = {}
     if instance.valeur_produits_de_la_mer is not None:
@@ -219,17 +206,6 @@ def validate_produits_de_la_mer_total(instance):
                 errors,
                 "valeur_produits_de_la_mer",
                 f"La valeur totale (HT) poissons et produits aquatiques provenance France, {instance.valeur_produits_de_la_mer_france}, est plus que la valeur totale (HT) poissons et produits aquatiques, {instance.valeur_produits_de_la_mer}",
-            )
-        elif (
-            instance.valeur_produits_de_la_mer_egalim is not None
-            and instance.valeur_produits_de_la_mer_france is not None
-            and (instance.valeur_produits_de_la_mer_egalim + instance.valeur_produits_de_la_mer_france)
-            > instance.valeur_produits_de_la_mer
-        ):
-            utils_utils.add_validation_error(
-                errors,
-                "valeur_produits_de_la_mer",
-                f"La somme des valeurs totales (HT) poissons et produits aquatiques EGalim, {instance.valeur_produits_de_la_mer_egalim}, et provenance France, {instance.valeur_produits_de_la_mer_france}, est plus que la valeur totale (HT) poissons et produits aquatiques, {instance.valeur_produits_de_la_mer}",
             )
     return errors
 
