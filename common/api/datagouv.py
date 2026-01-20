@@ -59,7 +59,7 @@ PAT_DATAGOUV_CSV_URL = "https://static.data.gouv.fr/resources/pat-projets-alimen
 # Caching
 
 CACHE_KEY_PREFIX = "api_datagouv"
-CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours
+CACHE_TIMEOUT = 60 * 60 * 24 * 7  # 7 days
 
 
 def get_dataset(dataset_id):
