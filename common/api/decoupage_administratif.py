@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 # DECOUPAGE_ADMINISTRATIF_DOCUMENTATION: https://geo.api.gouv.fr/decoupage-administratif
 DECOUPAGE_ADMINISTRATIF_API_URL = "https://geo.api.gouv.fr"
 CACHE_KEY_PREFIX = "api_decoupage_administratif"
-CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours
+CACHE_TIMEOUT = 60 * 60 * 24 * 7  # 7 days
 
 
 def fetch_communes():
