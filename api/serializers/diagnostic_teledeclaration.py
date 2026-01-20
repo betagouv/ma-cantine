@@ -31,7 +31,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     )  # serializers.CharField(source="canteen_snapshot.region_lib", read_only=True)
     nbre_cantines_region = serializers.SerializerMethodField()
     objectif_zone_geo = serializers.SerializerMethodField()
-    secteur = serializers.SerializerMethodField()
+    secteur = serializers.SerializerMethodField()  # canteen_snapshot.sector_list
     categorie = serializers.SerializerMethodField()
     line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
     spe = serializers.SerializerMethodField()
