@@ -443,6 +443,20 @@ class CanteenModelSaveTest(TransactionTestCase):
         canteen.save(skip_validations=True)
         self.assertEqual(canteen.siret, None)
 
+    def test_canteen_dirty_fields_on_save(self):
+        canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
+        self.assertFalse(canteen.is_dirty())
+        self.assertEqual(canteen.get_dirty_fields(), {})
+
+        canteen.siret = "21380185500015"
+        self.assertTrue(canteen.is_dirty())
+        self.assertEqual(canteen.get_dirty_fields(), {"siret": "21340172201787"})
+
+        canteen.save()
+        self.assertEqual(canteen.siret, "21380185500015")
+        self.assertFalse(canteen.is_dirty())
+        self.assertEqual(canteen.get_dirty_fields(), {})
+
 
 class CanteenModelDeleteTest(TestCase):
     @classmethod

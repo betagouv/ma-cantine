@@ -10,6 +10,7 @@ from django.db.models.functions import Coalesce, Length
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 from simple_history.utils import update_change_reason
+from dirtyfields import DirtyFieldsMixin
 
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
@@ -325,7 +326,7 @@ class CanteenManager(SoftDeletionManager):
     queryset_model = CanteenQuerySet
 
 
-class Canteen(SoftDeletionModel):
+class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     objects = CanteenManager.from_queryset(CanteenQuerySet)()
     all_objects = CanteenManager.from_queryset(CanteenQuerySet)(alive_only=False)
 
