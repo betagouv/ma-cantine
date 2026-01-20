@@ -705,6 +705,16 @@ class Canteen(SoftDeletionModel):
         return self.satellites.has_missing_data().count()
 
     @property
+    def satellites_already_teledeclared_count(self):
+        if self.is_groupe:
+            year = timezone.now().year - 1
+            return (
+                self.satellites.annotate_with_action_for_year(year)
+                .filter(action__in=[Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED, Canteen.Actions.NOTHING])
+                .count()
+            )
+
+    @property
     def is_satellite(self) -> bool:
         return self.production_type and self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
 

@@ -7,7 +7,7 @@
       ]"
     />
     <v-row align="end">
-      <v-col cols="12" md="9" lg="10">
+      <v-col v-if="canteen" cols="12" md="9" lg="10">
         <DataInfoBadge
           :currentYear="+year === currentYear"
           :inTeledeclaration="inTeledeclarationCampaign"

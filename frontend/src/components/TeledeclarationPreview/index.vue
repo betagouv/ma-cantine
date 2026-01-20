@@ -20,6 +20,30 @@
         <p class="mb-0">Veuillez vérifier les données pour {{ diagnosticForTD.year }} ci-dessous.</p>
       </v-card-text>
       <PreviewTable ref="table" :canteen="canteenForTD" :diagnostic="diagnosticForTD" />
+      <div v-if="satWithTD > 0" class="text-left px-6">
+        <p>
+          {{ satWithTD }} {{ satWithTD === 1 ? "restaurant satellite a" : "restaurants satellites ont" }} déjà
+          télédéclaré un bilan pour {{ diagnosticForTD.year }}
+        </p>
+        <ul>
+          <li class="mb-4">
+            <p v-if="satWithTD > 0" class="text-left px-6">
+              En continuant, vous allez écraser les données du bilan par les vôtres. Si vous ne souhaitez pas écraser
+              les données, vous devez retirer
+              {{ satWithTD === 1 ? "ce restaurant satellite" : "ces restaurants satellites" }} de votre groupe avant de
+              télédéclarer.
+              <router-link
+                :to="{
+                  name: 'GestionnaireCantineGroupeSatellites',
+                  params: { canteenUrlComponent: canteenUrlComponent },
+                }"
+              >
+                Mettre à jour mes restaurants satellites
+              </router-link>
+            </p>
+          </li>
+        </ul>
+      </div>
       <div v-if="unusualData.length" class="text-left px-6">
         <p>Ces données sont-elles correctes ?</p>
         <ul>
@@ -28,6 +52,14 @@
       </div>
       <v-form ref="teledeclarationForm" v-model="teledeclarationFormIsValid" id="teledeclaration-form" class="px-6">
         <v-checkbox
+          v-if="satWithTD > 0"
+          class="mb-0 pb-0"
+          :rules="[validators.checked]"
+          label="Je confirme écraser les données en télédéclarant le bilan pour mon groupe de restaurants satellites"
+          v-model="overwriteSatTDConfirmed"
+        ></v-checkbox>
+        <v-checkbox
+          class="mt-0 pt-0"
           :rules="[validators.checked]"
           label="Je déclare sur l’honneur la véracité de mes informations"
           v-model="tdConfirmed"
@@ -74,6 +106,7 @@ export default {
     return {
       validators,
       tdConfirmed: false,
+      overwriteSatTDConfirmed: false,
       teledeclarationFormIsValid: true,
       maxSatellitesExpected: 200,
       minCostPerMealExpected: 0.5,
@@ -97,6 +130,9 @@ export default {
     diagnosticForTD() {
       if (this.diagnostics) return this.diagnostics[this.idx]
       return this.diagnostic
+    },
+    satWithTD() {
+      return this.canteenForTD.satellitesAlreadyTeledeclaredCount
     },
     unusualData() {
       const unusualData = []
@@ -239,6 +275,7 @@ export default {
     },
     resetTdConfirmation() {
       this.tdConfirmed = false
+      this.overwriteSatTDConfirmed = false
       this.teledeclarationFormIsValid = true
       this.$refs["teledeclarationForm"].reset()
     },
