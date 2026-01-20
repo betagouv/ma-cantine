@@ -36,10 +36,6 @@
               ></v-img>
               <div>
                 <CanteenIndicators :useCategories="true" :canteen="canteen" class="grey--text text--darken-3" />
-                <router-link to="#contact" v-if="!canteen.canBeClaimed">
-                  <v-icon small>mdi-email-outline</v-icon>
-                  Contactez-nous
-                </router-link>
               </div>
             </v-card-subtitle>
           </v-col>
