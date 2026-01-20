@@ -415,8 +415,10 @@ class Canteen(SoftDeletionModel):
         null=True, blank=True, verbose_name="siren de l'unité légale", validators=[utils_siret.validate_siren]
     )
 
+    city_insee_code = models.TextField(
+        null=True, blank=True, verbose_name="Code INSEE"
+    )  # nécessaire pour remplir les autres champs geo
     city = models.TextField(null=True, blank=True, verbose_name="ville")
-    city_insee_code = models.TextField(null=True, blank=True, verbose_name="Code INSEE")
     postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
     epci = models.CharField(null=True, blank=True, verbose_name="Code EPCI", validators=[utils_siret.validate_siren])
     epci_lib = models.TextField(null=True, blank=True, verbose_name="nom EPCI")
@@ -807,9 +809,9 @@ class Canteen(SoftDeletionModel):
         Helper to reset geo fields
         The geolocation bot will then fill them again (from the siret)
         """
-        self.city = None
         if with_city_insee_code:
             self.city_insee_code = None
+        self.city = None
         self.postal_code = None
         self.epci = None
         self.epci_lib = None
@@ -820,7 +822,7 @@ class Canteen(SoftDeletionModel):
         self.region = None
         self.region_lib = None
         self.geolocation_bot_attempts = 0
-        self.save()
+        self.save(skip_validations=True)
         update_change_reason(self, "Reset geo fields")
 
     @cached_property

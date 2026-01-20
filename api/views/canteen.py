@@ -456,7 +456,7 @@ class CanteenStatusBySirenView(APIView):
 
     def get(self, request, *args, **kwargs):
         siren = request.parser_context.get("kwargs").get("siren")
-        response = fetch_geo_data_from_siren(siren, {})
+        response = fetch_geo_data_from_siren(siren)
         if not response:
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         response["canteens"] = get_cantine_list_from_siren_unite_legale(siren, request)
