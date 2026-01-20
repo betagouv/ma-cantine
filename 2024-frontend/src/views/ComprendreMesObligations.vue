@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { useRoute } from "vue-router"
 import { tiles } from "@/constants/crisp-tiles.js"
+import documentation from "@/data/documentation.json"
 import AppNeedHelp from "@/components/AppNeedHelp.vue"
 
 const route = useRoute()
@@ -55,7 +56,7 @@ const closeModal = () => {
   <AppNeedHelp badge="En savoir plus" align="center" title="Pour les acteurs de la restauration collective">
     <p class="fr-mb-0">
       Pour toute question, consultez
-      <a href="https://ma-cantine.crisp.help/fr/" target="_blank">notre documentation</a>
+      <a :href="documentation.accueil" target="_blank">notre documentation</a>
     </p>
   </AppNeedHelp>
 </template>
