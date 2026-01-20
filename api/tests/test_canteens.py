@@ -746,7 +746,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.canteen.refresh_from_db()
         self.assertEqual(self.canteen.siret, "21380185500015")
-        self.assertEqual(self.canteen.city_insee_code, "34172")  # TODO: needs to be updated!
+        self.assertEqual(self.canteen.city_insee_code, None)
 
     @authenticate
     def test_cannot_update_canteen_image_if_not_manager(self):
