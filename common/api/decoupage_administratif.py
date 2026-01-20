@@ -6,9 +6,16 @@ from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------------
+# DECOUPAGE ADMINISTRATIF
+# API DOCUMENTATION: https://geo.api.gouv.fr/decoupage-administratif
 
-# DECOUPAGE_ADMINISTRATIF_DOCUMENTATION: https://geo.api.gouv.fr/decoupage-administratif
 DECOUPAGE_ADMINISTRATIF_API_URL = "https://geo.api.gouv.fr"
+
+
+# ------------------------------------------------------------------------------
+# Caching
+
 CACHE_KEY_PREFIX = "api_decoupage_administratif"
 CACHE_TIMEOUT = 60 * 60 * 24 * 7  # 7 days
 

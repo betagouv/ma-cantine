@@ -2,13 +2,8 @@ import json
 
 from django.core.management.base import BaseCommand
 
-from common.api.datagouv import get_pat_list
-from common.api.decoupage_administratif import (
-    fetch_communes,
-    fetch_departements,
-    fetch_epcis,
-    fetch_regions,
-)
+from common.api.datagouv import fetch_pats
+from common.api.decoupage_administratif import fetch_communes, fetch_departements, fetch_epcis, fetch_regions
 
 
 class Command(BaseCommand):
@@ -53,7 +48,7 @@ class Command(BaseCommand):
                 json.dump(department_list_filtered, f, ensure_ascii=False, indent=4)
 
         elif scope == "pat":
-            pat_list = get_pat_list()
+            pat_list = fetch_pats()
             pat_list_filtered = [
                 {
                     "code": pat["id"],
