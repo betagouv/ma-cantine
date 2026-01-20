@@ -141,7 +141,9 @@ def fetch_pats():
         response = requests.get(pat_dataset_resource["url"])
         response.raise_for_status()
         reader = csv.DictReader(response.iter_lines(decode_unicode=True), delimiter=";")
+        # the csv is BIG (4+ MB). So we only keep the fields we need.
         pat_list_filtered = [{field: row[field] for field in FIELDS_TO_KEEP} for row in reader]
+        # cache mechanism: store the result
         cache.set(cache_key, pat_list_filtered)
         return pat_list_filtered
     except requests.HTTPError as e:
