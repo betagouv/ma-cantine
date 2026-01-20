@@ -524,7 +524,6 @@ class CanteenActionsLightSerializer(serializers.ModelSerializer):
             "groupe",
             "satellites_count",  # property
             "satellites_missing_data_count",  # property
-            "satellites_already_teledeclared_count",  # property
             "action",  # annotate
         )
         read_only_fields = fields
