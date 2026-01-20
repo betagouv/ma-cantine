@@ -6,6 +6,36 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.4.0](https://github.com/betagouv/ma-cantine/compare/v2026.3.0...v2026.4.0) (2026-01-20)
+
+
+### Nouveautés
+
+* **Groupe:** ajouter le garde-fou au moment de télédéclarer pour un groupe avec des SAT déjà télédéclarés ([#6248](https://github.com/betagouv/ma-cantine/issues/6248)) ([763b0f1](https://github.com/betagouv/ma-cantine/commit/763b0f1d23606a4e1094f97ef400151da15f2e7b))
+* **Ressources:** ajout du lien vers l'article "Bien calculer son nombre de couverts" ([#6257](https://github.com/betagouv/ma-cantine/issues/6257)) ([ad1b409](https://github.com/betagouv/ma-cantine/commit/ad1b409d55143878a3760ac8885d89ad468ae057))
+
+
+### Améliorations
+
+* **Cantines:** Actions: si le groupe a au moins 1 satellite avec des données manquantes, renvoyer FILL_SATELLITE_CANTEEN_DATA ([#6247](https://github.com/betagouv/ma-cantine/issues/6247)) ([1e84d64](https://github.com/betagouv/ma-cantine/commit/1e84d64b83c3a237655c037f93772d9fa31aebe7))
+
+
+### Corrections (bugs, typos...)
+
+* **Imports:** Cantine admin: corrige le fichier d'exemple ([#6254](https://github.com/betagouv/ma-cantine/issues/6254)) ([2c5dffa](https://github.com/betagouv/ma-cantine/commit/2c5dffa62879f0366858b84344d54098121f1092))
+* **Logo:** corrige l'affichage du logo ma-cantine sur les pages mobile de l'ancien frontend ([#6253](https://github.com/betagouv/ma-cantine/issues/6253)) ([0cfcc39](https://github.com/betagouv/ma-cantine/commit/0cfcc3968c33046ed0df734a4ad81726c1db13fd))
+* **Page cantine:** supprimer le lien "Contactez-nous" ([#6252](https://github.com/betagouv/ma-cantine/issues/6252)) ([4c8e638](https://github.com/betagouv/ma-cantine/commit/4c8e63801b5154fa6688c71e4fde6e8b920459ac))
+* **Télédéclaration:** supprime la vérification inexactes de la sommes de totaux EGalim + France ([#6251](https://github.com/betagouv/ma-cantine/issues/6251)) ([09653ce](https://github.com/betagouv/ma-cantine/commit/09653ce53189ffcccc25e3d124441f861959c9a1))
+
+
+### Technique
+
+* **Cantines:** améliorations mineures sur la gestion des champs géo ([#6255](https://github.com/betagouv/ma-cantine/issues/6255)) ([e266bca](https://github.com/betagouv/ma-cantine/commit/e266bca9c1cf7441c235fd7b642881442d0f55a1))
+* **Cantines:** améliorer les tests sur l'API de modification ([#6258](https://github.com/betagouv/ma-cantine/issues/6258)) ([c86f27a](https://github.com/betagouv/ma-cantine/commit/c86f27ac3dec8f7154152c6c67ece85efc0aa35d))
+* **Cantines:** faire le ménage des is_central_cuisine plus utilisés ([#6245](https://github.com/betagouv/ma-cantine/issues/6245)) ([1f09c73](https://github.com/betagouv/ma-cantine/commit/1f09c738cfe46da5d56b69496da516c17722cf3f))
+* **Liens documentation:** stocker les urls vers les ressources dans un fichier dédié  ([#6256](https://github.com/betagouv/ma-cantine/issues/6256)) ([0a8594c](https://github.com/betagouv/ma-cantine/commit/0a8594c122628931e6f178c916dbae8f4fd3f2b3))
+* **Open Data:** enlever les exports parquet (gérés automatiquement par data.gouv) ([#6243](https://github.com/betagouv/ma-cantine/issues/6243)) ([e97f01a](https://github.com/betagouv/ma-cantine/commit/e97f01a1c4445cf31e8759b7c5fb604f4d328da5))
+
 ## [2026.3.0](https://github.com/betagouv/ma-cantine/compare/v2026.2.0...v2026.3.0) (2026-01-19)
 
 
