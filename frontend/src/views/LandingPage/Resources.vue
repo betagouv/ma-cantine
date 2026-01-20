@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import documentation from "../../../../2024-frontend/src/data/documentation.json"
+
 export default {
   data() {
     const resources = []
@@ -69,9 +71,9 @@ export default {
       title: "Documentation",
       icon: "$book-2-fill",
       description: "Ressources pour les acteurs et actrices de la restauration collective",
-      url: "https://ma-cantine.crisp.help/fr/",
+      url: documentation.accueil,
       to: null,
-      ctaText: "Consulter nos ressources",
+      ctaText: "Consulter notre documentation",
     })
 
     return { resources }

@@ -202,6 +202,7 @@
 <script>
 import LogoutButton from "./LogoutButton"
 import SkipLinks from "./SkipLinks"
+import documentation from "../../../../2024-frontend/src/data/documentation.json"
 
 export default {
   name: "AppHeader",
@@ -282,7 +283,7 @@ export default {
             },
             {
               text: "Documentation",
-              href: "https://ma-cantine.crisp.help/fr/",
+              href: documentation.accueil,
             },
           ],
         },
