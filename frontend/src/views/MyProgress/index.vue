@@ -13,7 +13,6 @@
           :inTeledeclaration="inTeledeclarationCampaign"
           :inCorrection="inCorrectionCampaign"
           :canteenAction="canteenAction"
-          :satellitesMissingDataCount="canteen.satellitesMissingDataCount"
           class="my-2"
         />
         <ProductionTypeTag v-if="canteen" :canteen="canteen" class="ml-3" />
@@ -44,7 +43,6 @@
           :inTeledeclaration="inTeledeclarationCampaign"
           :inCorrection="inCorrectionCampaign"
           :canteenAction="canteenAction"
-          :satellitesMissingDataCount="canteen.satellitesMissingDataCount"
           class="my-2"
         />
         <div v-if="hasActiveTeledeclaration">

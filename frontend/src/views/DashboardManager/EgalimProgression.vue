@@ -18,7 +18,6 @@
             :inTeledeclaration="inTeledeclarationCampaign"
             :inCorrection="inCorrectionCampaign"
             :canteenAction="canteenAction"
-            :satellitesMissingDataCount="canteen.satellitesMissingDataCount"
             class="mt-4"
           />
           <hr aria-hidden="true" role="presentation" class="my-6" />
