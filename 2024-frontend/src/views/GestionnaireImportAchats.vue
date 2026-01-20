@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue"
 import { useRoute } from "vue-router"
+import documentation from "@/data/documentation.json"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
@@ -23,6 +24,16 @@ const filePreviews = {
   error: "achats_fichier_exemple_fichier_rejete.jpg?v=2",
   altError: "Exemple de fichier rejeté pour importer des achats, qui contient des erreurs dans les colonnes ou les valeurs",
 }
+const links = [
+  {
+    title: "Comment importer un fichier CSV dans Excel ?",
+    href: documentation.importCSVDansExcel,
+  },
+  {
+    title: "Comment enregistrer un fichier Excel en CSV ?",
+    href: documentation.enregistrerExcelEnCSV,
+  }
+]
 
 /* Sucess */
 const showModal = ref(false)
@@ -43,7 +54,7 @@ const success = (count) => {
     <router-link :to="{ name: 'PurchasesHome' }">sur la plateforme</router-link>
     .
   </p>
-  <ImportExplanation :exampleFile/>
+  <ImportExplanation :exampleFile :links />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportFileUpload @success="success" apiUrl="importPurchases" eventMatomo="import-purchases-success"/>

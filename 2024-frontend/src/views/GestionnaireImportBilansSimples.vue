@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue"
 import { useRoute } from "vue-router"
+import documentation from "@/data/documentation.json"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
@@ -23,6 +24,16 @@ const filePreviews = {
   error: "importer_des_bilans_simples_exemple_fichier_rejete.jpg?v=1",
   altError: "Exemple de fichier rejeté pour importer des bilans simples, qui contient des erreurs dans les colonnes ou les valeurs",
 }
+const links = [
+  {
+    title: "Comment importer un fichier CSV dans Excel ?",
+    href: documentation.importCSVDansExcel,
+  },
+  {
+    title: "Comment enregistrer un fichier Excel en CSV ?",
+    href: documentation.enregistrerExcelEnCSV,
+  }
+]
 
 /* Sucess */
 const showModal = ref(false)
@@ -41,7 +52,7 @@ const success = (count) => {
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet d’ajouter les bilans simplifiés de toutes vos cantines d’un coup.
   </p>
-  <ImportExplanation :exampleFile/>
+  <ImportExplanation :exampleFile :links />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportFileUpload @success="success" apiUrl="importDiagnostics/simple" eventMatomo="import-diagnostics-success"/>
