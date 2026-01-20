@@ -623,6 +623,7 @@ class CanteenUpdateApiTest(APITestCase):
     @authenticate
     def test_cannot_update_canteen_with_put(self):
         payload = {"city": "Paris"}
+
         response = self.client.put(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -648,8 +649,8 @@ class CanteenUpdateApiTest(APITestCase):
         self.canteen.managers.add(authenticate.user)
 
         payload = {
-            "city": "Paris",
             "siret": "21380185500015",
+            "city": "Paris",  # siret changed, geo fields will be reset
             "managementType": Canteen.ManagementType.CONCEDED,
             "reservationExpeParticipant": True,
         }
@@ -657,8 +658,8 @@ class CanteenUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.canteen.refresh_from_db()
-        self.assertEqual(self.canteen.city, "Paris")
         self.assertEqual(self.canteen.siret, "21380185500015")
+        self.assertEqual(self.canteen.city, None)
         self.assertEqual(self.canteen.management_type, Canteen.ManagementType.CONCEDED)
         self.assertEqual(self.canteen.reservation_expe_participant, True)
 
