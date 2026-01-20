@@ -719,17 +719,34 @@ class CanteenUpdateApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
         self.assertEqual(body["id"], canteen.id)
-        self.assertTrue(body["isManagedByUser"])  # only difference
+        self.assertTrue(body["isManagedByUser"])  # changed
 
     @authenticate
     def test_update_canteen_with_own_siret(self):
         self.assertEqual(self.canteen.siret, "21340172201787")
+
         self.canteen.managers.add(authenticate.user)
 
         payload = {"siret": self.canteen.siret}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_update_canteen_with_new_siret(self):
+        self.assertEqual(self.canteen.siret, "21340172201787")
+        self.canteen.city_insee_code = "34172"
+        self.canteen.save()
+        self.canteen.managers.add(authenticate.user)
+
+        payload = {"siret": "21380185500015"}
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.siret, "21380185500015")
+        self.assertEqual(self.canteen.city_insee_code, "34172")  # TODO: needs to be updated!
 
     @authenticate
     def test_cannot_update_canteen_image_if_not_manager(self):
