@@ -3,6 +3,8 @@ import unittest
 
 import requests_mock
 
+from django.core.cache import cache
+
 from common.api.decoupage_administratif import (
     DECOUPAGE_ADMINISTRATIF_API_URL,
     fetch_commune_detail,
@@ -14,6 +16,9 @@ from common.api.decoupage_administratif import (
 
 @requests_mock.Mocker()
 class TestDecoupageAdministratifAPI(unittest.TestCase):
+    def setUp(self):
+        cache.clear()  # clear cache before each test
+
     def test_map_communes_infos(self, mock):
         mock.get(
             f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes",
@@ -43,6 +48,8 @@ class TestDecoupageAdministratifAPI(unittest.TestCase):
         )
 
         communes_details = map_communes_infos()
+
+        self.assertEqual(mock.call_count, 1)
         self.assertEqual(len(communes_details), 2)
         self.assertCountEqual(list(communes_details.keys()), ["01001", "01002"])
         self.assertEqual(communes_details["01001"]["city"], "L'Abergement-Clémenciat")
@@ -60,6 +67,12 @@ class TestDecoupageAdministratifAPI(unittest.TestCase):
         self.assertEqual(fetch_commune_detail("01003", communes_details, "city"), None)
         self.assertEqual(fetch_commune_detail("01003", communes_details, "epci"), None)
 
+        # Second call to test caching
+        communes_details = map_communes_infos()
+
+        self.assertEqual(mock.call_count, 1)  # No additional API call
+        self.assertEqual(len(communes_details), 2)
+
     def test_map_epcis_code_name(self, mock):
         mock.get(
             f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code",
@@ -70,7 +83,10 @@ class TestDecoupageAdministratifAPI(unittest.TestCase):
                 ]
             ),
         )
+
         epci_names = map_epcis_code_name()
+        self.assertEqual(mock.call_count, 1)
+
         self.assertEqual(len(epci_names), 2)
         self.assertEqual(epci_names["200000172"], "CC Faucigny - Glières")
         self.assertEqual(epci_names["200000438"], "CC du Pays de Pontchâteau St-Gildas-des-Bois")
