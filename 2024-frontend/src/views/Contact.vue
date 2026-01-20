@@ -1,5 +1,6 @@
 <script setup>
 import AppFormSendInquiry from "@/components/AppFormSendInquiry.vue"
+import documentation from "@/data/documentation.json"
 
 const links = [
   {
@@ -7,7 +8,7 @@ const links = [
     title: "Webinaires",
   },
   {
-    href: "https://ma-cantine.crisp.help/fr/",
+    href: documentation.accueil,
     title: "Documentation",
   },
   {

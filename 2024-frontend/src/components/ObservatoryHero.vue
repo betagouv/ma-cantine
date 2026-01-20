@@ -1,5 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router"
+import documentation from "@/data/documentation.json"
 
 const route = useRoute()
 const pictoDataVisualization = "/static/images/picto-dsfr/data-visualization.svg"
@@ -39,7 +40,7 @@ const pictoDocuments = "/static/images/picto-dsfr/documents.svg"
         <DsfrTile
           titleTag="p"
           title="Accéder aux bilans statistiques EGalim"
-          to="https://ma-cantine.crisp.help/fr/article/rapports-bilans-statistiques-egalim-de-la-restauration-collective-18z8ru0/"
+          :to="documentation.rapportsBilansStatistiquesEgalim"
           :imgSrc="pictoDocuments"
           small
         />

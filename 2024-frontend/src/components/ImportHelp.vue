@@ -1,5 +1,6 @@
 <script setup>
 import AppSeparator from "@/components/AppSeparator.vue"
+import documentation from "@/data/documentation.json"
 </script>
 
 <template>
@@ -13,10 +14,10 @@ import AppSeparator from "@/components/AppSeparator.vue"
       <p class="fr-pr-0 fr-pr-md-8w">
         Si vous avez des questions ou des problèmes pour importer votre fichier, vous pouvez
         <a
-          href="https://ma-cantine.crisp.help/fr/"
+          :href="documentation.accueil"
           target="_blank"
         >
-          consulter nos ressources
+          consulter notre documentation
         </a>
       </p>
     </div>

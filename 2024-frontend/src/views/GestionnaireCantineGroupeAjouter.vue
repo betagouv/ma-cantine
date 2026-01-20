@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
+import documentation from "@/data/documentation.json"
 import canteensService from "@/services/canteens"
 import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
@@ -58,7 +59,7 @@ const resetForm = (name) => {
     <div class="fr-col-offset-md-1"></div>
     <AppRessources>
       <li>
-        <a href="https://ma-cantine.crisp.help/fr/article/les-groupes-de-restaurants-satellites-definition-et-gestion-82qt51/?bust=1767947700084" target="_blank">
+        <a :href="documentation.groupesRestaurantsSatellites" target="_blank">
           Les groupes de restaurants satellites : définition et gestion
         </a>
       </li>

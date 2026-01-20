@@ -2,6 +2,7 @@
 import { ref, computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
+import documentation from "@/data/documentation.json"
 import canteenService from "@/services/canteens.js"
 import campaignService from "@/services/campaigns.js"
 import canteensTableService from "@/services/canteensTable.js"
@@ -118,7 +119,7 @@ const campaign = computedAsync(async () => {
     </div>
   </section>
   <DsfrAlert v-if="canteensGroup.displayBanner > 0" :title="canteensGroup.title" class="fr-mb-4w">
-    <p>Vous pouvez requalifier vos groupes directement depuis ce tableau de bord, <a href="https://ma-cantine.crisp.help/fr/article/les-groupes-de-restaurants-satellites-definition-et-gestion-82qt51/?bust=1767947700084" target="_blank">découvrez comment faire</a></p>
+    <p>Vous pouvez requalifier vos groupes directement depuis ce tableau de bord, <a :href="documentation.groupesRestaurantsSatellites" target="_blank">découvrez comment faire</a></p>
   </DsfrAlert>
   <GestionnaireEmptyCanteen v-if="store.canteenPreviews.length === 0" />
   <section v-else-if="store.canteenPreviews.length > 0 && campaign">

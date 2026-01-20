@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue"
 import { useRootStore } from "@/stores/root"
+import documentation from "@/data/documentation.json"
 
 const store = useRootStore()
 
@@ -93,7 +94,7 @@ const navItems = [
       },
       {
         text: "Documentation",
-        to: "https://ma-cantine.crisp.help/fr/",
+        to: documentation.accueil,
         target: "_blank",
         rel: "noopener external",
       },

@@ -1,4 +1,5 @@
 <script setup>
+import documentation from "@/data/documentation.json"
 defineProps(["exampleFile"])
 </script>
 
@@ -60,7 +61,7 @@ defineProps(["exampleFile"])
         </li>
         <li class="fr-mb-3v">
           <a
-            href="https://ma-cantine.crisp.help/fr/article/comment-importer-un-fichier-csv-dans-excel-7zyxo/"
+            :href="documentation.importCSVDansExcel"
             target="_blank"
           >
             Comment importer un fichier CSV dans Excel&nbsp;?
@@ -68,7 +69,7 @@ defineProps(["exampleFile"])
         </li>
         <li class="fr-mb-3v">
           <a
-            href="https://ma-cantine.crisp.help/fr/article/comment-enregistrer-un-fichier-excel-en-csv-cgfrbp/"
+            :href="documentation.enregistrerExcelEnCSV"
             target="_blank"
           >
             Comment enregistrer mon fichier Excel en CSV&nbsp;?
