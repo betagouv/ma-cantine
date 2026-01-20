@@ -186,7 +186,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 13)
+        self.assertEqual(len(errors), 17)
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
@@ -242,6 +242,24 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(
             errors.pop(0)["message"],
             "Champ 'Valeur totale (HT) des autres achats EGalim' : La valeur (HT) achats commerce équitable (hors bio), 150, est plus que la valeur totale (HT) des autres achats EGalim, 50",
+        )
+        # Both totals meat are greater than the total retur error
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
+        )
+        # Both totals meat are greater than the total return error
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+        )
+        self.assertEqual(
+            errors.pop(0)["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques provenance France, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(len(errors), 0)
 
