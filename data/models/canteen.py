@@ -594,6 +594,14 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
 
+    def reset_geo_fields_if_needed(self):
+        """
+        Cases where we need to reset geo fields:
+        - if siret has changed: reset all geo fields (including city_insee_code)
+        - if city_insee_code is missing: reset all geo fields
+        """
+        pass
+
     def set_region_from_department(self):
         if self.department:
             self.region = self._get_region()
@@ -625,6 +633,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         """
         self.normalize_fields()
         self.optimize_logo()
+        self.reset_geo_fields_if_needed()
         self.set_region_from_department()
         if not skip_validations:
             self.full_clean()
