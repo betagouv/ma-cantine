@@ -11,6 +11,14 @@ last_year = timezone.now().date().year - 1
 
 
 class CanteenForm(forms.ModelForm):
+    production_type = forms.ChoiceField(
+        choices=[
+            choice
+            for choice in Canteen.ProductionType.choices
+            if choice[0] not in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
+        ]
+    )
+
     class Meta:
         widgets = {
             "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
