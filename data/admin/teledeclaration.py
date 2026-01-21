@@ -39,7 +39,6 @@ class TeledeclarationInline(admin.TabularInline):
         return False
 
 
-@admin.register(Teledeclaration)
 class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
     form = TeledeclarationForm
     list_display = (

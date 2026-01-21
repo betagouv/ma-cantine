@@ -8,7 +8,6 @@ from .sector import SectorM2MAdmin  # noqa
 from .blogpost import BlogPost  # noqa
 from .blogtag import BlogTag  # noqa
 from .managerinvitation import ManagerInvitation  # noqa
-from .teledeclaration import TeledeclarationAdmin  # noqa
 from .reservationexpe import ReservationExpeAdmin  # noqa
 from .vegetarianexpe import VegetarianExpeAdmin  # noqa
 from .message import MessageAdmin  # noqa
