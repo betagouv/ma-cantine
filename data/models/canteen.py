@@ -1,5 +1,7 @@
 from urllib.parse import quote
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import ValidationError
@@ -600,6 +602,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         - if siret has changed: reset all geo fields (including city_insee_code)
         """
         if self.id and self.is_dirty():
+            print(self.get_dirty_fields())
             if "siret" in self.get_dirty_fields():
                 self.reset_geo_fields(with_city_insee_code=True, with_save=False)
 
@@ -929,6 +932,26 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     @property
     def lead_image(self):
         return self.images.first()
+
+
+@receiver(post_save, sender=Canteen)
+def fetch_city_insee_code_from_siret(sender, instance, created, **kwargs):
+    """
+    On canteen creation, or when the canteen changes siret, we need to fill its geo fields
+    - if city_insee_code is (already) set, we don't override it
+    - GROUPE canteens don't have siret, so it won't be triggered for them
+    """
+    from macantine import tasks
+
+    print("post_save", instance.siret, instance.city_insee_code, created)
+    # print(instance.get_dirty_fields())
+    # if "siret" in instance.get_dirty_fields():
+    #     if not has_dirty_field(instance, "city_insee_code", allow_empty=True):
+    #         print("post_save task")
+    #         tasks.update_canteen_city_insee_code_from_siret(instance)
+    if instance.siret and not instance.city_insee_code:
+        print("post_save task")
+        tasks.update_canteen_city_insee_code_from_siret(instance)
 
 
 class CanteenImage(models.Model):
