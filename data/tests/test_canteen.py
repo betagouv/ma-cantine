@@ -478,7 +478,6 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertTrue(canteen.is_dirty())
         self.assertEqual(canteen.get_dirty_fields(), {"siret": "21340172201787"})
 
-        print("changing siret pre_save")
         canteen.save()
         self.assertEqual(canteen.siret, "21380185500015")
         self.assertFalse(canteen.is_dirty())
