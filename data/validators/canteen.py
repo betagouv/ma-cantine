@@ -86,10 +86,11 @@ def validate_canteen_production_type_field(instance):
     if value in [None, ""]:
         utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
     if instance.id:
-        if value in [instance.ProductionType.CENTRAL, instance.ProductionType.CENTRAL_SERVING]:
-            utils_utils.add_validation_error(
-                errors, field_name, "Les types CENTRAL et CENTRAL_SERVING ne sont plus autorisées."
-            )
+        if field_name in instance.get_dirty_fields():
+            if value in [instance.ProductionType.CENTRAL, instance.ProductionType.CENTRAL_SERVING]:
+                utils_utils.add_validation_error(
+                    errors, field_name, "Les types CENTRAL et CENTRAL_SERVING ne sont plus autorisées."
+                )
     return errors
 
 

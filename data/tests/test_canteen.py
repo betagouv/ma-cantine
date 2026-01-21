@@ -191,6 +191,11 @@ class CanteenModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, CanteenFactory, management_type=VALUE_NOT_OK)
 
     def test_canteen_production_type_validation(self):
+        """
+        - the field is mandatory
+        - the field should be one of the choices
+        - some types are not available anymore
+        """
         for TUPLE_OK in [(key, key) for key in Canteen.ProductionType.values]:
             with self.subTest(production_type=TUPLE_OK[0]):
                 canteen = CanteenFactory(production_type=TUPLE_OK[0])
@@ -198,6 +203,11 @@ class CanteenModelSaveTest(TransactionTestCase):
         for VALUE_NOT_OK in [None, "", "  ", 123, "invalid"]:
             with self.subTest(production_type=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, production_type=VALUE_NOT_OK)
+        # cannot change a Canteen to CENTRAL & CENTRAL_SERVING anymore
+        canteen = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
+            canteen.production_type = production_type
+            self.assertRaises(ValidationError, canteen.save)
 
     def test_canteen_economic_model_validation(self):
         # groupe: must be empty
