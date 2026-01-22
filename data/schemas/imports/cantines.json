@@ -160,6 +160,17 @@
       "name": "gestionnaires_additionnels",
       "title": "Adresses mél de gestionnaires additionnels",
       "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Ce champ est uniquement pour les cantines de type 'Restaurant satellite', il permet de les rattacher à un groupe.",
+      "example": "1293",
+      "format": "default",
+      "name": "groupe_id",
+      "title": "ID du groupe",
+      "type": "integer"
     }
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
