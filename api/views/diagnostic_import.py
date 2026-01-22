@@ -35,6 +35,7 @@ class DiagnosticsImportView(ABC, APIView):
         self.errors = []
         self.start_time = None
         self.file = None
+        self.expected_header = file_import.get_expected_header_from_schema(DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH)
         super().__init__(**kwargs)
 
     @property
@@ -70,14 +71,9 @@ class DiagnosticsImportView(ABC, APIView):
                     return self._get_success_response()
 
                 # Header validation
-                header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
-                if header_has_errors:
-                    self.errors = [
-                        {
-                            "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-                            "status": 400,
-                        }
-                    ]
+                user_file_header = validata_response["resource_data"][0]
+                self.errors = validata.process_header_errors(user_file_header, self.expected_header)
+                if len(self.errors):
                     self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
                     return self._get_success_response()
 
