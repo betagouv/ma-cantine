@@ -315,8 +315,8 @@ class CanteensImportView(APIView):
         canteen.groupe = groupe
         if self.is_admin_import:
             canteen.line_ministry = (
-                next((value for value, label in Canteen.Ministries.choices if label == row[10].strip()), None)
-                if row[10]
+                next((value for value, label in Canteen.Ministries.choices if label == row[11].strip()), None)
+                if row[11]
                 else None
             )
             canteen.import_source = import_source
