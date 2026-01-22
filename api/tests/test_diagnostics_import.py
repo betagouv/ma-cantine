@@ -55,11 +55,16 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(
-            errors[0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
+        self.assertEqual(len(errors), 21)
+        for error in errors:
+            self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
+
+    @authenticate
+    def test_validata_header_extra_error(self):
+        """
+        A file should not be valid if it doesn't contain a valid header
+        """
+        self.assertEqual(Diagnostic.objects.count(), 0)
 
         # wrong header
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_wrong_header.csv"
@@ -73,13 +78,11 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]["field"], "3 colonnes supplémentaires")
         self.assertEqual(
-            errors[0]["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+            errors[0]["title"],
+            "Supprimer les 3 colonnes en excès et toutes les données présentes dans ces dernières. Il se peut qu'un espace ou un symbole invisible soit présent dans votre fichier, en cas de doute faite un copier-coller des données dans un nouveau document.",
         )
-
-        # partial header
-        # TODO
 
     @authenticate
     def test_validata_empty_rows_error(self):
