@@ -169,7 +169,7 @@
       "example": "1293",
       "format": "default",
       "name": "groupe_id",
-      "title": "ID du groupe",
+      "title": "Numéro identifiant (ID) du groupe",
       "type": "integer"
     }
   ],
