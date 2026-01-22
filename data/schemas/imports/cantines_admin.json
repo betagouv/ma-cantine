@@ -32,7 +32,7 @@
       "description": "Ce champ est uniquement pour les cantines de type 'Restaurant satellite'. Ce SIRET peut être vide ou utilisé pour plusieurs lignes.",
       "example": "29969025300230",
       "format": "default",
-      "name": "siret_livreur_repas",
+      "name": "siret_cuisine_centrale",
       "title": "SIRET de la cuisine centrale",
       "type": "any"
     },
