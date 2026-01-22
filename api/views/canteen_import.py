@@ -63,6 +63,9 @@ class CanteensImportView(APIView):
             schema_name = CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME
             schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
             validata_response = validata.validate_file_against_schema(self.file, schema_url)
+            schema_file_path = CANTEEN_ADMIN_SCHEMA_FILE_PATH if self.is_admin_import else CANTEEN_SCHEMA_FILE_PATH
+            self.expected_header = file_import.get_expected_header_from_schema(schema_file_path)
+            admin_expected_header = file_import.get_expected_header_from_schema(CANTEEN_ADMIN_SCHEMA_FILE_PATH)
 
             # Error generating the report
             if "error" in validata_response:
@@ -77,14 +80,19 @@ class CanteensImportView(APIView):
                 return self._get_success_response()
 
             # Header validation
-            header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
-            if header_has_errors:
+            user_file_header = validata_response["resource_data"][0]
+            if user_file_header == admin_expected_header and not self.is_admin_import:
                 self.errors = [
                     {
                         "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
                         "status": 400,
                     }
                 ]
+                self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
+                return self._get_success_response()
+
+            self.errors = validata.process_header_errors(user_file_header, self.expected_header)
+            if len(self.errors):
                 self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
                 return self._get_success_response()
 
