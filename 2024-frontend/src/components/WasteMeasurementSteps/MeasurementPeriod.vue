@@ -85,6 +85,12 @@ onMounted(() => {
             <b>d'au moins 5 jours.</b>
           </p>
         </HelpText>
+        <HelpText question="Nombre de couverts">
+          <p class="fr-mb-0">
+            Besoin d'aide pour calculer le nombre de couverts ?
+            <a :href="documentation.calculerNombreCouverts" target="_blank">Consultez notre documentation</a>
+          </p>
+        </HelpText>
       </div>
     </div>
   </div>
