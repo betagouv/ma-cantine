@@ -293,7 +293,7 @@ class CanteensImportApiErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 4, errors)
+        self.assertEqual(len(errors), 5, errors)
         self.assertTrue(
             errors.pop(0)["message"].startswith("Champ 'repas par jour' : Le champ doit être au moins égal à 3."),
         )
@@ -310,6 +310,11 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertTrue(
             errors.pop(0)["message"].startswith(
                 "Champ 'siret de la cuisine centrale' : Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite."
+            ),
+        )
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Champ 'Groupe' : Aucun groupe avec le numéro identifiant « 14 » trouvé sur la plateforme."
             ),
         )
 
