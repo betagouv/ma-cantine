@@ -8,10 +8,6 @@
     "type": "string"
   },
   {
-    "name": "email_no_diagnostic_first_reminder",
-    "type": "string"
-  },
-  {
     "name": "creation_mtm_source",
     "type": "string"
   },

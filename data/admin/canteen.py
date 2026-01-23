@@ -146,7 +146,6 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "creation_mtm_source",
         "creation_mtm_campaign",
         "creation_mtm_medium",
-        "email_no_diagnostic_first_reminder",
         "deletion_date",
     )
     readonly_fields = (
