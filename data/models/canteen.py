@@ -594,11 +594,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         null=True, blank=True, verbose_name="participante à l'expérimentation repas végétariens"
     )
 
-    # Email campaigns
-    email_no_diagnostic_first_reminder = models.DateTimeField(
-        null=True, blank=True, verbose_name="Date d'envoi du premier email pour manque de diagnostics"
-    )
-
     # Automatic tasks
     geolocation_bot_attempts = models.IntegerField(default=0)
 

@@ -97,54 +97,6 @@ def update_brevo_contacts():
     logger.info(f"update_brevo_contacts task ended. Duration : {end - start} seconds")
 
 
-@app.task()
-def no_diagnostic_first_reminder():
-    if not settings.TEMPLATE_ID_NO_DIAGNOSTIC_FIRST:
-        logger.error("Environment variable TEMPLATE_ID_NO_DIAGNOSTIC_FIRST not set")
-        return
-    today = timezone.now()
-    threshold = today - datetime.timedelta(weeks=1)
-    canteens = Canteen.objects.filter(
-        diagnostics__isnull=True,
-        creation_date__lte=threshold,
-        email_no_diagnostic_first_reminder__isnull=True,
-    ).all()
-    if not canteens:
-        logger.info("no_diagnostic_first_reminder: No canteens to notify.")
-        return
-
-    logger.info(f"no_diagnostic_first_reminder: {len(canteens)} canteens to notify.")
-
-    for canteen in canteens:
-        if _covered_by_central_kitchen(canteen):
-            continue
-
-        for manager in canteen.managers.filter(opt_out_reminder_emails=False, is_dev=False):
-            try:
-                parameters = {"PRENOM": manager.first_name, "NOM_CANTINE": canteen.name}
-                to_name = _user_name(manager)
-                brevo.send_sib_template(
-                    settings.TEMPLATE_ID_NO_DIAGNOSTIC_FIRST,
-                    parameters,
-                    manager.email,
-                    f"{to_name}",
-                )
-                logger.info(
-                    f"First no-diagnostic email sent to {to_name} ({manager.email}) for canteen '{canteen.name}'."
-                )
-                if not canteen.email_no_diagnostic_first_reminder:
-                    canteen.email_no_diagnostic_first_reminder = today
-                    canteen.save()
-            except ApiException as e:
-                logger.exception(
-                    f"SIB error when sending first no-diagnostic email to {to_name} concerning canteen {canteen.name}:\n{e}"
-                )
-            except Exception as e:
-                logger.exception(
-                    f"Unable to send first no-diagnostic reminder email to {to_name} concerning canteen {canteen.name}:\n{e}"
-                )
-
-
 def _covered_by_central_kitchen(canteen):
     if canteen.production_type == Canteen.ProductionType.ON_SITE_CENTRAL and canteen.central_producer_siret:
         try:

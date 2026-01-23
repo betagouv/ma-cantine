@@ -409,10 +409,6 @@ ANYMAIL = {
 }
 NEWSLETTER_SENDINBLUE_LIST_ID = os.getenv("NEWSLETTER_SENDINBLUE_LIST_ID")
 
-TEMPLATE_ID_NO_DIAGNOSTIC_FIRST = (
-    int(os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST")) if os.getenv("TEMPLATE_ID_NO_DIAGNOSTIC_FIRST", None) else None
-)
-
 
 # Analytics
 # ------------------------------------------------------------------------------
