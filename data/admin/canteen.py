@@ -5,6 +5,7 @@ from django.utils.html import format_html
 
 from data.admin.softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
 from data.models import Canteen
+from data.admin.utils import get_arrayfield_list_filter
 from data.models.creation_source import CreationSource
 
 last_year = timezone.now().date().year - 1
@@ -79,7 +80,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "production_type",
         "economic_model",
         SoftDeletionStatusFilter,
-        "sector_list",
+        get_arrayfield_list_filter("sector_list", "Secteur"),
         "region",
         "department",
         "import_source",
