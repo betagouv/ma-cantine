@@ -378,7 +378,10 @@ export default {
 
       // check meat and fish totals
       const { viandesVolaillesEgalim } = this.viandesVolaillesTotals()
-      const sumMeat = viandesVolaillesEgalim + (this.payload.valeurViandesVolaillesNonEgalim.toFixed(2) || 0)
+      const nonEgalimMeat = this.payload.valeurViandesVolaillesNonEgalim
+        ? Number(this.payload.valeurViandesVolaillesNonEgalim.toFixed(2))
+        : 0
+      const sumMeat = viandesVolaillesEgalim + nonEgalimMeat
       const totalMeat = this.payload.valeurViandesVolailles
       if (sumMeat > totalMeat) {
         this.viandesVolaillesTotalErrorMessage = this.errorMessage(
@@ -389,7 +392,10 @@ export default {
         )
       }
       const { produitsDeLaMerEgalim } = this.produitsDeLaMerTotals()
-      const sumFish = produitsDeLaMerEgalim + (this.payload.valeurProduitsDeLaMerNonEgalim.toFixed(2) || 0)
+      const nonEgalimFish = this.payload.valeurProduitsDeLaMerNonEgalim
+        ? Number(this.payload.valeurProduitsDeLaMerNonEgalim.toFixed(2))
+        : 0
+      const sumFish = produitsDeLaMerEgalim + nonEgalimFish
       const totalFish = this.payload.valeurProduitsDeLaMer
       if (sumFish > totalFish) {
         this.produitsDeLaMerTotalErrorMessage = this.errorMessage(
