@@ -70,7 +70,7 @@ class TestDecoupageAdministratifAPI(unittest.TestCase):
         # Second call to test caching
         communes_details = map_communes_infos()
 
-        self.assertEqual(mock.call_count, 1)  # No additional API call
+        self.assertEqual(mock.call_count, 1)  # no additional API call
         self.assertEqual(len(communes_details), 2)
 
     def test_map_epcis_code_name(self, mock):
@@ -85,8 +85,8 @@ class TestDecoupageAdministratifAPI(unittest.TestCase):
         )
 
         epci_names = map_epcis_code_name()
-        self.assertEqual(mock.call_count, 1)
 
+        self.assertEqual(mock.call_count, 1)
         self.assertEqual(len(epci_names), 2)
         self.assertEqual(epci_names["200000172"], "CC Faucigny - Glières")
         self.assertEqual(epci_names["200000438"], "CC du Pays de Pontchâteau St-Gildas-des-Bois")

@@ -6,9 +6,16 @@ from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
+# ------------------------------------------------------------------------------
+# DECOUPAGE ADMINISTRATIF
+# API DOCUMENTATION: https://geo.api.gouv.fr/decoupage-administratif
 
-# DECOUPAGE_ADMINISTRATIF_DOCUMENTATION: https://geo.api.gouv.fr/decoupage-administratif
 DECOUPAGE_ADMINISTRATIF_API_URL = "https://geo.api.gouv.fr"
+
+
+# ------------------------------------------------------------------------------
+# Caching
+
 CACHE_KEY_PREFIX = "api_decoupage_administratif"
 CACHE_TIMEOUT = 60 * 60 * 24 * 7  # 7 days
 
@@ -25,6 +32,7 @@ def fetch_communes():
     api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes?type=arrondissement-municipal,commune-actuelle"
     response = requests.get(api_url, timeout=50)
     response.raise_for_status()
+    # cache mechanism: store the result
     cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
     return response.json()
 
@@ -41,6 +49,7 @@ def fetch_epcis():
     api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code"
     response = requests.get(api_url, timeout=50)
     response.raise_for_status()
+    # cache mechanism: store the result
     cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
     return response.json()
 
@@ -67,6 +76,7 @@ def fetch_departements():
     api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/departements?zone=metro,drom,com"
     response = requests.get(api_url, timeout=5)
     response.raise_for_status()
+    # cache mechanism: store the result
     cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
     return response.json()
 
@@ -83,6 +93,7 @@ def fetch_regions():
     api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/regions?zone=metro,drom,com"
     response = requests.get(api_url, timeout=5)
     response.raise_for_status()
+    # cache mechanism: store the result
     cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
     return response.json()
 
