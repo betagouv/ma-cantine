@@ -6,6 +6,31 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.5.0](https://github.com/betagouv/ma-cantine/compare/v2026.4.0...v2026.5.0) (2026-01-23)
+
+
+### Nouveautés
+
+* **Imports:** Cantines: renommer "siret_livreur_repas" pour "siret_cuisine_centrale" ([#6261](https://github.com/betagouv/ma-cantine/issues/6261)) ([ad7729a](https://github.com/betagouv/ma-cantine/commit/ad7729a3414e820acb38315d76bb1a45d4c8d3ef))
+
+
+### Améliorations
+
+* **Admin:** cacher les Télédéclarations (ont été remplacés par les Diagnostics) ([#6269](https://github.com/betagouv/ma-cantine/issues/6269)) ([ab7878c](https://github.com/betagouv/ma-cantine/commit/ab7878cbf3ec04a94bec8d7a6c892a1f15f0fb2f))
+* **Admin:** Cantines: améliorer l'affichage du filtre par secteurs ([#6268](https://github.com/betagouv/ma-cantine/issues/6268)) ([2f48ea3](https://github.com/betagouv/ma-cantine/commit/2f48ea3c205ff739c7066d2ab26e87bea1ccbc5f))
+* **API Découpage Administratif:** utiliser le cache pour appeler l'API qu'1 seule fois par semaine ([#6262](https://github.com/betagouv/ma-cantine/issues/6262)) ([e202bbc](https://github.com/betagouv/ma-cantine/commit/e202bbcc4df6591d31ca9ed236b559821abffd83))
+* **Cantines:** connaitre facilement la valeur précédente des champs qui sont modifiés, grâce à django-dirtyfields ([#6260](https://github.com/betagouv/ma-cantine/issues/6260)) ([2d9fa4a](https://github.com/betagouv/ma-cantine/commit/2d9fa4a23615d96730765ae04658a97bf2b75ed7))
+* **Cantines:** lorsque le SIRET est modifié, réinitialiser tous les champs géo ([#6259](https://github.com/betagouv/ma-cantine/issues/6259)) ([73f2d35](https://github.com/betagouv/ma-cantine/commit/73f2d35cb12df111e0408afbd8b9195e96114aa5))
+* **Ressource:** mise à jour des annexes du protocole de pesées ([#6272](https://github.com/betagouv/ma-cantine/issues/6272)) ([a52b8b3](https://github.com/betagouv/ma-cantine/commit/a52b8b304f87138e97ea0c1de68096735dcdaf83))
+
+
+### Corrections (bugs, typos...)
+
+* **Gaspillage alimentaire:** corrige le non affichage de l'input ([#6277](https://github.com/betagouv/ma-cantine/issues/6277)) ([5875e88](https://github.com/betagouv/ma-cantine/commit/5875e886b7382a448f3207c83272fbcac16109a3))
+* **Groupes:** empêcher toute modification de cantines vers central ou central_serving ([#6265](https://github.com/betagouv/ma-cantine/issues/6265)) ([bb0a97f](https://github.com/betagouv/ma-cantine/commit/bb0a97f1a158831b99630cbdf0400af5a8f7f615))
+* **Inscription:** corrige la redirection vers le tableau de bord après la création de compte ([#6276](https://github.com/betagouv/ma-cantine/issues/6276)) ([b60d39d](https://github.com/betagouv/ma-cantine/commit/b60d39d724c1064d9fe8fb87c5473649aa777cca))
+* **Télédéclaration:** corrige la vérification des totaux viandes et poissons concaténée ([#6278](https://github.com/betagouv/ma-cantine/issues/6278)) ([dea4853](https://github.com/betagouv/ma-cantine/commit/dea485340a784d21ab1cee2064810cc3ac054606))
+
 ## [2026.4.0](https://github.com/betagouv/ma-cantine/compare/v2026.3.0...v2026.4.0) (2026-01-20)
 
 
