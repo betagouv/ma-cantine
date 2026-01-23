@@ -102,7 +102,8 @@ class BaseImportView(ABC, APIView):
         try:
             # File validation
             self.file = request.data["file"]
-            file_import.validate_file_size(self.file)
+            if not self._validate_file_size():
+                return self._get_success_response()
 
             # Schema validation (Validata)
             schema_config = self._get_schema_config()
@@ -207,6 +208,21 @@ class BaseImportView(ABC, APIView):
         Default: first column (often SIRET)
         """
         return row[0] if row else None
+
+    def _validate_file_size(self):
+        """
+        Validate file size and handle ValidationError.
+
+        Returns:
+            bool: True if validation passed, False if file is too large
+        """
+        try:
+            file_import.validate_file_size(self.file)
+            return True
+        except ValidationError as e:
+            self._log_error(e.message)
+            self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
+            return False
 
     def _log_import_start(self):
         """Log the start of import process"""

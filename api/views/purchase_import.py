@@ -3,6 +3,7 @@ from decimal import ROUND_HALF_DOWN, Decimal, InvalidOperation
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 
 from api.serializers import PurchaseSerializer
@@ -39,12 +40,12 @@ class PurchasesImportView(BaseImportView):
         # Override to add file digest check before base processing
         self.file = request.data.get("file")
         if self.file:
-            file_import.validate_file_size(self.file)
-            self.file_digest = file_import.get_file_digest(self.file)
-            try:
-                self._check_duplication()
-            except ValidationError:
-                # Duplication check failed, return response with duplicate info
+            # Validate file size before expensive operations
+            if not self._validate_file_size():
+                return self._get_success_response()
+
+            # Compute file digest and check for duplication
+            if not self._check_file_digest_and_duplication():
                 return self._get_success_response()
 
         return super().post(request)
@@ -90,6 +91,23 @@ class PurchasesImportView(BaseImportView):
             self.is_duplicate_file = True
             self.duplicate_purchase_count = matching_purchases.count()
             raise ValidationError("Ce fichier a déjà été utilisé pour un import")
+
+    def _check_file_digest_and_duplication(self):
+        """
+        Compute file digest and check for duplicate imports.
+
+        Returns:
+            bool: True if no duplication found, False if file is duplicate
+        """
+        self.file_digest = file_import.get_file_digest(self.file)
+        try:
+            self._check_duplication()
+            return True
+        except ValidationError as e:
+            # Duplication check failed, add error and return with duplicate info
+            self._log_error(e.message)
+            self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
+            return False
 
     def _process_chunk(self, chunk):
         """Process a chunk of rows and bulk insert if no errors"""
