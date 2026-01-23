@@ -78,12 +78,19 @@ def validate_canteen_production_type_field(instance):
     - clean_fields() (called by full_clean()) already checks that the value is in the choices
     - extra validation:
         - the field must be filled
+        - CENTRAL and CENTRAL_SERVING types are no longer allowed (only on change for now, to avoid breaking tests)
     """
     errors = {}
     field_name = "production_type"
     value = getattr(instance, field_name)
     if value in [None, ""]:
         utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
+    if instance.id:
+        if field_name in instance.get_dirty_fields():
+            if value in [instance.ProductionType.CENTRAL, instance.ProductionType.CENTRAL_SERVING]:
+                utils_utils.add_validation_error(
+                    errors, field_name, "Les types CENTRAL et CENTRAL_SERVING ne sont plus autorisées."
+                )
     return errors
 
 
