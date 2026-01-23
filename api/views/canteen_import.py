@@ -36,7 +36,7 @@ class CanteensImportView(BaseImportView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.canteens = {}
+        self.canteens_created = {}
         self.is_admin_import = False
         self.locations_csv_str = "siret\n"
         self.has_locations_to_find = False
@@ -65,7 +65,7 @@ class CanteensImportView(BaseImportView):
                 continue
             try:
                 canteen, should_update_geolocation = self._save_data_from_row(row)
-                self.canteens[canteen.siret] = canteen
+                self.canteens_created[canteen.siret] = canteen
                 if should_update_geolocation and not self.errors:
                     self.has_locations_to_find = True
                     self.locations_csv_str += f"{canteen.siret}\n"
@@ -116,7 +116,11 @@ class CanteensImportView(BaseImportView):
 
     def _get_response_data(self):
         """Return canteen-specific response data"""
-        serialized_canteens = [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens.values()]
+        serialized_canteens = (
+            []
+            if self.errors
+            else [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens_created.values()]
+        )
         return {
             "canteens": serialized_canteens,
             "count": len(serialized_canteens),
@@ -130,7 +134,7 @@ class CanteensImportView(BaseImportView):
                 if row[0] == "siret":
                     continue  # skip header
                 if row[5] != "":  # city found, so rest of data is found
-                    canteen = self.canteens[row[0]]
+                    canteen = self.canteens_created[row[0]]
                     canteen.city_insee_code = row[3]
                     canteen.postal_code = row[4]
                     canteen.city = row[5]
