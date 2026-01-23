@@ -7,7 +7,6 @@ from simple_history.admin import SimpleHistoryAdmin
 
 from data.models import Diagnostic
 from data.models.creation_source import CreationSource
-from .teledeclaration import TeledeclarationInline
 
 
 class DiagnosticForm(forms.ModelForm):
@@ -58,7 +57,6 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
     search_help_text = "La recherche est faite sur les champs : ID, nom de la cantine, siret, siren de l'unité légale"
 
     form = DiagnosticForm
-    inlines = (TeledeclarationInline,)
     autocomplete_fields = ("canteen",)
     fieldsets = (
         (
