@@ -29,6 +29,18 @@ class DiagnosticsImportView(BaseImportView):
             "url": DIAGNOSTICS_SIMPLE_SCHEMA_URL,
         }
 
+    def _process_file(self, data):
+        """Process all rows in the file."""
+        for row_number, row in enumerate(data, start=1):
+            if row_number == 1:  # skip header
+                continue
+            try:
+                self._save_data_from_row(row)
+            except Exception as e:
+                identifier = self._get_row_identifier(row)
+                for error in self._parse_errors(e, row, identifier):
+                    self.errors.append(self._get_error(e, error["message"], error["code"], row_number))
+
     @transaction.atomic
     def _save_data_from_row(self, row):
         siret = row[0]
