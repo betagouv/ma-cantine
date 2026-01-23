@@ -67,21 +67,14 @@ onMounted(() => {
               :min="payload.periodStartDate"
               :error-message="formatError(v$.periodEndDate)"
             />
-            <DsfrInputGroup :error-message="formatError(v$.mealCount)" >
-              <DsfrInput
-                v-model.number="payload.mealCount"
-                type="number"
-                :label="Constants.WasteMeasurement.mealCount.title"
-              >
-                <template #required-tip>
-                  <p class="fr-hint-text">
-                    Pour rappel, votre nombre de couvert par jour est de {{ canteen.dailyMealCount }} jours.
-                    Besoin d'aide pour calculer le nombre de couverts ?
-                    <a :href="documentation.calculerNombreCouverts" target="_blank">Consultez notre documentation</a>
-                  </p>
-                </template>
-              </DsfrInput>
-            </DsfrInputGroup>
+            <DsfrInputGroup
+              v-model.number="payload.mealCount"
+              type="number"
+              :label="Constants.WasteMeasurement.mealCount.title"
+              :hint="`Pour rappel, votre nombre de couvert par jour est de ${canteen.dailyMealCount} jours`"
+              label-visible
+              :error-message="formatError(v$.mealCount)"
+            />
           </div>
         </fieldset>
       </div>
@@ -90,6 +83,12 @@ onMounted(() => {
           <p class="fr-mb-0">
             Pour garantir une bonne estimation, nous vous conseillons de réaliser vos mesures sur une période
             <b>d'au moins 5 jours.</b>
+          </p>
+        </HelpText>
+        <HelpText question="Nombre de couverts">
+          <p class="fr-mb-0">
+            Besoin d'aide pour calculer le nombre de couverts ?
+            <a :href="documentation.calculerNombreCouverts" target="_blank">Consultez notre documentation</a>
           </p>
         </HelpText>
       </div>
