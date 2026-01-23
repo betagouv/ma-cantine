@@ -42,7 +42,7 @@ class BaseImportView(ABC, APIView):
 
     def __init__(self, **kwargs):
         self.errors = []
-        self.start_time = None
+        self.start_time = time.time()
         self.file = None
         super().__init__(**kwargs)
 
@@ -241,7 +241,7 @@ class BaseImportView(ABC, APIView):
 
     def _get_success_response(self):
         """Build final response with errors and timing"""
-        response_data = self._get_response_data() if not self.errors else {}
+        response_data = self._get_response_data()
         base_response = {
             "errors": self.errors,
             "seconds": time.time() - self.start_time,
