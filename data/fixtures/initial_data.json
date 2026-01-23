@@ -10,28 +10,22 @@
   },
   {
     "fields": {
-      "city": "Paris",
+      "city": "Montpellier",
+      "city_insee_code": "34172",
       "creation_date": "2025-01-01T00:00:00+00:00",
       "managers": [
         1
       ],
       "modification_date": "2025-01-01T00:00:00+00:00",
       "name": "Sample Canteen",
-      "postal_code": "75001",
-      "siret": "83014132100034",
+      "postal_code": "34070",
+      "sector_list": [
+        "education_primaire"
+      ],
+      "siret": "21340172201787",
       "yearly_meal_count": 1000
     },
     "model": "data.canteen",
-    "pk": 1
-  },
-  {
-    "fields": {
-      "category": "administration",
-      "creation_date": "2025-01-01T00:00:00+00:00",
-      "modification_date": "2025-01-01T00:00:00+00:00",
-      "name": "Administration ma-cantine"
-    },
-    "model": "data.sectorm2m",
     "pk": 1
   },
   {
@@ -40,7 +34,8 @@
       "creation_date": "2025-01-01T00:00:00+00:00",
       "modification_date": "2025-01-01T00:00:00+00:00",
       "valeur_bio": 200,
-      "valeur_totale": 1000
+      "valeur_totale": 1000,
+      "year": 2024
     },
     "model": "data.diagnostic",
     "pk": 1
