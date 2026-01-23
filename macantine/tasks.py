@@ -1,14 +1,14 @@
-import datetime
 import logging
 import time
+import datetime
 
 import redis as r
 from django.conf import settings
 from django.core.management import call_command
 from django.db.models import F
 from django.utils import timezone
-from sib_api_v3_sdk.rest import ApiException
 
+from sib_api_v3_sdk.rest import ApiException
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
 from common.api.datagouv import (
@@ -36,74 +36,6 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 def _user_name(user):
     return user.get_full_name() or user.username
-
-
-@app.task()
-def no_canteen_first_reminder():
-    if not settings.TEMPLATE_ID_NO_CANTEEN_FIRST:
-        logger.error("Environment variable TEMPLATE_ID_NO_CANTEEN_FIRST not set")
-        return
-    today = timezone.now()
-    threshold = today - datetime.timedelta(weeks=1)
-    users = User.objects.filter(
-        canteens=None,
-        date_joined__lte=threshold,
-        email_no_canteen_first_reminder__isnull=True,
-        opt_out_reminder_emails=False,
-        is_dev=False,
-    ).all()
-    if not users:
-        logger.info("no_canteen_first_reminder: No users to notify.")
-        return
-
-    logger.info(f"no_canteen_first_reminder: {len(users)} users to notify.")
-    for user in users:
-        try:
-            parameters = {"PRENOM": user.first_name}
-            to_name = _user_name(user)
-            brevo.send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_FIRST, parameters, user.email, to_name)
-            logger.info(f"First email sent to {user.get_full_name()} ({user.email})")
-            user.email_no_canteen_first_reminder = today
-            user.save()
-        except ApiException as e:
-            logger.exception(f"SIB error when sending first no-cantine email to {user.username}:\n{e}")
-        except Exception as e:
-            logger.exception(f"Unable to send first no-cantine reminder email to {user.username}:\n{e}")
-
-
-@app.task()
-def no_canteen_second_reminder():
-    if not settings.TEMPLATE_ID_NO_CANTEEN_SECOND:
-        logger.error("Environment variable TEMPLATE_ID_NO_CANTEEN_SECOND not set")
-        return
-    today = timezone.now()
-    threshold = today - datetime.timedelta(weeks=2)
-    first_reminder_threshold = today - datetime.timedelta(weeks=1)
-    users = User.objects.filter(
-        canteens=None,
-        date_joined__lte=threshold,
-        email_no_canteen_first_reminder__lte=first_reminder_threshold,
-        email_no_canteen_second_reminder__isnull=True,
-        opt_out_reminder_emails=False,
-        is_dev=False,
-    ).all()
-    if not users:
-        logger.info("no_canteen_second_reminder: No users to notify.")
-        return
-
-    logger.info(f"no_canteen_second_reminder: {len(users)} users to notify.")
-    for user in users:
-        try:
-            parameters = {"PRENOM": user.first_name}
-            to_name = _user_name(user)
-            brevo.send_sib_template(settings.TEMPLATE_ID_NO_CANTEEN_SECOND, parameters, user.email, to_name)
-            logger.info(f"Second email sent to {user.get_full_name()} ({user.email})")
-            user.email_no_canteen_second_reminder = today
-            user.save()
-        except ApiException as e:
-            logger.exception(f"SIB error when sending second no-cantine reminder email to {user.username}:\n{e}")
-        except Exception as e:
-            logger.exception(f"Unable to send second no-cantine reminder email to {user.username}:\n{e}")
 
 
 ##########################################################################

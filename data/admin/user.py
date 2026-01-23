@@ -88,14 +88,9 @@ class MaCanteenUserAdmin(UserAdmin):
             },
         ),
         (
-            _("Emails automatiques"),
+            _("Brevo"),
             {
-                "fields": (
-                    "opt_out_reminder_emails",
-                    "email_no_canteen_first_reminder",
-                    "email_no_canteen_second_reminder",
-                    *User.BREVO_FIELDS,
-                ),
+                "fields": (*User.BREVO_FIELDS,),
             },
         ),
         (
