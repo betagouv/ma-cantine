@@ -1,32 +1,23 @@
 import csv
-import logging
-import re
-import time
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
-from django.http import JsonResponse
-from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 
-from api.permissions import IsAuthenticated
 from api.serializers import FullCanteenSerializer
-from common.api import validata
-from common.utils import file_import
+from api.views.base_import import BaseImportView
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportFailure, ImportType, Sector
+from data.models import Canteen, ImportType, Sector
 from data.models.creation_source import CreationSource
 
 from .canteen import AddManagerView
 from .utils import camelize
 
-logger = logging.getLogger(__name__)
 
 CANTEEN_SCHEMA_FILE_NAME = "cantines.json"
 CANTEEN_ADMIN_SCHEMA_FILE_NAME = "cantines_admin.json"
@@ -36,116 +27,62 @@ CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/ref
 CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
 
 
-class CanteensImportView(APIView):
-    permission_classes = [IsAuthenticated]
-    value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
+class CanteensImportView(BaseImportView):
+    import_type = ImportType.CANTEEN_ONLY
+    model_class = Canteen
+
     manager_column_idx = 10  # gestionnaires_additionnels
     silent_manager_idx = manager_column_idx + 2  # admin_gestionnaires_additionnels
 
     def __init__(self, **kwargs):
-        self.canteens = {}
-        self.errors = []
-        self.start_time = None
-        self.file = None
-        self.is_admin_import = False
         super().__init__(**kwargs)
+        self.canteens = {}
+        self.is_admin_import = False
+        self.locations_csv_str = "siret\n"
+        self.has_locations_to_find = False
 
-    def post(self, request):  # noqa: C901
-        self.start_time = time.time()
-        logger.info("Canteen bulk import started")
-        try:
-            # File validation
-            self.file = request.data["file"]
-            file_import.validate_file_size(self.file)
+    def post(self, request):
+        # Set admin flag before base processing
+        self.is_admin_import = request.user.is_staff
+        return super().post(request)
 
-            # Schema validation (Validata)
-            self.is_admin_import = self.request.user.is_staff
-            schema_name = CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME
-            schema_url = CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL
-            validata_response = validata.validate_file_against_schema(self.file, schema_url)
-
-            # Error generating the report
-            if "error" in validata_response:
-                error = validata_response["error"]["message"]
-                self.errors = [
-                    {
-                        "message": f"Une erreur inconnue s'est produite en lisant votre fichier : « {error} ». Renouveler votre essai, et si l'erreur persiste contactez le support.",
-                        "status": 400,
-                    }
-                ]
-                self._log_error(f"Echec lors de la demande de validation du fichier (schema {schema_name} - Validata)")
-                return self._get_success_response()
-
-            # Header validation
-            header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
-            if header_has_errors:
-                self.errors = [
-                    {
-                        "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-                        "status": 400,
-                    }
-                ]
-                self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
-                return self._get_success_response()
-
-            # Rows validation
-            self.errors = validata.process_errors(validata_response["report"])
-            if len(self.errors):
-                self._log_error(f"Echec lors de la validation du fichier (schema {schema_name} - Validata)")
-                return self._get_success_response()
-
-            # ma-cantine validation (permissions, last checks...) + import
-            with transaction.atomic():
-                self._process_file(validata_response["resource_data"])
-
-                if self.errors:
-                    raise IntegrityError()
-
-        except PermissionDenied as e:
-            self._log_error(e.detail)
-            self.errors = [{"row": 0, "status": status.HTTP_401_UNAUTHORIZED, "message": e.detail}]
-        except IntegrityError as e:
-            self._log_error(f"L'import du fichier CSV a échoué: {e}")
-        except ValidationError as e:
-            self._log_error(e.message)
-            self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
-        except Exception as e:
-            message = f"Échec lors de la lecture du fichier: {e}"
-            self._log_error(message, "exception")
-            self.errors = [{"row": 0, "status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": message}]
-        return self._get_success_response()
-
-    def _log_error(self, message, level="warning"):
-        logger_function = getattr(logger, level)
-        logger_function(message)
-        ImportFailure.objects.create(
-            user=self.request.user,
-            file=self.file,
-            details=message,
-            import_type=ImportType.CANTEEN_ONLY,
-        )
+    def _get_schema_config(self):
+        """Return schema config based on user role"""
+        if self.is_admin_import:
+            return {
+                "name": CANTEEN_ADMIN_SCHEMA_FILE_NAME,
+                "url": CANTEEN_ADMIN_SCHEMA_URL,
+            }
+        return {
+            "name": CANTEEN_SCHEMA_FILE_NAME,
+            "url": CANTEEN_SCHEMA_URL,
+        }
 
     def _process_file(self, data):
-        locations_csv_str = "siret\n"
-        has_locations_to_find = False
+        """Process file and track canteens needing geolocation"""
         for row_number, row in enumerate(data, start=1):
+            if row_number == 1:  # skip header
+                continue
             try:
-                if row_number == 1:  # skip header
-                    continue
                 canteen, should_update_geolocation = self._save_data_from_row(row)
                 self.canteens[canteen.siret] = canteen
                 if should_update_geolocation and not self.errors:
-                    has_locations_to_find = True
-                    locations_csv_str += f"{canteen.siret}\n"
+                    self.has_locations_to_find = True
+                    self.locations_csv_str += f"{canteen.siret}\n"
 
             except Exception as e:
-                for error in self._parse_errors(e, row):
-                    self.errors.append(CanteensImportView._get_error(e, error["message"], error["code"], row_number))
-        if has_locations_to_find:
-            self._update_location_data(locations_csv_str)
+                identifier = row[0] if row else None
+                for error in self._parse_errors(e, row, identifier):
+                    self.errors.append(self._get_error(e, error["message"], error["code"], row_number))
+
+    def _post_process_file(self):
+        """Update geo-location data for new canteens"""
+        if self.has_locations_to_find:
+            self._update_location_data(self.locations_csv_str)
 
     @transaction.atomic
     def _save_data_from_row(self, row):
+        """Process and save canteen data from row"""
         if row[0] == "":
             raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
         manager_emails = self._get_manager_emails_to_notify(row)
@@ -160,18 +97,6 @@ class CanteensImportView(APIView):
         )
 
         return (canteen, should_update_geolocation)
-
-    @staticmethod
-    def _get_error(e, message, error_status, row_number):
-        return {"row": row_number, "status": error_status, "message": message}
-
-    @staticmethod
-    def _get_verbose_field_name(field_name):
-        try:
-            return Canteen._meta.get_field(field_name).verbose_name
-        except Exception:
-            pass
-        return field_name
 
     @staticmethod
     def _get_manager_emails(row):
@@ -189,21 +114,16 @@ class CanteensImportView(APIView):
             except IntegrityError:
                 pass
 
-    def _get_success_response(self):
-        serialized_canteens = (
-            []
-            if len(self.errors)
-            else [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens.values()]
-        )
-        body = {
+    def _get_response_data(self):
+        """Return canteen-specific response data"""
+        serialized_canteens = [camelize(FullCanteenSerializer(canteen).data) for canteen in self.canteens.values()]
+        return {
             "canteens": serialized_canteens,
-            "count": 0 if len(self.errors) else len(serialized_canteens),
-            "errors": self.errors,
-            "seconds": time.time() - self.start_time,
+            "count": len(serialized_canteens),
         }
-        return JsonResponse(body, status=status.HTTP_200_OK)
 
     def _update_location_data(self, locations_csv_str):
+        """Update geo-location data for canteens using external API"""
         try:
             response = fetch_geo_data_from_code_csv(locations_csv_str)
             for row in csv.reader(response.splitlines()):
@@ -218,11 +138,10 @@ class CanteensImportView(APIView):
                     canteen.save(skip_validations=True)
                     update_change_reason(canteen, f"Mass CSV import - Geo data. {self.__class__.__name__[:100]}")
         except Exception as e:
-            logger.exception(f"Error while updating location data : {repr(e)} - {e}")
+            import logging
 
-    @staticmethod
-    def _add_error(errors, message, code=400):
-        errors.append({"message": message, "code": code})
+            logger = logging.getLogger(__name__)
+            logger.exception(f"Error while updating location data : {repr(e)} - {e}")
 
     def _get_manager_emails_to_notify(self, row):
         try:
@@ -354,47 +273,26 @@ class CanteensImportView(APIView):
 
         return (import_source, silently_added_manager_emails)
 
-    def _parse_errors(self, e, row):  # noqa: C901
+    def _parse_errors(self, e, row, identifier=None):
+        """Extended error parsing for canteen-specific errors"""
         errors = []
-        if isinstance(e, PermissionDenied):
-            CanteensImportView._add_error(errors, e.detail, 401)
-        elif isinstance(e, ValidationError):
-            if hasattr(e, "message_dict"):
-                for field, messages in e.message_dict.items():
-                    verbose_field_name = CanteensImportView._get_verbose_field_name(field)
-                    for message in messages:
-                        user_message = message
-                        if field != "__all__":
-                            user_message = f"Champ '{verbose_field_name}' : {user_message}"
-                        CanteensImportView._add_error(errors, user_message)
-            elif hasattr(e, "message"):
-                CanteensImportView._add_error(errors, e.message)
-            elif hasattr(e, "params"):
-                CanteensImportView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
-            else:
-                CanteensImportView._add_error(
-                    errors, "Une erreur s'est produite en créant une cantine pour cette ligne"
-                )
-        elif isinstance(e, ValueError):
-            match = self.value_error_regex.search(str(e))
-            field_name = match.group(1) if match else ""
-            value_given = match.group(2) if match else ""
-            if field_name:
-                verbose_field_name = CanteensImportView._get_verbose_field_name(field_name)
-                CanteensImportView._add_error(
-                    errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
-                )
-        elif isinstance(e, Canteen.MultipleObjectsReturned):
-            CanteensImportView._add_error(
+
+        # Handle canteen-specific exceptions first
+        if isinstance(e, Canteen.MultipleObjectsReturned):
+            self._add_error(
                 errors,
-                f"Plusieurs cantines correspondent au SIRET {row[0]}. Veuillez enlever les doublons.",
+                f"Plusieurs cantines correspondent au SIRET {identifier}. Veuillez enlever les doublons.",
             )
+            return errors
         elif isinstance(e, FileFormatError):
-            CanteensImportView._add_error(errors, e.detail)
-        if not errors:
-            logger.exception(f"No errors added through parsing but exception raised: {e}")
-            CanteensImportView._add_error(errors, "Une erreur s'est produite en créant une cantine pour cette ligne")
-        return errors
+            self._add_error(errors, e.detail)
+            return errors
+
+        # Fall back to base class handling
+        return super()._parse_errors(e, row, identifier)
+
+    def _get_generic_error_message(self):
+        return "Une erreur s'est produite en créant une cantine pour cette ligne"
 
 
 class FileFormatError(Exception):
