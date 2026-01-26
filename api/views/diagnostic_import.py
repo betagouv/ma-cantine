@@ -27,6 +27,7 @@ class DiagnosticsImportView(BaseImportView):
         return {
             "name": DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME,
             "url": DIAGNOSTICS_SIMPLE_SCHEMA_URL,
+            "path": DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH,
         }
 
     def _process_file(self, data):

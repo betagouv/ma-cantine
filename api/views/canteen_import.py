@@ -48,14 +48,10 @@ class CanteensImportView(BaseImportView):
 
     def _get_schema_config(self):
         """Return schema config based on user role"""
-        if self.is_admin_import:
-            return {
-                "name": CANTEEN_ADMIN_SCHEMA_FILE_NAME,
-                "url": CANTEEN_ADMIN_SCHEMA_URL,
-            }
         return {
-            "name": CANTEEN_SCHEMA_FILE_NAME,
-            "url": CANTEEN_SCHEMA_URL,
+            "name": CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME,
+            "url": CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL,
+            "path": CANTEEN_ADMIN_SCHEMA_FILE_PATH if self.is_admin_import else CANTEEN_SCHEMA_FILE_PATH,
         }
 
     def _process_file(self, data):
