@@ -7,47 +7,17 @@ const pages = ref([
   {
     title: "Importer des cantines",
     to: { name: "GestionnaireImportCantines" },
-    description: "Vous voulez créer ou mettre à jour des cantines.",
-    badges: [
-      {
-        label: "Excel",
-        noIcon: true,
-      },
-      {
-        label: "CSV",
-        noIcon: true,
-      },
-    ],
+    description: "Vous voulez créer ou mettre à jour des cantines."
   },
   {
     title: "Importer des achats",
     to: { name: "GestionnaireImportAchats" },
     description: "Vous voulez importer des données d'achat pour des cantines existantes.",
-    badges: [
-      {
-        label: "Excel",
-        noIcon: true,
-      },
-      {
-        label: "CSV",
-        noIcon: true,
-      },
-    ],
   },
   {
     title: "Importer des bilans simples",
     to: { name: "GestionnaireImportBilansSimples" },
     description: "Vous voulez importer des bilans simples pour des cantines existantes.",
-    badges: [
-      {
-        label: "Excel",
-        noIcon: true,
-      },
-      {
-        label: "CSV",
-        noIcon: true,
-      },
-    ],
   },
   {
     title: "Importer des bilans détaillés",
