@@ -193,12 +193,6 @@ class User(AbstractUser):
 
     # Emails
     opt_out_reminder_emails = models.BooleanField(default="False", verbose_name="Désactiver les emails de rappel")
-    email_no_canteen_first_reminder = models.DateTimeField(
-        null=True, blank=True, verbose_name="Date d'envoi du premier email pour manque de cantines"
-    )
-    email_no_canteen_second_reminder = models.DateTimeField(
-        null=True, blank=True, verbose_name="Date d'envoi du second email pour manque de cantines"
-    )
     brevo_last_update_date = models.DateTimeField(
         null=True, blank=True, verbose_name="Date de la dernière mise à jour Brevo"
     )
