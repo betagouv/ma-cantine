@@ -1,24 +1,14 @@
-import logging
-import re
-import time
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db import IntegrityError, transaction
-from django.http import JsonResponse
-from rest_framework import status
+from django.db import transaction
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.views import APIView
 from simple_history.utils import update_change_reason
 
-from api.permissions import IsAuthenticated
-from common.api import validata
-from common.utils import file_import
-from data.models import Canteen, Diagnostic, ImportFailure, ImportType
+from api.views.base_import import BaseImportView
+from data.models import Canteen, Diagnostic, ImportType
 from data.models.creation_source import CreationSource
-
-logger = logging.getLogger(__name__)
 
 
 DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME = "bilans_simple.json"
@@ -26,109 +16,30 @@ DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE
 DIAGNOSTICS_SIMPLE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH}"
 
 
-class DiagnosticsImportView(ABC, APIView):
-    permission_classes = [IsAuthenticated]
-    value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
+class DiagnosticsImportView(BaseImportView):
+    model_class = Diagnostic
 
     def __init__(self, **kwargs):
-        self.diagnostics_created_count = 0
-        self.errors = []
-        self.start_time = None
-        self.file = None
         super().__init__(**kwargs)
+        self.diagnostics_created_count = 0
 
-    @property
-    @abstractmethod
-    def import_type(): ...
-
-    def post(self, request):
-        self.start_time = time.time()
-        logger.info("Diagnostic bulk import started")
-        try:
-            with transaction.atomic():
-                # File validation
-                self.file = request.data["file"]
-                file_import.validate_file_size(self.file)
-
-                # Schema validation (Validata)
-                schema_name = DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME
-                schema_url = DIAGNOSTICS_SIMPLE_SCHEMA_URL
-                validata_response = validata.validate_file_against_schema(self.file, schema_url)
-
-                # Error generating the report
-                if "error" in validata_response:
-                    error = validata_response["error"]["message"]
-                    self.errors = [
-                        {
-                            "message": f"Une erreur inconnue s'est produite en lisant votre fichier : « {error} ». Renouveler votre essai, et si l'erreur persiste contactez le support.",
-                            "status": 400,
-                        }
-                    ]
-                    self._log_error(
-                        f"Echec lors de la demande de validation du fichier (schema {schema_name} - Validata)"
-                    )
-                    return self._get_success_response()
-
-                # Header validation
-                header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
-                if header_has_errors:
-                    self.errors = [
-                        {
-                            "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-                            "status": 400,
-                        }
-                    ]
-                    self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
-                    return self._get_success_response()
-
-                # Rows validation
-                self.errors = validata.process_errors(validata_response["report"])
-                if len(self.errors):
-                    self._log_error(f"Echec lors de la validation du fichier (schema {schema_name} - Validata)")
-                    return self._get_success_response()
-
-                # ma-cantine validation (permissions, last checks...) + import
-                with transaction.atomic():
-                    self._process_file(validata_response["resource_data"])
-                    if self.errors:
-                        raise IntegrityError()
-
-        except PermissionDenied as e:
-            self._log_error(e.detail)
-            self.errors = [{"row": 0, "status": status.HTTP_401_UNAUTHORIZED, "message": e.detail}]
-        except IntegrityError as e:
-            self._log_error(f"L'import du fichier CSV a échoué: {e}")
-        except ValidationError as e:
-            self._log_error(e.message)
-            self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
-        except Exception as e:
-            message = f"Échec lors de la lecture du fichier: {e}"
-            self._log_error(message, "exception")
-            self.errors = [{"row": 0, "status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": message}]
-        return self._get_success_response()
-
-    def _log_error(self, message, level="warning"):
-        logger_function = getattr(logger, level)
-        logger_function(message)
-        ImportFailure.objects.create(
-            user=self.request.user,
-            file=self.file,
-            details=message,
-            import_type=self.import_type,
-        )
+    def _get_schema_config(self):
+        return {
+            "name": DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME,
+            "url": DIAGNOSTICS_SIMPLE_SCHEMA_URL,
+        }
 
     def _process_file(self, data):
+        """Process all rows in the file."""
         for row_number, row in enumerate(data, start=1):
-            siret = row[0]
+            if row_number == 1:  # skip header
+                continue
             try:
-                if row_number == 1:  # skip header
-                    continue
                 self._save_data_from_row(row)
             except Exception as e:
-                for error in self._parse_errors(e, row, siret):
-                    self.errors.append(
-                        DiagnosticsImportView._get_error(e, error["message"], error["code"], row_number)
-                    )
+                identifier = self._get_row_identifier(row)
+                for error in self._parse_errors(e, row, identifier):
+                    self.errors.append(self._get_error(e, error["message"], error["code"], row_number))
 
     @transaction.atomic
     def _save_data_from_row(self, row):
@@ -142,7 +53,9 @@ class DiagnosticsImportView(ABC, APIView):
         self._update_or_create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
 
     @abstractmethod
-    def _validate_diagnostic(self, row): ...
+    def _validate_diagnostic(self, row):
+        """Parse row and return (year, values_dict, diagnostic_type)"""
+        pass
 
     def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
         diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()
@@ -163,12 +76,13 @@ class DiagnosticsImportView(ABC, APIView):
         update_change_reason(diagnostic, f"Mass CSV import. {self.__class__.__name__[:100]}")
         self.diagnostics_created_count += 1
 
-    @staticmethod
-    def _get_error(e, message, error_status, row_number):
-        return {"row": row_number, "status": error_status, "message": message}
+    def _get_response_data(self):
+        return {
+            "count": self.diagnostics_created_count,
+        }
 
-    @staticmethod
-    def _get_verbose_field_name(field_name):
+    def _get_verbose_field_name(self, field_name):
+        """Check both Canteen and Diagnostic models for field names"""
         try:
             return Canteen._meta.get_field(field_name).verbose_name
         except Exception:
@@ -178,64 +92,23 @@ class DiagnosticsImportView(ABC, APIView):
                 pass
         return field_name
 
-    def _get_success_response(self):
-        body = {
-            # "diagnostics": serialized_diagnostics,
-            "count": 0 if len(self.errors) else self.diagnostics_created_count,
-            "errors": self.errors,
-            "seconds": time.time() - self.start_time,
-        }
-        return JsonResponse(body, status=status.HTTP_200_OK)
+    def _get_generic_error_message(self):
+        return "Une erreur s'est produite en créant un bilan pour cette ligne"
 
-    @staticmethod
-    def _add_error(errors, message, code=400):
-        errors.append({"message": message, "code": code})
-
-    def _parse_errors(self, e, row, siret):  # noqa: C901
+    def _parse_errors(self, e, row, identifier=None):
+        """Extended error parsing to handle MultipleObjectsReturned"""
         errors = []
-        if isinstance(e, PermissionDenied):
-            DiagnosticsImportView._add_error(errors, e.detail, 401)
-        elif isinstance(e, ObjectDoesNotExist):
-            errors.append(
-                {
-                    "message": f"Une cantine avec le siret « {siret} » n'existe pas sur la plateforme.",
-                    "code": 404,
-                }
-            )
-        elif isinstance(e, ValidationError):
-            if hasattr(e, "message_dict"):
-                for field, messages in e.message_dict.items():
-                    verbose_field_name = DiagnosticsImportView._get_verbose_field_name(field)
-                    for message in messages:
-                        user_message = message
-                        if field != "__all__":
-                            user_message = f"Champ '{verbose_field_name}' : {user_message}"
-                        DiagnosticsImportView._add_error(errors, user_message)
-            elif hasattr(e, "message"):
-                DiagnosticsImportView._add_error(errors, e.message)
-            elif hasattr(e, "params"):
-                DiagnosticsImportView._add_error(errors, f"La valeur '{e.params['value']}' n'est pas valide.")
-            else:
-                DiagnosticsImportView._add_error(
-                    errors, "Une erreur s'est produite en créant un bilan pour cette ligne"
-                )
-        elif isinstance(e, ValueError):
-            match = self.value_error_regex.search(str(e))
-            field_name = match.group(1) if match else ""
-            value_given = match.group(2) if match else ""
-            if field_name:
-                verbose_field_name = DiagnosticsImportView._get_verbose_field_name(field_name)
-                DiagnosticsImportView._add_error(
-                    errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
-                )
-        elif isinstance(e, Canteen.MultipleObjectsReturned):
-            DiagnosticsImportView._add_error(
+
+        # Handle specific case for multiple canteens with same SIRET
+        if isinstance(e, Canteen.MultipleObjectsReturned):
+            self._add_error(
                 errors,
-                f"Plusieurs cantines correspondent au SIRET {siret}. Veuillez enlever les doublons pour pouvoir créer le bilan.",
+                f"Plusieurs cantines correspondent au SIRET {identifier}. Veuillez enlever les doublons pour pouvoir créer le bilan.",
             )
-        if not errors:
-            DiagnosticsImportView._add_error(errors, "Une erreur s'est produite en créant un bilan pour cette ligne")
-        return errors
+            return errors
+
+        # Fall back to base class handling
+        return super()._parse_errors(e, row, identifier)
 
 
 class DiagnosticsSimpleImportView(DiagnosticsImportView):

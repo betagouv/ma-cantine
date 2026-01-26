@@ -316,7 +316,8 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
-            errors[0]["message"], "La caractéristique LOCAL est sélectionnée : le champ doit être rempli."
+            errors[0]["message"],
+            "Champ 'définition de local' : La caractéristique LOCAL est sélectionnée : le champ doit être rempli.",
         )
 
     @authenticate
