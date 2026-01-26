@@ -1,5 +1,5 @@
 import logging
-
+import json
 import requests
 
 from django.core.cache import cache
@@ -153,3 +153,50 @@ def fetch_epci_name(code_insee_epci, epcis_names):
     """
     if code_insee_epci and code_insee_epci in epcis_names.keys():
         return epcis_names[code_insee_epci]
+
+
+def mock_fetch_communes(mock, success=True):
+    api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes?type=arrondissement-municipal,commune-actuelle"
+    if not success:
+        mock.get(api_url, text="", status_code=403)
+    mock.get(
+        api_url,
+        text=json.dumps(
+            [
+                {
+                    "nom": "L'Abergement-de-Varey",
+                    "code": "01002",
+                    "codeDepartement": "01",
+                    "siren": "210100020",
+                    "codeRegion": "84",
+                    "codesPostaux": ["01640"],
+                    "population": "267",
+                },
+                {
+                    "nom": "Grenoble",
+                    "code": "38185",
+                    "codeDepartement": "38",
+                    "siren": "213801855",
+                    "codeEpci": "200040715",
+                    "codeRegion": "84",
+                    "codesPostaux": ["38000", "38100"],
+                    "population": 156389,
+                },
+            ]
+        ),
+    )
+
+
+def mock_fetch_epcis(mock, success=True):
+    api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code"
+    if not success:
+        mock.get(api_url, text="", status_code=403)
+    mock.get(
+        api_url,
+        text=json.dumps(
+            [
+                {"nom": "CC Faucigny - Glières", "code": "200000172"},
+                {"nom": "Grenoble-Alpes-Métropole", "code": "200040715"},
+            ]
+        ),
+    )

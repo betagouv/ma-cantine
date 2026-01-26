@@ -2,9 +2,10 @@ import json
 
 import requests_mock
 from django.test import TestCase
+from django.core.cache import cache
 
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
-from common.api.decoupage_administratif import DECOUPAGE_ADMINISTRATIF_API_URL
+from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.factories import CanteenFactory, UserFactory
 from data.models.geo import Department
@@ -14,6 +15,9 @@ from data.models import Canteen
 
 @requests_mock.Mocker()
 class TestGeolocationUsingInseeCodeBot(TestCase):
+    def setUp(self):
+        cache.clear()  # clear cache before each test
+
     def test_number_of_api_calls(self, mock):
         """
         There should be one request for every canteens
@@ -21,42 +25,14 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         manager = UserFactory()  # Avoids integrity errors from user creation
         for i in range(130):
             CanteenFactory(
-                city=None,
-                geolocation_bot_attempts=0,
                 city_insee_code="69383",
+                city=None,
                 managers=[manager],
+                geolocation_bot_attempts=0,
             )
-        mock.get(
-            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes",
-            text=json.dumps(
-                [
-                    {
-                        "nom": "Grenoble",
-                        "code": "38185",
-                        "codeDepartement": "38",
-                        "siren": "213801855",
-                        "codeEpci": "200040715",
-                        "codeRegion": "84",
-                        "codesPostaux": ["38000", "38100"],
-                        "population": 156389,
-                    }
-                ]
-            ),
-        )
-        mock.get(
-            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis",
-            text=json.dumps(
-                [
-                    {
-                        "nom": "Grenoble-Alpes-Métropole",
-                        "code": "200040715",
-                        "codesDepartements": ["38"],
-                        "codesRegions": ["84"],
-                        "population": 449509,
-                    }
-                ]
-            ),
-        )
+
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
         mock_get_pat_dataset_resource(mock)
         mock_get_pat_csv(mock)
 
@@ -71,37 +47,8 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         """
         canteen = CanteenFactory(city_insee_code="38185", city=None, geolocation_bot_attempts=0)
 
-        mock.get(
-            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes",
-            text=json.dumps(
-                [
-                    {
-                        "nom": "Grenoble",
-                        "code": "38185",
-                        "codeDepartement": "38",
-                        "siren": "213801855",
-                        "codeEpci": "200040715",
-                        "codeRegion": "84",
-                        "codesPostaux": ["38000", "38100"],
-                        "population": 156389,
-                    }
-                ]
-            ),
-        )
-        mock.get(
-            f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis",
-            text=json.dumps(
-                [
-                    {
-                        "nom": "Grenoble-Alpes-Métropole",
-                        "code": "200040715",
-                        "codesDepartements": ["38"],
-                        "codesRegions": ["84"],
-                        "population": 449509,
-                    }
-                ]
-            ),
-        )
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
         mock_get_pat_dataset_resource(mock)
         mock_get_pat_csv(mock)
 
@@ -183,8 +130,8 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         """
         canteen = CanteenFactory(city=None, geolocation_bot_attempts=0, city_insee_code="69883")
 
-        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes", text="", status_code=403)
-        mock.get(f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code", text=json.dumps([]), status_code=403)
+        mock_fetch_communes(mock, success=False)
+        mock_fetch_epcis(mock, success=False)
         mock_get_pat_dataset_resource(mock, success=False)
         mock_get_pat_csv(mock, success=False)
 
@@ -197,6 +144,9 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
 @requests_mock.Mocker()
 class TestGeolocationBotUsingSiret(TestCase):
     api_url = "https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&mtm_campaign=ma-cantine&q="
+
+    def setUp(self):
+        cache.clear()  # clear cache before each test
 
     def test_candidate_canteens(self, _):
         """
