@@ -122,7 +122,7 @@ dependencies = [
     "pylint==3.3.1",
     "pylint-django==2.5.5",
     "pylint-plugin-utils==0.8.2",
-    "pypdf==5.1.0",
+    "pypdf==6.6.2",
     "pypdf3==1.0.6",
     "pypng==0.20220715.0",
     "pytest==8.0.0",
