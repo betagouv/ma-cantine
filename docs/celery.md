@@ -29,7 +29,6 @@ Sur le serveur dit "celery", renseigner les mêmes variables d'environnement que
 1. Relances automatiques par email
     1. `TEMPLATE_ID_NO_CANTEEN_FIRST= Optionnel - ID du template SendInBlue pour le premier email envoyé aux utilisateurs n'ayant pas encore créé une cantine. En cas d'absence la relance n'aura pas lieu.`
     1. `TEMPLATE_ID_NO_CANTEEN_SECOND= Optionnel - ID du template SendInBlue pour le deuzième email envoyé aux utilisateurs n'ayant pas encore créé une cantine. En cas d'absence la relance n'aura pas lieu.`
-    1. `TEMPLATE_ID_NO_DIAGNOSTIC_FIRST= Optionnel - ID du template SendInBlue pour le premier email envoyé aux utilisateurs ayant une cantine mais pas un diagnostic. En cas d'absence la relance n'aura pas lieu.`
 1. Mise à jour des contacts Brevo
     1. `SENDINBLUE_API_KEY= La clé API de SendInBlue`
 
