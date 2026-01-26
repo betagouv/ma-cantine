@@ -1,5 +1,5 @@
 import logging
-
+import json
 import requests
 
 from common.utils import siret as utils_siret
@@ -146,3 +146,67 @@ def fetch_geo_data_from_siret(siret):
     except Exception as e:
         logger.error(f"Api Recherche Entreprises: Unexpected exception\n{e}")
     return response
+
+
+def mock_fetch_geo_data_from_siren(mock, siren, success=True):
+    api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siren}"
+    if not success:
+        mock.get(api_url, text="", status_code=403)
+    mock.get(
+        api_url,
+        text=json.dumps(
+            {
+                # siren: 923412845
+                "results": [
+                    {
+                        "siren": "923412845",
+                        "nom_complet": "LA TURBINE",
+                        "siege": {
+                            "commune": "59512",
+                            "code_postal": "59100",
+                            "libelle_commune": "ROUBAIX",
+                            "epci": "200075174",
+                            "departement": "59",
+                            "region": "32",
+                            "liste_enseignes": None,
+                            "etat_administratif": "A",
+                        },
+                        "matching_etablissements": [],
+                    }
+                ],
+                "total_results": 1,
+            }
+        ),
+    )
+
+
+def mock_fetch_geo_data_from_siret(mock, siret, success=True):
+    api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siret}"
+    if not success:
+        mock.get(api_url, text="", status_code=403)
+    mock.get(
+        api_url,
+        text=json.dumps(
+            {
+                # siret: 92341284500011
+                "results": [
+                    {
+                        "siren": "923412845",
+                        "nom_complet": "LA TURBINE",
+                        "matching_etablissements": [
+                            {
+                                "commune": "59512",
+                                "code_postal": "59100",
+                                "libelle_commune": "ROUBAIX",
+                                "epci": "200075174",
+                                "region": "32",
+                                "liste_enseignes": ["Legal unit name"],
+                                "etat_administratif": "A",
+                            }
+                        ],
+                    }
+                ],
+                "total_results": 1,
+            }
+        ),
+    )

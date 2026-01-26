@@ -1,12 +1,10 @@
-import json
-
 import requests_mock
 from django.test import TestCase
 from django.core.cache import cache
 
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
-from common.api.recherche_entreprises import fetch_geo_data_from_siret
+from common.api.recherche_entreprises import fetch_geo_data_from_siret, mock_fetch_geo_data_from_siret
 from data.factories import CanteenFactory, UserFactory
 from data.models.geo import Department
 from macantine import tasks
@@ -30,7 +28,6 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
                 managers=[manager],
                 geolocation_bot_attempts=0,
             )
-
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
         mock_get_pat_dataset_resource(mock)
@@ -46,7 +43,6 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         from the API
         """
         canteen = CanteenFactory(city_insee_code="38185", city=None, geolocation_bot_attempts=0)
-
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
         mock_get_pat_dataset_resource(mock)
@@ -129,7 +125,6 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
         canteen increases, even if the API returns an error.
         """
         canteen = CanteenFactory(city=None, geolocation_bot_attempts=0, city_insee_code="69883")
-
         mock_fetch_communes(mock, success=False)
         mock_fetch_epcis(mock, success=False)
         mock_get_pat_dataset_resource(mock, success=False)
@@ -143,16 +138,14 @@ class TestGeolocationUsingInseeCodeBot(TestCase):
 
 @requests_mock.Mocker()
 class TestGeolocationBotUsingSiret(TestCase):
-    api_url = "https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&mtm_campaign=ma-cantine&q="
-
     def setUp(self):
         cache.clear()  # clear cache before each test
 
     def test_candidate_canteens(self, _):
         """
-        Only canteens with no city_insee_code and with a SIRET
+        Only canteens with SIRET but without city_insee_code
         """
-        candidate_canteen = CanteenFactory(city_insee_code=None, siret="89394682276911")
+        candidate_canteen = CanteenFactory(siret="89394682276911", city_insee_code=None)
         CanteenFactory(city_insee_code=29890)  # canteen with city_insee_code
         canteen_without_siret = CanteenFactory(city_insee_code=None)
         canteen_without_siret.siret = None  # missing data
@@ -165,75 +158,25 @@ class TestGeolocationBotUsingSiret(TestCase):
 
     def test_get_geo_data(self, mock):
         """
-        Should retrieve geo info for a canteen that have a SIRET
+        Should retrieve geo info for a canteen with SIRET but without city_insee_code
         """
-        siret_canteen = "89394682276911"
-        candidate_canteen = CanteenFactory(city_insee_code=None, siret=siret_canteen)
-        city_insee_code = "29352"
+        candidate_canteen = CanteenFactory(siret="92341284500011", city_insee_code=None)
+        mock_fetch_geo_data_from_siret(mock, candidate_canteen.siret)
 
-        mock.get(
-            self.api_url + siret_canteen,
-            text=json.dumps(
-                {
-                    "results": [
-                        {
-                            "siren": "923412845",
-                            "nom_complet": "Wrong name",
-                            "matching_etablissements": [
-                                {
-                                    "commune": "29352",
-                                    "code_postal": "75001",
-                                    "libelle_commune": "PARIS",
-                                    "liste_enseignes": ["Foo"],
-                                    "etat_administratif": "A",
-                                }
-                            ],
-                        }
-                    ],
-                    "total_results": 1,
-                },
-            ),
-            status_code=200,
-        )
         response = fetch_geo_data_from_siret(candidate_canteen.siret)
-        self.assertEqual(response["cityInseeCode"], city_insee_code)
+
+        self.assertEqual(response["cityInseeCode"], "59512")
 
     def test_geolocation_with_siret_data_filled(self, mock):
         """
         Geolocation data should be filled with the response
         from the API
         """
-        siret_canteen = "89394682276911"
-        canteen = CanteenFactory(city_insee_code=None, siret=siret_canteen)
-        city_insee_code = "29352"
-        code_postal = "29890"
-        mock.get(
-            self.api_url + siret_canteen,
-            text=json.dumps(
-                {
-                    "results": [
-                        {
-                            "siren": "923412845",
-                            "nom_complet": "A Name",
-                            "matching_etablissements": [
-                                {
-                                    "commune": city_insee_code,
-                                    "code_postal": code_postal,
-                                    "libelle_commune": "PARIS",
-                                    "liste_enseignes": ["Foo"],
-                                    "etat_administratif": "A",
-                                }
-                            ],
-                        }
-                    ],
-                    "total_results": 1,
-                },
-            ),
-            status_code=200,
-        )
+        canteen = CanteenFactory(siret="92341284500011", city_insee_code=None, postal_code=None)
+        mock_fetch_geo_data_from_siret(mock, canteen.siret)
 
         tasks.fill_missing_insee_code_using_siret()
 
         canteen.refresh_from_db()
-        self.assertEqual(canteen.city_insee_code, city_insee_code)
+        self.assertEqual(canteen.city_insee_code, "59512")
         self.assertEqual(canteen.postal_code, None)  # will be filled by the geo bot

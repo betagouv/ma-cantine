@@ -1,5 +1,5 @@
 import logging
-
+import json
 import requests
 
 from data.models.geo import Region
@@ -64,3 +64,25 @@ def fetch_geo_data_from_code_csv(csv_str, timeout=4):
     )
     response.raise_for_status()
     return response.text
+
+
+def mock_fetch_geo_data_from_code(mock, city_insee_code):
+    api_url = f"https://api-adresse.data.gouv.fr/search/?q={city_insee_code}&citycode={city_insee_code}&type=municipality&autocomplete=1"
+    mock.get(
+        api_url,
+        text=json.dumps(
+            {
+                # city_insee_code: 59512
+                "features": [
+                    {
+                        "properties": {
+                            "label": "ROUBAIX",
+                            "citycode": "59512",
+                            "postcode": "59100",
+                            "context": "38, Isère, Auvergne-Rhône-Alpes",
+                        }
+                    }
+                ],
+            }
+        ),
+    )

@@ -8,6 +8,8 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory
+from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret, mock_fetch_geo_data_from_siren
+from common.api.adresse import mock_fetch_geo_data_from_code
 
 
 class CanteenStatusBySiretApiTest(APITestCase):
@@ -16,27 +18,6 @@ class CanteenStatusBySiretApiTest(APITestCase):
         cls.siret = "92341284500011"
         cls.insee_code = "59512"
         cls.postcode = "59100"
-        cls.recherche_entreprises_api_url = f"https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&mtm_campaign=ma-cantine&q={cls.siret}"
-        cls.recherche_entreprises_api_mocked_response = {
-            "results": [
-                {
-                    "siren": "923412845",
-                    "nom_complet": "LA TURBINE",
-                    "matching_etablissements": [
-                        {
-                            "commune": "59512",
-                            "code_postal": "59100",
-                            "libelle_commune": "ROUBAIX",
-                            "epci": "200075174",
-                            "region": "32",
-                            "liste_enseignes": ["Legal unit name"],
-                            "etat_administratif": "A",
-                        }
-                    ],
-                }
-            ],
-            "total_results": 1,
-        }
         cls.url = reverse("canteen_status_by_siret", kwargs={"siret": cls.siret})
 
     @authenticate
@@ -93,21 +74,8 @@ class CanteenStatusBySiretApiTest(APITestCase):
     @requests_mock.Mocker()
     @authenticate
     def test_check_siret_new_canteen(self, mock):
-        mock.get(self.recherche_entreprises_api_url, json=self.recherche_entreprises_api_mocked_response)
-        geo_api_url = f"https://api-adresse.data.gouv.fr/search/?q={self.insee_code}&citycode={self.insee_code}&type=municipality&autocomplete=1"
-        geo_mocked_response = {
-            "features": [
-                {
-                    "properties": {
-                        "label": "ROUBAIX",
-                        "citycode": "59512",
-                        "postcode": "59100",
-                        "context": "38, Isère, Auvergne-Rhône-Alpes",
-                    }
-                }
-            ],
-        }
-        mock.get(geo_api_url, json=geo_mocked_response)
+        mock_fetch_geo_data_from_siret(mock, self.siret)
+        mock_fetch_geo_data_from_code(mock, self.insee_code)
 
         response = self.client.get(self.url)
 
@@ -154,33 +122,12 @@ class CanteenStatusBySirenApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.siren = "923412845"
-        cls.recherche_entreprises_api_url = f"https://recherche-entreprises.api.gouv.fr/search?etat_administratif=A&page=1&per_page=1&mtm_campaign=ma-cantine&q={cls.siren}"
-        cls.recherche_entreprises_api_mocked_response = {
-            "results": [
-                {
-                    "siren": "923412845",
-                    "nom_complet": "LA TURBINE",
-                    "siege": {
-                        "commune": "59512",
-                        "code_postal": "59100",
-                        "libelle_commune": "ROUBAIX",
-                        "epci": "200075174",
-                        "departement": "59",
-                        "region": "32",
-                        "liste_enseignes": None,
-                        "etat_administratif": "A",
-                    },
-                    "matching_etablissements": [],
-                }
-            ],
-            "total_results": 1,
-        }
         cls.url = reverse("canteen_status_by_siren", kwargs={"siren": cls.siren})
 
     @requests_mock.Mocker()
     @authenticate
     def test_check_siren_new_canteen(self, mock):
-        mock.get(self.recherche_entreprises_api_url, json=self.recherche_entreprises_api_mocked_response)
+        mock_fetch_geo_data_from_siren(mock, self.siren)
 
         response = self.client.get(self.url)
 
@@ -198,7 +145,7 @@ class CanteenStatusBySirenApiTest(APITestCase):
     @authenticate
     def test_check_siren_existing_canteen(self, mock):
         canteen = CanteenFactory(siret=None, siren_unite_legale=self.siren)
-        mock.get(self.recherche_entreprises_api_url, json=self.recherche_entreprises_api_mocked_response)
+        mock_fetch_geo_data_from_siren(mock, self.siren)
 
         response = self.client.get(self.url)
 
