@@ -586,7 +586,6 @@ class CanteensImportApiSuccessTest(APITestCase):
             name="Canteen groupe", id=9999999999, production_type=Canteen.ProductionType.GROUPE
         )
         self.assertEqual(Canteen.objects.count(), 1)
-        print("canteen_groupe", canteen_groupe)
 
         file_path = "./api/tests/files/canteens/canteens_good_groupe.csv"
         with open(file_path) as canteen_file:
