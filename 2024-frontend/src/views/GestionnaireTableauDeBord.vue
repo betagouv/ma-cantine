@@ -33,21 +33,9 @@ const links = [
     label: "Ajouter un groupe de restaurants satellites",
   },
   {
-    to: { name: "GestionnaireImportCantines" },
-    label: "Importer des cantines",
-  },
-  {
-    to: { name: "GestionnaireImportAchats" },
-    label: "Importer des achats",
-  },
-  {
-    to: { name: "GestionnaireImportBilansSimples" },
-    label: "Importer des bilans simples",
-  },
-  {
     to: { name: "GestionnaireImport" },
-    label: "Importer des bilans détaillés",
-  },
+    label: "Importer des données",
+  }
 ]
 
 /* SEARCH */
