@@ -13,7 +13,7 @@ import ImportFilesExample from "@/components/ImportFilesExample.vue"
 const route = useRoute()
 
 /* Data */
-const schemaFile = "achats.json"
+const schemaFile = "achats_siret.json"
 const exampleFile = {
   name: "achats_fichier_exemple_ma_cantine.csv",
   size: "189 octets",
