@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.6.0](https://github.com/betagouv/ma-cantine/compare/v2026.5.0...v2026.6.0) (2026-01-26)
+
+
+### Nouveautés
+
+* **Admin:** configurer l'affichage des groupes pour pouvoir sélectionner des utilisateurs ([#6267](https://github.com/betagouv/ma-cantine/issues/6267)) ([18f9e1f](https://github.com/betagouv/ma-cantine/commit/18f9e1f673674d176894816c2637a0456baa5a37))
+
+
+### Améliorations
+
+* **API Data Gouv:** PATs: utiliser le cache pour appeler l'API qu'1 seule fois par semaine ([#6263](https://github.com/betagouv/ma-cantine/issues/6263)) ([24a65d0](https://github.com/betagouv/ma-cantine/commit/24a65d00881d912f2dc766d433a3a3ed222fe29b))
+* **Brevo:** enlever de Django les emails de rappels 'pas de cantines' (les basculer sur Brevo) ([#6283](https://github.com/betagouv/ma-cantine/issues/6283)) ([0305b5b](https://github.com/betagouv/ma-cantine/commit/0305b5b0dcae9cd518abedf66424c311c6f6a311))
+* **Open Data:** Cantines: ajouter la colonne groupe_id ([#6285](https://github.com/betagouv/ma-cantine/issues/6285)) ([8f81292](https://github.com/betagouv/ma-cantine/commit/8f81292677cb04d4dbfe3b169a6dd9e3952a4313))
+
+
+### Technique
+
+* **API Decoupage Administratif:** mieux mocker les appels API dans les tests ([#6284](https://github.com/betagouv/ma-cantine/issues/6284)) ([feb5a49](https://github.com/betagouv/ma-cantine/commit/feb5a49e038bf8b8bfcb519af211bae4010369c7))
+* **API Recherche Entreprises:** mieux mocker les appels API dans les tests ([#6286](https://github.com/betagouv/ma-cantine/issues/6286)) ([7943f33](https://github.com/betagouv/ma-cantine/commit/7943f33b7fc0b168c048032502e29b03f686cde3))
+* **Tests:** màj des fixtures (et enlever les SectorM2M) ([#6281](https://github.com/betagouv/ma-cantine/issues/6281)) ([9d0f1bf](https://github.com/betagouv/ma-cantine/commit/9d0f1bf6bad085c8a1b52d4c9c6473d0c623c1db))
+
 ## [2026.5.0](https://github.com/betagouv/ma-cantine/compare/v2026.4.0...v2026.5.0) (2026-01-23)
 
 
