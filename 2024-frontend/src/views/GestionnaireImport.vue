@@ -11,7 +11,7 @@ const pages = ref([
   },
   {
     title: "Importer des achats via ID",
-    to: { name: "GestionnaireImport" },
+    to: { name: "GestionnaireImportAchats" },
     description: "Vous voulez importer des données d'achat pour des groupes de restaurants satellites ou des cantines inscrites rattachées à une unité légale.",
     detail: "Préparez le numéro ID de l'établissement",
     badges: [

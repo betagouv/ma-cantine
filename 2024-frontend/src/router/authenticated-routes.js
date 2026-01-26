@@ -11,6 +11,7 @@ import GestionnaireCantineSupprimer from "@/views/GestionnaireCantineSupprimer.v
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImport from "@/views/GestionnaireImport.vue"
+import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
 import GestionnaireImportAchatsSIRET from "@/views/GestionnaireImportAchatsSIRET.vue"
 import GestionnaireImportBilansSimples from "@/views/GestionnaireImportBilansSimples.vue"
 import GestionnaireImportCantines from "@/views/GestionnaireImportCantines.vue"
@@ -64,6 +65,18 @@ const routes = [
           title: "Importer des données",
           siteMap: diag,
           breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
+        },
+      },
+      {
+        path: "achats",
+        name: "GestionnaireImportAchats",
+        component: GestionnaireImportAchats,
+        meta: {
+          title: "Importer des achats via ID",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
         },
       },
       {
