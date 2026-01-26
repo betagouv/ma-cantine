@@ -7,12 +7,26 @@ const pages = ref([
   {
     title: "Importer des cantines",
     to: { name: "GestionnaireImportCantines" },
-    description: "Vous voulez créer ou mettre à jour des cantines."
+    description: "Vous voulez créer ou mettre à jour des cantines.",
+  },
+  {
+    title: "Importer des achats via ID",
+    to: { name: "GestionnaireImport" },
+    description: "Vous voulez importer des données d'achat pour des groupes de restaurants satellites ou des cantines inscrites rattachées à une unité légale.",
+    detail: "Préparez le numéro ID de l'établissement",
+    badges: [
+      {
+        label: "Nouveauté",
+        noIcon: false,
+        type: "new",
+      }
+    ],
   },
   {
     title: "Importer des achats",
-    to: { name: "GestionnaireImportAchats" },
+    to: { name: "GestionnaireImportAchatsSIRET" },
     description: "Vous voulez importer des données d'achat pour des cantines existantes.",
+    detail: "Pour les cantines inscrites avec SIRET",
   },
   {
     title: "Importer des bilans simples",
@@ -35,7 +49,7 @@ const pages = ref([
 </script>
 
 <template>
-  <section class="fr-col-12 fr-col-md-7">
+  <section class="gestionnaire-import fr-col-12 fr-col-md-7">
     <h1>{{ route.meta.title }}</h1>
     <p>
       Gagnez du temps en important vos données directement dans
@@ -47,19 +61,25 @@ const pages = ref([
   <section>
     <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
       <li v-for="page in pages" :key="page.name" class="fr-col-12 fr-col-md-4">
-        <DsfrCard :title="page.title" :link="page.to" :description="page.description">
-          <template #start-details v-if="page.badges">
-            <DsfrBadge
-              v-for="badge in page.badges"
-              :key="badge"
-              :label="badge.label"
-              :type="badge.type || 'info'"
-              class="fr-mr-1v"
-              :no-icon="badge.noIcon"
-            />
-          </template>
-        </DsfrCard>
+        <DsfrCard
+          class="gestionnaire-import__card"
+          :title="page.title"
+          :link="page.to"
+          :description="page.description"
+          :endDetail="page.detail"
+          :badges="page.badges"
+        />
       </li>
     </ul>
   </section>
 </template>
+
+<style lang="scss">
+.gestionnaire-import {
+  &__card {
+    .fr-card__content {
+      padding-top: 3rem;
+    }
+  }
+}
+</style>
