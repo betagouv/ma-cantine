@@ -6,12 +6,12 @@
       "constraints": {
         "required": true
       },
-      "description": "L'établissement avec ce SIRET doit être déjà enregistré sur notre plateforme.",
-      "example": "49463556926130",
+      "description": "",
+      "example": "949",
       "format": "default",
-      "name": "siret",
-      "title": "SIRET de l'établissement ayant réalisé l'achat",
-      "type": "any"
+      "name": "id",
+      "title": "Numéro ID de l'établissement ayant réalisé l'achat",
+      "type": "integer"
     },
     {
       "constraints": {
