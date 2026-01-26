@@ -715,6 +715,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
             "production_type",
             "satellite_canteens_count",
             "central_producer_siret",
+            "groupe_id",
             "creation_date",
             "daily_meal_count",
             "yearly_meal_count",
