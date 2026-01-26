@@ -214,14 +214,14 @@ class BaseImportView(ABC, APIView):
             self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
             return False
 
-    def _validate_file_header_custom(self):
+    def _validate_file_header_custom(self, user_file_header):
         """
         Validate file header custom.
 
         Returns:
             bool: True if validation passed, False otherwise
         """
-        pass
+        return True
 
     def _log_import_start(self):
         """Log the start of import process"""
