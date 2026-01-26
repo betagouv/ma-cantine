@@ -6,14 +6,14 @@ defineProps(["exampleFile", "links"])
   <section class="fr-grid-row fr-grid-row--bottom">
     <div class="fr-col-12 fr-col-md-7">
       <h2 class="fr-h5">Comment ça marche ?</h2>
-      <p>Nous scannons la structure du fichier, puis les valeurs des cellules avant d’importer.</p>
-      <h3 class="fr-text--md">Le formattage du fichier d'import doit impérativement respecter les règles suivantes :</h3>
+      <p class="fr-mb-1w">Nous scannons la structure du fichier, puis les valeurs des cellules avant d’importer.</p>
+      <h3 class="fr-text--md fr-mb-1w">Le formattage du fichier d'import doit impérativement respecter les règles suivantes :</h3>
       <ul>
         <li>
-          <p class="fr-mb-1v">Le fichier doit être dans un des format acceptés :
+          <p class="fr-mb-0">Le fichier doit être dans un des format acceptés :
             <DsfrBadge class="fr-mr-1v" type="info" label="Excel" no-icon />
             <DsfrBadge class="fr-mr-1v" type="info" label="CSV" no-icon />
-            <DsfrBadge type="info" label="TSV" no-icon />
+            <DsfrBadge  type="info" label="TSV" no-icon />
           </p>
         </li>
         <li>
