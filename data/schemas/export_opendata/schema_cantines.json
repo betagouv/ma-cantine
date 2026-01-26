@@ -141,6 +141,13 @@
       "type": "string"
     },
     {
+      "description": "Les restaurants satellites peuvent être rattachés à un groupe",
+      "example": "1",
+      "name": "groupe_id",
+      "title": "Identifiant du groupe",
+      "type": "integer"
+    },
+    {
       "description": "Date de création de la cantine au format ISO 8601",
       "example": "2018-01-01",
       "name": "creation_date",
