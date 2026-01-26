@@ -26,16 +26,6 @@ def has_arrayfield_missing_query(field_name):
     return Q(**{f"{field_name}__isnull": True}) | Q(**{f"{field_name}": []}) | Q(**{f"{field_name}": None})
 
 
-def has_dirty_field(instance, field_name, allow_empty=False):
-    if not hasattr(instance, "get_dirty_fields"):
-        return False
-    if allow_empty:
-        return field_name in instance.get_dirty_fields()
-    else:
-        dirty_fields = instance.get_dirty_fields()
-        return field_name in dirty_fields and dirty_fields.get(field_name) not in (None, "", [], {})
-
-
 def _needs_rotation(pillow_image):
     orientation_tag = next(filter(lambda x: ExifTags.TAGS[x] == "Orientation", ExifTags.TAGS), None)
     exif_data = pillow_image._getexif()

@@ -934,9 +934,11 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
 
 
 @receiver(post_save, sender=Canteen)
-def fetch_city_insee_code_from_siret(sender, instance, created, **kwargs):
+def fill_geo_fields_from_siret(sender, instance, created, **kwargs):
     """
     On canteen creation, we need to fill its geo fields
+
+    Notes:
     - if city_insee_code is (already) set, we don't override it
     - GROUPE canteens don't have siret, so it won't be triggered for them
     TODO: canteen edit (when the canteen changes siret)
@@ -945,8 +947,7 @@ def fetch_city_insee_code_from_siret(sender, instance, created, **kwargs):
 
     if created:
         if instance.siret and not instance.city_insee_code:
-            print("post_save task")
-            tasks.update_canteen_city_insee_code_from_siret(instance)
+            tasks.update_canteen_geo_fields_from_siret(instance)
 
 
 class CanteenImage(models.Model):
