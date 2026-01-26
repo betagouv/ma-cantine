@@ -45,7 +45,7 @@
         <v-icon small class="mr-2">$add-line</v-icon>
         Ajouter un achat
       </v-btn>
-      <v-btn :to="{ name: 'GestionnaireImportAchats' }" outlined color="primary" class="mx-2 mb-2 fr-btn--tertiary">
+      <v-btn :to="{ name: 'GestionnaireImport' }" outlined color="primary" class="mx-2 mb-2 fr-btn--tertiary">
         <v-icon small class="mr-2">$file-add-line</v-icon>
         Importer des achats
       </v-btn>

@@ -423,7 +423,7 @@ const vue3Routes = [
   },
   {
     path: "/tableau-de-bord/imports/achats",
-    name: "GestionnaireImportAchats",
+    name: "GestionnaireImportAchatsSIRET",
   },
   {
     path: "/tableau-de-bord/imports/cantines",
@@ -485,7 +485,7 @@ routes.push(...vue3Routes)
 
 routes.push({
   path: "/importer-achats",
-  redirect: { name: "GestionnaireImportAchats" },
+  redirect: { name: "GestionnaireImport" },
 })
 
 routes.push({
