@@ -481,7 +481,7 @@ pylint-plugin-utils==0.8.2
     # via
     #   ma-cantine
     #   pylint-django
-pypdf==5.1.0
+pypdf==6.6.2
     # via
     #   ma-cantine
     #   xhtml2pdf
