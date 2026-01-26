@@ -152,6 +152,17 @@
       "constraints": {
         "required": false
       },
+      "description": "Ce champ est uniquement pour les cantines de type 'Restaurant satellite', il permet de les rattacher à un groupe.",
+      "example": "1293",
+      "format": "default",
+      "name": "groupe_id",
+      "title": "Numéro identifiant (ID) du groupe",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
       "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
       "doc_enum_multiple": true,
       "doc_enum_multiple_seperator": ",",

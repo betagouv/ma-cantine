@@ -1,4 +1,2 @@
 siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,gestionnaires_additionnels
-21340172201787,A canteen,,700,14000,"Cliniques,Hôpitaux",Restaurant avec cuisine sur place,Concédée,Public,,
-,,,,,,,,,,
-,,,,,,,,,,
+50250039850458,Another satellite canteen,,700,14000,"Cliniques,Hôpitaux",Restaurant satellite,Concédée,Public,9999999999,

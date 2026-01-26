@@ -1,3 +1,3 @@
-siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,gestionnaires_additionnels
-85716078968772,Restaurant satellite,81264674048255,790,14000,"Autres établissements non listés",Restaurant satellite,Concédée,Public,test3@example.com
-49741884000847,Cantine qui produit les repas sur place,,3,420,"EHPAD / maisons de retraite / foyers de personnes âgées,Crèche",Restaurant avec cuisine sur place,Directe,Privé,
+siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,gestionnaires_additionnels
+85716078968772,Restaurant satellite,81264674048255,790,14000,"Autres établissements non listés",Restaurant satellite,Concédée,Public,1,test3@example.com
+49741884000847,Cantine qui produit les repas sur place,,3,420,"EHPAD / maisons de retraite / foyers de personnes âgées,Crèche",Restaurant avec cuisine sur place,Directe,Privé,,

@@ -293,7 +293,7 @@ class CanteensImportApiErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 4, errors)
+        self.assertEqual(len(errors), 5, errors)
         self.assertTrue(
             errors.pop(0)["message"].startswith("Champ 'repas par jour' : Le champ doit être au moins égal à 3."),
         )
@@ -310,6 +310,11 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertTrue(
             errors.pop(0)["message"].startswith(
                 "Champ 'siret de la cuisine centrale' : Restaurant satellite : le champ ne peut pas être égal au SIRET du satellite."
+            ),
+        )
+        self.assertTrue(
+            errors.pop(0)["message"].startswith(
+                "Champ 'Groupe' : Aucun groupe avec le numéro identifiant « 14 » trouvé sur la plateforme."
             ),
         )
 
@@ -558,6 +563,32 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(body["count"], 3)
         self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(errors), 0, errors)
+
+    @authenticate
+    def test_import_with_groupe_id(self):
+        """
+        Should be able to import canteens with groupe id
+        """
+        canteen_groupe = CanteenFactory(
+            name="Canteen groupe", id=9999999999, production_type=Canteen.ProductionType.GROUPE
+        )
+        self.assertEqual(Canteen.objects.count(), 1)
+        print("canteen_groupe", canteen_groupe)
+
+        file_path = "./api/tests/files/canteens/canteens_good_groupe.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["canteens"]), 1)
+        self.assertEqual(len(errors), 0, errors)
+        canteen_satellite = Canteen.objects.get(siret="50250039850458")
+        self.assertEqual(canteen_satellite.groupe, canteen_groupe)
 
     @authenticate
     def test_admin_import(self):

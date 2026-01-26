@@ -39,8 +39,8 @@ CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-canti
 class CanteensImportView(APIView):
     permission_classes = [IsAuthenticated]
     value_error_regex = re.compile(r"Field '(.+)' expected .+? got '(.+)'.")
-    manager_column_idx = 9  # gestionnaires_additionnels
-    silent_manager_idx = 9 + 2  # admin_gestionnaires_additionnels
+    manager_column_idx = 10  # gestionnaires_additionnels
+    silent_manager_idx = manager_column_idx + 2  # admin_gestionnaires_additionnels
 
     def __init__(self, **kwargs):
         self.canteens = {}
@@ -251,6 +251,7 @@ class CanteensImportView(APIView):
         # TODO: remove hardcoded indexes
         siret = utils_utils.normalize_string(row[0])
         name = row[1].strip()
+        central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
         daily_meal_count = row[3]
         yearly_meal_count = row[4]
         sector_list = [
@@ -266,7 +267,17 @@ class CanteensImportView(APIView):
         economic_model = next(
             (value for value, label in Canteen.EconomicModel.choices if row[8].strip() in [label, value]), None
         )
-        central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
+
+        # Group custom validation
+        groupe_id = row[9]
+        groupe = None
+        if groupe_id:
+            try:
+                groupe = Canteen.objects.get(id=groupe_id)
+            except Exception:
+                raise ValidationError(
+                    {"groupe_id": f"Aucun groupe avec le numéro identifiant « {groupe_id} » trouvé sur la plateforme."}
+                )
 
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
@@ -282,6 +293,7 @@ class CanteensImportView(APIView):
                 production_type=production_type,
                 economic_model=economic_model,
                 central_producer_siret=central_producer_siret,
+                groupe=groupe,
                 creation_source=CreationSource.IMPORT,
             )
         )
@@ -300,10 +312,11 @@ class CanteensImportView(APIView):
         canteen.management_type = management_type
         canteen.economic_model = economic_model
         canteen.central_producer_siret = central_producer_siret
+        canteen.groupe = groupe
         if self.is_admin_import:
             canteen.line_ministry = (
-                next((value for value, label in Canteen.Ministries.choices if label == row[10].strip()), None)
-                if row[10]
+                next((value for value, label in Canteen.Ministries.choices if label == row[11].strip()), None)
+                if row[11]
                 else None
             )
             canteen.import_source = import_source
