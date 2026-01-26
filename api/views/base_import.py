@@ -124,8 +124,13 @@ class BaseImportView(ABC, APIView):
                 return self._get_success_response()
 
             # Header validation
-            import_expected_header = file_import.get_expected_header_from_schema(schema_config["path"])
             user_file_header = validata_response["resource_data"][0]
+            # Custom validation
+            if not self._validate_file_header_custom(user_file_header):
+                self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
+                return self._get_success_response()
+            # Generic validation
+            import_expected_header = file_import.get_expected_header_from_schema(schema_config["path"])
             self.errors = validata.process_header_errors(user_file_header, import_expected_header)
             if len(self.errors):
                 self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
@@ -208,6 +213,15 @@ class BaseImportView(ABC, APIView):
             self._log_error(e.message)
             self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
             return False
+
+    def _validate_file_header_custom(self):
+        """
+        Validate file header custom.
+
+        Returns:
+            bool: True if validation passed, False otherwise
+        """
+        pass
 
     def _log_import_start(self):
         """Log the start of import process"""
