@@ -461,6 +461,7 @@ class CanteenCreateApiTest(APITestCase):
             reverse("user_canteens"),
             {**CANTEEN_SITE_DEFAULT_PAYLOAD, "productionType": Canteen.ProductionType.CENTRAL},
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(
@@ -471,6 +472,7 @@ class CanteenCreateApiTest(APITestCase):
     @authenticate
     def test_create_canteen(self):
         response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])

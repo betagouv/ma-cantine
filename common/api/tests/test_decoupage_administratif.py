@@ -25,8 +25,8 @@ class TestDecoupageAdministratifAPI(unittest.TestCase):
         communes_details = map_communes_infos()
 
         self.assertEqual(mock.call_count, 1)
-        self.assertEqual(len(communes_details), 2)
-        self.assertCountEqual(list(communes_details.keys()), ["01002", "38185"])
+        self.assertEqual(len(communes_details), 3)
+        self.assertCountEqual(list(communes_details.keys()), ["01002", "38185", "59512"])
         self.assertEqual(communes_details["01002"]["city"], "L'Abergement-de-Varey")
         self.assertEqual(communes_details["01002"]["postal_code_list"], ["01640"])
         self.assertEqual(communes_details["01002"]["department"], "01")
