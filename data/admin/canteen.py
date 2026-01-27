@@ -107,7 +107,6 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
                 "fields": (
                     "daily_meal_count",
                     "yearly_meal_count",
-                    # "satellite_canteens_count",
                     "management_type",
                     "production_type",
                     "economic_model",

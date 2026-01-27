@@ -310,38 +310,6 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(line_ministry=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK)
 
-    def test_canteen_satellite_canteens_count_validation(self):
-        # central kitchen: must be filled
-        for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
-            for TUPLE_OK in [(1, 1), (1000, 1000), ("123", 123), (10.5, 10)]:
-                with self.subTest(production_type=production_type, satellite_canteens_count=TUPLE_OK[0]):
-                    canteen = CanteenFactory(production_type=production_type, satellite_canteens_count=TUPLE_OK[0])
-                    self.assertEqual(canteen.satellite_canteens_count, TUPLE_OK[1])
-            for VALUE_NOT_OK in [None, "", 0, -1, -100, "10.5", "10,5", "invalid"]:
-                with self.subTest(production_type=production_type, satellite_canteens_count=VALUE_NOT_OK):
-                    self.assertRaises(
-                        ValidationError,
-                        CanteenFactory,
-                        production_type=production_type,
-                        satellite_canteens_count=VALUE_NOT_OK,
-                    )
-        for production_type in [Canteen.ProductionType.ON_SITE, Canteen.ProductionType.ON_SITE_CENTRAL]:
-            for TUPLE_OK in [(None, None)]:
-                with self.subTest(production_type=production_type, satellite_canteens_count=TUPLE_OK[0]):
-                    canteen = CanteenFactory(
-                        production_type=production_type,
-                        satellite_canteens_count=TUPLE_OK[0],
-                    )
-                    self.assertEqual(canteen.satellite_canteens_count, TUPLE_OK[1])
-            for VALUE_NOT_OK in [0, -1, -100, "10.5", "10,5", "invalid", 5, "5"]:
-                with self.subTest(production_type=production_type, satellite_canteens_count=VALUE_NOT_OK):
-                    self.assertRaises(
-                        ValidationError,
-                        CanteenFactory,
-                        production_type=production_type,
-                        satellite_canteens_count=VALUE_NOT_OK,
-                    )
-
     def test_canteen_groupe_fk_validation(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         canteen_groupe_deleted = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
@@ -659,12 +627,9 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         cls.canteen_central_1 = CanteenFactory(
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=2,  # 1 missing
             sector_list=[],
         )
-        cls.canteen_central_2 = CanteenFactory(
-            siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
-        )
+        cls.canteen_central_2 = CanteenFactory(siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL)
         cls.canteen_satellite_1 = CanteenFactory(
             siret="92341284500011",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -941,7 +906,6 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
-            satellite_canteens_count=2,
             sector_list=[],
         )
         cls.canteen_central_serving = CanteenFactory(
@@ -1162,7 +1126,6 @@ class CanteenAggregateQuerySetTest(TestCase):
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
-            satellite_canteens_count=1,
             sector_list=[],
         )
         cls.canteen_central_serving = CanteenFactory(
@@ -1171,7 +1134,6 @@ class CanteenAggregateQuerySetTest(TestCase):
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             economic_model=Canteen.EconomicModel.PUBLIC,
             daily_meal_count=12,
-            satellite_canteens_count=1,
             sector_list=[Sector.EDUCATION_SECONDAIRE_LYCEE, Sector.ENTERPRISE_ENTREPRISE],
         )
         cls.canteen_on_site = CanteenFactory(
@@ -1228,7 +1190,6 @@ class CanteenModelPropertiesTest(TestCase):
         canteen_with_diagnostic_submitted = CanteenFactory(
             siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=1,
             declaration_donnees_2024=True,
         )
         canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(

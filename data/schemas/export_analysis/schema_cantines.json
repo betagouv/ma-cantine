@@ -144,18 +144,11 @@
       "type": "string"
     },
     {
-      "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également restaurant satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas. Dans le cas d'une cantine qui cuisine pour d'autres cantines, le champ 'nombre_satellites' renseigne le nombre de restaurants satellites.",
+      "description": "Lieu de production et de service des repas. Il existe 4 types différents : central (cuisine centrale sans lieu de consommation), central_serving (cuisine centrale qui accueille aussi des convives sur place), site (cantine qui produit les repas sur place), site_cooked_elsewhere (cantine qui sert des repas preparés par une cuisine centrale, appelé également restaurant satellite). Dans ce dernier cas, le champ central_producer_siret renseigne l'identifiant SIRET de la cuisine préparant les repas.",
       "example": "central",
       "name": "type_production",
       "title": "Type de Production",
       "type": "string"
-    },
-    {
-      "description": "Nombre de restaurants satellites pour une cuisine centrale",
-      "example": "0",
-      "name": "nombre_satellites",
-      "title": "Nombre de restaurants satellites",
-      "type": "integer"
     },
     {
       "constraints": {

@@ -35,9 +35,6 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     categorie = serializers.SerializerMethodField()
     line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
     spe = serializers.SerializerMethodField()
-    satellite_canteens_count = serializers.IntegerField(
-        source="canteen_snapshot.satellite_canteens_count", read_only=True
-    )
     modele_economique = serializers.SerializerMethodField()
     management_type = serializers.SerializerMethodField()
     production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
@@ -108,7 +105,6 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "categorie",
             "line_ministry",
             "spe",
-            "satellite_canteens_count",
             "modele_economique",
             "management_type",
             "production_type",
@@ -301,9 +297,6 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
     canteen_department_lib = serializers.CharField(source="canteen_snapshot.department_lib", read_only=True)
     canteen_region = serializers.CharField(source="canteen_snapshot.region", read_only=True)
     canteen_region_lib = serializers.CharField(source="canteen_snapshot.region_lib", read_only=True)
-    canteen_satellite_canteens_count = serializers.IntegerField(
-        source="canteen_snapshot.satellite_canteens_count", read_only=True
-    )
     canteen_economic_model = serializers.CharField(source="canteen_snapshot.economic_model", read_only=True)
     canteen_management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
     canteen_production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
@@ -340,7 +333,6 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
             "canteen_department_lib",
             "canteen_region",
             "canteen_region_lib",
-            "canteen_satellite_canteens_count",
             "canteen_economic_model",
             "canteen_management_type",
             "canteen_production_type",

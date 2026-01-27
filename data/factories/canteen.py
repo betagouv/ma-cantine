@@ -280,14 +280,6 @@ class CanteenFactory(factory.django.DjangoModelFactory):
         ]
         else []
     )
-    # satellite_canteens_count: filled if central_cuisine
-    satellite_canteens_count = factory.LazyAttribute(
-        lambda obj: (
-            2
-            if obj.production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
-            else None
-        )
-    )
 
     @factory.post_generation
     def sectors_m2m(self, create, extracted, **kwargs):
