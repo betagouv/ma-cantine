@@ -127,7 +127,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "production_type",
             "management_type",
-            "satellite_canteens_count",
             "appro_diagnostic",
             "lead_image",
             "is_satellite",
@@ -173,7 +172,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "production_type",
             "management_type",
-            "satellite_canteens_count",
             "logo",
             "images",
             "publication_comments",
@@ -220,7 +218,6 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "yearly_meal_count",
             "production_type",
-            "satellite_canteens_count",
             "quality_comments",
             "waste_comments",
             "diversification_comments",
@@ -323,7 +320,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
-            "satellite_canteens_count",
             "siret",
             "siren_unite_legale",
             "groupe",
@@ -493,7 +489,6 @@ class CanteenActionsSerializer(serializers.ModelSerializer):
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
-            "satellite_canteens_count",
             "siret",
             "siren_unite_legale",
             "central_producer_siret",
@@ -598,7 +593,6 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
     modele_economique = serializers.SerializerMethodField()
     type_gestion = serializers.SerializerMethodField()
     type_production = serializers.SerializerMethodField()
-    nombre_satellites = serializers.IntegerField(source="satellite_canteens_count")
     siret_cuisine_centrale = serializers.CharField(source="central_producer_siret")
     ministere_tutelle = serializers.SerializerMethodField()
     spe = serializers.SerializerMethodField()
@@ -632,7 +626,6 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
             "modele_economique",
             "type_gestion",
             "type_production",
-            "nombre_satellites",
             "siret_cuisine_centrale",
             "ministere_tutelle",
             "spe",
@@ -713,7 +706,6 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
             "economic_model",
             "management_type",
             "production_type",
-            "satellite_canteens_count",
             "central_producer_siret",
             "groupe_id",
             "creation_date",
