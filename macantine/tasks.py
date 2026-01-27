@@ -94,7 +94,7 @@ def update_brevo_contacts():
 @app.task()
 def update_canteen_geo_fields_from_siret(canteen):
     """
-    Input: Canteen with siret but no city_insee_code
+    Input: Canteen with siret
     Processing: API Recherche Entreprises + API Découpage Administratif (cached)
     Output: Fill canteen's city_insee_code field + geo fields
     """
@@ -209,11 +209,8 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
     if canteen.region and not canteen.region_lib:
         canteen.region_lib = get_lib_region_from_code(canteen.region)
         update = True
-    # save
-    if update:
-        canteen.save(skip_validations=True)
-        update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
-        return True
+
+    return update
 
 
 @app.task()
@@ -233,8 +230,11 @@ def fill_missing_geolocation_data_using_insee_code():
         return
 
     for i, canteen in enumerate(candidate_canteens):
-        updated = _update_canteen_geo_data_from_insee_code(canteen)
-        if updated:
+        update = _update_canteen_geo_data_from_insee_code(canteen)
+        if update:
+            # save
+            canteen.save(skip_validations=True)
+            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
             counter += 1
 
     result = f"Updated {counter}/{candidate_canteens.count()} canteens"
