@@ -484,8 +484,14 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.get_dirty_fields(), {})
 
     def test_update_geo_fields_on_save(self):
-        canteen = CanteenFactory(siret="21340172201787", city_insee_code=None, city=None, department=None, region=None)
+        # CanteenFactory skips the post_save signal
+        # so we need to call save() to trigger the signal
+        canteen = CanteenFactory.build(
+            siret="21340172201787", city_insee_code=None, city=None, department=None, region=None
+        )
+        canteen.save()
         canteen.refresh_from_db()
+
         self.assertEqual(canteen.city_insee_code, "34172")
         self.assertEqual(canteen.city, "Montpellier")
         self.assertEqual(canteen.department, "34")
