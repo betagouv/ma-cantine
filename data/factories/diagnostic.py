@@ -12,7 +12,8 @@ from .canteen import CanteenFactory
 class DiagnosticFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Diagnostic
-        skip_postgeneration_save = True
+        # cannot be used because we want to save after fill_complete_fields is run
+        # skip_postgeneration_save = True
 
     canteen = factory.SubFactory(CanteenFactory)
     year = datetime.date.today().year - 1
