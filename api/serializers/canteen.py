@@ -559,7 +559,6 @@ CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS = (
     "production_type",
     "management_type",
     "economic_model",
-    "satellite_canteens_count",
     "central_producer_siret",
     "groupe_id",
     "is_filled",

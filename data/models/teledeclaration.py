@@ -320,7 +320,8 @@ class Teledeclaration(models.Model):
         """
         Create a teledeclaration object from a diagnostic
         """
-        version = "15"  # Helps identify which data will be present. Use incremental int values
+        version = "16"  # Remove satellite_canteens_count field from the serialized data
+        # version = "15"  # Helps identify which data will be present. Use incremental int values
         # Version 15 - Changed how we store the canteen's line_ministry
         # Version 14 - New Teledeclaration.canteen_siren_unite_legale field, also add the field to the canteen serialization
         # Version 13 - Add category_name in canteen sectors serializer
@@ -357,7 +358,6 @@ class Teledeclaration(models.Model):
         if is_central_cuisine:
             serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in canteen.satellites]
             json_fields["satellites"] = serialized_satellites
-            json_fields["satellite_canteens_count"] = canteen.satellite_canteens_count
 
         if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             diagnostic.populate_simplified_diagnostic_values()
