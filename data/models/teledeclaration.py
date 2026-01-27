@@ -357,7 +357,7 @@ class Teledeclaration(models.Model):
         if is_central_cuisine:
             serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in canteen.satellites]
             json_fields["satellites"] = serialized_satellites
-            json_fields["satellite_canteens_count"] = canteen.satellite_canteens_count
+            # json_fields["satellite_canteens_count"] = canteen.satellite_canteens_count  #  Remove in version 16
 
         if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
             diagnostic.populate_simplified_diagnostic_values()
