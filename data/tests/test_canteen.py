@@ -621,12 +621,9 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         cls.canteen_central_1 = CanteenFactory(
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=2,  # 1 missing
             sector_list=[],
         )
-        cls.canteen_central_2 = CanteenFactory(
-            siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL, satellite_canteens_count=2
-        )
+        cls.canteen_central_2 = CanteenFactory(siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL)
         cls.canteen_satellite_1 = CanteenFactory(
             siret="92341284500011",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -903,7 +900,6 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
-            satellite_canteens_count=2,
             sector_list=[],
         )
         cls.canteen_central_serving = CanteenFactory(
@@ -1124,7 +1120,6 @@ class CanteenAggregateQuerySetTest(TestCase):
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
-            satellite_canteens_count=1,
             sector_list=[],
         )
         cls.canteen_central_serving = CanteenFactory(
@@ -1133,7 +1128,6 @@ class CanteenAggregateQuerySetTest(TestCase):
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             economic_model=Canteen.EconomicModel.PUBLIC,
             daily_meal_count=12,
-            satellite_canteens_count=1,
             sector_list=[Sector.EDUCATION_SECONDAIRE_LYCEE, Sector.ENTERPRISE_ENTREPRISE],
         )
         cls.canteen_on_site = CanteenFactory(
@@ -1190,7 +1184,6 @@ class CanteenModelPropertiesTest(TestCase):
         canteen_with_diagnostic_submitted = CanteenFactory(
             siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL,
-            satellite_canteens_count=1,
             declaration_donnees_2024=True,
         )
         canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(
