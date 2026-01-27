@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.purchase_import import PURCHASE_SCHEMA_FILE_PATH
+from api.views.purchase_import import PURCHASE_SIRET_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.creation_source import CreationSource
@@ -25,7 +25,7 @@ from data.models.purchase import Purchase
 class PurchasesSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open(PURCHASE_SCHEMA_FILE_PATH))
+        cls.schema = json.load(open(PURCHASE_SIRET_SCHEMA_FILE_PATH))
 
     def test_famille_produits_regex(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "famille_produits"), None)

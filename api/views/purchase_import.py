@@ -16,9 +16,9 @@ from data.models.creation_source import CreationSource
 from .utils import camelize
 
 
-PURCHASE_SCHEMA_FILE_NAME = "achats.json"
-PURCHASE_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SCHEMA_FILE_NAME}"
-PURCHASE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SCHEMA_FILE_PATH}"
+PURCHASE_SIRET_SCHEMA_FILE_NAME = "achats_siret.json"
+PURCHASE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SIRET_SCHEMA_FILE_NAME}"
+PURCHASE_SIRET_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SIRET_SCHEMA_FILE_PATH}"
 
 
 class PurchasesImportView(BaseImportView):
@@ -33,6 +33,7 @@ class PurchasesImportView(BaseImportView):
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
+        self.import_type = ImportType.PURCHASE
 
     def post(self, request):
         # Override to add file digest check before base processing
@@ -50,9 +51,9 @@ class PurchasesImportView(BaseImportView):
 
     def _get_schema_config(self):
         return {
-            "name": PURCHASE_SCHEMA_FILE_NAME,
-            "url": PURCHASE_SCHEMA_URL,
-            "path": PURCHASE_SCHEMA_FILE_PATH,
+            "name": PURCHASE_SIRET_SCHEMA_FILE_NAME,
+            "url": PURCHASE_SIRET_SCHEMA_URL,
+            "path": PURCHASE_SIRET_SCHEMA_FILE_PATH,
         }
 
     def _process_file(self, data):
