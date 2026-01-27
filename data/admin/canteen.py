@@ -152,6 +152,8 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     readonly_fields = (
         "creation_date",
         "creation_source",
+        "city",
+        "postal_code",
         "epci",
         "epci_lib",
         "pat_list",
