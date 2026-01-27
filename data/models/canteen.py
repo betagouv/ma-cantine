@@ -406,6 +406,41 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         SPORT = "sport", "Sport"
         TRAVAIL = "travail", "Travail"
 
+    GEO_FIELDS = [
+        "city_insee_code",
+        "city",
+        "postal_code",
+        "epci",
+        "epci_lib",
+        "pat_list",
+        "pat_lib_list",
+        "department",
+        "department_lib",
+        "region",
+        "region_lib",
+    ]
+
+    TD_FIELDS = [
+        "declaration_donnees_2021",
+        "declaration_donnees_2022",
+        "declaration_donnees_2023",
+        "declaration_donnees_2024",
+        "declaration_donnees_2025",
+    ]
+
+    MATOMO_FIELDS = [
+        "creation_mtm_source",
+        "creation_mtm_campaign",
+        "creation_mtm_medium",
+    ]
+
+    CREATION_META_FIELDS = [
+        "creation_date",
+        "modification_date",
+        "creation_source",
+        "import_source",
+    ]
+
     import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
