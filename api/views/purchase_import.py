@@ -8,7 +8,6 @@ from rest_framework.exceptions import PermissionDenied
 
 from api.serializers import PurchaseSerializer
 from api.views.base_import import BaseImportView
-from common.api import validata
 from common.utils import file_import
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType, Purchase
@@ -34,7 +33,6 @@ class PurchasesImportView(BaseImportView):
         self.is_duplicate_file = False
         self.duplicate_purchases = []
         self.duplicate_purchase_count = 0
-        self.expected_header = file_import.get_expected_header_from_schema(PURCHASE_SCHEMA_FILE_PATH)
 
     def post(self, request):
         # Override to add file digest check before base processing
@@ -54,16 +52,8 @@ class PurchasesImportView(BaseImportView):
         return {
             "name": PURCHASE_SCHEMA_FILE_NAME,
             "url": PURCHASE_SCHEMA_URL,
+            "path": PURCHASE_SCHEMA_FILE_PATH,
         }
-
-    def _validate_header(self, validata_response, schema_name):
-        """Custom header validation for purchases"""
-        user_file_header = validata_response["resource_data"][0]
-        self.errors = validata.process_header_errors(user_file_header, self.expected_header)
-        if len(self.errors):
-            self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
-            return False
-        return True
 
     def _process_file(self, data):
         """Process file with chunking for better performance"""

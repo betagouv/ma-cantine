@@ -12,6 +12,7 @@ from api.serializers import FullCanteenSerializer
 from api.views.base_import import BaseImportView
 from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import utils as utils_utils
+from common.utils import file_import
 from data.models import Canteen, ImportType, Sector
 from data.models.creation_source import CreationSource
 
@@ -48,15 +49,26 @@ class CanteensImportView(BaseImportView):
 
     def _get_schema_config(self):
         """Return schema config based on user role"""
-        if self.is_admin_import:
-            return {
-                "name": CANTEEN_ADMIN_SCHEMA_FILE_NAME,
-                "url": CANTEEN_ADMIN_SCHEMA_URL,
-            }
         return {
-            "name": CANTEEN_SCHEMA_FILE_NAME,
-            "url": CANTEEN_SCHEMA_URL,
+            "name": CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME,
+            "url": CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL,
+            "path": CANTEEN_ADMIN_SCHEMA_FILE_PATH if self.is_admin_import else CANTEEN_SCHEMA_FILE_PATH,
         }
+
+    def _validate_file_header_custom(self, user_file_header):
+        """
+        Non-admin users cannot use the admin schema.
+        """
+        admin_expected_header = file_import.get_expected_header_from_schema(CANTEEN_ADMIN_SCHEMA_FILE_PATH)
+        if user_file_header == admin_expected_header and not self.is_admin_import:
+            self.errors = [
+                {
+                    "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+                    "status": 400,
+                }
+            ]
+            return False
+        return True
 
     def _process_file(self, data):
         """Process file and track canteens needing geolocation"""

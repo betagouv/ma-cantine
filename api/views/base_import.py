@@ -124,7 +124,16 @@ class BaseImportView(ABC, APIView):
                 return self._get_success_response()
 
             # Header validation
-            if not self._validate_header(validata_response, schema_config["name"]):
+            user_file_header = validata_response["resource_data"][0]
+            # Custom validation
+            if not self._validate_file_header_custom(user_file_header):
+                self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
+                return self._get_success_response()
+            # Generic validation
+            import_expected_header = file_import.get_expected_header_from_schema(schema_config["path"])
+            self.errors = validata.process_header_errors(user_file_header, import_expected_header)
+            if len(self.errors):
+                self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
                 return self._get_success_response()
 
             # Rows validation
@@ -157,24 +166,6 @@ class BaseImportView(ABC, APIView):
             self.errors = [{"row": 0, "status": status.HTTP_500_INTERNAL_SERVER_ERROR, "message": message}]
 
         return self._get_success_response()
-
-    def _validate_header(self, validata_response, schema_name):
-        """
-        Validate file header.
-
-        Can be overridden by subclasses for custom header validation.
-        """
-        header_has_errors = validata.check_if_has_errors_header(validata_response["report"])
-        if header_has_errors:
-            self.errors = [
-                {
-                    "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-                    "status": 400,
-                }
-            ]
-            self._log_error(f"Echec lors de la validation du header (schema {schema_name} - Validata)")
-            return False
-        return True
 
     @abstractmethod
     def _process_file(self, data):
@@ -222,6 +213,15 @@ class BaseImportView(ABC, APIView):
             self._log_error(e.message)
             self.errors = [{"row": 0, "status": status.HTTP_400_BAD_REQUEST, "message": e.message}]
             return False
+
+    def _validate_file_header_custom(self, user_file_header):
+        """
+        Validate file header custom.
+
+        Returns:
+            bool: True if validation passed, False otherwise
+        """
+        return True
 
     def _log_import_start(self):
         """Log the start of import process"""

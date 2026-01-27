@@ -164,7 +164,7 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 0)
 
     @authenticate
-    def test_validata_header_error(self):
+    def test_validata_missing_header_error(self):
         """
         A file should not be valid if it doesn't contain a valid header
         """
@@ -182,10 +182,18 @@ class CanteensImportApiErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]["field"], "Première ligne du fichier incorrecte")
         self.assertEqual(
-            errors.pop(0)["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+            errors[0]["title"],
+            "Elle doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
+
+    @authenticate
+    def test_validata_wrong_header_error(self):
+        """
+        A file should not be valid if it doesn't contain a valid header
+        """
+        self.assertEqual(Canteen.objects.count(), 0)
 
         # wrong header
         file_path = "./api/tests/files/canteens/canteens_bad_wrong_header.csv"
@@ -198,14 +206,18 @@ class CanteensImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(
-            errors.pop(0)["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
+        self.assertEqual(len(errors), 11)
+        for error in errors:
+            self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
-        # partial header
-        file_path = "./api/tests/files/canteens/canteens_bad_partial_header.csv"
+    @authenticate
+    def test_validata_extra_header_error(self):
+        """
+        A file should not be valid if it doesn't contain a valid header
+        """
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteens_bad_extra_header.csv"
         with open(file_path, "rb") as canteen_file:
             response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
 
@@ -216,9 +228,10 @@ class CanteensImportApiErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]["field"], "3 colonnes supplémentaires")
         self.assertEqual(
-            errors.pop(0)["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+            errors[0]["title"],
+            "Supprimer les 3 colonnes en excès et toutes les données présentes dans ces dernières. Il se peut qu'un espace ou un symbole invisible soit présent dans votre fichier, en cas de doute faite un copier-coller des données dans un nouveau document.",
         )
 
     @authenticate
@@ -362,10 +375,10 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0]["status"], 400)
+        self.assertEqual(errors[0]["field"], "Première ligne du fichier incorrecte")
         self.assertEqual(
-            errors.pop(0)["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
+            errors[0]["title"],
+            "Elle doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
     @authenticate
@@ -573,7 +586,6 @@ class CanteensImportApiSuccessTest(APITestCase):
             name="Canteen groupe", id=9999999999, production_type=Canteen.ProductionType.GROUPE
         )
         self.assertEqual(Canteen.objects.count(), 1)
-        print("canteen_groupe", canteen_groupe)
 
         file_path = "./api/tests/files/canteens/canteens_good_groupe.csv"
         with open(file_path) as canteen_file:

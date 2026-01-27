@@ -54,16 +54,6 @@ def process_errors(report):
     return errors
 
 
-def check_if_has_errors_header(report):
-    # Example "blank-label"
-    if any("rowNumber" not in error for error in report["errors"]):
-        return True
-    # Examples "Colonne manquante", "Colonne surnuméraire"
-    if any("Colonne" in warning for warning in report["warnings"]):
-        return True
-    return False
-
-
 def process_header_errors(user_file_header, expected_header):
     header_errors = []
     diff_header_length = len(user_file_header) - len(expected_header)
