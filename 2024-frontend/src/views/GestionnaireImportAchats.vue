@@ -27,7 +27,7 @@ const filePreviews = {
 const links = [
   {
     title: "Où trouver l'ID de ma cantine ou de mon groupe ?",
-    href: documentation.findCanteenId,
+    href: documentation.trouverIdCantine,
   },
   {
     title: "Comment importer un fichier CSV dans Excel ?",
