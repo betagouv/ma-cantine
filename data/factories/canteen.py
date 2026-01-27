@@ -233,6 +233,7 @@ SIRET_LIST_FOR_FACTORY = [
 class CanteenFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Canteen
+        skip_postgeneration_save = True
 
     name = factory.Faker("text", max_nb_chars=20)
     # siret: empty if groupe
