@@ -161,23 +161,29 @@ def _covered_by_central_kitchen(canteen):
 @app.task()
 def update_canteen_geo_fields_from_siret(canteen):
     """
-    Input: Canteen with siret but no city_insee_code
+    Input: Canteen with siret
     Processing: API Recherche Entreprises + API Découpage Administratif (cached)
     Output: Fill canteen's city_insee_code field + geo fields
     """
     # Step 1: fetch city_insee_code from API Recherche Entreprises
-    response = fetch_geo_data_from_siret(canteen.siret)
-    if response:
-        try:
-            if "cityInseeCode" in response.keys():
-                canteen.city_insee_code = response["cityInseeCode"]
-                canteen.save(skip_validations=True)
-                update_change_reason(canteen, "Code Insee MAJ par bot, via SIRET")
-        except Exception as e:
-            logger.error(e)
+    if not canteen.city_insee_code:
+        response = fetch_geo_data_from_siret(canteen.siret)
+        if response:
+            try:
+                if "cityInseeCode" in response.keys():
+                    canteen.city_insee_code = response["cityInseeCode"]
+                    canteen.save(skip_validations=True)
+                    update_change_reason(canteen, "Code Insee MAJ par bot, via SIRET")
+            except Exception as e:
+                logger.error(e)
     # Step 2: fetch geo data from API Découpage Administratif & DataGouv
     if canteen.city_insee_code:
-        _update_canteen_geo_data_from_insee_code(canteen)
+        if canteen.has_missing_geo_data:
+            if canteen.geolocation_bot_attempts < 5:
+                _update_canteen_geo_data_from_insee_code(canteen)
+                canteen.geolocation_bot_attempts += 1
+                canteen.save(skip_validations=True)
+                update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
     return True
 
 
@@ -267,11 +273,8 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
     if canteen.region and not canteen.region_lib:
         canteen.region_lib = get_lib_region_from_code(canteen.region)
         update = True
-    # save
-    if update:
-        canteen.save(skip_validations=True)
-        update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
-        return True
+
+    return update
 
 
 @app.task()
@@ -291,8 +294,11 @@ def fill_missing_geolocation_data_using_insee_code():
         return
 
     for i, canteen in enumerate(candidate_canteens):
-        updated = _update_canteen_geo_data_from_insee_code(canteen)
-        if updated:
+        update = _update_canteen_geo_data_from_insee_code(canteen)
+        if update:
+            # save
+            canteen.save(skip_validations=True)
+            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
             counter += 1
 
     result = f"Updated {counter}/{candidate_canteens.count()} canteens"
