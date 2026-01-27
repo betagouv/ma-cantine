@@ -496,11 +496,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     yearly_meal_count = models.PositiveIntegerField(
         null=True, blank=True, verbose_name="repas par an (y compris livrés)"
     )
-    satellite_canteens_count = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        verbose_name="nombre de restaurants satellites dépendants (si cuisine centrale)",
-    )
 
     groupe = models.ForeignKey(
         "self",
