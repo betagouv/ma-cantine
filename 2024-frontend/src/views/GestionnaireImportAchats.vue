@@ -19,9 +19,9 @@ const exampleFile = {
   size: "176 octets",
 }
 const filePreviews = {
-  success: "achats_fichier_exemple_fichier_accepte.jpg?v=1",
+  success: "achats_fichier_exemple_fichier_accepte.jpg?v=3",
   altSuccess: "Exemple de fichier accepté pour importer des achats, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "achats_fichier_exemple_fichier_rejete.jpg?v=2",
+  error: "achats_fichier_exemple_fichier_rejete.jpg?v=3",
   altError: "Exemple de fichier rejeté pour importer des achats, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 const links = [
