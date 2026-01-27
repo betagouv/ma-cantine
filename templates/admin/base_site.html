@@ -5,10 +5,18 @@
 {% block title %}{{ title }} | {{ site_title|default:_('NEW TITLE') }}{% endblock %}
 
 {% block extrastyle %}
+    <!-- Customize the admin color depending on the ENV -->
     {% admin_css_override as css_path %}
     {% if css_path is not None %}
         <link rel="stylesheet" type="text/css" href="{% static css_path %}"/>
     {% endif %}
+
+    <!-- Extra style -->
+    <style>
+        .aligned label:has(input.choice-array-field-widget) {
+            width: 100% !important;
+        }
+    </style>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}

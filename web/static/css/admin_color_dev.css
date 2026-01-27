@@ -19,14 +19,12 @@ div.breadcrumbs {
     color: #c4dce8;
 }
 div.breadcrumbs a.active {
-    color: #c4dce8;
-!important;
+    color: #c4dce8 !important;
     font-weight: 300;
 }
 
 div.breadcrumbs a:focus, div.breadcrumbs a:hover {
-    color: #c4dce8;
-!important;
+    color: #c4dce8 !important;
     font-weight: 300;
 }
 
