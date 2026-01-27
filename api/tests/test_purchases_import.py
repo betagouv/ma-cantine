@@ -631,6 +631,26 @@ class PurchasesImportIdApiErrorTest(APITestCase):
 
 class PurchasesImportIdApiSuccessTest(APITestCase):
     @authenticate
+    def test_import_default_type_is_id(self):
+        """
+        Tests that if no type is provided, the default import type is id
+        """
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user], id=949)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_id.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(errors), 0, errors)
+
+    @authenticate
     def test_import_with_canteen_id(self):
         """
         Tests that can import a file with id instead of siret
