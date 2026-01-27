@@ -13,15 +13,15 @@ import ImportFilesExample from "@/components/ImportFilesExample.vue"
 const route = useRoute()
 
 /* Data */
-const schemaFile = "achats_id.json"
+const schemaFile = "achats_siret.json"
 const exampleFile = {
-  name: "achats_fichier_exemple_ma_cantine.csv",
-  size: "176 octets",
+  name: "achats_siret_fichier_exemple_ma_cantine.csv",
+  size: "190 octets",
 }
 const filePreviews = {
-  success: "achats_fichier_exemple_fichier_accepte.jpg?v=4",
+  success: "achats_siret_fichier_exemple_fichier_accepte.jpg?v=1",
   altSuccess: "Exemple de fichier accepté pour importer des achats, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "achats_fichier_exemple_fichier_rejete.jpg?v=4",
+  error: "achats_siret_fichier_exemple_fichier_rejete.jpg?v=1",
   altError: "Exemple de fichier rejeté pour importer des achats, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 const links = [
@@ -57,7 +57,7 @@ const success = (count) => {
   <ImportExplanation :exampleFile :links />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
-  <ImportFileUpload @success="success" apiUrl="importPurchases" apiImportType="id" eventMatomo="import-purchases-success"/>
+  <ImportFileUpload @success="success" apiUrl="importPurchases" eventMatomo="import-purchases-success"/>
   <ImportSuccessModal
     :opened="showModal"
     :message="

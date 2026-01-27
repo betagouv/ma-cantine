@@ -11,7 +11,7 @@ import AppLoader from "@/components/AppLoader.vue"
 const store = useRootStore()
 const router = useRouter()
 const emit = defineEmits(["success"])
-const props = defineProps(["apiUrl", "eventMatomo"])
+const props = defineProps(["apiUrl", "apiImportType", "eventMatomo"])
 
 /* Data */
 const pictoDocument = "/static/images/picto-dsfr/document-add.svg"
@@ -24,7 +24,7 @@ const upload = (file) => {
   isProcessingFile.value = true
   const fileExtension = file[0].name.split(".").pop()
   initErrors()
-  importFile({ file: file, apiUrl: props.apiUrl })
+  importFile({ file: file, apiUrl: props.apiUrl, importType: props.apiImportType })
     .then((json) => {
       if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count, file: fileExtension })
       else if (json.duplicateFile) duplicatedUpload(json.duplicatePurchases)

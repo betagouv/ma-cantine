@@ -16,9 +16,12 @@ from data.models.creation_source import CreationSource
 from .utils import camelize
 
 
-PURCHASE_SCHEMA_FILE_NAME = "achats.json"
-PURCHASE_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SCHEMA_FILE_NAME}"
-PURCHASE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SCHEMA_FILE_PATH}"
+PURCHASE_SIRET_SCHEMA_FILE_NAME = "achats_siret.json"
+PURCHASE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SIRET_SCHEMA_FILE_NAME}"
+PURCHASE_SIRET_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SIRET_SCHEMA_FILE_PATH}"
+PURCHASE_ID_SCHEMA_FILE_NAME = "achats_id.json"
+PURCHASE_ID_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_ID_SCHEMA_FILE_NAME}"
+PURCHASE_ID_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_ID_SCHEMA_FILE_PATH}"
 
 
 class PurchasesImportView(BaseImportView):
@@ -35,6 +38,9 @@ class PurchasesImportView(BaseImportView):
         self.duplicate_purchase_count = 0
 
     def post(self, request):
+        # Set import type based on request
+        self.is_siret_import = request.data.get("type") == "siret"
+        self.import_type = ImportType.PURCHASE if self.is_siret_import else ImportType.PURCHASE_ID
         # Override to add file digest check before base processing
         self.file = request.data.get("file")
         if self.file:
@@ -50,9 +56,9 @@ class PurchasesImportView(BaseImportView):
 
     def _get_schema_config(self):
         return {
-            "name": PURCHASE_SCHEMA_FILE_NAME,
-            "url": PURCHASE_SCHEMA_URL,
-            "path": PURCHASE_SCHEMA_FILE_PATH,
+            "name": PURCHASE_SIRET_SCHEMA_FILE_NAME if self.is_siret_import else PURCHASE_ID_SCHEMA_FILE_NAME,
+            "url": PURCHASE_SIRET_SCHEMA_URL if self.is_siret_import else PURCHASE_ID_SCHEMA_URL,
+            "path": PURCHASE_SIRET_SCHEMA_FILE_PATH if self.is_siret_import else PURCHASE_ID_SCHEMA_FILE_PATH,
         }
 
     def _process_file(self, data):
@@ -124,14 +130,19 @@ class PurchasesImportView(BaseImportView):
 
     def _save_data_from_row(self, row):
         """Not used in purchase import due to chunking, but required by base class"""
-        siret = utils_utils.normalize_string(row[0])
-        return self._create_purchase_for_canteen(siret, row)
+        identifier = utils_utils.normalize_string(row[0]) if self.is_siret_import else row[0]
+        return self._create_purchase_for_canteen(identifier, row)
 
-    def _create_purchase_for_canteen(self, siret, row):
+    def _create_purchase_for_canteen(self, identifier, row):
         """Create a purchase object for a canteen from row data"""
-        if not Canteen.objects.filter(siret=siret).exists():
+        canteen_exists = (
+            Canteen.objects.filter(siret=identifier).exists()
+            if self.is_siret_import
+            else Canteen.objects.filter(id=identifier).exists()
+        )
+        if not canteen_exists:
             raise ObjectDoesNotExist()
-        canteen = Canteen.objects.get(siret=siret)
+        canteen = Canteen.objects.get(siret=identifier) if self.is_siret_import else Canteen.objects.get(id=identifier)
         if self.request.user not in canteen.managers.all():
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
@@ -182,3 +193,8 @@ class PurchasesImportView(BaseImportView):
 
     def _get_generic_error_message(self):
         return "Une erreur s'est produite en créant un achat pour cette ligne"
+
+    def _get_not_found_message(self, identifier):
+        """Get error message for object not found"""
+        identifier_name = "le siret" if self.is_siret_import else "l'id"
+        return f"Une cantine avec {identifier_name} « {identifier} » n'existe pas sur la plateforme."

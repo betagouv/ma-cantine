@@ -12,6 +12,7 @@ import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAli
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImport from "@/views/GestionnaireImport.vue"
 import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
+import GestionnaireImportAchatsSIRET from "@/views/GestionnaireImportAchatsSIRET.vue"
 import GestionnaireImportBilansSimples from "@/views/GestionnaireImportBilansSimples.vue"
 import GestionnaireImportCantines from "@/views/GestionnaireImportCantines.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
@@ -71,7 +72,19 @@ const routes = [
         name: "GestionnaireImportAchats",
         component: GestionnaireImportAchats,
         meta: {
-          title: "Importer des achats",
+          title: "Importer des achats via ID",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "achats-siret",
+        name: "GestionnaireImportAchatsSIRET",
+        component: GestionnaireImportAchatsSIRET,
+        meta: {
+          title: "Importer des achats via SIRET",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },

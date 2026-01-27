@@ -1,0 +1,135 @@
+{
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "949",
+      "format": "default",
+      "name": "cantine_id",
+      "title": "Numéro ID de l'établissement ayant réalisé l'achat : une cantine ou un groupe de restaurants satellites.",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "Pommes de terre",
+      "format": "default",
+      "name": "description",
+      "title": "Description de l'achat",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "Le traiteur du village",
+      "format": "default",
+      "name": "fournisseur",
+      "title": "Nom du fournisseur",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "2022-01-30",
+      "format": "%Y-%m-%d",
+      "name": "date",
+      "title": "Date de l'achat",
+      "type": "date"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "1234.99",
+      "name": "prix_ht",
+      "title": "Prix HT de l'achat",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "pattern": "^ *(VIANDES_VOLAILLES|CHARCUTERIE|PRODUITS_DE_LA_MER|FRUITS_ET_LEGUMES|PRODUITS_LAITIERS|BOULANGERIE|BOISSONS|AUTRES) *$",
+        "required": true
+      },
+      "description": "",
+      "doc_enum": [
+        "VIANDES_VOLAILLES",
+        "CHARCUTERIE",
+        "PRODUITS_DE_LA_MER",
+        "FRUITS_ET_LEGUMES",
+        "PRODUITS_LAITIERS",
+        "BOULANGERIE",
+        "BOISSONS",
+        "AUTRES"
+      ],
+      "example": "VIANDES_VOLAILLES",
+      "format": "default",
+      "name": "famille_produits",
+      "title": "Famille de produits de l'achat",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^ *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|CIRCUIT_COURT|LOCAL)( *, *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|FRANCE|CIRCUIT_COURT|LOCAL))* *$",
+        "required": false
+      },
+      "description": "",
+      "doc_enum": [
+        "BIO",
+        "LABEL_ROUGE",
+        "AOCAOP",
+        "IGP",
+        "STG",
+        "HVE",
+        "PECHE_DURABLE",
+        "RUP",
+        "COMMERCE_EQUITABLE",
+        "FERMIER",
+        "EXTERNALITES",
+        "PERFORMANCE",
+        "FRANCE",
+        "CIRCUIT_COURT",
+        "LOCAL"
+      ],
+      "doc_enum_multiple": true,
+      "doc_enum_multiple_seperator": ",",
+      "example": "BIO,IGP",
+      "format": "default",
+      "name": "caracteristiques",
+      "title": "Caractéristiques de l'achat",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^ *(AUTOUR_SERVICE|DEPARTEMENT|REGION|AUTRE) *$",
+        "required": false
+      },
+      "description": "Obligatoire si l'achat a la caractéristique de LOCAL.",
+      "doc_enum": [
+        "AUTOUR_SERVICE",
+        "DEPARTEMENT",
+        "REGION",
+        "AUTRE"
+      ],
+      "example": "AUTOUR_SERVICE",
+      "format": "default",
+      "name": "definition_local",
+      "title": "Définition de local",
+      "type": "string"
+    }
+  ],
+  "homepage": "https://github.com/betagouv/ma-cantine",
+  "name": "import-achats",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json",
+  "title": "Schema import des achats"
+}
