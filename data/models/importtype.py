@@ -11,4 +11,5 @@ class ImportType(models.TextChoices):
     DIAGNOSTIC_COMPLETE = "DIAGNOSTIC_COMPLETE", "Cantines avec diagnostic complet"
     CC_SIMPLE = "CC_SIMPLE", "Cuisines centrales avec un diagnostic simple et leurs restaurants satellites"
     CC_COMPLETE = "CC_COMPLETE", "Cuisines centrales avec un diagnostic complet et leurs restaurants satellites"
-    PURCHASE = "PURCHASE", "Achats"
+    PURCHASE = "PURCHASE_SIRET", "Achats par SIRET"
+    PURCHASE_ID = "PURCHASE_ID", "Achats par ID"
