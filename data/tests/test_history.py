@@ -21,36 +21,33 @@ class HistoryModelTest(TestCase):
             sectors_m2m=[],
         )
 
-        # why 2 and not 1?
-        # because of the factory's post_generation hooks
-        # see https://factoryboy.readthedocs.io/en/stable/recipes.html
-        self.assertEqual(canteen.history.count(), 1 + 1)
-        self.assertEqual(canteen.history.all().order_by("history_date")[0].history_type, "+")
-        delta = canteen.history.first().diff_against(canteen.history.all().order_by("history_date")[0])
-        self.assertEqual(len(delta.changes), 0)
+        self.assertEqual(canteen.history.count(), 1)
+        self.assertEqual(canteen.history.first().history_type, "+")
 
         # update canteen: adds a new history record
         canteen.name = "Updated name"
         canteen.save()
 
-        self.assertEqual(canteen.history.count(), 2 + 1)
+        self.assertEqual(canteen.history.count(), 1 + 1)
         self.assertEqual(canteen.history.first().history_type, "~")
+        delta = canteen.history.first().diff_against(canteen.history.all().order_by("history_date")[0])
+        self.assertEqual(len(delta.changes), 1)
 
         # empty save: adds a new history record
         canteen.save()
 
-        self.assertEqual(canteen.history.count(), 3 + 1)
+        self.assertEqual(canteen.history.count(), 2 + 1)
         self.assertEqual(canteen.history.first().history_type, "~")
-        delta = canteen.history.first().diff_against(canteen.history.all().order_by("history_date")[2])
+        delta = canteen.history.first().diff_against(canteen.history.all().order_by("history_date")[1])
         self.assertEqual(len(delta.changes), 0)
 
         # change field from None to empty string: adds a new history record
         canteen.city = ""
         canteen.save()
 
-        self.assertEqual(canteen.history.count(), 4 + 1)
+        self.assertEqual(canteen.history.count(), 3 + 1)
         self.assertEqual(canteen.history.first().history_type, "~")
-        delta = canteen.history.first().diff_against(canteen.history.all().order_by("history_date")[3])
+        delta = canteen.history.first().diff_against(canteen.history.all().order_by("history_date")[2])
         self.assertEqual(len(delta.changes), 1)
         self.assertEqual(delta.changes[0].field, "city")
 
@@ -66,13 +63,14 @@ class HistoryModelTest(TestCase):
             sectors_m2m=[],
         )
 
-        # why 2 and not 1?
-        # because of the factory's post_generation hooks
-        # see https://factoryboy.readthedocs.io/en/stable/recipes.html
-        self.assertEqual(canteen.history.count(), 1 + 1)
-        self.assertEqual(canteen.history.all().order_by("history_date")[0].history_type, "+")
-        delta = canteen.history.first().diff_against(canteen.history.all().order_by("history_date")[0])
-        self.assertEqual(len(delta.changes), 0)
+        self.assertEqual(canteen.history.count(), 1)
+        self.assertEqual(canteen.history.first().history_type, "+")
+
+        # create an empty entry
+        canteen.save()
+
+        self.assertEqual(canteen.history.count(), 2)
+        self.assertEqual(canteen.history.first().history_type, "~")
 
         call_command("clean_duplicate_history", "--auto")
 
