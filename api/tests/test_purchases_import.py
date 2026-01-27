@@ -339,6 +339,22 @@ class PurchasesImportApiErrorTest(APITestCase):
         )
 
     @authenticate
+    def test_canteen_not_found_with_id(self):
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_id.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE_ID, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors.pop(0)["message"], "Une cantine avec l'id « 949 » n'existe pas sur la plateforme.")
+
+    @authenticate
     def test_user_not_canteen_manager(self):
         CanteenFactory(siret="21010034300016")
         self.assertEqual(Purchase.objects.count(), 0)
@@ -496,6 +512,30 @@ class PurchasesImportApiSuccessTest(APITestCase):
 
         purchase = Purchase.objects.filter(description="Pommes, rouges").first()
         self.assertEqual(purchase.price_ht, Decimal("90.11"))
+
+    @authenticate
+    def test_import_with_canteen_id(self):
+        """
+        Tests that can import a file with id instead of siret
+        """
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user], id=949)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_id.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(errors), 0, errors)
+
+        purchase = Purchase.objects.filter(description="Pommes, rouges").first()
+        self.assertEqual(purchase.price_ht, Decimal("90.11"))
+        self.assertEqual(purchase.canteen.id, 949)
 
     @authenticate
     def test_import_excel_file(self):

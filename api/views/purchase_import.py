@@ -193,3 +193,8 @@ class PurchasesImportView(BaseImportView):
 
     def _get_generic_error_message(self):
         return "Une erreur s'est produite en créant un achat pour cette ligne"
+
+    def _get_not_found_message(self, identifier):
+        """Get error message for object not found"""
+        identifier_name = "le siret" if self.is_siret_import else "l'id"
+        return f"Une cantine avec {identifier_name} « {identifier} » n'existe pas sur la plateforme."
