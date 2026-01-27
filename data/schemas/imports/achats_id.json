@@ -9,8 +9,8 @@
       "description": "",
       "example": "949",
       "format": "default",
-      "name": "id",
-      "title": "Numéro ID de l'établissement ayant réalisé l'achat",
+      "name": "cantine_id",
+      "title": "Numéro ID de l'établissement ayant réalisé l'achat : une cantine ou un groupe de restaurants satellites.",
       "type": "number"
     },
     {
