@@ -182,6 +182,16 @@ def mock_fetch_communes(mock, success=True):
                     "codesPostaux": ["38000", "38100"],
                     "population": 156389,
                 },
+                {
+                    "nom": "Roubaix",
+                    "code": "59512",
+                    "codeDepartement": "59",
+                    "siren": "215905126",
+                    "codeEpci": "200093201",
+                    "codeRegion": "32",
+                    "codesPostaux": ["59100"],
+                    "population": 98286,
+                },
             ]
         ),
     )

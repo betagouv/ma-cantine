@@ -1,5 +1,7 @@
 from urllib.parse import quote
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import ValidationError
@@ -929,6 +931,23 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     @property
     def lead_image(self):
         return self.images.first()
+
+
+@receiver(post_save, sender=Canteen)
+def fill_geo_fields_from_siret(sender, instance, created, **kwargs):
+    """
+    On canteen creation, we need to fill its geo fields
+
+    Notes:
+    - if city_insee_code is (already) set, we don't override it
+    - GROUPE canteens don't have siret, so it won't be triggered for them
+    TODO: canteen edit (when the canteen changes siret)
+    """
+    from macantine import tasks
+
+    if created:
+        if instance.siret and not instance.city_insee_code:
+            tasks.update_canteen_geo_fields_from_siret(instance)
 
 
 class CanteenImage(models.Model):

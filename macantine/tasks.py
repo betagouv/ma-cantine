@@ -22,7 +22,6 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from common.utils import siret as utils_siret
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 from data.models import Canteen, User
 
@@ -159,20 +158,27 @@ def _covered_by_central_kitchen(canteen):
     return False
 
 
-def _update_canteen_geo_data_from_siret(canteen):
-    if utils_siret.is_valid_length_siret(canteen.siret):
-        response = fetch_geo_data_from_siret(canteen.siret)
-        if response:
-            try:
-                if "cityInseeCode" in response.keys():
-                    canteen.city_insee_code = response["cityInseeCode"]
-                    canteen.save(skip_validations=True)
-                    update_change_reason(canteen, "Code Insee MAJ par bot, via SIRET")
-                    logger.info(f"Canteen info has been updated. Canteen name : {canteen.name}")
-                    return True
-            except Exception as e:
-                logger.error(f"Unable to update canteen info for canteen : {canteen.name}")
-                logger.error(e)
+@app.task()
+def update_canteen_geo_fields_from_siret(canteen):
+    """
+    Input: Canteen with siret but no city_insee_code
+    Processing: API Recherche Entreprises + API Découpage Administratif (cached)
+    Output: Fill canteen's city_insee_code field + geo fields
+    """
+    # Step 1: fetch city_insee_code from API Recherche Entreprises
+    response = fetch_geo_data_from_siret(canteen.siret)
+    if response:
+        try:
+            if "cityInseeCode" in response.keys():
+                canteen.city_insee_code = response["cityInseeCode"]
+                canteen.save(skip_validations=True)
+                update_change_reason(canteen, "Code Insee MAJ par bot, via SIRET")
+        except Exception as e:
+            logger.error(e)
+    # Step 2: fetch geo data from API Découpage Administratif & DataGouv
+    if canteen.city_insee_code:
+        _update_canteen_geo_data_from_insee_code(canteen)
+    return True
 
 
 @app.task()
@@ -192,7 +198,7 @@ def fill_missing_insee_code_using_siret():
 
     for i, canteen in enumerate(candidate_canteens):
         logger.info(f"Traitement de la cantine {canteen.name} {canteen.siret}, appel #{i}")
-        updated = _update_canteen_geo_data_from_siret(canteen)
+        updated = update_canteen_geo_fields_from_siret(canteen)
         if updated:
             counter += 1
         # time.sleeps to avoid API rate limit
@@ -208,16 +214,11 @@ def fill_missing_insee_code_using_siret():
     return result
 
 
-def _update_canteen_geo_data_from_insee_code(  # noqa C901
-    canteen, communes_details=None, epcis_names=None, pat_mapping=None
-):
+def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
     # fetch geo data from API Découpage Administratif & DataGouv
-    if not communes_details:
-        communes_details = map_communes_infos()
-    if not epcis_names:
-        epcis_names = map_epcis_code_name()
-    if not pat_mapping:
-        pat_mapping = map_pat_list_to_communes_insee_code()
+    communes_details = map_communes_infos()
+    epcis_names = map_epcis_code_name()
+    pat_mapping = map_pat_list_to_communes_insee_code()
 
     update = False
     # geo fields
@@ -289,13 +290,8 @@ def fill_missing_geolocation_data_using_insee_code():
         logger.info("No candidate canteens have been found. Nothing to do here...")
         return
 
-    # fetch geo data from API Découpage Administratif & DataGouv
-    communes_details = map_communes_infos()
-    epcis_names = map_epcis_code_name()
-    pat_mapping = map_pat_list_to_communes_insee_code()
-
     for i, canteen in enumerate(candidate_canteens):
-        updated = _update_canteen_geo_data_from_insee_code(canteen, communes_details, epcis_names, pat_mapping)
+        updated = _update_canteen_geo_data_from_insee_code(canteen)
         if updated:
             counter += 1
 
