@@ -2,6 +2,8 @@ import random
 
 import factory
 
+from django.db.models.signals import post_save
+
 from data.models import Canteen
 from data.models.sector import Sector
 
@@ -230,6 +232,7 @@ SIRET_LIST_FOR_FACTORY = [
 ]
 
 
+@factory.django.mute_signals(post_save)
 class CanteenFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Canteen
