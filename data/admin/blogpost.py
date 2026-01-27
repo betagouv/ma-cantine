@@ -23,6 +23,7 @@ class BlogPostAdmin(admin.ModelAdmin):
     list_filter = ("published",)
 
     form = BlogPostForm
+    filter_vertical = ("tags",)
     fields = (
         "title",
         "tagline",
@@ -32,7 +33,6 @@ class BlogPostAdmin(admin.ModelAdmin):
         "body",
         "tags",
     )
-    filter_vertical = ("tags",)
 
     def published_state(self, obj):
         return "✅ Publié" if obj.published else "🔒 Non publié"
