@@ -15,14 +15,12 @@ class SiretToGeoDataBotTest(TestCase):
     def setUp(self):
         cache.clear()  # clear cache before each test
 
-    def test_candidate_canteens(self, mock):
+    def test_get_geo_data(self, mock):
         canteen_without_city_insee_code = CanteenFactory(siret="92341284500011")
-        canteen_without_city_insee_code.city_insee_code = None
-        canteen_without_city_insee_code.city = None
-        canteen_without_city_insee_code.postal_code = None
-        canteen_without_city_insee_code.department = None
-        canteen_without_city_insee_code.region = None
-        canteen_without_city_insee_code.save(skip_validations=True)
+        Canteen.objects.filter(id=canteen_without_city_insee_code.id).update(
+            city_insee_code=None, city=None, postal_code=None, department=None, region=None
+        )
+        canteen_without_city_insee_code.refresh_from_db()
         mock_fetch_geo_data_from_siret(mock, canteen_without_city_insee_code.siret)
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
@@ -45,7 +43,7 @@ class SiretToCityInseeCodeGeoBotTest(TestCase):
     def setUp(self):
         cache.clear()  # clear cache before each test
 
-    def test_candidate_canteens(self, _):
+    def test_candidate_canteens_queryset(self, _):
         """
         Only canteens with SIRET but without city_insee_code
         """
@@ -56,8 +54,8 @@ class SiretToCityInseeCodeGeoBotTest(TestCase):
         # ignored canteens
         CanteenFactory(city_insee_code=29890)  # canteen with siret & city_insee_code
         canteen_without_siret = CanteenFactory()
-        canteen_without_siret.siret = None
-        canteen_without_siret.city_insee_code = None
+        canteen_without_siret.siret = None  # missing data
+        canteen_without_siret.city_insee_code = None  # missing data
         canteen_without_siret.save(skip_validations=True)
 
         self.assertEqual(Canteen.objects.count(), 3)
@@ -136,7 +134,7 @@ class CityInseeCodeToGeoFieldsGeoBotTest(TestCase):
         self.assertEqual(canteen.region_lib, "Auvergne-Rhône-Alpes")  # filled
         self.assertEqual(canteen.geolocation_bot_attempts, 1)
 
-    def test_candidate_canteens(self, _):
+    def test_candidate_canteens_queryset(self, _):
         """
         Only canteens with INSEE code
         that have not been queried more than ten times

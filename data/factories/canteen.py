@@ -232,6 +232,8 @@ SIRET_LIST_FOR_FACTORY = [
 ]
 
 
+# we disable post_save signals to avoid calling fill_geo_fields_from_siret
+# Note: this will also disable history tracking (on creation)
 @factory.django.mute_signals(post_save)
 class CanteenFactory(factory.django.DjangoModelFactory):
     class Meta:
