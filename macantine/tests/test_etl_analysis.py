@@ -9,81 +9,138 @@ from django.utils import timezone
 from freezegun import freeze_time
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
-from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS, aggregate_col
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 
 
-class TestETLAnalysisCanteen(TestCase):
+class CanteenETLAnalysisTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector = SectorM2MFactory(id=1, name="Sector factory", category="Category factory")
-        cls.canteen_1 = CanteenFactory(
+        # same test data as in CanteenETLOpenDataTest
+        cls.canteen_site_manager_1 = UserFactory(email="gestionnaire1@example.com")
+        cls.canteen_site_manager_2 = UserFactory(email="gestionnaire2@example.com")
+        cls.canteen_site = CanteenFactory(
             name="Cantine",
             siret="19382111300027",
             city_insee_code="38185",
             epci="200040715",
             epci_lib="Grenoble-Alpes-Métropole",
+            pat_list=["1294", "1295"],
+            pat_lib_list=[
+                "PAT du Département de l'Isère",
+                "Projet Alimentaire inter Territorial de la Grande région grenobloise",
+            ],
             department="38",
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            sector_list=[Sector.ADMINISTRATION_PRISON],
-            sectors_m2m=[cls.sector],
-            line_ministry=Canteen.Ministries.AGRICULTURE,
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
+            sector_list=[Sector.SANTE_HOPITAL, Sector.SOCIAL_CRECHE],
+            declaration_donnees_2022=True,
+            declaration_donnees_2023=False,
+            declaration_donnees_2024=True,
+            declaration_donnees_2025=False,
+            managers=[cls.canteen_site_manager_1, cls.canteen_site_manager_2],
         )
-        cls.canteen_2 = CanteenFactory(sector_list=[Sector.ADMINISTRATION_PRISON], sectors_m2m=[cls.sector])
+        cls.canteen_site_without_manager = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[])
+        cls.canteen_site_created_earlier = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE,
+            # creation_date=timezone.now() - timezone.timedelta(days=10),
+        )
+        Canteen.objects.filter(id=cls.canteen_site_created_earlier.id).update(
+            creation_date=timezone.now() - timezone.timedelta(days=10)
+        )
+        cls.canteen_site_deleted = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE,
+            deletion_date=timezone.now(),
+        )
+        cls.canteen_site_armee = CanteenFactory(
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            sector_list=[Sector.ADMINISTRATION_PRISON],
+            line_ministry=Canteen.Ministries.AGRICULTURE,
+        )
+        cls.canteen_groupe = CanteenFactory(
+            production_type=Canteen.ProductionType.GROUPE,
+        )
+        cls.canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=cls.canteen_groupe,
+            central_producer_siret="22730656663081",
+        )
 
     def test_canteen_extract(self):
-        etl = ETL_ANALYSIS_CANTEEN()
-        etl.extract_dataset()
-        self.assertEqual(len(etl.df.id.unique()), 2, "There should be two different canteens")
-        self.assertEqual(etl.get_dataset().iloc[0]["id"], self.canteen_1.id, "Order by created date ascending")
+        self.assertEqual(Canteen.all_objects.count(), 7)
+        self.assertEqual(Canteen.objects.count(), 6)  # 1 is deleted
 
-    def test_canteen_transform_dataset_match_schema(self):
         etl = ETL_ANALYSIS_CANTEEN()
+
+        self.assertEqual(etl.len_dataset(), 0)  # before extraction
+
+        etl.extract_dataset()
+
+        self.assertEqual(len(etl.df.id.unique()), 6)  # 1 is deleted
+        self.assertEqual(
+            etl.get_dataset().iloc[0]["id"], self.canteen_site_created_earlier.id
+        )  # Order by created date ascending
+
+    def test_canteen_transform(self):
         schema = json.load(open("data/schemas/export_analysis/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
+
+        etl = ETL_ANALYSIS_CANTEEN()
         etl.extract_dataset()
         etl.transform_dataset()
-        canteens = etl.df
 
         # Check the schema matching
+        self.assertEqual(len(etl.df.columns), len(schema_cols))
         self.assertEqual(
-            len(canteens.columns),
-            len(schema_cols),
-            "The columns should match have the same length as the number of elements in the schema.",
-        )
-        self.assertEqual(
-            set(canteens.columns), set(schema_cols), "The columns names should match the schema field names."
+            set(etl.df.columns), set(schema_cols), "The columns names should match the schema field names."
         )
 
         # Check the generated columns
-        canteen_1 = canteens[canteens.id == self.canteen_1.id].iloc[0]
-        self.assertEqual(canteen_1["epci"], "200040715")
-        self.assertEqual(canteen_1["epci_lib"], "Grenoble-Alpes-Métropole")
-        self.assertEqual(canteen_1["departement"], "38")
-        self.assertEqual(canteen_1["departement_lib"], "Isère")
-        self.assertEqual(canteen_1["region"], "84")
-        self.assertEqual(canteen_1["region_lib"], "Auvergne-Rhône-Alpes")
-        self.assertEqual(canteen_1["secteur"], "Restaurants des prisons")
-        self.assertEqual(canteen_1["categorie"], "Administration")
-        self.assertEqual(canteen_1["ministere_tutelle"], "Agriculture, Alimentation et Forêts")
-        self.assertEqual(canteen_1["type_gestion"], "Directe")
-        self.assertEqual(canteen_1["type_production"], "Restaurant avec cuisine sur place")
-        self.assertEqual(canteen_1["modele_economique"], "Public")
-        self.assertEqual(canteen_1["spe"], "Oui")  # because line_ministry is set
+        canteen_site = etl.df[etl.df.id == self.canteen_site.id].iloc[0]
+        self.assertEqual(canteen_site["epci"], "200040715")
+        self.assertEqual(canteen_site["epci_lib"], "Grenoble-Alpes-Métropole")
+        self.assertEqual(canteen_site["pat_liste"], "1294,1295")
+        self.assertEqual(
+            canteen_site["pat_lib_liste"],
+            "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
+        )
+        self.assertEqual(canteen_site["departement"], "38")
+        self.assertEqual(canteen_site["departement_lib"], "Isère")
+        self.assertEqual(canteen_site["region"], "84")
+        self.assertEqual(canteen_site["region_lib"], "Auvergne-Rhône-Alpes")
+        self.assertEqual(canteen_site["type_gestion"], "Directe")
+        self.assertEqual(canteen_site["type_production"], "Restaurant avec cuisine sur place")
+        self.assertEqual(canteen_site["modele_economique"], "Public")
+        self.assertEqual(canteen_site["secteur"], "Hôpitaux,Crèche")
+        self.assertIn("Santé", canteen_site["categorie"])  # flaky if assertEqual
+        self.assertEqual(canteen_site["ministere_tutelle"], None)
+        self.assertEqual(canteen_site["spe"], "Non")
+        self.assertEqual(str(canteen_site["declaration_donnees_2022"]), "True")
+        self.assertEqual(str(canteen_site["declaration_donnees_2025"]), "False")
+        self.assertEqual(canteen_site["adresses_gestionnaires"], "gestionnaire1@example.com,gestionnaire2@example.com")
 
-        canteen_2 = canteens[canteens.id == self.canteen_2.id].iloc[0]
-        self.assertEqual(canteen_2["ministere_tutelle"], None)
-        self.assertEqual(canteen_2["spe"], "Non")
+        canteen_site_armee = etl.df[etl.df.id == self.canteen_site_armee.id].iloc[0]
+        self.assertEqual(canteen_site_armee["secteur"], "Restaurants des prisons")
+        self.assertEqual(canteen_site_armee["categorie"], "Administration")
+        self.assertEqual(canteen_site_armee["ministere_tutelle"], "Agriculture, Alimentation et Forêts")
+        self.assertEqual(canteen_site_armee["spe"], "Oui")  # because line_ministry is set
+
+        canteen_site_without_manager = etl.df[etl.df.id == self.canteen_site_without_manager.id].iloc[0]
+        self.assertEqual(canteen_site_without_manager["adresses_gestionnaires"], "")
+
+        canteen_satellite = etl.df[etl.df.id == self.canteen_satellite.id].iloc[0]
+        self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
 
 
-class TestETLAnalysisTD(TestCase):
+class TeledeclarationETLAnalysisTest(TestCase):
     def test_extraction_teledeclaration(self):
         applicant = UserFactory()
         canteen = CanteenFactory(siret="98648424243607")
