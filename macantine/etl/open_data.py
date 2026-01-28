@@ -1,7 +1,6 @@
 import csv
 import json
 import os
-import time
 from io import BytesIO
 
 import pandas as pd
@@ -164,11 +163,6 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         self.transform_canteen_choicefields()
         logger.info("Canteens: Transform ArrayFields...")
         self.transform_canteen_arrayfields()
-        logger.info("Canteens: Fill geo name...")
-        start = time.time()
-        self.transform_canteen_geo_data()
-        end = time.time()
-        logger.info(f"Time spent on geo data : {end - start}")
 
 
 class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):

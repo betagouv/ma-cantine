@@ -39,17 +39,6 @@ class CanteenETLOpenDataTest(TestCase):
         schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
-        mock.get(
-            "https://geo.api.gouv.fr/communes",
-            text=json.dumps([{"code": "38185", "codeEpci": "200040715"}]),
-            status_code=200,
-        )
-        mock.get(
-            "https://geo.api.gouv.fr/epcis?fields=nom,code",
-            text=json.dumps([{"nom": "Grenoble-Alpes-Métropole", "code": "200040715"}]),
-            status_code=200,
-        )
-
         etl = ETL_OPEN_DATA_CANTEEN()
         etl.extract_dataset()
         etl.transform_dataset()
