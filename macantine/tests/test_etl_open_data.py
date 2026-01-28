@@ -5,6 +5,7 @@ import pandas as pd
 import requests_mock
 from django.core.files.storage import default_storage
 from django.test import TestCase, override_settings
+from django.utils import timezone
 from freezegun import freeze_time
 
 from common.api.datagouv import update_dataset_resources
@@ -38,6 +39,162 @@ class CanteenETLOpenDataTest(TestCase):
     def test_canteen_transform(self, mock):
         schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
+
+        etl = ETL_OPEN_DATA_CANTEEN()
+        etl.extract_dataset()
+        etl.transform_dataset()
+
+        # Check the schema matching
+        self.assertEqual(len(etl.df.columns), len(schema_cols))
+
+        canteen_site = etl.df[etl.df.id == self.canteen_site.id].iloc[0]
+        self.assertEqual(canteen_site["epci"], "200040715")
+        self.assertEqual(canteen_site["epci_lib"], "Grenoble-Alpes-Métropole")
+        self.assertEqual(canteen_site["pat_list"], "1294,1295")
+        self.assertEqual(
+            canteen_site["pat_lib_list"],
+            "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
+        )
+        self.assertEqual(canteen_site["department"], "38")
+        self.assertEqual(canteen_site["department_lib"], "Isère")
+        self.assertEqual(canteen_site["region"], "84")
+        self.assertEqual(canteen_site["region_lib"], "Auvergne-Rhône-Alpes")
+        self.assertEqual(canteen_site["management_type"], "direct")
+        self.assertEqual(canteen_site["production_type"], "site")
+        self.assertEqual(canteen_site["economic_model"], "public")
+        self.assertEqual(canteen_site["sector_list"], "Hôpitaux,Crèche")
+        self.assertEqual(canteen_site["line_ministry"], None)
+        self.assertTrue(canteen_site["declaration_donnees_2022"])
+        self.assertFalse(canteen_site["declaration_donnees_2025"])
+        self.assertTrue(canteen_site["active_on_ma_cantine"])
+
+        canteen_site_without_manager = etl.df[etl.df.id == self.canteen_site_without_manager.id].iloc[0]
+        self.assertFalse(canteen_site_without_manager["active_on_ma_cantine"])
+
+        canteen_satellite = etl.df[etl.df.id == self.canteen_satellite.id].iloc[0]
+        self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
+
+    @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+    def test_canteen_load_dataset(self, mock):
+        # Making sure the code will not enter online dataset validation by forcing local filesystem management
+        test_cases = [
+            {
+                "name": " Load valid dataset",
+                "data": pd.DataFrame({"index": [0], "name": ["a valid name"]}),
+                "expected_length": 1,
+            },
+            {
+                "name": " Load valid dataset with special characters",
+                "data": pd.DataFrame({"index": [0], "name": ["a valid name with our csv sep ;"]}),
+                "expected_length": 1,
+            },
+        ]
+        etl = ETL_OPEN_DATA_CANTEEN()
+        etl.dataset_name += "_test"  # Avoid interferring with other files
+
+        for tc in test_cases:
+            etl.df = tc["data"]
+            etl.load_dataset()
+            with default_storage.open(f"open_data/{etl.dataset_name}.csv", "r") as csv_file:
+                output_dataframe = pd.read_csv(csv_file, sep=";")
+            self.assertEqual(tc["expected_length"], len(output_dataframe))
+
+            self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
+
+            # Cleaning files
+            for file_extension in ["csv", "xlsx"]:
+                default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")
+
+
+@requests_mock.Mocker()
+class CanteenETLOpenDataTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # same test data as in CanteenETLAnalysisTest
+        cls.canteen_site_manager_1 = UserFactory(email="gestionnaire1@example.com")
+        cls.canteen_site_manager_2 = UserFactory(email="gestionnaire2@example.com")
+        cls.canteen_site = CanteenFactory(
+            name="Cantine",
+            siret="19382111300027",
+            city_insee_code="38185",
+            epci="200040715",
+            epci_lib="Grenoble-Alpes-Métropole",
+            pat_list=["1294", "1295"],
+            pat_lib_list=[
+                "PAT du Département de l'Isère",
+                "Projet Alimentaire inter Territorial de la Grande région grenobloise",
+            ],
+            department="38",
+            department_lib="Isère",
+            region="84",
+            region_lib="Auvergne-Rhône-Alpes",
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            sector_list=[Sector.SANTE_HOPITAL, Sector.SOCIAL_CRECHE],
+            declaration_donnees_2022=True,
+            declaration_donnees_2023=False,
+            declaration_donnees_2024=True,
+            declaration_donnees_2025=False,
+            managers=[cls.canteen_site_manager_1, cls.canteen_site_manager_2],
+        )
+        cls.canteen_site_without_manager = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[])
+        cls.canteen_site_created_earlier = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE,
+            # creation_date=timezone.now() - timezone.timedelta(days=10),
+        )
+        Canteen.objects.filter(id=cls.canteen_site_created_earlier.id).update(
+            creation_date=timezone.now() - timezone.timedelta(days=10)
+        )
+        cls.canteen_site_deleted = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE,
+            deletion_date=timezone.now(),
+        )
+        cls.canteen_site_armee = CanteenFactory(
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            sector_list=[Sector.ADMINISTRATION_PRISON],
+            line_ministry=Canteen.Ministries.AGRICULTURE,
+        )
+        cls.canteen_groupe = CanteenFactory(
+            production_type=Canteen.ProductionType.GROUPE,
+        )
+        cls.canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=cls.canteen_groupe,
+            central_producer_siret="22730656663081",
+        )
+
+    def test_canteen_extract(self, mock):
+        self.assertEqual(Canteen.all_objects.count(), 7)
+        self.assertEqual(Canteen.objects.count(), 6)  # 1 is deleted
+
+        etl = ETL_OPEN_DATA_CANTEEN()
+
+        self.assertEqual(etl.len_dataset(), 0)  # before extraction
+
+        etl.extract_dataset()
+
+        self.assertEqual(len(etl.df.id.unique()), 5)  # 1 is deleted & 1 is private
+        self.assertEqual(
+            etl.get_dataset().iloc[0]["id"], self.canteen_site_created_earlier.id
+        )  # Order by created date ascending
+
+    def test_canteen_transform(self, mock):
+        schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
+        schema_cols = [i["name"] for i in schema["fields"]]
+
+        mock.get(
+            "https://geo.api.gouv.fr/communes",
+            text=json.dumps([{"code": "38185", "codeEpci": "200040715"}]),
+            status_code=200,
+        )
+        mock.get(
+            "https://geo.api.gouv.fr/epcis?fields=nom,code",
+            text=json.dumps([{"nom": "Grenoble-Alpes-Métropole", "code": "200040715"}]),
+            status_code=200,
+        )
 
         etl = ETL_OPEN_DATA_CANTEEN()
         etl.extract_dataset()
