@@ -165,6 +165,7 @@ def update_canteen_geo_fields_from_siret(canteen):
     Processing: API Recherche Entreprises + API Découpage Administratif (cached)
     Output: Fill canteen's city_insee_code field + geo fields
     """
+    update = False
     # Step 1: fetch city_insee_code from API Recherche Entreprises
     if not canteen.city_insee_code:
         response = fetch_geo_data_from_siret(canteen.siret)
@@ -172,18 +173,19 @@ def update_canteen_geo_fields_from_siret(canteen):
             try:
                 if "cityInseeCode" in response.keys():
                     canteen.city_insee_code = response["cityInseeCode"]
-                    canteen.save(skip_validations=True)
-                    update_change_reason(canteen, "Code Insee MAJ par bot, via SIRET")
+                    update = True
             except Exception as e:
                 logger.error(e)
     # Step 2: fetch geo data from API Découpage Administratif & DataGouv
     if canteen.city_insee_code:
         if canteen.has_missing_geo_data:
             if canteen.geolocation_bot_attempts < 5:
-                _update_canteen_geo_data_from_insee_code(canteen)
+                update = _update_canteen_geo_data_from_insee_code(canteen)
                 canteen.geolocation_bot_attempts += 1
-                canteen.save(skip_validations=True)
-                update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
+    # Step 3: save & return
+    if update:
+        canteen._change_reason = "Données de localisation MAJ"
+        canteen.save(skip_validations=True)
     return True
 
 
