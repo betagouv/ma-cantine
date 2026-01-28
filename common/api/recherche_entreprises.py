@@ -182,31 +182,32 @@ def mock_fetch_geo_data_from_siren(mock, siren, success=True):
 
 def mock_fetch_geo_data_from_siret(mock, siret, success=True):
     api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siret}"
-    if not success:
+    if success:
+        mock.get(
+            api_url,
+            text=json.dumps(
+                {
+                    # siret: 92341284500011
+                    "results": [
+                        {
+                            "siren": "923412845",
+                            "nom_complet": "LA TURBINE",
+                            "matching_etablissements": [
+                                {
+                                    "commune": "59512",
+                                    "code_postal": "59100",
+                                    "libelle_commune": "ROUBAIX",
+                                    "epci": "200075174",
+                                    "region": "32",
+                                    "liste_enseignes": ["Legal unit name"],
+                                    "etat_administratif": "A",
+                                }
+                            ],
+                        }
+                    ],
+                    "total_results": 1,
+                }
+            ),
+        )
+    else:
         mock.get(api_url, text="", status_code=403)
-    mock.get(
-        api_url,
-        text=json.dumps(
-            {
-                # siret: 92341284500011
-                "results": [
-                    {
-                        "siren": "923412845",
-                        "nom_complet": "LA TURBINE",
-                        "matching_etablissements": [
-                            {
-                                "commune": "59512",
-                                "code_postal": "59100",
-                                "libelle_commune": "ROUBAIX",
-                                "epci": "200075174",
-                                "region": "32",
-                                "liste_enseignes": ["Legal unit name"],
-                                "etat_administratif": "A",
-                            }
-                        ],
-                    }
-                ],
-                "total_results": 1,
-            }
-        ),
-    )
