@@ -168,6 +168,13 @@
       "type": "string"
     },
     {
+      "description": "Les restaurants satellites peuvent être rattachés à un groupe",
+      "example": "1",
+      "name": "groupe_id",
+      "title": "Identifiant du groupe",
+      "type": "integer"
+    },
+    {
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
       "example": "Ministère de l'Education Nationale",
       "name": "ministere_tutelle",
