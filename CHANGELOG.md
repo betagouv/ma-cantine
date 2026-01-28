@@ -6,6 +6,38 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.7.0](https://github.com/betagouv/ma-cantine/compare/v2026.6.0...v2026.7.0) (2026-01-28)
+
+
+### Nouveautés
+
+* **Cantines:** récupérer les données géo en temps réel (au lieu d'attendre 1h puis le lendemain) ([#6266](https://github.com/betagouv/ma-cantine/issues/6266)) ([c36e4e9](https://github.com/betagouv/ma-cantine/commit/c36e4e9e902321eb375b66c621c203a7d14ebb5f))
+* **Imports:** Achats: permettre d'importer des achats via le numéro ID de la cantine ([#6293](https://github.com/betagouv/ma-cantine/issues/6293)) ([303de4f](https://github.com/betagouv/ma-cantine/commit/303de4f0d0bb7536478786576aa6ade1df913879))
+* **Imports:** améliore la page tampon avant d'ajouter les nouveaux imports via ID ([#6287](https://github.com/betagouv/ma-cantine/issues/6287)) ([b5305ae](https://github.com/betagouv/ma-cantine/commit/b5305ae353ac594551d27db320dd9ef11f7a9ce5))
+* **Imports:** Cantines et Bilans: améliorations du message d'erreur pour une en-tête de fichier incorrecte ([#6289](https://github.com/betagouv/ma-cantine/issues/6289)) ([3315f77](https://github.com/betagouv/ma-cantine/commit/3315f7798e090a97fe3dc3fac34acb8f889d771f))
+* **Imports:** Cantines: ajoute le colonne "groupe_id" ([#6273](https://github.com/betagouv/ma-cantine/issues/6273)) ([081283f](https://github.com/betagouv/ma-cantine/commit/081283f08dec3bbf5cf076f4addb14b6de548c66))
+* **Ressources:** ajout des supports de webinaire sur les cuisines centrales et satellites ([#6302](https://github.com/betagouv/ma-cantine/issues/6302)) ([f6b75bc](https://github.com/betagouv/ma-cantine/commit/f6b75bc089049b81ee8e3adba08fa4035e56d043))
+
+
+### Améliorations
+
+* **Admin:** Cantines: mettre les champs ville & code postal en lecture-seule (le code INSEE est le pivot) ([#6291](https://github.com/betagouv/ma-cantine/issues/6291)) ([e07b569](https://github.com/betagouv/ma-cantine/commit/e07b569a7e26c0f239e46e7d107768ae638b6ef9))
+* **Admin:** Cantines: ré-organiser les champs en groupes (fieldsets) ([#6294](https://github.com/betagouv/ma-cantine/issues/6294)) ([046feb3](https://github.com/betagouv/ma-cantine/commit/046feb3759142c2e0ad0cd589b2512403288b496))
+* **Admin:** donner une plus grande largeur aux checkbox ([#6292](https://github.com/betagouv/ma-cantine/issues/6292)) ([6c71d90](https://github.com/betagouv/ma-cantine/commit/6c71d909949ff01d2d408151b345e072a9094da5))
+
+
+### Corrections (bugs, typos...)
+
+* **Ressources:** mise à jour de la convention de délégation ([#6301](https://github.com/betagouv/ma-cantine/issues/6301)) ([ee1243d](https://github.com/betagouv/ma-cantine/commit/ee1243ddaeb22e0dfa1e3b9ee6d5abce223553dc))
+
+
+### Technique
+
+* **Cantines:** désactiver le géo bot "temps réel" quand on utilise la factory (tests) ([#6298](https://github.com/betagouv/ma-cantine/issues/6298)) ([2c65cf3](https://github.com/betagouv/ma-cantine/commit/2c65cf364ceec1d5619c271f772d756763432421))
+* **Historisations:** ajout de tests pour expliciter le fonctionnement actuel ([#6295](https://github.com/betagouv/ma-cantine/issues/6295)) ([c6371bf](https://github.com/betagouv/ma-cantine/commit/c6371bf355db74ead6522f2d8685a9873284671c))
+* **Import:** créer une classe "base" commune qui supprime le code dupliqué ([#6279](https://github.com/betagouv/ma-cantine/issues/6279)) ([5ff87f0](https://github.com/betagouv/ma-cantine/commit/5ff87f0ea3e5d0a990db321d18a5ae7bcabc02e5))
+* **Tests:** Cantines: utiliser skip_postgeneration_save pour éviter d'appeler 2x save dans la factory (qui utilise post_generation) ([#6297](https://github.com/betagouv/ma-cantine/issues/6297)) ([a24edb2](https://github.com/betagouv/ma-cantine/commit/a24edb2c5ac21f10ed1a3dc1d79ac4ab40a1098d))
+
 ## [2026.6.0](https://github.com/betagouv/ma-cantine/compare/v2026.5.0...v2026.6.0) (2026-01-26)
 
 
