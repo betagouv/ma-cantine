@@ -10,7 +10,6 @@ from django.utils import timezone
 
 from sib_api_v3_sdk.rest import ApiException
 import macantine.brevo as brevo
-from api.views.utils import update_change_reason
 from common.api.datagouv import (
     fetch_commune_pat_list,
     map_pat_list_to_communes_insee_code,
@@ -299,8 +298,8 @@ def fill_missing_geolocation_data_using_insee_code():
         update = _update_canteen_geo_data_from_insee_code(canteen)
         if update:
             # save
+            canteen._change_reason = "Données de localisation MAJ par bot, via code INSEE"
             canteen.save(skip_validations=True)
-            update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
             counter += 1
 
     result = f"Updated {counter}/{candidate_canteens.count()} canteens"
