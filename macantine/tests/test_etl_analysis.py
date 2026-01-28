@@ -31,7 +31,7 @@ class CanteenETLAnalysisTest(TestCase):
 
         etl.extract_dataset()
 
-        self.assertEqual(len(etl.df.id.unique()), 6)  # 1 is deleted
+        self.assertEqual(etl.len_dataset(), 6)  # 1 is deleted
         self.assertEqual(
             etl.get_dataset().iloc[0]["id"], self.canteen_site_created_earlier.id
         )  # Order by created date ascending
@@ -46,9 +46,7 @@ class CanteenETLAnalysisTest(TestCase):
 
         # Check the schema matching
         self.assertEqual(len(etl.df.columns), len(schema_cols))
-        self.assertEqual(
-            set(etl.df.columns), set(schema_cols), "The columns names should match the schema field names."
-        )
+        self.assertEqual(set(etl.df.columns), set(schema_cols))
 
         # Check the generated columns
         canteen_site = etl.df[etl.df.id == self.canteen_site.id].iloc[0]
