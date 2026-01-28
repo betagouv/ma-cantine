@@ -11,6 +11,109 @@ from common.api.datagouv import update_dataset_resources
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Sector, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
+from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
+
+
+@requests_mock.Mocker()
+class CanteenETLOpenDataTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        ETLCommonSetUpTestData(cls)
+
+    def test_canteen_extract(self, mock):
+        self.assertEqual(Canteen.all_objects.count(), 7)
+        self.assertEqual(Canteen.objects.count(), 6)  # 1 is deleted
+
+        etl = ETL_OPEN_DATA_CANTEEN()
+
+        self.assertEqual(etl.len_dataset(), 0)  # before extraction
+
+        etl.extract_dataset()
+
+        self.assertEqual(len(etl.df.id.unique()), 4)  # 1 is deleted, 2 are private (armee & groupe)
+        self.assertEqual(
+            etl.get_dataset().iloc[0]["id"], self.canteen_site_created_earlier.id
+        )  # Order by created date ascending
+
+    def test_canteen_transform(self, mock):
+        schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
+        schema_cols = [i["name"] for i in schema["fields"]]
+
+        mock.get(
+            "https://geo.api.gouv.fr/communes",
+            text=json.dumps([{"code": "38185", "codeEpci": "200040715"}]),
+            status_code=200,
+        )
+        mock.get(
+            "https://geo.api.gouv.fr/epcis?fields=nom,code",
+            text=json.dumps([{"nom": "Grenoble-Alpes-Métropole", "code": "200040715"}]),
+            status_code=200,
+        )
+
+        etl = ETL_OPEN_DATA_CANTEEN()
+        etl.extract_dataset()
+        etl.transform_dataset()
+
+        # Check the schema matching
+        self.assertEqual(len(etl.df.columns), len(schema_cols))
+
+        canteen_site = etl.df[etl.df.id == self.canteen_site.id].iloc[0]
+        self.assertEqual(canteen_site["epci"], "200040715")
+        self.assertEqual(canteen_site["epci_lib"], "Grenoble-Alpes-Métropole")
+        self.assertEqual(canteen_site["pat_list"], "1294,1295")
+        self.assertEqual(
+            canteen_site["pat_lib_list"],
+            "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
+        )
+        self.assertEqual(canteen_site["department"], "38")
+        self.assertEqual(canteen_site["department_lib"], "Isère")
+        self.assertEqual(canteen_site["region"], "84")
+        self.assertEqual(canteen_site["region_lib"], "Auvergne-Rhône-Alpes")
+        self.assertEqual(canteen_site["management_type"], "direct")
+        self.assertEqual(canteen_site["production_type"], "site")
+        self.assertEqual(canteen_site["economic_model"], "public")
+        self.assertEqual(canteen_site["sector_list"], "Hôpitaux,Crèche")
+        self.assertEqual(canteen_site["line_ministry"], None)
+        self.assertTrue(canteen_site["declaration_donnees_2022"])
+        self.assertFalse(canteen_site["declaration_donnees_2025"])
+        self.assertTrue(canteen_site["active_on_ma_cantine"])
+
+        canteen_site_without_manager = etl.df[etl.df.id == self.canteen_site_without_manager.id].iloc[0]
+        self.assertFalse(canteen_site_without_manager["active_on_ma_cantine"])
+
+        canteen_satellite = etl.df[etl.df.id == self.canteen_satellite.id].iloc[0]
+        self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
+
+    @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+    def test_canteen_load_dataset(self, mock):
+        # Making sure the code will not enter online dataset validation by forcing local filesystem management
+        test_cases = [
+            {
+                "name": " Load valid dataset",
+                "data": pd.DataFrame({"index": [0], "name": ["a valid name"]}),
+                "expected_length": 1,
+            },
+            {
+                "name": " Load valid dataset with special characters",
+                "data": pd.DataFrame({"index": [0], "name": ["a valid name with our csv sep ;"]}),
+                "expected_length": 1,
+            },
+        ]
+        etl = ETL_OPEN_DATA_CANTEEN()
+        etl.dataset_name += "_test"  # Avoid interferring with other files
+
+        for tc in test_cases:
+            etl.df = tc["data"]
+            etl.load_dataset()
+            with default_storage.open(f"open_data/{etl.dataset_name}.csv", "r") as csv_file:
+                output_dataframe = pd.read_csv(csv_file, sep=";")
+            self.assertEqual(tc["expected_length"], len(output_dataframe))
+
+            self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
+
+            # Cleaning files
+            for file_extension in ["csv", "xlsx"]:
+                default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")
 
 
 @requests_mock.Mocker()
@@ -133,71 +236,6 @@ class TestETLOpenData(TestCase):
             "The bio value is aggregated from bio fields and should be greater than 0",
         )
 
-    def test_canteen_extract(self, mock):
-        etl_canteen = ETL_OPEN_DATA_CANTEEN()
-        self.assertEqual(etl_canteen.len_dataset(), 0, "There shoud be an empty dataframe before extraction")
-
-        etl_canteen.extract_dataset()
-        self.assertEqual(len(etl_canteen.df.id.unique()), 3, "There should be three different canteens")
-        self.assertEqual(etl_canteen.get_dataset().iloc[0]["id"], self.canteen.id, "Order by created date ascending")
-
-        # Only non-deleted canteens should be extracted
-        self.canteen.delete()
-        etl_canteen.extract_dataset()
-        self.assertEqual(len(etl_canteen.df.id.unique()), 2, "There should be one canteen less after soft deletion")
-
-        self.canteen_central_without_manager.hard_delete()
-        etl_canteen = ETL_OPEN_DATA_CANTEEN()
-        etl_canteen.extract_dataset()
-        self.assertEqual(etl_canteen.len_dataset(), 1, "There should be one canteen less after hard deletion")
-
-    def test_canteen_transform(self, mock):
-        schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
-        schema_cols = [i["name"] for i in schema["fields"]]
-
-        mock.get(
-            "https://geo.api.gouv.fr/communes",
-            text=json.dumps([{"code": "38185", "codeEpci": "200040715"}]),
-            status_code=200,
-        )
-        mock.get(
-            "https://geo.api.gouv.fr/epcis?fields=nom,code",
-            text=json.dumps([{"nom": "Grenoble-Alpes-Métropole", "code": "200040715"}]),
-            status_code=200,
-        )
-
-        etl_canteen = ETL_OPEN_DATA_CANTEEN()
-
-        etl_canteen.extract_dataset()
-        etl_canteen.transform_dataset()
-        canteens = etl_canteen.get_dataset()
-
-        # Check the schema matching
-        self.assertEqual(len(canteens.columns), len(schema_cols), "The columns should match the schema.")
-
-        canteen = canteens[canteens.id == self.canteen.id].iloc[0]
-        self.assertEqual(canteen["epci"], "200040715")
-        self.assertEqual(canteen["epci_lib"], "Grenoble-Alpes-Métropole")
-        self.assertEqual(canteen["pat_list"], "1294,1295")
-        self.assertEqual(
-            canteen["pat_lib_list"],
-            "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
-        )
-        self.assertEqual(canteen["line_ministry"], "Agriculture, Alimentation et Forêts")
-        self.assertEqual(canteen["management_type"], "direct")
-        self.assertEqual(canteen["production_type"], "site")
-        self.assertEqual(canteen["economic_model"], "public")
-        self.assertEqual(canteen["sector_list"], "Ecole primaire (maternelle et élémentaire),Secondaire collège")
-        self.assertTrue(canteen["declaration_donnees_2022"])
-        self.assertFalse(canteen["declaration_donnees_2023"])
-        self.assertTrue(canteen["declaration_donnees_2024"])
-        self.assertTrue(canteen["active_on_ma_cantine"])
-
-        canteen_central_without_manager = canteens[canteens.id == self.canteen_central_without_manager.id].iloc[0]
-        self.assertEqual(canteen_central_without_manager["line_ministry"], None)
-        self.assertEqual(canteen_central_without_manager["sector_list"], "")
-        self.assertFalse(canteen_central_without_manager["active_on_ma_cantine"])
-
     @freeze_time("2023-05-14")  # during the 2022 campaign
     def test_update_ressource(self, mock):
         dataset_id = "expected_dataset_id"
@@ -260,34 +298,3 @@ class TestETLOpenData(TestCase):
         # with dataset_id
         number_of_updated_resources = update_dataset_resources(dataset_id)
         self.assertEqual(number_of_updated_resources, 1, "Only the csv resource should be updated")
-
-    @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
-    def test_canteen_load_dataset(self, mock):
-        # Making sure the code will not enter online dataset validation by forcing local filesystem management
-        test_cases = [
-            {
-                "name": " Load valid dataset",
-                "data": pd.DataFrame({"index": [0], "name": ["a valid name"]}),
-                "expected_length": 1,
-            },
-            {
-                "name": " Load valid dataset with special characters",
-                "data": pd.DataFrame({"index": [0], "name": ["a valid name with our csv sep ;"]}),
-                "expected_length": 1,
-            },
-        ]
-        etl = ETL_OPEN_DATA_CANTEEN()
-        etl.dataset_name += "_test"  # Avoid interferring with other files
-
-        for tc in test_cases:
-            etl.df = tc["data"]
-            etl.load_dataset()
-            with default_storage.open(f"open_data/{etl.dataset_name}.csv", "r") as csv_file:
-                output_dataframe = pd.read_csv(csv_file, sep=";")
-            self.assertEqual(tc["expected_length"], len(output_dataframe))
-
-            self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
-
-            # Cleaning files
-            for file_extension in ["csv", "xlsx"]:
-                default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")
