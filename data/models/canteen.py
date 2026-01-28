@@ -789,9 +789,14 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
 
     @property
     def has_missing_geo_data(self) -> bool:
+        """
+        returns True if at least one geo field is missing
+        Note: not all city_insee_code belong to a PAT. We don't manage these cases yet
+        """
         for field_name in self.GEO_FIELDS:
             if not getattr(self, field_name):
                 return True
+        return False
 
     def _is_filled(self) -> bool:
         # basic rules
