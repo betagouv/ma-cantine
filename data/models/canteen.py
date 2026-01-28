@@ -787,6 +787,12 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def can_be_claimed(self):
         return not self.managers.exists()
 
+    @property
+    def has_missing_geo_data(self) -> bool:
+        for field_name in self.GEO_FIELDS:
+            if not getattr(self, field_name):
+                return True
+
     def _is_filled(self) -> bool:
         # basic rules
         is_filled = (
