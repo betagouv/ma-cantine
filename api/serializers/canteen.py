@@ -634,6 +634,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
             "type_production",
             "nombre_satellites",
             "siret_cuisine_centrale",
+            "groupe_id",
             "ministere_tutelle",
             "spe",
             "secteur",
