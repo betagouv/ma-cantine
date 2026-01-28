@@ -1,3 +1,6 @@
+import requests_mock
+
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase, TransactionTestCase
@@ -7,6 +10,9 @@ from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, U
 from data.models import Canteen, Diagnostic, Sector, SectorCategory, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region
+from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
+from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
+from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 
 
 class CanteenModelSaveTest(TransactionTestCase):
@@ -454,18 +460,6 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(creation_source=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, creation_source=VALUE_NOT_OK)
 
-    def test_canteen_reset_geo_fields_when_siret_change_on_save(self):
-        canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
-        self.assertEqual(canteen.city_insee_code, "34172")
-
-        canteen.siret = "21380185500015"
-        canteen.save()
-
-        self.assertEqual(canteen.city_insee_code, None)
-        self.assertEqual(canteen.department, None)
-        self.assertEqual(canteen.region, None)
-        # geobot will run again
-
     def test_canteen_skip_validations_on_save(self):
         canteen = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
         canteen.siret = None
@@ -491,19 +485,127 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertFalse(canteen.is_dirty())
         self.assertEqual(canteen.get_dirty_fields(), {})
 
-    def test_update_geo_fields_on_save(self):
-        # CanteenFactory skips the post_save signal
-        # so we need to call save() to trigger the signal
-        canteen = CanteenFactory.build(
-            siret="21340172201787", city_insee_code=None, city=None, department=None, region=None
-        )
-        canteen.save()
-        canteen.refresh_from_db()
 
+class CanteenModelPostSaveTest(TestCase):
+    def setUp(self):
+        cache.clear()  # clear cache before each test
+
+    @requests_mock.Mocker()
+    def test_update_geo_fields_on_create_with_siret(self, mock):
+        siret = "92341284500011"
+
+        # mock external API calls
+        mock_fetch_geo_data_from_siret(mock, siret)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        # build canteen (without saving)
+        # CanteenFactory skips the post_save signal
+        # so we need to call save() manually to trigger the signal
+        canteen = CanteenFactory.build(siret=siret, city_insee_code=None, city=None, department=None, region=None)
+        self.assertEqual(canteen.city_insee_code, None)
+        self.assertEqual(canteen.city, None)
+        self.assertEqual(canteen.department, None)
+        self.assertEqual(canteen.region, None)
+
+        # create canteen (triggers post_save signal)
+        # geo data will be fetched
+        canteen.save()
+
+        self.assertEqual(mock.call_count, 5)
+        self.assertEqual(canteen.city_insee_code, "59512")
+        self.assertEqual(canteen.city, "Roubaix")
+        self.assertEqual(canteen.department, "59")
+        self.assertEqual(canteen.region, "32")
+
+    @requests_mock.Mocker()
+    def test_no_update_geo_fields_on_create_with_siret_unknown(self, mock):
+        siret = "75665621899905"
+
+        # mock external API calls
+        mock_fetch_geo_data_from_siret(mock, siret, success=False)
+
+        # build canteen (without saving)
+        # CanteenFactory skips the post_save signal
+        # so we need to call save() manually to trigger the signal
+        canteen = CanteenFactory.build(siret=siret, city_insee_code=None, city=None, department=None, region=None)
+        self.assertEqual(canteen.city_insee_code, None)
+        self.assertEqual(canteen.city, None)
+        self.assertEqual(canteen.department, None)
+        self.assertEqual(canteen.region, None)
+
+        # create canteen (triggers post_save signal)
+        # geo data will be fetched
+        canteen.save()
+
+        self.assertEqual(mock.call_count, 1)
+        self.assertEqual(canteen.city_insee_code, None)
+        self.assertEqual(canteen.city, None)
+        self.assertEqual(canteen.department, None)
+        self.assertEqual(canteen.region, None)
+
+    @requests_mock.Mocker()
+    def test_update_geo_fields_on_update(self, mock):
+        siret = "92341284500011"
+
+        # mock external API calls
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        # create canteen with some geo fields already set
+        # CanteenFactory skips the post_save signal
+        canteen = CanteenFactory(siret=siret, city_insee_code="59512", city=None, department=None, region=None)
+        self.assertEqual(canteen.city_insee_code, "59512")
+        self.assertEqual(canteen.city, None)
+        self.assertEqual(canteen.department, None)
+        self.assertEqual(canteen.region, None)
+
+        # update canteen (triggers post_save signal)
+        # geo data will be fetched
+        canteen.save()
+
+        self.assertEqual(mock.call_count, 4)
+        self.assertEqual(canteen.city_insee_code, "59512")  # was already set
+        self.assertEqual(canteen.city, "Roubaix")
+        self.assertEqual(canteen.department, "59")
+        self.assertEqual(canteen.region, "32")
+
+    @requests_mock.Mocker()
+    def test_canteen_reset_geo_fields_when_siret_change_on_save(self, mock):
+        siret_old = "21340172201787"
+        siret_new = "92341284500011"
+
+        # mock external API calls
+        mock_fetch_geo_data_from_siret(mock, siret_new)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        canteen = CanteenFactory(
+            siret=siret_old, city_insee_code="34172", city="Montpellier", department="34", region="76"
+        )
+        # canteen.save()
         self.assertEqual(canteen.city_insee_code, "34172")
         self.assertEqual(canteen.city, "Montpellier")
         self.assertEqual(canteen.department, "34")
         self.assertEqual(canteen.region, "76")
+
+        # set new siret
+        canteen.siret = siret_new
+        # update canteen (triggers post_save signal)
+        # geo data will be fetched
+        canteen.save()
+
+        self.assertEqual(mock.call_count, 5)
+        self.assertEqual(canteen.city_insee_code, "59512")
+        self.assertEqual(canteen.city, "Roubaix")
+        self.assertEqual(canteen.department, "59")
+        self.assertEqual(canteen.region, "32")
 
 
 class CanteenModelDeleteTest(TestCase):
