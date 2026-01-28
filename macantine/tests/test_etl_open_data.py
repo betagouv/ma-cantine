@@ -63,7 +63,7 @@ class CanteenETLOpenDataTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.ADMINISTRATION_PRISON],
-            line_ministry=Canteen.Ministries.AGRICULTURE,
+            line_ministry=Canteen.Ministries.ARMEE,
         )
         cls.canteen_groupe = CanteenFactory(
             production_type=Canteen.ProductionType.GROUPE,
@@ -84,7 +84,7 @@ class CanteenETLOpenDataTest(TestCase):
 
         etl.extract_dataset()
 
-        self.assertEqual(len(etl.df.id.unique()), 5)  # 1 is deleted & 1 is private
+        self.assertEqual(len(etl.df.id.unique()), 4)  # 1 is deleted, 2 are private (armee & groupe)
         self.assertEqual(
             etl.get_dataset().iloc[0]["id"], self.canteen_site_created_earlier.id
         )  # Order by created date ascending

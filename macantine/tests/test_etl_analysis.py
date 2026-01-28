@@ -63,7 +63,7 @@ class CanteenETLAnalysisTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.ADMINISTRATION_PRISON],
-            line_ministry=Canteen.Ministries.AGRICULTURE,
+            line_ministry=Canteen.Ministries.ARMEE,
         )
         cls.canteen_groupe = CanteenFactory(
             production_type=Canteen.ProductionType.GROUPE,
@@ -130,7 +130,7 @@ class CanteenETLAnalysisTest(TestCase):
         canteen_site_armee = etl.df[etl.df.id == self.canteen_site_armee.id].iloc[0]
         self.assertEqual(canteen_site_armee["secteur"], "Restaurants des prisons")
         self.assertEqual(canteen_site_armee["categorie"], "Administration")
-        self.assertEqual(canteen_site_armee["ministere_tutelle"], "Agriculture, Alimentation et Forêts")
+        self.assertEqual(canteen_site_armee["ministere_tutelle"], "Armées")
         self.assertEqual(canteen_site_armee["spe"], "Oui")  # because line_ministry is set
 
         canteen_site_without_manager = etl.df[etl.df.id == self.canteen_site_without_manager.id].iloc[0]
