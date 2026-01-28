@@ -8,8 +8,7 @@ from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
 from common.api.datagouv import update_dataset_resources
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Sector, Diagnostic
+from data.models import Canteen, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 
@@ -30,9 +29,9 @@ class CanteenETLOpenDataTest(TestCase):
 
         etl.extract_dataset()
 
-        self.assertEqual(len(etl.df.id.unique()), 4)  # 1 is deleted, 2 are private (armee & groupe)
+        self.assertEqual(etl.len_dataset(), 4)  # 1 is deleted, 2 are private (armee & groupe)
         self.assertEqual(
-            etl.get_dataset().iloc[0]["id"], self.canteen_site_created_earlier.id
+            etl.get_dataset().iloc[0]["id"], self.canteen_site_earlier.id
         )  # Order by created date ascending
 
     def test_canteen_transform(self, mock):
@@ -147,7 +146,9 @@ class CanteenETLOpenDataTest(TestCase):
 
         # Check the schema matching
         self.assertEqual(len(etl.df.columns), len(schema_cols))
+        self.assertEqual(set(etl.df.columns), set(schema_cols))
 
+        # Check the generated columns
         canteen_site = etl.df[etl.df.id == self.canteen_site.id].iloc[0]
         self.assertEqual(canteen_site["epci"], "200040715")
         self.assertEqual(canteen_site["epci_lib"], "Grenoble-Alpes-Métropole")
@@ -211,84 +212,35 @@ class CanteenETLOpenDataTest(TestCase):
 class TestETLOpenData(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user_manager = UserFactory()
-        cls.canteen = CanteenFactory(
-            name="Cantine",
-            siret="19382111300027",
-            city_insee_code="38185",
-            epci="200040715",
-            epci_lib="Grenoble-Alpes-Métropole",
-            pat_list=["1294", "1295"],
-            pat_lib_list=[
-                "PAT du Département de l'Isère",
-                "Projet Alimentaire inter Territorial de la Grande région grenobloise",
-            ],
-            department="38",
-            department_lib="Isère",
-            region="84",
-            region_lib="Auvergne-Rhône-Alpes",
-            sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.EDUCATION_SECONDAIRE_COLLEGE],
-            line_ministry=Canteen.Ministries.AGRICULTURE,
-            management_type=Canteen.ManagementType.DIRECT,
-            production_type=Canteen.ProductionType.ON_SITE,
-            economic_model=Canteen.EconomicModel.PUBLIC,
-            managers=[cls.user_manager],
-            declaration_donnees_2022=True,
-            declaration_donnees_2023=False,
-            declaration_donnees_2024=True,
-        )
-        cls.canteen_2 = CanteenFactory(
-            name="Cantine 2",
-            siret="19382111300035",
-            managers=[cls.user_manager],
-            declaration_donnees_2022=True,
-        )
-        with freeze_time("2023-05-14"):  # during the 2022 campaign
-            diagnostic = DiagnosticFactory(
-                canteen=cls.canteen, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            )
-            diagnostic_2 = DiagnosticFactory(
-                canteen=cls.canteen_2, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            )
-            diagnostic_2.teledeclare(cls.user_manager)
-        with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
-            diagnostic.teledeclare(cls.user_manager)
-        with freeze_time("2024-04-01"):  # during the 2023 campaign
-            diagnostic = DiagnosticFactory(
-                canteen=cls.canteen, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            )
-            diagnostic.teledeclare(cls.user_manager)
-            diagnostic.cancel()  # will not appear in the exports
-        with freeze_time("2025-04-20"):  # after the 2024 campaign
-            diagnostic = DiagnosticFactory(
-                canteen=cls.canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            )
-            diagnostic.teledeclare(cls.user_manager)
-
-        cls.canteen_central_without_manager = CanteenFactory(
-            siret="21590350100017", sector_list=[], production_type=Canteen.ProductionType.CENTRAL
-        )
-        cls.canteen_central_without_manager.managers.clear()
+        ETLCommonSetUpTestData(cls, with_diagnostics=True)
 
     def test_teledeclaration_extract(self, mock):
-        # Only teledeclarations that occurred during one specific teledeclaration campaign should be extracted
+        # 2022: 3 teledeclarations (1 is hidden (groupe))
         etl_td_2022 = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
         etl_td_2022.extract_dataset()
-        self.assertEqual(etl_td_2022.len_dataset(), 2, "2 TDs in the 2022 campaign")
-        self.assertEqual(
-            etl_td_2022.get_dataset().iloc[0]["canteen_id"],
-            self.canteen_2.id,
-            "Order by teledeclaration date ascending",
-        )
 
-        # Only non-cancelled teledeclarations should be extracted
+        self.assertEqual(Diagnostic.objects.filter(year=2022).count(), 3)
+        self.assertEqual(Diagnostic.objects.filter(year=2022).teledeclared().count(), 3)
+        self.assertEqual(etl_td_2022.len_dataset(), 2)
+        self.assertEqual(
+            etl_td_2022.df.iloc[0]["canteen_id"], self.canteen_site_earlier.id
+        )  # Order by teledeclaration date ascending
+
+        # 2023: 0 teledeclarations (1 is cancelled, 1 is hidden (armee))
         etl_td_2023 = ETL_OPEN_DATA_TELEDECLARATIONS(2023)
         etl_td_2023.extract_dataset()
-        self.assertEqual(etl_td_2023.len_dataset(), 0, "The only TD in the 2023 campaign has the CANCELLED status")
 
+        self.assertEqual(Diagnostic.objects.filter(year=2023).count(), 2)
+        self.assertEqual(Diagnostic.objects.filter(year=2023).teledeclared().count(), 1)
+        self.assertEqual(etl_td_2023.len_dataset(), 0)
+
+        # 2024: 1 teledeclaration
         etl_td_2024 = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
         etl_td_2024.extract_dataset()
-        self.assertEqual(etl_td_2024.len_dataset(), 1, "Only 1 TD in the 2024 campaign")
+
+        self.assertEqual(Diagnostic.objects.filter(year=2024).count(), 1)
+        self.assertEqual(Diagnostic.objects.filter(year=2024).teledeclared().count(), 1)
+        self.assertEqual(etl_td_2024.len_dataset(), 1)
 
     def test_teledeclaration_transform(self, mock):
         mock.get(
@@ -305,24 +257,25 @@ class TestETLOpenData(TestCase):
         schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
 
-        etl_td = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
-        etl_td.extract_dataset()
-        etl_td.transform_dataset()
+        etl_td_2024 = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
+        etl_td_2024.extract_dataset()
+        etl_td_2024.transform_dataset()
 
-        self.assertEqual(len(etl_td.get_dataset().columns), len(schema_cols), "The columns should match the schema")
-        self.assertEqual(etl_td.len_dataset(), 1, "Only 1 TD in the 2024 campaign")
-        self.assertEqual(etl_td.get_dataset().iloc[0]["applicant_id"], self.user_manager.id)
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_siret"], "19382111300027")
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_name"], "Cantine")
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_central_kitchen_siret"], None)
-        self.assertEqual(str(etl_td.get_dataset().iloc[0]["canteen_satellite_canteens_count"]), "<NA>")
-        self.assertEqual(
-            etl_td.get_dataset().iloc[0]["canteen_sector_list"],
-            "Ecole primaire (maternelle et élémentaire),Secondaire collège",
-        )
-        self.assertEqual(etl_td.get_dataset().iloc[0]["canteen_line_ministry"], "Agriculture, Alimentation et Forêts")
+        # Check the schema matching
+        self.assertEqual(len(etl_td_2024.df.columns), len(schema_cols))
+        self.assertEqual(set(etl_td_2024.df.columns), set(schema_cols))
+        self.assertEqual(etl_td_2024.len_dataset(), 1)
+
+        canteen_site_diagnostic_2024 = etl_td_2024.df[etl_td_2024.df.canteen_id == self.canteen_site.id].iloc[0]
+        self.assertEqual(canteen_site_diagnostic_2024["applicant_id"], self.canteen_site_manager_1.id)
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_siret"], "21380185500015")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_name"], "Cantine")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_central_kitchen_siret"], None)
+        self.assertEqual(str(canteen_site_diagnostic_2024["canteen_satellite_canteens_count"]), "<NA>")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_sector_list"], "Hôpitaux,Crèche")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_line_ministry"], None)
         self.assertGreater(
-            etl_td.get_dataset().iloc[0]["teledeclaration_ratio_bio"],
+            canteen_site_diagnostic_2024["teledeclaration_ratio_bio"],
             0,
             "The bio value is aggregated from bio fields and should be greater than 0",
         )
