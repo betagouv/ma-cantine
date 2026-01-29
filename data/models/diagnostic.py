@@ -1664,12 +1664,21 @@ class Diagnostic(models.Model):
 
     @property
     def diversification_badge(self) -> bool | None:
+        from data.models import Sector
+
         has_daily_frequency = self.vegetarian_weekly_recurrence == Diagnostic.VegetarianMenuFrequency.DAILY
         has_weekly_or_more_frequency = self.vegetarian_weekly_recurrence in [
             Diagnostic.VegetarianMenuFrequency.DAILY,
             Diagnostic.VegetarianMenuFrequency.MID,
             Diagnostic.VegetarianMenuFrequency.HIGH,
         ]
+        # For canteens sector "Creche" badge is not applicable
+        if (
+            self.canteen.sector_list
+            and len(self.canteen.sector_list) == 1
+            and Sector.SOCIAL_CRECHE in self.canteen.sector_list
+        ):
+            return True
         # Only the canteens with more than 200 daily meals with a diversification plan
         if self.canteen.daily_meal_count and self.canteen.daily_meal_count >= 200 and self.has_diversification_plan:
             return True
