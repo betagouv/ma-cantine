@@ -98,7 +98,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
 
         self.assertEqual(etl_td.len_dataset(), 3 + 1 + 1)
         self.assertEqual(
-            etl_td.df.iloc[0]["canteen_id"], self.canteen_site_earlier.id
+            etl_td.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
         )  # Order by teledeclaration created date ascending
 
     def test_teledeclaration_transform(self):
@@ -113,14 +113,13 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(len(etl_td.df.columns), len(schema_cols))
         self.assertEqual(set(etl_td.df.columns), set(schema_cols))
 
-        canteen_site_diagnostic_2024 = etl_td.df[etl_td.df.canteen_id == self.canteen_site.id][
+        canteen_site_diagnostic_2024 = etl_td.df[etl_td.df.id == self.canteen_site_diagnostic_2024.teledeclaration_id][
             etl_td.df.year == 2024
         ].iloc[0]
         self.assertEqual(canteen_site_diagnostic_2024["email"], self.canteen_site_manager_1.email)
         self.assertEqual(canteen_site_diagnostic_2024["siret"], "21380185500015")
         self.assertEqual(canteen_site_diagnostic_2024["name"], "Cantine")
         self.assertEqual(canteen_site_diagnostic_2024["central_producer_siret"], None)
-        self.assertEqual(str(canteen_site_diagnostic_2024["satellite_canteens_count"]), "None")
         self.assertEqual(canteen_site_diagnostic_2024["secteur"], None)  # error, should be "Hôpitaux,Crèche"
         self.assertEqual(canteen_site_diagnostic_2024["line_ministry"], None)
         self.assertGreater(

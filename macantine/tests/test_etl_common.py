@@ -71,27 +71,31 @@ def setUpTestData(cls, with_diagnostics=False):
 
     if with_diagnostics:
         with freeze_time("2023-05-14"):  # during the 2022 campaign
-            canteen_site_diagnostic_2022 = DiagnosticFactory(
+            cls.canteen_site_diagnostic_2022 = DiagnosticFactory(
                 canteen=cls.canteen_site, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
-            DiagnosticFactory(
+            cls.canteen_site_earlier_diagnostic_2022 = DiagnosticFactory(
                 canteen=cls.canteen_site_earlier, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            ).teledeclare(cls.canteen_site_manager_2)
-            DiagnosticFactory(
+            )
+            cls.canteen_site_earlier_diagnostic_2022.teledeclare(cls.canteen_site_manager_2)
+            cls.canteen_groupe_diagnostic_2022 = DiagnosticFactory(
                 canteen=cls.canteen_groupe, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            ).teledeclare(cls.canteen_groupe_manager)
+            )
+            cls.canteen_groupe_diagnostic_2022.teledeclare(cls.canteen_groupe_manager)
         with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
-            canteen_site_diagnostic_2022.teledeclare(cls.canteen_site_manager_1)
+            cls.canteen_site_diagnostic_2022.teledeclare(cls.canteen_site_manager_1)
         with freeze_time("2024-04-01"):  # during the 2023 campaign
-            canteen_site_diagnostic_2023 = DiagnosticFactory(
+            cls.canteen_site_diagnostic_2023 = DiagnosticFactory(
                 canteen=cls.canteen_site, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
-            canteen_site_diagnostic_2023.teledeclare(cls.canteen_site_manager_1)
-            canteen_site_diagnostic_2023.cancel()  # will not appear in the exports
-            DiagnosticFactory(
+            cls.canteen_site_diagnostic_2023.teledeclare(cls.canteen_site_manager_1)
+            cls.canteen_site_diagnostic_2023.cancel()  # will not appear in the exports
+            cls.canteen_site_armee_diagnostic_2023 = DiagnosticFactory(
                 canteen=cls.canteen_site_armee, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            ).teledeclare(cls.canteen_site_manager_2)
+            )
+            cls.canteen_site_armee_diagnostic_2023.teledeclare(cls.canteen_site_manager_2)
         with freeze_time("2025-04-20"):  # during the 2024 correction campaign
-            DiagnosticFactory(
+            cls.canteen_site_diagnostic_2024 = DiagnosticFactory(
                 canteen=cls.canteen_site, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            ).teledeclare(cls.canteen_site_manager_1)
+            )
+            cls.canteen_site_diagnostic_2024.teledeclare(cls.canteen_site_manager_1)

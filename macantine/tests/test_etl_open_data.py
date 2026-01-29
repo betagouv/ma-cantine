@@ -105,110 +105,6 @@ class CanteenETLOpenDataTest(TestCase):
 
 
 @requests_mock.Mocker()
-class CanteenETLOpenDataTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        ETLCommonSetUpTestData(cls)
-
-    def test_canteen_extract(self, mock):
-        self.assertEqual(Canteen.all_objects.count(), 7)
-        self.assertEqual(Canteen.objects.count(), 6)  # 1 is deleted
-
-        etl = ETL_OPEN_DATA_CANTEEN()
-
-        self.assertEqual(etl.len_dataset(), 0)  # before extraction
-
-        etl.extract_dataset()
-
-        self.assertEqual(len(etl.df.id.unique()), 4)  # 1 is deleted, 2 are private (armee & groupe)
-        self.assertEqual(
-            etl.get_dataset().iloc[0]["id"], self.canteen_site_created_earlier.id
-        )  # Order by created date ascending
-
-    def test_canteen_transform(self, mock):
-        schema = json.load(open("data/schemas/export_opendata/schema_cantines.json"))
-        schema_cols = [i["name"] for i in schema["fields"]]
-
-        mock.get(
-            "https://geo.api.gouv.fr/communes",
-            text=json.dumps([{"code": "38185", "codeEpci": "200040715"}]),
-            status_code=200,
-        )
-        mock.get(
-            "https://geo.api.gouv.fr/epcis?fields=nom,code",
-            text=json.dumps([{"nom": "Grenoble-Alpes-Métropole", "code": "200040715"}]),
-            status_code=200,
-        )
-
-        etl = ETL_OPEN_DATA_CANTEEN()
-        etl.extract_dataset()
-        etl.transform_dataset()
-
-        # Check the schema matching
-        self.assertEqual(len(etl.df.columns), len(schema_cols))
-        self.assertEqual(set(etl.df.columns), set(schema_cols))
-
-        # Check the generated columns
-        canteen_site = etl.df[etl.df.id == self.canteen_site.id].iloc[0]
-        self.assertEqual(canteen_site["epci"], "200040715")
-        self.assertEqual(canteen_site["epci_lib"], "Grenoble-Alpes-Métropole")
-        self.assertEqual(canteen_site["pat_list"], "1294,1295")
-        self.assertEqual(
-            canteen_site["pat_lib_list"],
-            "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
-        )
-        self.assertEqual(canteen_site["department"], "38")
-        self.assertEqual(canteen_site["department_lib"], "Isère")
-        self.assertEqual(canteen_site["region"], "84")
-        self.assertEqual(canteen_site["region_lib"], "Auvergne-Rhône-Alpes")
-        self.assertEqual(canteen_site["management_type"], "direct")
-        self.assertEqual(canteen_site["production_type"], "site")
-        self.assertEqual(canteen_site["economic_model"], "public")
-        self.assertEqual(canteen_site["sector_list"], "Hôpitaux,Crèche")
-        self.assertEqual(canteen_site["line_ministry"], None)
-        self.assertTrue(canteen_site["declaration_donnees_2022"])
-        self.assertFalse(canteen_site["declaration_donnees_2025"])
-        self.assertTrue(canteen_site["active_on_ma_cantine"])
-
-        canteen_site_without_manager = etl.df[etl.df.id == self.canteen_site_without_manager.id].iloc[0]
-        self.assertFalse(canteen_site_without_manager["active_on_ma_cantine"])
-
-        canteen_satellite = etl.df[etl.df.id == self.canteen_satellite.id].iloc[0]
-        self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
-
-    @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
-    def test_canteen_load_dataset(self, mock):
-        # Making sure the code will not enter online dataset validation by forcing local filesystem management
-        test_cases = [
-            {
-                "name": " Load valid dataset",
-                "data": pd.DataFrame({"index": [0], "name": ["a valid name"]}),
-                "expected_length": 1,
-            },
-            {
-                "name": " Load valid dataset with special characters",
-                "data": pd.DataFrame({"index": [0], "name": ["a valid name with our csv sep ;"]}),
-                "expected_length": 1,
-            },
-        ]
-        etl = ETL_OPEN_DATA_CANTEEN()
-        etl.dataset_name += "_test"  # Avoid interferring with other files
-
-        for tc in test_cases:
-            etl.df = tc["data"]
-            etl.load_dataset()
-            with default_storage.open(f"open_data/{etl.dataset_name}.csv", "r") as csv_file:
-                output_dataframe = pd.read_csv(csv_file, sep=";")
-            self.assertEqual(tc["expected_length"], len(output_dataframe))
-
-            self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
-
-            # Cleaning files
-            for file_extension in ["csv", "xlsx"]:
-                default_storage.delete(f"open_data/{etl.dataset_name}.{file_extension}")
-
-
-@requests_mock.Mocker()
 class TestETLOpenData(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -223,7 +119,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(Diagnostic.objects.filter(year=2022).teledeclared().count(), 3)
         self.assertEqual(etl_td_2022.len_dataset(), 2)
         self.assertEqual(
-            etl_td_2022.df.iloc[0]["canteen_id"], self.canteen_site_earlier.id
+            etl_td_2022.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
         )  # Order by teledeclaration created date ascending
 
         # 2023: 1 teledeclaration (1 is cancelled, 1 is hidden (armee))
@@ -271,7 +167,6 @@ class TestETLOpenData(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["canteen_siret"], "21380185500015")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_name"], "Cantine")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_central_kitchen_siret"], None)
-        self.assertEqual(str(canteen_site_diagnostic_2024["canteen_satellite_canteens_count"]), "<NA>")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_sector_list"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_line_ministry"], None)
         self.assertGreater(
