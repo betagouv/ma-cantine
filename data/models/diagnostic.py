@@ -1611,15 +1611,15 @@ class Diagnostic(models.Model):
 
     @property
     def canteen_snapshot_sector_list_display(self):
-        from data.models import Sector
+        from data.models.sector import get_sector_label_list_from_sector_list
 
         if self.canteen_snapshot:
             if "sector_list" in self.canteen_snapshot:
                 if len(self.canteen_snapshot["sector_list"]) > 0:
-                    return ", ".join([Sector(sector).label for sector in self.canteen_snapshot["sector_list"]])
+                    return ",".join(get_sector_label_list_from_sector_list(self.canteen_snapshot["sector_list"]))
             elif "sectors" in self.canteen_snapshot:
                 if len(self.canteen_snapshot["sectors"]) > 0:
-                    return ", ".join([x["name"] for x in (self.canteen_snapshot.get("sectors") or [])])
+                    return ",".join([x["name"] for x in (self.canteen_snapshot.get("sectors") or [])])
         return None
 
     @property

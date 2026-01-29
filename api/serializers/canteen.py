@@ -4,7 +4,7 @@ import os
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from data.models import Canteen, CanteenImage, Sector, SectorM2M
+from data.models import Canteen, CanteenImage, SectorM2M
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -595,7 +595,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
     siret_cuisine_centrale = serializers.CharField(source="central_producer_siret")
     ministere_tutelle = serializers.SerializerMethodField()
     spe = serializers.SerializerMethodField()
-    secteur = serializers.SerializerMethodField()
+    secteur = serializers.CharField(source="sector_list_display", read_only=True)  # property
     categorie = serializers.SerializerMethodField()
     date_creation = serializers.DateTimeField(source="creation_date")
     date_modification = serializers.DateTimeField(source="modification_date")
@@ -669,9 +669,6 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
     def get_spe(self, obj):
         return "Oui" if obj.is_spe else "Non"
 
-    def get_secteur(self, obj):
-        return ",".join([Sector(sector).label for sector in obj.sector_list])
-
     def get_categorie(self, obj):
         return ",".join([category.label for category in obj.category_list_from_sector_list])
 
@@ -682,7 +679,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
 
 class CanteenOpenDataSerializer(serializers.ModelSerializer):
     logo = serializers.SerializerMethodField(read_only=True)
-    sector_list = serializers.SerializerMethodField(source="sector_list", read_only=True)
+    sector_list = serializers.CharField(source="sector_list_display", read_only=True)  # property
     active_on_ma_cantine = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -730,9 +727,6 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
         if obj.logo:
             return f"{bucket_url}/{bucket_name}/media/{obj.logo}"
         return ""
-
-    def get_sector_list(self, obj):
-        return [Sector(sector).label for sector in obj.sector_list]
 
     def get_active_on_ma_cantine(self, obj):
         return obj.managers.exists()

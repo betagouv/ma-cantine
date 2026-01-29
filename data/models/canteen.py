@@ -773,6 +773,12 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             return self.groupe.diagnostics.filter(central_kitchen_diagnostic_mode__isnull=False)
 
     @property
+    def sector_list_display(self):
+        from data.models.sector import get_sector_label_list_from_sector_list
+
+        return ",".join(get_sector_label_list_from_sector_list(self.sector_list))
+
+    @property
     def category_list_from_sector_list(self):
         from data.models.sector import get_sector_category_from_sector
 

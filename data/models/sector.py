@@ -121,6 +121,10 @@ SECTOR_HAS_LINE_MINISTRY_LIST = [
 ]
 
 
+def get_sector_label_list_from_sector_list(sector_list: list[str]) -> list[str]:
+    return [Sector(sector).label for sector in (sector_list or []) if sector in Sector.values]
+
+
 def get_sector_category_from_sector(sector: str) -> str:
     if sector in ADMINISTRATION_SECTOR_LIST:
         return SectorCategory.ADMINISTRATION
