@@ -188,11 +188,22 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         sectors = obj.canteen_snapshot.get("sectors", None)
         if sectors:
             return extract_sector_from_dict_sectors(sectors)
+        else:
+            sectors = obj.canteen_snapshot.get("sector_list", None)
+            if sectors:
+                return ",".join([Sector(sector).label for sector in sectors])
 
     def get_categorie(self, obj):
-        categories = obj.canteen_snapshot.get("sectors", None)
-        if categories:
-            return extract_category_from_dict_sectors(categories)
+        from data.models.sector import get_sector_category_from_sector
+
+        sectors = obj.canteen_snapshot.get("sectors", None)
+        if sectors:
+            return extract_category_from_dict_sectors(sectors)
+        else:
+            sectors = obj.canteen_snapshot.get("sector_list", None)
+            if sectors:
+                category_list = [get_sector_category_from_sector(sector).label for sector in sectors]
+                return list(set(category_list))
 
     def get_lib_departement(self, obj):
         department = obj.canteen_snapshot.get("department", None)
