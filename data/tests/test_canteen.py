@@ -1185,6 +1185,104 @@ class CanteenAggregateQuerySetTest(TestCase):
 
 
 class CanteenModelPropertiesTest(TestCase):
+    def test_canteen_has_missing_geo_data_property(self):
+        # canteen with missing geo data
+        canteen_without_geo = CanteenFactory(siret="21340172201787", city_insee_code=None, postal_code=None, city=None)
+        canteen_without_lib = CanteenFactory(
+            siret="92341284500011",
+            city_insee_code="59512",
+            postal_code="59100",
+            city="Roubaix",
+            department="59",
+            region="32",
+            epci="200075174",
+            pat_list=["1415"],
+        )
+        canteen_siren_without_lib = CanteenFactory(
+            siret=None,
+            siren_unite_legale="923412845",
+            city_insee_code="59512",
+            postal_code="59100",
+            city="Roubaix",
+            department="59",
+            region="32",
+            epci="200075174",
+            pat_list=["1415"],
+        )
+
+        for canteen in [
+            canteen_without_geo,
+            canteen_without_lib,
+            canteen_siren_without_lib,
+        ]:
+            with self.subTest(canteen=canteen):
+                self.assertTrue(canteen.has_missing_geo_data)
+
+        # canteen with complete geo data
+        canteen_without_pat = CanteenFactory(
+            siret="21380185500015",
+            city_insee_code="38185",
+            postal_code="38000",
+            city="Grenoble",
+            department="38",
+            department_lib="Isère",
+            region="84",
+            region_lib="Auvergne-Rhône-Alpes",
+            epci="200040715",
+            epci_lib="Grenoble-Alpes-Métropole",
+        )
+        canteen_siren_without_pat = CanteenFactory(
+            siret=None,
+            siren_unite_legale="213801855",
+            city_insee_code="38185",
+            postal_code="38000",
+            city="Grenoble",
+            department="38",
+            department_lib="Isère",
+            region="84",
+            region_lib="Auvergne-Rhône-Alpes",
+            epci="200040715",
+            epci_lib="Grenoble-Alpes-Métropole",
+        )
+        canteen_siret_with_geo = CanteenFactory(
+            siret="21670482500019",
+            city_insee_code="67482",
+            postal_code="67000",
+            city="Strasbourg",
+            department="67",
+            department_lib="Bas-Rhin",
+            region="44",
+            region_lib="Grand Est",
+            epci="246700488",
+            epci_lib="Eurométropole de Strasbourg",
+            pat_list=["1403"],
+            pat_lib_list=["PAT de la Ville et Eurométropole de Strasbourg"],
+        )
+        canteen_siren_with_geo = CanteenFactory(
+            siret=None,
+            siren_unite_legale="216704825",
+            city_insee_code="67482",
+            postal_code="67000",
+            city="Strasbourg",
+            department="67",
+            department_lib="Bas-Rhin",
+            region="44",
+            region_lib="Grand Est",
+            epci="246700488",
+            epci_lib="Eurométropole de Strasbourg",
+            pat_list=["1403"],
+            pat_lib_list=["PAT de la Ville et Eurométropole de Strasbourg"],
+        )
+
+        for canteen in [
+            canteen_without_pat,
+            canteen_siren_without_pat,
+            canteen_siret_with_geo,
+            canteen_siren_with_geo,
+        ]:
+            with self.subTest(canteen=canteen):
+                self.assertFalse(canteen.has_missing_geo_data)
+
     def test_canteen_get_declaration_donnees_year_display(self):
         canteen_with_diagnostic_cancelled = CanteenFactory(declaration_donnees_2024=False)
         canteen_with_diagnostic_submitted = CanteenFactory(
