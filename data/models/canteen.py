@@ -419,6 +419,10 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         "region",
         "region_lib",
     ]
+    # not all city_insee_code are linked to a PAT
+    GEO_FIELDS_WITHOUT_PAT = [
+        field_name for field_name in GEO_FIELDS if field_name not in ("pat_list", "pat_lib_list")
+    ]
 
     TD_FIELDS = [
         "declaration_donnees_2021",
@@ -791,9 +795,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def has_missing_geo_data(self) -> bool:
         """
         returns True if at least one geo field is missing
-        Note: not all city_insee_code belong to a PAT. We don't manage these cases yet
+        Note: not all city_insee_code belong to a PAT. So we don't check these fields.
         """
-        for field_name in self.GEO_FIELDS:
+        for field_name in self.GEO_FIELDS_WITHOUT_PAT:
             if not getattr(self, field_name):
                 return True
         return False

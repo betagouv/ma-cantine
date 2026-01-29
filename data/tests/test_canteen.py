@@ -1188,6 +1188,37 @@ class CanteenModelPropertiesTest(TestCase):
     def test_canteen_has_missing_geo_data_property(self):
         # canteen with missing geo data
         canteen_without_geo = CanteenFactory(siret="21340172201787", city_insee_code=None, postal_code=None, city=None)
+        canteen_without_lib = CanteenFactory(
+            siret="92341284500011",
+            city_insee_code="59512",
+            postal_code="59100",
+            city="Roubaix",
+            department="59",
+            region="32",
+            epci="200075174",
+            pat_list=["1415"],
+        )
+        canteen_siren_without_lib = CanteenFactory(
+            siret=None,
+            siren_unite_legale="923412845",
+            city_insee_code="59512",
+            postal_code="59100",
+            city="Roubaix",
+            department="59",
+            region="32",
+            epci="200075174",
+            pat_list=["1415"],
+        )
+
+        for canteen in [
+            canteen_without_geo,
+            canteen_without_lib,
+            canteen_siren_without_lib,
+        ]:
+            with self.subTest(canteen=canteen):
+                self.assertTrue(canteen.has_missing_geo_data)
+
+        # canteen with complete geo data
         canteen_without_pat = CanteenFactory(
             siret="21380185500015",
             city_insee_code="38185",
@@ -1213,39 +1244,6 @@ class CanteenModelPropertiesTest(TestCase):
             epci="200040715",
             epci_lib="Grenoble-Alpes-Métropole",
         )
-        canteen_without_lib = CanteenFactory(
-            siret="92341284500011",
-            city_insee_code="59512",
-            postal_code="59100",
-            city="Roubaix",
-            department="59",
-            region="32",
-            epci="200075174",
-            pat_list=["1415"],
-        )
-        canteen_siren_without_lib = CanteenFactory(
-            siret=None,
-            siren_unite_legale="923412845",
-            city_insee_code="59512",
-            postal_code="59100",
-            city="Roubaix",
-            department="59",
-            region="32",
-            epci="200075174",
-            pat_list=["1415"],
-        )
-
-        for canteen in [
-            canteen_without_geo,
-            canteen_without_pat,
-            canteen_siren_without_pat,
-            canteen_without_lib,
-            canteen_siren_without_lib,
-        ]:
-            with self.subTest(canteen=canteen):
-                self.assertTrue(canteen.has_missing_geo_data)
-
-        # canteen with complete geo data
         canteen_siret_with_geo = CanteenFactory(
             siret="21670482500019",
             city_insee_code="67482",
@@ -1276,7 +1274,12 @@ class CanteenModelPropertiesTest(TestCase):
             pat_lib_list=["PAT de la Ville et Eurométropole de Strasbourg"],
         )
 
-        for canteen in [canteen_siret_with_geo, canteen_siren_with_geo]:
+        for canteen in [
+            canteen_without_pat,
+            canteen_siren_without_pat,
+            canteen_siret_with_geo,
+            canteen_siren_with_geo,
+        ]:
             with self.subTest(canteen=canteen):
                 self.assertFalse(canteen.has_missing_geo_data)
 
