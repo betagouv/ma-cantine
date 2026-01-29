@@ -5,7 +5,7 @@
 
     <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }" role="main">
       <AppBanner v-if="!isWidget && !fullscreen" />
-      <AppBannerAlert />
+      <AppBannerAlert v-if="!isWidget && !fullscreen" />
       <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner && !fullscreen" />
       <v-container fluid :fill-height="!initialDataLoaded || fullscreen" :class="{ 'pa-0': fullscreen }">
         <v-progress-circular
