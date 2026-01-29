@@ -639,10 +639,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             if "siret" in self.get_dirty_fields():
                 self.reset_geo_fields(with_city_insee_code=True, with_save=False)
 
-    def set_region_from_department(self):
-        if self.department:
-            self.region = self._get_region()
-
     def set_is_filled(self):
         self.is_filled = self._is_filled()
 
@@ -670,11 +666,11 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.normalize_fields()
         self.optimize_logo()
         self.reset_geo_fields_if_siret_changed()
-        self.set_region_from_department()
         if not skip_validations:
             self.full_clean()
         self.set_is_filled()
         super().save(**kwargs)
+        # see also: post_save signal
 
     def delete(self, skip_validations=False, **kwargs):
         """
