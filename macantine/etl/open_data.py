@@ -47,6 +47,10 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
                 self.df[col] = self.df[col].apply(lambda x: ",".join(x))
 
     def transform_canteen_geo_data(self, prefix=""):
+        """
+        Only for (old) TD datasets
+        TODO: don't run this on new TD datasets (we store geo data now)
+        """
         logger.info("Start fetching communes details")
         communes_infos = map_communes_infos()
 
