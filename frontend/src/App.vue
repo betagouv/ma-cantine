@@ -5,6 +5,7 @@
 
     <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }" role="main">
       <AppBanner v-if="!isWidget && !fullscreen" />
+      <AppBannerAlert />
       <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner && !fullscreen" />
       <v-container fluid :fill-height="!initialDataLoaded || fullscreen" :class="{ 'pa-0': fullscreen }">
         <v-progress-circular
@@ -26,6 +27,7 @@
 <script>
 import AppHeader from "@/components/AppHeader"
 import AppBanner from "@/components/AppBanner"
+import AppBannerAlert from "@/components/AppBannerAlert"
 import WidgetHeader from "@/components/WidgetHeader"
 import AppFooter from "@/components/AppFooter"
 import WebinaireBanner from "@/components/WebinaireBanner"
@@ -37,6 +39,7 @@ export default {
   components: {
     AppHeader,
     AppBanner,
+    AppBannerAlert,
     WidgetHeader,
     AppFooter,
     NotificationSnackbar,
