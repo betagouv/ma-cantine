@@ -224,9 +224,9 @@ class TestETLOpenData(TestCase):
         self.assertEqual(etl_td_2022.len_dataset(), 2)
         self.assertEqual(
             etl_td_2022.df.iloc[0]["canteen_id"], self.canteen_site_earlier.id
-        )  # Order by teledeclaration date ascending
+        )  # Order by teledeclaration created date ascending
 
-        # 2023: 0 teledeclarations (1 is cancelled, 1 is hidden (armee))
+        # 2023: 1 teledeclaration (1 is cancelled, 1 is hidden (armee))
         etl_td_2023 = ETL_OPEN_DATA_TELEDECLARATIONS(2023)
         etl_td_2023.extract_dataset()
 
