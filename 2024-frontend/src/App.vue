@@ -23,6 +23,9 @@ watch(route, (to) => {
   <div>
     <AppHeader v-if="!layout.fullscreen" />
     <AppBanner v-if="!layout.fullscreen" />
+    <DsfrNotice v-if="!layout.fullscreen" type="alert">
+      Gestionnaires de crèches : rappel de laits infantiles, voir les lots concernés sur le site <a href="https://rappel.conso.gouv.fr/categorie/25" target="_blank">Rappel conso</a>
+    </DsfrNotice>
 
     <main :class="routerViewClass">
       <AppBreadcrumb v-if="!layout.fullscreen" />
