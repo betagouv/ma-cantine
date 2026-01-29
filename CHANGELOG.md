@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.8.0](https://github.com/betagouv/ma-cantine/compare/v2026.7.0...v2026.8.0) (2026-01-29)
+
+
+### Nouveautés
+
+* **Bandeau:** Ajoute le bandeau d'alerte pour le rappel des laits infantiles ([#6312](https://github.com/betagouv/ma-cantine/issues/6312)) ([e5748aa](https://github.com/betagouv/ma-cantine/commit/e5748aae3b73524ae94a315bf59278af787716e8))
+* **Cantines:** supprime le champ déclaratif "satellite_canteens_count" ([#6299](https://github.com/betagouv/ma-cantine/issues/6299)) ([5b9f026](https://github.com/betagouv/ma-cantine/commit/5b9f026742b02454ab9fe0908b7dc99f07ece721))
+* **Imports:** Achats: ajoute une ressource pour retrouver l'ID de sa cantine ([#6300](https://github.com/betagouv/ma-cantine/issues/6300)) ([61707c8](https://github.com/betagouv/ma-cantine/commit/61707c8a9d5f101293b9357c170afe538301f520))
+* **Ressources:** ajout du kit du teledeclarant ([#6309](https://github.com/betagouv/ma-cantine/issues/6309)) ([4fa5167](https://github.com/betagouv/ma-cantine/commit/4fa5167c5e5bf05d1dc547fe75c4df88aeedf453))
+
+
+### Améliorations
+
+* **Metabase:** Cantines: ajouter le champ 'groupe_id' dans les exports ([#6306](https://github.com/betagouv/ma-cantine/issues/6306)) ([fe930bb](https://github.com/betagouv/ma-cantine/commit/fe930bbdf762e0e43142441a065d20dfe642776a))
+* **Open Data:** Cantines: lors de l'export, ne plus aller chercher les données géo, on les a déjà en DB ([#6307](https://github.com/betagouv/ma-cantine/issues/6307)) ([6d61ae1](https://github.com/betagouv/ma-cantine/commit/6d61ae1da64db37dd0d18cf8ae645930c95683be))
+
+
+### Technique
+
+* **ETL:** Cantines: homogénéiser les tests entre Metabase et Open Data ([#6305](https://github.com/betagouv/ma-cantine/issues/6305)) ([8e2b4c5](https://github.com/betagouv/ma-cantine/commit/8e2b4c519837a19f5e9e808e057205e1f2399274))
+
 ## [2026.7.0](https://github.com/betagouv/ma-cantine/compare/v2026.6.0...v2026.7.0) (2026-01-28)
 
 
