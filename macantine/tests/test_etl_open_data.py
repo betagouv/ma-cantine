@@ -11,6 +11,7 @@ from common.api.datagouv import update_dataset_resources
 from data.models import Canteen, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
+from macantine.utils import TELEDECLARATION_CURRENT_VERSION
 
 
 @requests_mock.Mocker()
@@ -163,7 +164,11 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(etl_td_2024.len_dataset(), 1)
 
         canteen_site_diagnostic_2024 = etl_td_2024.df[etl_td_2024.df.canteen_id == self.canteen_site.id].iloc[0]
+        self.assertEqual(canteen_site_diagnostic_2024["id"], self.canteen_site_diagnostic_2024.teledeclaration_id)
+        self.assertEqual(canteen_site_diagnostic_2024["year"], 2024)
+        self.assertEqual(canteen_site_diagnostic_2024["version"], str(TELEDECLARATION_CURRENT_VERSION))
         self.assertEqual(canteen_site_diagnostic_2024["applicant_id"], self.canteen_site_manager_1.id)
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_id"], self.canteen_site.id)
         self.assertEqual(canteen_site_diagnostic_2024["canteen_siret"], "21380185500015")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_name"], "Cantine")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_central_kitchen_siret"], None)

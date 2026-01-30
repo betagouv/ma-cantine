@@ -12,6 +12,7 @@ from data.models import Canteen, Diagnostic
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS, aggregate_col
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
+from macantine.utils import TELEDECLARATION_CURRENT_VERSION
 
 
 class CanteenETLAnalysisTest(TestCase):
@@ -116,7 +117,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
         canteen_site_diagnostic_2024 = etl_td.df[etl_td.df.id == self.canteen_site_diagnostic_2024.teledeclaration_id][
             etl_td.df.year == 2024
         ].iloc[0]
+        self.assertEqual(canteen_site_diagnostic_2024["id"], self.canteen_site_diagnostic_2024.teledeclaration_id)
+        self.assertEqual(canteen_site_diagnostic_2024["year"], 2024)
+        self.assertEqual(canteen_site_diagnostic_2024["version"], str(TELEDECLARATION_CURRENT_VERSION))
         self.assertEqual(canteen_site_diagnostic_2024["email"], self.canteen_site_manager_1.email)
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_id"], self.canteen_site.id)
         self.assertEqual(canteen_site_diagnostic_2024["siret"], "21380185500015")
         self.assertEqual(canteen_site_diagnostic_2024["name"], "Cantine")
         self.assertEqual(canteen_site_diagnostic_2024["central_producer_siret"], None)
