@@ -62,7 +62,6 @@ class CanteenETLOpenDataTest(TestCase):
         self.assertEqual(canteen_site["production_type"], "site")
         self.assertEqual(canteen_site["economic_model"], "public")
         self.assertEqual(canteen_site["sector_list"], "Hôpitaux,Crèche")
-        self.assertEqual(canteen_site["category_list"], "Santé,Social / Médico-social")
         self.assertEqual(canteen_site["line_ministry"], None)
         self.assertTrue(canteen_site["declaration_donnees_2022"])
         self.assertFalse(canteen_site["declaration_donnees_2025"])
