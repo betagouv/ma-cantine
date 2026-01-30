@@ -1,10 +1,8 @@
 from rest_framework import serializers
 
-from api.serializers.utils import extract_category_from_dict_sectors, extract_sector_from_dict_sectors
 from data.models import Diagnostic
 from data.models.geo import Department, Region
 from macantine.etl import utils
-from data.models.sector import get_sector_lib_list_from_sector_list
 
 
 class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
@@ -189,14 +187,10 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
                 return "C) non renseigné"
 
     def get_secteur(self, obj):
-        sectors = obj.canteen_snapshot.get("sectors", None)
-        if sectors:
-            return extract_sector_from_dict_sectors(sectors)
+        return ",".join(obj.canteen_snapshot_sector_lib_list or [])
 
     def get_categorie(self, obj):
-        categories = obj.canteen_snapshot.get("sectors", None)
-        if categories:
-            return extract_category_from_dict_sectors(categories)
+        return ",".join(obj.canteen.category_lib_list_from_sector_list or [])
 
     def get_lib_departement(self, obj):
         department = obj.canteen_snapshot.get("department", None)
@@ -305,7 +299,7 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
     canteen_economic_model = serializers.CharField(source="canteen_snapshot.economic_model", read_only=True)
     canteen_management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
     canteen_production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
-    canteen_sector_list = serializers.SerializerMethodField()
+    canteen_sector_list = serializers.SerializerMethodField(read_only=True)
     canteen_line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
 
     teledeclaration_ratio_bio = serializers.SerializerMethodField(read_only=True)  # TODO: compute & store in DB?
@@ -350,14 +344,7 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_canteen_sector_list(self, obj):
-        sectors_before_2025 = obj.canteen_snapshot.get("sectors", None)
-        if sectors_before_2025:
-            return [sector["name"] for sector in sectors_before_2025]
-        else:
-            sectors_2025 = obj.canteen_snapshot.get("sector_list", None)
-            if sectors_2025:
-                return get_sector_lib_list_from_sector_list(sectors_2025)
-        return []
+        return ",".join(obj.canteen_snapshot_sector_lib_list or [])
 
     def get_teledeclaration_ratio_bio(self, obj):
         return obj.valeur_bio_agg / obj.valeur_totale

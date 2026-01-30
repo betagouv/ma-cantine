@@ -180,7 +180,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
         them to be human-readable (e.g., replacing keys with labels)
         """
         return {
-            "sectors": diagnostic.canteen_snapshot_sector_list_display,
+            "sectors": ", ".join(diagnostic.canteen_snapshot_sector_lib_list or []),
             "production_type": (
                 Canteen.ProductionType(diagnostic.canteen_snapshot["production_type"]).label
                 if diagnostic.canteen_snapshot.get("production_type")

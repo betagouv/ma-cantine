@@ -41,8 +41,9 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         )
 
     def transform_canteen_arrayfields(self, prefix=""):
-        # sector_list, pat_list & pat_lib_list
-        for col in [prefix + "sector_list", prefix + "pat_list", prefix + "pat_lib_list"]:
+        # pat_list & pat_lib_list
+        # sector_list managed in the serializer
+        for col in [prefix + "pat_list", prefix + "pat_lib_list"]:
             if col in self.df.columns:
                 self.df[col] = self.df[col].apply(lambda x: ",".join(x))
 

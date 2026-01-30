@@ -241,7 +241,8 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         self.assertEqual(self.diagnostic_groupe.canteen_snapshot["id"], self.canteen_groupe.id)
         self.assertEqual(self.diagnostic_groupe.canteen_snapshot["production_type"], Canteen.ProductionType.GROUPE)
         self.assertEqual(self.diagnostic_groupe.canteen_snapshot["sector_list"], [])
-        self.assertEqual(self.diagnostic_groupe.canteen_snapshot_sector_list_display, None)
+        self.assertEqual(self.diagnostic_groupe.canteen_snapshot_sector_lib_list, None)
+        self.assertEqual(self.diagnostic_groupe.canteen_snapshot_category_lib_list, None)
         # site
         self.assertIsNotNone(self.diagnostic_site.canteen_snapshot)
         self.assertEqual(self.diagnostic_site.canteen_snapshot["id"], self.canteen_site.id)
@@ -249,8 +250,12 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         self.assertEqual(len(self.diagnostic_site.canteen_snapshot["sector_list"]), 2)
         self.assertEqual(self.diagnostic_site.canteen_snapshot["sector_list"][0], "education_primaire")
         self.assertEqual(
-            self.diagnostic_site.canteen_snapshot_sector_list_display,
-            "Ecole primaire (maternelle et élémentaire), Hôpitaux",
+            self.diagnostic_site.canteen_snapshot_sector_lib_list,
+            ["Ecole primaire (maternelle et élémentaire)", "Hôpitaux"],
+        )
+        self.assertEqual(
+            self.diagnostic_site.canteen_snapshot_category_lib_list,
+            ["Enseignement", "Santé"],
         )
 
     def test_diagnostic_satellites_snapshot(self):

@@ -682,7 +682,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
 
 class CanteenOpenDataSerializer(serializers.ModelSerializer):
     logo = serializers.SerializerMethodField(read_only=True)
-    sector_list = serializers.ListField(source="sector_lib_list", read_only=True)  # property
+    sector_list = serializers.SerializerMethodField(read_only=True)
     active_on_ma_cantine = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -730,6 +730,9 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
         if obj.logo:
             return f"{bucket_url}/{bucket_name}/media/{obj.logo}"
         return ""
+
+    def get_sector_list(self, obj):
+        return ",".join(obj.sector_lib_list)
 
     def get_active_on_ma_cantine(self, obj):
         return obj.managers.exists()
