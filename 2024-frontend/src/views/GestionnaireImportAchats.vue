@@ -30,12 +30,8 @@ const links = [
     href: documentation.trouverIdCantine,
   },
   {
-    title: "Comment importer un fichier CSV dans Excel ?",
-    href: documentation.importCSVDansExcel,
-  },
-  {
-    title: "Comment enregistrer un fichier Excel en CSV ?",
-    href: documentation.enregistrerExcelEnCSV,
+    title: "Aide pour les formats d'import CSV, Excel, ODS",
+    href: documentation.importsFormatsFichiers,
   }
 ]
 
