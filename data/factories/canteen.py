@@ -266,9 +266,7 @@ class CanteenFactory(factory.django.DjangoModelFactory):
     production_type = Canteen.ProductionType.ON_SITE  # the production_type with the least constraints
     # economic_model: empty if groupe
     economic_model = factory.LazyAttribute(
-        lambda obj: random.choice(Canteen.EconomicModel.values)
-        if obj.production_type != Canteen.ProductionType.GROUPE
-        else None
+        lambda obj: Canteen.EconomicModel.PRIVATE if obj.production_type != Canteen.ProductionType.GROUPE else None
     )
     # sector_list: empty if groupe or central
     sector_list = factory.LazyAttribute(
