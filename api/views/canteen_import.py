@@ -32,8 +32,8 @@ class CanteensImportView(BaseImportView):
     import_type = ImportType.CANTEEN_ONLY
     model_class = Canteen
 
-    manager_column_idx = 10  # gestionnaires_additionnels
-    silent_manager_idx = manager_column_idx + 2  # admin_gestionnaires_additionnels
+    manager_column_idx = 11  # gestionnaires_additionnels
+    silent_manager_idx = manager_column_idx + 1  # admin_gestionnaires_additionnels
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -214,6 +214,12 @@ class CanteensImportView(BaseImportView):
                     {"groupe_id": f"Aucun groupe avec le numéro identifiant « {groupe_id} » trouvé sur la plateforme."}
                 )
 
+        line_ministry = (
+            next((value for value, label in Canteen.Ministries.choices if label == row[10].strip()), None)
+            if row[10]
+            else None
+        )
+
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         canteen = (
             Canteen.objects.get(siret=siret)
@@ -229,6 +235,7 @@ class CanteensImportView(BaseImportView):
                 economic_model=economic_model,
                 central_producer_siret=central_producer_siret,
                 groupe=groupe,
+                line_ministry=line_ministry,
                 creation_source=CreationSource.IMPORT,
             )
         )
@@ -248,12 +255,8 @@ class CanteensImportView(BaseImportView):
         canteen.economic_model = economic_model
         canteen.central_producer_siret = central_producer_siret
         canteen.groupe = groupe
+        canteen.line_ministry = line_ministry
         if self.is_admin_import:
-            canteen.line_ministry = (
-                next((value for value, label in Canteen.Ministries.choices if label == row[11].strip()), None)
-                if row[11]
-                else None
-            )
             canteen.import_source = import_source
 
         canteen.save()

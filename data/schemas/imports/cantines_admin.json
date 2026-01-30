@@ -161,23 +161,10 @@
     },
     {
       "constraints": {
-        "required": false
-      },
-      "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
-      "doc_enum_multiple": true,
-      "doc_enum_multiple_seperator": ",",
-      "example": "gestionnaire1@example.com, gestionnaire2@example.com",
-      "format": "default",
-      "name": "gestionnaires_additionnels",
-      "title": "Adresses mél de gestionnaires additionnels",
-      "type": "string"
-    },
-    {
-      "constraints": {
         "pattern": "^ *(Affaires étrangères|Agriculture, Alimentation et Forêts|Armées|Cohésion des territoires - Relations avec les collectivités territoriales|Culture|Économie et finances|Éducation et Jeunesse|Enseignement supérieur et Recherche|Environnement|Fonction Publiques|Intérieur et Outre-mer|Justice|Mer|Préfecture - Administration Territoriale de l'État \\(ATE\\)|Présidence de la république - Autorités indépendantes \\(AAI, API\\)|Services du Premier Ministre|Santé et Solidarités|Sport|Travail) *$",
         "required": false
       },
-      "description": "",
+      "description": "Hors fonction publique territoriale et hospitalière",
       "doc_enum": [
         "Affaires étrangères",
         "Agriculture, Alimentation et Forêts",
@@ -201,8 +188,21 @@
       ],
       "example": "Agriculture, Alimentation et Forêts",
       "format": "default",
-      "name": "admin_ministère_tutelle",
-      "title": "Ministère de tutelle",
+      "name": "administration_tutelle",
+      "title": "Administration générale de tutelle (ministère ou ATE)",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
+      "doc_enum_multiple": true,
+      "doc_enum_multiple_seperator": ",",
+      "example": "gestionnaire1@example.com, gestionnaire2@example.com",
+      "format": "default",
+      "name": "gestionnaires_additionnels",
+      "title": "Adresses mél de gestionnaires additionnels",
       "type": "string"
     },
     {

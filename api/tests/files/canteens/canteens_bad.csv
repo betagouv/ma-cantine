@@ -1,7 +1,7 @@
-siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,gestionnaires_additionnels
-21340172201787,A canteen,,0,14000,"Cliniques,Hôpitaux",Restaurant avec cuisine sur place,Concédée,Public,,
-57381277842635,A canteen site,,3,200,"Cliniques,Hôpitaux",Restaurant avec cuisine sur place,Concédée,Public,,
-78227374972913,Another site,83014132100034,700,14000,"Cliniques,Hôpitaux",Restaurant avec cuisine sur place,Concédée,Public,,
-40419443300078,A satellite canteen,21380185500015,700,14000,"Cliniques,Hôpitaux",Restaurant satellite,Concédée,Public,,
-83014132100034,Another satellite canteen,83014132100034,700,14000,"Cliniques,Hôpitaux",Restaurant satellite,Concédée,Public,,
-50250039850458,Another satellite canteen,,700,14000,"Cliniques,Hôpitaux",Restaurant satellite,Concédée,Public,14,
+siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,administration_tutelle,gestionnaires_additionnels
+21340172201787,A canteen,,0,14000,"Cliniques,Hôpitaux",Restaurant avec cuisine sur place,Concédée,Public,,,
+57381277842635,A canteen site,,3,200,"Cliniques,Hôpitaux",Restaurant avec cuisine sur place,Concédée,Public,,,
+78227374972913,Another site,83014132100034,700,14000,"Cliniques,Hôpitaux",Restaurant avec cuisine sur place,Concédée,Public,,,
+40419443300078,A satellite canteen,21380185500015,700,14000,"Cliniques,Hôpitaux",Restaurant satellite,Concédée,Public,,,
+83014132100034,Another satellite canteen,83014132100034,700,14000,"Cliniques,Hôpitaux",Restaurant satellite,Concédée,Public,,,
+50250039850458,Another satellite canteen,,700,14000,"Cliniques,Hôpitaux",Restaurant satellite,Concédée,Public,14,,

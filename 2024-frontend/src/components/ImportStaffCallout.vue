@@ -8,8 +8,7 @@ const file = "/static/documents/admin_importer_des_cantines_exemple_ma_cantine.c
       <ul class="fr-col-12 fr-col-md-8">
         <li>
           <p class="fr-mb-1w">
-            Vous devez ajouter 3 colonnes additionnelles à la fin du fichier : admin_ministère_tutelle,
-            admin_gestionnaires_additionnels & admin_source_donnees.
+            Vous devez ajouter 2 colonnes additionnelles à la fin du fichier : admin_gestionnaires_additionnels & admin_source_donnees.
           </p>
         </li>
         <li>
