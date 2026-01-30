@@ -43,13 +43,6 @@
       "type": "string"
     },
     {
-      "description": "Ancien identifiant unique de la télédéclaration",
-      "example": "15572",
-      "name": "teledeclaration_id",
-      "title": "Ancien identifiant Télédéclaration",
-      "type": "integer"
-    },
-    {
       "description": "Identifiant unique de la cantine ayant télédéclaré",
       "example": "15572",
       "name": "canteen_id",
