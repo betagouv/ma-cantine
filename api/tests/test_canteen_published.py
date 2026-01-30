@@ -22,13 +22,29 @@ class CanteenPublishedListApiTest(APITestCase):
         All canteens except with line ministry ARMEE should be public
         """
         published_canteens = [
-            CanteenFactory(line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES),
+            CanteenFactory(
+                line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES,
+                sector_list=[Sector.ADMINISTRATION_PRISON],
+                economic_model=Canteen.EconomicModel.PUBLIC,
+            ),
             CanteenFactory(line_ministry=None),
-            CanteenFactory(line_ministry=Canteen.Ministries.AGRICULTURE),
+            CanteenFactory(
+                line_ministry=Canteen.Ministries.AGRICULTURE,
+                sector_list=[Sector.ADMINISTRATION_PRISON],
+                economic_model=Canteen.EconomicModel.PUBLIC,
+            ),
         ]
         private_canteens = [
-            CanteenFactory(line_ministry=Canteen.Ministries.ARMEE),
-            CanteenFactory(line_ministry=Canteen.Ministries.ARMEE),
+            CanteenFactory(
+                line_ministry=Canteen.Ministries.ARMEE,
+                sector_list=[Sector.ADMINISTRATION_PRISON],
+                economic_model=Canteen.EconomicModel.PUBLIC,
+            ),
+            CanteenFactory(
+                line_ministry=Canteen.Ministries.ARMEE,
+                sector_list=[Sector.ADMINISTRATION_PRISON],
+                economic_model=Canteen.EconomicModel.PUBLIC,
+            ),
         ]
 
         response = self.client.get(reverse("published_canteens"))
@@ -589,10 +605,15 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         administration = SectorM2MFactory(name="Administration")
         # unused sectors shouldn't show up as an option
         unused = SectorM2MFactory(name="Unused")
-        CanteenFactory(line_ministry=None, sectors_m2m=[school, enterprise], name="Shiso")
-        CanteenFactory(line_ministry=None, sectors_m2m=[school, administration], name="Umami")
-
-        CanteenFactory(line_ministry=Canteen.Ministries.ARMEE, sectors_m2m=[unused], name="Secret")
+        CanteenFactory(sectors_m2m=[school, enterprise], name="Shiso")
+        CanteenFactory(sectors_m2m=[school, administration], name="Umami")
+        CanteenFactory(
+            line_ministry=Canteen.Ministries.ARMEE,
+            sectors_m2m=[unused],
+            sector_list=[Sector.ADMINISTRATION_PRISON],
+            name="Secret",
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
@@ -658,7 +679,11 @@ class PublishedCanteenDetailApiTest(APITestCase):
         that has not been published by the manager.
         """
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
-        canteen_armee = CanteenFactory(line_ministry=Canteen.Ministries.ARMEE)
+        canteen_armee = CanteenFactory(
+            line_ministry=Canteen.Ministries.ARMEE,
+            sector_list=[Sector.ADMINISTRATION_PRISON],
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
 
         for canteen in [canteen_groupe, canteen_armee]:
             response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
