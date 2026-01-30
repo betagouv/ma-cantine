@@ -9,6 +9,7 @@ from macantine.etl import utils
 class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source="teledeclaration_id", read_only=True)
     creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)
+    version = serializers.CharField(source="teledeclaration_version", read_only=True)
 
     canteen_id = serializers.IntegerField(source="canteen_snapshot.id", read_only=True)
     name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
@@ -82,6 +83,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "teledeclaration_mode",
             "creation_date",  # teledeclaration_date
             "year",
+            "version",
             "creation_source",
             # canteen fields
             "canteen_id",
@@ -283,8 +285,8 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
 class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source="teledeclaration_id", read_only=True)
     diagnostic_type = serializers.CharField(source="teledeclaration_type", read_only=True)  # TODO: avoid renaming?
-    creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)  # TODO: avoid renaming?
-    version = serializers.CharField(source="teledeclaration_version", read_only=True)  # TODO: avoid renaming?
+    creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)
+    version = serializers.CharField(source="teledeclaration_version", read_only=True)
 
     canteen_name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
     canteen_siret = serializers.CharField(source="canteen_snapshot.siret", read_only=True)
