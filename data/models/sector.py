@@ -121,6 +121,10 @@ SECTOR_HAS_LINE_MINISTRY_LIST = [
 ]
 
 
+def get_sector_lib_list_from_sector_list(sector_list: list[str]) -> list[str]:
+    return [Sector(sector).label for sector in (sector_list or []) if sector in Sector.values]
+
+
 def get_sector_category_from_sector(sector: str) -> str:
     if sector in ADMINISTRATION_SECTOR_LIST:
         return SectorCategory.ADMINISTRATION
@@ -136,6 +140,14 @@ def get_sector_category_from_sector(sector: str) -> str:
         return SectorCategory.LEISURE
     else:
         return SectorCategory.AUTRES
+
+
+def get_category_lib_list_from_sector_list(sector_list: list[str]) -> list[str]:
+    category_lib_list = []
+    for sector in sector_list or []:
+        if sector:
+            category_lib_list.append(get_sector_category_from_sector(sector).label)
+    return list(dict.fromkeys(category_lib_list))  # remove duplicates while preserving order
 
 
 def is_sector_with_line_ministry(sector: str) -> bool:
