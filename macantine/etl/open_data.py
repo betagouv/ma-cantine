@@ -16,7 +16,7 @@ from common.api.datagouv import (
     MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL,
 )
 from api.views.canteen import CanteenOpenDataListView
-from api.views.diagnostic import DiagnosticTeledeclaredOpenDataListView
+from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredOpenDataListView
 from common.api.datagouv import update_dataset_resources
 from common.api.decoupage_administratif import (
     fetch_commune_detail,
