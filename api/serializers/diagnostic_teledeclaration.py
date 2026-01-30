@@ -99,6 +99,8 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "code_insee_commune",
             # "epci",
             # "epci_lib",
+            # "pat_list",
+            # "pat_lib_list",
             "departement",
             "lib_departement",
             "region",
@@ -272,6 +274,8 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
     canteen_city_insee_code = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
     canteen_epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
     canteen_epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
+    canteen_pat_list = serializers.SerializerMethodField(read_only=True)
+    canteen_pat_lib_list = serializers.SerializerMethodField(read_only=True)
     canteen_department = serializers.CharField(source="canteen_snapshot.department", read_only=True)
     canteen_department_lib = serializers.CharField(source="canteen_snapshot.department_lib", read_only=True)
     canteen_region = serializers.CharField(source="canteen_snapshot.region", read_only=True)
@@ -308,6 +312,8 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
             "canteen_city_insee_code",
             "canteen_epci",
             "canteen_epci_lib",
+            "canteen_pat_list",
+            "canteen_pat_lib_list",
             "canteen_department",
             "canteen_department_lib",
             "canteen_region",
@@ -322,6 +328,12 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
             "teledeclaration_ratio_egalim_hors_bio",
         )
         read_only_fields = fields
+
+    def get_canteen_pat_list(self, obj):
+        return ",".join(obj.canteen_snapshot.get("pat_list", []) or [])
+
+    def get_canteen_pat_lib_list(self, obj):
+        return ",".join(obj.canteen_snapshot.get("pat_lib_list", []) or [])
 
     def get_canteen_sector_list(self, obj):
         return ",".join(obj.canteen_snapshot_sector_lib_list or [])

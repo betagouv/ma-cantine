@@ -92,6 +92,20 @@
       "type": "string"
     },
     {
+      "description": "Liste des codes PAT (Projets Alimentaires Territoriaux) dans lesquels se trouve la cantine.",
+      "example": "1294,1295",
+      "name": "canteen_pat_list",
+      "title": "Codes PAT",
+      "type": "string"
+    },
+    {
+      "description": "Liste des libellés PAT (Projets Alimentaires Territoriaux) dans lesquels se trouve la cantine.",
+      "example": "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
+      "name": "canteen_pat_lib_list",
+      "title": "Libellés PAT",
+      "type": "string"
+    },
+    {
       "description": "Code Insee du département dans lequel se trouve la cantine",
       "example": "50",
       "name": "canteen_department",
@@ -102,7 +116,7 @@
       "description": "Libellé du département dans lequel se trouve la cantine",
       "example": "Finistère",
       "name": "canteen_department_lib",
-      "title": "Département Libellé",
+      "title": "Libellé Département",
       "type": "string"
     },
     {
@@ -116,7 +130,7 @@
       "description": "Libellé de la région dans laquelle se trouve la cantine",
       "example": "Bretagne",
       "name": "canteen_region_lib",
-      "title": "Région libellé",
+      "title": "Libellé Région",
       "type": "string"
     },
     {

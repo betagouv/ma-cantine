@@ -7,6 +7,8 @@ from django.core.files.storage import default_storage
 from django.test import TestCase, override_settings
 from freezegun import freeze_time
 
+from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
+from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.datagouv import update_dataset_resources
 from data.models import Canteen, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
@@ -148,16 +150,10 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(etl_td_2024.len_dataset(), 1)
 
     def test_teledeclaration_transform(self, mock):
-        mock.get(
-            "https://geo.api.gouv.fr/communes",
-            text=json.dumps(""),
-            status_code=200,
-        )
-        mock.get(
-            "https://geo.api.gouv.fr/epcis?fields=nom,code",
-            text=json.dumps(""),
-            status_code=200,
-        )
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
 
         schema = json.load(open("data/schemas/export_opendata/schema_teledeclarations.json"))
         schema_cols = [i["name"] for i in schema["fields"]]
@@ -183,6 +179,17 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["canteen_management_type"], self.canteen_site.management_type)
         self.assertEqual(canteen_site_diagnostic_2024["canteen_economic_model"], self.canteen_site.economic_model)
         self.assertEqual(canteen_site_diagnostic_2024["canteen_central_kitchen_siret"], None)
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_epci"], "200040715")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_epci_lib"], "Grenoble-Alpes-Métropole")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_pat_list"], "1294,1295")
+        self.assertEqual(
+            canteen_site_diagnostic_2024["canteen_pat_lib_list"],
+            "PAT du Département de l'Isère,Projet Alimentaire inter Territorial de la Grande région grenobloise",
+        )
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_department"], "38")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_department_lib"], "Isère")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_region"], "84")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_region_lib"], "Auvergne-Rhône-Alpes")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_sector_list"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_line_ministry"], None)
         self.assertGreater(
