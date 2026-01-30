@@ -1072,8 +1072,11 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.ADMINISTRATION_PRISON],
-            line_ministry=None,  # missing data
+            line_ministry=Canteen.Ministries.SPORT,
         )
+        cls.canteen_on_site_missing_data_3.line_ministry = None  # missing data
+        cls.canteen_on_site_missing_data_3.save(skip_validations=True)
+        cls.canteen_on_site_missing_data_3.refresh_from_db()
         cls.canteen_satellite_not_in_groupe_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="21340172201787"
         )
@@ -1151,7 +1154,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             siren_unite_legale="967669103",
             management_type=Canteen.ManagementType.DIRECT,
             production_type=Canteen.ProductionType.ON_SITE,
-            economic_model=Canteen.EconomicModel.PUBLIC,
+            economic_model=Canteen.EconomicModel.PRIVATE,
             daily_meal_count=12,
             sector_list=[Sector.EDUCATION_SECONDAIRE_LYCEE, Sector.AUTRES_AUTRE],
         )
@@ -1159,7 +1162,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             siret="96766910375238",
             management_type=Canteen.ManagementType.CONCEDED,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            economic_model=Canteen.EconomicModel.PRIVATE,
+            economic_model=Canteen.EconomicModel.PUBLIC,
             daily_meal_count=12,
             central_producer_siret=cls.canteen_central.siret,
             sector_list=[Sector.ADMINISTRATION_PRISON],
