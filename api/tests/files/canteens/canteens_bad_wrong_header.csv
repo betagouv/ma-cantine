@@ -1,2 +1,2 @@
-SI_RET,Nom de la cantine,SIRET CRO,Nb de repas par jour,Nb de repas par an,Secteurs,Mode de production,Mode de gestion,Secteur économique,Groupe identifiant,Gestionnaires notifiés
-21340172201787,A canteen,,700,14000,Secondaire collège,Restaurant avec cuisine sur place,Concédée,,
+SI_RET,Nom de la cantine,SIRET CRO,Nb de repas par jour,Nb de repas par an,Secteurs,Mode de production,Mode de gestion,Secteur économique,Groupe identifiant,Administration de tutelle,Gestionnaires notifiés
+21340172201787,A canteen,,700,14000,Secondaire collège,Restaurant avec cuisine sur place,Concédée,,,

@@ -1,4 +1,4 @@
-siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,gestionnaires_additionnels,admin_ministère_tutelle,admin_gestionnaires_additionnels,admin_source_donnees
-21340172201787,Canteen for two,,700,14000,Cliniques,Restaurant avec cuisine sur place,Concédée,Public,,,Santé et Solidarités,"user1@example.com,user2@example.com",Automated test
+siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,administration_tutelle,gestionnaires_additionnels,admin_gestionnaires_additionnels,admin_source_donnees
+21340172201787,Canteen for two,,700,14000,Cliniques,Restaurant avec cuisine sur place,Concédée,Public,,Santé et Solidarités,,"user1@example.com,user2@example.com",Automated test
 21380185500015,Staff canteen,,700,14000,Cliniques,Restaurant avec cuisine sur place,Concédée,Public,,user1@example.com,,"authenticate@example.com,user2@example.com",Automated test
-21010034300016,Canteen update,,700,14000,Cliniques,Restaurant avec cuisine sur place,Concédée,Public,,,"Agriculture, Alimentation et Forêts","user1@example.com,user2@example.com",Automated test
+21010034300016,Canteen update,,700,14000,Cliniques,Restaurant avec cuisine sur place,Concédée,Public,,"Agriculture, Alimentation et Forêts",,"user1@example.com,user2@example.com",Automated test
