@@ -8,7 +8,7 @@ from freezegun import freeze_time
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Diagnostic
+from data.models import Canteen, Diagnostic, Sector
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS, aggregate_col
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
@@ -402,7 +402,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
 
     def test_line_ministry_and_spe(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
-            canteen_with_line_ministry = CanteenFactory(line_ministry=Canteen.Ministries.AGRICULTURE)
+            canteen_with_line_ministry = CanteenFactory(
+                line_ministry=Canteen.Ministries.AGRICULTURE,
+                sector_list=[Sector.ADMINISTRATION_ARMEE],
+                economic_model=Canteen.EconomicModel.PUBLIC,
+            )
             diagnostic = DiagnosticFactory(canteen=canteen_with_line_ministry, year=2022)
             diagnostic.teledeclare(applicant=UserFactory())
 

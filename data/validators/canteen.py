@@ -173,6 +173,49 @@ def validate_canteen_sector_list_field(instance):
     return errors
 
 
+def validate_canteen_line_ministry_field(instance):
+    """
+    - clean_fields() (called by full_clean()) already checks that the value is in the choices
+    - extra validation:
+        - if groupe: the sector_list should be empty, so line_ministry should be empty too
+        - if not groupe:
+            - if at least one sector has has_line_ministry=True: line_ministry must be filled and if economic_model is public
+            - else: line_ministry must be empty
+    """
+    errors = {}
+    field_name = "line_ministry"
+    value = getattr(instance, field_name)
+    if instance.is_groupe:
+        if value:
+            utils_utils.add_validation_error(errors, field_name, "Groupe : le champ doit être vide.")
+    elif not instance.is_public:
+        if value:
+            utils_utils.add_validation_error(
+                errors, field_name, "Le champ doit être vide car le modèle modèle économique n'est pas 'Public'."
+            )
+    else:
+        if instance.sector_list:
+            from data.models.sector import SECTOR_HAS_LINE_MINISTRY_LIST
+
+            sectors_with_line_ministry = [
+                sector for sector in instance.sector_list if sector in SECTOR_HAS_LINE_MINISTRY_LIST
+            ]
+
+            if len(sectors_with_line_ministry) > 0 and not value:
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    "Le champ doit être rempli car vous avez sélectionné au moins un secteur nécessitant un ministère de tutelle.",
+                )
+            elif len(sectors_with_line_ministry) == 0 and value:
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    "Le champ doit être vide car vous n'avez pas sélectionné de secteur nécessitant un ministère de tutelle.",
+                )
+    return errors
+
+
 def validate_canteen_groupe_field(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the groupe field is a valid Canteen or empty

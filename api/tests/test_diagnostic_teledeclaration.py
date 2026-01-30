@@ -66,9 +66,12 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.ADMINISTRATION_PRISON],
-            line_ministry=None,
+            line_ministry=Canteen.Ministries.SPORT,
             managers=[authenticate.user],
         )
+        canteen_without_line_ministry.line_ministry = None
+        canteen_without_line_ministry.save(skip_validations=True)
+        canteen_without_line_ministry.refresh_from_db()
         DiagnosticFactory(canteen=canteen_without_line_ministry, year=last_year, valeur_totale=10000)
 
         # to verify we are returning the correct diag for the canteen, create another diag for a different year

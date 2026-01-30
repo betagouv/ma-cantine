@@ -140,7 +140,7 @@ class CanteenStatsApiTest(APITestCase):
                 siret="21730065600014",
                 city_insee_code="00002",
                 epci=None,
-                sector_list=[Sector.EDUCATION_PRIMAIRE],
+                sector_list=[Sector.ADMINISTRATION_PRISON],
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
