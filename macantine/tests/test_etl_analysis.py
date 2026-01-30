@@ -1,11 +1,9 @@
 import json
-from datetime import datetime
 
 import numpy as np
 import pandas as pd
 import pytest
 from django.test import TestCase
-from django.utils import timezone
 from freezegun import freeze_time
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
@@ -31,9 +29,9 @@ class CanteenETLAnalysisTest(TestCase):
 
         etl.extract_dataset()
 
-        self.assertEqual(len(etl.df.id.unique()), 6)  # 1 is deleted
+        self.assertEqual(etl.len_dataset(), 6)  # 1 is deleted
         self.assertEqual(
-            etl.get_dataset().iloc[0]["id"], self.canteen_site_created_earlier.id
+            etl.get_dataset().iloc[0]["id"], self.canteen_site_earlier.id
         )  # Order by created date ascending
 
     def test_canteen_transform(self):
@@ -46,9 +44,7 @@ class CanteenETLAnalysisTest(TestCase):
 
         # Check the schema matching
         self.assertEqual(len(etl.df.columns), len(schema_cols))
-        self.assertEqual(
-            set(etl.df.columns), set(schema_cols), "The columns names should match the schema field names."
-        )
+        self.assertEqual(set(etl.df.columns), set(schema_cols))
 
         # Check the generated columns
         canteen_site = etl.df[etl.df.id == self.canteen_site.id].iloc[0]
@@ -88,41 +84,49 @@ class CanteenETLAnalysisTest(TestCase):
 
 
 class TeledeclarationETLAnalysisTest(TestCase):
-    def test_extraction_teledeclaration(self):
-        applicant = UserFactory()
-        canteen = CanteenFactory(siret="98648424243607")
-        canteen_deleted = CanteenFactory(
-            siret="92341284500011", deletion_date=timezone.make_aware(datetime.strptime("2023-03-31", "%Y-%m-%d"))
+    @classmethod
+    def setUpTestData(cls):
+        ETLCommonSetUpTestData(cls, with_diagnostics=True)
+
+    def test_teledeclaration_extract(self):
+        # all years combined
+        # 2022: 3 teledeclarations (1 groupe with 1 satellite)
+        # 2023: 1 teledeclaration (1 is cancelled, 1 armee)
+        # 2024: 1 teledeclaration
+        etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl_td.extract_dataset()
+
+        self.assertEqual(etl_td.len_dataset(), 3 + 1 + 1)
+        self.assertEqual(
+            etl_td.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
+        )  # Order by diagnostic created date ascending
+
+    def test_teledeclaration_transform(self):
+        schema = json.load(open("data/schemas/export_analysis/schema_teledeclarations.json"))
+        schema_cols = [i["name"] for i in schema["fields"]]
+
+        etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl_td.extract_dataset()
+        etl_td.transform_dataset()
+
+        # Check the schema matching
+        self.assertEqual(len(etl_td.df.columns), len(schema_cols))
+        self.assertEqual(set(etl_td.df.columns), set(schema_cols))
+
+        canteen_site_diagnostic_2024 = etl_td.df[etl_td.df.id == self.canteen_site_diagnostic_2024.teledeclaration_id][
+            etl_td.df.year == 2024
+        ].iloc[0]
+        self.assertEqual(canteen_site_diagnostic_2024["email"], self.canteen_site_manager_1.email)
+        self.assertEqual(canteen_site_diagnostic_2024["siret"], "21380185500015")
+        self.assertEqual(canteen_site_diagnostic_2024["name"], "Cantine")
+        self.assertEqual(canteen_site_diagnostic_2024["central_producer_siret"], None)
+        self.assertEqual(canteen_site_diagnostic_2024["secteur"], None)  # error, should be "Hôpitaux,Crèche"
+        self.assertEqual(canteen_site_diagnostic_2024["line_ministry"], None)
+        self.assertGreater(
+            canteen_site_diagnostic_2024["ratio_bio"],
+            0,
+            "The bio value is aggregated from bio fields and should be greater than 0",
         )
-        canteen_without_siret = CanteenFactory()
-        canteen_without_siret.siret = None  # missing data
-        canteen_without_siret.save(skip_validations=True)
-        canteen_without_siret.refresh_from_db()
-
-        with freeze_time("2023-03-30"):  # during the 2022 campaign
-            diagnostic = DiagnosticFactory(
-                canteen=canteen, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, teledeclaration_id=1
-            )
-            diagnostic.teledeclare(applicant=applicant)
-            diagnostic_canteen_deleted = DiagnosticFactory(
-                canteen=canteen_deleted,
-                year=2022,
-                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                teledeclaration_id=2,
-            )
-            diagnostic_canteen_deleted.teledeclare(applicant=applicant)
-            diagnostic_canteen_without_siret = DiagnosticFactory(
-                canteen=canteen_without_siret,
-                year=2022,
-                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                teledeclaration_id=3,
-            )
-            diagnostic_canteen_without_siret.teledeclare(applicant=applicant, skip_validations=True)
-
-        etl_stats = ETL_ANALYSIS_TELEDECLARATIONS()
-        etl_stats.extract_dataset()
-
-        self.assertEqual(etl_stats.len_dataset(), 1)
 
     def test_get_egalim_sans_bio(self):
         test_cases = [
