@@ -125,7 +125,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["siret"], "21380185500015")
         self.assertEqual(canteen_site_diagnostic_2024["name"], "Cantine")
         self.assertEqual(canteen_site_diagnostic_2024["central_producer_siret"], None)
-        self.assertEqual(canteen_site_diagnostic_2024["secteur"], None)  # error, should be "Hôpitaux,Crèche"
+        self.assertEqual(canteen_site_diagnostic_2024["secteur"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site_diagnostic_2024["line_ministry"], None)
         self.assertGreater(
             canteen_site_diagnostic_2024["ratio_bio"],
