@@ -1011,12 +1011,11 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
             [SectorCategory.ADMINISTRATION.value],
         )
 
-    def test_category_list_from_sector_list_property(self):
-        self.assertEqual(Canteen.objects.count(), 4)
-        self.assertEqual(self.canteen_central.category_list_from_sector_list, [])
-        self.assertEqual(len(self.canteen_central_serving.category_list_from_sector_list), 2)
-        self.assertEqual(self.canteen_satellite_spe.category_list_from_sector_list, [SectorCategory.ADMINISTRATION])
-        self.assertEqual(self.canteen_private.category_list_from_sector_list, [SectorCategory.ADMINISTRATION])
+    def test_sector_lib_list(self):
+        pass  # see data/tests/test_sector.py
+
+    def test_category_lib_list_from_sector_list_property(self):
+        pass  # see data/tests/test_sector.py
 
     def test_is_spe_property(self):
         self.assertEqual(Canteen.objects.count(), 4)

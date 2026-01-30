@@ -1,9 +1,10 @@
 from rest_framework import serializers
 
 from api.serializers.utils import extract_category_from_dict_sectors, extract_sector_from_dict_sectors
-from data.models import Diagnostic, Sector
+from data.models import Diagnostic
 from data.models.geo import Department, Region
 from macantine.etl import utils
+from data.models.sector import get_sector_lib_list_from_sector_list
 
 
 class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
@@ -355,7 +356,7 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
         else:
             sectors_2025 = obj.canteen_snapshot.get("sector_list", None)
             if sectors_2025:
-                return [Sector(sector).label for sector in sectors_2025]
+                return get_sector_lib_list_from_sector_list(sectors_2025)
         return []
 
     def get_teledeclaration_ratio_bio(self, obj):
