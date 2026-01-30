@@ -22,9 +22,9 @@ const exampleFile = {
   size: "496 octets",
 }
 const filePreviews = {
-  success: "importer_des_cantines_exemple_fichier_accepte.jpg?v=4",
+  success: "importer_des_cantines_exemple_fichier_accepte.jpg?v=5",
   altSuccess: "Exemple de fichier accepté pour importer des cantines, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "importer_des_cantines_exemple_fichier_rejete.jpg?v=4",
+  error: "importer_des_cantines_exemple_fichier_rejete.jpg?v=5",
   altError: "Exemple de fichier rejeté pour importer des cantines, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 const links = [
