@@ -188,7 +188,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
                 return "C) non renseigné"
 
     def get_secteur(self, obj):
-        return ",".join(obj.canteen_snapshot_sector_lib_list) if obj.canteen_snapshot_sector_lib_list else None
+        return ",".join(obj.canteen_snapshot_sector_lib_list or [])
 
     def get_categorie(self, obj):
         categories = obj.canteen_snapshot.get("sectors", None)
@@ -347,7 +347,7 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_canteen_sector_list(self, obj):
-        return ",".join(obj.canteen_snapshot_sector_lib_list) if obj.canteen_snapshot_sector_lib_list else None
+        return ",".join(obj.canteen_snapshot_sector_lib_list or [])
 
     def get_teledeclaration_ratio_bio(self, obj):
         return obj.valeur_bio_agg / obj.valeur_totale
