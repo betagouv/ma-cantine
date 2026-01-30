@@ -67,6 +67,18 @@ def setUpTestData(cls, with_diagnostics=False):
         production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
         groupe=cls.canteen_groupe,
         central_producer_siret="22730656663081",
+        city_insee_code="38185",
+        epci="200040715",
+        epci_lib="Grenoble-Alpes-Métropole",
+        pat_list=["1294", "1295"],
+        pat_lib_list=[
+            "PAT du Département de l'Isère",
+            "Projet Alimentaire inter Territorial de la Grande région grenobloise",
+        ],
+        department="38",
+        department_lib="Isère",
+        region="84",
+        region_lib="Auvergne-Rhône-Alpes",
         sector_list=[Sector.EDUCATION_PRIMAIRE],
     )
 
@@ -102,3 +114,8 @@ def setUpTestData(cls, with_diagnostics=False):
                 canteen=cls.canteen_site, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             cls.canteen_site_diagnostic_2024.teledeclare(cls.canteen_site_manager_1)
+        with freeze_time("2026-01-30"):  # during the 2025 campaign
+            cls.canteen_groupe_diagnostic_2025 = DiagnosticFactory(
+                canteen=cls.canteen_groupe, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
+            cls.canteen_groupe_diagnostic_2025.teledeclare(cls.canteen_groupe_manager)

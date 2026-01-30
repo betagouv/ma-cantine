@@ -139,6 +139,14 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(Diagnostic.objects.filter(year=2024).teledeclared().count(), 1)
         self.assertEqual(etl_td_2024.len_dataset(), 1)
 
+        # 2025: 1 teledeclaration
+        etl_td_2025 = ETL_OPEN_DATA_TELEDECLARATIONS(2025)
+        etl_td_2025.extract_dataset()
+
+        self.assertEqual(Diagnostic.objects.filter(year=2025).count(), 1)
+        self.assertEqual(Diagnostic.objects.filter(year=2025).teledeclared().count(), 1)
+        self.assertEqual(etl_td_2024.len_dataset(), 1)
+
     def test_teledeclaration_transform(self, mock):
         mock.get(
             "https://geo.api.gouv.fr/communes",
