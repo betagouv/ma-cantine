@@ -33,7 +33,7 @@ class CanteensImportView(BaseImportView):
     model_class = Canteen
 
     manager_column_idx = 11  # gestionnaires_additionnels
-    silent_manager_idx = manager_column_idx + 2  # admin_gestionnaires_additionnels
+    silent_manager_idx = manager_column_idx + 1  # admin_gestionnaires_additionnels
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
