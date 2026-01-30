@@ -1,6 +1,7 @@
 import logging
 import os
 
+from django_filters import rest_framework as django_filters
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.http import HttpResponse
@@ -8,7 +9,7 @@ from django.template.loader import get_template
 from django.utils.text import slugify
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
@@ -18,7 +19,9 @@ from api.permissions import (
     IsLinkedCanteenManager,
     IsCanteenManager,
 )
+from api.serializers import DiagnosticTeledeclaredAnalysisSerializer, DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
+from macantine.utils import CAMPAIGN_DATES
 
 
 logger = logging.getLogger(__name__)
@@ -297,3 +300,21 @@ class DiagnosticTeledeclarationPdfView(APIView):
             for family, display_family in family_variable_to_display.items():
                 structured_data[display_label][display_family] = getattr(diagnostic, f"valeur_{family}_{label}")
         return structured_data
+
+
+class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
+    serializer_class = DiagnosticTeledeclaredAnalysisSerializer
+    filter_backends = [django_filters.DjangoFilterBackend]
+    ordering_fields = ["creation_date"]
+
+    def get_queryset(self):
+        return Diagnostic.objects.with_meal_price().historical_valid_td(CAMPAIGN_DATES.keys())
+
+
+class DiagnosticTeledeclaredOpenDataListView(ListAPIView):
+    serializer_class = DiagnosticTeledeclaredOpenDataSerializer
+    filter_backends = [django_filters.DjangoFilterBackend]
+    ordering_fields = ["creation_date"]
+
+    def get_queryset(self, year):
+        return Diagnostic.objects.publicly_visible().valid_td_by_year(year).order_by("teledeclaration_date")

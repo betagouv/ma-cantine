@@ -10,7 +10,7 @@ from api.serializers.utils import (
     extract_sector_from_dict_sectors,
 )
 from api.views.canteen import CanteenAnalysisListView
-from api.views.diagnostic import DiagnosticTeledeclaredAnalysisListView
+from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredAnalysisListView
 from data.models import Canteen
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
