@@ -81,6 +81,18 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.FILL_CANTEEN_DATA,
         )
 
+        # has diagnostic, but still missing data (line_ministry)
+        self.canteen_site.sector_list = [Sector.ADMINISTRATION_PRISON]
+        self.canteen_site.economic_model = Canteen.EconomicModel.PUBLIC
+        self.canteen_site.save(skip_validations=True)
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_site.id).action,
+            Canteen.Actions.FILL_CANTEEN_DATA,
+        )
+
         # has diagnostic and data filled
         self.canteen_site.sector_list = [Sector.EDUCATION_PRIMAIRE]
         self.canteen_site.save(skip_validations=True)
