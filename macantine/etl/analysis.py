@@ -5,10 +5,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from api.serializers.utils import (
-    extract_category_from_dict_sectors,
-    extract_sector_from_dict_sectors,
-)
+from data.models.sector import get_sector_lib_list_from_canteen_snapshot, get_category_lib_list_from_canteen_snapshot
 from api.views.canteen import CanteenAnalysisListView
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredAnalysisListView
 from data.models import Canteen
@@ -125,7 +122,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
 
     def flatten_central_kitchen_td(self):
         """
-        Split rows of central kitchen into a row for each satellite
+        1TD1Site: split rows of central kitchen into a row for each satellite
         NOTE: following the migration to groupes, we added the central_serving extra satellite in their snapshots
         """
         self.df = self.df.set_index("id", drop=False)
@@ -139,18 +136,19 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             }:
                 nbre_satellites = len(row["tmp_satellites"] or [])
                 for satellite in row["tmp_satellites"] or []:
+                    # duplicate the row
                     satellite_row = row.copy()
+                    # override with satellite data
                     satellite_row["canteen_id"] = satellite["id"]
                     satellite_row["name"] = satellite["name"]
                     satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
                     satellite_row["siret"] = satellite["siret"]
                     satellite_row["satellite_canteens_count"] = 0
-
-                    sectors_dict = satellite["sectors"] if "sectors" in satellite else []
-                    satellite_row["secteur"] = extract_sector_from_dict_sectors(sectors_dict)
-                    satellite_row["categorie"] = extract_category_from_dict_sectors(sectors_dict)
-
+                    satellite_row["secteur"] = ",".join(get_sector_lib_list_from_canteen_snapshot(satellite))
+                    satellite_row["categorie"] = ",".join(get_category_lib_list_from_canteen_snapshot(satellite))
+                    # split numerical values
                     satellite_row = self.split_cc_values(satellite_row, nbre_satellites)
+                    # append
                     satellite_rows.append(satellite_row)
 
         # Append all new rows at once

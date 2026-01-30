@@ -134,6 +134,17 @@ class TeledeclarationETLAnalysisTest(TestCase):
             "The bio value is aggregated from bio fields and should be greater than 0",
         )
 
+        canteen_groupe_diagnostic_2022_satellite = etl_td.df[etl_td.df.canteen_id == self.canteen_satellite.id][
+            etl_td.df.year == 2022
+        ].iloc[0]
+        self.assertEqual(
+            canteen_groupe_diagnostic_2022_satellite["id"], self.canteen_groupe_diagnostic_2022.teledeclaration_id
+        )
+        self.assertEqual(
+            canteen_groupe_diagnostic_2022_satellite["secteur"], "Ecole primaire (maternelle et élémentaire)"
+        )
+        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["categorie"], "Enseignement")
+
     def test_get_egalim_sans_bio(self):
         test_cases = [
             {
@@ -456,7 +467,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                         "name": "SAT 1",
                         "siret": "21930055500196",
                         "yearly_meal_count": 60,
-                        "sectors": [{"Secteur A"}, {"Secteur B"}],
+                        "sectors": [{"name": "Secteur A"}, {"name": "Secteur B"}],
                     },
                     {
                         "id": 21,
@@ -501,7 +512,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
         # central
         self.assertEqual(len(etl.df[etl.df.canteen_id == 20]), 1)
         self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].valeur_totale, 500)  # Appro value split
-        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].secteur, "Secteurs multiples")  # Appro value split
+        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].secteur, "Secteur A,Secteur B")  # Appro value split
         # central_serving
         self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].valeur_totale, 750)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 31].iloc[0].valeur_totale, 750)  # Appro value split

@@ -67,6 +67,7 @@ def setUpTestData(cls, with_diagnostics=False):
         production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
         groupe=cls.canteen_groupe,
         central_producer_siret="22730656663081",
+        sector_list=[Sector.EDUCATION_PRIMAIRE],
     )
 
     if with_diagnostics:
