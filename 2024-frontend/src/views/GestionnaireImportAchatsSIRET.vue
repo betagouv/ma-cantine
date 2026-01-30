@@ -15,8 +15,8 @@ const route = useRoute()
 /* Data */
 const schemaFile = "achats_siret.json"
 const exampleFile = {
-  name: "achats_siret_fichier_exemple_ma_cantine.csv",
-  size: "190 octets",
+  name: "achats_siret_fichier_exemple_ma_cantine.xlsx",
+  size: "6 ko",
 }
 const filePreviews = {
   success: "achats_siret_fichier_exemple_fichier_accepte.jpg?v=1",

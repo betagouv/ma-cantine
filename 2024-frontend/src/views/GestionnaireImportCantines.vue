@@ -18,8 +18,8 @@ const route = useRoute()
 /* Data */
 const schemaFile = store.loggedUser.isStaff ? "cantines_admin.json" : "cantines.json"
 const exampleFile = {
-  name: "importer_des_cantines_exemple_ma_cantine.csv",
-  size: "496 octets",
+  name: "importer_des_cantines_exemple_ma_cantine.xlsx",
+  size: "6 ko",
 }
 const filePreviews = {
   success: "importer_des_cantines_exemple_fichier_accepte.jpg?v=5",

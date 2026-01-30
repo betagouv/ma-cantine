@@ -48,8 +48,8 @@ defineProps(["exampleFile", "links"])
             :size="exampleFile.size"
             :href="`/static/documents/${exampleFile.name}`"
             :download="exampleFile.name"
-            format="CSV"
-            title="Télécharger notre fichier d’exemple CSV"
+            format="Excel (.xlsx)"
+            title="Télécharger le fichier exemple Excel"
           />
         </li>
         <li v-for="link in links" :key="link.title">
