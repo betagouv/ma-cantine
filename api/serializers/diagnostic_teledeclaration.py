@@ -85,6 +85,8 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "year",
             "version",
             "creation_source",
+            # applicant fields
+            "email",
             # canteen fields
             "canteen_id",
             "name",
@@ -147,8 +149,6 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "ratio_bio",
             "ratio_egalim_avec_bio",
             "ratio_egalim_sans_bio",
-            # applicant fields
-            "email",
             # extra
             "tmp_satellites",
             "genere_par_cuisine_centrale",
