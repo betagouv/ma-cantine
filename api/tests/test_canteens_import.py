@@ -429,6 +429,32 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(errors[0]["message"], error_message_min_max)
 
     @authenticate
+    def test_error_line_ministry(self):
+        """
+        Line ministry should be empty if canteen is private and sector does not require it
+        """
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteens_bad_line_ministry.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 2)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self.assertEqual(
+            errors[0]["message"],
+            "Champ 'Ministère de tutelle' : Le champ doit être vide car le modèle modèle économique n'est pas 'Public'.",
+        )
+        self.assertEqual(
+            errors[1]["message"],
+            "Champ 'Ministère de tutelle' : Le champ doit être vide car vous n'avez pas sélectionné de secteur nécessitant un ministère de tutelle.",
+        )
+
+    @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     def test_file_above_max_size(self):
         self.assertEqual(Canteen.objects.count(), 0)
