@@ -508,7 +508,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(
-            Canteen.objects.filter(sector_list__contains=[Sector.ADMINISTRATION_ADMINISTRATIF]).distinct().count(),
+            Canteen.objects.filter(sector_list__contains=[Sector.ENTERPRISE_ENTREPRISE]).distinct().count(),
             2,
         )
 
@@ -616,7 +616,6 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
-        print(errors)
         self.assertEqual(body["count"], 2)
         self.assertEqual(len(body["canteens"]), 2)
         self.assertEqual(len(errors), 0, errors)
