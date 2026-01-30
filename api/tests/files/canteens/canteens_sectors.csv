@@ -1,3 +1,3 @@
-siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,gestionnaires_additionnels
-21340172201787,Canteen 1,,700,14000,Restaurants administratifs d’Etat (RA),Restaurant avec cuisine sur place,Concédée,Public,,
-58137739217041,Canteen 2,,700,14000,Restaurants administratifs d'Etat (RA),Restaurant avec cuisine sur place,Concédée,Public,,
+siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,administration_tutelle,gestionnaires_additionnels
+21340172201787,Canteen 1,,700,14000,Restaurants administratifs d’Etat (RA),Restaurant avec cuisine sur place,Concédée,Public,,,
+58137739217041,Canteen 2,,700,14000,Restaurants administratifs d'Etat (RA),Restaurant avec cuisine sur place,Concédée,Public,,,

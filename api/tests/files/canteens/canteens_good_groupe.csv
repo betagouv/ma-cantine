@@ -1,2 +1,2 @@
-siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,gestionnaires_additionnels
-50250039850458,Another satellite canteen,,700,14000,"Cliniques,Hôpitaux",Restaurant satellite,Concédée,Public,9999999999,
+siret,nom,siret_cuisine_centrale,nombre_repas_jour,nombre_repas_an,secteurs,type_production,type_gestion,modèle_économique,groupe_id,administration_tutelle,gestionnaires_additionnels
+50250039850458,Another satellite canteen,,700,14000,"Cliniques,Hôpitaux",Restaurant satellite,Concédée,Public,9999999999,,
