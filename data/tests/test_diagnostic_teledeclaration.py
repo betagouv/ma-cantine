@@ -242,6 +242,7 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         self.assertEqual(self.diagnostic_groupe.canteen_snapshot["production_type"], Canteen.ProductionType.GROUPE)
         self.assertEqual(self.diagnostic_groupe.canteen_snapshot["sector_list"], [])
         self.assertEqual(self.diagnostic_groupe.canteen_snapshot_sector_lib_list, None)
+        self.assertEqual(self.diagnostic_groupe.canteen_snapshot_category_lib_list, None)
         # site
         self.assertIsNotNone(self.diagnostic_site.canteen_snapshot)
         self.assertEqual(self.diagnostic_site.canteen_snapshot["id"], self.canteen_site.id)
@@ -251,6 +252,10 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         self.assertEqual(
             self.diagnostic_site.canteen_snapshot_sector_lib_list,
             ["Ecole primaire (maternelle et élémentaire)", "Hôpitaux"],
+        )
+        self.assertEqual(
+            self.diagnostic_site.canteen_snapshot_category_lib_list,
+            ["Enseignement", "Santé"],
         )
 
     def test_diagnostic_satellites_snapshot(self):

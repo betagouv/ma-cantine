@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from api.serializers.utils import extract_category_from_dict_sectors
 from data.models import Diagnostic
 from data.models.geo import Department, Region
 from macantine.etl import utils
@@ -191,9 +190,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         return ",".join(obj.canteen_snapshot_sector_lib_list or [])
 
     def get_categorie(self, obj):
-        categories = obj.canteen_snapshot.get("sectors", None)
-        if categories:
-            return extract_category_from_dict_sectors(categories)
+        return ",".join(obj.canteen.category_lib_list_from_sector_list or [])
 
     def get_lib_departement(self, obj):
         department = obj.canteen_snapshot.get("department", None)

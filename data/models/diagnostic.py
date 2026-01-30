@@ -1623,6 +1623,19 @@ class Diagnostic(models.Model):
         return None
 
     @property
+    def canteen_snapshot_category_lib_list(self):
+        from data.models.sector import get_category_lib_list_from_sector_list
+        from api.serializers.utils import extract_category_from_dict_sectors
+
+        if self.canteen_snapshot:
+            if "sector_list" in self.canteen_snapshot:
+                if len(self.canteen_snapshot["sector_list"]) > 0:
+                    return get_category_lib_list_from_sector_list(self.canteen_snapshot["sector_list"])
+            elif "sectors" in self.canteen_snapshot:
+                if len(self.canteen_snapshot["sectors"]) > 0:
+                    return extract_category_from_dict_sectors(self.canteen_snapshot["sectors"])
+
+    @property
     def latest_submitted_teledeclaration(self):
         submitted_teledeclarations = self.teledeclaration_set.submitted()
         if submitted_teledeclarations.count() == 0:
