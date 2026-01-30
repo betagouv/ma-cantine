@@ -175,7 +175,6 @@ def validate_canteen_sector_list_field(instance):
 
 def validate_canteen_line_ministry_field(instance):
     """
-    Rule: line_ministry must be filled if at least one sector has has_line_ministry=True
     - clean_fields() (called by full_clean()) already checks that the value is in the choices
     - extra validation:
         - if groupe: the sector_list should be empty, so line_ministry should be empty too
