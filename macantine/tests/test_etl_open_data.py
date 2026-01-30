@@ -105,7 +105,7 @@ class CanteenETLOpenDataTest(TestCase):
 
 
 @requests_mock.Mocker()
-class TestETLOpenData(TestCase):
+class TeledeclarationETLOpenDataTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         ETLCommonSetUpTestData(cls, with_diagnostics=True)
@@ -119,7 +119,7 @@ class TestETLOpenData(TestCase):
         self.assertEqual(Diagnostic.objects.filter(year=2022).teledeclared().count(), 3)
         self.assertEqual(etl_td_2022.len_dataset(), 2)
         self.assertEqual(
-            etl_td_2022.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
+            etl_td_2022.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.id
         )  # Order by teledeclaration created date ascending
 
         # 2023: 1 teledeclaration (1 is cancelled, 1 is hidden (armee))

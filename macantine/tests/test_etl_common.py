@@ -74,16 +74,18 @@ def setUpTestData(cls, with_diagnostics=False):
             cls.canteen_site_diagnostic_2022 = DiagnosticFactory(
                 canteen=cls.canteen_site, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
+        with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
             cls.canteen_site_earlier_diagnostic_2022 = DiagnosticFactory(
                 canteen=cls.canteen_site_earlier, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             cls.canteen_site_earlier_diagnostic_2022.teledeclare(cls.canteen_site_manager_2)
+        with freeze_time("2023-05-16"):  # during the 2022 campaign (1 day later)
+            cls.canteen_site_diagnostic_2022.teledeclare(cls.canteen_site_manager_1)
+        with freeze_time("2023-05-17"):  # during the 2022 campaign (1 day later)
             cls.canteen_groupe_diagnostic_2022 = DiagnosticFactory(
                 canteen=cls.canteen_groupe, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             cls.canteen_groupe_diagnostic_2022.teledeclare(cls.canteen_groupe_manager)
-        with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
-            cls.canteen_site_diagnostic_2022.teledeclare(cls.canteen_site_manager_1)
         with freeze_time("2024-04-01"):  # during the 2023 campaign
             cls.canteen_site_diagnostic_2023 = DiagnosticFactory(
                 canteen=cls.canteen_site, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
