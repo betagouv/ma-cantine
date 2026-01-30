@@ -9,6 +9,7 @@ from macantine.etl import utils
 class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source="teledeclaration_id", read_only=True)
     creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)
+
     canteen_id = serializers.IntegerField(source="canteen_snapshot.id", read_only=True)
     name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
     siret = serializers.CharField(source="canteen_snapshot.siret", read_only=True)
@@ -76,7 +77,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         model = Diagnostic
         fields = (
             # diagnostic fields
-            "id",  # teledeclaration_id  # TODO: replace with diagnostic_id
+            "id",  # teledeclaration_id
             "diagnostic_type",
             "teledeclaration_mode",
             "creation_date",  # teledeclaration_date
@@ -280,6 +281,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
 
 
 class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="teledeclaration_id", read_only=True)
     diagnostic_type = serializers.CharField(source="teledeclaration_type", read_only=True)  # TODO: avoid renaming?
     creation_date = serializers.DateTimeField(source="teledeclaration_date", read_only=True)  # TODO: avoid renaming?
     version = serializers.CharField(source="teledeclaration_version", read_only=True)  # TODO: avoid renaming?
@@ -311,13 +313,13 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
         fields = (
-            "id",
-            "diagnostic_type",
+            # diagnostic fields
+            "id",  # teledeclaration_id
+            "diagnostic_type",  # teledeclaration_type
             "teledeclaration_mode",
-            "creation_date",
+            "creation_date",  # teledeclaration_date
             "year",
             "version",
-            "teledeclaration_id",
             # applicant fields
             "applicant_id",
             # canteen fields
