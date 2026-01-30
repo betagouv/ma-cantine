@@ -139,8 +139,8 @@ class CanteensSchemaTest(TestCase):
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
-    def test_admin_ministere_tutelle_regex(self):
-        pattern = self.get_pattern(self.schema_admin, "admin_ministère_tutelle")
+    def test_administration_tutelle_regex(self):
+        pattern = self.get_pattern(self.schema_admin, "administration_tutelle")
         for VALUE_OK in [
             "Agriculture, Alimentation et Forêts",
             " Santé et Solidarités",
