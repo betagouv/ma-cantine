@@ -190,9 +190,10 @@ def validate_canteen_line_ministry_field(instance):
         if value:
             utils_utils.add_validation_error(errors, field_name, "Groupe : le champ doit être vide.")
     elif not instance.is_public:
-        utils_utils.add_validation_error(
-            errors, field_name, "Le champ doit être vide car le modèle modèle économique n'est pas 'Public'."
-        )
+        if value:
+            utils_utils.add_validation_error(
+                errors, field_name, "Le champ doit être vide car le modèle modèle économique n'est pas 'Public'."
+            )
     else:
         if instance.sector_list:
             from data.models.sector import SECTOR_HAS_LINE_MINISTRY_LIST
