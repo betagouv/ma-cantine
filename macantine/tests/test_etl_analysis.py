@@ -64,7 +64,7 @@ class CanteenETLAnalysisTest(TestCase):
         self.assertEqual(canteen_site["type_production"], "Restaurant avec cuisine sur place")
         self.assertEqual(canteen_site["modele_economique"], "Public")
         self.assertEqual(canteen_site["secteur"], "Hôpitaux,Crèche")
-        self.assertIn("Santé", canteen_site["categorie"])  # flaky if assertEqual
+        self.assertEqual(canteen_site["categorie"], "Santé,Social / Médico-social")
         self.assertEqual(canteen_site["ministere_tutelle"], None)
         self.assertEqual(canteen_site["spe"], "Non")
         self.assertEqual(str(canteen_site["declaration_donnees_2022"]), "True")

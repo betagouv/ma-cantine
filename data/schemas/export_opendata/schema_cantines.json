@@ -162,6 +162,13 @@
       "type": "integer"
     },
     {
+      "description": "Liste des secteurs d'activités de la cantine.",
+      "example": "Secondaire collège,Ecole primaire (maternelle et élémentaire)",
+      "name": "sector_list",
+      "title": "Secteurs",
+      "type": "string"
+    },
+    {
       "description": "Ministère de tutelle de la cantine, s'il y en a un",
       "example": "Éducation et Jeunesse",
       "name": "line_ministry",
@@ -180,13 +187,6 @@
       "example": "https://www.mangerlocal.fr/static/img/logo.png",
       "name": "logo",
       "title": "Logo",
-      "type": "string"
-    },
-    {
-      "description": "Liste des secteurs d'activités de la cantine.",
-      "example": "Secondaire collège,Ecole primaire (maternelle et élémentaire)",
-      "name": "sector_list",
-      "title": "Secteurs",
       "type": "string"
     },
     {

@@ -773,11 +773,16 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             return self.groupe.diagnostics.filter(central_kitchen_diagnostic_mode__isnull=False)
 
     @property
-    def category_list_from_sector_list(self):
-        from data.models.sector import get_sector_category_from_sector
+    def sector_lib_list(self):
+        from data.models.sector import get_sector_lib_list_from_sector_list
 
-        category_list = [get_sector_category_from_sector(sector) for sector in self.sector_list]
-        return list(set(category_list))
+        return get_sector_lib_list_from_sector_list(self.sector_list)
+
+    @property
+    def category_lib_list_from_sector_list(self):
+        from data.models.sector import get_category_lib_list_from_sector_list
+
+        return get_category_lib_list_from_sector_list(self.sector_list)
 
     @property
     def is_spe(self) -> bool:
