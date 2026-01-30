@@ -302,13 +302,53 @@ class CanteenModelSaveTest(TransactionTestCase):
                     )
 
     def test_canteen_line_ministry_validation(self):
-        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Canteen.Ministries.values)]:
+        for TUPLE_OK in [*((key, key) for key in Canteen.Ministries.values)]:
             with self.subTest(line_ministry=TUPLE_OK[0]):
-                canteen = CanteenFactory(line_ministry=TUPLE_OK[0])
+                canteen = CanteenFactory(
+                    line_ministry=TUPLE_OK[0],
+                    economic_model=Canteen.EconomicModel.PUBLIC,
+                    sector_list=[Sector.ADMINISTRATION_PRISON],
+                )
                 self.assertEqual(canteen.line_ministry, TUPLE_OK[1])
+        for TUPLE_OK_EMPTY_PRIVATE in [(None, None), ("", "")]:
+            with self.subTest(line_ministry=TUPLE_OK_EMPTY_PRIVATE[0]):
+                canteen = CanteenFactory(
+                    line_ministry=TUPLE_OK_EMPTY_PRIVATE[0],
+                    economic_model=Canteen.EconomicModel.PRIVATE,
+                    sector_list=[Sector.ADMINISTRATION_PRISON],
+                )
+                self.assertEqual(canteen.line_ministry, TUPLE_OK_EMPTY_PRIVATE[1])
+        for TUPLE_OK_EMPTY_NO_SECTOR_REQUIRED in [(None, None), ("", "")]:
+            with self.subTest(line_ministry=TUPLE_OK_EMPTY_NO_SECTOR_REQUIRED[0]):
+                canteen = CanteenFactory(
+                    line_ministry=TUPLE_OK_EMPTY_NO_SECTOR_REQUIRED[0],
+                    economic_model=Canteen.EconomicModel.PUBLIC,
+                    sector_list=[Sector.ENTERPRISE_ENTREPRISE],
+                )
+                self.assertEqual(canteen.line_ministry, TUPLE_OK_EMPTY_NO_SECTOR_REQUIRED[1])
         for VALUE_NOT_OK in ["  ", 123, "invalid"]:
-            with self.subTest(line_ministry=VALUE_NOT_OK):
+            with self.subTest(
+                line_ministry=VALUE_NOT_OK,
+                economic_model=Canteen.EconomicModel.PUBLIC,
+                sector_list=[Sector.ADMINISTRATION_PRISON],
+            ):
                 self.assertRaises(ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK)
+        for VALUE_NOT_OK_PRIVATE in [*((key, key) for key in Canteen.Ministries.values)]:
+            with self.subTest(
+                line_ministry=VALUE_NOT_OK_PRIVATE[0],
+                economic_model=Canteen.EconomicModel.PRIVATE,
+                sector_list=[Sector.ADMINISTRATION_PRISON],
+            ):
+                self.assertRaises(ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK[1])
+        for VALUE_NOT_OK_EMPTY_NO_SECTOR_REQUIRED in [*((key, key) for key in Canteen.Ministries.values)]:
+            with self.subTest(
+                line_ministry=VALUE_NOT_OK_EMPTY_NO_SECTOR_REQUIRED[0],
+                economic_model=Canteen.EconomicModel.PUBLIC,
+                sector_list=[Sector.ENTERPRISE_ENTREPRISE],
+            ):
+                self.assertRaises(
+                    ValidationError, CanteenFactory, line_ministry=VALUE_NOT_OK_EMPTY_NO_SECTOR_REQUIRED[1]
+                )
 
     def test_canteen_groupe_fk_validation(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
