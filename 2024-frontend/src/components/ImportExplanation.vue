@@ -52,7 +52,7 @@ defineProps(["exampleFile", "links"])
             title="Télécharger le fichier exemple Excel"
           />
         </li>
-        <li v-for="link in links" :key="link.title">
+        <li v-for="link in links" :key="link.title" class="fr-mb-3v">
           <a :href="link.href" target="_blank">
             {{ link.title }}
           </a>
