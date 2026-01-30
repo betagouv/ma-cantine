@@ -603,6 +603,32 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(canteen_satellite.groupe, canteen_groupe)
 
     @authenticate
+    def test_import_with_line_ministry(self):
+        """
+        Should be able to import canteens with line ministry
+        """
+        self.assertEqual(Canteen.objects.count(), 0)
+
+        file_path = "./api/tests/files/canteens/canteens_good_line_ministry.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        print(errors)
+        self.assertEqual(body["count"], 2)
+        self.assertEqual(len(body["canteens"]), 2)
+        self.assertEqual(len(errors), 0, errors)
+        self.assertEqual(Canteen.objects.count(), 2)
+
+        canteen1 = Canteen.objects.get(siret="21340172201787")
+        self.assertEqual(canteen1.line_ministry, Canteen.Ministries.SANTE)
+
+        canteen2 = Canteen.objects.get(siret="21010034300016")
+        self.assertEqual(canteen2.line_ministry, Canteen.Ministries.AGRICULTURE)
+
+    @authenticate
     def test_admin_import(self):
         """
         Admin get to specify extra columns and have fewer requirements on what data is required.
