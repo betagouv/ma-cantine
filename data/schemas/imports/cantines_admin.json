@@ -174,39 +174,6 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(Affaires étrangères|Agriculture, Alimentation et Forêts|Armées|Cohésion des territoires - Relations avec les collectivités territoriales|Culture|Économie et finances|Éducation et Jeunesse|Enseignement supérieur et Recherche|Environnement|Fonction Publiques|Intérieur et Outre-mer|Justice|Mer|Préfecture - Administration Territoriale de l'État \\(ATE\\)|Présidence de la république - Autorités indépendantes \\(AAI, API\\)|Services du Premier Ministre|Santé et Solidarités|Sport|Travail) *$",
-        "required": false
-      },
-      "description": "",
-      "doc_enum": [
-        "Affaires étrangères",
-        "Agriculture, Alimentation et Forêts",
-        "Armées",
-        "Cohésion des territoires - Relations avec les collectivités territoriales",
-        "Culture",
-        "Économie et finances",
-        "Éducation et Jeunesse",
-        "Enseignement supérieur et Recherche",
-        "Environnement",
-        "Fonction Publiques",
-        "Intérieur et Outre-mer",
-        "Justice",
-        "Mer",
-        "Préfecture - Administration Territoriale de l'État (ATE)",
-        "Présidence de la république - Autorités indépendantes (AAI, API)",
-        "Services du Premier Ministre",
-        "Santé et Solidarités",
-        "Sport",
-        "Travail"
-      ],
-      "example": "Agriculture, Alimentation et Forêts",
-      "format": "default",
-      "name": "admin_ministère_tutelle",
-      "title": "Ministère de tutelle",
-      "type": "string"
-    },
-    {
-      "constraints": {
         "required": false
       },
       "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
