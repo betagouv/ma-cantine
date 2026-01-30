@@ -610,7 +610,11 @@ class CanteenVisibleQuerySetAndPropertyTest(TestCase):
     def setUpTestData(cls):
         cls.canteen = CanteenFactory(line_ministry=None)
         cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
-        cls.canteen_armee = CanteenFactory(line_ministry=Canteen.Ministries.ARMEE)
+        cls.canteen_armee = CanteenFactory(
+            line_ministry=Canteen.Ministries.ARMEE,
+            sector_list=[Sector.ADMINISTRATION_ARMEE],
+            economic_model=Canteen.EconomicModel.PUBLIC,
+        )
 
     def test_publicly_visible_queryset(self):
         self.assertEqual(Canteen.objects.count(), 3)
