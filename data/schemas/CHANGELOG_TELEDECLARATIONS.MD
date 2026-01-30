@@ -2,12 +2,17 @@
 
 Tous les changements notables apportés aux jeux de données exposés sur data.gouv.fr vont être documentés ici.
 
+## 2026-01-30
+
+### Modification
+
+* La colonne `teledeclaration_id` est supprimée (il y a déjà `id`)
+
 ## 2025-12-23
 
 ### Modification
 
 * La colonne `canteen_sectors` est renommée à `canteen_sector_list`, et renvoie maintenant une liste de secteurs sous forme de chaine de caractères séparés par une virgule
-
 
 ## 2025-05-14
 
