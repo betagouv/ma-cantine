@@ -99,7 +99,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(etl_td.len_dataset(), 3 + 1 + 1)
         self.assertEqual(
             etl_td.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
-        )  # Order by diagnostic created date ascending
+        )  # Order by teledeclaration created date ascending
 
     def test_teledeclaration_transform(self):
         schema = json.load(open("data/schemas/export_analysis/schema_teledeclarations.json"))
