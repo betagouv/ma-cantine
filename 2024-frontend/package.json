@@ -21,7 +21,7 @@
     "eslint-plugin-vuejs-accessibility": "^2.4.1",
     "pinia": "^3.0.3",
     "vue": "^3.5.22",
-    "vue-i18n": "^11.1.12",
+    "vue-i18n": "^11.2.8",
     "vue-material-design-icons": "^5.3.1",
     "vue-matomo": "^4.2.0",
     "vue-router": "^4.6.3"
