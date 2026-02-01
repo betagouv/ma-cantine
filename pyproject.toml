@@ -159,7 +159,7 @@ dependencies = [
     "typing-extensions==4.12.2",
     "tzdata==2024.2",
     "tzlocal==5.2",
-    "uritemplate==4.1.1",
+    "uritemplate==4.2.0",
     "uritools==4.0.3",
     "urllib3==2.2.3",
     "vine==5.1.0",

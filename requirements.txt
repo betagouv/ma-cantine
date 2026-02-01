@@ -644,7 +644,7 @@ tzlocal==5.2
     # via
     #   ma-cantine
     #   pyhanko
-uritemplate==4.1.1
+uritemplate==4.2.0
     # via
     #   drf-spectacular
     #   ma-cantine
