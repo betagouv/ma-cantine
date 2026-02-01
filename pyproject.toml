@@ -154,7 +154,7 @@ dependencies = [
     "tinycss2==1.4.0",
     "toml==0.10.2",
     "tomli==2.2.1",
-    "tomlkit==0.13.2",
+    "tomlkit==0.14.0",
     "tqdm==4.67.0",
     "typing-extensions==4.12.2",
     "tzdata==2024.2",

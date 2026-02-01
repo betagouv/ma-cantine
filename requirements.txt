@@ -612,7 +612,7 @@ toml==0.10.2
     # via ma-cantine
 tomli==2.2.1
     # via ma-cantine
-tomlkit==0.13.2
+tomlkit==0.14.0
     # via
     #   ma-cantine
     #   pylint
