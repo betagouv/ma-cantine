@@ -13,7 +13,7 @@
   "dependencies": {
     "@gouvfr/dsfr": "^1.13.2",
     "@gouvfr/dsfr-chart": "^2.0.4",
-    "@gouvminint/vue-dsfr": "^8.9.0",
+    "@gouvminint/vue-dsfr": "^8.13.1",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
     "@vueuse/core": "^14.0.0",
