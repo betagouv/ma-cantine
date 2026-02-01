@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -815,15 +815,15 @@ sdist = { url = "https://files.pythonhosted.org/packages/48/1c/090d49cbd04b5c535
 
 [[package]]
 name = "drf-excel"
-version = "2.4.1"
+version = "2.5.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "djangorestframework" },
     { name = "openpyxl" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0f/89/137bdc746c07c146d4c7bc8d2c0eee6176ed4b9222d17593e03f5ca646ca/drf_excel-2.4.1.tar.gz", hash = "sha256:0103e4e3b7a923ac017169e56854f0a7be717e1bbcccd6cabaf7aabf9b5b7f28", size = 17433, upload-time = "2024-06-22T15:03:09.719Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d2/57/3bc9d43dd6a792319943a78c79038338506590107b8ffcbe54c2e15fe99b/drf_excel-2.5.3.tar.gz", hash = "sha256:cac688c4b7581d7cfde1e6dfa88bcbc649939e4277a052877109d40934692202", size = 45139, upload-time = "2025-03-07T09:18:07.176Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/33/21/8ab79acfaada2789dc096e152b73bdbb205d67343e7950031e0aea38fa86/drf_excel-2.4.1-py3-none-any.whl", hash = "sha256:6ae4b7c2c3552d633da88a3f93ea1c1d6237b805a50bb76555f1c5ce14521d65", size = 14628, upload-time = "2024-06-22T15:03:07.522Z" },
+    { url = "https://files.pythonhosted.org/packages/98/2c/94ce25e3bf42db0d8fcd494f3aa2e9c90ba9fc811351e2d352c656ffcaee/drf_excel-2.5.3-py3-none-any.whl", hash = "sha256:3c1e3a0f925394eec348a0d133288ab9cb4e7e676d2dbbc1f3a9c038167543e6", size = 15039, upload-time = "2025-03-07T09:18:05.839Z" },
 ]
 
 [[package]]
@@ -1544,7 +1544,7 @@ requires-dist = [
     { name = "djlint", specifier = "==1.36.3" },
     { name = "draftjs-exporter", specifier = "==5.0.0" },
     { name = "drf-base64", specifier = "==2.0" },
-    { name = "drf-excel", specifier = "==2.4.1" },
+    { name = "drf-excel", specifier = "==2.5.3" },
     { name = "drf-spectacular", specifier = "==0.28.0" },
     { name = "drf-spectacular-sidecar", specifier = "==2024.7.1" },
     { name = "editorconfig", specifier = "==0.12.4" },

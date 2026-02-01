@@ -241,7 +241,7 @@ draftjs-exporter==5.0.0
     #   wagtail
 drf-base64==2.0
     # via ma-cantine
-drf-excel==2.4.1
+drf-excel==2.5.3
     # via ma-cantine
 drf-spectacular==0.28.0
     # via ma-cantine

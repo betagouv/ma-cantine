@@ -64,7 +64,7 @@ dependencies = [
     "djlint==1.36.3",
     "draftjs-exporter==5.0.0",
     "drf-base64==2.0",
-    "drf-excel==2.4.1",
+    "drf-excel==2.5.3",
     "drf-spectacular==0.28.0",
     "drf-spectacular-sidecar==2024.7.1",
     "editorconfig==0.12.4",
