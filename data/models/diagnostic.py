@@ -1611,29 +1611,15 @@ class Diagnostic(models.Model):
 
     @property
     def canteen_snapshot_sector_lib_list(self):
-        from data.models.sector import get_sector_lib_list_from_sector_list
+        from data.models.sector import get_sector_lib_list_from_canteen_snapshot
 
-        if self.canteen_snapshot:
-            if "sector_list" in self.canteen_snapshot:
-                if len(self.canteen_snapshot["sector_list"]) > 0:
-                    return get_sector_lib_list_from_sector_list(self.canteen_snapshot["sector_list"])
-            elif "sectors" in self.canteen_snapshot:
-                if len(self.canteen_snapshot["sectors"]) > 0:
-                    return [x["name"] for x in (self.canteen_snapshot.get("sectors") or [])]
-        return None
+        return get_sector_lib_list_from_canteen_snapshot(self.canteen_snapshot)
 
     @property
     def canteen_snapshot_category_lib_list(self):
-        from data.models.sector import get_category_lib_list_from_sector_list
-        from api.serializers.utils import extract_category_from_dict_sectors
+        from data.models.sector import get_category_lib_list_from_canteen_snapshot
 
-        if self.canteen_snapshot:
-            if "sector_list" in self.canteen_snapshot:
-                if len(self.canteen_snapshot["sector_list"]) > 0:
-                    return get_category_lib_list_from_sector_list(self.canteen_snapshot["sector_list"])
-            elif "sectors" in self.canteen_snapshot:
-                if len(self.canteen_snapshot["sectors"]) > 0:
-                    return extract_category_from_dict_sectors(self.canteen_snapshot["sectors"])
+        return get_category_lib_list_from_canteen_snapshot(self.canteen_snapshot)
 
     @property
     def latest_submitted_teledeclaration(self):

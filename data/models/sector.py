@@ -125,6 +125,21 @@ def get_sector_lib_list_from_sector_list(sector_list: list[str]) -> list[str]:
     return [Sector(sector).label for sector in (sector_list or []) if sector in Sector.values]
 
 
+def get_sector_lib_list_from_canteen_snapshot(canteen_snapshot: dict) -> list[str]:
+    """
+    Before 2025: sectors are stored as a list of dict (M2M relation)
+    Since 2025: sectors are stored as a flat list (sector_list field)
+    """
+    if canteen_snapshot:
+        if "sector_list" in canteen_snapshot:
+            if len(canteen_snapshot["sector_list"]) > 0:
+                return get_sector_lib_list_from_sector_list(canteen_snapshot["sector_list"])
+        elif "sectors" in canteen_snapshot:
+            if len(canteen_snapshot["sectors"]) > 0:
+                return [x.get("name") for x in (canteen_snapshot.get("sectors") or []) if x and x.get("name")]
+    return []
+
+
 def get_sector_category_from_sector(sector: str) -> str:
     if sector in ADMINISTRATION_SECTOR_LIST:
         return SectorCategory.ADMINISTRATION
@@ -148,6 +163,26 @@ def get_category_lib_list_from_sector_list(sector_list: list[str]) -> list[str]:
         if sector:
             category_lib_list.append(get_sector_category_from_sector(sector).label)
     return list(dict.fromkeys(category_lib_list))  # remove duplicates while preserving order
+
+
+def get_category_lib_list_from_canteen_snapshot(canteen_snapshot: dict) -> list[str]:
+    """
+    Before 2025: sectors are stored as a list of dict (M2M relation)
+    Since 2025: sectors are stored as a flat list (sector_list field)
+    """
+    if canteen_snapshot:
+        if "sector_list" in canteen_snapshot:
+            if len(canteen_snapshot["sector_list"]) > 0:
+                return get_category_lib_list_from_sector_list(canteen_snapshot["sector_list"])
+        elif "sectors" in canteen_snapshot:
+            if len(canteen_snapshot["sectors"]) > 0:
+                category_lib_list = [
+                    x.get("category_name")
+                    for x in (canteen_snapshot.get("sectors") or [])
+                    if x and x.get("category_name")
+                ]
+                return list(dict.fromkeys(category_lib_list))  # remove duplicates while preserving order
+    return []
 
 
 def is_sector_with_line_ministry(sector: str) -> bool:

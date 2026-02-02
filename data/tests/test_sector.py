@@ -7,6 +7,8 @@ from data.models.sector import (
     is_sector_with_line_ministry,
     get_sector_lib_list_from_sector_list,
     get_category_lib_list_from_sector_list,
+    get_sector_lib_list_from_canteen_snapshot,
+    get_category_lib_list_from_canteen_snapshot,
 )
 
 
@@ -21,6 +23,38 @@ class SectorTextChoicesTest(TestCase):
         ]:
             with self.subTest(TUPLE=TUPLE):
                 self.assertEqual(get_sector_lib_list_from_sector_list(TUPLE[0]), TUPLE[1])
+
+    def get_sector_lib_list_from_canteen_snapshot(self):
+        for TUPLE in [
+            (None, []),
+            ({}, []),
+            # since 2025
+            ({"sector_list": []}, []),
+            ({"sector_list": ["Inconnu"]}, []),
+            ({"sector_list": [Sector.SANTE_HOPITAL]}, ["Hôpitaux"]),
+            (
+                {"sector_list": [Sector.SANTE_HOPITAL, Sector.SOCIAL_CRECHE]},
+                ["Hôpitaux", "Crèche"],
+            ),
+            # before 2025
+            ({"sectors": []}, []),
+            ({"sectors": [{"name": "Inconnu", "category_name": "Inconnu"}]}, []),
+            (
+                {"sectors": [{"name": Sector.SANTE_HOPITAL.label, "category_name": SectorCategory.HEALTH.label}]},
+                ["Hôpitaux"],
+            ),
+            (
+                {
+                    "sectors": [
+                        {"name": Sector.SANTE_HOPITAL.label, "category_name": SectorCategory.HEALTH.label},
+                        {"name": Sector.SOCIAL_CRECHE.label, "category_name": SectorCategory.SOCIAL.label},
+                    ]
+                },
+                ["Hôpitaux", "Crèche"],
+            ),
+        ]:
+            with self.subTest(TUPLE=TUPLE):
+                self.assertEqual(get_sector_lib_list_from_canteen_snapshot(TUPLE[0]), TUPLE[1])
 
     def test_get_sector_category_from_sector(self):
         for TUPLE in [
@@ -49,6 +83,48 @@ class SectorTextChoicesTest(TestCase):
         ]:
             with self.subTest(TUPLE=TUPLE):
                 self.assertEqual(get_category_lib_list_from_sector_list(TUPLE[0]), TUPLE[1])
+
+    def test_get_category_lib_list_from_canteen_snapshot(self):
+        for TUPLE in [
+            (None, []),
+            ({}, []),
+            # since 2025
+            ({"sector_list": []}, []),
+            ({"sector_list": ["Inconnu"]}, ["Autres"]),
+            ({"sector_list": [Sector.SANTE_HOPITAL]}, ["Santé"]),
+            ({"sector_list": [Sector.SANTE_HOPITAL, Sector.SANTE_AUTRE]}, ["Santé"]),
+            (
+                {"sector_list": [Sector.SANTE_HOPITAL, Sector.SOCIAL_CRECHE]},
+                ["Santé", "Social / Médico-social"],
+            ),
+            # before 2025
+            ({"sectors": []}, []),
+            ({"sectors": [{"name": "Inconnu", "category_name": "Inconnu"}]}, ["Inconnu"]),
+            (
+                {"sectors": [{"name": Sector.SANTE_HOPITAL.label, "category_name": SectorCategory.HEALTH.label}]},
+                ["Santé"],
+            ),
+            (
+                {
+                    "sectors": [
+                        {"name": Sector.SANTE_HOPITAL.label, "category_name": SectorCategory.HEALTH.label},
+                        {"name": Sector.SANTE_AUTRE.label, "category_name": SectorCategory.HEALTH.label},
+                    ]
+                },
+                ["Santé"],
+            ),
+            (
+                {
+                    "sectors": [
+                        {"name": Sector.SANTE_HOPITAL.label, "category_name": SectorCategory.HEALTH.label},
+                        {"name": Sector.SOCIAL_CRECHE.label, "category_name": SectorCategory.SOCIAL.label},
+                    ]
+                },
+                ["Santé", "Social / Médico-social"],
+            ),
+        ]:
+            with self.subTest(TUPLE=TUPLE):
+                self.assertEqual(get_category_lib_list_from_canteen_snapshot(TUPLE[0]), TUPLE[1])
 
     def test_is_sector_with_line_ministry(self):
         self.assertTrue(is_sector_with_line_ministry(Sector.ADMINISTRATION_PRISON))
