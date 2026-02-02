@@ -6,6 +6,39 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.9.0](https://github.com/betagouv/ma-cantine/compare/v2026.8.0...v2026.9.0) (2026-02-02)
+
+
+### Nouveautés
+
+* **Cantines:** ajoute une règle métier sur le ministère de tutelle ([#6319](https://github.com/betagouv/ma-cantine/issues/6319)) ([40e1514](https://github.com/betagouv/ma-cantine/commit/40e151426df61eef20439f56f65328cbd94598e5))
+* **Imports:** Cantines: déplace la colonne "Administration de tutelle" dans l'import commun ([#6318](https://github.com/betagouv/ma-cantine/issues/6318)) ([756b73b](https://github.com/betagouv/ma-cantine/commit/756b73b5b504f2d11b5f21cfc661abe7c9373195))
+* **Imports:** remplace les fichiers d'exemples CSV par les Excel ([#6323](https://github.com/betagouv/ma-cantine/issues/6323)) ([d418998](https://github.com/betagouv/ma-cantine/commit/d4189986c812a22fd2826bd940ec2c183a4c8cc5))
+
+
+### Améliorations
+
+* **Achats:** Caractéristiques: améliorer le wording pour 'performance' & 'externalités' ([#6342](https://github.com/betagouv/ma-cantine/issues/6342)) ([7d9b78c](https://github.com/betagouv/ma-cantine/commit/7d9b78c6cdf35d53136248627e588720f9c2accc))
+* **Metabase:** Télédéclarations: exporter aussi la version de la TD ([#6317](https://github.com/betagouv/ma-cantine/issues/6317)) ([eb2eab0](https://github.com/betagouv/ma-cantine/commit/eb2eab04b0f5c1f656c01ae9b25fdc7bae4a2395))
+* **Metabase:** Télédéclarations: ordonner par teledeclaration_date ([#6315](https://github.com/betagouv/ma-cantine/issues/6315)) ([2b2ed41](https://github.com/betagouv/ma-cantine/commit/2b2ed41d05f549b3ec94f5a42a4082803ce027cd))
+* **Metabase:** Télédéclarations: utiliser les city_insee_code, department & region du satellite [1TD1Site] ([#6325](https://github.com/betagouv/ma-cantine/issues/6325)) ([8e76975](https://github.com/betagouv/ma-cantine/commit/8e769756ddffe2cd74f661cf84a0140a785f7018))
+* **Metabase:** Télédéclarations: utiliser les sector_list du satellite [1TD1Site] ([#6324](https://github.com/betagouv/ma-cantine/issues/6324)) ([1175eba](https://github.com/betagouv/ma-cantine/commit/1175eba58a9dc7c4f799aadf4f7e329abee6f972))
+* **Open Data:** Télédéclaration: avoir une seule colonne id (enlever le doublon teledeclaration_id) ([#6316](https://github.com/betagouv/ma-cantine/issues/6316)) ([49658e6](https://github.com/betagouv/ma-cantine/commit/49658e60dbaeab8f972f6537701f0753fccd42bb))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** Simplifie les exports secteur & catégorie (et répare l'export Metabase) ([#6321](https://github.com/betagouv/ma-cantine/issues/6321)) ([7be0526](https://github.com/betagouv/ma-cantine/commit/7be052601e808df049e9881e0eaa490bb08514f7))
+
+
+### Technique
+
+* **Cantines:** nouvelle property has_missing_geo_data pour détecter si elle a des champs géo manquants ([#6303](https://github.com/betagouv/ma-cantine/issues/6303)) ([77ead7e](https://github.com/betagouv/ma-cantine/commit/77ead7e9a01a0ab22ed546a9ce4227f215ddd497))
+* **Données Géo:** améliorer les mocks pour les tests ([#6304](https://github.com/betagouv/ma-cantine/issues/6304)) ([4616a01](https://github.com/betagouv/ma-cantine/commit/4616a01399642cd3b063f1142b9df55ef532b323))
+* **ETL:** Télédéclaration: bouge les views dédié aux exports dans le fichier séparé ([#6314](https://github.com/betagouv/ma-cantine/issues/6314)) ([558fee9](https://github.com/betagouv/ma-cantine/commit/558fee9e47a0151e40ce658c6325e504d18707da))
+* **ETL:** Télédéclarations: homogénéiser les tests entre Metabase et Open Data ([#6308](https://github.com/betagouv/ma-cantine/issues/6308)) ([ef99178](https://github.com/betagouv/ma-cantine/commit/ef9917854f05f6e26ca1c32c232ff7e8b0c67e4c))
+* **Secteurs:** utils pour mieux jongler avec les verbose_name et les lib ([#6320](https://github.com/betagouv/ma-cantine/issues/6320)) ([c28fec8](https://github.com/betagouv/ma-cantine/commit/c28fec8862d2a2d960cc11d92a40c700a00ae7d8))
+
 ## [2026.8.0](https://github.com/betagouv/ma-cantine/compare/v2026.7.0...v2026.8.0) (2026-01-29)
 
 
