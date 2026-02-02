@@ -120,7 +120,7 @@
               @change="familyChange"
               optionsRow
               labelClasses="body-2 my-3"
-              optionClasses="body-2 grey--text text--darken-4"
+              optionClasses="body-2"
               validate-on-blur
               :rules="[validators.required]"
             />
