@@ -18,8 +18,8 @@ const route = useRoute()
 /* Data */
 const schemaFile = store.loggedUser.isStaff ? "cantines_admin.json" : "cantines.json"
 const exampleFile = {
-  name: "importer_des_cantines_exemple_ma_cantine.csv",
-  size: "496 octets",
+  name: "importer_des_cantines_exemple_ma_cantine.xlsx",
+  size: "6 ko",
 }
 const filePreviews = {
   success: "importer_des_cantines_exemple_fichier_accepte.jpg?v=5",
@@ -29,12 +29,8 @@ const filePreviews = {
 }
 const links = [
   {
-    title: "Comment importer un fichier CSV dans Excel ?",
-    href: documentation.importCSVDansExcel,
-  },
-  {
-    title: "Comment enregistrer un fichier Excel en CSV ?",
-    href: documentation.enregistrerExcelEnCSV,
+    title: "Aide pour les formats d'import CSV, Excel, ODS",
+    href: documentation.importsFormatsFichiers,
   },
   {
     title: "Bien calculer son nombre de couverts",

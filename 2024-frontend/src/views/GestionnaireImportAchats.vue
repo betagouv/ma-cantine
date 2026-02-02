@@ -15,8 +15,8 @@ const route = useRoute()
 /* Data */
 const schemaFile = "achats_id.json"
 const exampleFile = {
-  name: "achats_fichier_exemple_ma_cantine.csv",
-  size: "176 octets",
+  name: "achats_fichier_exemple_ma_cantine.xlsx",
+  size: "6 ko",
 }
 const filePreviews = {
   success: "achats_fichier_exemple_fichier_accepte.jpg?v=4",
@@ -30,12 +30,8 @@ const links = [
     href: documentation.trouverIdCantine,
   },
   {
-    title: "Comment importer un fichier CSV dans Excel ?",
-    href: documentation.importCSVDansExcel,
-  },
-  {
-    title: "Comment enregistrer un fichier Excel en CSV ?",
-    href: documentation.enregistrerExcelEnCSV,
+    title: "Aide pour les formats d'import CSV, Excel, ODS",
+    href: documentation.importsFormatsFichiers,
   }
 ]
 

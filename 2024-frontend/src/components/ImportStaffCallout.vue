@@ -27,11 +27,11 @@ const file = "/static/documents/admin_importer_des_cantines_exemple_ma_cantine.c
       <div class="fr-col-offset-md-1"></div>
       <div class="fr-col-12 fr-col-md-3 fr-grid-row--right fr-mt-3w fr-mt-md-0">
         <DsfrFileDownload
-          format="CSV"
-          size="463 octets"
+          format="Excel (.xlsx)"
+          size="6 ko"
           :href="file"
-          title="Télécharger le fichier d'exemple"
-          download="admin_importer_des_cantines_exemple_ma_cantine.csv"
+          title="Télécharger le fichier exemple Excel"
+          download="admin_importer_des_cantines_exemple_ma_cantine.xlsx"
         />
       </div>
     </div>
