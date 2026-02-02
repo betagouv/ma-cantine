@@ -135,13 +135,14 @@ export default Object.freeze({
     COMMERCE_EQUITABLE: { text: "Commerce équitable" },
     FERMIER: { text: "Fermier", longText: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »" },
     EXTERNALITES: {
-      text: "Externalités environnementales",
+      text: "Critère externalités environnementales",
       longText:
         "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     },
     PERFORMANCE: {
-      text: "Performance environnementale",
-      longText: "Produits acquis sur la base de leurs performances en matière environnementale",
+      text: "Critères protection de l'environnement et approvisionnement direct",
+      longText:
+        "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
     },
     FRANCE: { text: "Origine France" },
     CIRCUIT_COURT: { text: "Origine France : dont circuit-court" },
@@ -170,14 +171,15 @@ export default Object.freeze({
       color: "orange",
     },
     EXTERNALITES: {
-      text: "Externalités environnementales",
+      text: "Critère externalités environnementales",
       longText:
         "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
       color: "teal",
     },
     PERFORMANCE: {
-      text: "Performance environnementale",
-      longText: "Produits acquis sur la base de leurs performances en matière environnementale",
+      text: "Critères protection de l'environnement et approvisionnement direct",
+      longText:
+        "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
       color: "pink",
     },
     NON_EGALIM: { text: "Non-EGalim", color: "blue-grey lighten-2" },
