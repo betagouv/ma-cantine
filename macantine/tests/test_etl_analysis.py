@@ -94,10 +94,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
         # 2022: 3 teledeclarations (1 groupe with 1 satellite)
         # 2023: 1 teledeclaration (1 is cancelled, 1 armee)
         # 2024: 1 teledeclaration
+        # 2025: 1 teledeclaration
         etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_td.extract_dataset()
 
-        self.assertEqual(etl_td.len_dataset(), 3 + 1 + 1)
+        self.assertEqual(etl_td.len_dataset(), 3 + 1 + 1 + 1)
         self.assertEqual(
             etl_td.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
         )  # Order by teledeclaration created date ascending
@@ -113,6 +114,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
         # Check the schema matching
         self.assertEqual(len(etl_td.df.columns), len(schema_cols))
         self.assertEqual(set(etl_td.df.columns), set(schema_cols))
+
+    def test_teledeclaration_transform_site(self):
+        etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl_td.extract_dataset()
+        etl_td.transform_dataset()
 
         canteen_site_diagnostic_2024 = etl_td.df[etl_td.df.id == self.canteen_site_diagnostic_2024.teledeclaration_id][
             etl_td.df.year == 2024
@@ -134,16 +140,35 @@ class TeledeclarationETLAnalysisTest(TestCase):
             "The bio value is aggregated from bio fields and should be greater than 0",
         )
 
+    def test_teledeclaration_transform_groupe_before_2025(self):
+        etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl_td.extract_dataset()
+        etl_td.transform_dataset()
+
         canteen_groupe_diagnostic_2022_satellite = etl_td.df[etl_td.df.canteen_id == self.canteen_satellite.id][
             etl_td.df.year == 2022
         ].iloc[0]
         self.assertEqual(
             canteen_groupe_diagnostic_2022_satellite["id"], self.canteen_groupe_diagnostic_2022.teledeclaration_id
         )
+        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["secteur"], "")  # groupe secteur
+        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["categorie"], "")  # groupe categorie
+
+    def test_teledeclaration_transform_groupe_since_2025(self):
+        etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
+        etl_td.extract_dataset()
+        etl_td.transform_dataset()
+
+        canteen_groupe_diagnostic_2025_satellite = etl_td.df[etl_td.df.canteen_id == self.canteen_satellite.id][
+            etl_td.df.year == 2025
+        ].iloc[0]
         self.assertEqual(
-            canteen_groupe_diagnostic_2022_satellite["secteur"], "Ecole primaire (maternelle et élémentaire)"
+            canteen_groupe_diagnostic_2025_satellite["id"], self.canteen_groupe_diagnostic_2025.teledeclaration_id
         )
-        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["categorie"], "Enseignement")
+        self.assertEqual(
+            canteen_groupe_diagnostic_2025_satellite["secteur"], "Ecole primaire (maternelle et élémentaire)"
+        )
+        self.assertEqual(canteen_groupe_diagnostic_2025_satellite["categorie"], "Enseignement")
 
     def test_get_egalim_sans_bio(self):
         test_cases = [
@@ -457,6 +482,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
             "central_producer_siret": {2: None, 3: None, 4: None, 5: None},
             "diagnostic_type": {2: None, 3: None, 4: None, 5: None},
             "satellite_canteens_count": {2: None, 3: 206.0, 4: 2, 5: 1},
+            "sectors": {2: [], 3: [], 4: [], 5: []},
             "valeur_totale": {2: 100, 3: 1000, 4: 1500, 5: 2000},
             "valeur_bio": {2: None, 3: 100, 4: 0, 5: 0},
             "tmp_satellites": {
@@ -495,7 +521,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
                         "id": 40,
                         "name": "SATELLITE 1",
                         "siret": "21340172201787",
+                        "city_insee_code": "38185",
+                        "department": "38",
+                        "region": "84",
                         "yearly_meal_count": 120,
+                        "sector_list": [Sector.SANTE_HOPITAL],
                     },
                 ],
             },
@@ -509,10 +539,13 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(
             len(etl.df[etl.df.canteen_id.isin([2, 3, 4])]), 0
         )  # groupe, central & central_serving filtered out
-        # central
+        # central (before 2025)
         self.assertEqual(len(etl.df[etl.df.canteen_id == 20]), 1)
+        self.assertTrue(np.isnan(etl.df[etl.df.canteen_id == 20].iloc[0].code_insee_commune))
+        self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].departement))
+        self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].region))
+        self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].secteur))
         self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].valeur_totale, 500)  # Appro value split
-        self.assertEqual(etl.df[etl.df.canteen_id == 20].iloc[0].secteur, "Secteur A,Secteur B")  # Appro value split
         # central_serving
         self.assertEqual(etl.df[etl.df.canteen_id == 30].iloc[0].valeur_totale, 750)  # Appro value split
         self.assertEqual(etl.df[etl.df.canteen_id == 31].iloc[0].valeur_totale, 750)  # Appro value split
@@ -520,7 +553,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(
             etl.df[etl.df.canteen_id == 30].iloc[0].valeur_bio, 0
         )  # Zeros are processed as zeros and not nulls
-        # groupe
+        # groupe (since 2025)
+        self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].code_insee_commune, "38185")  # from satellite
+        self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].departement, "38")  # from satellite
+        self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].region, "84")  # from satellite
+        self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].secteur, "Hôpitaux")  # from satellite
         self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].valeur_totale, 2000)  # 1 satellite, no split
 
     def test_delete_duplicates_cc_csat_with_duplicates(self):
