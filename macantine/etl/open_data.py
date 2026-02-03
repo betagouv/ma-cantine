@@ -17,7 +17,7 @@ from common.api.datagouv import (
 )
 from api.views.canteen import CanteenOpenDataListView
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredOpenDataListView
-from common.api.datagouv import update_dataset_resources
+from common.api.datagouv import update_dataset_resources, map_pat_list_to_communes_insee_code, fetch_commune_pat_list
 from common.api.decoupage_administratif import (
     fetch_commune_detail,
     fetch_epci_name,
@@ -40,34 +40,33 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
             lambda x: Canteen.Ministries(x).label if (x in Canteen.Ministries) else None
         )
 
-    def transform_canteen_arrayfields(self, prefix=""):
-        # pat_list & pat_lib_list
-        # sector_list managed in the serializer
-        for col in [prefix + "pat_list", prefix + "pat_lib_list"]:
-            if col in self.df.columns:
-                self.df[col] = self.df[col].apply(lambda x: ",".join(x))
-
     def transform_canteen_geo_data(self, prefix=""):
         """
         Only for (old) TD datasets
         TODO: don't run this on new TD datasets (we store geo data now)
         """
         logger.info("Start fetching communes details")
-        communes_infos = map_communes_infos()
-
         if "campagne_td" in self.dataset_name:
-            # Get canteen geo data as most of TD don't have this info
+            communes_infos = map_communes_infos()
+            epcis_names = map_epcis_code_name()
+            pat_mapping = map_pat_list_to_communes_insee_code()
+
             self.df["canteen_department"] = self.df["canteen_city_insee_code"].apply(
                 lambda x: fetch_commune_detail(x, communes_infos, "department")
             )
             self.df["canteen_region"] = self.df["canteen_city_insee_code"].apply(
                 lambda x: fetch_commune_detail(x, communes_infos, "region")
             )
-            self.df["canteen_epci"] = self.df["canteen_epci"].apply(
+            self.df["canteen_epci"] = self.df["canteen_city_insee_code"].apply(
                 lambda x: fetch_commune_detail(x, communes_infos, "epci")
             )
-            epcis_names = map_epcis_code_name()
             self.df["canteen_epci_lib"] = self.df["canteen_epci"].apply(lambda x: fetch_epci_name(x, epcis_names))
+            self.df["canteen_pat_list"] = self.df["canteen_city_insee_code"].apply(
+                lambda x: ",".join(fetch_commune_pat_list(x, pat_mapping, "id") or [])
+            )
+            self.df["canteen_pat_lib_list"] = self.df["canteen_city_insee_code"].apply(
+                lambda x: ",".join(fetch_commune_pat_list(x, pat_mapping, "lib") or [])
+            )
 
         logger.info("Start filling geo_name")
         self.fill_geo_names(prefix)
@@ -166,8 +165,6 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         self._clean_dataset()
         logger.info("Canteens: Transform ChoiceFields...")
         self.transform_canteen_choicefields()
-        logger.info("Canteens: Transform ArrayFields...")
-        self.transform_canteen_arrayfields()
 
 
 class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
@@ -189,8 +186,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
         logger.info("TD campagne: Transform ChoiceFields...")
         self.transform_canteen_choicefields(prefix="canteen_")
-        logger.info("TD campagne: Transform Canteen ArrayFields...")
-        self.transform_canteen_arrayfields(prefix="canteen_")
         logger.info("TD campagne: Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
         # TODO: self.flatten_central_kitchen_td()

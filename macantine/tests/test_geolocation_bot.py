@@ -126,8 +126,11 @@ class CityInseeCodeToGeoFieldsGeoBotTest(TestCase):
         self.assertEqual(canteen.postal_code, "38000")  # filled
         self.assertEqual(canteen.epci, "200040715")  # filled
         self.assertEqual(canteen.epci_lib, "Grenoble-Alpes-Métropole")  # filled
-        self.assertEqual(canteen.pat_list, ["1294"])  # filled
-        self.assertEqual(canteen.pat_lib_list, ["PAT du Département de l'Isère"])  # filled
+        self.assertEqual(canteen.pat_list, ["1294", "1295"])  # filled
+        self.assertEqual(
+            canteen.pat_lib_list,
+            ["PAT du Département de l'Isère", "Projet Alimentaire inter Territorial de la Grande région grenobloise"],
+        )  # filled
         self.assertEqual(canteen.department, "38")  # filled
         self.assertEqual(canteen.department_lib, "Isère")  # filled
         self.assertEqual(canteen.region, "84")  # filled

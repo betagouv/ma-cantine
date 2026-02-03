@@ -681,6 +681,8 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
 
 
 class CanteenOpenDataSerializer(serializers.ModelSerializer):
+    pat_list = serializers.SerializerMethodField()
+    pat_lib_list = serializers.SerializerMethodField()
     logo = serializers.SerializerMethodField(read_only=True)
     sector_list = serializers.SerializerMethodField(read_only=True)
     active_on_ma_cantine = serializers.SerializerMethodField(read_only=True)
@@ -722,6 +724,12 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
             "declaration_donnees_2025",
             "active_on_ma_cantine",
         )
+
+    def get_pat_list(self, obj):
+        return ",".join(obj.pat_list)
+
+    def get_pat_lib_list(self, obj):
+        return ",".join(obj.pat_lib_list)
 
     def get_logo(self, obj):
         bucket_url = os.environ.get("CELLAR_HOST")
