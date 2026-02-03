@@ -131,8 +131,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["siret"], self.canteen_site.siret)
         self.assertEqual(canteen_site_diagnostic_2024["name"], self.canteen_site.name)
         self.assertEqual(canteen_site_diagnostic_2024["production_type"], self.canteen_site.production_type)
-        self.assertEqual(canteen_site_diagnostic_2024["management_type"], "A) directe")
-        self.assertEqual(canteen_site_diagnostic_2024["modele_economique"], "B) public")
+        self.assertEqual(canteen_site_diagnostic_2024["management_type"], self.canteen_site.management_type)
+        self.assertEqual(canteen_site_diagnostic_2024["modele_economique"], self.canteen_site.economic_model)
         self.assertEqual(canteen_site_diagnostic_2024["central_producer_siret"], None)
         self.assertEqual(canteen_site_diagnostic_2024["secteur"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site_diagnostic_2024["categorie"], "Santé,Social / Médico-social")
@@ -158,7 +158,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
             canteen_groupe_diagnostic_2022_satellite["production_type"], "site_cooked_elsewhere"
         )  # hardcoded
         self.assertEqual(
-            canteen_groupe_diagnostic_2022_satellite["management_type"], "B) concédée"
+            canteen_groupe_diagnostic_2022_satellite["management_type"], self.canteen_groupe.management_type
         )  # groupe management_type
         self.assertEqual(canteen_groupe_diagnostic_2022_satellite["modele_economique"], None)  # groupe economic_model
         self.assertEqual(canteen_groupe_diagnostic_2022_satellite["secteur"], "")  # groupe secteur

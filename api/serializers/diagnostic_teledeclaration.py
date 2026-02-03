@@ -36,8 +36,8 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     categorie = serializers.SerializerMethodField()
     line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
     spe = serializers.SerializerMethodField()
-    modele_economique = serializers.SerializerMethodField()
-    management_type = serializers.SerializerMethodField()
+    modele_economique = serializers.CharField(source="canteen_snapshot.economic_model", read_only=True)
+    management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
     production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
     declaration_donnees_2021 = serializers.SerializerMethodField()
     declaration_donnees_2022 = serializers.SerializerMethodField()
@@ -165,26 +165,6 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             return "A) oui"
         else:
             return "C) non renseigné"
-
-    def get_management_type(self, obj):
-        management_type = obj.canteen_snapshot.get("management_type", None)
-        if management_type:
-            if management_type == "direct":
-                return "A) directe"
-            elif management_type == "conceded":
-                return "B) concédée"
-            else:
-                return "C) non renseigné"
-
-    def get_modele_economique(self, obj):
-        economic_model = obj.canteen_snapshot.get("economic_model", None)
-        if economic_model:
-            if economic_model == "private":
-                return "A) privé"
-            elif economic_model == "public":
-                return "B) public"
-            else:
-                return "C) non renseigné"
 
     def get_secteur(self, obj):
         return ",".join(obj.canteen_snapshot_sector_lib_list or [])
