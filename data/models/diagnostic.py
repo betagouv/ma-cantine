@@ -1622,13 +1622,6 @@ class Diagnostic(models.Model):
         return get_category_lib_list_from_canteen_snapshot(self.canteen_snapshot)
 
     @property
-    def latest_submitted_teledeclaration(self):
-        submitted_teledeclarations = self.teledeclaration_set.submitted()
-        if submitted_teledeclarations.count() == 0:
-            return None
-        return submitted_teledeclarations.order_by("-creation_date").first()
-
-    @property
     def appro_badge(self) -> bool | None:
         total = self.valeur_totale
         if total:

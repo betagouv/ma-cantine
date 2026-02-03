@@ -5,7 +5,6 @@ from rest_framework import serializers
 
 from data.models import Diagnostic
 
-from .teledeclaration import ShortTeledeclarationSerializer
 from .utils import appro_to_percentages
 
 logger = logging.getLogger(__name__)
@@ -153,8 +152,6 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
 
 
 class FullDiagnosticSerializer(DiagnosticSerializer):
-    teledeclaration = ShortTeledeclarationSerializer(source="latest_submitted_teledeclaration")
-
     class Meta:
         model = Diagnostic
         fields = (
