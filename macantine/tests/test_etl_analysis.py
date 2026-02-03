@@ -128,8 +128,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["version"], str(TELEDECLARATION_CURRENT_VERSION))
         self.assertEqual(canteen_site_diagnostic_2024["email"], self.canteen_site_manager_1.email)
         self.assertEqual(canteen_site_diagnostic_2024["canteen_id"], self.canteen_site.id)
-        self.assertEqual(canteen_site_diagnostic_2024["siret"], "21380185500015")
-        self.assertEqual(canteen_site_diagnostic_2024["name"], "Cantine")
+        self.assertEqual(canteen_site_diagnostic_2024["siret"], self.canteen_site.siret)
+        self.assertEqual(canteen_site_diagnostic_2024["name"], self.canteen_site.name)
+        self.assertEqual(canteen_site_diagnostic_2024["production_type"], self.canteen_site.production_type)
+        self.assertEqual(canteen_site_diagnostic_2024["management_type"], "A) directe")
+        self.assertEqual(canteen_site_diagnostic_2024["modele_economique"], "B) public")
         self.assertEqual(canteen_site_diagnostic_2024["central_producer_siret"], None)
         self.assertEqual(canteen_site_diagnostic_2024["secteur"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site_diagnostic_2024["categorie"], "Santé,Social / Médico-social")
@@ -151,6 +154,13 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(
             canteen_groupe_diagnostic_2022_satellite["id"], self.canteen_groupe_diagnostic_2022.teledeclaration_id
         )
+        self.assertEqual(
+            canteen_groupe_diagnostic_2022_satellite["production_type"], "site_cooked_elsewhere"
+        )  # hardcoded
+        self.assertEqual(
+            canteen_groupe_diagnostic_2022_satellite["management_type"], "B) concédée"
+        )  # groupe management_type
+        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["modele_economique"], None)  # groupe economic_model
         self.assertEqual(canteen_groupe_diagnostic_2022_satellite["secteur"], "")  # groupe secteur
         self.assertEqual(canteen_groupe_diagnostic_2022_satellite["categorie"], "")  # groupe categorie
 
@@ -164,6 +174,15 @@ class TeledeclarationETLAnalysisTest(TestCase):
         ].iloc[0]
         self.assertEqual(
             canteen_groupe_diagnostic_2025_satellite["id"], self.canteen_groupe_diagnostic_2025.teledeclaration_id
+        )
+        self.assertEqual(
+            canteen_groupe_diagnostic_2025_satellite["production_type"], self.canteen_satellite.production_type
+        )
+        self.assertEqual(
+            canteen_groupe_diagnostic_2025_satellite["management_type"], self.canteen_satellite.management_type
+        )
+        self.assertEqual(
+            canteen_groupe_diagnostic_2025_satellite["modele_economique"], self.canteen_satellite.economic_model
         )
         self.assertEqual(
             canteen_groupe_diagnostic_2025_satellite["secteur"], "Ecole primaire (maternelle et élémentaire)"
@@ -492,6 +511,9 @@ class TeledeclarationETLAnalysisTest(TestCase):
                         "id": 20,
                         "name": "SAT 1",
                         "siret": "21930055500196",
+                        "production_type": "site_cooked_elsewhere",
+                        "management_type": "direct",
+                        "economic_model": "public",
                         "yearly_meal_count": 60,
                         "sectors": [{"name": "Secteur A"}, {"name": "Secteur B"}],
                     },
@@ -499,6 +521,9 @@ class TeledeclarationETLAnalysisTest(TestCase):
                         "id": 21,
                         "name": "SAT 2",
                         "siret": "21930055500188",
+                        "production_type": "site",
+                        "management_type": "direct",
+                        "economic_model": "public",
                         "yearly_meal_count": 40,
                     },
                 ],
@@ -507,12 +532,18 @@ class TeledeclarationETLAnalysisTest(TestCase):
                         "id": 30,
                         "name": "SATELLITE 1",
                         "siret": "31930055500123",
+                        "production_type": "site_cooked_elsewhere",
+                        "management_type": "direct",
+                        "economic_model": "public",
                         "yearly_meal_count": 120,
                     },
                     {
                         "id": 31,
                         "name": "SATELLITE 2",
                         "siret": "31930055500456",
+                        "production_type": "site_cooked_elsewhere",
+                        "management_type": "direct",
+                        "economic_model": "public",
                         "yearly_meal_count": None,
                     },
                 ],
@@ -521,6 +552,9 @@ class TeledeclarationETLAnalysisTest(TestCase):
                         "id": 40,
                         "name": "SATELLITE 1",
                         "siret": "21340172201787",
+                        "production_type": "site_cooked_elsewhere",
+                        "management_type": "direct",
+                        "economic_model": "public",
                         "city_insee_code": "38185",
                         "department": "38",
                         "region": "84",

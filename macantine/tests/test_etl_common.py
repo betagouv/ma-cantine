@@ -52,8 +52,8 @@ def setUpTestData(cls, with_diagnostics=False):
         deletion_date=timezone.now(),
     )
     cls.canteen_site_armee = CanteenFactory(
-        management_type=Canteen.ManagementType.DIRECT,
         production_type=Canteen.ProductionType.ON_SITE,
+        management_type=Canteen.ManagementType.DIRECT,
         economic_model=Canteen.EconomicModel.PUBLIC,
         sector_list=[Sector.ADMINISTRATION_PRISON],
         line_ministry=Canteen.Ministries.ARMEE,
@@ -61,10 +61,13 @@ def setUpTestData(cls, with_diagnostics=False):
     )
     cls.canteen_groupe = CanteenFactory(
         production_type=Canteen.ProductionType.GROUPE,
+        management_type=Canteen.ManagementType.CONCEDED,
         managers=[cls.canteen_groupe_manager],
     )
     cls.canteen_satellite = CanteenFactory(
         production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        management_type=Canteen.ManagementType.DIRECT,
+        economic_model=Canteen.EconomicModel.PUBLIC,
         groupe=cls.canteen_groupe,
         central_producer_siret="22730656663081",
         city_insee_code="38185",

@@ -146,6 +146,9 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                     satellite_row["satellite_canteens_count"] = 0
                     # since 2025: override more fields
                     if satellite_row["year"] >= 2025:
+                        satellite_row["production_type"] = satellite["production_type"]
+                        satellite_row["management_type"] = satellite["management_type"]
+                        satellite_row["modele_economique"] = satellite["economic_model"]
                         satellite_row["code_insee_commune"] = satellite.get("city_insee_code", None)
                         satellite_row["departement"] = satellite.get("department", None)
                         satellite_row["region"] = satellite.get("region", None)
