@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.10.0](https://github.com/betagouv/ma-cantine/compare/v2026.9.0...v2026.10.0) (2026-02-03)
+
+
+### Nouveautés
+
+* **Ressource:** mise à jour antisèche et kit du télédéclarant ([#6346](https://github.com/betagouv/ma-cantine/issues/6346)) ([852ec2a](https://github.com/betagouv/ma-cantine/commit/852ec2a46977b5431f760f4ad095f9ad2e4301a0))
+
 ## [2026.9.0](https://github.com/betagouv/ma-cantine/compare/v2026.8.0...v2026.9.0) (2026-02-02)
 
 
