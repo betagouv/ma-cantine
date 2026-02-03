@@ -165,8 +165,6 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
         self._clean_dataset()
         logger.info("Canteens: Transform ChoiceFields...")
         self.transform_canteen_choicefields()
-        logger.info("Canteens: Transform ArrayFields...")
-        self.transform_canteen_arrayfields()
 
 
 class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
