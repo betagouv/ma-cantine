@@ -132,7 +132,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         with default_storage.open(filename + ".xlsx", "wb") as f:
             f.write(output.getvalue())
 
-    def load_dataset(self):
+    def load_dataset(self, datagouv=True):
         filepath = f"open_data/{self.dataset_name}"
         if (
             os.environ.get("STATICFILES_STORAGE") == "storages.backends.s3.S3Storage"
@@ -145,7 +145,8 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
             self._load_data_csv(filepath)
             self._load_data_xlsx(filepath)
 
-            update_dataset_resources(self.datagouv_dataset_id)
+            if datagouv:
+                update_dataset_resources(self.datagouv_dataset_id)
         except Exception as e:
             logger.error(f"Error saving validated data: {e}")
 

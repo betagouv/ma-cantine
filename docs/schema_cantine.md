@@ -2,8 +2,8 @@
 
 |Nom|Type|Description|Exemple|Propriétés|
 |-|-|-|-|-|
-|id (Identifiant)|nombre entier|Identifiant Unique de la Cantine|71331||
-|name (Nom)|chaîne de caractères|Nom la Cantine|Restaurant Scolaire de Marigny-le-Lozon||
+|id (Identifiant)|nombre entier|Identifiant unique de la cantine|71331||
+|name (Nom)|chaîne de caractères|Nom la cantine|Restaurant Scolaire de Marigny-le-Lozon||
 |siret (Siret)|chaîne de caractères|Identifiant du [Système d'Identification du Répertoire des Etablissements](https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_%C3%A9tablissements) (SIRET) qui identifie la cantine|20005822000092||
 |city (Ville)|chaîne de caractères|Ville dans laquelle se trouve la cantine|Marigny-Le-Lozon||
 |city_insee_code (Code Insee ville)|chaîne de caractères|Code Insee de la ville dans laquelle se trouve la cantine|50292||
