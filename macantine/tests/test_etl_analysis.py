@@ -80,6 +80,10 @@ class CanteenETLAnalysisTest(TestCase):
         canteen_site_without_manager = etl.df[etl.df.id == self.canteen_site_without_manager.id].iloc[0]
         self.assertEqual(canteen_site_without_manager["adresses_gestionnaires"], "")
 
+        canteen_site_earlier = etl.df[etl.df.id == self.canteen_site_earlier.id].iloc[0]
+        self.assertEqual(canteen_site_earlier["secteur"], "Supérieur et Universitaire")
+        self.assertEqual(canteen_site_earlier["ministere_tutelle"], "Enseignement supérieur et Recherche")
+
         canteen_satellite = etl.df[etl.df.id == self.canteen_satellite.id].iloc[0]
         self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
 
@@ -93,12 +97,12 @@ class TeledeclarationETLAnalysisTest(TestCase):
         # all years combined
         # 2022: 3 teledeclarations (1 groupe with 1 satellite)
         # 2023: 1 teledeclaration (1 is cancelled, 1 armee)
-        # 2024: 1 teledeclaration
+        # 2024: 2 teledeclarations
         # 2025: 1 teledeclaration
         etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_td.extract_dataset()
 
-        self.assertEqual(etl_td.len_dataset(), 3 + 1 + 1 + 1)
+        self.assertEqual(etl_td.len_dataset(), 3 + 1 + 2 + 1)
         self.assertEqual(
             etl_td.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
         )  # Order by teledeclaration created date ascending
@@ -120,6 +124,14 @@ class TeledeclarationETLAnalysisTest(TestCase):
         etl_td.extract_dataset()
         etl_td.transform_dataset()
 
+        canteen_site_earlier_diagnostic_2024 = etl_td.df[
+            etl_td.df.id == self.canteen_site_earlier_diagnostic_2024.teledeclaration_id
+        ][etl_td.df.year == 2024].iloc[0]
+        self.assertEqual(canteen_site_earlier_diagnostic_2024["secteur"], "Supérieur et Universitaire")
+        self.assertEqual(
+            canteen_site_earlier_diagnostic_2024["line_ministry"], "enseignement_superieur"
+        )  # TODO: verbose_name
+
         canteen_site_diagnostic_2024 = etl_td.df[etl_td.df.id == self.canteen_site_diagnostic_2024.teledeclaration_id][
             etl_td.df.year == 2024
         ].iloc[0]
@@ -130,9 +142,9 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["canteen_id"], self.canteen_site.id)
         self.assertEqual(canteen_site_diagnostic_2024["siret"], self.canteen_site.siret)
         self.assertEqual(canteen_site_diagnostic_2024["name"], self.canteen_site.name)
-        self.assertEqual(canteen_site_diagnostic_2024["production_type"], self.canteen_site.production_type)
-        self.assertEqual(canteen_site_diagnostic_2024["management_type"], self.canteen_site.management_type)
-        self.assertEqual(canteen_site_diagnostic_2024["modele_economique"], self.canteen_site.economic_model)
+        self.assertEqual(canteen_site_diagnostic_2024["production_type"], "site")
+        self.assertEqual(canteen_site_diagnostic_2024["management_type"], "direct")
+        self.assertEqual(canteen_site_diagnostic_2024["modele_economique"], "public")
         self.assertEqual(canteen_site_diagnostic_2024["central_producer_siret"], None)
         self.assertEqual(canteen_site_diagnostic_2024["secteur"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site_diagnostic_2024["categorie"], "Santé,Social / Médico-social")
