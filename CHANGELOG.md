@@ -6,6 +6,21 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.11.0](https://github.com/betagouv/ma-cantine/compare/v2026.10.0...v2026.11.0) (2026-02-04)
+
+
+### Nouveautés
+
+* **Ressources:** ajout du support et des resultats des sondages du webinaire du 3 fevrier ([#6350](https://github.com/betagouv/ma-cantine/issues/6350)) ([857f7af](https://github.com/betagouv/ma-cantine/commit/857f7af20369cf0502f7fbcdaf78e1c70f57da8c))
+
+
+### Améliorations
+
+* **Metabase:** Télédéclarations: ne plus exporter les champs management_type & economic_model avec les prefix 'A) ' [1TD1Site] ([#6343](https://github.com/betagouv/ma-cantine/issues/6343)) ([1c91602](https://github.com/betagouv/ma-cantine/commit/1c91602a29b7716ffb487b9d30ebac3b919513b3))
+* **Metabase:** Télédéclarations: utiliser les management_type & economic_model du satellite [1TD1Site] ([#6341](https://github.com/betagouv/ma-cantine/issues/6341)) ([aaff445](https://github.com/betagouv/ma-cantine/commit/aaff44517f0a016d24fa3262abf06fb39679d99a))
+* **Open Data:** améliorer les exports des colonnes pat_list & pat_lib_list ([#6322](https://github.com/betagouv/ma-cantine/issues/6322)) ([47df57e](https://github.com/betagouv/ma-cantine/commit/47df57e874026ddeb83e171e31fdc989f1295818))
+* **Open Data:** mettre à jour les fichiers d'exports Cantines & Télédéclarations (en local) ([#6352](https://github.com/betagouv/ma-cantine/issues/6352)) ([c3b1d68](https://github.com/betagouv/ma-cantine/commit/c3b1d6815e6915058b1fb6062591b72bbcbbf9f8))
+
 ## [2026.10.0](https://github.com/betagouv/ma-cantine/compare/v2026.9.0...v2026.10.0) (2026-02-03)
 
 
