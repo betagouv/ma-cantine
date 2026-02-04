@@ -15,8 +15,8 @@ const createCanteen = (payload) => {
     .catch((e) => e)
 }
 
-const canteenStatus = (searchBy, number) => {
-  return fetch(`/api/v1/canteenStatus/${searchBy}/${number}`, {
+const fetchCanteen = (id) => {
+  return fetch(`/api/v1/canteens/${id}`, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -27,8 +27,32 @@ const canteenStatus = (searchBy, number) => {
     .catch((e) => e)
 }
 
-const fetchCanteen = (id) => {
-  return fetch(`/api/v1/canteens/${id}`, {
+const fetchSatellites = (canteenId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/satellites/`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const fetchCanteensActions = (year) => {
+  return fetch(`/api/v1/canteenActions/${year}`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const canteenStatus = (searchBy, number) => {
+  return fetch(`/api/v1/canteenStatus/${searchBy}/${number}`, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -47,19 +71,6 @@ const updateCanteen = (payload, id) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
-  })
-    .then(verifyResponse)
-    .then((response) => response)
-    .catch((e) => e)
-}
-
-
-const fetchSatellites = (canteenId) => {
-  return fetch(`/api/v1/canteens/${canteenId}/satellites/`, {
-    method: "GET",
-    headers: {
-      "X-CSRFToken": window.CSRF_TOKEN || "",
-    },
   })
     .then(verifyResponse)
     .then((response) => response)
@@ -112,18 +123,6 @@ const teamJoinRequest = (id, userInfos) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(userInfos),
-  })
-    .then(verifyResponse)
-    .then((response) => response)
-    .catch((e) => e)
-}
-
-const fetchCanteensActions = (year) => {
-  return fetch(`/api/v1/canteenActions/${year}`, {
-    method: "GET",
-    headers: {
-      "X-CSRFToken": window.CSRF_TOKEN || "",
-    },
   })
     .then(verifyResponse)
     .then((response) => response)
