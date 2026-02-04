@@ -41,6 +41,10 @@ def setUpTestData(cls, with_diagnostics=False):
     cls.canteen_site_without_manager = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[])
     cls.canteen_site_earlier = CanteenFactory(
         production_type=Canteen.ProductionType.ON_SITE,
+        management_type=Canteen.ManagementType.DIRECT,
+        economic_model=Canteen.EconomicModel.PUBLIC,
+        sector_list=[Sector.EDUCATION_SUPERIEUR_UNIVERSITAIRE],
+        line_ministry=Canteen.Ministries.ENSEIGNEMENT_SUPERIEUR,
         managers=[cls.canteen_site_manager_2],
         # creation_date=timezone.now() - timezone.timedelta(days=10),
     )
@@ -112,6 +116,11 @@ def setUpTestData(cls, with_diagnostics=False):
                 canteen=cls.canteen_site_armee, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             cls.canteen_site_armee_diagnostic_2023.teledeclare(cls.canteen_site_manager_2)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            cls.canteen_site_earlier_diagnostic_2024 = DiagnosticFactory(
+                canteen=cls.canteen_site_earlier, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
+            cls.canteen_site_earlier_diagnostic_2024.teledeclare(cls.canteen_site_manager_2)
         with freeze_time("2025-04-20"):  # during the 2024 correction campaign
             cls.canteen_site_diagnostic_2024 = DiagnosticFactory(
                 canteen=cls.canteen_site, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE

@@ -24,7 +24,6 @@ from common.api.decoupage_administratif import (
     map_communes_infos,
     map_epcis_code_name,
 )
-from data.models import Canteen
 from macantine.etl import etl
 from macantine.etl.etl import logger
 
@@ -33,12 +32,6 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
     """
     Abstract class implementing the specifity for open data export
     """
-
-    def transform_canteen_choicefields(self, prefix=""):
-        # line_ministry
-        self.df[prefix + "line_ministry"] = self.df[prefix + "line_ministry"].apply(
-            lambda x: Canteen.Ministries(x).label if (x in Canteen.Ministries) else None
-        )
 
     def transform_canteen_geo_data(self, prefix=""):
         """
@@ -164,8 +157,6 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
     def transform_dataset(self):
         logger.info("Canteens: Clean dataset...")
         self._clean_dataset()
-        logger.info("Canteens: Transform ChoiceFields...")
-        self.transform_canteen_choicefields()
 
 
 class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
@@ -185,8 +176,6 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self._clean_dataset()
         logger.info("TD campagne: Format the decimals...")
         self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
-        logger.info("TD campagne: Transform ChoiceFields...")
-        self.transform_canteen_choicefields(prefix="canteen_")
         logger.info("TD campagne: Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
         # TODO: self.flatten_central_kitchen_td()

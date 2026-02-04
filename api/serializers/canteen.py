@@ -685,6 +685,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
     pat_lib_list = serializers.SerializerMethodField()
     logo = serializers.SerializerMethodField(read_only=True)
     sector_list = serializers.SerializerMethodField(read_only=True)
+    line_ministry = serializers.SerializerMethodField(read_only=True)
     active_on_ma_cantine = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -741,6 +742,11 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
 
     def get_sector_list(self, obj):
         return ",".join(obj.sector_lib_list)
+
+    def get_line_ministry(self, obj):
+        if obj.line_ministry:
+            return Canteen.Ministries(obj.line_ministry).label
+        return None
 
     def get_active_on_ma_cantine(self, obj):
         return obj.managers.exists()
