@@ -9,7 +9,7 @@ from freezegun import freeze_time
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector
-from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS, aggregate_col
+from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 from macantine.utils import TELEDECLARATION_CURRENT_VERSION
@@ -247,67 +247,6 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 )
                 data = self.serializer.data
                 self.assertEqual(int(data["ratio_egalim_sans_bio"]), tc["expected_outcome"])
-
-    def test_aggregate_col(self):
-        test_cases = [
-            {
-                "name": "Regular aggregation",
-                "data": {
-                    "0": {
-                        "id": 1,
-                        "valeur_bio": pd.NA,
-                        "valeur_bio_boulange": 5,
-                        "valeur_bio_viande": 5,
-                    }
-                },
-                "categ": "bio",
-                "sub_categ": ["_bio"],
-                "expected_outcome": 10,
-            },
-            {
-                "name": "No double count by exluding potential aggregated value from sum",
-                "data": {
-                    "0": {
-                        "id": 1,
-                        "valeur_bio": 5,
-                        "valeur_bio_boulange": 5,
-                        "valeur_bio_viande": 5,
-                    }
-                },
-                "categ": "bio",
-                "sub_categ": ["_bio"],
-                "expected_outcome": 10,
-            },
-            {
-                "name": "Multiple sub categ",
-                "data": {
-                    "0": {
-                        "id": 1,
-                        "valeur_bio": pd.NA,
-                        "valeur_bio_boulange": 5,
-                        "valeur_bio_viande": 5,
-                        "valeur_awesome_viande": 5,
-                    }
-                },
-                "categ": "bio",
-                "sub_categ": ["_bio", "_awesome"],
-                "expected_outcome": 15,
-            },
-        ]
-        for tc in test_cases:
-            td_complete = pd.DataFrame.from_dict(tc["data"], orient="index")
-            td_aggregated = aggregate_col(td_complete, tc["categ"], tc["sub_categ"])
-            self.assertEqual(td_aggregated.iloc[0][f"teledeclaration.valeur_{tc['categ']}"], tc["expected_outcome"])
-
-    def test_check_column_matches_substring(self):
-        data = {
-            "0": {
-                "id": 1,
-            }
-        }
-        df = pd.DataFrame.from_dict(data, orient="index")
-        with self.assertRaises(KeyError):
-            aggregate_col(df, "categ_A", ["_non_existing_sub_categ"])
 
     def test_transform_sector_column(self):
         data = {
