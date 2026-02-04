@@ -22,13 +22,6 @@
       "type": "string"
     },
     {
-      "description": "Date de création de la télédéclaration",
-      "example": "2019-04-01T00:00:00.000Z",
-      "name": "creation_date",
-      "title": "Date de création",
-      "type": "string"
-    },
-    {
       "description": "Année de la télédéclaration",
       "example": "2022",
       "name": "year",
@@ -199,6 +192,13 @@
       "name": "teledeclaration_ratio_egalim_hors_bio",
       "title": "Télédéclaration Ratio EGalim",
       "type": "number"
+    },
+    {
+      "description": "Date de création de la télédéclaration",
+      "example": "2019-04-01T00:00:00.000Z",
+      "name": "creation_date",
+      "title": "Date de création",
+      "type": "string"
     }
   ],
   "title": "Schéma des télédéclarations d'achats alimentaires pour la restauration collective"

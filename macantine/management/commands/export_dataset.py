@@ -12,6 +12,8 @@ class Command(BaseCommand):
     """
     Exemples:
     - python manage.py export_dataset --model Canteen --destination analysis
+    - python manage.py export_dataset --model Canteen --destination opendata
+    - python manage.py export_dataset --model Teledeclaration --destination analysis
     - python manage.py export_dataset --model Teledeclaration --destination opendata
     """
 

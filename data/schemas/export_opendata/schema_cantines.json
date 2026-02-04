@@ -1,14 +1,14 @@
 {
   "fields": [
     {
-      "description": "Identifiant Unique de la Cantine",
+      "description": "Identifiant unique de la cantine",
       "example": "71331",
       "name": "id",
       "title": "Identifiant",
       "type": "integer"
     },
     {
-      "description": "Nom la Cantine",
+      "description": "Nom la cantine",
       "example": "Restaurant Scolaire de Marigny-le-Lozon",
       "name": "name",
       "title": "Nom",
@@ -141,13 +141,6 @@
       "type": "integer"
     },
     {
-      "description": "Date de création de la cantine au format ISO 8601",
-      "example": "2018-01-01",
-      "name": "creation_date",
-      "title": "Date de création",
-      "type": "string"
-    },
-    {
       "description": "Nombre de repas servis, en moyenne, par jour dans la cantine",
       "example": "100",
       "name": "daily_meal_count",
@@ -173,13 +166,6 @@
       "example": "Éducation et Jeunesse",
       "name": "line_ministry",
       "title": "Ministère de tutelle",
-      "type": "string"
-    },
-    {
-      "description": "Date de dernière modification de la cantine au format ISO 8601",
-      "example": "2018-01-01",
-      "name": "modification_date",
-      "title": "Date de modification",
       "type": "string"
     },
     {
@@ -230,6 +216,20 @@
       "name": "active_on_ma_cantine",
       "title": "Actif sur Ma Cantine",
       "type": "boolean"
+    },
+    {
+      "description": "Date de création de la cantine au format ISO 8601",
+      "example": "2018-01-01",
+      "name": "creation_date",
+      "title": "Date de création",
+      "type": "string"
+    },
+    {
+      "description": "Date de dernière modification de la cantine au format ISO 8601",
+      "example": "2018-01-01",
+      "name": "modification_date",
+      "title": "Date de modification",
+      "type": "string"
     }
   ],
   "title": "Schéma des établissements de restauration collective"

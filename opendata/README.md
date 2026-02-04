@@ -24,3 +24,21 @@ Pour chacun des fichiers (cantines & télédéclarations), un schéma au format 
 1. Générer le fichier et le stocker sur Clever Cloud (ou Github)
 2. Se connecter à l'interface admin de data.gouv
 3. Cliquer sur "Ajouter des fichiers" et remplir le formulaire
+
+## Stocker une copie sur Github
+
+1. avoir récupéré en local le backup de la nuit
+2. modifier `macantine/etl/open_data.py` : dans `load_dataset`, mettre `datagouv=False` (pour éviter de pusher)
+3. lancer les exports
+```
+python manage.py export_dataset --model Canteen --destination opendata
+python manage.py export_dataset --model Teledeclaration --destination opendata
+```
+4. copier les données dans le dossier opendata
+```
+cp media/open_data/registre_cantines.csv opendata/registre_cantines.csv
+cp media/open_data/campagne_td_2021.csv opendata/campagne_td_2021.csv
+cp media/open_data/campagne_td_2022.csv opendata/campagne_td_2022.csv
+cp media/open_data/campagne_td_2023.csv opendata/campagne_td_2023.csv
+cp media/open_data/campagne_td_2024.csv opendata/campagne_td_2024.csv
+```
