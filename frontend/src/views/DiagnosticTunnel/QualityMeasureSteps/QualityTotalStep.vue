@@ -269,7 +269,15 @@ export default {
     replaceOptionnalValueWithEmpty(purchases) {
       const nonEgalimFields = Constants.TeledeclarationCharacteristicGroups.nonEgalim.fields
       const outsideLawFields = Constants.TeledeclarationCharacteristicGroups.outsideLaw.fields
-      const optionnalFields = [...nonEgalimFields, ...outsideLawFields, "valueProduitsDeLaMerPecheDurable"]
+      const optionnalEgalimFields = Constants.TeledeclarationCharacteristicGroups.egalim.fields.filter(
+        (field) => field.endsWith("Performance") || field.endsWith("Externalites")
+      )
+      const optionnalFields = [
+        ...optionnalEgalimFields,
+        ...nonEgalimFields,
+        ...outsideLawFields,
+        "valueProduitsDeLaMerPecheDurable",
+      ]
       const purchasesKeys = Object.keys(purchases)
       const purchasesWithEmptyValue = {}
       purchasesKeys.map((key) => {
