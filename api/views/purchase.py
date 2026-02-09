@@ -37,31 +37,19 @@ class PurchasesPagination(LimitOffsetPagination):
     canteens = []
 
     def paginate_queryset(self, queryset, request, view=None):
-        # Performance improvements possible
-        user_purchases = Purchase.objects.filter(canteen__in=request.user.canteens.all())
-        family_param = request.query_params.get("family")
-        if family_param:
-            family_qs = user_purchases
-            characteristic_param = request.query_params.getlist("characteristics")
-            if characteristic_param:
-                family_qs = family_qs.filter(characteristics__overlap=characteristic_param)
-                self.families = set(filter(lambda x: x, family_qs.values_list("family", flat=True)))
-            else:
-                self.families = list(Purchase.Family)
-        else:
-            self.families = set(filter(lambda x: x, queryset.values_list("family", flat=True)))
-        self.canteens = list(
-            queryset.order_by("canteen__id").distinct("canteen__id").values_list("canteen__id", flat=True)
+        """
+        return extra fields for the filter options in the frontend
+        (and not only for the current page)
+        """
+        self.families = list(set(queryset.values_list("family", flat=True)))
+        self.characteristics = list(
+            {
+                characteristic
+                for characteristics in queryset.values_list("characteristics", flat=True)
+                for characteristic in characteristics
+            }
         )
-
-        self.characteristics = []
-        all_characteristics = list(Purchase.Characteristic)
-        characteristic_qs = user_purchases
-        if family_param:
-            characteristic_qs = characteristic_qs.filter(family=family_param)
-        for c in all_characteristics:
-            if characteristic_qs.filter(characteristics__contains=[c]).exists():
-                self.characteristics.append(c)
+        self.canteens = list(set(queryset.values_list("canteen__id", flat=True)))
 
         return super().paginate_queryset(queryset, request, view)
 

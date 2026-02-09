@@ -172,7 +172,8 @@ class PurchaseListFilterApiTest(APITestCase):
         """
         self.canteen.managers.add(authenticate.user)
 
-        response = self.client.get(f"{reverse('purchase_list_create')}")
+        with self.assertNumQueries(7):
+            response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -181,7 +182,7 @@ class PurchaseListFilterApiTest(APITestCase):
         self.assertEqual(len(body["characteristics"]), 2)
         self.assertEqual(len(body["canteens"]), 1)
 
-        response = self.client.get(f"{reverse('purchase_list_create')}?characteristics={Purchase.Characteristic.BIO}")
+        response = self.client.get(f"{self.url}?characteristics={Purchase.Characteristic.BIO}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -189,13 +190,13 @@ class PurchaseListFilterApiTest(APITestCase):
         self.assertEqual(len(body["characteristics"]), 2)
         self.assertEqual(len(body["families"]), 1)
 
-        response = self.client.get(f"{reverse('purchase_list_create')}?family={Purchase.Family.PRODUITS_LAITIERS}")
+        response = self.client.get(f"{self.url}?family={Purchase.Family.PRODUITS_LAITIERS}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(len(body["results"]), 0)
         self.assertEqual(len(body["characteristics"]), 0)
-        self.assertEqual(len(body["families"]), 8)  # error detected?
+        self.assertEqual(len(body["families"]), 0)
 
 
 class PurchaseListExportApiTest(APITestCase):
