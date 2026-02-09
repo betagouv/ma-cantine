@@ -1,6 +1,5 @@
 import json
 import logging
-import re
 from datetime import datetime
 
 import pandas as pd
@@ -14,27 +13,6 @@ from macantine.etl.data_ware_house import DataWareHouse
 from macantine.utils import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
-
-
-def check_column_matches_substring(df, sub_categ: str):
-    for substring in sub_categ:
-        pattern = rf".*{re.escape(substring)}.*"
-        matching_cols = df.filter(regex=pattern).columns.tolist()
-        if len(matching_cols) == 0:
-            logger.error("The sub categ {substring} doesn't match any columns from the dataframe")
-            raise KeyError
-
-
-def aggregate_col(df, categ, sub_categ):
-    """
-    Aggregating into a new column all the values of a category for complete TD
-    """
-    check_column_matches_substring(df, sub_categ)
-    regex_pattern = rf"^(?!valeur_{categ}$).*(" + "|".join(sub_categ) + ")"
-    df[f"teledeclaration.valeur_{categ}"] = df.filter(regex=regex_pattern).sum(
-        axis=1, numeric_only=True, skipna=True, min_count=1
-    )
-    return df
 
 
 class ANALYSIS(etl.TRANSFORMER_LOADER):
@@ -57,11 +35,6 @@ class ANALYSIS(etl.TRANSFORMER_LOADER):
         """
         logger.info(f"Loading {len(self.df)} objects in db")
         self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
-
-    def _clean_dataset(self):
-        self.df = self.df.loc[:, ~self.df.columns.duplicated()]
-        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
-        self.df = self.df.drop_duplicates(subset=["id"])
 
 
 class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
