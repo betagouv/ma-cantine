@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.12.0](https://github.com/betagouv/ma-cantine/compare/v2026.11.0...v2026.12.0) (2026-02-09)
+
+
+### Nouveautés
+
+* **Ressources:** ajout du support et sondages webinaire acteurs de terrain ([#6355](https://github.com/betagouv/ma-cantine/issues/6355)) ([e5301db](https://github.com/betagouv/ma-cantine/commit/e5301db99094d716f8e9fab762222359135b100b))
+
+
+### Technique
+
+* **Metabase:** enlève certaines fonctions plus utilisées ([#6353](https://github.com/betagouv/ma-cantine/issues/6353)) ([72fe0a7](https://github.com/betagouv/ma-cantine/commit/72fe0a733bddf9589563c4bf3c6d034aa400fe42))
+* **Open Data:** simplifier l'export en gérant le line_ministry dans le serializer ([#6354](https://github.com/betagouv/ma-cantine/issues/6354)) ([f14a021](https://github.com/betagouv/ma-cantine/commit/f14a0212e80981a9b5e6e3c7f755f7971d47c3a7))
+
 ## [2026.11.0](https://github.com/betagouv/ma-cantine/compare/v2026.10.0...v2026.11.0) (2026-02-04)
 
 
