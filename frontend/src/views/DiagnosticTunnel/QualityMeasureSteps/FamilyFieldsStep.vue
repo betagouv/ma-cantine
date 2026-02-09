@@ -146,6 +146,7 @@ export default {
       viandesVolaillesFieldPrefix: "valeurViandesVolailles",
       produitsDeLaMerFieldPrefix: "valeurProduitsDeLaMer",
       requiredCategories: ["bio", "egalim"],
+      exceptionCaracteristics: ["EXTERNALITES", "PERFORMANCE"],
       exceptionFields: ["valueProduitsDeLaMerPecheDurable"],
     }
   },
@@ -188,10 +189,9 @@ export default {
       rules.push(this.validators.nonNegativeOrEmpty)
       rules.push(this.validators.decimalPlaces(2))
       rules.push(this.validators.lteOrEmpty(this.payload.valeurTotale))
-      // Catégorie obligatoire
-      const isRequiredCategory = this.requiredCategories.includes(this.groupId)
-      const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
-      if (isRequiredCategory && !isExceptionFields) rules.push(this.validators.required)
+      // Obligatoire
+      const isOptionnalField = this.isOptionnalField(fId)
+      if (!isOptionnalField) rules.push(this.validators.required)
       // Sous-catégories origine France : groupId : "valeurAutresCircuitCourt" "valeurAutresLocal"
       const franceSubcategoryGroupIDd = ["CIRCUIT_COURT", "LOCAL"]
       if (franceSubcategoryGroupIDd.includes(this.characteristicId)) {
@@ -208,7 +208,8 @@ export default {
     isOptionnalField(fId) {
       const isRequiredCategory = this.requiredCategories.includes(this.groupId)
       const isExceptionFields = this.exceptionFields.includes(this.diagnosticKey(fId))
-      return !isRequiredCategory || isExceptionFields
+      const isExceptionCaracteristic = this.exceptionCaracteristics.includes(this.characteristicId)
+      return !isRequiredCategory || isExceptionFields || isExceptionCaracteristic
     },
     diagnosticKey(family, extra) {
       let keyName = `valeur_${family}_${this.characteristicId}`
