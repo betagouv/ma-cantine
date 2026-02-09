@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue"
+import { ref, useTemplateRef } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import documentation from "@/data/documentation.json"
@@ -15,6 +15,8 @@ const store = useRootStore()
 
 /* Component */
 const forceRerender = ref(0)
+const errors = ref([])
+const formRef = useTemplateRef("form-ref")
 
 /* Save group */
 const saveGroup = (props) => {
@@ -23,13 +25,22 @@ const saveGroup = (props) => {
   canteensService
     .createCanteen(form)
     .then((canteenCreated) => {
-      const stayOnCreationPage = canteenCreated.id && action === "stay-on-creation-page"
-      const redirect = canteenCreated.id && action === "go-to-canteen-page"
-      if (!canteenCreated.id) store.notifyServerError()
-      if (stayOnCreationPage) resetForm(canteenCreated.name)
-      if (redirect) goToNewCanteenPage(canteenCreated)
+      if (!canteenCreated.id) errorCreateCanteen(canteenCreated)
+      else successCreateCanteen(canteenCreated, action)
     })
     .catch((e) => { store.notifyServerError(e) })
+}
+
+const successCreateCanteen = (canteenCreated, action) => {
+  const stayOnCreationPage = canteenCreated.id && action === "stay-on-creation-page"
+  const redirect = canteenCreated.id && action === "go-to-canteen-page"
+  if (stayOnCreationPage) resetForm(canteenCreated.name)
+  if (redirect) goToNewCanteenPage(canteenCreated)
+}
+
+const errorCreateCanteen = (canteenCreated) => {
+  errors.value = canteenCreated.list
+  formRef.value.scrollIntoView({ behavior: "smooth" })
 }
 
 /* After canteen is saved */
@@ -70,8 +81,11 @@ const resetForm = (name) => {
       </li>
     </AppRessources>
   </section>
-  <CanteenFormGroupe
-    :key="forceRerender"
-    @sendForm="(payload) => saveGroup(payload)"
-  />
+  <div ref="form-ref">
+    <CanteenFormGroupe
+      :key="forceRerender"
+      :errors="errors"
+      @sendForm="(payload) => saveGroup(payload)"
+    />
+  </div>
 </template>

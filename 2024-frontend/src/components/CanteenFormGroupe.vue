@@ -1,15 +1,11 @@
 <script setup>
-import { ref, computed, reactive } from "vue"
-import { helpers } from "@vuelidate/validators"
-import { useVuelidate } from "@vuelidate/core"
-import { useValidators } from "@/validators.js"
-import { formatError } from "@/utils.js"
+import { ref, reactive } from "vue"
 import documentation from "@/data/documentation.json"
 import options from "@/constants/canteen-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
 
 /* Data */
-const props = defineProps(["establishmentData", "showCancelButton"])
+const props = defineProps(["establishmentData", "showCancelButton", "errors"])
 const emit = defineEmits(["sendForm", "cancel"])
 const prefillEstablishment = ref(props.establishmentData)
 
@@ -41,38 +37,25 @@ const prefillFields = () => {
   form.centralProducerSiret = props.establishmentData.centralProducerSiret
 }
 
-/* Fields verification */
-const { required, integer, minValue, maxValue, minLength, maxLength } = useValidators()
-const yearlyMealMinValue = computed(() => Math.max(form.dailyMealCount, 420))
-const dailyMealMaxValue = computed(() => form.yearlyMealCount)
-
-const rules = {
-  name: { required },
-  sirenUniteLegale: { required },
-  managementType: { required },
-  centralProducerSiret: {
-    minLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", minLength(14)),
-    maxLength: helpers.withMessage("Le SIRET doit contenir 14 caractères", maxLength(14)),
-  },
-  dailyMealCount: { required, integer, minValue: minValue(3), maxValue: maxValue(dailyMealMaxValue) },
-  yearlyMealCount: { required, integer, minValue: minValue(yearlyMealMinValue) },
-}
-
 /* Form */
 const isSaving = ref(false)
 const forceRerender = ref(0)
-const v$ = useVuelidate(rules, form)
 
-const validateForm = (action) => {
-  v$.value.$validate()
-  if (v$.value.$invalid) return
+const sendForm = (action) => {
   emit("sendForm", { form: form, action: action })
+}
+
+const getErrorMessage = (fieldName) => {
+  if (props.errors.length === 0) return null
+  const errorIndex = props.errors.findIndex((error) => error.field === fieldName)
+  if (errorIndex === -1) return null
+  const messages = props.errors[errorIndex].message
+  return messages.length > 0 ? messages.join(". ") : messages[0]
 }
 
 /* Form fields initialisation */
 if (props.establishmentData) {
   prefillFields()
-  v$.value.$validate()
 } else resetFields()
 </script>
 
@@ -85,25 +68,25 @@ if (props.establishmentData) {
           v-model="form.name"
           label="Nom du groupe *"
           :label-visible="true"
-          :error-message="formatError(v$.name)"
+          :error-message="getErrorMessage('name')"
         />
         <DsfrRadioButtonSet
           legend="Mode de gestion *"
           v-model="form.managementType"
           :options="options.managementType"
-          :error-message="formatError(v$.managementType)"
+          :error-message="getErrorMessage('managementType')"
         />
         <DsfrInputGroup
           v-model="form.centralProducerSiret"
           label="SIRET de la cuisine centrale"
           hint="Optionnel"
           :label-visible="true"
-          :error-message="formatError(v$.centralProducerSiret)"
+          :error-message="getErrorMessage('centralProducerSiret')"
         />
         <CanteenEstablishmentSearch
           :key="forceRerender"
           @select="(canteenInfos) => selectEstablishment(canteenInfos)"
-          :error-required="formatError(v$.sirenUniteLegale)"
+          :error-required="getErrorMessage('sirenUniteLegale')"
           :establishment-data="prefillEstablishment"
           :has-siret="false"
           title="Mon établissement"
@@ -123,7 +106,7 @@ if (props.establishmentData) {
               label="Nombre de repas par jour *"
               :label-visible="true"
               type="number"
-              :error-message="formatError(v$.dailyMealCount)"
+              :error-message="getErrorMessage('dailyMealCount')"
               />
           </div>
           <div class="fr-col-12 fr-col-md-6">
@@ -132,7 +115,7 @@ if (props.establishmentData) {
               label="Nombre de repas par an *"
               :label-visible="true"
               type="number"
-              :error-message="formatError(v$.yearlyMealCount)"
+              :error-message="getErrorMessage('yearlyMealCount')"
               />
           </div>
         </div>
@@ -152,13 +135,13 @@ if (props.establishmentData) {
           :disabled="isSaving"
           secondary
           class="fr-mb-1v fr-mr-1v"
-          @click="validateForm('stay-on-creation-page')"
+          @click="sendForm('stay-on-creation-page')"
         />
         <DsfrButton
           label="Enregistrer"
           :disabled="isSaving"
           icon="fr-icon-save-line"
-          @click="validateForm('go-to-canteen-page')"
+          @click="sendForm('go-to-canteen-page')"
         />
       </div>
     </form>
