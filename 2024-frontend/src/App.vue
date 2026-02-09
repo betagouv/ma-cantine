@@ -22,8 +22,8 @@ watch(route, (to) => {
 
 <template>
   <div>
-    <AppBannerDemo />
     <AppHeader v-if="!layout.fullscreen" />
+    <AppBannerDemo />
     <AppBanner v-if="!layout.fullscreen" />
     <DsfrNotice v-if="!layout.fullscreen" type="alert">
       Gestionnaires de crèches : rappel de laits infantiles, voir les lots concernés sur le site <a href="https://rappel.conso.gouv.fr/categorie/25" target="_blank">Rappel conso</a>
