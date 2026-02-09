@@ -166,29 +166,61 @@ class PurchaseListFilterApiTest(APITestCase):
         self.assertEqual(len(results), 2)
 
     @authenticate
-    def test_available_filter_options(self):
-        """
-        Test that filter options with data are included in purchases list response
-        """
+    def test_pagination(self):
         self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 3)
+        self.assertIn("next", body)
+        self.assertIn("previous", body)
+        self.assertEqual(len(body["results"]), 3)
+        self.assertEqual(len(body["families"]), 2)
+        self.assertEqual(len(body["characteristics"]), 2)
+        self.assertEqual(len(body["canteens"]), 1)
+
+        response = self.client.get(f"{self.url}?limit=1&offset=1")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 3)
+        self.assertIn("next", body)
+        self.assertIn("previous", body)
+        self.assertEqual(len(body["results"]), 1)
+        # the pagination should not change the available filter options
+        self.assertEqual(len(body["families"]), 2)
+        self.assertEqual(len(body["characteristics"]), 2)
+        self.assertEqual(len(body["canteens"]), 1)
+
+    @authenticate
+    def test_available_filter_options(self):
+        # set the user as manager + add an extra canteen with purchase
+        self.canteen.managers.add(authenticate.user)
+        canteen_2 = CanteenFactory(managers=[authenticate.user])
+        PurchaseFactory(
+            canteen=canteen_2, family=Purchase.Family.AUTRES, characteristics=[Purchase.Characteristic.BIO]
+        )
 
         with self.assertNumQueries(7):
             response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body["results"]), 3)
+        self.assertEqual(len(body["results"]), 3 + 1)
         self.assertEqual(len(body["families"]), 2)
         self.assertEqual(len(body["characteristics"]), 2)
-        self.assertEqual(len(body["canteens"]), 1)
+        self.assertEqual(len(body["canteens"]), 1 + 1)
 
         response = self.client.get(f"{self.url}?characteristics={Purchase.Characteristic.BIO}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body["results"]), 2)
+        self.assertEqual(len(body["results"]), 2 + 1)
         self.assertEqual(len(body["characteristics"]), 2)
-        self.assertEqual(len(body["families"]), 1)
+        self.assertEqual(len(body["families"]), 1 + 1)
+        self.assertEqual(len(body["canteens"]), 1 + 1)
 
         response = self.client.get(f"{self.url}?family={Purchase.Family.PRODUITS_LAITIERS}")
 
@@ -197,6 +229,7 @@ class PurchaseListFilterApiTest(APITestCase):
         self.assertEqual(len(body["results"]), 0)
         self.assertEqual(len(body["characteristics"]), 0)
         self.assertEqual(len(body["families"]), 0)
+        self.assertEqual(len(body["canteens"]), 0)
 
 
 class PurchaseListExportApiTest(APITestCase):
