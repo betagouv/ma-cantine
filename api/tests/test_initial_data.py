@@ -1,5 +1,4 @@
 import datetime
-import json
 
 from django.urls import reverse
 from django.utils import timezone
@@ -11,69 +10,89 @@ from data.factories import CanteenFactory, CommunityEventFactory, PartnerTypeFac
 from data.models import Canteen
 
 
-class TestInitialDataApi(APITestCase):
+INITIAL_DATA_BODY_KEYS = [
+    "loggedUser",
+    "sectors",
+    "partnerTypes",
+    "communityEvents",
+    "videoTutorials",
+    "canteenPreviews",
+    "lineMinistries",
+]
+
+
+class InitialDataApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.partner_type = PartnerTypeFactory()
+        cls.community_event = CommunityEventFactory(start_date=timezone.now() - datetime.timedelta(days=10), end_date=timezone.now() + datetime.timedelta(days=10))
+        cls.video_tutorial = VideoTutorialFactory(published=True)
+        cls.url = reverse("initial_data")
+
     def test_unauthenticated_initial_data(self):
-        """
-        The initial data request must contain data that is individually managed
-        by other views. If the call isn't authenticated, "loggedUser" should be None
-        """
-        partner_type = PartnerTypeFactory()
-        community_event = CommunityEventFactory(end_date=timezone.now() + datetime.timedelta(days=10))
-        video_tutorial = VideoTutorialFactory(published=True)
+        response = self.client.get(self.url)
 
-        response = self.client.get(reverse("initial_data"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
 
-        body = json.loads(response.content.decode())
-        self.assertIn("loggedUser", body)
+        for key in INITIAL_DATA_BODY_KEYS:
+            with self.subTest(key=key):
+                self.assertIn(key, body)
+
+        # unauthenticated: loggedUser & canteenPreviews should be null
         self.assertIsNone(body["loggedUser"])
+        self.assertIsNone(body["canteenPreviews"])
 
-        self.assertIn("sectors", body)
         self.assertEqual(len(body["sectors"]), 26)
         self.assertEqual(body["sectors"][0]["name"], "Restaurants des prisons")
 
-        self.assertIn("partnerTypes", body)
         self.assertEqual(len(body["partnerTypes"]), 1)
-        self.assertEqual(body["partnerTypes"][0]["name"], partner_type.name)
+        self.assertEqual(body["partnerTypes"][0]["name"], self.partner_type.name)
 
-        self.assertIn("communityEvents", body)
         self.assertEqual(len(body["communityEvents"]), 1)
-        self.assertEqual(body["communityEvents"][0]["title"], community_event.title)
+        self.assertEqual(body["communityEvents"][0]["title"], self.community_event.title)
 
-        self.assertIn("videoTutorials", body)
         self.assertEqual(len(body["videoTutorials"]), 1)
-        self.assertEqual(body["videoTutorials"][0]["title"], video_tutorial.title)
+        self.assertEqual(body["videoTutorials"][0]["title"], self.video_tutorial.title)
 
-        self.assertIn("canteenPreviews", body)
-        self.assertIsNone(body["canteenPreviews"])
-
-        self.assertIn("lineMinistries", body)
         self.assertEqual(len(body["lineMinistries"]), len(Canteen.Ministries))
 
     @authenticate
-    def test_authenticated_logged_initial_data(self):
-        """
-        Same endpoint, this time with data in the "loggedUser" property. Not needed
-        to thoroughly test the other keys, just making sure they are present.
-        The cantine previews should also be present in this case.
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
+    def test_authenticated_initial_data(self):
+        response = self.client.get(self.url)
 
-        response = self.client.get(reverse("initial_data"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
 
-        body = json.loads(response.content.decode())
-        self.assertIn("loggedUser", body)
+        for key in INITIAL_DATA_BODY_KEYS:
+            with self.subTest(key=key):
+                self.assertIn(key, body)
+
+        self.assertIsNotNone(body["loggedUser"])
         self.assertEqual(body["loggedUser"]["id"], authenticate.user.id)
         self.assertEqual(body["loggedUser"]["email"], authenticate.user.email)
         self.assertEqual(body["loggedUser"]["username"], authenticate.user.username)
         self.assertEqual(body["loggedUser"]["firstName"], authenticate.user.first_name)
 
-        self.assertIn("canteenPreviews", body)
-        self.assertEqual(len(body["canteenPreviews"]), 1)
-        self.assertEqual(body["canteenPreviews"][0]["name"], canteen.name)
+        # authenticated but not manager: canteenPreviews should be empty
+        self.assertIsNotNone(body["canteenPreviews"])
+        self.assertEqual(len(body["canteenPreviews"]), 0)
 
-        self.assertIn("sectors", body)
-        self.assertIn("partnerTypes", body)
-        self.assertIn("communityEvents", body)
-        self.assertIn("videoTutorials", body)
+    @authenticate
+    def test_authenticated_and_manager(self):
+        self.canteen.managers.set([authenticate.user])
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        for key in INITIAL_DATA_BODY_KEYS:
+            with self.subTest(key=key):
+                self.assertIn(key, body)
+
+        # authenticated and manager: canteenPreviews filled
+        self.assertIsNotNone(body["canteenPreviews"])
+        self.assertEqual(len(body["canteenPreviews"]), 1)
+        self.assertEqual(body["canteenPreviews"][0]["name"], self.canteen.name)
