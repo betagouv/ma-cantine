@@ -1,5 +1,23 @@
 # Onboarding tech
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Cloner le dépôt](#cloner-le-d%C3%A9p%C3%B4t)
+- [Mise en place de l'environnement dev](#mise-en-place-de-lenvironnement-dev)
+- [Lancer l'application en mode développement](#lancer-lapplication-en-mode-d%C3%A9veloppement)
+- [Pre-commit](#pre-commit)
+- [Lancer les tests](#lancer-les-tests)
+- [Creation d'un superuser](#creation-dun-superuser)
+- [Utilisation des magic token](#utilisation-des-magic-token)
+- [Reception d'emails en local](#reception-demails-en-local)
+- [Visual Studio Code](#visual-studio-code)
+- [Git & Github](#git--github)
+- [Déploiement](#d%C3%A9ploiement)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Cloner le dépôt
 
 ```
@@ -22,6 +40,7 @@ Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md)
 
 ### À installer localement
 
+- Python 3.11+
 - [uv](https://docs.astral.sh/uv/)
 - [Node et npm](https://nodejs.org/en/download/)
 - [Postgres](https://www.postgresql.org/download/)
@@ -29,40 +48,19 @@ Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md)
 - [pre-commit](https://pypi.org/project/pre-commit/)
 - [virtualenv](https://virtualenv.pypa.io/en/stable/installation.html) (optionnel)
 
-### Python
-
-Pour installer Python 3 il est possible de passer par uv :
-
-```
-uv python install [version]
-
-```
-
-> On utilise idéalement la version 3.11
-
-### Création d'un environnement virtuel
-
-Pour commencer, c'est recommandé de créer un environnement virtuel avec Python3.
-
-```
-uv venv
-source .venv/bin/activate
-```
-
 ### Installer les dépendances du backend
 
-Les dépendances du backend se trouvent dans `pyproject.toml`, pour les installer dans l'environnement virtuel :
+Les dépendances du backend se trouvent dans `pyproject.toml`.
+
+`uv` va installer les dépendances dans un environment virtuel : 
 
 ```
 uv sync
 ```
 
-Pour ajouter / supprimer une dépendance :
-
-```
-uv add xxx
-uv remove xxx
-```
+Ensuite, pour lancer les commandes python du projet, 2 options :
+* précéder chaque commande de `uv run` (e.g. `uv run python manage.py runserver`)
+* activer l'environment virtuel : `source .venv/bin/activate`
 
 ### Installer les dépendances *des* frontends
 
