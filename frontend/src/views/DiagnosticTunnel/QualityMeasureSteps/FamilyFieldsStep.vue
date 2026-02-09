@@ -191,7 +191,6 @@ export default {
       rules.push(this.validators.lteOrEmpty(this.payload.valeurTotale))
       // Obligatoire
       const isOptionnalField = this.isOptionnalField(fId)
-      console.log("isOptionnalField", isOptionnalField, fId)
       if (!isOptionnalField) rules.push(this.validators.required)
       // Sous-catégories origine France : groupId : "valeurAutresCircuitCourt" "valeurAutresLocal"
       const franceSubcategoryGroupIDd = ["CIRCUIT_COURT", "LOCAL"]
