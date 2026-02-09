@@ -1,16 +1,12 @@
 <template>
-  <div class="app-banner-alert">
-    <div class="fr-notice fr-notice--alert">
+  <div class="app-banner-env">
+    <div v-if="show" class="fr-notice fr-notice--info">
       <div class="fr-container">
         <div class="fr-notice__body">
           <p class="mb-0">
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
             <span class="fr-notice__title">
-              Gestionnaires de crèches : rappel de laits infantiles, voir les lots concernés sur le site
-              <a href="https://rappel.conso.gouv.fr/categorie/25" target="_blank">
-                Rappel conso
-                <v-icon small class="ml-1">mdi-open-in-new</v-icon>
-              </a>
+              Environnement de démonstration : toutes les actions sont sans conséquence.
             </span>
           </p>
         </div>
@@ -21,10 +17,10 @@
 
 <script>
 export default {
-  name: "AppBannerAlert",
+  name: "AppBannerDemo",
   data() {
     return {
-      show: window.SHOW_BANNER,
+      show: window.ENVIRONMENT !== "prod",
     }
   },
 }
@@ -36,18 +32,18 @@ export default {
   Not the best solution but the quickest before all pages are migrated to vue3
 */
 
-.app-banner-alert .fr-notice {
+.app-banner-env .fr-notice {
   padding-bottom: 1rem;
   padding-top: 1rem;
   position: relative;
 
-  &--alert {
-    background-color: #ffe9e9;
-    color: #ce0500;
+  &--info {
+    background-color: #ffe9e6;
+    color: #b34000;
   }
 
   &__icon {
-    color: #ce0500;
+    color: #b34000;
   }
 
   .fr-container {
@@ -71,14 +67,6 @@ export default {
     font-size: 1rem;
     line-height: 1.5rem;
     font-weight: 700;
-
-    a {
-      color: inherit !important;
-      text-decoration: underline !important;
-    }
-    i {
-      color: inherit !important;
-    }
   }
 }
 </style>
