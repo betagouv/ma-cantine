@@ -206,6 +206,8 @@ export default Object.freeze({
         "RUP",
         "COMMERCE_EQUITABLE",
         "FERMIER",
+        "EXTERNALITES",
+        "PERFORMANCE",
       ],
       fields: [
         "valeurViandesVolaillesBio",
@@ -280,12 +282,6 @@ export default Object.freeze({
         "valeurBoulangerieCommerceEquitable",
         "valeurBoissonsCommerceEquitable",
         "valeurAutresCommerceEquitable",
-      ],
-    },
-    nonEgalim: {
-      text: "Merci de renseigner les montants des produits hors EGalim",
-      characteristics: ["EXTERNALITES", "PERFORMANCE", "NON_EGALIM"],
-      fields: [
         "valeurViandesVolaillesExternalites",
         "valeurProduitsDeLaMerExternalites",
         "valeurFruitsEtLegumesExternalites",
@@ -302,6 +298,12 @@ export default Object.freeze({
         "valeurBoulangeriePerformance",
         "valeurBoissonsPerformance",
         "valeurAutresPerformance",
+      ],
+    },
+    nonEgalim: {
+      text: "Merci de renseigner les montants des produits hors EGalim",
+      characteristics: ["NON_EGALIM"],
+      fields: [
         "valeurViandesVolaillesNonEgalim",
         "valeurProduitsDeLaMerNonEgalim",
         "valeurFruitsEtLegumesNonEgalim",
