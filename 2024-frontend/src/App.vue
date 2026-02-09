@@ -3,7 +3,7 @@ import { RouterView, useRoute } from "vue-router"
 import { reactive, computed, watch } from "vue"
 import AppHeader from "@/components/AppHeader.vue"
 import AppBanner from "@/components/AppBanner.vue"
-import AppBannerEnv from "@/components/AppBannerEnv.vue"
+import AppBannerDemo from "@/components/AppBannerDemo.vue"
 import AppFooter from "@/components/AppFooter.vue"
 import AppBreadcrumb from "@/components/AppBreadcrumb.vue"
 import NotificationCenter from "@/components/NotificationCenter.vue"
@@ -22,7 +22,7 @@ watch(route, (to) => {
 
 <template>
   <div>
-    <AppBannerEnv />
+    <AppBannerDemo />
     <AppHeader v-if="!layout.fullscreen" />
     <AppBanner v-if="!layout.fullscreen" />
     <DsfrNotice v-if="!layout.fullscreen" type="alert">

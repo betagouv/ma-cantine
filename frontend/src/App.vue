@@ -4,7 +4,7 @@
     <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
 
     <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }" role="main">
-      <AppBannerEnv v-if="!isWidget && !fullscreen" />
+      <AppBannerDemo v-if="!isWidget && !fullscreen" />
       <AppBanner v-if="!isWidget && !fullscreen" />
       <AppBannerAlert v-if="!isWidget && !fullscreen" />
       <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner && !fullscreen" />
@@ -28,7 +28,7 @@
 <script>
 import AppHeader from "@/components/AppHeader"
 import AppBanner from "@/components/AppBanner"
-import AppBannerEnv from "@/components/AppBannerEnv"
+import AppBannerDemo from "@/components/AppBannerDemo"
 import AppBannerAlert from "@/components/AppBannerAlert"
 import WidgetHeader from "@/components/WidgetHeader"
 import AppFooter from "@/components/AppFooter"
@@ -41,7 +41,7 @@ export default {
   components: {
     AppHeader,
     AppBanner,
-    AppBannerEnv,
+    AppBannerDemo,
     AppBannerAlert,
     WidgetHeader,
     AppFooter,

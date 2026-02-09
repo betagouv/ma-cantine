@@ -5,7 +5,9 @@
         <div class="fr-notice__body">
           <p class="mb-0">
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
-            <span class="fr-notice__title">Vous êtes sur l'environnement {{ envText }}</span>
+            <span class="fr-notice__title">
+              Environnement de démonstration : toutes les actions sont sans conséquence.
+            </span>
           </p>
         </div>
       </div>
@@ -15,17 +17,10 @@
 
 <script>
 export default {
-  name: "AppBannerEnv",
-  computed: {
-    envText() {
-      if (window.ENVIRONMENT === "staging") return "DEV"
-      if (window.ENVIRONMENT === "demo") return "DÉMO"
-      return window.ENVIRONMENT
-    },
-  },
+  name: "AppBannerDemo",
   data() {
     return {
-      show: window.ENVIRONMENT !== "prod",
+      show: window.ENVIRONMENT === "demo",
     }
   },
 }
