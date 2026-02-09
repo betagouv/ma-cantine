@@ -152,7 +152,7 @@ class TeledeclarationETLOpenDataTest(TestCase):
 
         self.assertEqual(Diagnostic.objects.filter(year=2025).count(), 1)
         self.assertEqual(Diagnostic.objects.filter(year=2025).teledeclared().count(), 1)
-        self.assertEqual(etl_td_2025.len_dataset(), 0)  # TODO: fix
+        self.assertEqual(etl_td_2025.len_dataset(), 0)  # not exported yet
 
     def test_teledeclaration_transform(self, mock):
         mock_fetch_communes(mock)
