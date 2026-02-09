@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue"
+import { ref, useTemplateRef } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
@@ -16,6 +16,8 @@ const store = useRootStore()
 
 /* Component */
 const forceRerender = ref(0)
+const formRef = useTemplateRef("form-ref")
+const errors = ref([])
 
 /* Get establishemnt infos */
 const canteenData = ref({})
@@ -38,9 +40,14 @@ const saveGroup = (props) => {
     .updateCanteen(form, canteenId)
     .then((canteen) => {
       if(canteen.id) goToCanteenPage(canteen)
-      else store.notifyServerError()
+      else displayErrors(canteen)
     })
     .catch((e) => { store.notifyServerError(e) })
+}
+
+const displayErrors = (canteen) => {
+  errors.value = canteen.list
+  formRef.value.scrollIntoView({ behavior: "smooth" })
 }
 
 /* Page redirection */
@@ -71,17 +78,20 @@ const goToCanteenPage = (canteen) => {
       </li>
     </AppRessources>
   </section>
-  <AppLoader v-if="loading" />
-  <CanteenFormGroupe
-    v-else-if="!loading && canteenData.id"
-    :key="forceRerender"
-    :showCancelButton="true"
-    :establishment-data="canteenData"
-    @sendForm="(payload) => saveGroup(payload)"
-    @cancel="goToCanteenPage(canteenData)"
-  />
-  <p v-else>
-    Une erreur est survenue,
-    <AppLinkRouter :to="{ name: 'DashboardManager' }" title="revenir à la page précédente" />
-  </p>
+  <div ref="form-ref">
+    <AppLoader v-if="loading" />
+    <CanteenFormGroupe
+      v-else-if="!loading && canteenData.id"
+      :key="forceRerender"
+      :showCancelButton="true"
+      :establishment-data="canteenData"
+      :errors="errors"
+      @sendForm="(payload) => saveGroup(payload)"
+      @cancel="goToCanteenPage(canteenData)"
+    />
+    <p v-else>
+      Une erreur est survenue,
+      <AppLinkRouter :to="{ name: 'DashboardManager' }" title="revenir à la page précédente" />
+    </p>
+  </div>
 </template>
