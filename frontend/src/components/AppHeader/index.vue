@@ -18,13 +18,9 @@
           :to="{ name: 'LandingPage' }"
           class="text-decoration-none d-flex align-center"
           aria-label="ma cantine (aller à l'accueil) - République Française"
-          :aria-description="chipInfo && `environnement ${chipInfo.text}`"
         >
           <img src="/static/images/Marianne-Republique-Francaise.svg" height="100" alt="" />
           <img src="/static/images/ma-cantine-logo-light.svg" height="65" alt="" />
-          <v-chip v-if="chipInfo" label outlined :color="chipInfo.color" class="font-weight-bold ml-3" small>
-            {{ chipInfo.text }}
-          </v-chip>
         </router-link>
       </v-toolbar-title>
 
@@ -324,13 +320,6 @@ export default {
         navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.forElected)))
         return navlinks
       }
-    },
-    chipInfo() {
-      const env = window.ENVIRONMENT
-      if (env === "dev") return { text: "Dev", color: "pink" }
-      if (env === "staging") return { text: "Staging", color: "purple" }
-      if (env === "demo") return { text: "Démo", color: "green darken-2" }
-      return null
     },
     quickLinks() {
       if (!this.userDataReady) return []
