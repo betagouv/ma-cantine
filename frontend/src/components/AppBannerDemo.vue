@@ -20,7 +20,7 @@ export default {
   name: "AppBannerDemo",
   data() {
     return {
-      show: window.ENVIRONMENT === "demo",
+      show: window.ENVIRONMENT !== "prod",
     }
   },
 }
