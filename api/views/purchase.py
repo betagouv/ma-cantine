@@ -39,7 +39,8 @@ class PurchasesPagination(LimitOffsetPagination):
     def paginate_queryset(self, queryset, request, view=None):
         """
         return extra fields for the filter options in the frontend
-        (and not only for the current page)
+        - queryset's list of values for families, characteristics and canteens
+        - and not only for the current page
         """
         self.families = list(set(queryset.values_list("family", flat=True)))
         self.characteristics = list(
@@ -49,7 +50,7 @@ class PurchasesPagination(LimitOffsetPagination):
                 for characteristic in characteristics
             }
         )
-        self.canteens = list(set(queryset.values_list("canteen__id", flat=True)))
+        self.canteen_ids = list(set(queryset.values_list("canteen__id", flat=True)))
 
         return super().paginate_queryset(queryset, request, view)
 
@@ -63,7 +64,7 @@ class PurchasesPagination(LimitOffsetPagination):
                     ("results", data),
                     ("families", self.families),
                     ("characteristics", self.characteristics),
-                    ("canteens", self.canteens),
+                    ("canteens", self.canteen_ids),
                 ]
             )
         )
@@ -91,7 +92,6 @@ class PurchaseFilterSet(django_filters.FilterSet):
 
 
 class PurchaseListCreateView(ListCreateAPIView):
-    include_in_documentation = True
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer
