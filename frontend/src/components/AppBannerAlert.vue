@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: "AppBanner",
+  name: "AppBannerAlert",
   data() {
     return {
       show: window.SHOW_BANNER,
