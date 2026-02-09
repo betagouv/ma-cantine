@@ -1,5 +1,3 @@
-import csv
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -10,7 +8,6 @@ from simple_history.utils import update_change_reason
 
 from api.serializers import FullCanteenSerializer
 from api.views.base_import import BaseImportView
-from common.api.adresse import fetch_geo_data_from_code_csv
 from common.utils import utils as utils_utils
 from common.utils import file_import
 from data.models import Canteen, ImportType, Sector
@@ -39,7 +36,6 @@ class CanteensImportView(BaseImportView):
         super().__init__(**kwargs)
         self.canteens_created = {}
         self.is_admin_import = False
-        self.locations_csv_str = "siret\n"
         self.has_locations_to_find = False
 
     def post(self, request):
@@ -76,21 +72,13 @@ class CanteensImportView(BaseImportView):
             if row_number == 1:  # skip header
                 continue
             try:
-                canteen, should_update_geolocation = self._save_data_from_row(row)
+                canteen = self._save_data_from_row(row)
                 self.canteens_created[canteen.siret] = canteen
-                if should_update_geolocation and not self.errors:
-                    self.has_locations_to_find = True
-                    self.locations_csv_str += f"{canteen.siret}\n"
 
             except Exception as e:
                 identifier = row[0] if row else None
                 for error in self._parse_errors(e, row, identifier):
                     self.errors.append(self._get_error(e, error["message"], error["code"], row_number))
-
-    def _post_process_file(self):
-        """Update geo-location data for new canteens"""
-        if self.has_locations_to_find:
-            self._update_location_data(self.locations_csv_str)
 
     @transaction.atomic
     def _save_data_from_row(self, row):
@@ -104,11 +92,9 @@ class CanteensImportView(BaseImportView):
             silently_added_manager_emails,
         ) = self._generate_canteen_meta_fields(row)
         # create the canteen
-        canteen, should_update_geolocation = self._update_or_create_canteen(
-            row, import_source, manager_emails, silently_added_manager_emails
-        )
+        canteen = self._update_or_create_canteen(row, import_source, manager_emails, silently_added_manager_emails)
 
-        return (canteen, should_update_geolocation)
+        return canteen
 
     @staticmethod
     def _get_manager_emails(row):
@@ -137,27 +123,6 @@ class CanteensImportView(BaseImportView):
             "canteens": serialized_canteens,
             "count": len(serialized_canteens),
         }
-
-    def _update_location_data(self, locations_csv_str):
-        """Update geo-location data for canteens using external API"""
-        try:
-            response = fetch_geo_data_from_code_csv(locations_csv_str)
-            for row in csv.reader(response.splitlines()):
-                if row[0] == "siret":
-                    continue  # skip header
-                if row[5] != "":  # city found, so rest of data is found
-                    canteen = self.canteens_created[row[0]]
-                    canteen.city_insee_code = row[3]
-                    canteen.postal_code = row[4]
-                    canteen.city = row[5]
-                    canteen.department = row[6].split(",")[0]
-                    canteen.save(skip_validations=True)
-                    update_change_reason(canteen, f"Mass CSV import - Geo data. {self.__class__.__name__[:100]}")
-        except Exception as e:
-            import logging
-
-            logger = logging.getLogger(__name__)
-            logger.exception(f"Error while updating location data : {repr(e)} - {e}")
 
     def _get_manager_emails_to_notify(self, row):
         try:
@@ -270,8 +235,7 @@ class CanteensImportView(BaseImportView):
             CanteensImportView._add_managers_to_canteen(
                 silently_added_manager_emails, canteen, send_invitation_mail=False
             )
-        should_update_geolocation = not canteen_exists
-        return (canteen, should_update_geolocation)
+        return canteen
 
     def _generate_canteen_meta_fields(self, row):
         silently_added_manager_emails = []
