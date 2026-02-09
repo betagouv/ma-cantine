@@ -20,16 +20,13 @@ Le produit est découpé en applications. Les applications les plus modifiées :
 - `api` : fournit l'API
 - `web` : l'application d'authentification du site et le source de quelques fichiers statiques
 
-### Infrastructure
-
-L’hébergement est fait chez [Clever Cloud](https://www.clever-cloud.com). Ceci concerne l'application, la base de données, les fichiers statiques, et l'instance [Metabase](https://www.metabase.com).
-
 ### Outillage
 
+- [Clever Cloud](https://www.clever-cloud.com) pour l'hébergement du serveur
 - [Github](https://github.com) pour l'hébergement du code et l'intégration continue
 - [Sentry](https://sentry.io) pour le reporting des erreurs
 - [Brevo](https://www.brevo.com/fr) pour l'envoi d'e-mails
 - [Crisp](https://crisp.chat/fr/) pour le support utilisateur
 - [AlwaysData](https://www.alwaysdata.com/fr) pour la gestion des DNS
-- [Metabase](https://www.metabase.com) pour l'analyse et la visualisation des données : [nos statistiques publiques](https://ma-cantine-metabase.cleverapps.io/public/dashboard/f65ca7cc-c3bd-4cfb-a3dc-236f81864663)
-- [Matomo](https://fr.matomo.org) pour l'analyse du traffic web : [nos statistiques publiques](https://stats.beta.gouv.fr/index.php?idSite=78) ([anciennes données](https://stats.data.gouv.fr/index.php?idSite=162))
+- [Metabase](https://www.metabase.com) pour l'analyse et la visualisation des données
+- [Matomo](https://fr.matomo.org) pour l'analyse du traffic web

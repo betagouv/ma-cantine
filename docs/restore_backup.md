@@ -2,12 +2,11 @@
 
 **Attention : La restauration de la base de donnée va supprimer vos donénes actuelles**
 
-1. Exporter un backup : Clever cloud -> bdd add-on -> backups -> télécharger le backup (c'est format \*.dump, extrat via une commande `pg_dump`)
+1. Exporter un backup : Clever cloud -> bdd add-on -> backups -> télécharger le backup (au format `.dump`, extrait via une commande `pg_dump`)
 2. Lancer la restauration :
 ```
-pg_restore -v -x -d postgresql://<db user>:<db password>@<nom du db service dans compose>:<db port>/<db name> <path to .dump file>
+pg_restore --verbose --clean --no-privileges -d postgresql://<db user>:<db password>@<nom du db service dans compose>:<db port>/<db name> <path to .dump file>
 ```
-(-v pour verbose; -x pour ignorer les droits; -d pour specifier la BDD)
 
 ## Comment recuperer les identifiants des objets supprimés ?
 
