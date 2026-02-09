@@ -2,10 +2,9 @@
 import { RouterView, useRoute } from "vue-router"
 import { reactive, computed, watch } from "vue"
 import AppHeader from "@/components/AppHeader.vue"
-import AppBanner from "@/components/AppBanner.vue"
-import AppBannerDemo from "@/components/AppBannerDemo.vue"
 import AppFooter from "@/components/AppFooter.vue"
 import AppBreadcrumb from "@/components/AppBreadcrumb.vue"
+import AppBanners from "@/components/AppBanners.vue"
 import NotificationCenter from "@/components/NotificationCenter.vue"
 
 const layout = reactive({ fullscreen: false })
@@ -23,11 +22,7 @@ watch(route, (to) => {
 <template>
   <div>
     <AppHeader v-if="!layout.fullscreen" />
-    <AppBannerDemo />
-    <AppBanner v-if="!layout.fullscreen" />
-    <DsfrNotice v-if="!layout.fullscreen" type="alert">
-      Gestionnaires de crèches : rappel de laits infantiles, voir les lots concernés sur le site <a href="https://rappel.conso.gouv.fr/categorie/25" target="_blank">Rappel conso</a>
-    </DsfrNotice>
+    <AppBanners v-if="!layout.fullscreen" />
 
     <main :class="routerViewClass">
       <AppBreadcrumb v-if="!layout.fullscreen" />
