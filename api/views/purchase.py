@@ -15,7 +15,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.filters.utils import MaCantineOrderingFilter, UnaccentSearchFilter
+from api.filters.utils import UnaccentSearchFilter
 from api.permissions import IsAuthenticated, IsCanteenManager, IsLinkedCanteenManager
 from api.serializers import (
     PurchaseExportSerializer,
@@ -82,6 +82,7 @@ class PurchasesPagination(LimitOffsetPagination):
 
 
 class PurchaseFilterSet(django_filters.FilterSet):
+    characteristics = django_filters.CharFilter(method="filter_characteristics")
     date = django_filters.DateFromToRangeFilter()
 
     class Meta:
@@ -89,17 +90,25 @@ class PurchaseFilterSet(django_filters.FilterSet):
         fields = (
             "canteen__id",
             "family",
-            "date",
+            # "characteristics",
+            # "date"
         )
+
+    # characteristics is a ChoiceArrayField, we need a custom overlap filter
+    def filter_characteristics(self, queryset, name, value):
+        characteristics = self.request.query_params.getlist("characteristics")
+        if characteristics:
+            return queryset.filter(characteristics__overlap=characteristics)
+        return queryset
 
 
 class PurchaseListCreateView(ListCreateAPIView):
+    include_in_documentation = True
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
     filter_backends = [
-        MaCantineOrderingFilter,
         UnaccentSearchFilter,
         django_filters.DjangoFilterBackend,
     ]
@@ -141,13 +150,6 @@ class PurchaseListCreateView(ListCreateAPIView):
                 f"User {self.request.user.id} attempted to create a purchase in nonexistent canteen {canteen_id}"
             )
             raise NotFound() from e
-
-    def filter_queryset(self, queryset):
-        # handle characteristics filtering manually because ChoiceArrayField is not a Django field
-        characteristics = self.request.query_params.getlist("characteristics")
-        if characteristics:
-            queryset = queryset.filter(characteristics__overlap=characteristics)
-        return super().filter_queryset(queryset)
 
 
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
