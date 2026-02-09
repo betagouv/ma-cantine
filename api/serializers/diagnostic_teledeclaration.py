@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from data.models import Diagnostic
+from data.models import Canteen, Diagnostic
 from data.models.geo import Department, Region
 from macantine.etl import utils
 
@@ -284,7 +284,7 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
     canteen_management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
     canteen_production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
     canteen_sector_list = serializers.SerializerMethodField(read_only=True)
-    canteen_line_ministry = serializers.CharField(source="canteen_snapshot.line_ministry", read_only=True)
+    canteen_line_ministry = serializers.SerializerMethodField(read_only=True)
 
     teledeclaration_ratio_bio = serializers.SerializerMethodField(read_only=True)  # TODO: compute & store in DB?
     teledeclaration_ratio_egalim_hors_bio = serializers.SerializerMethodField(
@@ -337,6 +337,12 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
 
     def get_canteen_sector_list(self, obj):
         return ",".join(obj.canteen_snapshot_sector_lib_list or [])
+
+    def get_canteen_line_ministry(self, obj):
+        line_ministry = obj.canteen_snapshot.get("line_ministry", None)
+        if line_ministry:
+            return Canteen.Ministries(line_ministry).label
+        return None
 
     def get_teledeclaration_ratio_bio(self, obj):
         return obj.valeur_bio_agg / obj.valeur_totale

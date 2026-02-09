@@ -72,6 +72,11 @@ class CanteenETLOpenDataTest(TestCase):
         canteen_site_without_manager = etl.df[etl.df.id == self.canteen_site_without_manager.id].iloc[0]
         self.assertFalse(canteen_site_without_manager["active_on_ma_cantine"])
 
+        canteen_site_earlier = etl.df[etl.df.id == self.canteen_site_earlier.id].iloc[0]
+        self.assertEqual(canteen_site_earlier["sector_list"], "Supérieur et Universitaire")
+        self.assertEqual(canteen_site_earlier["line_ministry"], "Enseignement supérieur et Recherche")
+        self.assertTrue(canteen_site_earlier["active_on_ma_cantine"])
+
         canteen_satellite = etl.df[etl.df.id == self.canteen_satellite.id].iloc[0]
         self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
 
@@ -133,13 +138,13 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(Diagnostic.objects.filter(year=2023).teledeclared().count(), 1)
         self.assertEqual(etl_td_2023.len_dataset(), 0)
 
-        # 2024: 1 teledeclaration
+        # 2024: 2 teledeclaratios
         etl_td_2024 = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
         etl_td_2024.extract_dataset()
 
-        self.assertEqual(Diagnostic.objects.filter(year=2024).count(), 1)
-        self.assertEqual(Diagnostic.objects.filter(year=2024).teledeclared().count(), 1)
-        self.assertEqual(etl_td_2024.len_dataset(), 1)
+        self.assertEqual(Diagnostic.objects.filter(year=2024).count(), 2)
+        self.assertEqual(Diagnostic.objects.filter(year=2024).teledeclared().count(), 2)
+        self.assertEqual(etl_td_2024.len_dataset(), 2)
 
         # 2025: 1 teledeclaration
         etl_td_2025 = ETL_OPEN_DATA_TELEDECLARATIONS(2025)
@@ -147,7 +152,7 @@ class TeledeclarationETLOpenDataTest(TestCase):
 
         self.assertEqual(Diagnostic.objects.filter(year=2025).count(), 1)
         self.assertEqual(Diagnostic.objects.filter(year=2025).teledeclared().count(), 1)
-        self.assertEqual(etl_td_2024.len_dataset(), 1)
+        self.assertEqual(etl_td_2025.len_dataset(), 0)  # not exported yet
 
     def test_teledeclaration_transform(self, mock):
         mock_fetch_communes(mock)
@@ -165,7 +170,15 @@ class TeledeclarationETLOpenDataTest(TestCase):
         # Check the schema matching
         self.assertEqual(len(etl_td_2024.df.columns), len(schema_cols))
         self.assertEqual(set(etl_td_2024.df.columns), set(schema_cols))
-        self.assertEqual(etl_td_2024.len_dataset(), 1)
+        self.assertEqual(etl_td_2024.len_dataset(), 2)
+
+        canteen_site_earlier_diagnostic_2024 = etl_td_2024.df[
+            etl_td_2024.df.canteen_id == self.canteen_site_earlier.id
+        ].iloc[0]
+        self.assertEqual(canteen_site_earlier_diagnostic_2024["canteen_sector_list"], "Supérieur et Universitaire")
+        self.assertEqual(
+            canteen_site_earlier_diagnostic_2024["canteen_line_ministry"], "Enseignement supérieur et Recherche"
+        )
 
         canteen_site_diagnostic_2024 = etl_td_2024.df[etl_td_2024.df.canteen_id == self.canteen_site.id].iloc[0]
         self.assertEqual(canteen_site_diagnostic_2024["id"], self.canteen_site_diagnostic_2024.teledeclaration_id)
@@ -175,9 +188,9 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["canteen_id"], self.canteen_site.id)
         self.assertEqual(canteen_site_diagnostic_2024["canteen_siret"], self.canteen_site.siret)
         self.assertEqual(canteen_site_diagnostic_2024["canteen_name"], self.canteen_site.name)
-        self.assertEqual(canteen_site_diagnostic_2024["canteen_production_type"], self.canteen_site.production_type)
-        self.assertEqual(canteen_site_diagnostic_2024["canteen_management_type"], self.canteen_site.management_type)
-        self.assertEqual(canteen_site_diagnostic_2024["canteen_economic_model"], self.canteen_site.economic_model)
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_production_type"], "site")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_management_type"], "direct")
+        self.assertEqual(canteen_site_diagnostic_2024["canteen_economic_model"], "public")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_central_kitchen_siret"], None)
         self.assertEqual(canteen_site_diagnostic_2024["canteen_epci"], "200040715")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_epci_lib"], "Grenoble-Alpes-Métropole")
