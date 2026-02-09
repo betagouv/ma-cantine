@@ -6,6 +6,25 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.13.0](https://github.com/betagouv/ma-cantine/compare/v2026.12.0...v2026.13.0) (2026-02-09)
+
+
+### Nouveautés
+
+* **Header:** remplace le badge dans le header pour un bandeau d'information qui indique l'environnement ([#6358](https://github.com/betagouv/ma-cantine/issues/6358)) ([c91fc9d](https://github.com/betagouv/ma-cantine/commit/c91fc9d4745012e35cc77d261f32ddd6c572f89b))
+
+
+### Corrections (bugs, typos...)
+
+* **Événements:** s'assurer qu'on renvoit bien seulement les événements en cours et à venir ([#6361](https://github.com/betagouv/ma-cantine/issues/6361)) ([309ce97](https://github.com/betagouv/ma-cantine/commit/309ce97621b64536a41b66cfa48a4089081bb131))
+* **Matomo:** distingue les imports achats par id et siret depuis le nom de l'évèment ([#6359](https://github.com/betagouv/ma-cantine/issues/6359)) ([a260851](https://github.com/betagouv/ma-cantine/commit/a2608510ab0e6e87f19257b0be74f7808b3884dc))
+* **Télédéclaration:** corrige le calcul des totaux EGalim avec les valeurs performances et environnalités de prises en compte ([#6362](https://github.com/betagouv/ma-cantine/issues/6362)) ([f44eb46](https://github.com/betagouv/ma-cantine/commit/f44eb467b46f0c9590351f635a4762f94d981382))
+
+
+### Documentation
+
+* màj de la doc d'onboarding ([#6357](https://github.com/betagouv/ma-cantine/issues/6357)) ([fb32fe8](https://github.com/betagouv/ma-cantine/commit/fb32fe80113077d5e0fb5fd7f873f4b37b0a1fe4))
+
 ## [2026.12.0](https://github.com/betagouv/ma-cantine/compare/v2026.11.0...v2026.12.0) (2026-02-09)
 
 
