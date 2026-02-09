@@ -1,11 +1,19 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
+
+
+class CommunityEventQuerySet(models.QuerySet):
+    def upcoming(self):
+        return self.filter(end_date__gt=timezone.now())
 
 
 class CommunityEvent(models.Model):
     class Meta:
         verbose_name = "événement"
         ordering = ["start_date"]
+
+    objects = CommunityEventQuerySet.as_manager()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)

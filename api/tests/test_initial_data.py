@@ -1,5 +1,6 @@
 import datetime
 
+from freezegun import freeze_time
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
@@ -26,11 +27,14 @@ class InitialDataApiTest(APITestCase):
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
         cls.partner_type = PartnerTypeFactory()
-        cls.community_event = CommunityEventFactory(start_date=timezone.now() - datetime.timedelta(days=10), end_date=timezone.now() + datetime.timedelta(days=10))
+        cls.community_event = CommunityEventFactory(
+            start_date=timezone.now() - datetime.timedelta(days=1),
+            end_date=timezone.now() + datetime.timedelta(days=1),
+        )
         cls.video_tutorial = VideoTutorialFactory(published=True)
         cls.url = reverse("initial_data")
 
-    def test_unauthenticated_initial_data(self):
+    def test_get_unauthenticated(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -58,8 +62,18 @@ class InitialDataApiTest(APITestCase):
 
         self.assertEqual(len(body["lineMinistries"]), len(Canteen.Ministries))
 
+    @freeze_time(timezone.now() + datetime.timedelta(days=2))
+    def test_get_unauthenticated_no_upcoming_community_events(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+
+        # no upcoming community event
+        self.assertEqual(len(body["communityEvents"]), 0)
+
     @authenticate
-    def test_authenticated_initial_data(self):
+    def test_get_authenticated(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -80,7 +94,7 @@ class InitialDataApiTest(APITestCase):
         self.assertEqual(len(body["canteenPreviews"]), 0)
 
     @authenticate
-    def test_authenticated_and_manager(self):
+    def test_get_authenticated_and_manager(self):
         self.canteen.managers.set([authenticate.user])
 
         response = self.client.get(self.url)
