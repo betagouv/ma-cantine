@@ -192,5 +192,5 @@ class BrevoUserDataTest(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_GROUPE"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_SATELLITE"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_2025"), 0)
-        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_TODO_2025"), 1)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_TODO_2025"), 1)  # TODO: should we set to 0?
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_TD_2025"), 1)  # groupe has td
