@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
@@ -45,6 +45,27 @@ class UserQuerySet(models.QuerySet):
             nb_cantines_gestion_concedee=Count(
                 "canteens", filter=Q(canteens__management_type=Canteen.ManagementType.CONCEDED), distinct=True
             ),
+        )
+
+    def with_canteen_diagnostic_stats(self):
+        """
+        # TODO: clarify nb_cantines_td_todo_2025
+        """
+        return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
+            # bilans
+            nb_cantines_bilan_2025=Count(
+                "canteens__diagnostics", filter=Q(canteens__diagnostics__year=2025), distinct=True
+            ),
+            nb_cantines_bilan_todo_2025=Count("canteens", distinct=True) - F("nb_cantines_bilan_2025"),
+            # TDs
+            nb_cantines_td_2025=Count("canteens", filter=Q(canteens__declaration_donnees_2025=True), distinct=True),
+            # nb_cantines_td_todo_2025=F("nb_cantines_bilan_2025") - Count(
+            #     "canteens",
+            #     filter=Q(
+            #         canteens__declaration_donnees_2025=False
+            #     ),
+            #     distinct=True
+            # ),
         )
 
 
@@ -119,6 +140,12 @@ class User(AbstractUser):
         "nb_cantines_satellite",
         "nb_cantines_groupe",
         "nb_cantines_gestion_concedee",
+    ]
+    DATA_CANTEEN_DIAGNOSTIC_FIELDS = [
+        "nb_cantines_bilan_2025",
+        "nb_cantines_bilan_todo_2025",
+        "nb_cantines_td_2025",
+        # "nb_cantines_td_todo_2025",
     ]
 
     objects = UserManager.from_queryset(UserQuerySet)()
@@ -231,8 +258,10 @@ class User(AbstractUser):
         )
 
     def update_data(self):
-        # need to have called the user with 'with_canteen_stats' queryset method
-        self.data = {field: getattr(self, field) for field in self.DATA_CANTEEN_FIELDS}
+        # need to have called the user with 'with_canteen_stats' & 'with_canteen_diagnostic_stats' queryset method
+        self.data = {
+            field: getattr(self, field) for field in self.DATA_CANTEEN_FIELDS + self.DATA_CANTEEN_DIAGNOSTIC_FIELDS
+        }
         self.data["modification_date"] = timezone.now().isoformat()
         self.save(update_fields=["data"])
 
