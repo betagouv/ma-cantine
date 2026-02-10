@@ -35,8 +35,17 @@ const links = [
   {
     to: { name: "GestionnaireImport" },
     label: "Importer des données",
+  },
+  {
+    emitEvent: 'clickExport',
+    label: "Exporter des données",
   }
 ]
+
+const modalExportOpened = ref(false)
+const clickDropdownMenu = (emitEvent) => {
+  if (emitEvent === 'clickExport') modalExportOpened.value = true
+}
 
 /* SEARCH */
 const search = ref()
@@ -103,7 +112,7 @@ const campaign = computedAsync(async () => {
   <section class="fr-grid-row">
     <h1 class="fr-col-12 fr-col-md-6">Bienvenue dans votre espace, {{ store.loggedUser.firstName }}</h1>
     <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--right fr-grid-row--top">
-      <AppDropdownMenu label="Gérer mes cantines" :links="links" size="medium" />
+      <AppDropdownMenu label="Gérer mes cantines" :links="links" size="medium" @click="clickDropdownMenu" />
     </div>
   </section>
   <DsfrAlert v-if="canteensGroup.displayBanner > 0" :title="canteensGroup.title" class="fr-mb-4w">
@@ -141,4 +150,13 @@ const campaign = computedAsync(async () => {
     url="https://jedonnemonavis.numerique.gouv.fr/Demarches/3661?button=4069"
     title="Qu'avez-vous pensé de la page Tableau de bord ?"
   />
+  <DsfrModal
+    :opened="modalExportOpened"
+    title="Exporter des données"
+    @close="modalExportOpened = false"
+  >
+    <p>
+      Ma modal d'export
+    </p>
+  </DsfrModal>
 </template>
