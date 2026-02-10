@@ -31,7 +31,7 @@ class UserCanteenListExportView(ListAPIView, XLSXFileMixin):
             "modèle_économique",
             "groupe_id",
             "administration_tutelle",
-            "gestionnaires",
+            "gestionnaires_additionnels",
         ],
         # "column_width": [],
         "style": {

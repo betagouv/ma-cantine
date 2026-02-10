@@ -592,7 +592,7 @@ class CanteenExportSerializer(serializers.ModelSerializer):
     modèle_économique = serializers.SerializerMethodField()
     # groupe_id = serializers.IntegerField(source="groupe_id", read_only=True)
     administration_tutelle = serializers.SerializerMethodField()
-    gestionnaires = serializers.SerializerMethodField()
+    gestionnaires_additionnels = serializers.SerializerMethodField()
 
     class Meta:
         model = Canteen
@@ -608,7 +608,7 @@ class CanteenExportSerializer(serializers.ModelSerializer):
             "modèle_économique",
             "groupe_id",
             "administration_tutelle",
-            "gestionnaires",  # gestionnaires_additionnels
+            "gestionnaires_additionnels",
         )
 
     def get_secteurs(self, obj):
@@ -634,9 +634,8 @@ class CanteenExportSerializer(serializers.ModelSerializer):
             return Canteen.Ministries(obj.line_ministry).label
         return None
 
-    def get_gestionnaires(self, obj):
-        emails = [manager.email for manager in obj.managers.all()]
-        return ",".join(emails)
+    def get_gestionnaires_additionnels(self, obj):
+        return ""
 
 
 class CanteenAnalysisSerializer(serializers.ModelSerializer):
