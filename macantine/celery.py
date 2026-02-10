@@ -37,19 +37,6 @@ nightly_5 = crontab(hour=5, minute=0, day_of_week="*")  # Every day at 5AM
 weekly = crontab(hour=4, minute=0, day_of_week=6)  # Saturday 4AM
 
 app.conf.beat_schedule = {
-    # Email reminders
-    "no_canteen_first_reminder": {
-        "task": "macantine.tasks.no_canteen_first_reminder",
-        "schedule": daily_week,
-    },
-    "no_canteen_second_reminder": {
-        "task": "macantine.tasks.no_canteen_second_reminder",
-        "schedule": daily_week,
-    },
-    "no_diagnostic_first_reminder": {
-        "task": "macantine.tasks.no_diagnostic_first_reminder",
-        "schedule": daily_week,
-    },
     # Canteen data (needed for User data task, analysis & opendata)
     "canteen_fill_declaration_donnees_year_field": {
         "task": "macantine.tasks.canteen_fill_declaration_donnees_year_field",

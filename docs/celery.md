@@ -26,8 +26,6 @@ Sur le serveur dit "celery", renseigner les mêmes variables d'environnement que
     1. `DATA_WARE_HOUSE_HOST=Optionnel - le host de la base postgres utilisée pour les analsyes stats`
     1. `DATA_WARE_HOUSE_PORT= Optionnel - le port de la base postgres utilisée pour les analsyes stats`
     1. `DATA_WARE_HOUSE_DB= Optionnel - le nom de la db de la base postgres utilisée pour les analsyes stats`
-1. Relances automatiques par email
-    1. `TEMPLATE_ID_NO_DIAGNOSTIC_FIRST= Optionnel - ID du template SendInBlue pour le premier email envoyé aux utilisateurs ayant une cantine mais pas un diagnostic. En cas d'absence la relance n'aura pas lieu.`
 1. Mise à jour des contacts Brevo
     1. `SENDINBLUE_API_KEY= La clé API de SendInBlue`
 
