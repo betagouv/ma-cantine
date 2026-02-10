@@ -7,12 +7,15 @@ const emit = defineEmits(["close"])
   <DsfrModal
     class="canteen-modal-export"
     :opened="opened"
-    title="Export des informations de mes cantines"
+    title="Export des informations de mes cantines avec SIRET"
     @close="emit('close')"
   >
+    <DsfrHighlight text="Prochainement : export des cantines sans SIRET et des groupes de restaurants satellites." class="fr-mt-4w fr-ml-0"/>
     <p>
-      Cet export contient l'ensemble des données d’information relatives aux cantines dont vous gérez.
-      Vous pourrez modifier ce fichier et le ré-utiliser tel quel dans le module d’import “Modifier des cantines” pour mettre à jour vos informations en masse.
+      Cet export contient l'ensemble des données d’information relatives aux cantines enregistrées avec un SIRET que vous gérez.
+      Vous pourrez modifier ce fichier et le ré-utiliser tel quel depuis la page
+      <router-link :to="{ name: 'GestionnaireImportCantines' }">importer des cantines</router-link>
+      pour mettre à jour les informations de ces cantines en masse.
     </p>
     <p class="ma-cantine--bold">Pour rappel, pour modifier les cantines via imports ou créer des bilans, vous devez être gestionnaire de celles-ci.</p>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-grid-row--middle fr-mt-4w">
