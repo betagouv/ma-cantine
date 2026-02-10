@@ -122,7 +122,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         with default_storage.open(filename + ".xlsx", "wb") as f:
             f.write(output.getvalue())
 
-    def load_dataset(self, datagouv=False):
+    def load_dataset(self, datagouv=True):
         filepath = f"open_data/{self.dataset_name}"
         if (
             os.environ.get("STATICFILES_STORAGE") == "storages.backends.s3.S3Storage"
