@@ -59,9 +59,9 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
         </router-link>
         <a v-else
           href="#"
-          class="app-dropdown-menu__link ma-cantine--unstyled-link fr-text-title--blue-france fr-py-1v fr-px-3v fr-nav__link fr-text--sm ma-cantine--text-right fr-col-12"
+          class="app-dropdown-menu__link ma-cantine--unstyled-link fr-text-title--blue-france fr-py-1v fr-px-3v fr-nav__link fr-text--sm"
           @click.prevent="clickEmitLink(link.emitEvent)">
-          {{ link.label }}
+          <span class="ma-cantine--text-right fr-col-12">{{ link.label }}</span>
         </a>
       </li>
     </ul>
