@@ -1,0 +1,46 @@
+{
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "constraints": {
+        "required": true,
+        "unique": true
+      },
+      "description": "Ce SIRET doit être unique car il correspond à un lieu physique.",
+      "example": "49463556926130",
+      "format": "default",
+      "name": "siret",
+      "title": "SIRET de l'établissement",
+      "type": "any"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
+      "doc_enum_multiple": true,
+      "doc_enum_multiple_seperator": ",",
+      "example": "gestionnaire1@example.com, gestionnaire2@example.com",
+      "format": "default",
+      "name": "gestionnaires_additionnels",
+      "title": "Adresses mél de gestionnaires additionnels qui seront ajoutés sans être notifiés par email",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "resytal",
+      "format": "default",
+      "name": "source_donnees",
+      "title": "Identifiant décrivant la source de données",
+      "type": "string"
+    }
+  ],
+  "homepage": "https://github.com/betagouv/ma-cantine",
+  "name": "import-cantines-admin",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_admin.json",
+  "title": "Schema import des cantines (admin)"
+}
