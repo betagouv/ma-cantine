@@ -47,7 +47,7 @@ class UserQuerySet(models.QuerySet):
             ),
         )
 
-    def with_diagnostic_stats(self):
+    def with_canteen_diagnostic_stats(self):
         """
         Note: basic stats, we ignore if the central/group has done the diagnostic for its satellites
             - should we look at the central/group ?
@@ -144,7 +144,7 @@ class User(AbstractUser):
         "nb_cantines_groupe",
         "nb_cantines_gestion_concedee",
     ]
-    DATA_DIAGNOSTIC_FIELDS = [
+    DATA_CANTEEN_DIAGNOSTIC_FIELDS = [
         "nb_cantines_bilan_2025",
         "nb_cantines_bilan_todo_2025",
         "nb_cantines_td_2025",
@@ -261,8 +261,10 @@ class User(AbstractUser):
         )
 
     def update_data(self):
-        # need to have called the user with 'with_canteen_stats' & 'with_diagnostic_stats' queryset method
-        self.data = {field: getattr(self, field) for field in self.DATA_CANTEEN_FIELDS + self.DATA_DIAGNOSTIC_FIELDS}
+        # need to have called the user with 'with_canteen_stats' & 'with_canteen_diagnostic_stats' queryset method
+        self.data = {
+            field: getattr(self, field) for field in self.DATA_CANTEEN_FIELDS + self.DATA_CANTEEN_DIAGNOSTIC_FIELDS
+        }
         self.data["modification_date"] = timezone.now().isoformat()
         self.save(update_fields=["data"])
 

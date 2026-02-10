@@ -98,8 +98,8 @@ class UserModelTest(TestCase):
         self.assertEqual(user_without_canteens.nb_cantines_satellite, 0)
         self.assertEqual(user_without_canteens.nb_cantines_gestion_concedee, 0)
 
-    def test_queryset_with_diagnostic_stats(self):
-        user_qs = User.objects.with_diagnostic_stats()
+    def test_queryset_with_canteen_diagnostic_stats(self):
+        user_qs = User.objects.with_canteen_diagnostic_stats()
 
         user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
         user_without_canteens = user_qs.get(id=self.user_without_canteens.id)
@@ -117,7 +117,7 @@ class UserModelTest(TestCase):
     def test_model_method_update_data(self):
         self.assertIsNone(self.user_with_canteens.data)
 
-        user_qs = User.objects.with_canteen_stats().with_diagnostic_stats()
+        user_qs = User.objects.with_canteen_stats().with_canteen_diagnostic_stats()
         self.user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
         self.user_with_canteens.update_data()
         self.user_with_canteens.refresh_from_db()

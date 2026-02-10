@@ -48,7 +48,7 @@ def update_user_data():
     """
     logger.info("update_user_data task starting")
     start = time.time()
-    users = User.objects.with_canteen_stats()
+    users = User.objects.with_canteen_stats().with_canteen_diagnostic_stats()
     for user in users:
         user.update_data()
     end = time.time()
