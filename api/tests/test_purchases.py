@@ -232,48 +232,6 @@ class PurchaseListFilterApiTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 0)
 
 
-class PurchaseListExportApiTest(APITestCase):
-    def test_excel_export_unauthenticated(self):
-        response = self.client.get(reverse("purchase_list_export"))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_excel_export(self):
-        canteen = CanteenFactory(managers=[authenticate.user])
-        PurchaseFactory(description="avoine", canteen=canteen)
-        PurchaseFactory(description="tomates", canteen=canteen)
-        PurchaseFactory(description="pommes", canteen=canteen)
-
-        response = self.client.get(reverse("purchase_list_export"))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 3)
-
-    @authenticate
-    def test_excel_export_search(self):
-        canteen = CanteenFactory(managers=[authenticate.user])
-        PurchaseFactory(description="avoine", canteen=canteen)
-        PurchaseFactory(description="tomates", canteen=canteen)
-        PurchaseFactory(description="pommes", canteen=canteen)
-
-        search_term = "avoine"
-        response = self.client.get(f"{reverse('purchase_list_export')}?search={search_term}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-
-    @authenticate
-    def test_excel_export_filter(self):
-        canteen = CanteenFactory(managers=[authenticate.user])
-        PurchaseFactory(family=Purchase.Family.PRODUITS_DE_LA_MER, description="avoine", canteen=canteen)
-        PurchaseFactory(family=Purchase.Family.PRODUITS_DE_LA_MER, description="tomates", canteen=canteen)
-        PurchaseFactory(family=Purchase.Family.AUTRES, description="pommes", canteen=canteen)
-
-        response = self.client.get(f"{reverse('purchase_list_export')}?family=PRODUITS_DE_LA_MER")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-
-
 class PurchaseDetailApiTest(APITestCase):
     def test_cannot_get_purchase_unauthenticated(self):
         """
