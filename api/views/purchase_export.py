@@ -2,7 +2,7 @@ from drf_excel.mixins import XLSXFileMixin
 from drf_excel.renderers import XLSXRenderer
 from rest_framework.exceptions import MethodNotAllowed
 
-from api.views import PurchaseListCreateView
+from api.views.purchase import PurchaseListCreateView
 from api.serializers import PurchaseExportSerializer
 
 
