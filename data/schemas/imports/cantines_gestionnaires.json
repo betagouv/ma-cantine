@@ -16,7 +16,7 @@
     },
     {
       "constraints": {
-        "required": false
+        "required": true
       },
       "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
       "doc_enum_multiple": true,
