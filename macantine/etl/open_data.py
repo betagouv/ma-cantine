@@ -1,4 +1,3 @@
-import csv
 import json
 import os
 from io import BytesIO
@@ -87,12 +86,12 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         with default_storage.open(filename + ".csv", "w") as csv_file:
             df_csv.to_csv(
                 csv_file,
-                sep=";",
+                sep=",",
                 index=False,
                 na_rep="",
                 encoding="utf_8_sig",
-                quoting=csv.QUOTE_NONE,
-                escapechar="\\",
+                # quoting=csv.QUOTE_NONE,
+                # escapechar="\\",
             )
 
     def _load_data_xlsx(self, filename):
@@ -125,7 +124,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         with default_storage.open(filename + ".xlsx", "wb") as f:
             f.write(output.getvalue())
 
-    def load_dataset(self, datagouv=True):
+    def load_dataset(self, datagouv=False):
         filepath = f"open_data/{self.dataset_name}"
         if (
             os.environ.get("STATICFILES_STORAGE") == "storages.backends.s3.S3Storage"
