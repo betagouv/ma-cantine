@@ -1,7 +1,12 @@
+<script setup>
+defineProps(["text"])
+const defaultText = "Chargement en cours"
+</script>
+
 <template>
   <div class="app-loader fr-grid-row fr-grid-row--top">
     <div class="app-loader__icon mdi mdi-loading"></div>
-    <p class="fr-ml-1w fr-mb-0">Chargement en cours...</p>
+    <p class="fr-ml-1w fr-mb-0">{{text || defaultText}}...</p>
   </div>
 </template>
 

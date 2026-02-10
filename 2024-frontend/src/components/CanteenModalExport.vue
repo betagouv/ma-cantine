@@ -31,7 +31,7 @@ const closeModal = () => {
     <DsfrHighlight text="Pour rappel, pour modifier les cantines via imports ou créer des bilans, vous devez être gestionnaire de celles-ci." class="fr-ml-0"/>
     <div class="fr-grid-row fr-grid-row--left fr-grid-row--middle">
       <DsfrButton primary label="Générer l'export" :disabled="isGenerating" @click="generateExport" />
-      <AppLoader v-if="isGenerating" class="fr-ml-2w" />
+      <AppLoader text="Génération de l'export en cours" v-if="isGenerating" class="fr-ml-2w" />
     </div>
   </DsfrModal>
 </template>
