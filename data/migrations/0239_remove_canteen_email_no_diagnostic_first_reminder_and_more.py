@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0235_user_brevo_is_deleted_and_more"),
+        ("data", "0238_remove_canteen_satellite_canteens_count_and_more"),
     ]
 
     operations = [
