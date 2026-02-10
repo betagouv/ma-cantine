@@ -273,6 +273,10 @@ class User(AbstractUser):
             f"MA_CANTINE_{field.upper()}": self.data.get(field, 0) if self.data else 0
             for field in self.DATA_CANTEEN_FIELDS
         }
+        data_canteen_diagnostic_fields_dict = {
+            f"MA_CANTINE_{field.upper()}": self.data.get(field, 0) if self.data else 0
+            for field in self.DATA_CANTEEN_DIAGNOSTIC_FIELDS
+        }
         return {
             # user info
             "NOM": self.last_name,
@@ -282,15 +286,7 @@ class User(AbstractUser):
             "MA_CANTINE_DERNIERE_CONNEXION": self.last_login.strftime("%Y-%m-%d") if self.last_login else "",
             "MA_CANTINE_COMPTE_DEV": self.is_dev,
             "MA_CANTINE_COMPTE_ELU_E": self.is_elected_official,
-            # user canteen info
+            # user canteen & diagnostic info
             **data_canteen_fields_dict,
-            # user canteen diagnostic info
-            "MA_CANTINE_MANQUE_BILAN_DONNEES_2024": self.has_missing_diagnostic_for_year(2024),
-            "MA_CANTINE_MANQUE_BILAN_DONNEES_2023": self.has_missing_diagnostic_for_year(2023),
-            "MA_CANTINE_MANQUE_BILAN_DONNEES_2022": self.has_missing_diagnostic_for_year(2022),
-            "MA_CANTINE_MANQUE_BILAN_DONNEES_2021": self.has_missing_diagnostic_for_year(2021),
-            "MA_CANTINE_MANQUE_TD_DONNEES_2024": self.has_missing_teledeclaration_for_year(2024),
-            "MA_CANTINE_MANQUE_TD_DONNEES_2023": self.has_missing_teledeclaration_for_year(2023),
-            "MA_CANTINE_MANQUE_TD_DONNEES_2022": self.has_missing_teledeclaration_for_year(2022),
-            "MA_CANTINE_MANQUE_TD_DONNEES_2021": self.has_missing_teledeclaration_for_year(2021),
+            **data_canteen_diagnostic_fields_dict,
         }
