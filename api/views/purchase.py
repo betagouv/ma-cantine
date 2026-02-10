@@ -15,7 +15,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.filters.utils import MaCantineOrderingFilter, UnaccentSearchFilter
+from api.filters.utils import UnaccentSearchFilter
 from api.permissions import IsAuthenticated, IsCanteenManager, IsLinkedCanteenManager
 from api.serializers import (
     PurchaseExportSerializer,
@@ -37,31 +37,20 @@ class PurchasesPagination(LimitOffsetPagination):
     canteens = []
 
     def paginate_queryset(self, queryset, request, view=None):
-        # Performance improvements possible
-        user_purchases = Purchase.objects.filter(canteen__in=request.user.canteens.all())
-        family_param = request.query_params.get("family")
-        if family_param:
-            family_qs = user_purchases
-            characteristic_param = request.query_params.getlist("characteristics")
-            if characteristic_param:
-                family_qs = family_qs.filter(characteristics__overlap=characteristic_param)
-                self.families = set(filter(lambda x: x, family_qs.values_list("family", flat=True)))
-            else:
-                self.families = list(Purchase.Family)
-        else:
-            self.families = set(filter(lambda x: x, queryset.values_list("family", flat=True)))
-        self.canteens = list(
-            queryset.order_by("canteen__id").distinct("canteen__id").values_list("canteen__id", flat=True)
+        """
+        return extra fields for the filter options in the frontend
+        - queryset's list of values for families, characteristics and canteens
+        - and not only for the current page
+        """
+        self.families = list(set(queryset.values_list("family", flat=True)))
+        self.characteristics = list(
+            {
+                characteristic
+                for characteristics in queryset.values_list("characteristics", flat=True)
+                for characteristic in characteristics
+            }
         )
-
-        self.characteristics = []
-        all_characteristics = list(Purchase.Characteristic)
-        characteristic_qs = user_purchases
-        if family_param:
-            characteristic_qs = characteristic_qs.filter(family=family_param)
-        for c in all_characteristics:
-            if characteristic_qs.filter(characteristics__contains=[c]).exists():
-                self.characteristics.append(c)
+        self.canteen_ids = list(set(queryset.values_list("canteen__id", flat=True)))
 
         return super().paginate_queryset(queryset, request, view)
 
@@ -75,13 +64,14 @@ class PurchasesPagination(LimitOffsetPagination):
                     ("results", data),
                     ("families", self.families),
                     ("characteristics", self.characteristics),
-                    ("canteens", self.canteens),
+                    ("canteens", self.canteen_ids),
                 ]
             )
         )
 
 
 class PurchaseFilterSet(django_filters.FilterSet):
+    characteristics = django_filters.CharFilter(method="filter_characteristics")
     date = django_filters.DateFromToRangeFilter()
 
     class Meta:
@@ -89,8 +79,16 @@ class PurchaseFilterSet(django_filters.FilterSet):
         fields = (
             "canteen__id",
             "family",
-            "date",
+            # "characteristics",
+            # "date"
         )
+
+    # characteristics is a ChoiceArrayField, we need a custom overlap filter
+    def filter_characteristics(self, queryset, name, value):
+        characteristics = self.request.query_params.getlist("characteristics")
+        if characteristics:
+            return queryset.filter(characteristics__overlap=characteristics)
+        return queryset
 
 
 class PurchaseListCreateView(ListCreateAPIView):
@@ -99,7 +97,6 @@ class PurchaseListCreateView(ListCreateAPIView):
     serializer_class = PurchaseSerializer
     pagination_class = PurchasesPagination
     filter_backends = [
-        MaCantineOrderingFilter,
         UnaccentSearchFilter,
         django_filters.DjangoFilterBackend,
     ]
@@ -141,13 +138,6 @@ class PurchaseListCreateView(ListCreateAPIView):
                 f"User {self.request.user.id} attempted to create a purchase in nonexistent canteen {canteen_id}"
             )
             raise NotFound() from e
-
-    def filter_queryset(self, queryset):
-        # handle characteristics filtering manually because ChoiceArrayField is not a Django field
-        characteristics = self.request.query_params.getlist("characteristics")
-        if characteristics:
-            queryset = queryset.filter(characteristics__overlap=characteristics)
-        return super().filter_queryset(queryset)
 
 
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
