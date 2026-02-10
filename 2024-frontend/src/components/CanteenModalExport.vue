@@ -21,7 +21,7 @@ const emit = defineEmits(["close"])
       </div>
       <div class="fr-col-12 fr-col-md-10">
         <DsfrFileDownload
-          href="api/v1/export-cantines.xlsx"
+          href="/api/v1/export-cantines.xlsx"
           title="Télécharger l'export de la liste les cantines dont vous êtes gestionnaire sur la plateforme ma cantine"
           target="_blank"
           size="Taille du fichier inconnue"
