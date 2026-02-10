@@ -1,10 +1,10 @@
 from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
-from django.core.management import call_command
 
 from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
 from data.models import Canteen, User
+from macantine import tasks
 
 
 class UserModelTest(TestCase):
@@ -55,7 +55,7 @@ class UserModelTest(TestCase):
         with freeze_time("2026-01-30"):  # during the 2025 campaign
             cls.canteen_centrale_diagnostic_teledeclared.teledeclare(applicant=cls.user_with_canteens)
 
-        call_command("canteen_fill_declaration_donnees_year_field", year=2025)
+        tasks.canteen_fill_declaration_donnees_year_field()
 
     def test_queryset_brevo_to_create(self):
         self.assertEqual(User.objects.count(), 2)
