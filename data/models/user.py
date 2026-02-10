@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
@@ -54,27 +54,21 @@ class UserQuerySet(models.QuerySet):
             - should we use the canteen.declaration_donnees_YEAR field instead ?
         Note: needs to add a new year every campaign
         """
-        from data.models import Diagnostic
-
         return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
-            nb_bilans_2025=Count("canteens__diagnostics", filter=Q(canteens__diagnostics__year=2024), distinct=True),
-            nb_td_2025=Count(
-                "canteens__diagnostics",
-                filter=Q(
-                    canteens__diagnostics__year=2024,
-                    canteens__diagnostics__status=Diagnostic.DiagnosticStatus.SUBMITTED,
-                ),
-                distinct=True,
+            # bilans
+            nb_cantines_bilan_2025=Count(
+                "canteens__diagnostics", filter=Q(canteens__diagnostics__year=2025), distinct=True
             ),
-            nb_bilans_todo_2025=Count("canteens", distinct=True)
-            - Count("canteens__diagnostics", filter=Q(canteens__diagnostics__year=2024), distinct=True),
-            nb_td_todo_2025=Count(
-                "canteens__diagnostics",
-                filter=Q(
-                    canteens__diagnostics__year=2024, canteens__diagnostics__status=Diagnostic.DiagnosticStatus.DRAFT
-                ),
-                distinct=True,
-            ),
+            nb_cantines_bilan_todo_2025=Count("canteens", distinct=True) - F("nb_cantines_bilan_2025"),
+            # TDs
+            nb_cantines_td_2025=Count("canteens", filter=Q(canteens__declaration_donnees_2025=True), distinct=True),
+            # nb_cantines_td_todo_2025=F("nb_cantines_bilan_2025") - Count(
+            #     "canteens",
+            #     filter=Q(
+            #         canteens__declaration_donnees_2025=False
+            #     ),
+            #     distinct=True
+            # ),
         )
 
 
@@ -151,10 +145,10 @@ class User(AbstractUser):
         "nb_cantines_gestion_concedee",
     ]
     DATA_DIAGNOSTIC_FIELDS = [
-        "nb_bilans_2025",
-        "nb_td_2025",
-        "nb_bilans_todo_2025",
-        "nb_td_todo_2025",
+        "nb_cantines_bilan_2025",
+        "nb_cantines_bilan_todo_2025",
+        "nb_cantines_td_2025",
+        # "nb_cantines_td_todo_2025",
     ]
 
     objects = UserManager.from_queryset(UserQuerySet)()
