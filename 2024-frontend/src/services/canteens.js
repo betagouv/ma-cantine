@@ -142,6 +142,15 @@ const deleteCanteen = (canteenId) => {
     .catch((e) => e)
 }
 
+const exportCanteens = () => {
+  // Waiting for endpoint to be implemented
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true)
+    }, 1000)
+  })
+ }
+
 export default {
   createCanteen,
   canteenStatus,
@@ -154,4 +163,5 @@ export default {
   linkSatellite,
   unlinkSatellite,
   fetchCanteensActions,
+  exportCanteens,
 }
