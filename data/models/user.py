@@ -49,10 +49,7 @@ class UserQuerySet(models.QuerySet):
 
     def with_canteen_diagnostic_stats(self):
         """
-        Note: basic stats, we ignore if the central/group has done the diagnostic for its satellites
-            - should we look at the central/group ?
-            - should we use the canteen.declaration_donnees_YEAR field instead ?
-        Note: needs to add a new year every campaign
+        # TODO: clarify nb_cantines_td_todo_2025
         """
         return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
             # bilans
