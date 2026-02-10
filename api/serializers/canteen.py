@@ -579,6 +579,65 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
         fields = CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS
 
 
+# same as data/schemas/imports/cantines.json
+class CanteenExportSerializer(serializers.ModelSerializer):
+    # siret = serializers.CharField(source="siret", read_only=True)
+    nom = serializers.CharField(source="name", read_only=True)
+    siret_cuisine_centrale = serializers.CharField(source="central_producer_siret", read_only=True)
+    nombre_repas_jour = serializers.IntegerField(source="daily_meal_count", read_only=True)
+    nombre_repas_an = serializers.IntegerField(source="yearly_meal_count", read_only=True)
+    secteurs = serializers.SerializerMethodField()
+    type_production = serializers.SerializerMethodField()
+    type_gestion = serializers.SerializerMethodField()
+    modèle_économique = serializers.SerializerMethodField()
+    # groupe_id = serializers.IntegerField(source="groupe_id", read_only=True)
+    administration_tutelle = serializers.SerializerMethodField()
+    gestionnaires_additionnels = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Canteen
+        fields = (
+            "siret",
+            "nom",
+            "siret_cuisine_centrale",
+            "nombre_repas_jour",
+            "nombre_repas_an",
+            "secteurs",
+            "type_production",
+            "type_gestion",
+            "modèle_économique",
+            "groupe_id",
+            "administration_tutelle",
+            "gestionnaires_additionnels",
+        )
+
+    def get_secteurs(self, obj):
+        return ",".join(obj.sector_lib_list)
+
+    def get_type_production(self, obj):
+        if obj.production_type:
+            return Canteen.ProductionType(obj.production_type).label
+        return None
+
+    def get_type_gestion(self, obj):
+        if obj.management_type:
+            return Canteen.ManagementType(obj.management_type).label
+        return None
+
+    def get_modèle_économique(self, obj):
+        if obj.economic_model:
+            return Canteen.EconomicModel(obj.economic_model).label
+        return None
+
+    def get_administration_tutelle(self, obj):
+        if obj.line_ministry:
+            return Canteen.Ministries(obj.line_ministry).label
+        return None
+
+    def get_gestionnaires_additionnels(self, obj):
+        return ""
+
+
 class CanteenAnalysisSerializer(serializers.ModelSerializer):
     nom = serializers.CharField(source="name")
     code_insee_commune = serializers.CharField(source="city_insee_code")

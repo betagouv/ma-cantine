@@ -42,6 +42,7 @@ from api.views import (  # ImportCompleteCentralKitchenView,; ImportCompleteDiag
     PublishedCanteenSingleView,
     PublishedCanteensView,
     PurchaseListCreateView,
+    UserCanteenListExportView,
     PurchaseListExportView,
     PurchaseOptionsView,
     PurchaseRetrieveUpdateDestroyView,
@@ -93,6 +94,11 @@ urlpatterns = {
     path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
     path("canteenSummaries/", UserCanteenSummaries.as_view(), name="user_canteens_summaries"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
+    path(
+        "export-cantines.xlsx",  # breaking from URL conventions for nicer filename
+        UserCanteenListExportView.as_view(),
+        name="user_canteen_list_export",
+    ),
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
     path(
         "canteens/<int:canteen_pk>/diagnostics/",

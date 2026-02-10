@@ -21,6 +21,7 @@ from .canteen import (  # noqa: F401
     UserCanteenSummaries,
     UserCanteensView,
 )
+from .canteen_export import UserCanteenListExportView  # noqa: F401
 from .canteen_groupe import (  # noqa: F401
     CanteenGroupeSatellitesListView,
     CanteenGroupeSatelliteLinkView,
