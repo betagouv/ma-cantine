@@ -6,6 +6,23 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.13.1](https://github.com/betagouv/ma-cantine/compare/v2026.13.0...v2026.13.1) (2026-02-10)
+
+
+### Améliorations
+
+* **Achats:** API: améliorer les performances de la réponse 'liste' (avec/sans filtres) ([#6364](https://github.com/betagouv/ma-cantine/issues/6364)) ([8396fbf](https://github.com/betagouv/ma-cantine/commit/8396fbf46285c91f2e20a3e627185b48ae6ffd5a))
+* **Brevo:** enlever de Django les emails de rappels 'pas de diagnostics' (les basculer sur Brevo) ([#6282](https://github.com/betagouv/ma-cantine/issues/6282)) ([74050c1](https://github.com/betagouv/ma-cantine/commit/74050c1a246be633f456f2730cf2e43672978cff))
+* **OpenData:** Cantines: exporter le csv avec un séparateur virgule. répare l'export ([#6370](https://github.com/betagouv/ma-cantine/issues/6370)) ([b339895](https://github.com/betagouv/ma-cantine/commit/b339895776f1a3ab46b7f6199547980f066353be))
+* **Utilisateurs:** Brevo: utiliser les données bilans stockées dans le champ 'data' ([#6367](https://github.com/betagouv/ma-cantine/issues/6367)) ([1a97587](https://github.com/betagouv/ma-cantine/commit/1a9758727b3e9ea4687f65f66b7137cd5785c417))
+* **Utilisateurs:** stocker toutes les nuits des données en lien avec les bilans des cantines gérées ([#6112](https://github.com/betagouv/ma-cantine/issues/6112)) ([ffd78ea](https://github.com/betagouv/ma-cantine/commit/ffd78ea6eda0752971600c03859173f1fdcedb93))
+
+
+### Technique
+
+* **Imports:** Cantines: maintenant qu'on récupère les données géo à la création, plus besoin de le faire pendant les imports ([#6363](https://github.com/betagouv/ma-cantine/issues/6363)) ([a4a3399](https://github.com/betagouv/ma-cantine/commit/a4a33999647380d8947bd7e87c5224e772070a2d))
+* **Tâches nocturnes:** Mettre à jour les infos cantines plus tôt dans la nuit (on va en avoir besoin pour Brevo) ([#6366](https://github.com/betagouv/ma-cantine/issues/6366)) ([290c995](https://github.com/betagouv/ma-cantine/commit/290c995ba0943685a32b38b394103ae90cd301e7))
+
 ## [2026.13.0](https://github.com/betagouv/ma-cantine/compare/v2026.12.0...v2026.13.0) (2026-02-09)
 
 
