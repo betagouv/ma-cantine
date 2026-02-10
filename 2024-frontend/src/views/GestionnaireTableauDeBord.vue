@@ -9,6 +9,7 @@ import canteensTableService from "@/services/canteensTable.js"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireEmptyCanteen from "@/components/GestionnaireEmptyCanteen.vue"
 import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
+import CanteenModalExport from "@/components/CanteenModalExport.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppLoader from "@/components/AppLoader.vue"
 import AppJeDonneMonAvis from "@/components/AppJeDonneMonAvis.vue"
@@ -150,13 +151,5 @@ const campaign = computedAsync(async () => {
     url="https://jedonnemonavis.numerique.gouv.fr/Demarches/3661?button=4069"
     title="Qu'avez-vous pensé de la page Tableau de bord ?"
   />
-  <DsfrModal
-    :opened="modalExportOpened"
-    title="Exporter des données"
-    @close="modalExportOpened = false"
-  >
-    <p>
-      Ma modal d'export
-    </p>
-  </DsfrModal>
+  <CanteenModalExport :opened="modalExportOpened" @close="modalExportOpened = false" />
 </template>
