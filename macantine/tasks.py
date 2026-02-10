@@ -1,6 +1,5 @@
 import logging
 import time
-import datetime
 
 import redis as r
 from django.conf import settings
@@ -8,7 +7,6 @@ from django.core.management import call_command
 from django.db.models import F
 from django.utils import timezone
 
-from sib_api_v3_sdk.rest import ApiException
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
 from common.api.datagouv import (
@@ -31,10 +29,6 @@ from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
-
-
-def _user_name(user):
-    return user.get_full_name() or user.username
 
 
 ##########################################################################
@@ -95,19 +89,6 @@ def update_brevo_contacts():
 
     end = time.time()
     logger.info(f"update_brevo_contacts task ended. Duration : {end - start} seconds")
-
-
-def _covered_by_central_kitchen(canteen):
-    if canteen.production_type == Canteen.ProductionType.ON_SITE_CENTRAL and canteen.central_producer_siret:
-        try:
-            central_kitchen = Canteen.objects.get(siret=canteen.central_producer_siret)
-            covered_by_central_kitchen = central_kitchen.diagnostics.exists()
-            return covered_by_central_kitchen
-        except Canteen.DoesNotExist:
-            pass
-        except Canteen.MultipleObjectsReturned as e:
-            logger.exception(f"Multiple central canteens detected on email task: {e}")
-    return False
 
 
 @app.task()
