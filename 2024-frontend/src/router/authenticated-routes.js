@@ -15,6 +15,7 @@ import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
 import GestionnaireImportAchatsSIRET from "@/views/GestionnaireImportAchatsSIRET.vue"
 import GestionnaireImportBilansSimples from "@/views/GestionnaireImportBilansSimples.vue"
 import GestionnaireImportCantines from "@/views/GestionnaireImportCantines.vue"
+import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportCantinesGestionnaires.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 
 /* Sitemap section id */
@@ -109,6 +110,18 @@ const routes = [
         component: GestionnaireImportCantines,
         meta: {
           title: "Importer des cantines",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "cantines-gestionnaires",
+        name: "GestionnaireImportCantinesGestionnaires",
+        component: GestionnaireImportCantinesGestionnaires,
+        meta: {
+          title: "Ajouter des gestionnaires en masse via le SIRET des cantines",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
