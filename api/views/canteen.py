@@ -10,12 +10,14 @@ from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.db.models import FloatField, Q, Sum
 from django.db.models.functions import Cast
+from drf_excel.mixins import XLSXFileMixin
+from drf_excel.renderers import XLSXRenderer
 from django.http import JsonResponse
 from django_filters import BaseInFilter, CharFilter
 from django_filters import rest_framework as django_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -41,6 +43,7 @@ from api.serializers import (
     ElectedCanteenSerializer,
     FullCanteenSerializer,
     ManagingTeamSerializer,
+    CanteenExportSerializer,
     MinimalCanteenSerializer,
     PublicCanteenPreviewSerializer,
     PublicCanteenSerializer,
@@ -379,6 +382,48 @@ class UserCanteenActions(ListAPIView):
         year = self.request.parser_context.get("kwargs").get("year")
         user_canteen_queryset = self.request.user.canteens.order_by("name")
         return user_canteen_queryset.select_related("groupe").annotate_with_action_for_year(year)
+
+
+class UserCanteenListExportView(UserCanteenActions, XLSXFileMixin):
+    renderer_classes = (XLSXRenderer,)
+    pagination_class = None
+    serializer_class = CanteenExportSerializer
+
+    # same as data/schemas/imports/cantines.json
+    column_header = {
+        "titles": [
+            "siret",
+            "nom",
+            "siret_cuisine_centrale",
+            "nombre_repas_jour",
+            "nombre_repas_an",
+            "secteurs",
+            "type_production",
+            "type_gestion",
+            "modèle_économique",
+            "groupe_id",
+            "administration_tutelle",
+            "gestionnaires",
+        ],
+        # "column_width": [],
+        "style": {
+            "font": {
+                "bold": True,
+            },
+        },
+    }
+    body = {
+        "style": {
+            "alignment": {
+                "horizontal": "left",
+                "vertical": "center",
+            },
+        },
+        "height": 20,
+    }
+
+    def post(self, request, *args, **kwargs):
+        raise MethodNotAllowed()
 
 
 @extend_schema_view(
