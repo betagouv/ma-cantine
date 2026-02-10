@@ -27,6 +27,8 @@ hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
 every_6_hours = crontab(hour="*/6", minute=0, day_of_week="*")  # Every 6 hours
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
 nightly_0 = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
+nightly_0_10 = crontab(hour=0, minute=10, day_of_week="*")  # Every day at 12:10AM
+nightly_0_20 = crontab(hour=0, minute=20, day_of_week="*")  # Every day at 12:20AM
 nightly_0_30 = crontab(hour=0, minute=30, day_of_week="*")  # Every day at 12:30AM
 nightly_3 = crontab(hour=3, minute=0, day_of_week="*")  # Every day at 3AM
 nightly_4 = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
@@ -48,10 +50,15 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.no_diagnostic_first_reminder",
         "schedule": daily_week,
     },
+    # Canteen data (needed for User data task, analysis & opendata)
+    "canteen_fill_declaration_donnees_year_field": {
+        "task": "macantine.tasks.canteen_fill_declaration_donnees_year_field",
+        "schedule": nightly_0_10,
+    },
     # User data (needed for Brevo)
     "update_user_data": {
         "task": "macantine.tasks.update_user_data",
-        "schedule": nightly_0,
+        "schedule": nightly_0_20,
     },
     # Brevo
     "update_brevo_contacts": {
@@ -72,17 +79,11 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.delete_old_historical_records",
         "schedule": nightly_3,
     },
-    # Campaign-related (needed for analysis & opendata)
-    "canteen_fill_declaration_donnees_year_field": {
-        "task": "macantine.tasks.canteen_fill_declaration_donnees_year_field",
-        "schedule": nightly_4_30,
-    },
-    # Campaign-related (needed for analysis)
+    # Dataset exports
     "export_dataset_td_analysis": {
         "task": "macantine.tasks.export_dataset_td_analysis",
-        "schedule": every_6_hours,
+        "schedule": every_6_hours,  # Campaign-related
     },
-    # Dataset exports
     "export_dataset_canteen_analysis": {
         "task": "macantine.tasks.export_dataset_canteen_analysis",
         "schedule": nightly_5,
