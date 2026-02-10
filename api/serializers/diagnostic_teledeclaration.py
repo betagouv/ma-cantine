@@ -340,7 +340,7 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
 
     def get_canteen_line_ministry(self, obj):
         line_ministry = obj.canteen_snapshot.get("line_ministry", None)
-        if line_ministry:
+        if line_ministry and line_ministry not in ["autre"]:
             return Canteen.Ministries(line_ministry).label
         return None
 

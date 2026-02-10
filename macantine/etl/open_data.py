@@ -90,8 +90,6 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
                 index=False,
                 na_rep="",
                 encoding="utf_8_sig",
-                # quoting=csv.QUOTE_NONE,
-                # escapechar="\\",
             )
 
     def _load_data_xlsx(self, filename):
