@@ -86,10 +86,6 @@
       "type": "integer"
     },
     {
-      "name": "departement",
-      "type": "string"
-    },
-    {
       "constraints": {
         "pattern": "^([013-9]\\d|2[AB1-9])\\d{3}$",
         "required": false
@@ -98,6 +94,26 @@
       "example": "75105",
       "name": "code_insee_commune",
       "title": "Code Insee Commune",
+      "type": "string"
+    },
+    {
+      "name": "epci",
+      "type": "string"
+    },
+    {
+      "name": "epci_lib",
+      "type": "string"
+    },
+    {
+      "name": "pat_list",
+      "type": "string"
+    },
+    {
+      "name": "pat_lib_list",
+      "type": "string"
+    },
+    {
+      "name": "departement",
       "type": "string"
     },
     {
