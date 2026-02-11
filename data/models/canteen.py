@@ -880,7 +880,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def reset_geo_fields(self, with_city_insee_code=False, with_save=True):
         """
         Helper to reset geo fields
-        The geolocation bot will then fill them again (from the siret)
+        The geolocation bot will then fill them again (using the siret) (post_save signal)
         """
         if with_city_insee_code:
             self.city_insee_code = None

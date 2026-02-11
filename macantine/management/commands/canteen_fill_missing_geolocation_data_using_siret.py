@@ -13,10 +13,8 @@ class Command(BaseCommand):
     - python manage.py canteen_fill_missing_geolocation_data_using_siret
     """
 
-    help = (
-        "Export datasets TD and canteens to the 'media/open_data' folder of the configured file system (local or s3)"
-    )
+    help = "Fill missing geolocation data for canteens using SIRET and API Recherche Entreprises"
 
     def handle(self, *args, **options):
-        logger.info("Start task : fill_missing_geolocation_data")
+        logger.info("Start task : canteen_fill_missing_geolocation_data_using_siret")
         fill_missing_insee_code_using_siret()
