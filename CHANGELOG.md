@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.14.0](https://github.com/betagouv/ma-cantine/compare/v2026.13.1...v2026.14.0) (2026-02-11)
+
+
+### Nouveautés
+
+* **Cantines:** API: nouvel endpoint pour générer la liste de ses cantines en xlsx ([#6369](https://github.com/betagouv/ma-cantine/issues/6369)) ([4339094](https://github.com/betagouv/ma-cantine/commit/43390941afa0b3f067bd32ba337bd6a3ec40695e))
+* **Export cantines:** exporte uniquement les cantines SIRET ([#6372](https://github.com/betagouv/ma-cantine/issues/6372)) ([2f20263](https://github.com/betagouv/ma-cantine/commit/2f202636058f03920de3db78f713a5b203f47a9f))
+* **Tableau de bord:** ajoute la modale d'export ([#6368](https://github.com/betagouv/ma-cantine/issues/6368)) ([fc2e25b](https://github.com/betagouv/ma-cantine/commit/fc2e25b161fec736c9ad58ce6b7ad38fe3a4c80b))
+
+
+### Technique
+
+* **Exports achats:** basculer l'endpoint dans un fichier dédié ([#6373](https://github.com/betagouv/ma-cantine/issues/6373)) ([4019ee9](https://github.com/betagouv/ma-cantine/commit/4019ee9cac65f524718c2473a2700f18e04a0ac5))
+
 ## [2026.13.1](https://github.com/betagouv/ma-cantine/compare/v2026.13.0...v2026.13.1) (2026-02-10)
 
 
