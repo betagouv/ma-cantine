@@ -115,7 +115,8 @@ def update_canteen_geo_fields_from_siret(canteen):
                 update = True
     # Step 2: fetch geo data from API Découpage Administratif & DataGouv
     if canteen.city_insee_code:
-        _update_canteen_geo_data_from_insee_code(canteen)
+        if canteen.has_missing_geo_data:
+            _update_canteen_geo_data_from_insee_code(canteen)
     # Step 3: save & return
     if update:
         canteen._change_reason = "Données de localisation MAJ"
