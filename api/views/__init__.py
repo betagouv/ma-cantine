@@ -21,6 +21,7 @@ from .canteen import (  # noqa: F401
     UserCanteenSummaries,
     UserCanteensView,
 )
+from .purchase_export import PurchaseListExportView  # noqa: F401
 from .canteen_export import UserCanteenListExportView  # noqa: F401
 from .canteen_groupe import (  # noqa: F401
     CanteenGroupeSatellitesListView,
@@ -58,7 +59,6 @@ from .purchase import (  # noqa: F401
     CanteenPurchasesSummaryView,
     DiagnosticsFromPurchasesView,
     PurchaseListCreateView,
-    PurchaseListExportView,
     PurchaseOptionsView,
     PurchaseRetrieveUpdateDestroyView,
     PurchasesDeleteView,

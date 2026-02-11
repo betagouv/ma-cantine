@@ -7,8 +7,12 @@ from data.factories import CanteenFactory
 
 
 class CanteenListExportApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("user_canteen_list_export")
+
     def test_excel_export_unauthenticated(self):
-        response = self.client.get(reverse("user_canteen_list_export"))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -18,7 +22,7 @@ class CanteenListExportApiTest(APITestCase):
         CanteenFactory(managers=[authenticate.user])
         CanteenFactory()
 
-        response = self.client.get(reverse("user_canteen_list_export"))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)

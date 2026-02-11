@@ -6,10 +6,8 @@ from django.db.models import Q, Sum
 from django.db.models.functions import ExtractYear
 from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
-from drf_excel.mixins import XLSXFileMixin
-from drf_excel.renderers import XLSXRenderer
 from rest_framework import status
-from rest_framework.exceptions import MethodNotAllowed, NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -18,7 +16,6 @@ from rest_framework.views import APIView
 from api.filters.utils import UnaccentSearchFilter
 from api.permissions import IsAuthenticated, IsCanteenManager, IsLinkedCanteenManager
 from api.serializers import (
-    PurchaseExportSerializer,
     PurchasePercentageSummarySerializer,
     PurchaseSerializer,
     PurchaseSummarySerializer,
@@ -425,42 +422,6 @@ class DiagnosticsFromPurchasesView(APIView):
             diagnostic.save()
             created_diags.append(diagnostic.id)
         return JsonResponse({"results": created_diags, "errors": errors}, status=status.HTTP_201_CREATED)
-
-
-class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
-    renderer_classes = (XLSXRenderer,)
-    pagination_class = None
-    serializer_class = PurchaseExportSerializer
-
-    column_header = {
-        "titles": [
-            "Date",
-            "Cantine",
-            "Description",
-            "Fournisseur",
-            "Famille de produit",
-            "Caractéristiques",
-            "Prix HT",
-        ],
-        "column_width": [18, 25, 25, 20, 35, 35, 10],
-        "style": {
-            "font": {
-                "bold": True,
-            },
-        },
-    }
-    body = {
-        "style": {
-            "alignment": {
-                "horizontal": "left",
-                "vertical": "center",
-            },
-        },
-        "height": 20,
-    }
-
-    def post(self, request, *args, **kwargs):
-        raise MethodNotAllowed()
 
 
 class PurchaseOptionsView(APIView):
