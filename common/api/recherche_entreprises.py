@@ -34,11 +34,12 @@ def validate_result(siret, response):
             logger.info(f"API Recherche Entreprises : No results found for canteen SIRET : {siret}")
             return
         result = response["results"][0]
-        if len(response["results"][0]["matching_etablissements"]) > 1:
-            logger.warning(
-                f"API Recherche Entreprises : Expecting 1 establishment for SIRET (choosing the first one) : {siret}"
-            )
-            return
+        if "matching_etablissements" in response["results"][0]:
+            if len(response["results"][0]["matching_etablissements"]) > 1:
+                logger.warning(
+                    f"API Recherche Entreprises : Expecting 1 establishment for SIRET (choosing the first one) : {siret}"
+                )
+                return
         return result
 
 
@@ -175,17 +176,18 @@ MOCK_SIREN_923412845_RESULTS = [
 
 def mock_fetch_geo_data_from_siren(mock, siren, success=True):
     api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siren}"
-    if not success:
+    if success:
+        mock.get(
+            api_url,
+            text=json.dumps(
+                {
+                    "results": eval(f"MOCK_SIREN_{siren}_RESULTS"),
+                    "total_results": 1,
+                }
+            ),
+        )
+    else:
         mock.get(api_url, text="", status_code=403)
-    mock.get(
-        api_url,
-        text=json.dumps(
-            {
-                "results": eval(f"MOCK_SIREN_{siren}_RESULTS"),
-                "total_results": 1,
-            }
-        ),
-    )
 
 
 MOCK_SIRET_00000000000000_RESULTS = []

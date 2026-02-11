@@ -82,7 +82,7 @@ class CanteenStatusBySiretApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertNotIn("id", body)
-        self.assertEqual(body["name"], "Legal unit name")
+        self.assertEqual(body["name"], "LA TURBINE")
         self.assertEqual(body["siret"], self.siret)
         self.assertEqual(body["postalCode"], "59100")
         self.assertEqual(body["city"], "ROUBAIX")
