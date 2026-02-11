@@ -14,7 +14,6 @@ class UserCanteenListExportView(ListAPIView, XLSXFileMixin):
     serializer_class = CanteenExportSerializer
 
     def get_queryset(self):
-        # similar to UserCanteenActions
         return self.request.user.canteens.has_siret().order_by("name")
 
     # same as data/schemas/imports/cantines.json
