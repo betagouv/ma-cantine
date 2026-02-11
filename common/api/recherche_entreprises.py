@@ -220,6 +220,37 @@ MOCK_SIRET_92341284500011_RESULTS = [
         ],
     }
 ]
+MOCK_SIRET_21340172201787_RESULTS = [
+    {
+        "siren": "213401722",
+        "nom_complet": "COMMUNE DE MONTPELLIER",
+        "siege": {
+            "code_postal": "34070",
+            "commune": "34172",
+            "date_fermeture": None,
+            "departement": "34",
+            "epci": "243400017",
+            "etat_administratif": "A",
+            "libelle_commune": "MONTPELLIER",
+            "liste_enseignes": ["MAIRIE"],
+            "region": "76",
+            "siret": "21340172201787",
+        },
+        "matching_etablissements": [
+            {
+                "code_postal": "34070",
+                "commune": "34172",
+                "date_fermeture": None,
+                "epci": "243400017",
+                "etat_administratif": "A",  # active
+                "libelle_commune": "MONTPELLIER",
+                "liste_enseignes": ["MAIRIE"],
+                "region": "76",
+                "siret": "21340172201787",
+            }
+        ],
+    }
+]
 MOCK_SIRET_21380185500072_RESULTS = [
     {
         "siren": "213801855",
@@ -242,7 +273,7 @@ MOCK_SIRET_21380185500072_RESULTS = [
                 "commune": "38185",
                 "date_fermeture": "2000-05-01",
                 "epci": "200040715",
-                "etat_administratif": "F",
+                "etat_administratif": "F",  # closed
                 "libelle_commune": "GRENOBLE",
                 "liste_enseignes": ["SCE DES EAUX"],
                 "region": "84",
