@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from data.models import Canteen, Diagnostic
-from data.models.geo import Department, Region
 from macantine.etl import utils
 
 
@@ -20,16 +19,14 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     cuisine_centrale = serializers.SerializerMethodField()
     central_producer_siret = serializers.CharField(source="canteen_snapshot.central_producer_siret", read_only=True)
     code_insee_commune = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
-    # epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
-    # epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
+    epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
+    epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
+    pat_list = serializers.SerializerMethodField()
+    pat_lib_list = serializers.SerializerMethodField()
     departement = serializers.CharField(source="canteen_snapshot.department", read_only=True)
-    lib_departement = (
-        serializers.SerializerMethodField()
-    )  # serializers.CharField(source="canteen_snapshot.department_lib", read_only=True)
+    lib_departement = serializers.CharField(source="canteen_snapshot.department_lib", read_only=True)
     region = serializers.CharField(source="canteen_snapshot.region", read_only=True)
-    lib_region = (
-        serializers.SerializerMethodField()
-    )  # serializers.CharField(source="canteen_snapshot.region_lib", read_only=True)
+    lib_region = serializers.CharField(source="canteen_snapshot.region_lib", read_only=True)
     nbre_cantines_region = serializers.SerializerMethodField()
     objectif_zone_geo = serializers.SerializerMethodField()
     secteur = serializers.SerializerMethodField()
@@ -97,10 +94,10 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "cuisine_centrale",
             "central_producer_siret",
             "code_insee_commune",
-            # "epci",
-            # "epci_lib",
-            # "pat_list",
-            # "pat_lib_list",
+            "epci",
+            "epci_lib",
+            "pat_list",
+            "pat_lib_list",
             "departement",
             "lib_departement",
             "region",
@@ -168,19 +165,17 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         else:
             return "C) non renseigné"
 
+    def get_pat_list(self, obj):
+        return ",".join(obj.canteen_snapshot.get("pat_list", []) or [])
+
+    def get_pat_lib_list(self, obj):
+        return ",".join(obj.canteen_snapshot.get("pat_lib_list", []) or [])
+
     def get_secteur(self, obj):
         return ",".join(obj.canteen_snapshot_sector_lib_list or [])
 
     def get_categorie(self, obj):
         return ",".join(obj.canteen.category_lib_list_from_sector_list or [])
-
-    def get_lib_departement(self, obj):
-        department = obj.canteen_snapshot.get("department", None)
-        return Department(department).label.split(" - ")[1].lstrip() if department else None
-
-    def get_lib_region(self, obj):
-        region = obj.canteen_snapshot.get("region", None)
-        return Region(region).label.split(" - ")[1].lstrip() if region else None
 
     def get_nbre_cantines_region(self, obj):
         return utils.get_nbre_cantines_region(obj.canteen_snapshot.get("region", None))
