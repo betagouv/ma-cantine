@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.15.0](https://github.com/betagouv/ma-cantine/compare/v2026.14.0...v2026.15.0) (2026-02-12)
+
+
+### Nouveautés
+
+* **Ressource:** ajout des supports webinaire sur la gestion concédée ([#6377](https://github.com/betagouv/ma-cantine/issues/6377)) ([2ad75b4](https://github.com/betagouv/ma-cantine/commit/2ad75b4574ac6081b12d5cefe964049cc2e7b8cb))
+
 ## [2026.14.0](https://github.com/betagouv/ma-cantine/compare/v2026.13.1...v2026.14.0) (2026-02-11)
 
 
