@@ -595,6 +595,15 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     )
 
     # Automatic tasks
+    siret_inconnu = models.BooleanField(
+        default=False, verbose_name="le siret de cette cantine est inconnu (obtenu via API Recherche Entreprises)"
+    )
+    siret_etat_administratif = models.CharField(
+        max_length=10,
+        null=True,
+        blank=True,
+        verbose_name="état administratif du siret (obtenu via API Recherche Entreprises)",
+    )
     geolocation_bot_attempts = models.IntegerField(default=0)
 
     # Campaign tracking
@@ -868,7 +877,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def _get_region(self):
         return get_region_from_department(self.department)
 
-    def reset_geo_fields(self, with_city_insee_code=False, with_save=False):
+    def reset_geo_fields(self, with_city_insee_code=False, with_save=True):
         """
         Helper to reset geo fields
         The geolocation bot will then fill them again (from the siret)
@@ -885,6 +894,8 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.department_lib = None
         self.region = None
         self.region_lib = None
+        self.siret_inconnu = False
+        self.siret_etat_administratif = None
         self.geolocation_bot_attempts = 0
         if with_save:
             self.save(skip_validations=True)
