@@ -99,18 +99,27 @@ def update_canteen_geo_fields_from_siret(canteen):
     Output: Fill canteen's city_insee_code field + geo fields
     """
     # Step 1: fetch city_insee_code from API Recherche Entreprises
-    response = fetch_geo_data_from_siret(canteen.siret)
-    if response:
-        try:
-            if "cityInseeCode" in response.keys():
-                canteen.city_insee_code = response["cityInseeCode"]
-                canteen.save(skip_validations=True)
-                update_change_reason(canteen, "Code Insee MAJ par bot, via SIRET")
-        except Exception as e:
-            logger.error(e)
+    if not canteen.city_insee_code:
+        response = fetch_geo_data_from_siret(canteen.siret)
+        if response:
+            try:
+                if "cityInseeCode" in response.keys():
+                    canteen.city_insee_code = response["cityInseeCode"]
+                    canteen.siret_etat_administratif = response["etat_administratif"]
+                    update = True
+            except Exception as e:
+                logger.error(e)
+        else:
+            if not canteen.siret_inconnu:
+                canteen.siret_inconnu = True
+                update = True
     # Step 2: fetch geo data from API Découpage Administratif & DataGouv
     if canteen.city_insee_code:
         _update_canteen_geo_data_from_insee_code(canteen)
+    # Step 3: save & return
+    if update:
+        canteen._change_reason = "Données de localisation MAJ"
+        canteen.save(skip_validations=True)
     return True
 
 
