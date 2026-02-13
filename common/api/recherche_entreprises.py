@@ -1,5 +1,5 @@
-import logging
 import json
+import logging
 import requests
 
 from common.utils import siret as utils_siret
@@ -34,11 +34,12 @@ def validate_result(siret, response):
             logger.info(f"API Recherche Entreprises : No results found for canteen SIRET : {siret}")
             return
         result = response["results"][0]
-        if len(response["results"][0]["matching_etablissements"]) > 1:
-            logger.warning(
-                f"API Recherche Entreprises : Expecting 1 establishment for SIRET (choosing the first one) : {siret}"
-            )
-            return
+        if "matching_etablissements" in response["results"][0]:
+            if len(response["results"][0]["matching_etablissements"]) > 1:
+                logger.warning(
+                    f"API Recherche Entreprises : Expecting 1 establishment for SIRET (choosing the first one) : {siret}"
+                )
+                return
         return result
 
 
@@ -74,6 +75,8 @@ def fetch_geo_data_from_siren(siren):
                 response["epci"] = etablissement["epci"]
                 response["department"] = etablissement["departement"]
                 response["region"] = etablissement["region"]
+                response["etat_administratif"] = etablissement["etat_administratif"]  # "A", "F"
+                response["date_fermeture"] = etablissement["date_fermeture"]
                 return response
             except KeyError as e:
                 logger.error(
@@ -127,6 +130,8 @@ def fetch_geo_data_from_siret(siret):
                 response["epci"] = etablissement["epci"]
                 # response["department"] = etablissement["departement"]  # not in response
                 response["region"] = etablissement["region"]
+                response["etat_administratif"] = etablissement["etat_administratif"]  # "A", "F"
+                response["date_fermeture"] = etablissement["date_fermeture"]
                 return response
             except KeyError as e:
                 logger.error(
@@ -148,36 +153,137 @@ def fetch_geo_data_from_siret(siret):
     return response
 
 
+MOCK_SIREN_000000000_RESULTS = []
+MOCK_SIREN_923412845_RESULTS = [
+    {
+        "siren": "923412845",
+        "nom_complet": "LA TURBINE",
+        "siege": {
+            "code_postal": "59100",
+            "commune": "59512",
+            "date_fermeture": None,
+            "departement": "59",
+            "epci": "200075174",
+            "etat_administratif": "A",
+            "libelle_commune": "ROUBAIX",
+            "liste_enseignes": None,
+            "region": "32",
+            "siret": "92341284500011",
+        },
+    }
+]
+
+
 def mock_fetch_geo_data_from_siren(mock, siren, success=True):
     api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siren}"
-    if not success:
+    if success:
+        mock.get(
+            api_url,
+            text=json.dumps(
+                {
+                    "results": eval(f"MOCK_SIREN_{siren}_RESULTS"),
+                    "total_results": 1,
+                }
+            ),
+        )
+    else:
         mock.get(api_url, text="", status_code=403)
-    mock.get(
-        api_url,
-        text=json.dumps(
+
+
+MOCK_SIRET_00000000000000_RESULTS = []
+MOCK_SIRET_92341284500011_RESULTS = [
+    {
+        "siren": "923412845",
+        "nom_complet": "LA TURBINE",
+        "siege": {
+            "code_postal": "59100",
+            "commune": "59512",
+            "date_fermeture": None,
+            "departement": "59",
+            "epci": "200075174",
+            "etat_administratif": "A",
+            "libelle_commune": "ROUBAIX",
+            "liste_enseignes": None,
+            "region": "32",
+            "siret": "92341284500011",
+        },
+        "matching_etablissements": [
             {
-                # siren: 923412845
-                "results": [
-                    {
-                        "siren": "923412845",
-                        "nom_complet": "LA TURBINE",
-                        "siege": {
-                            "commune": "59512",
-                            "code_postal": "59100",
-                            "libelle_commune": "ROUBAIX",
-                            "epci": "200075174",
-                            "departement": "59",
-                            "region": "32",
-                            "liste_enseignes": None,
-                            "etat_administratif": "A",
-                        },
-                        "matching_etablissements": [],
-                    }
-                ],
-                "total_results": 1,
+                "code_postal": "59100",
+                "commune": "59512",
+                "date_fermeture": None,
+                "epci": "200075174",
+                "etat_administratif": "A",
+                "libelle_commune": "ROUBAIX",
+                "liste_enseignes": None,
+                "region": "32",
+                "siret": "92341284500011",
             }
-        ),
-    )
+        ],
+    }
+]
+MOCK_SIRET_21340172201787_RESULTS = [
+    {
+        "siren": "213401722",
+        "nom_complet": "COMMUNE DE MONTPELLIER",
+        "siege": {
+            "code_postal": "34070",
+            "commune": "34172",
+            "date_fermeture": None,
+            "departement": "34",
+            "epci": "243400017",
+            "etat_administratif": "A",
+            "libelle_commune": "MONTPELLIER",
+            "liste_enseignes": ["MAIRIE"],
+            "region": "76",
+            "siret": "21340172201787",
+        },
+        "matching_etablissements": [
+            {
+                "code_postal": "34070",
+                "commune": "34172",
+                "date_fermeture": None,
+                "epci": "243400017",
+                "etat_administratif": "A",  # active
+                "libelle_commune": "MONTPELLIER",
+                "liste_enseignes": ["MAIRIE"],
+                "region": "76",
+                "siret": "21340172201787",
+            }
+        ],
+    }
+]
+MOCK_SIRET_21380185500072_RESULTS = [
+    {
+        "siren": "213801855",
+        "nom_complet": "SCE DES EAUX",
+        "siege": {
+            "code_postal": "38000",
+            "commune": "38185",
+            "date_fermeture": None,
+            "departement": "38",
+            "epci": "200040715",
+            "etat_administratif": "A",
+            "libelle_commune": "GRENOBLE",
+            "liste_enseignes": ["MAIRIE"],
+            "region": "84",
+            "siret": "21380185500015",
+        },
+        "matching_etablissements": [
+            {
+                "code_postal": "38000",
+                "commune": "38185",
+                "date_fermeture": "2000-05-01",
+                "epci": "200040715",
+                "etat_administratif": "F",  # closed
+                "libelle_commune": "GRENOBLE",
+                "liste_enseignes": ["SCE DES EAUX"],
+                "region": "84",
+                "siret": "21380185500072",
+            }
+        ],
+    }
+]
 
 
 def mock_fetch_geo_data_from_siret(mock, siret, success=True):
@@ -187,24 +293,7 @@ def mock_fetch_geo_data_from_siret(mock, siret, success=True):
             api_url,
             text=json.dumps(
                 {
-                    # siret: 92341284500011
-                    "results": [
-                        {
-                            "siren": "923412845",
-                            "nom_complet": "LA TURBINE",
-                            "matching_etablissements": [
-                                {
-                                    "commune": "59512",
-                                    "code_postal": "59100",
-                                    "libelle_commune": "ROUBAIX",
-                                    "epci": "200075174",
-                                    "region": "32",
-                                    "liste_enseignes": ["Legal unit name"],
-                                    "etat_administratif": "A",
-                                }
-                            ],
-                        }
-                    ],
+                    "results": eval(f"MOCK_SIRET_{siret}_RESULTS"),
                     "total_results": 1,
                 }
             ),
