@@ -7,7 +7,7 @@ from data.models import Canteen
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 
 
-class CanteenResetGeolocationDataUsingSiretCommandTest(TestCase):
+class CanteenUpdateGeolocationDataUsingSiretCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_siren = CanteenFactory(siret=None, siren_unite_legale="123456789", city_insee_code="59512")
@@ -29,21 +29,25 @@ class CanteenResetGeolocationDataUsingSiretCommandTest(TestCase):
 
         self.assertEqual(self.canteen_siret_unknown.city_insee_code, "12345")
         self.assertEqual(self.canteen_siret_unknown.siret_inconnu, False)
+        self.assertEqual(self.canteen_siret_unknown.siret_etat_administratif, None)
         self.assertEqual(self.canteen_siret_closed_deleted.siret_etat_administratif, None)
         self.assertEqual(self.canteen_siret_city_insee_code_mismatch.city_insee_code, "12345")
+        self.assertEqual(self.canteen_siret_city_insee_code_mismatch.siret_etat_administratif, None)
         self.assertEqual(self.canteen_siret_city_insee_code_ok.city_insee_code, "59512")
+        self.assertEqual(self.canteen_siret_city_insee_code_mismatch.siret_etat_administratif, None)
 
-        call_command("canteen_reset_geolocation_data_using_siret")
+        call_command("canteen_update_geolocation_data_using_siret")
 
         self.canteen_siret_unknown.refresh_from_db()
         self.canteen_siret_closed_deleted.refresh_from_db()
         self.canteen_siret_city_insee_code_mismatch.refresh_from_db()
         self.canteen_siret_city_insee_code_ok.refresh_from_db()
 
-        self.assertEqual(self.canteen_siret_unknown.city_insee_code, None)
-        self.assertEqual(self.canteen_siret_unknown.siret_inconnu, True)
-        self.assertEqual(self.canteen_siret_closed_deleted.siret_etat_administratif, "F")
-        self.assertEqual(self.canteen_siret_city_insee_code_mismatch.city_insee_code, "59512")
-        self.assertEqual(self.canteen_siret_city_insee_code_mismatch.siret_etat_administratif, "A")
-        self.assertEqual(self.canteen_siret_city_insee_code_ok.city_insee_code, "59512")
-        self.assertEqual(self.canteen_siret_city_insee_code_ok.siret_etat_administratif, "A")
+        self.assertEqual(self.canteen_siret_unknown.city_insee_code, "12345")  # not reset (yet ?)
+        self.assertEqual(self.canteen_siret_unknown.siret_inconnu, True)  # updated
+        self.assertEqual(self.canteen_siret_unknown.siret_etat_administratif, None)  # unchanged
+        self.assertEqual(self.canteen_siret_closed_deleted.siret_etat_administratif, "F")  # updated
+        self.assertEqual(self.canteen_siret_city_insee_code_mismatch.city_insee_code, "12345")  # not reset (yet ?)
+        self.assertEqual(self.canteen_siret_city_insee_code_mismatch.siret_etat_administratif, "A")  # updated
+        self.assertEqual(self.canteen_siret_city_insee_code_ok.city_insee_code, "59512")  # unchanged
+        self.assertEqual(self.canteen_siret_city_insee_code_ok.siret_etat_administratif, "A")  # updated
