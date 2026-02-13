@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.15.1](https://github.com/betagouv/ma-cantine/compare/v2026.15.0...v2026.15.1) (2026-02-13)
+
+
+### Améliorations
+
+* **Cantine:** 2 nouveaux champs pour savoir si le SIRET est inconnu ou fermé ([#6376](https://github.com/betagouv/ma-cantine/issues/6376)) ([ed42151](https://github.com/betagouv/ma-cantine/commit/ed421514d1cd121b6da4ccb6ea6b85562752a1bb))
+
+
+### Technique
+
+* **API Recherche Entreprises:** récupérer les infos etat_administratif & date_fermeture. mocker d'avantage de données ([#6375](https://github.com/betagouv/ma-cantine/issues/6375)) ([b915226](https://github.com/betagouv/ma-cantine/commit/b9152269a23ad922648fcfcfc05123cf8c9e64b0))
+* **Cantines:** script pour remplir les 2 nouveaux champs siret_ ([#6374](https://github.com/betagouv/ma-cantine/issues/6374)) ([2600721](https://github.com/betagouv/ma-cantine/commit/2600721eef05eec2ea0cb7d9c6338fefb29cbdf2))
+* **Tests:** services dédiés pour Postgres & Redis ([#6380](https://github.com/betagouv/ma-cantine/issues/6380)) ([3215d12](https://github.com/betagouv/ma-cantine/commit/3215d1290d5291e252a9e231ef7f1ea0a4471764))
+
 ## [2026.15.0](https://github.com/betagouv/ma-cantine/compare/v2026.14.0...v2026.15.0) (2026-02-12)
 
 
