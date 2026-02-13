@@ -16,24 +16,34 @@ jobs:
   build:
     name: "ma-cantine: build and test"
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:5
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     # Skip if PR is in draft
     if: ${{ !github.event.pull_request.draft }}
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup PostgreSQL
-        uses: Harmon758/postgresql-action@v1.0.0
-        with:
-          postgresql db: postgres
-          postgresql user: postgres
-          postgresql password: postgres
-
-      - name: Setup Redis
-        uses: zhulik/redis-action@1.1.0
-        with:
-          redis version: "5"
-          number of databases: 5
 
       - name: Setup Python
         uses: actions/setup-python@v5
