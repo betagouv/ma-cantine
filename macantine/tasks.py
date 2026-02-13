@@ -8,7 +8,6 @@ from django.db.models import F
 from django.utils import timezone
 
 import macantine.brevo as brevo
-from api.views.utils import update_change_reason
 from common.api.datagouv import (
     fetch_commune_pat_list,
     map_pat_list_to_communes_insee_code,
@@ -94,10 +93,11 @@ def update_brevo_contacts():
 @app.task()
 def update_canteen_geo_fields_from_siret(canteen):
     """
-    Input: Canteen with siret but no city_insee_code
+    Input: Canteen with siret
     Processing: API Recherche Entreprises + API Découpage Administratif (cached)
     Output: Fill canteen's city_insee_code field + geo fields
     """
+    update = False
     # Step 1: fetch city_insee_code from API Recherche Entreprises
     if not canteen.city_insee_code:
         response = fetch_geo_data_from_siret(canteen.siret)
@@ -115,7 +115,8 @@ def update_canteen_geo_fields_from_siret(canteen):
                 update = True
     # Step 2: fetch geo data from API Découpage Administratif & DataGouv
     if canteen.city_insee_code:
-        _update_canteen_geo_data_from_insee_code(canteen)
+        if canteen.has_missing_geo_data:
+            _update_canteen_geo_data_from_insee_code(canteen)
     # Step 3: save & return
     if update:
         canteen._change_reason = "Données de localisation MAJ"
@@ -209,11 +210,8 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
     if canteen.region and not canteen.region_lib:
         canteen.region_lib = get_lib_region_from_code(canteen.region)
         update = True
-    # save
-    if update:
-        canteen.save(skip_validations=True)
-        update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
-        return True
+
+    return update
 
 
 @app.task()
@@ -233,8 +231,11 @@ def fill_missing_geolocation_data_using_insee_code():
         return
 
     for i, canteen in enumerate(candidate_canteens):
-        updated = _update_canteen_geo_data_from_insee_code(canteen)
-        if updated:
+        update = _update_canteen_geo_data_from_insee_code(canteen)
+        if update:
+            # save
+            canteen._change_reason = "Données de localisation MAJ par bot, via code INSEE"
+            canteen.save(skip_validations=True)
             counter += 1
 
     result = f"Updated {counter}/{candidate_canteens.count()} canteens"
