@@ -586,7 +586,7 @@ soupsieve==2.5
     #   ma-cantine
 sqlalchemy==2.0.35
     # via ma-cantine
-sqlparse==0.5.3
+sqlparse==0.5.4
     # via
     #   django
     #   django-debug-toolbar

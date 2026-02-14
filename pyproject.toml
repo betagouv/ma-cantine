@@ -147,7 +147,7 @@ dependencies = [
     "six==1.17.0",
     "soupsieve==2.5",
     "sqlalchemy==2.0.35",
-    "sqlparse==0.5.3",
+    "sqlparse==0.5.4",
     "svglib==1.5.1",
     "telepath==0.3.1",
     "text-unidecode==1.3",
