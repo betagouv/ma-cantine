@@ -69,10 +69,10 @@ class CanteensImportView(BaseImportView):
         return normalized_emails
 
     @staticmethod
-    def _add_managers_to_canteen(emails, canteen, send_invitation_mail=True):
+    def _add_managers_to_canteen(emails, canteen):
         for email in emails:
             try:
-                AddManagerView.add_manager_to_canteen(email, canteen, send_invitation_mail=send_invitation_mail)
+                AddManagerView.add_manager_to_canteen(email, canteen, send_invitation_mail=True)
             except IntegrityError:
                 pass
 
