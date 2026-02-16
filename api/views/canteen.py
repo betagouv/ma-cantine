@@ -719,7 +719,7 @@ class ClaimCanteenView(APIView):
         canteen.managers.add(self.request.user)
         canteen.claimed_by = self.request.user
         canteen.has_been_claimed = True
-        canteen.save()
+        canteen.save(skip_validations=True)
         return Response(MinimalCanteenSerializer(canteen).data, status=status.HTTP_200_OK)
 
 
@@ -739,7 +739,7 @@ class UndoClaimCanteenView(APIView):
         canteen.managers.remove(self.request.user)
         canteen.claimed_by = None
         canteen.has_been_claimed = False
-        canteen.save()
+        canteen.save(skip_validations=True)
         return JsonResponse({}, status=status.HTTP_200_OK)
 
 
