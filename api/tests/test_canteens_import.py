@@ -4,16 +4,15 @@ from unittest import skipIf
 
 from django.test.utils import override_settings
 from django.conf import settings
-from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.canteen_import import CANTEEN_ADMIN_SCHEMA_FILE_PATH, CANTEEN_SCHEMA_FILE_PATH
+from api.views.canteen_import import CANTEEN_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory, UserFactory
-from data.models import Canteen, ImportFailure, ImportType, ManagerInvitation, Sector
+from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.creation_source import CreationSource
 
 
@@ -21,7 +20,6 @@ class CanteensSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.schema = json.load(open(CANTEEN_SCHEMA_FILE_PATH))
-        cls.schema_admin = json.load(open(CANTEEN_ADMIN_SCHEMA_FILE_PATH))
 
     def get_pattern(self, schema, field_name):
         field_index = next((i for i, f in enumerate(schema["fields"]) if f["name"] == field_name), None)
@@ -140,7 +138,7 @@ class CanteensSchemaTest(TestCase):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_administration_tutelle_regex(self):
-        pattern = self.get_pattern(self.schema_admin, "administration_tutelle")
+        pattern = self.get_pattern(self.schema, "administration_tutelle")
         for VALUE_OK in [
             "Agriculture, Alimentation et Forêts",
             " Santé et Solidarités",
@@ -352,59 +350,6 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
-
-    @authenticate
-    def test_staff_import_non_admin_header(self):
-        """
-        Staff users must import file with additionnal columns
-        """
-        user = authenticate.user
-        user.is_staff = True
-        user.save()
-        self.assertEqual(Canteen.objects.count(), 0)
-
-        file_path = "./api/tests/files/canteens/canteens_good.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0]["field"], "Première ligne du fichier incorrecte")
-        self.assertEqual(
-            errors[0]["title"],
-            "Elle doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
-
-    @authenticate
-    def test_staff_import_non_staff(self):
-        """
-        Non-staff users shouldn't have staff import capabilities
-        """
-        self.assertEqual(Canteen.objects.count(), 0)
-
-        file_path = "./api/tests/files/canteens/canteens_admin_good_new_canteen.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0]["status"], 400)
-        self.assertEqual(
-            errors.pop(0)["message"],
-            "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-        )
 
     @authenticate
     def test_sectors_error(self):
@@ -652,60 +597,3 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         canteen2 = Canteen.objects.get(siret="21010034300016")
         self.assertEqual(canteen2.line_ministry, Canteen.Ministries.AGRICULTURE)
-
-    @authenticate
-    def test_admin_import(self):
-        """
-        Admin get to specify extra columns and have fewer requirements on what data is required.
-        - new canteen: managers are added without sending emails to them.
-        - new canteen: the importer isn't added to the canteen unless specified.
-        - updated canteen: admin doesn't have to be a manager.
-        """
-        canteen = CanteenFactory(name="Canteen initial", siret="21010034300016")
-        canteen.managers.clear()
-        user = authenticate.user
-        user.is_staff = True
-        user.email = "authenticate@example.com"
-        user.save()
-
-        file_path = "./api/tests/files/canteens/canteens_admin_good_new_canteen.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 3)
-        self.assertEqual(len(body["canteens"]), 3)
-        self.assertEqual(len(errors), 0, errors)
-        self.assertEqual(Canteen.objects.count(), 3)
-        self.assertEqual(ManagerInvitation.objects.count(), 2 + 2 + 2)
-        self.assertEqual(len(mail.outbox), 1)
-
-        canteen1 = Canteen.objects.get(siret="21340172201787")
-        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user1@example.com"))
-        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen1, email="user2@example.com"))
-        self.assertEqual(canteen1.managers.count(), 0)
-        self.assertEqual(canteen1.line_ministry, Canteen.Ministries.SANTE)
-        self.assertEqual(canteen1.import_source, "Automated test")
-
-        canteen2 = Canteen.objects.get(siret="21380185500015")
-        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user1@example.com"))
-        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen2, email="user2@example.com"))
-        self.assertEqual(canteen2.managers.count(), 1)
-        self.assertEqual(canteen2.managers.first(), user)
-        self.assertEqual(canteen2.line_ministry, None)
-        self.assertEqual(canteen2.import_source, "Automated test")
-
-        canteen3 = Canteen.objects.get(siret="21010034300016")
-        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user1@example.com"))
-        self.assertIsNotNone(ManagerInvitation.objects.get(canteen=canteen3, email="user2@example.com"))
-        self.assertEqual(canteen3.managers.count(), 0)
-        self.assertEqual(canteen3.name, "Canteen update")  # updated
-        self.assertEqual(canteen3.line_ministry, Canteen.Ministries.AGRICULTURE)
-        self.assertEqual(canteen3.import_source, "Automated test")
-
-        email = mail.outbox[0]
-        self.assertEqual(email.to[0], "user1@example.com")
-        self.assertNotIn("Canteen for two", email.body)
-        self.assertIn("Staff canteen", email.body)
