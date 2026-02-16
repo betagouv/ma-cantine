@@ -1,9 +1,18 @@
 <script setup>
-import { ref } from "vue"
+import { computed } from "vue"
 import { useRoute } from "vue-router"
+import { useRootStore } from "@/stores/root"
 
-const route = useRoute()
-const pages = ref([
+/* Pages */
+const staffPages = [
+{
+    title: "Ajouter des gestionnaires",
+    to: { name: "GestionnaireImportCantinesGestionnaires" },
+    description: "Vous voulez ajouter des gestionnaires en masse via le SIRET des cantines sans envoyer d'invitations email.",
+    detail: "Réservé aux utilisateurs administrateurs",
+  },
+]
+const commonPages = [
   {
     title: "Importer des cantines",
     to: { name: "GestionnaireImportCantines" },
@@ -45,7 +54,12 @@ const pages = ref([
       },
     ],
   },
-])
+]
+
+/* Data */
+const route = useRoute()
+const store = useRootStore()
+const pages = computed(() =>  store.loggedUser.isStaff ? [...staffPages, ...commonPages] : commonPages)
 </script>
 
 <template>
