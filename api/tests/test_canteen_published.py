@@ -1161,6 +1161,28 @@ class TestPublishedCanteenClaimApiTest(APITestCase):
         self.assertTrue(canteen.has_been_claimed)
 
     @authenticate
+    def test_canteen_not_filled_can_be_claimed(self):
+        canteen = CanteenFactory()
+        canteen.managers.clear()
+        canteen.siret = None
+        canteen.save(skip_validations=True)
+
+        self.assertIsNone(canteen.siret)
+        self.assertFalse(canteen.is_filled)
+
+        response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], canteen.id)
+        self.assertEqual(body["name"], canteen.name)
+        user = authenticate.user
+        self.assertEqual(canteen.managers.first().id, user.id)
+        self.assertEqual(canteen.managers.count(), 1)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.claimed_by, user)
+        self.assertTrue(canteen.has_been_claimed)
+
+    @authenticate
     def test_canteen_claim_request_fails_when_already_claimed(self):
         canteen = CanteenFactory()
         self.assertGreater(canteen.managers.count(), 0)
@@ -1176,6 +1198,22 @@ class TestPublishedCanteenClaimApiTest(APITestCase):
     @authenticate
     def test_undo_claim_canteen(self):
         canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
+
+        response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(canteen.managers.filter(id=authenticate.user.id).exists())
+        canteen.refresh_from_db()
+        self.assertIsNone(canteen.claimed_by)
+        self.assertFalse(canteen.has_been_claimed)
+
+    @authenticate
+    def test_undo_claim_for_canteen_not_filled(self):
+        canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
+        canteen.siret = None
+        canteen.save(skip_validations=True)
+
+        self.assertIsNone(canteen.siret)
+        self.assertFalse(canteen.is_filled)
 
         response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
