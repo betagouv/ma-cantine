@@ -314,3 +314,31 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
 
         # Check managers were added
         self.assertEqual(ManagerInvitation.objects.filter(canteen=canteen).count(), 2)
+
+    @authenticate
+    def test_import_for_canteen_not_filled(self):
+        """
+        Staff user can add managers to a canteen not filled
+        """
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+
+        # Create a canteen with an error in a field
+        canteen = CanteenFactory(siret="21340172201787")
+        canteen.yearly_meal_count = None
+        canteen.save(skip_validations=True)
+        canteen.managers.clear()
+
+        self.assertFalse(canteen.is_filled)
+
+        file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
+        with open(file_path) as managers_file:
+            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(errors), 0, errors)

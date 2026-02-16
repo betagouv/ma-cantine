@@ -113,7 +113,7 @@ class CanteensManagersImportView(BaseImportView):
 
         canteen = Canteen.objects.get(siret=siret)
         canteen.import_source = import_source
-        canteen.save()
+        canteen.save(skip_validations=True)
         update_change_reason(canteen, f"Mass CSV import. {self.__class__.__name__[:100]}")
         self._add_managers_to_canteen(silently_added_manager_emails, canteen)
         return canteen
