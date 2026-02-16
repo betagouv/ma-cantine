@@ -8,7 +8,7 @@ const staffPages = [
 {
     title: "Ajouter des gestionnaires",
     to: { name: "GestionnaireImportCantinesGestionnaires" },
-    description: "Vous voulez ajouter des gestionnaires en masse via le SIRET des cantines sans envoyer d'invitations email.",
+    description: "Vous voulez ajouter des gestionnaires en masse via le SIRET des cantines sans envoyer d'invitation email.",
     detail: "Réservé aux utilisateurs administrateurs",
   },
 ]
