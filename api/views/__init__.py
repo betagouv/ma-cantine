@@ -29,6 +29,7 @@ from .canteen_groupe import (  # noqa: F401
     CanteenGroupeSatelliteUnlinkView,
 )  # noqa: F401
 from .canteen_import import CanteensImportView  # noqa: F401
+from .canteen_managers_import import CanteensManagersImportView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticCreateView,
