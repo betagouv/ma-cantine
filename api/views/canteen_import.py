@@ -9,7 +9,6 @@ from simple_history.utils import update_change_reason
 from api.serializers import FullCanteenSerializer
 from api.views.base_import import BaseImportView
 from common.utils import utils as utils_utils
-from common.utils import file_import
 from data.models import Canteen, ImportType, Sector
 from data.models.creation_source import CreationSource
 
@@ -18,11 +17,8 @@ from .utils import camelize
 
 
 CANTEEN_SCHEMA_FILE_NAME = "cantines.json"
-CANTEEN_ADMIN_SCHEMA_FILE_NAME = "cantines_admin.json"
 CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
-CANTEEN_ADMIN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_ADMIN_SCHEMA_FILE_NAME}"
 CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{CANTEEN_SCHEMA_FILE_PATH}"
-CANTEEN_ADMIN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{CANTEEN_ADMIN_SCHEMA_FILE_PATH}"
 
 
 class CanteensImportView(BaseImportView):
@@ -30,41 +26,18 @@ class CanteensImportView(BaseImportView):
     model_class = Canteen
 
     manager_column_idx = 11  # gestionnaires_additionnels
-    silent_manager_idx = manager_column_idx + 1  # admin_gestionnaires_additionnels
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.canteens_created = {}
-        self.is_admin_import = False
-        self.has_locations_to_find = False
-
-    def post(self, request):
-        # Set admin flag before base processing
-        self.is_admin_import = request.user.is_staff
-        return super().post(request)
 
     def _get_schema_config(self):
         """Return schema config based on user role"""
         return {
-            "name": CANTEEN_ADMIN_SCHEMA_FILE_NAME if self.is_admin_import else CANTEEN_SCHEMA_FILE_NAME,
-            "url": CANTEEN_ADMIN_SCHEMA_URL if self.is_admin_import else CANTEEN_SCHEMA_URL,
-            "path": CANTEEN_ADMIN_SCHEMA_FILE_PATH if self.is_admin_import else CANTEEN_SCHEMA_FILE_PATH,
+            "name": CANTEEN_SCHEMA_FILE_NAME,
+            "url": CANTEEN_SCHEMA_URL,
+            "path": CANTEEN_SCHEMA_FILE_PATH,
         }
-
-    def _validate_file_header_custom(self, user_file_header):
-        """
-        Non-admin users cannot use the admin schema.
-        """
-        admin_expected_header = file_import.get_expected_header_from_schema(CANTEEN_ADMIN_SCHEMA_FILE_PATH)
-        if user_file_header == admin_expected_header and not self.is_admin_import:
-            self.errors = [
-                {
-                    "message": "La première ligne du fichier doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
-                    "status": 400,
-                }
-            ]
-            return False
-        return True
 
     def _process_file(self, data):
         """Process file and track canteens needing geolocation"""
@@ -83,17 +56,8 @@ class CanteensImportView(BaseImportView):
     @transaction.atomic
     def _save_data_from_row(self, row):
         """Process and save canteen data from row"""
-        if row[0] == "":
-            raise ValidationError({"siret": "Le siret de la cantine ne peut pas être vide"})
         manager_emails = self._get_manager_emails_to_notify(row)
-        # return staff-customisable fields
-        (
-            import_source,
-            silently_added_manager_emails,
-        ) = self._generate_canteen_meta_fields(row)
-        # create the canteen
-        canteen = self._update_or_create_canteen(row, import_source, manager_emails, silently_added_manager_emails)
-
+        canteen = self._update_or_create_canteen(row, manager_emails)
         return canteen
 
     @staticmethod
@@ -135,18 +99,10 @@ class CanteensImportView(BaseImportView):
             )
         return manager_emails
 
-    def _has_canteen_permission(self, canteen):
-        # admin bypass the is_canteen_manager check
-        if self.is_admin_import:
-            return True
-        return self.request.user in canteen.managers.all()
-
     def _update_or_create_canteen(
         self,
         row,
-        import_source,
         manager_emails,
-        silently_added_manager_emails,
     ):
         # TODO: remove hardcoded indexes
         siret = utils_utils.normalize_string(row[0])
@@ -221,40 +177,14 @@ class CanteensImportView(BaseImportView):
         canteen.central_producer_siret = central_producer_siret
         canteen.groupe = groupe
         canteen.line_ministry = line_ministry
-        if self.is_admin_import:
-            canteen.import_source = import_source
 
         canteen.save()
         update_change_reason(canteen, f"Mass CSV import. {self.__class__.__name__[:100]}")
 
-        if not self.request.user.is_staff:
-            canteen.managers.add(self.request.user)
+        canteen.managers.add(self.request.user)
         if manager_emails:
             CanteensImportView._add_managers_to_canteen(manager_emails, canteen)
-        if silently_added_manager_emails:
-            CanteensImportView._add_managers_to_canteen(
-                silently_added_manager_emails, canteen, send_invitation_mail=False
-            )
         return canteen
-
-    def _generate_canteen_meta_fields(self, row):
-        silently_added_manager_emails = []
-        import_source = "Import massif"
-        if len(row) > self.silent_manager_idx:  # already checked earlier that it's a staff user
-            try:
-                if row[self.silent_manager_idx]:
-                    silently_added_manager_emails = CanteensImportView._get_manager_emails(
-                        row[self.silent_manager_idx]
-                    )
-            except Exception:
-                raise ValidationError(
-                    {
-                        "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[self.silent_manager_idx]}) n'est pas valide."
-                    }
-                )
-            import_source = row[self.silent_manager_idx + 1].strip()
-
-        return (import_source, silently_added_manager_emails)
 
     def _parse_errors(self, e, row, identifier=None):
         """Extended error parsing for canteen-specific errors"""
