@@ -1,17 +1,11 @@
 <template>
-  <div class="app-banner-alert">
+  <div v-if="false" class="app-banner-alert">
     <div class="fr-notice fr-notice--alert">
       <div class="fr-container">
         <div class="fr-notice__body">
           <p class="mb-0">
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
-            <span class="fr-notice__title">
-              Gestionnaires de crèches : rappel de laits infantiles, voir les lots concernés sur le site
-              <a href="https://rappel.conso.gouv.fr/categorie/25" target="_blank">
-                Rappel conso
-                <v-icon small class="ml-1">mdi-open-in-new</v-icon>
-              </a>
-            </span>
+            <span class="fr-notice__title"></span>
           </p>
         </div>
       </div>
@@ -22,11 +16,6 @@
 <script>
 export default {
   name: "AppBannerAlert",
-  data() {
-    return {
-      show: window.SHOW_BANNER,
-    }
-  },
 }
 </script>
 
