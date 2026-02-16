@@ -34,6 +34,11 @@ const success = (count) => {
   <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}</h1>
   <ImportExplanation :links />
   <ImportSchemaTable :schemaFile />
+  <DsfrCallout
+    titleTag="h3"
+    title="En tant que membre de l'équipe ma cantine"
+    content="Vous pouvez modifier des cantines, vous n'avez pas besoin d'être gestionnaire de ces cantines et vous ne serez pas ajouté automatiquement à l'équipe de gestion."
+  />
   <ImportFileUpload
     @success="success"
     apiUrl="importCanteensManagers"
