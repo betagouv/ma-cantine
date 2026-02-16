@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.diagnostic_import import DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH
+from api.views.diagnostic_import import DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource
@@ -18,7 +18,7 @@ from data.models.creation_source import CreationSource
 class DiagnosticsSimpleSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open(DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH))
+        cls.schema = json.load(open(DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH))
 
     def get_pattern(self, schema, field_name):
         field_index = next((i for i, f in enumerate(schema["fields"]) if f["name"] == field_name), None)
@@ -51,7 +51,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -73,7 +73,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -97,7 +97,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -129,7 +129,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -194,7 +194,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, file_path)
 
         body = response.json()
         errors = body["errors"]
@@ -286,7 +286,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
