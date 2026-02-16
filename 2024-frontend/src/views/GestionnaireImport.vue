@@ -38,9 +38,23 @@ const commonPages = [
     detail: "Pour les cantines inscrites avec SIRET",
   },
   {
-    title: "Importer des bilans simples",
+    title: "Importer des bilans simples via ID",
     to: { name: "GestionnaireImportBilansSimples" },
+    detail: "Pour toutes les cantines",
+    description: "Vous voulez importer des bilans simples pour des cantines des groupes de restaurants satellites ou des cantines rattachées à une unité légale.",
+    badges: [
+      {
+        label: "Nouveauté",
+        noIcon: false,
+        type: "new",
+      }
+    ],
+  },
+  {
+    title: "Importer des bilans simples via SIRET",
+    to: { name: "GestionnaireImportBilansSimplesSIRET" },
     description: "Vous voulez importer des bilans simples pour des cantines existantes.",
+    detail: "Pour les cantines inscrites avec SIRET",
   },
   {
     title: "Importer des bilans détaillés",
