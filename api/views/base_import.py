@@ -223,6 +223,14 @@ class BaseImportView(ABC, APIView):
         """
         return True
 
+    def _has_canteen_permission(self, canteen):
+        """
+        Check if user has permission to access canteen or if is staff.
+        """
+        if self.request.user.is_staff:
+            return True
+        return self.request.user in canteen.managers.all()
+
     def _log_import_start(self):
         """Log the start of import process"""
         logger.info(f"{self.__class__.__name__} bulk import started")
