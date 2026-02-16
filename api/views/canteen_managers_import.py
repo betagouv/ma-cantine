@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
+from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
 
 from api.serializers import FullCanteenSerializer
@@ -30,6 +31,10 @@ class CanteensManagersImportView(BaseImportView):
         super().__init__(**kwargs)
         self.canteens_updated = {}
 
+    def post(self, request):
+        self.is_admin = request.user.is_staff
+        return super().post(request)
+
     def _get_schema_config(self):
         """Return schema config based on user role"""
         return {
@@ -40,6 +45,11 @@ class CanteensManagersImportView(BaseImportView):
 
     def _process_file(self, data):
         """Process file and add managers without sending invitation emails"""
+        if not self.is_admin:
+            raise PermissionDenied(
+                "Vous n'avez pas les permissions nécessaires pour importer des gestionnaires en masse."
+            )
+
         for row_number, row in enumerate(data, start=1):
             if row_number == 1:  # skip header
                 continue
