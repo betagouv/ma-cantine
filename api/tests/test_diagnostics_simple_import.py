@@ -47,7 +47,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         # header missing
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_no_header.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -69,7 +69,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         # wrong header
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_wrong_header.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -93,7 +93,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_empty_rows.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -125,7 +125,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_format.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -190,7 +190,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -283,7 +283,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -301,7 +301,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_file_format.ods"
         with open(file_path, "rb") as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -326,7 +326,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
                 "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
             )
             with open(file_path) as diag_file:
-                response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+                response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()
@@ -341,7 +341,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             # now test cancelled TD
             diagnostic.cancel()
             with open(file_path) as diag_file:
-                response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+                response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()
@@ -358,7 +358,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -376,7 +376,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -402,7 +402,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 2)
@@ -470,7 +470,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good.xlsx"
         with open(file_path, "rb") as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 1)
@@ -516,7 +516,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(ImportFailure.objects.exists())

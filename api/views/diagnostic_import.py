@@ -30,7 +30,7 @@ class DiagnosticsImportView(BaseImportView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.diagnostics_created_count = 0
-        self.is_id_import = False
+        self.is_siret_import = True
 
     def _process_file(self, data):
         """Process all rows in the file."""
@@ -47,11 +47,11 @@ class DiagnosticsImportView(BaseImportView):
     @transaction.atomic
     def _save_data_from_row(self, row):
         identifier = row[0]
-        if self.is_id_import and not Canteen.objects.filter(id=identifier).exists():
+        if self.is_siret_import and not Canteen.objects.filter(siret=identifier).exists():
             raise ObjectDoesNotExist()
-        elif not self.is_id_import and not Canteen.objects.filter(siret=identifier).exists():
+        elif not self.is_siret_import and not Canteen.objects.filter(id=identifier).exists():
             raise ObjectDoesNotExist()
-        canteen = Canteen.objects.get(id=identifier) if self.is_id_import else Canteen.objects.get(siret=identifier)
+        canteen = Canteen.objects.get(siret=identifier) if self.is_siret_import else Canteen.objects.get(id=identifier)
         # TODO : once it's merge re-use _has_canteen_manager_permission from base_import.py
         if self.request.user not in canteen.managers.all():
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
@@ -118,7 +118,7 @@ class DiagnosticsImportView(BaseImportView):
 
     def _get_not_found_message(self, identifier):
         """Get error message for object not found"""
-        identifier_name = "l'id" if self.is_id_import else "le siret"
+        identifier_name = "le siret" if self.is_siret_import else "l'id"
         return f"Une cantine avec {identifier_name} « {identifier} » n'existe pas sur la plateforme."
 
 
@@ -127,19 +127,21 @@ class DiagnosticsSimpleImportView(DiagnosticsImportView):
 
     def post(self, request):
         # Set import type based on request
-        self.is_id_import = request.data.get("type") == "id"
-        self.import_type = ImportType.DIAGNOSTIC_SIMPLE_ID if self.is_id_import else ImportType.DIAGNOSTIC_SIMPLE_SIRET
+        self.is_siret_import = request.data.get("type") == "siret"
+        self.import_type = (
+            ImportType.DIAGNOSTIC_SIMPLE_SIRET if self.is_siret_import else ImportType.DIAGNOSTIC_SIMPLE_ID
+        )
         return super().post(request)
 
     def _get_schema_config(self):
         return {
-            "name": DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_NAME
-            if self.is_id_import
-            else DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME,
-            "url": DIAGNOSTICS_SIMPLE_ID_SCHEMA_URL if self.is_id_import else DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_URL,
-            "path": DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH
-            if self.is_id_import
-            else DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_PATH,
+            "name": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME
+            if self.is_siret_import
+            else DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_NAME,
+            "url": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_URL if self.is_siret_import else DIAGNOSTICS_SIMPLE_ID_SCHEMA_URL,
+            "path": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_PATH
+            if self.is_siret_import
+            else DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH,
         }
 
     def _validate_diagnostic(self, row):
