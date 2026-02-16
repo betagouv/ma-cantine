@@ -15,6 +15,7 @@ import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
 import GestionnaireImportAchatsSIRET from "@/views/GestionnaireImportAchatsSIRET.vue"
 import GestionnaireImportBilansSimples from "@/views/GestionnaireImportBilansSimples.vue"
 import GestionnaireImportBilansDetailles from "@/views/GestionnaireImportBilansDetailles.vue"
+import GestionnaireImportBilansSimplesSIRET from "@/views/GestionnaireImportBilansSimplesSIRET.vue"
 import GestionnaireImportCantines from "@/views/GestionnaireImportCantines.vue"
 import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportCantinesGestionnaires.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
@@ -98,7 +99,19 @@ const routes = [
         name: "GestionnaireImportBilansSimples",
         component: GestionnaireImportBilansSimples,
         meta: {
-          title: "Importer des bilans simples",
+          title: "Importer des bilans simples via ID",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "bilans-simples-siret",
+        name: "GestionnaireImportBilansSimplesSIRET",
+        component: GestionnaireImportBilansSimplesSIRET,
+        meta: {
+          title: "Importer des bilans simples via SIRET",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
