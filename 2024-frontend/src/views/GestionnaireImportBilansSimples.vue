@@ -13,18 +13,22 @@ import ImportFilesExample from "@/components/ImportFilesExample.vue"
 const route = useRoute()
 
 /* Data */
-const schemaFile = "bilans_simple.json"
+const schemaFile = "bilans_simple_id.json"
 const exampleFile = {
-  name: "importer_des_bilans_simples_exemple.xlsx",
+  name: "importer_des_bilans_simples_id_exemple.xlsx",
   size: "6 ko",
 }
 const filePreviews = {
-  success: "importer_des_bilans_simples_exemple_fichier_accepte.jpg?v=1",
-  altSuccess: "Exemple de fichier accepté pour importer des bilans simples, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "importer_des_bilans_simples_exemple_fichier_rejete.jpg?v=1",
-  altError: "Exemple de fichier rejeté pour importer des bilans simples, qui contient des erreurs dans les colonnes ou les valeurs",
+  success: "",
+  altSuccess: "",
+  error: "",
+  altError: "",
 }
 const links = [
+  {
+    title: "Où trouver l'ID de ma cantine ou de mon groupe ?",
+    href: documentation.trouverIdCantine,
+  },
   {
     title: "Aide pour les formats d'import CSV, Excel, ODS",
     href: documentation.importsFormatsFichiers,
@@ -46,12 +50,12 @@ const success = (count) => {
 <template>
   <h1>{{ route.meta.title }}</h1>
   <p class="fr-col-12 fr-col-md-7">
-    Notre outil d’import de masse vous permet d’ajouter les bilans simplifiés de toutes vos cantines d’un coup.
+    Notre outil d'import de masse vous permet d'ajouter les bilans simplifiés de toutes vos cantines d'un coup.
   </p>
   <ImportExplanation :exampleFile :links />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
-  <ImportFileUpload @success="success" apiUrl="importDiagnostics/simple" eventMatomo="import-diagnostics-success"/>
+  <ImportFileUpload @success="success" apiUrl="importDiagnostics/simple" apiImportType="id" eventMatomo="import-diagnostics-id-success"/>
   <ImportSuccessModal
     :opened="showModal"
     :message="successMessage"
