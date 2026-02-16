@@ -528,3 +528,110 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.valeur_totale, 1000)
         self.assertEqual(diagnostic.valeur_bio, 500)
+
+
+class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
+    @authenticate
+    def test_canteen_not_found_with_id(self):
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_ID, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors.pop(0)["message"], "Une cantine avec l'id « 949 » n'existe pas sur la plateforme.")
+
+    @authenticate
+    def test_user_not_canteen_manager_with_id(self):
+        CanteenFactory(id=949, managers=[])
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_ID, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(errors[0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
+
+
+class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
+    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @authenticate
+    def test_import_with_canteen_id(self):
+        """
+        Tests that can import a file with id instead of siret
+        """
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=949)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(errors), 0, errors)
+
+        diagnostic = Diagnostic.objects.get(canteen_id=949)
+        self.assertEqual(diagnostic.year, 2024)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(diagnostic.valeur_bio, 500)
+        self.assertEqual(diagnostic.valeur_bio_dont_commerce_equitable, 250)
+        self.assertEqual(diagnostic.valeur_siqo, Decimal("100.1"))
+        self.assertEqual(diagnostic.valeur_externalites_performance, 10)
+        self.assertEqual(diagnostic.valeur_egalim_autres, 20)
+        self.assertEqual(diagnostic.valeur_egalim_autres_dont_commerce_equitable, 15)
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 2)
+        self.assertEqual(diagnostic.valeur_viandes_volailles_egalim, 1)
+        self.assertEqual(diagnostic.valeur_viandes_volailles_france, 1)
+        self.assertEqual(diagnostic.valeur_produits_de_la_mer, 3)
+        self.assertEqual(diagnostic.valeur_produits_de_la_mer_egalim, 1)
+        self.assertEqual(diagnostic.valeur_produits_de_la_mer_france, 1)
+        self.assertEqual(diagnostic.valeur_fruits_et_legumes_france, Decimal("1.1"))
+        self.assertEqual(diagnostic.valeur_charcuterie_france, Decimal("1.2"))
+        self.assertEqual(diagnostic.valeur_produits_laitiers_france, Decimal("1.3"))
+        self.assertEqual(diagnostic.valeur_boulangerie_france, Decimal("1.4"))
+        self.assertEqual(diagnostic.valeur_boissons_france, Decimal("1.5"))
+        self.assertEqual(diagnostic.valeur_autres_france, Decimal("1.6"))
+        self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(diagnostic.creation_source, CreationSource.IMPORT)
+
+    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @authenticate
+    def test_update_existing_diagnostic_with_id(self):
+        """
+        If a diagnostic already exists for the canteen (found by id),
+        update the diag with data from import file
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=949)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
+
+        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(errors), 0, errors)
+
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(diagnostic.valeur_bio, 500)

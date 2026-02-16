@@ -116,6 +116,11 @@ class DiagnosticsImportView(BaseImportView):
         # Fall back to base class handling
         return super()._parse_errors(e, row, identifier)
 
+    def _get_not_found_message(self, identifier):
+        """Get error message for object not found"""
+        identifier_name = "l'id" if self.is_id_import else "le siret"
+        return f"Une cantine avec {identifier_name} « {identifier} » n'existe pas sur la plateforme."
+
 
 class DiagnosticsSimpleImportView(DiagnosticsImportView):
     import_type = ImportType.DIAGNOSTIC_SIMPLE_SIRET
