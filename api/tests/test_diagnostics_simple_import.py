@@ -274,6 +274,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             errors[16]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques provenance France, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
+        self.assertEqual(len(errors), 0)
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
