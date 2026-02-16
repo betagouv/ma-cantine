@@ -149,7 +149,7 @@ class PurchasesImportView(BaseImportView):
         description = row[1]
         provider = row[2]
         date = row[3]
-        price = row[4].strip().replace(",", ".")
+        price = row[4]
 
         # We try to round the price. If we can't, we will let Django's field validation
         # manage the error - hence the `pass` in the exception handler
