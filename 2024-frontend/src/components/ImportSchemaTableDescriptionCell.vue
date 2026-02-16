@@ -10,7 +10,6 @@ const isSelected = computed(() => {
   const hash = route.hash.replace("#", "")
   return hash === props.id
 })
-const forAdmin = computed(() => props.id.startsWith("admin_"))
 </script>
 
 <template>
@@ -19,7 +18,6 @@ const forAdmin = computed(() => props.id.startsWith("admin_"))
     class="fr-text--sm fr-mb-1w"
     :class="{
       selected: isSelected,
-      admin: forAdmin,
     }"
   >
     {{ title }}
