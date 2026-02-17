@@ -45,6 +45,7 @@ defineProps(["exampleFile", "links"])
       <ul class="ma-cantine--unstyled-list">
         <li class="fr-mb-3v">
           <DsfrFileDownload
+            v-if="exampleFile"
             :size="exampleFile.size"
             :href="`/static/documents/${exampleFile.name}`"
             :download="exampleFile.name"
