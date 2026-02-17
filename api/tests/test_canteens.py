@@ -508,7 +508,7 @@ class CanteenCreateApiTest(APITestCase):
         response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
-        self.assertEqual(body["siret"], ["Ce champ est obligatoire."])
+        self.assertEqual(body["siret"], ["Champ requis."])
 
     @authenticate
     def test_cannot_create_canteen_with_bad_siret(self):
