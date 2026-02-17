@@ -1,22 +1,19 @@
 <script setup>
 import { ref } from "vue"
-import { useRootStore } from "@/stores/root"
 import { useRoute } from "vue-router"
 import documentation from "@/data/documentation.json"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-import ImportStaffCallout from "@/components/ImportStaffCallout.vue"
 import ImportFilesExample from "@/components/ImportFilesExample.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 
-/* Store and Router */
-const store = useRootStore()
+/* Router */
 const route = useRoute()
 
 /* Data */
-const schemaFile = store.loggedUser.isStaff ? "cantines_admin.json" : "cantines.json"
+const schemaFile = "cantines.json"
 const exampleFile = {
   name: "importer_des_cantines_exemple_ma_cantine.xlsx",
   size: "6 ko",
@@ -60,7 +57,6 @@ const success = (count) => {
   <ImportExplanation :exampleFile :links />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
-  <ImportStaffCallout v-if="store.loggedUser.isStaff" class="fr-mb-3w" />
   <ImportFileUpload
     @success="success"
     apiUrl="importCanteens"
