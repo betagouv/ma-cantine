@@ -500,7 +500,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
     @authenticate
     def test_import_excel_file(self):
         """
-        Tests that can import a file with comma-separated numbers
+        Tests that can import a file with Excel format
         """
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)

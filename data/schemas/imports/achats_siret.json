@@ -50,7 +50,7 @@
       "constraints": {
         "required": true
       },
-      "description": "",
+      "description": "Utiliser le point comme séparateur décimal",
       "example": "1234.99",
       "name": "prix_ht",
       "title": "Prix HT de l'achat",
