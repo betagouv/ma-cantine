@@ -322,7 +322,9 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         with freeze_time(date_in_2024_teledeclaration_campaign):
             diagnostic.teledeclare(applicant=authenticate.user)
 
-            file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen.csv"
+            file_path = (
+                "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+            )
             with open(file_path) as diag_file:
                 response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -354,7 +356,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -372,7 +374,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21340172201787", managers=[])
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -512,7 +514,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
