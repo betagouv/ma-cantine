@@ -17,6 +17,7 @@ import GestionnaireImportBilansSimples from "@/views/GestionnaireImportBilansSim
 import GestionnaireImportBilansDetailles from "@/views/GestionnaireImportBilansDetailles.vue"
 import GestionnaireImportBilansSimplesSIRET from "@/views/GestionnaireImportBilansSimplesSIRET.vue"
 import GestionnaireImportCantinesCreer from "@/views/GestionnaireImportCantinesCreer.vue"
+import GestionnaireImportCantinesModifier from "@/views/GestionnaireImportCantinesModifier.vue"
 import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportCantinesGestionnaires.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 
@@ -136,6 +137,18 @@ const routes = [
         component: GestionnaireImportCantinesCreer,
         meta: {
           title: "Créer des cantines",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "cantines-modifier",
+        name: "GestionnaireImportCantinesModifier",
+        component: GestionnaireImportCantinesModifier,
+        meta: {
+          title: "Modifier des cantines",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
