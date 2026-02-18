@@ -19,7 +19,7 @@ routes.push({
 })
 
 routes.push({
-  path: "v2/tableau-de-bord/imports/cantines",
+  path: "/v2/tableau-de-bord/imports/cantines",
   redirect: { name: "GestionnaireImportCantinesCreer" },
 })
 
