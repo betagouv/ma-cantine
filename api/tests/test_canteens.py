@@ -12,6 +12,8 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.models.creation_source import CreationSource
+from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
+from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -648,6 +650,10 @@ class CanteenUpdateApiTest(APITestCase):
     def test_update_canteen(self, mock):
         siret_2 = "21340172201787"
         mock_fetch_geo_data_from_siret(mock, siret_2)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
         self.assertEqual(self.canteen.city, "Roubaix")
         self.canteen.managers.add(authenticate.user)
 
@@ -740,6 +746,10 @@ class CanteenUpdateApiTest(APITestCase):
     def test_update_canteen_with_new_siret(self, mock):
         siret_2 = "21340172201787"
         mock_fetch_geo_data_from_siret(mock, siret_2)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
         self.assertEqual(self.canteen.siret, "92341284500011")
         self.canteen.managers.add(authenticate.user)
 

@@ -426,6 +426,7 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         canteen = serializer.save()
+        print(canteen)
         update_change_reason_with_auth(self, canteen)
 
     def perform_destroy(self, instance):

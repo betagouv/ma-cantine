@@ -997,12 +997,10 @@ def fill_geo_fields_from_siret(sender, instance, created, **kwargs):
     """
     from macantine import tasks
 
+    print("fill_geo_fields_from_siret", instance.id, instance.siret, instance.has_missing_geo_data)
+
     if instance.siret:
         if instance.has_missing_geo_data:
-            # hack: avoid recursive loops on siret change
-            if "siret" in instance.get_dirty_fields():
-                instance.refresh_from_db()
-            # update geo fields
             tasks.update_canteen_geo_fields_from_siret(instance)
 
 
