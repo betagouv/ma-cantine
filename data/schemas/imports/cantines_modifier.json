@@ -1,0 +1,246 @@
+{
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "constraints": {
+        "required": true,
+        "unique": true
+      },
+      "description": "Ce numéro est unique parmi les cantines inscrites sur la plateforme.",
+      "example": "949",
+      "format": "default",
+      "name": "cantine_id",
+      "title": "Numéro ID de la cantine a modifier.",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Si la colonne SIREN de l'unité légale est présente, le SIRET doit être vide.",
+      "example": "49463556926130",
+      "format": "default",
+      "name": "siret",
+      "title": "SIRET de l'établissement",
+      "type": "any"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Si la colonne siret est présente, le SIREN de l'unité légale doit être présent.",
+      "example": "494635569",
+      "format": "default",
+      "name": "siren_unite_legale",
+      "title": "SIREN de l'unité légale de rattachement",
+      "type": "any"
+    },
+    {
+      "constraints": {
+        "pattern": "^[0-9]{5}$",
+        "required": false
+      },
+      "example": "75001",
+      "format": "insee",
+      "name": "code_insee",
+      "title": "Code insee de la ville",
+      "type": "any"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "Ecole Jean Jaurès",
+      "format": "default",
+      "name": "nom",
+      "title": "Nom de l'établissement",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Ce champ est uniquement pour les cantines de type 'Restaurant satellite'. Ce SIRET peut être vide ou utilisé pour plusieurs lignes.",
+      "example": "29969025300230",
+      "format": "default",
+      "name": "siret_cuisine_centrale",
+      "title": "SIRET de la cuisine centrale",
+      "type": "any"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "Minimum 3, y compris les couverts livrés.",
+      "example": "300",
+      "format": "default",
+      "name": "nombre_repas_jour",
+      "title": "Nombre de repas servis, en moyenne, par jour dans la cantine",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "Minimum 420, y compris les couverts livrés.",
+      "example": "42000",
+      "format": "default",
+      "name": "nombre_repas_an",
+      "title": "Nombre de repas servis, en moyenne, par an dans la cantine",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "pattern": "(^ *$)|(^ *(Crèche|Etablissements de la PJJ|Secondaire lycée \\(hors agricole\\)|Etablissements d[’']enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d[’']entreprises|Restaurants inter-entreprises|Autres structures d[’']enseignement|Ecole primaire \\(maternelle et élémentaire\\)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP|ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d[’']Etat \\(RA\\)|Restaurants des armées / police / gendarmerie|Etablissements publics d[’']Etat \\(EPA ou EPIC\\)|Supérieur et Universitaire|Restaurants inter-administratifs d[’']État \\(RIA\\))( *\\, *(Crèche|Etablissements de la PJJ|Secondaire lycée \\(hors agricole\\)|Etablissements d[’']enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d[’']entreprises|Restaurants inter-entreprises|Autres structures d[’']enseignement|Ecole primaire \\(maternelle et élémentaire\\)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP|ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d[’']Etat \\(RA\\)|Restaurants des armées / police / gendarmerie|Etablissements publics d[’']Etat \\(EPA ou EPIC\\)|Supérieur et Universitaire|Restaurants inter-administratifs d[’']État \\(RIA\\)))* *)$",
+        "required": true
+      },
+      "description": "3 secteurs maximum.",
+      "doc_enum": [
+        "Crèche",
+        "Etablissements de la PJJ",
+        "Secondaire lycée (hors agricole)",
+        "Etablissements d’enseignement agricole",
+        "Restaurants administratifs des collectivités territoriales",
+        "Restaurants d’entreprises",
+        "Restaurants inter-entreprises",
+        "Autres structures d’enseignement",
+        "Ecole primaire (maternelle et élémentaire)",
+        "Secondaire collège",
+        "Hôpitaux",
+        "Cliniques",
+        "Autres établissements de soins",
+        "Autres établissements sociaux et médico-sociaux",
+        "IME / ITEP",
+        "ESAT / Etablissements spécialisés",
+        "EHPAD / maisons de retraite / foyers de personnes âgées",
+        "Centre de vacances / sportif",
+        "Autres établissements de loisirs",
+        "Autres établissements non listés",
+        "Restaurants des prisons",
+        "Restaurants administratifs d’Etat (RA)",
+        "Restaurants des armées / police / gendarmerie",
+        "Etablissements publics d’Etat (EPA ou EPIC)",
+        "Supérieur et Universitaire",
+        "Restaurants inter-administratifs d’État (RIA)"
+      ],
+      "doc_enum_multiple": true,
+      "doc_enum_multiple_seperator": ",",
+      "example": "Crèche,Secondaire lycée (hors agricole)",
+      "format": "default",
+      "name": "secteurs",
+      "title": "Secteurs d'activité de l'établissement",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^ *(Restaurant avec cuisine sur place|Restaurant satellite|site|site_cooked_elsewhere) *$",
+        "required": true
+      },
+      "description": "Il existe 2 types différents : 'Restaurant avec cuisine sur place' qui produit les repas sur place, 'Restaurant satellite' qui sert des repas preparés par une cuisine centrale.",
+      "doc_enum": [
+        "Restaurant avec cuisine sur place",
+        "Restaurant satellite"
+      ],
+      "example": "Restaurant avec cuisine sur place",
+      "format": "default",
+      "name": "type_production",
+      "title": "Lieu de production et de service des repas",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^ *(Concédée|Directe|conceded|direct) *$",
+        "required": true
+      },
+      "description": "Si de manière concédée, la délégation peut être totale ou partielle.",
+      "doc_enum": [
+        "Concédée",
+        "Directe"
+      ],
+      "example": "Directe",
+      "format": "default",
+      "name": "type_gestion",
+      "title": "Mode de gestion de l'établissement",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^ *(Public|Privé|public|private) *$",
+        "required": true
+      },
+      "description": "",
+      "doc_enum": [
+        "Public",
+        "Privé"
+      ],
+      "example": "Public",
+      "format": "default",
+      "name": "modèle_économique",
+      "title": "Modèle économique de l'établissement",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Ce champ est uniquement pour les cantines de type 'Restaurant satellite', il permet de les rattacher à un groupe.",
+      "example": "1293",
+      "format": "default",
+      "name": "groupe_id",
+      "title": "Numéro identifiant (ID) du groupe",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "pattern": "^ *(Affaires étrangères|Agriculture, Alimentation et Forêts|Armées|Cohésion des territoires - Relations avec les collectivités territoriales|Culture|Économie et finances|Éducation et Jeunesse|Enseignement supérieur et Recherche|Environnement|Fonction Publiques|Intérieur et Outre-mer|Justice|Mer|Préfecture - Administration Territoriale de l'État \\(ATE\\)|Présidence de la république - Autorités indépendantes \\(AAI, API\\)|Services du Premier Ministre|Santé et Solidarités|Sport|Travail) *$",
+        "required": false
+      },
+      "description": "Hors fonction publique territoriale et hospitalière",
+      "doc_enum": [
+        "Affaires étrangères",
+        "Agriculture, Alimentation et Forêts",
+        "Armées",
+        "Cohésion des territoires - Relations avec les collectivités territoriales",
+        "Culture",
+        "Économie et finances",
+        "Éducation et Jeunesse",
+        "Enseignement supérieur et Recherche",
+        "Environnement",
+        "Fonction Publiques",
+        "Intérieur et Outre-mer",
+        "Justice",
+        "Mer",
+        "Préfecture - Administration Territoriale de l'État (ATE)",
+        "Présidence de la république - Autorités indépendantes (AAI, API)",
+        "Services du Premier Ministre",
+        "Santé et Solidarités",
+        "Sport",
+        "Travail"
+      ],
+      "example": "Agriculture, Alimentation et Forêts",
+      "format": "default",
+      "name": "administration_tutelle",
+      "title": "Administration générale de tutelle (ministère ou ATE)",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
+      "doc_enum_multiple": true,
+      "doc_enum_multiple_seperator": ",",
+      "example": "gestionnaire1@example.com, gestionnaire2@example.com",
+      "format": "default",
+      "name": "gestionnaires_additionnels",
+      "title": "Adresses mél de gestionnaires additionnels",
+      "type": "string"
+    }
+  ],
+  "homepage": "https://github.com/betagouv/ma-cantine",
+  "name": "import-cantines-modifier",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_modifier.json",
+  "title": "Schema modifier des cantines"
+}
