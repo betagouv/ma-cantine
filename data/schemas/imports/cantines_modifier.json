@@ -48,11 +48,10 @@
     },
     {
       "constraints": {
-        "pattern": "^[0-9]{5}$",
         "required": false
       },
       "description": "Ce champ est obligatoire pour les cantines rattachées à une unité légale.",
-      "example": "75001",
+      "example": "75056",
       "format": "default",
       "name": "code_insee",
       "title": "Code insee de la ville",
