@@ -21,7 +21,7 @@ CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
 CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{CANTEEN_SCHEMA_FILE_PATH}"
 
 
-class CanteensImportView(BaseImportView):
+class CanteensCreateImportView(BaseImportView):
     import_type = ImportType.CANTEEN_ONLY
     model_class = Canteen
 
@@ -92,7 +92,7 @@ class CanteensImportView(BaseImportView):
         try:
             manager_emails = []
             if len(row) > self.manager_column_idx and row[self.manager_column_idx]:
-                manager_emails = CanteensImportView._get_manager_emails(row[self.manager_column_idx])
+                manager_emails = CanteensCreateImportView._get_manager_emails(row[self.manager_column_idx])
         except Exception:
             raise ValidationError(
                 {"email": f"Un adresse email des gestionnaires ({row[self.manager_column_idx]}) n'est pas valide."}
@@ -183,7 +183,7 @@ class CanteensImportView(BaseImportView):
 
         canteen.managers.add(self.request.user)
         if manager_emails:
-            CanteensImportView._add_managers_to_canteen(manager_emails, canteen)
+            CanteensCreateImportView._add_managers_to_canteen(manager_emails, canteen)
         return canteen
 
     def _parse_errors(self, e, row, identifier=None):

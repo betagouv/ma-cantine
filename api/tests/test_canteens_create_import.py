@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.canteen_import import CANTEEN_SCHEMA_FILE_PATH
+from api.views.canteen_create_import import CANTEEN_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.creation_source import CreationSource
@@ -156,7 +156,7 @@ class CanteensImportApiErrorTest(APITestCase):
     def test_unauthenticated(self):
         self.assertEqual(Canteen.objects.count(), 0)
 
-        response = self.client.post(reverse("canteens_import"))
+        response = self.client.post(reverse("canteens_create_import"))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -171,7 +171,7 @@ class CanteensImportApiErrorTest(APITestCase):
         # header missing
         file_path = "./api/tests/files/canteens/canteens_bad_no_header.csv"
         with open(file_path, "rb") as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -196,7 +196,7 @@ class CanteensImportApiErrorTest(APITestCase):
         # wrong header
         file_path = "./api/tests/files/canteens/canteens_bad_wrong_header.csv"
         with open(file_path, "rb") as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -217,7 +217,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_bad_extra_header.csv"
         with open(file_path, "rb") as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -241,7 +241,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_bad_empty_rows.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -265,7 +265,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_bad_nearly_good.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -295,7 +295,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_bad.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -339,7 +339,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_bad_nearly_good_2.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 1 + 0)
@@ -360,7 +360,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteen_bad_sectors.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -382,7 +382,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_bad_line_ministry.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -406,7 +406,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_good.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
@@ -430,7 +430,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_good.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 3)
@@ -451,7 +451,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_good_add_manager.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 1)
@@ -472,7 +472,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_sectors.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -495,7 +495,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_good_max_sectors.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -514,7 +514,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_good.xlsx"
         with open(file_path, "rb") as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -537,7 +537,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_good_choices_slug_values.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 3)
@@ -560,7 +560,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_good_groupe.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 2)
@@ -582,7 +582,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_good_line_ministry.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_import"), {"file": canteen_file})
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
