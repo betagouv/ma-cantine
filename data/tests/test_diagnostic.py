@@ -476,7 +476,7 @@ class DiagnosticQuerySetTest(TestCase):
 
     def test_publicly_visible(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
-        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 13)  # groupe & army excluded
+        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 15)  # army excluded
 
     def test_with_appro_percent_stats(self):
         self.assertEqual(Diagnostic.objects.count(), 17)

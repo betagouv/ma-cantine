@@ -119,13 +119,13 @@ class TeledeclarationETLOpenDataTest(TestCase):
         ETLCommonSetUpTestData(cls, with_diagnostics=True)
 
     def test_teledeclaration_extract(self, mock):
-        # 2022: 3 teledeclarations (1 is hidden (groupe))
+        # 2022: 3 teledeclarations (TODO after 1TD1Site: remove groupe and split data by satellite)
         etl_td_2022 = ETL_OPEN_DATA_TELEDECLARATIONS(2022)
         etl_td_2022.extract_dataset()
 
         self.assertEqual(Diagnostic.objects.filter(year=2022).count(), 3)
         self.assertEqual(Diagnostic.objects.filter(year=2022).teledeclared().count(), 3)
-        self.assertEqual(etl_td_2022.len_dataset(), 2)
+        self.assertEqual(etl_td_2022.len_dataset(), 3)
         self.assertEqual(
             etl_td_2022.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
         )  # Order by teledeclaration created date ascending
