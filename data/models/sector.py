@@ -273,3 +273,27 @@ class SectorM2M(models.Model):
 
     def __str__(self):
         return self.name
+
+
+MAPPING_OLD_SECTOR_NAME_TO_NEW_SECTOR_VALUE = {
+    **{Sector(sector).label: sector for sector in Sector.values},
+    # old mappings
+    "Restaurants administratifs d’Etat (RA)": Sector.ADMINISTRATION_ADMINISTRATIF,
+    "Restaurants des armées/police/gendarmerie": Sector.ADMINISTRATION_ARMEE,
+    "Etablissements publics d’Etat (EPA ou EPIC)": Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC,
+    "Restaurants inter-administratifs d’Etat (RIA)": Sector.ADMINISTRATION_INTER_ADMINISTRATIF,
+    "Restaurants inter-administratifs d’État (RIA)": Sector.ADMINISTRATION_INTER_ADMINISTRATIF,
+    "Autres établissements du secteur public": Sector.AUTRES_AUTRE,  # ??
+    "Autres etablissements du secteur public": Sector.AUTRES_AUTRE,  # ??
+    "Restaurants d’entreprises": Sector.ENTERPRISE_ENTREPRISE,
+    "Secondaire lycée agricole": Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE,
+    "Secondaire Lycée agricole": Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE,
+    "Autres structures d’enseignement": Sector.EDUCATION_AUTRE,
+    "IME/ITEP": Sector.SOCIAL_IME,
+    "ESAT/Etablissements spécialisés": Sector.SOCIAL_ESAT,
+    "ESAT/établissements spécialisés": Sector.SOCIAL_ESAT,
+    "EHPAD/ maisons de retraite / foyers de personnes âgées": Sector.SOCIAL_EHPAD,
+    "Autres établissements sociaux et médicaux sociaux": Sector.SOCIAL_AUTRE,
+    "Centre de vacances/sportif": Sector.LOISIR_CENTRE_VACANCES,
+    "Autres etablissements non listés": Sector.AUTRES_AUTRE,
+}
