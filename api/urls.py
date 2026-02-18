@@ -182,7 +182,7 @@ urlpatterns = {
         name="remove_manager",
     ),
     path("importPurchases/", PurchasesImportView.as_view(), name="purchases_import"),
-    path("importCreateCanteens/", CanteensCreateImportView.as_view(), name="canteens_create_import"),
+    path("importCanteens/create/", CanteensCreateImportView.as_view(), name="canteens_create_import"),
     path("importCanteensManagers/", CanteensManagersImportView.as_view(), name="canteens_managers_import"),
     path("importDiagnostics/simple/", DiagnosticsSimpleImportView.as_view(), name="diagnostics_simple_import"),
     path("importDiagnostics/complete/", DiagnosticsCompleteImportView.as_view(), name="diagnostics_complete_import"),
