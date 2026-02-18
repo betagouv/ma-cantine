@@ -11,9 +11,14 @@ from data.models import Canteen, Diagnostic, ImportType
 from data.models.creation_source import CreationSource
 
 
+# simple
 DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME = "bilans_simple.json"
 DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME}"
 DIAGNOSTICS_SIMPLE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH}"
+# complete
+DIAGNOSTICS_COMPLETE_SCHEMA_FILE_NAME = "bilans_detaille.json"
+DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_COMPLETE_SCHEMA_FILE_NAME}"
+DIAGNOSTICS_COMPLETE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH}"
 
 
 class DiagnosticsImportView(BaseImportView):
@@ -22,13 +27,6 @@ class DiagnosticsImportView(BaseImportView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.diagnostics_created_count = 0
-
-    def _get_schema_config(self):
-        return {
-            "name": DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME,
-            "url": DIAGNOSTICS_SIMPLE_SCHEMA_URL,
-            "path": DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH,
-        }
 
     def _process_file(self, data):
         """Process all rows in the file."""
@@ -115,6 +113,13 @@ class DiagnosticsImportView(BaseImportView):
 class DiagnosticsSimpleImportView(DiagnosticsImportView):
     import_type = ImportType.DIAGNOSTIC_SIMPLE
 
+    def _get_schema_config(self):
+        return {
+            "name": DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME,
+            "url": DIAGNOSTICS_SIMPLE_SCHEMA_URL,
+            "path": DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH,
+        }
+
     def _validate_diagnostic(self, row):
         values_dict = {}
         diagnostic_year = row[1]
@@ -123,3 +128,23 @@ class DiagnosticsSimpleImportView(DiagnosticsImportView):
             value_idx = idx + offset_row
             values_dict[value] = None if not row[value_idx] else row[value_idx]
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
+
+
+class DiagnosticsCompleteImportView(DiagnosticsImportView):
+    import_type = ImportType.DIAGNOSTIC_COMPLETE
+
+    def _get_schema_config(self):
+        return {
+            "name": DIAGNOSTICS_COMPLETE_SCHEMA_FILE_NAME,
+            "url": DIAGNOSTICS_COMPLETE_SCHEMA_URL,
+            "path": DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH,
+        }
+
+    def _validate_diagnostic(self, row):
+        values_dict = {}
+        diagnostic_year = row[1]
+        offset_row = 2  # Two columns before value_fields in row
+        for idx, value in enumerate(Diagnostic.COMPLETE_APPRO_FIELDS):
+            value_idx = idx + offset_row
+            values_dict[value] = None if not row[value_idx] else row[value_idx]
+        return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE
