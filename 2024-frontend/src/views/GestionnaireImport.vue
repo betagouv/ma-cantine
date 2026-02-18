@@ -19,6 +19,11 @@ const commonPages = [
     description: "Vous voulez créer des cantines en masse à partir de leur numéro SIRET.",
   },
   {
+    title: "Modifier des cantines",
+    to: { name: "GestionnaireImportCantinesCreer" },
+    description: "Vous voulez modifier des cantines dont vous êtes gestionnaire.",
+  },
+  {
     title: "Importer des achats via ID",
     to: { name: "GestionnaireImportAchats" },
     description: "Vous voulez importer des données d'achat pour des groupes de restaurants satellites ou des cantines rattachées à une unité légale.",
