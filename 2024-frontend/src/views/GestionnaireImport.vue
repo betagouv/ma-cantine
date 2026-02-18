@@ -44,15 +44,8 @@ const commonPages = [
   },
   {
     title: "Importer des bilans détaillés",
-    disabled: true,
-    description: "Cette fonctionnalité est en cours de construction et sera disponible prochainement.",
-    badges: [
-      {
-        label: "Bientôt disponible",
-        type: "warning",
-        noIcon: false,
-      },
-    ],
+    to: { name: "GestionnaireImportBilansDetailles" },
+    description: "Vous voulez importer des bilans détaillés pour des cantines existantes.",
   },
 ]
 
