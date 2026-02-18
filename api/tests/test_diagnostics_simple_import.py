@@ -135,20 +135,30 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 10)
         # Missing required values
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[0]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[1]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[2]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[3]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[4]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[5]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[6]["message"])
+        self.assertEqual(errors[0]["field"], "année_bilan")
+        self.assertEqual(errors[0]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[1]["field"], "valeur_totale")
+        self.assertEqual(errors[1]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[2]["field"], "valeur_bio")
+        self.assertEqual(errors[2]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[3]["field"], "valeur_siqo")
+        self.assertEqual(errors[3]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[4]["field"], "valeur_egalim_autres")
+        self.assertEqual(errors[4]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[5]["field"], "valeur_viandes_volailles")
+        self.assertEqual(errors[5]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[6]["field"], "siret")
+        self.assertEqual(errors[6]["message"], "La valeur est obligatoire et doit être renseignée")
         # Invalid number
+        self.assertEqual(errors[7]["field"], "valeur_totale")
         self.assertEqual(
-            "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal", errors[7]["message"]
+            errors[7]["message"], "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal"
         )
+        self.assertEqual(errors[8]["field"], "valeur_totale")
         self.assertTrue(errors[8]["message"].startswith("Le séparateur décimal à utiliser est le point"))
         # Unique SIRET
-        self.assertEqual("Les valeurs de cette colonne doivent être uniques", errors[9]["message"])
+        self.assertEqual(errors[9]["field"], "siret")
+        self.assertEqual(errors[9]["message"], "Les valeurs de cette colonne doivent être uniques")
 
     @freeze_time("2025-02-15")  # during the 2024 campaign
     @authenticate

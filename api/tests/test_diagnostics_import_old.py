@@ -726,7 +726,7 @@
 #         self.assertEqual(len(mail.outbox), 1)
 #         email = mail.outbox[0]
 #         self.assertEqual(email.to[0], "team@example.com")
-#         self.assertEqual("dupont@example.com", email.reply_to[0])
+#         self.assertEqual(email.reply_to[0], "dupont@example.com")
 #         self.assertEqual(email.attachments[0][0], "diagnostics_simple_bad.csv")
 #         self.assertIn("dupont@example.com", email.body)
 #         self.assertIn("Camille Dupont", email.body)
