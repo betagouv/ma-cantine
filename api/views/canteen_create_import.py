@@ -134,7 +134,9 @@ class CanteensCreateImportView(BaseImportView):
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
         if canteen_exists:
             raise ValidationError(
-                {"siret": f"Une cantine avec le numéro SIRET « {siret} » existe déjà sur la plateforme."}
+                {
+                    "siret": f"Vous ne pouvez pas créer de cantine avec le numéro SIRET « {siret} » car elle existe déjà sur la plateforme."
+                }
             )
 
         if groupe_id:
