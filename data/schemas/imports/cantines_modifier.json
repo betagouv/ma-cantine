@@ -18,7 +18,6 @@
       "constraints": {
         "required": false
       },
-      "description": "Si la colonne SIREN de l'unité légale est présente, le SIRET doit être vide.",
       "example": "49463556926130",
       "format": "default",
       "name": "siret",
@@ -29,7 +28,7 @@
       "constraints": {
         "required": false
       },
-      "description": "Si la colonne siret est présente, le SIREN de l'unité légale doit être présent.",
+      "description": "Seuls certains établissements peuvent être rattachés au SIREN d’une unité légale, vérifiez votre éligibilité dans nos conditions d’utilisation.",
       "example": "494635569",
       "format": "default",
       "name": "siren_unite_legale",
@@ -42,7 +41,7 @@
         "required": false
       },
       "example": "75001",
-      "format": "insee",
+      "format": "default",
       "name": "code_insee",
       "title": "Code insee de la ville",
       "type": "any"
