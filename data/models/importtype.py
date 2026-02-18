@@ -8,8 +8,8 @@ class ImportType(models.TextChoices):
         "CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE",
         "Cantines seules ou avec un diagnostic simple",
     )  # plus utilisé
-    DIAGNOSTIC_SIMPLE_SIRET = "DIAGNOSTIC_SIMPLE_SIRET", "Diagnostic simple par SIRET"
-    DIAGNOSTIC_SIMPLE_ID = "DIAGNOSTIC_SIMPLE_ID", "Diagnostic simple par ID"
+    DIAGNOSTIC_SIMPLE_SIRET = "DIAGNOSTIC_SIMPLE_SIRET", "Bilans simples par SIRET"
+    DIAGNOSTIC_SIMPLE_ID = "DIAGNOSTIC_SIMPLE_ID", "Bilans simples par ID"
     DIAGNOSTIC_COMPLETE = "DIAGNOSTIC_COMPLETE", "Cantines avec diagnostic complet"
     CC_SIMPLE = "CC_SIMPLE", "Cuisines centrales avec un diagnostic simple et leurs restaurants satellites"
     CC_COMPLETE = "CC_COMPLETE", "Cuisines centrales avec un diagnostic complet et leurs restaurants satellites"
