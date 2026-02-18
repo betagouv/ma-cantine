@@ -25,3 +25,15 @@ L'objectif est de s'assurer qu'au aucun oublie n'a été fait dans la liste des 
 |Cuisine centrale et bilan(s) simple(s)|[`imports/diagnostics_cc.json`](https://github.com/betagouv/ma-cantine/blob/main/data/schemas/imports/diagnostics_cc.json)|[/importer-diagnostics/cuisine-centrale-diagnostics-simples](https://ma-cantine.agriculture.gouv.fr/importer-diagnostics/cuisine-centrale-diagnostics-simples)|
 |Cuisine centrale et bilan(s) détaillé(s)|[`imports/diagnostics_complets_cc.json`](https://github.com/betagouv/ma-cantine/blob/main/data/schemas/imports/diagnostics_complets_cc.json)|[/importer-diagnostics/cuisine-centrale-diagnostics-complets](https://ma-cantine.agriculture.gouv.fr/importer-diagnostics/cuisine-centrale-diagnostics-complets)|
 |Achats|[`imports/achats.json`](https://github.com/betagouv/ma-cantine/blob/main/data/schemas/imports/achats.json)|[/importer-achats](https://ma-cantine.agriculture.gouv.fr/importer-achats/)|
+
+## Outils
+
+### Validata
+
+voir `common/api/validata.py`
+
+### frictionless
+
+```
+frictionless validate --type schema data/schemas/imports/bilans_detaille.json
+```
