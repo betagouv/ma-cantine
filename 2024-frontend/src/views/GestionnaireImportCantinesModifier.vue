@@ -60,7 +60,7 @@ const success = (count) => {
   <ImportSchemaTable :schemaFile />
   <ImportFileUpload
     @success="success"
-    apiUrl="importUpdateCanteens"
+    apiUrl="importCanteens/update/"
     eventMatomo="import-canteen-update-success"
   />
   <ImportSuccessModal
