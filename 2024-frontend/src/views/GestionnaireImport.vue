@@ -20,7 +20,7 @@ const commonPages = [
   },
   {
     title: "Modifier des cantines",
-    to: { name: "GestionnaireImportCantinesCreer" },
+    to: { name: "GestionnaireImportCantinesModifier" },
     description: "Vous voulez modifier des cantines dont vous êtes gestionnaire.",
   },
   {
