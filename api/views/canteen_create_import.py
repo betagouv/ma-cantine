@@ -15,7 +15,7 @@ from .canteen import AddManagerView
 from .utils import camelize
 
 
-CANTEEN_SCHEMA_FILE_NAME = "cantines.json"
+CANTEEN_SCHEMA_FILE_NAME = "cantines_creer.json"
 CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
 CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{CANTEEN_SCHEMA_FILE_PATH}"
 

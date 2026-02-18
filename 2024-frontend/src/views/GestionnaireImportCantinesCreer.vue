@@ -13,7 +13,7 @@ import ImportHelp from "@/components/ImportHelp.vue"
 const route = useRoute()
 
 /* Data */
-const schemaFile = "cantines.json"
+const schemaFile = "cantines_creer.json"
 const exampleFile = {
   name: "importer_des_cantines_exemple_ma_cantine.xlsx",
   size: "6 ko",
