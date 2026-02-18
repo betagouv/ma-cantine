@@ -37,17 +37,6 @@
     },
     {
       "constraints": {
-        "pattern": "^[0-9]{5}$",
-        "required": false
-      },
-      "example": "75001",
-      "format": "default",
-      "name": "code_insee",
-      "title": "Code insee de la ville",
-      "type": "any"
-    },
-    {
-      "constraints": {
         "required": true
       },
       "description": "",
@@ -56,6 +45,17 @@
       "name": "nom",
       "title": "Nom de l'établissement",
       "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^[0-9]{5}$",
+        "required": false
+      },
+      "example": "75001",
+      "format": "default",
+      "name": "code_insee",
+      "title": "Code insee de la ville",
+      "type": "any"
     },
     {
       "constraints": {
