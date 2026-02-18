@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from django.urls import reverse
 from freezegun import freeze_time
+import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -11,6 +12,9 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.models.creation_source import CreationSource
+from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
+from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
+from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -641,14 +645,21 @@ class CanteenUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @requests_mock.Mocker()
     @authenticate
-    def test_update_canteen(self):
+    def test_update_canteen(self, mock):
+        siret_2 = "21340172201787"
+        mock_fetch_geo_data_from_siret(mock, siret_2)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
         self.assertEqual(self.canteen.city, "Roubaix")
         self.canteen.managers.add(authenticate.user)
 
         payload = {
-            "siret": "21340172201787",
-            "city": "Montpellier",  # siret changed, geo fields will be reset
+            "siret": siret_2,
+            "city": "Wrong",  # siret changed, geo fields will be reset
             "managementType": Canteen.ManagementType.CONCEDED,
             "reservationExpeParticipant": True,
         }
@@ -656,8 +667,8 @@ class CanteenUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.canteen.refresh_from_db()
-        self.assertEqual(self.canteen.siret, "21340172201787")
-        self.assertEqual(self.canteen.city, None)
+        self.assertEqual(self.canteen.siret, siret_2)
+        self.assertEqual(self.canteen.city, "Montpellier")  # geo bot ran
         self.assertEqual(self.canteen.management_type, Canteen.ManagementType.CONCEDED)
         self.assertEqual(self.canteen.reservation_expe_participant, True)
 
@@ -730,9 +741,15 @@ class CanteenUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @requests_mock.Mocker()
     @authenticate
-    def test_update_canteen_with_new_siret(self):
+    def test_update_canteen_with_new_siret(self, mock):
         siret_2 = "21340172201787"
+        mock_fetch_geo_data_from_siret(mock, siret_2)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
         self.assertEqual(self.canteen.siret, "92341284500011")
         self.canteen.managers.add(authenticate.user)
 
@@ -743,7 +760,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.canteen.refresh_from_db()
         self.assertEqual(self.canteen.siret, siret_2)
-        self.assertEqual(self.canteen.city_insee_code, None)
+        self.assertEqual(self.canteen.city_insee_code, "34172")
 
     @authenticate
     def test_cannot_update_canteen_image_if_not_manager(self):
