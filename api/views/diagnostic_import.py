@@ -52,7 +52,6 @@ class DiagnosticsImportView(BaseImportView):
         elif not self.is_siret_import and not Canteen.objects.filter(id=identifier).exists():
             raise ObjectDoesNotExist()
         canteen = Canteen.objects.get(siret=identifier) if self.is_siret_import else Canteen.objects.get(id=identifier)
-        # TODO : once it's merge re-use _has_canteen_manager_permission from base_import.py
         if self.request.user not in canteen.managers.all():
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
         diagnostic_year, values_dict, diagnostic_type = self._validate_diagnostic(row)
