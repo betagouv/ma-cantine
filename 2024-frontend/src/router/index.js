@@ -18,6 +18,11 @@ routes.push({
   redirect: { name: "GestionnaireCantineGroupeSatellites" },
 })
 
+routes.push({
+  path: "v2/tableau-de-bord/imports/cantines",
+  redirect: { name: "GestionnaireImportCantinesCreer" },
+})
+
 /* Create router */
 const router = createRouter({
   history: createWebHistory(),

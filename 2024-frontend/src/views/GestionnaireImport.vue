@@ -14,9 +14,9 @@ const staffPages = [
 ]
 const commonPages = [
   {
-    title: "Importer des cantines",
-    to: { name: "GestionnaireImportCantines" },
-    description: "Vous voulez créer ou mettre à jour des cantines.",
+    title: "Créer des cantines",
+    to: { name: "GestionnaireImportCantinesCreer" },
+    description: "Vous voulez créer des cantines en masse à partir de leur numéro SIRET.",
   },
   {
     title: "Importer des achats via ID",

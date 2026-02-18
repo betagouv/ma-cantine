@@ -75,7 +75,7 @@ const resetForm = (name) => {
       </li>
       <li>
         <AppLinkRouter
-          :to="{ name: 'GestionnaireImportCantines' }"
+          :to="{ name: 'GestionnaireImportCantinesCreer' }"
           title="Créer plusieurs établissements via un fichier d’import"
         />
       </li>
