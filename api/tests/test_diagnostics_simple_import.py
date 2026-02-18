@@ -1,17 +1,17 @@
 import json
 from decimal import Decimal
 
+from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.test import TestCase
 
-from api.views.diagnostic_import import DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH
 from api.tests.utils import assert_import_failure_created, authenticate
+from api.views.diagnostic_import import DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory, DiagnosticFactory
-from data.models import Canteen, Diagnostic, ImportType, ImportFailure
+from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource
 
 
@@ -45,7 +45,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         # header missing
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_no_header.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_no_header.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -67,7 +67,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         # wrong header
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_wrong_header.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_wrong_header.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -91,7 +91,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_empty_rows.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_empty_rows.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -103,7 +103,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 2, errors)
         self.assertTrue(
-            errors.pop(0)["field"].startswith("ligne vide"),
+            errors[0]["field"].startswith("ligne vide"),
         )
 
     @authenticate
@@ -123,7 +123,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 8)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_format.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_format.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -135,20 +135,30 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 10)
         # Missing required values
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[0]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[1]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[2]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[3]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[4]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[5]["message"])
-        self.assertEqual("La valeur est obligatoire et doit être renseignée", errors[6]["message"])
+        self.assertEqual(errors[0]["field"], "année_bilan")
+        self.assertEqual(errors[0]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[1]["field"], "valeur_totale")
+        self.assertEqual(errors[1]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[2]["field"], "valeur_bio")
+        self.assertEqual(errors[2]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[3]["field"], "valeur_siqo")
+        self.assertEqual(errors[3]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[4]["field"], "valeur_egalim_autres")
+        self.assertEqual(errors[4]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[5]["field"], "valeur_viandes_volailles")
+        self.assertEqual(errors[5]["message"], "La valeur est obligatoire et doit être renseignée")
+        self.assertEqual(errors[6]["field"], "siret")
+        self.assertEqual(errors[6]["message"], "La valeur est obligatoire et doit être renseignée")
         # Invalid number
+        self.assertEqual(errors[7]["field"], "valeur_totale")
         self.assertEqual(
-            "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal", errors[7]["message"]
+            errors[7]["message"], "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal"
         )
+        self.assertEqual(errors[8]["field"], "valeur_totale")
         self.assertTrue(errors[8]["message"].startswith("Le séparateur décimal à utiliser est le point"))
         # Unique SIRET
-        self.assertEqual("Les valeurs de cette colonne doivent être uniques", errors[9]["message"])
+        self.assertEqual(errors[9]["field"], "siret")
+        self.assertEqual(errors[9]["message"], "Les valeurs de cette colonne doivent être uniques")
 
     @freeze_time("2025-02-15")  # during the 2024 campaign
     @authenticate
@@ -178,7 +188,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 15)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -193,85 +203,84 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[0]["message"],
             # Note: if the line has other errors, they will not be raised...
             "Plusieurs cantines correspondent au SIRET 21340172201787. Veuillez enlever les doublons pour pouvoir créer le bilan.",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[1]["message"],
             "Champ 'année' : L'année doit être comprise entre 2024 et 2026.",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[2]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la valeur (HT) valeur_bio, 1500",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[3]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 1500",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[4]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 2000",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[5]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement pour le label france, 1600",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[6]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[7]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[8]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[9]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques provenance France, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[10]["message"],
             # TODO: is this the best field to point to as being wrong? hors bio could be confusing
             "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[11]["message"],
             "Champ 'Bio - Valeur annuelle HT' : La valeur (HT) bio dont commerce équitable, 150, est plus que la valeur totale (HT) bio, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[12]["message"],
             "Champ 'Valeur totale (HT) des autres achats EGalim' : La valeur (HT) achats commerce équitable (hors bio), 150, est plus que la valeur totale (HT) des autres achats EGalim, 50",
         )
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[13]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[14]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[15]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[16]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques provenance France, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
-        self.assertEqual(len(errors), 0)
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     def test_file_above_max_size(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -282,14 +291,14 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(
-            errors.pop(0)["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
+            errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
 
     @authenticate
     def test_file_bad_format(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_bad_file_format.ods"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_file_format.ods"
         with open(file_path, "rb") as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -312,7 +321,9 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         with freeze_time(date_in_2024_teledeclaration_campaign):
             diagnostic.teledeclare(applicant=authenticate.user)
 
-            file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv"
+            file_path = (
+                "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+            )
             with open(file_path) as diag_file:
                 response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -344,7 +355,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -362,7 +373,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21340172201787", managers=[])
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -388,7 +399,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_different_canteens.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -456,7 +467,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good.xlsx"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good.xlsx"
         with open(file_path, "rb") as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
@@ -502,7 +513,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_one_canteen.csv"
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
 
