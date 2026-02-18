@@ -21,7 +21,7 @@ class CanteensUpdateImportView(BaseImportView):
     import_type = ImportType.CANTEEN_UPDATE
     model_class = Canteen
 
-    manager_column_idx = 11  # gestionnaires_additionnels
+    manager_column_idx = 14  # gestionnaires_additionnels
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
