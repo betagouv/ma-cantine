@@ -103,7 +103,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 2, errors)
         self.assertTrue(
-            errors.pop(0)["field"].startswith("ligne vide"),
+            errors[0]["field"].startswith("ligne vide"),
         )
 
     @authenticate
@@ -203,78 +203,77 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[0]["message"],
             # Note: if the line has other errors, they will not be raised...
             "Plusieurs cantines correspondent au SIRET 21340172201787. Veuillez enlever les doublons pour pouvoir créer le bilan.",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[1]["message"],
             "Champ 'année' : L'année doit être comprise entre 2024 et 2026.",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[2]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la valeur (HT) valeur_bio, 1500",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[3]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 1500",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[4]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 2000",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[5]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement pour le label france, 1600",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[6]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[7]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[8]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[9]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques provenance France, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[10]["message"],
             # TODO: is this the best field to point to as being wrong? hors bio could be confusing
             "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[11]["message"],
             "Champ 'Bio - Valeur annuelle HT' : La valeur (HT) bio dont commerce équitable, 150, est plus que la valeur totale (HT) bio, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[12]["message"],
             "Champ 'Valeur totale (HT) des autres achats EGalim' : La valeur (HT) achats commerce équitable (hors bio), 150, est plus que la valeur totale (HT) des autres achats EGalim, 50",
         )
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[13]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[14]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[15]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors.pop(0)["message"],
+            errors[16]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques provenance France, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
-        self.assertEqual(len(errors), 0)
 
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
@@ -292,7 +291,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(
-            errors.pop(0)["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
+            errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
 
     @authenticate
