@@ -82,7 +82,8 @@ class CanteenStatisticsView(APIView):
             cache_key = f"{CACHE_KEY_PREFIX}_{year}"
             cached_data = cache.get(cache_key)
             if cached_data:
-                return JsonResponse(cached_data, status=status.HTTP_200_OK)
+                pass
+                # return JsonResponse(cached_data, status=status.HTTP_200_OK)
 
         filters = self._extract_query_filters(request)
         egalim_group = self._get_egalim_group(filters)
@@ -90,8 +91,8 @@ class CanteenStatisticsView(APIView):
         canteen_qs = Canteen.objects.publicly_visible().created_before_year_campaign_end_date(year)
         canteens = self._apply_query_filters(canteen_qs, filters)
 
-        teledeclaration_qs = Diagnostic.objects.publicly_visible().valid_td_by_year(year)
-        teledeclarations = self._apply_query_filters(teledeclaration_qs, filters, prefix="canteen__")
+        teledeclaration_qs = Diagnostic.objects.publicly_visible().valid_td_by_year(year).with_annotate_for_stats()
+        teledeclarations = self._apply_query_filters(teledeclaration_qs, filters, prefix="canteen_")
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
         data["notes"] = self.serializer_class.generate_notes(year, egalim_group)
