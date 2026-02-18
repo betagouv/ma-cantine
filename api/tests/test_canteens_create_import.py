@@ -175,7 +175,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_CREATE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -200,7 +200,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_CREATE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -221,7 +221,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_CREATE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -245,7 +245,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_CREATE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -269,7 +269,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_CREATE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -299,7 +299,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_CREATE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -330,28 +330,6 @@ class CanteensImportApiErrorTest(APITestCase):
         )
 
     @authenticate
-    def test_user_not_canteen_manager(self):
-        """
-        Cannot update an existing canteen if the user is not a manager of this canteen
-        """
-        CanteenFactory(siret="21010034300016")
-        self.assertEqual(Canteen.objects.count(), 1)
-
-        file_path = "./api/tests/files/canteens/canteens_bad_nearly_good_2.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Canteen.objects.count(), 1 + 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(body["canteens"]), 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
-
-    @authenticate
     def test_sectors_error(self):
         """
         - Canteen can't have more than 3 sectors
@@ -364,7 +342,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_CREATE, file_path)
         body = response.json()
         errors = body["errors"]
         error_message_min_max = "Champ 'secteurs d'activité' : Le champ doit contenir entre 1 et 3 secteurs."
@@ -410,7 +388,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_ONLY, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_CREATE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
