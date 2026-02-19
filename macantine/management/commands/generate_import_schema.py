@@ -27,6 +27,26 @@ COMMON_FIELDS = {
         "title": "SIRET de l'établissement",
         "type": "any",
     },
+    "gestionnaires_additionnels": {
+        "constraints": {"required": True},
+        "description": "Ces gestionnaires auront la main sur la gestion de l'établissement.",
+        "doc_enum_multiple": True,
+        "doc_enum_multiple_seperator": ",",
+        "example": "gestionnaire1@example.com, gestionnaire2@example.com",
+        "format": "default",
+        "name": "gestionnaires_additionnels",
+        "title": "Adresses mél de gestionnaires additionnels qui seront ajoutés sans être notifiés par email",
+        "type": "string",
+    },
+    "source_donnees": {
+        "constraints": {"required": True},
+        "description": "",
+        "example": "resytal",
+        "format": "default",
+        "name": "source_donnees",
+        "title": "Identifiant décrivant la source de données",
+        "type": "string",
+    },
     "année_bilan": {
         "constraints": {"required": True},
         "description": "Réfère à l'année des données et non l'année de déclaration",
@@ -38,6 +58,15 @@ COMMON_FIELDS = {
 }
 
 SCHEMA_SPECS = {
+    "Canteen": {
+        "gestionnaires": {
+            "file_name": "cantines_gestionnaires.json",
+            "fields_ordered": ["siret", "gestionnaires_additionnels", "source_donnees"],
+            "fields_required": ["siret", "gestionnaires_additionnels", "source_donnees"],
+            "schema_name": "import-cantines-gestionnaires",
+            "schema_title": "Schema import des gestionnaires de cantines",
+        }
+    },
     "Diagnostic": {
         "simple_id": {
             "file_name": "bilans_simple_id.json",
@@ -67,8 +96,9 @@ SCHEMA_SPECS = {
 class Command(BaseCommand):
     """
     Exemples:
+    - python manage.py generate_import_schema --model Canteen --schema gestionnaires --dry-run
     - python manage.py generate_import_schema --model Diagnostic --schema detaille --show-diff
-    - python manage.py generate_import_schema --model Diagnostic --schema detaille --dry-run
+    - python manage.py generate_import_schema --model Diagnostic --schema detaille
     """
 
     help = "Regenerate import schema JSON files from model fields."
@@ -112,7 +142,7 @@ class Command(BaseCommand):
             )
             return
 
-        schema_path = self._schema_path(schema_spec["file_name"])
+        schema_path = Path(settings.BASE_DIR) / "data" / "schemas" / "imports" / schema_spec["file_name"]
         old_schema = self._read_schema_text(schema_path)
         new_schema = self._build_schema(schema_spec)
         new_schema_json = json.dumps(new_schema, ensure_ascii=False, indent=2, sort_keys=True)
@@ -126,9 +156,6 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f"Updated schema file: {schema_path}"))
         else:
             self.stdout.write(f"No changes for schema file: {schema_path}")
-
-    def _schema_path(self, file_name: str) -> Path:
-        return Path(settings.BASE_DIR) / "data" / "schemas" / "imports" / file_name
 
     def _build_schema(self, schema_spec: dict) -> dict:
         schema = {
