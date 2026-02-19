@@ -333,7 +333,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             self.assertEqual(body["count"], 0)
             self.assertEqual(
                 errors[0]["message"],
-                "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration.",
+                "Ce n'est pas possible de modifier un bilan télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration.",
             )
             self.assertEqual(diagnostic.valeur_totale, 1)
 
