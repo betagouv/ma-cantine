@@ -478,7 +478,7 @@ export default {
           param: "valeurBoissonsFrance",
         },
         {
-          label: "Mes achats origine France en autres produits frais, surgelés et d’épicerie",
+          label: "Mes achats origine France en Autres produits frais, surgelés et d'épicerie",
           param: "valeurAutresFrance",
         },
       ]

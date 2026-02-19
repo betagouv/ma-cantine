@@ -28,7 +28,7 @@ families = [
     ("PRODUITS_LAITIERS", "BOF (Produits laitiers, beurre et œufs)"),
     ("BOULANGERIE", "Boulangerie/Pâtisserie fraîches et surgelées"),
     ("BOISSONS", "Boissons"),
-    ("AUTRES", "Autres produits frais, surgelés et d’épicerie"),
+    ("AUTRES", "Autres produits frais, surgelés et d'épicerie"),
 ]
 labels = [(label[0].lower(), label[1]) for label in labels]
 families = [(f[0].lower(), f[1]) for f in families]

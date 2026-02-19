@@ -116,7 +116,7 @@ export default Object.freeze({
       color: "green darken-4",
     },
     AUTRES: {
-      text: "Autres produits frais, surgelés et d’épicerie",
+      text: "Autres produits frais, surgelés et d'épicerie",
       shortText: "autres produits",
       color: "grey darken-3",
     },

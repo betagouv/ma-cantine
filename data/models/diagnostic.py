@@ -1090,10 +1090,10 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Bio dont commerce équitable",
     )
     valeur_autres_bio = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Bio",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Bio",
     )
     valeur_autres_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Bio dont commerce équitable",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Bio dont commerce équitable",
     )
     valeur_viandes_volailles_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Label rouge",
@@ -1117,7 +1117,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Label rouge",
     )
     valeur_autres_label_rouge = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Label rouge",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Label rouge",
     )
     valeur_viandes_volailles_aocaop_igp_stg = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
@@ -1141,7 +1141,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, AOC / AOP / IGP / STG",
     )
     valeur_autres_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, AOC / AOP / IGP / STG",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, AOC / AOP / IGP / STG",
     )
     valeur_viandes_volailles_hve = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Haute valeur environnementale",
@@ -1165,7 +1165,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Haute valeur environnementale",
     )
     valeur_autres_hve = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Haute valeur environnementale",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Haute valeur environnementale",
     )
     valeur_viandes_volailles_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Pêche durable",
@@ -1189,7 +1189,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Pêche durable",
     )
     valeur_autres_peche_durable = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Pêche durable",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Pêche durable",
     )
     valeur_viandes_volailles_rup = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Région ultrapériphérique",
@@ -1213,7 +1213,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Région ultrapériphérique",
     )
     valeur_autres_rup = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Région ultrapériphérique",
     )
     valeur_viandes_volailles_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Commerce équitable",
@@ -1237,7 +1237,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Commerce équitable",
     )
     valeur_autres_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Commerce équitable",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Commerce équitable",
     )
     valeur_viandes_volailles_fermier = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Fermier",
@@ -1261,7 +1261,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Fermier",
     )
     valeur_autres_fermier = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Fermier",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Fermier",
     )
     valeur_viandes_volailles_externalites = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
@@ -1285,7 +1285,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
     valeur_autres_externalites = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
     valeur_viandes_volailles_performance = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
@@ -1309,7 +1309,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Produits acquis sur la base de leurs performances en matière environnementale",
     )
     valeur_autres_performance = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
     )
     valeur_viandes_volailles_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, non-EGalim.",
@@ -1333,7 +1333,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, non-EGalim.",
     )
     valeur_autres_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, non-EGalim.",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, non-EGalim.",
     )
     valeur_viandes_volailles_france = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Provenance France",
@@ -1357,7 +1357,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Provenance France",
     )
     valeur_autres_france = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Provenance France",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Provenance France",
     )
     valeur_viandes_volailles_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Circuit-court",
@@ -1381,7 +1381,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Circuit-court",
     )
     valeur_autres_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Circuit-court",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Circuit-court",
     )
     valeur_viandes_volailles_local = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Produit local",
@@ -1405,7 +1405,7 @@ class Diagnostic(models.Model):
         verbose_name="Boissons, Produit local",
     )
     valeur_autres_local = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d’épicerie, Produit local",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Produit local",
     )
 
     # Télédéclaration

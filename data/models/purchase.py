@@ -43,7 +43,7 @@ class Purchase(SoftDeletionModel):
         PRODUITS_LAITIERS = "PRODUITS_LAITIERS", "BOF (Produits laitiers, beurre et œufs)"
         BOULANGERIE = "BOULANGERIE", "Boulangerie/Pâtisserie fraîches et surgelées"
         BOISSONS = "BOISSONS", "Boissons"
-        AUTRES = "AUTRES", "Autres produits frais, surgelés et d’épicerie"
+        AUTRES = "AUTRES", "Autres produits frais, surgelés et d'épicerie"
 
     class Characteristic(models.TextChoices):
         BIO = "BIO", "Bio"

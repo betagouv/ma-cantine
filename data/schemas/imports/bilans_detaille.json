@@ -179,14 +179,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_bio",
-      "title": "Autres produits frais, surgelés et d’épicerie, Bio",
+      "title": "Autres produits frais, surgelés et d'épicerie, Bio",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_bio_dont_commerce_equitable",
-      "title": "Autres produits frais, surgelés et d’épicerie, Bio dont commerce équitable",
+      "title": "Autres produits frais, surgelés et d'épicerie, Bio dont commerce équitable",
       "type": "number"
     },
     {
@@ -263,7 +263,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_label_rouge",
-      "title": "Autres produits frais, surgelés et d’épicerie, Label rouge",
+      "title": "Autres produits frais, surgelés et d'épicerie, Label rouge",
       "type": "number"
     },
     {
@@ -343,7 +343,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_aocaop_igp_stg",
-      "title": "Autres produits frais, surgelés et d’épicerie, AOC / AOP / IGP / STG",
+      "title": "Autres produits frais, surgelés et d'épicerie, AOC / AOP / IGP / STG",
       "type": "number"
     },
     {
@@ -423,7 +423,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_hve",
-      "title": "Autres produits frais, surgelés et d’épicerie, Haute valeur environnementale",
+      "title": "Autres produits frais, surgelés et d'épicerie, Haute valeur environnementale",
       "type": "number"
     },
     {
@@ -479,7 +479,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_peche_durable",
-      "title": "Autres produits frais, surgelés et d’épicerie, Pêche durable",
+      "title": "Autres produits frais, surgelés et d'épicerie, Pêche durable",
       "type": "number"
     },
     {
@@ -559,7 +559,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_rup",
-      "title": "Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique",
+      "title": "Autres produits frais, surgelés et d'épicerie, Région ultrapériphérique",
       "type": "number"
     },
     {
@@ -639,7 +639,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_commerce_equitable",
-      "title": "Autres produits frais, surgelés et d’épicerie, Commerce équitable",
+      "title": "Autres produits frais, surgelés et d'épicerie, Commerce équitable",
       "type": "number"
     },
     {
@@ -704,7 +704,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_fermier",
-      "title": "Autres produits frais, surgelés et d’épicerie, Fermier",
+      "title": "Autres produits frais, surgelés et d'épicerie, Fermier",
       "type": "number"
     },
     {
@@ -760,7 +760,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_externalites",
-      "title": "Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Autres produits frais, surgelés et d'épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
       "type": "number"
     },
     {
@@ -816,7 +816,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_performance",
-      "title": "Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Autres produits frais, surgelés et d'épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
       "type": "number"
     },
     {
@@ -872,7 +872,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_non_egalim",
-      "title": "Autres produits frais, surgelés et d’épicerie, non-EGalim.",
+      "title": "Autres produits frais, surgelés et d'épicerie, non-EGalim.",
       "type": "number"
     },
     {
@@ -928,7 +928,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_france",
-      "title": "Autres produits frais, surgelés et d’épicerie, Provenance France",
+      "title": "Autres produits frais, surgelés et d'épicerie, Provenance France",
       "type": "number"
     },
     {
@@ -984,7 +984,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_circuit_court",
-      "title": "Autres produits frais, surgelés et d’épicerie, Circuit-court",
+      "title": "Autres produits frais, surgelés et d'épicerie, Circuit-court",
       "type": "number"
     },
     {
@@ -1040,7 +1040,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_local",
-      "title": "Autres produits frais, surgelés et d’épicerie, Produit local",
+      "title": "Autres produits frais, surgelés et d'épicerie, Produit local",
       "type": "number"
     }
   ],
