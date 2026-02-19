@@ -8,7 +8,7 @@ Actuellement les dates sont celles des 1ères créations de TD avec la version c
 |16|2025|12/01/2026||en cours|- Nouveaux champs simplifiée et détaillée<br>- Renommer 'value' en 'valeur', enlever 'ht'<br>- Traduit certains champs en français<br>- Ajout de champs supplémentaires dans les snapshot 'canteen' et 'satellites' (sector_list entre autre)|
 |15||||0|- Modifications sur la façon de stocker Canteen.line_ministry|
 |14|2024|17/03/2025|30/04/2025|15436|- Ajout du champ Canteen.canteen_siren_unite_legale|
-|13|2024|05/03/2025|17/03/2025|3371|- Ajout du champ Canteen.sectors.name|
+|13|2024|05/03/2025|17/03/2025|3371|- Ajout du champ Canteen.sectors.category_name|
 |12|2024|07/01/2025|05/03/2025|4879|- Nouveau champ Diagnostic.service_type (et arrêter de remplir Diagnostic.vegetarian_menu_type)|
 |11||||0|- Check pour s'assurer que Diagnostic.declaration_mode est rempli pour les cuisines centrales|
 |10|2022, 2023|26/06/2023|11/06/2024|12123|- Ajout du champ Canteen.department<br>- Ajout du champ Canteen.region|
