@@ -5,7 +5,7 @@ from django.db.models import Func, IntegerField
 from simple_history.utils import update_change_reason
 
 from data.models import Canteen, Diagnostic
-from data.models.sector import MAPPING_OLD_SECTOR_NAME_TO_NEW_SECTOR_VALUE
+from data.models.sector import get_sector_list_from_old_sector_dict_list
 
 
 class Command(BaseCommand):
@@ -178,19 +178,10 @@ class Command(BaseCommand):
             canteen_snapshot_temp = diagnostic.canteen_snapshot
             if canteen_snapshot_temp:
                 if "sectors" in canteen_snapshot_temp:
-                    sectors = canteen_snapshot_temp["sectors"]
-                    sector_list = []
-                    for sector in sectors:
-                        old_sector_name = sector.get("name")
-                        new_sector_value = MAPPING_OLD_SECTOR_NAME_TO_NEW_SECTOR_VALUE.get(old_sector_name)
-                        if new_sector_value:
-                            sector_list.append(new_sector_value)
-                        else:
-                            print(
-                                f"Diagnostic {diagnostic.id} has an old sector name '{old_sector_name}' that is not in the mapping, skipping this sector"
-                            )
+                    sectors_old = canteen_snapshot_temp["sectors"]
+                    sector_list_new = get_sector_list_from_old_sector_dict_list(sectors_old)
                     if apply:
-                        canteen_snapshot_temp["sector_list"] = sector_list
+                        canteen_snapshot_temp["sector_list"] = sector_list_new
                         diagnostic.canteen_snapshot = canteen_snapshot_temp
                         diagnostic.save(update_fields=["canteen_snapshot"])
                         update_change_reason(diagnostic, "Script: set sector_list from sectors M2M")
@@ -199,3 +190,4 @@ class Command(BaseCommand):
                     print(f"Diagnostic {diagnostic.id} has no sectors in canteen_snapshot, skipping")
             else:
                 print(f"Diagnostic {diagnostic.id} has no canteen_snapshot, skipping")
+        print("Done! Diagnostics updated:", diagnostics_updated_count)
