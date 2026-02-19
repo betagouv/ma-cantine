@@ -5,6 +5,7 @@ import os
 from datetime import date
 
 import requests
+from django.conf import settings
 from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,9 @@ MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME = "schema_cantines.json"
 MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_PATH = (
     f"data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME}"
 )
-MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME}"
+MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_URL = (
+    f"{settings.GITHUB_RAW_BASE_URL}/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_NAME}"
+)
 
 # Teledeclarations
 MA_CANTINE_DATAGOUV_TELEDECLARATION_DATASET_ID = "resultats-de-campagnes-de-teledeclaration-des-cantines"
@@ -39,7 +42,7 @@ MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME = "schema_teledeclarations.
 MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_PATH = (
     f"data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME}"
 )
-MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME}"
+MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL = f"{settings.GITHUB_RAW_BASE_URL}/data/schemas/export_opendata/{MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_NAME}"
 
 
 # ------------------------------------------------------------------------------

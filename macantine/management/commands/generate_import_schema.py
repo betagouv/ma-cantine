@@ -5,10 +5,8 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
+from common.api import validata
 from data.models import Diagnostic
-
-GITHUB_REPO_URL = "https://github.com/betagouv/ma-cantine"
-GITHUB_RAW_BASE_URL = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main"
 
 COMMON_FIELDS = {
     "cantine_id": {
@@ -119,11 +117,12 @@ class Command(BaseCommand):
 
     def _build_schema(self, schema_spec: dict) -> dict:
         schema = {
+            "$schema": validata.FRICTIONLESS_SCHEMA_URL,
             "encoding": "utf-8",
             "fields": [],
-            "homepage": GITHUB_REPO_URL,
+            "homepage": settings.GITHUB_REPO_URL,
             "name": schema_spec["schema_name"],
-            "path": f"{GITHUB_RAW_BASE_URL}/data/schemas/imports/{schema_spec['file_name']}",
+            "path": f"{settings.GITHUB_RAW_BASE_URL}/data/schemas/imports/{schema_spec['file_name']}",
             "title": schema_spec["schema_title"],
         }
 

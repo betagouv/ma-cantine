@@ -24,6 +24,7 @@ Possible error keys:
 
 import requests
 
+FRICTIONLESS_SCHEMA_URL = "https://frictionlessdata.io/schemas/table-schema.json"
 VALIDATA_PREPROD_API_URL = "https://preprod-api-validata.dataeng.etalab.studio/validate"
 VALIDATA_PROD_API_URL = "https://api.validata.etalab.studio/validate"
 
