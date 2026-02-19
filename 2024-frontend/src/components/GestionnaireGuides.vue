@@ -16,7 +16,7 @@ const tiles = [
     title: "Télédéclaration",
     horizontal: true,
     details: "Déclarer vos achats et à suivre vos indicateurs EGalim.",
-    to: documentation.teleldeclaration,
+    to: documentation.teledeclaration,
     imgSrc: pictoCrispTeledeclaration,
   },
   {
