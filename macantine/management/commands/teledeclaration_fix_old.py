@@ -27,6 +27,12 @@ class Command(BaseCommand):
     - Usage:
         - python manage.py teledeclaration_fix_old --command set_canteen_sector_list_from_sectors_m2m
         - python manage.py teledeclaration_fix_old --command set_canteen_sector_list_from_sectors_m2m --apply
+
+    set_satellite_sector_list_from_sectors_m2m
+    - Description: avant 2025, il y avait une relation M2M entre Canteen et Sector. Entre 2023 et 2025, cette relation était dans satellites_snapshot. En 2026 cela a été remplacé par le champ sector_list.
+    - Usage:
+        - python manage.py teledeclaration_fix_old --command set_satellite_sector_list_from_sectors_m2m
+        - python manage.py teledeclaration_fix_old --command set_satellite_sector_list_from_sectors_m2m --apply
     """
 
     help = "One-time commands to fix old teledeclarations"
@@ -40,8 +46,9 @@ class Command(BaseCommand):
                 "set_canteen_id_before_v4",
                 "recreate_canteen_hard_deleted",
                 "set_canteen_sector_list_from_sectors_m2m",
+                "set_satellite_sector_list_from_sectors_m2m",
             ],
-            help="Command to run. Options are: 'set_canteen_id_before_v4', 'recreate_canteen_hard_deleted'",
+            help="Command to run. Options are: 'set_canteen_id_before_v4', 'recreate_canteen_hard_deleted', 'set_canteen_sector_list_from_sectors_m2m', 'set_satellite_sector_list_from_sectors_m2m'",
         )
         parser.add_argument(
             "--apply",
@@ -65,6 +72,8 @@ class Command(BaseCommand):
             self.recreate_canteen_hard_deleted(apply)
         elif command == "set_canteen_sector_list_from_sectors_m2m":
             self.set_canteen_sector_list_from_sectors_m2m(apply)
+        elif command == "set_satellite_sector_list_from_sectors_m2m":
+            self.set_satellite_sector_list_from_sectors_m2m(apply)
 
     def set_canteen_id_before_v4(self, apply):
         diagnostic_updated_count = 0
@@ -164,14 +173,10 @@ class Command(BaseCommand):
         print("Done! Canteens recreated:", canteens_created_count)
 
     def set_canteen_sector_list_from_sectors_m2m(self, apply):
-        """
-        - "sectors" was added in the canteen_snapshot in version 9 (for the 2022 campaign)
-        - "sectors was replaced by "sector_list" in version 16 (for the 2025 campaign)
-        """
         diagnostic_qs = Diagnostic.objects.teledeclared().filter(
-            teledeclaration_version__gte=9, teledeclaration_version__lt=16
+            teledeclaration_version__gte=9, teledeclaration_version__lte=15
         )
-        print("Diagnostics teledeclared with canteen_snapshot.sectors:", diagnostic_qs.count())
+        print("Diagnostics teledeclared between v9 & v15:", diagnostic_qs.count())
 
         diagnostics_updated_count = 0
         for diagnostic in diagnostic_qs:
@@ -186,8 +191,28 @@ class Command(BaseCommand):
                         diagnostic.save(update_fields=["canteen_snapshot"])
                         update_change_reason(diagnostic, "Script: set sector_list from sectors M2M")
                     diagnostics_updated_count += 1
-                else:
-                    print(f"Diagnostic {diagnostic.id} has no sectors in canteen_snapshot, skipping")
-            else:
-                print(f"Diagnostic {diagnostic.id} has no canteen_snapshot, skipping")
+
+        print("Done! Diagnostics updated:", diagnostics_updated_count)
+
+    def set_satellite_sector_list_from_sectors_m2m(self, apply):
+        diagnostic_qs = Diagnostic.objects.teledeclared().filter(
+            teledeclaration_version__gte=9, teledeclaration_version__lte=15
+        )
+        print("Diagnostics teledeclared between v9 & v15:", diagnostic_qs.count())
+
+        diagnostics_updated_count = 0
+        for diagnostic in diagnostic_qs:
+            satellites_snapshot_temp = diagnostic.satellites_snapshot
+            if satellites_snapshot_temp:
+                for satellite in satellites_snapshot_temp:
+                    if "sectors" in satellite:
+                        sectors_old = satellite["sectors"]
+                        sector_list_new = get_sector_list_from_old_sector_dict_list(sectors_old)
+                        if apply:
+                            satellite["sector_list"] = sector_list_new
+                            diagnostic.satellites_snapshot = satellites_snapshot_temp
+                            diagnostic.save(update_fields=["satellites_snapshot"])
+                            update_change_reason(diagnostic, "Script: set satellite sector_list from sectors M2M")
+                        diagnostics_updated_count += 1
+
         print("Done! Diagnostics updated:", diagnostics_updated_count)
