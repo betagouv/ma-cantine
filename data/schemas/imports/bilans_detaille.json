@@ -253,7 +253,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_label_rouge",
-      "title": "Boissons, Label rouge",
+      "title": "Boissons, Label rouge (non applicable)",
       "type": "number"
     },
     {
@@ -430,56 +430,56 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_peche_durable",
-      "title": "Viandes et volailles fraîches et surgelées, Pêche durable",
+      "title": "Viandes et volailles fraîches et surgelées, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_peche_durable",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Pêche durable",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_peche_durable",
-      "title": "Fruits et légumes frais et surgelés, Pêche durable",
+      "title": "Fruits et légumes frais et surgelés, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_peche_durable",
-      "title": "Charcuterie, Pêche durable",
+      "title": "Charcuterie, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_peche_durable",
-      "title": "BOF (Produits laitiers, beurre et œufs), Pêche durable",
+      "title": "BOF (Produits laitiers, beurre et œufs), Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_peche_durable",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Pêche durable",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_peche_durable",
-      "title": "Boissons, Pêche durable",
+      "title": "Boissons, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_peche_durable",
-      "title": "Autres produits frais, surgelés et d'épicerie, Pêche durable",
+      "title": "Autres produits frais, surgelés et d'épicerie, Pêche durable (non applicable)",
       "type": "number"
     },
     {
@@ -656,14 +656,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_fermier",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Fermier",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Fermier (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_fermier",
-      "title": "Fruits et légumes frais et surgelés, Fermier",
+      "title": "Fruits et légumes frais et surgelés, Fermier (non applicable)",
       "type": "number"
     },
     {
@@ -690,21 +690,21 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_fermier",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Fermier",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Fermier (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_fermier",
-      "title": "Boissons, Fermier",
+      "title": "Boissons, Fermier (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_fermier",
-      "title": "Autres produits frais, surgelés et d'épicerie, Fermier",
+      "title": "Autres produits frais, surgelés et d'épicerie, Fermier (non applicable)",
       "type": "number"
     },
     {
