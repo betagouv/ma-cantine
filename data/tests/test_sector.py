@@ -9,6 +9,7 @@ from data.models.sector import (
     get_category_lib_list_from_sector_list,
     get_sector_lib_list_from_canteen_snapshot,
     get_category_lib_list_from_canteen_snapshot,
+    get_sector_list_from_old_sector_dict_list,
 )
 
 
@@ -55,6 +56,34 @@ class SectorTextChoicesTest(TestCase):
         ]:
             with self.subTest(TUPLE=TUPLE):
                 self.assertEqual(get_sector_lib_list_from_canteen_snapshot(TUPLE[0]), TUPLE[1])
+
+    def test_get_sector_list_from_old_sector_dict_list(self):
+        for TUPLE in [
+            (None, []),
+            ([], []),
+            ([{"name": "Inconnu", "category_name": "Inconnu"}], []),
+            (
+                [{"name": Sector.SANTE_HOPITAL.label, "category_name": SectorCategory.HEALTH.label}],
+                [Sector.SANTE_HOPITAL],
+            ),
+            (
+                [
+                    {"name": Sector.SANTE_HOPITAL.label, "category_name": SectorCategory.HEALTH.label},
+                    {"name": Sector.SOCIAL_CRECHE.label, "category_name": SectorCategory.SOCIAL.label},
+                ],
+                [Sector.SANTE_HOPITAL, Sector.SOCIAL_CRECHE],
+            ),
+            (
+                [
+                    {"name": "Inconnu", "category_name": "Inconnu"},
+                    {"name": "Autres structures d’enseignement"},
+                    {"name": Sector.SANTE_HOPITAL.label, "category_name": SectorCategory.HEALTH.label},
+                ],
+                [Sector.EDUCATION_AUTRE, Sector.SANTE_HOPITAL],
+            ),
+        ]:
+            with self.subTest(TUPLE=TUPLE):
+                self.assertEqual(get_sector_list_from_old_sector_dict_list(TUPLE[0]), TUPLE[1])
 
     def test_get_sector_category_from_sector(self):
         for TUPLE in [
