@@ -38,26 +38,28 @@ COMMON_FIELDS = {
 }
 
 SCHEMA_SPECS = {
-    "simple_id": {
-        "file_name": "bilans_simple_id.json",
-        "fields_ordered": ["cantine_id", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS,
-        "fields_required": ["cantine_id", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025,
-        "schema_name": "import-bilans-simple-id",
-        "schema_title": "Schema import des bilans (simple) par ID",
-    },
-    "simple_siret": {
-        "file_name": "bilans_simple_siret.json",
-        "fields_ordered": ["siret", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS,
-        "fields_required": ["siret", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025,
-        "schema_name": "import-bilans-simple-siret",
-        "schema_title": "Schema import des bilans (simple) par SIRET",
-    },
-    "detaille": {
-        "file_name": "bilans_detaille.json",
-        "fields_ordered": ["siret", "année_bilan"] + Diagnostic.COMPLETE_APPRO_FIELDS,
-        "fields_required": ["siret", "année_bilan"] + Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025,
-        "schema_name": "import-bilans-detaille",
-        "schema_title": "Schema import des bilans (detaille)",
+    "Diagnostic": {
+        "simple_id": {
+            "file_name": "bilans_simple_id.json",
+            "fields_ordered": ["cantine_id", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS,
+            "fields_required": ["cantine_id", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025,
+            "schema_name": "import-bilans-simple-id",
+            "schema_title": "Schema import des bilans (simple) par ID",
+        },
+        "simple_siret": {
+            "file_name": "bilans_simple_siret.json",
+            "fields_ordered": ["siret", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS,
+            "fields_required": ["siret", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025,
+            "schema_name": "import-bilans-simple-siret",
+            "schema_title": "Schema import des bilans (simple) par SIRET",
+        },
+        "detaille": {
+            "file_name": "bilans_detaille.json",
+            "fields_ordered": ["siret", "année_bilan"] + Diagnostic.COMPLETE_APPRO_FIELDS,
+            "fields_required": ["siret", "année_bilan"] + Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025,
+            "schema_name": "import-bilans-detaille",
+            "schema_title": "Schema import des bilans (detaille)",
+        },
     },
 }
 
@@ -65,16 +67,24 @@ SCHEMA_SPECS = {
 class Command(BaseCommand):
     """
     Exemples:
-    - python manage.py generate_import_schema --schema detaille --show-diff
-    - python manage.py generate_import_schema --schema detaille --dry-run
+    - python manage.py generate_import_schema --model Diagnostic --schema detaille --show-diff
+    - python manage.py generate_import_schema --model Diagnostic --schema detaille --dry-run
     """
 
-    help = "Regenerate bilan import schema JSON files from Diagnostic fields."
+    help = "Regenerate import schema JSON files from model fields."
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--schema",
+            "--model",
             choices=sorted(SCHEMA_SPECS.keys()),
+            required=True,
+            help="Select the model for which to regenerate import schemas.",
+        )
+        parser.add_argument(
+            "--schema",
+            choices=sorted(
+                {schema_key for model_schemas in SCHEMA_SPECS.values() for schema_key in model_schemas.keys()}
+            ),
             required=True,
             help="Regenerate only the selected schema.",
         )
@@ -90,27 +100,32 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        selected_schema = options.get("schema")
+        model = options.get("model")
+        model_schema = options.get("schema")
         show_diff = options.get("show_diff")
         dry_run = options.get("dry_run") or show_diff
 
-        for schema_key, schema_spec in SCHEMA_SPECS.items():
-            if schema_key != selected_schema:
-                continue
-            schema_path = self._schema_path(schema_spec["file_name"])
-            old_schema = self._read_schema_text(schema_path)
-            new_schema = self._build_schema(schema_spec)
-            new_schema_json = json.dumps(new_schema, ensure_ascii=False, indent=2, sort_keys=True)
+        schema_spec = SCHEMA_SPECS.get(model, {}).get(model_schema)
+        if not schema_spec:
+            self.stdout.write(
+                self.style.ERROR(f"No schema specification found for model '{model}' and schema '{model_schema}'")
+            )
+            return
 
-            schema_changed = old_schema != new_schema_json
-            if schema_changed:
-                if show_diff:
-                    self._print_schema_diff(schema_path, old_schema, new_schema_json)
-                elif not dry_run:
-                    self._write_schema_text(schema_path, new_schema_json)
-                    self.stdout.write(self.style.SUCCESS(f"Updated schema file: {schema_path}"))
-            else:
-                self.stdout.write(f"No changes for schema file: {schema_path}")
+        schema_path = self._schema_path(schema_spec["file_name"])
+        old_schema = self._read_schema_text(schema_path)
+        new_schema = self._build_schema(schema_spec)
+        new_schema_json = json.dumps(new_schema, ensure_ascii=False, indent=2, sort_keys=True)
+
+        schema_changed = old_schema != new_schema_json
+        if schema_changed:
+            if show_diff:
+                self._print_schema_diff(schema_path, old_schema, new_schema_json)
+            elif not dry_run:
+                self._write_schema_text(schema_path, new_schema_json)
+                self.stdout.write(self.style.SUCCESS(f"Updated schema file: {schema_path}"))
+        else:
+            self.stdout.write(f"No changes for schema file: {schema_path}")
 
     def _schema_path(self, file_name: str) -> Path:
         return Path(settings.BASE_DIR) / "data" / "schemas" / "imports" / file_name
