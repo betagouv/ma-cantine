@@ -12,9 +12,12 @@ from data.models.creation_source import CreationSource
 
 
 # simple
-DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME = "bilans_simple.json"
-DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME}"
-DIAGNOSTICS_SIMPLE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH}"
+DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME = "bilans_simple_siret.json"
+DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME}"
+DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_PATH}"
+DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_NAME = "bilans_simple_id.json"
+DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_NAME}"
+DIAGNOSTICS_SIMPLE_ID_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH}"
 # complete
 DIAGNOSTICS_COMPLETE_SCHEMA_FILE_NAME = "bilans_detaille.json"
 DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_COMPLETE_SCHEMA_FILE_NAME}"
@@ -27,6 +30,7 @@ class DiagnosticsImportView(BaseImportView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.diagnostics_created_count = 0
+        self.is_siret_import = True
 
     def _process_file(self, data):
         """Process all rows in the file."""
@@ -42,10 +46,12 @@ class DiagnosticsImportView(BaseImportView):
 
     @transaction.atomic
     def _save_data_from_row(self, row):
-        siret = row[0]
-        if not Canteen.objects.filter(siret=siret).exists():
+        identifier = row[0]
+        if self.is_siret_import and not Canteen.objects.filter(siret=identifier).exists():
             raise ObjectDoesNotExist()
-        canteen = Canteen.objects.get(siret=siret)
+        elif not self.is_siret_import and not Canteen.objects.filter(id=identifier).exists():
+            raise ObjectDoesNotExist()
+        canteen = Canteen.objects.get(siret=identifier) if self.is_siret_import else Canteen.objects.get(id=identifier)
         if self.request.user not in canteen.managers.all():
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
         diagnostic_year, values_dict, diagnostic_type = self._validate_diagnostic(row)
@@ -109,15 +115,32 @@ class DiagnosticsImportView(BaseImportView):
         # Fall back to base class handling
         return super()._parse_errors(e, row, identifier)
 
+    def _get_not_found_message(self, identifier):
+        """Get error message for object not found"""
+        identifier_name = "le siret" if self.is_siret_import else "l'id"
+        return f"Une cantine avec {identifier_name} « {identifier} » n'existe pas sur la plateforme."
+
 
 class DiagnosticsSimpleImportView(DiagnosticsImportView):
-    import_type = ImportType.DIAGNOSTIC_SIMPLE
+    import_type = ImportType.DIAGNOSTIC_SIMPLE_SIRET
+
+    def post(self, request):
+        # Set import type based on request
+        self.is_siret_import = request.data.get("type") == "siret"
+        self.import_type = (
+            ImportType.DIAGNOSTIC_SIMPLE_SIRET if self.is_siret_import else ImportType.DIAGNOSTIC_SIMPLE_ID
+        )
+        return super().post(request)
 
     def _get_schema_config(self):
         return {
-            "name": DIAGNOSTICS_SIMPLE_SCHEMA_FILE_NAME,
-            "url": DIAGNOSTICS_SIMPLE_SCHEMA_URL,
-            "path": DIAGNOSTICS_SIMPLE_SCHEMA_FILE_PATH,
+            "name": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME
+            if self.is_siret_import
+            else DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_NAME,
+            "url": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_URL if self.is_siret_import else DIAGNOSTICS_SIMPLE_ID_SCHEMA_URL,
+            "path": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_PATH
+            if self.is_siret_import
+            else DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH,
         }
 
     def _validate_diagnostic(self, row):
