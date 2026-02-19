@@ -229,24 +229,24 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         )
         self.assertEqual(
             errors[6]["message"],
-            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
             errors[7]["message"],
-            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
             errors[8]["message"],
-            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
             errors[9]["message"],
-            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques provenance France, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, Origine France, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
             errors[10]["message"],
             # TODO: is this the best field to point to as being wrong? hors bio could be confusing
-            "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
+            "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons, EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
         )
         self.assertEqual(
             errors[11]["message"],
@@ -259,20 +259,20 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
             errors[13]["message"],
-            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
             errors[14]["message"],
-            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées provenance France, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
             errors[15]["message"],
-            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques EGalim, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, EGalim, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
             errors[16]["message"],
-            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques provenance France, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, Origine France, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
 
     @authenticate

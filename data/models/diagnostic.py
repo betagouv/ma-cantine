@@ -811,16 +811,16 @@ class Diagnostic(models.Model):
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
     )
     valeur_viandes_volailles_egalim = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim",
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim",
     )
     valeur_viandes_volailles_france = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées origine France",
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France",
     )
     valeur_produits_de_la_mer = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) poissons et produits aquatiques",
     )
     valeur_produits_de_la_mer_egalim = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) poissons et produits aquatiques EGalim",
+        verbose_name="Valeur totale (HT) poissons et produits aquatiques, EGalim",
     )
 
     valeur_label_rouge = make_optional_positive_decimal_field(
@@ -1312,52 +1312,52 @@ class Diagnostic(models.Model):
         verbose_name="Autres produits frais, surgelés et d'épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
     )
     valeur_viandes_volailles_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Viandes et volailles fraîches et surgelées, non-EGalim.",
+        verbose_name="Viandes et volailles fraîches et surgelées, non-EGalim",
     )
     valeur_produits_de_la_mer_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Poissons, produits de la mer et de l'aquaculture, non-EGalim.",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, non-EGalim",
     )
     valeur_fruits_et_legumes_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, non-EGalim.",
+        verbose_name="Fruits et légumes frais et surgelés, non-EGalim",
     )
     valeur_charcuterie_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Charcuterie, non-EGalim.",
+        verbose_name="Charcuterie, non-EGalim",
     )
     valeur_produits_laitiers_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="BOF (Produits laitiers, beurre et œufs), non-EGalim.",
+        verbose_name="BOF (Produits laitiers, beurre et œufs), non-EGalim",
     )
     valeur_boulangerie_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, non-EGalim.",
+        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, non-EGalim",
     )
     valeur_boissons_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Boissons, non-EGalim.",
+        verbose_name="Boissons, non-EGalim",
     )
     valeur_autres_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d'épicerie, non-EGalim.",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, non-EGalim",
     )
     valeur_viandes_volailles_france = make_optional_positive_decimal_field(
-        verbose_name="Viandes et volailles fraîches et surgelées, Provenance France",
+        verbose_name="Viandes et volailles fraîches et surgelées, Origine France",
     )
     valeur_produits_de_la_mer_france = make_optional_positive_decimal_field(
-        verbose_name="Poissons, produits de la mer et de l'aquaculture, Provenance France",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Origine France",
     )
     valeur_fruits_et_legumes_france = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, Provenance France",
+        verbose_name="Fruits et légumes frais et surgelés, Origine France",
     )
     valeur_charcuterie_france = make_optional_positive_decimal_field(
-        verbose_name="Charcuterie, Provenance France",
+        verbose_name="Charcuterie, Origine France",
     )
     valeur_produits_laitiers_france = make_optional_positive_decimal_field(
-        verbose_name="BOF (Produits laitiers, beurre et œufs), Provenance France",
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Origine France",
     )
     valeur_boulangerie_france = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Provenance France",
+        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Origine France",
     )
     valeur_boissons_france = make_optional_positive_decimal_field(
-        verbose_name="Boissons, Provenance France",
+        verbose_name="Boissons, Origine France",
     )
     valeur_autres_france = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d'épicerie, Provenance France",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Origine France",
     )
     valeur_viandes_volailles_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Circuit-court",
