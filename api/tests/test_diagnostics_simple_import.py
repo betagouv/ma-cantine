@@ -54,8 +54,6 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
-        print("errors")
-        print(errors)
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 21)  # len(schema["fields"])
         for error in errors:
