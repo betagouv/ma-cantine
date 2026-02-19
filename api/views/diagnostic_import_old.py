@@ -201,7 +201,7 @@ class DiagnosticsImportView(ABC, APIView):
         )
         if diagnostic.is_teledeclared:
             raise ValidationError(
-                "Ce n'est pas possible de modifier un diagnostic télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration."
+                "Ce n'est pas possible de modifier un bilan télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration."
             )
         diagnostic.diagnostic_type = diagnostic_type
         for key, value in values_dict.items():

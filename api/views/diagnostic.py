@@ -85,7 +85,7 @@ class DiagnosticUpdateView(UpdateAPIView):
 
     def perform_update(self, serializer):
         if self.get_object().is_teledeclared:
-            raise PermissionDenied("Ce n'est pas possible de modifier un diagnostic télédéclaré.")
+            raise PermissionDenied("Ce n'est pas possible de modifier un bilan télédéclaré.")
         serializer.is_valid(raise_exception=True)
         diagnostic = serializer.save()
         update_change_reason_with_auth(self, diagnostic)

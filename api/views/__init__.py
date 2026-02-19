@@ -44,7 +44,7 @@ from .diagnostic import (  # noqa: F401
 #     ImportSimpleCentralKitchenView,
 #     ImportSimpleDiagnosticsView,
 # )
-from .diagnostic_import import DiagnosticsSimpleImportView  # noqa: F401
+from .diagnostic_import import DiagnosticsCompleteImportView, DiagnosticsSimpleImportView  # noqa: F401
 from .diagnostic_teledeclaration import (  # noqa: F401
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
