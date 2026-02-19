@@ -11,9 +11,18 @@ GITHUB_REPO_URL = "https://github.com/betagouv/ma-cantine"
 GITHUB_RAW_BASE_URL = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main"
 
 COMMON_FIELDS = {
+    "cantine_id": {
+        "constraints": {"required": True, "unique": True},
+        "description": "",
+        "example": "949",
+        "format": "default",
+        "name": "cantine_id",
+        "title": "Numéro ID de l'établissement pour lequel créer ou modifier le bilan",
+        "type": "number",
+    },
     "siret": {
         "constraints": {"required": True, "unique": True},
-        "description": "L'établissement avec ce SIRET doit être déjà enregistré sur notre plateforme.",
+        "description": "L'établissement avec ce SIRET doit être déjà enregistré sur notre plateforme",
         "example": "49463556926130",
         "format": "default",
         "name": "siret",
@@ -22,7 +31,7 @@ COMMON_FIELDS = {
     },
     "année_bilan": {
         "constraints": {"required": True},
-        "description": "Réfère à l'année des données et non l'année de déclaration.",
+        "description": "Réfère à l'année des données et non l'année de déclaration",
         "example": "2021",
         "name": "année_bilan",
         "title": "Année du bilan",
@@ -31,17 +40,24 @@ COMMON_FIELDS = {
 }
 
 SCHEMA_SPECS = {
-    "simple": {
-        "file_name": "bilans_simple.json",
-        "fields": Diagnostic.SIMPLE_APPRO_FIELDS,
-        "required": Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025,
-        "schema_name": "import-bilans-simple",
-        "schema_title": "Schema import des bilans (simple)",
+    "simple_id": {
+        "file_name": "bilans_simple_id.json",
+        "fields_ordered": ["cantine_id", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS,
+        "fields_required": ["cantine_id", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025,
+        "schema_name": "import-bilans-simple-id",
+        "schema_title": "Schema import des bilans (simple) par ID",
+    },
+    "simple_siret": {
+        "file_name": "bilans_simple_siret.json",
+        "fields_ordered": ["siret", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS,
+        "fields_required": ["siret", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025,
+        "schema_name": "import-bilans-simple-siret",
+        "schema_title": "Schema import des bilans (simple) par SIRET",
     },
     "detaille": {
         "file_name": "bilans_detaille.json",
-        "fields": Diagnostic.COMPLETE_APPRO_FIELDS,
-        "required": Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025,
+        "fields_ordered": ["siret", "année_bilan"] + Diagnostic.COMPLETE_APPRO_FIELDS,
+        "fields_required": ["siret", "année_bilan"] + Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025,
         "schema_name": "import-bilans-detaille",
         "schema_title": "Schema import des bilans (detaille)",
     },
@@ -80,12 +96,12 @@ class Command(BaseCommand):
         show_diff = options.get("show_diff")
         dry_run = options.get("dry_run") or show_diff
 
-        for schema_key, spec in SCHEMA_SPECS.items():
+        for schema_key, schema_spec in SCHEMA_SPECS.items():
             if schema_key != selected_schema:
                 continue
-            schema_path = self._schema_path(spec["file_name"])
+            schema_path = self._schema_path(schema_spec["file_name"])
             old_schema = self._read_schema_text(schema_path)
-            new_schema = self._build_schema(spec)
+            new_schema = self._build_schema(schema_spec)
             new_schema_json = json.dumps(new_schema, ensure_ascii=False, indent=2, sort_keys=True)
 
             schema_changed = old_schema != new_schema_json
@@ -101,26 +117,23 @@ class Command(BaseCommand):
     def _schema_path(self, file_name: str) -> Path:
         return Path(settings.BASE_DIR) / "data" / "schemas" / "imports" / file_name
 
-    def _build_schema(self, spec: dict) -> dict:
+    def _build_schema(self, schema_spec: dict) -> dict:
         schema = {
             "encoding": "utf-8",
             "fields": [],
             "homepage": GITHUB_REPO_URL,
-            "name": spec["schema_name"],
-            "path": f"{GITHUB_RAW_BASE_URL}/data/schemas/imports/{spec['file_name']}",
-            "title": spec["schema_title"],
+            "name": schema_spec["schema_name"],
+            "path": f"{GITHUB_RAW_BASE_URL}/data/schemas/imports/{schema_spec['file_name']}",
+            "title": schema_spec["schema_title"],
         }
-        required_names = {"siret", "année_bilan", *spec["required"]}
-        ordered_names = ["siret", "année_bilan", *spec["fields"]]
 
-        for name in ordered_names:
-            field = self._build_field_definition(name)
-            self._set_required(field, name in required_names)
+        for name in schema_spec["fields_ordered"]:
+            field = self._build_field_definition(name, is_required=name in schema_spec["fields_required"])
             schema["fields"].append(field)
 
         return schema
 
-    def _build_field_definition(self, name: str) -> dict:
+    def _build_field_definition(self, name: str, is_required=False) -> dict:
         if name in COMMON_FIELDS.keys():
             return COMMON_FIELDS[name]
 
@@ -131,7 +144,7 @@ class Command(BaseCommand):
         except Exception:
             pass
 
-        return {
+        field_definition = {
             "description": "",
             "example": "1234.99",
             "name": name,
@@ -139,17 +152,10 @@ class Command(BaseCommand):
             "type": "number",
         }
 
-    def _set_required(self, field: dict, is_required: bool) -> None:
-        constraints = dict(field.get("constraints") or {})
         if is_required:
-            constraints["required"] = True
-        else:
-            constraints.pop("required", None)
+            field_definition["constraints"] = {"required": True}
 
-        if constraints:
-            field["constraints"] = constraints
-        else:
-            field.pop("constraints", None)
+        return field_definition
 
     def _read_schema_text(self, schema_path: Path) -> str:
         if schema_path.exists():

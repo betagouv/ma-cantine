@@ -10,14 +10,14 @@
       "example": "949",
       "format": "default",
       "name": "cantine_id",
-      "title": "Numéro ID de l'établissement pour lequel créer ou modifier le bilan.",
+      "title": "Numéro ID de l'établissement pour lequel créer ou modifier le bilan",
       "type": "number"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "Réfère à l'année des données et non l'année de déclaration.",
+      "description": "Réfère à l'année des données et non l'année de déclaration",
       "example": "2021",
       "name": "année_bilan",
       "title": "Année du bilan",
@@ -30,7 +30,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_totale",
-      "title": "Valeur totale (HT) des achats",
+      "title": "Valeur totale annuelle HT",
       "type": "number"
     },
     {
@@ -40,14 +40,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_bio",
-      "title": "Valeur totale (HT) des achats bio",
+      "title": "Bio - Valeur annuelle HT",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_bio_dont_commerce_equitable",
-      "title": "Valeur totale (HT) des achats bio dont commerce équitable",
+      "title": "Bio dont commerce équitable - Valeur annuelle HT",
       "type": "number"
     },
     {
@@ -57,7 +57,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_siqo",
-      "title": "Valeur totale (HT) des achats SIQO",
+      "title": "Produits SIQO (hors bio) - Valeur annuelle HT",
       "type": "number"
     },
     {
@@ -74,7 +74,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_egalim_autres",
-      "title": "Valeur totale (HT) des achats commerce équitable (hors bio)",
+      "title": "Valeur totale (HT) des autres achats EGalim",
       "type": "number"
     },
     {
@@ -108,7 +108,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_france",
-      "title": "Valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France",
+      "title": "Viandes et volailles fraîches et surgelées, Origine France",
       "type": "number"
     },
     {
