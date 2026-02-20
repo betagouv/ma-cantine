@@ -6,7 +6,7 @@ import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-// import ImportFilesExample from "@/components/ImportFilesExample.vue"
+import ImportFilesExample from "@/components/ImportFilesExample.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 import ImportAdminCallout from "@/components/ImportAdminCallout.vue"
 
@@ -19,12 +19,12 @@ const exampleFile = {
   name: "importer_des_cantines_modifier_exemple_ma_cantine.xlsx",
   size: "6 ko",
 }
-// const filePreviews = {
-//   success: "",
-//   altSuccess: "",
-//   error: "",
-//   altError: "",
-// }
+const filePreviews = {
+  success: "importer_des_cantines_modifier_exemple_fichier_accepte.jpg",
+  altSuccess: "Exemple de fichier accepté pour modifier des cantines, qui contient le bon nom de colonnes et les bonnes valeurs",
+  error: "importer_des_cantines_modifier_exemple_fichier_rejete.jpg",
+  altError: "Exemple de fichier rejeté pour modifier des cantines, qui contient des erreurs dans les colonnes ou les valeurs",
+}
 const links = [
   {
     title: "Où trouver le numéro ID de ma cantine ?",
@@ -57,9 +57,7 @@ const success = (count) => {
     Vous pouvez modifier des cantines inscrites avec leur numéro SIRET ou avec le numéro SIREN d'une unité légale.
   </p>
   <ImportExplanation :exampleFile :links />
-  <!--
   <ImportFilesExample :filePreviews />
-  -->
   <ImportSchemaTable :schemaFile />
   <ImportAdminCallout />
   <ImportFileUpload
