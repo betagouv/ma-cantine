@@ -112,10 +112,20 @@ class CanteensUpdateImportView(BaseImportView):
                 {"id": f"Aucune cantine avec le numéro identifiant « {id} » trouvée sur la plateforme."}
             )
 
-        siret = utils_utils.normalize_string(row[1])
-        siren_unite_legale = utils_utils.normalize_string(row[2])
+        siret = utils_utils.normalize_string(row[1]) if row[1] else None
+        siren_unite_legale = utils_utils.normalize_string(row[2]) if row[2] else None
         name = row[3].strip()
-        city_insee_code = row[4]
+
+        city_insee_code = utils_utils.normalize_string(row[4]) if row[4] else None
+        # Validate city_insee_code
+        if siren_unite_legale and city_insee_code:
+            if len(city_insee_code) != 5:
+                raise ValidationError(
+                    {
+                        "city_insee_code": f"Le code INSEE « {city_insee_code} » n'est pas valide, il doit contenir 5 caractères (ex : 75056)."
+                    }
+                )
+
         central_producer_siret = utils_utils.normalize_string(row[5]) if row[5] else None
         daily_meal_count = row[6]
         yearly_meal_count = row[7]
@@ -155,17 +165,6 @@ class CanteensUpdateImportView(BaseImportView):
 
         canteen.siret = siret
         canteen.siren_unite_legale = siren_unite_legale
-        if siren_unite_legale and city_insee_code:
-            # Validate city_insee_code
-            # TODO : move to canteen model validators ?
-            code = utils_utils.normalize_string(city_insee_code)
-            if len(code) != 5:
-                raise ValidationError(
-                    {
-                        "city_insee_code": f"Le code INSEE « {city_insee_code} » n'est pas valide, il doit contenir 5 caractères (ex : 75056)."
-                    }
-                )
-            canteen.city_insee_code = city_insee_code
         canteen.name = name
         canteen.daily_meal_count = daily_meal_count
         canteen.yearly_meal_count = yearly_meal_count
@@ -178,6 +177,12 @@ class CanteensUpdateImportView(BaseImportView):
         canteen.line_ministry = line_ministry
 
         canteen.save()
+
+        # Need to first update the canteen because when the SIRET is changing to SIREN it will not save the city_insee_code
+        if siren_unite_legale and city_insee_code:
+            canteen.city_insee_code = city_insee_code
+        canteen.save()
+
         update_change_reason(canteen, f"Mass CSV import. {self.__class__.__name__[:100]}")
 
         if manager_emails:
