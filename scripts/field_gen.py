@@ -16,7 +16,7 @@ labels = [
         "Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     ),
     ("PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"),
-    ("FRANCE", "Provenance France"),
+    ("FRANCE", "Origine France"),
     ("CIRCUIT_COURT", "Circuit-court"),
     ("LOCAL", "Produit local"),
 ]

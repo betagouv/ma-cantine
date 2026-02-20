@@ -1371,52 +1371,52 @@ class Diagnostic(models.Model):
         verbose_name="Autres produits frais, surgelés et d'épicerie, Origine France",
     )
     valeur_viandes_volailles_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="Viandes et volailles fraîches et surgelées, Circuit-court",
+        verbose_name="Viandes et volailles fraîches et surgelées, Origine France (dont circuit-court)",
     )
     valeur_produits_de_la_mer_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="Poissons, produits de la mer et de l'aquaculture, Circuit-court",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Origine France (dont circuit-court)",
     )
     valeur_fruits_et_legumes_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, Circuit-court",
+        verbose_name="Fruits et légumes frais et surgelés, Origine France (dont circuit-court)",
     )
     valeur_charcuterie_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="Charcuterie, Circuit-court",
+        verbose_name="Charcuterie, Origine France (dont circuit-court)",
     )
     valeur_produits_laitiers_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="BOF (Produits laitiers, beurre et œufs), Circuit-court",
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Origine France (dont circuit-court)",
     )
     valeur_boulangerie_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Circuit-court",
+        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont circuit-court)",
     )
     valeur_boissons_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="Boissons, Circuit-court",
+        verbose_name="Boissons, Origine France (dont circuit-court)",
     )
     valeur_autres_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d'épicerie, Circuit-court",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Origine France (dont circuit-court)",
     )
     valeur_viandes_volailles_local = make_optional_positive_decimal_field(
-        verbose_name="Viandes et volailles fraîches et surgelées, Produit local",
+        verbose_name="Viandes et volailles fraîches et surgelées, Origine France (dont local)",
     )
     valeur_produits_de_la_mer_local = make_optional_positive_decimal_field(
-        verbose_name="Poissons, produits de la mer et de l'aquaculture, Produit local",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Origine France (dont local)",
     )
     valeur_fruits_et_legumes_local = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, Produit local",
+        verbose_name="Fruits et légumes frais et surgelés, Origine France (dont local)",
     )
     valeur_charcuterie_local = make_optional_positive_decimal_field(
-        verbose_name="Charcuterie, Produit local",
+        verbose_name="Charcuterie, Origine France (dont local)",
     )
     valeur_produits_laitiers_local = make_optional_positive_decimal_field(
-        verbose_name="BOF (Produits laitiers, beurre et œufs), Produit local",
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Origine France (dont local)",
     )
     valeur_boulangerie_local = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Produit local",
+        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont local)",
     )
     valeur_boissons_local = make_optional_positive_decimal_field(
-        verbose_name="Boissons, Produit local",
+        verbose_name="Boissons, Origine France (dont local)",
     )
     valeur_autres_local = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d'épicerie, Produit local",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Origine France (dont local)",
     )
 
     # Télédéclaration

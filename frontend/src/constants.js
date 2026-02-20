@@ -145,8 +145,8 @@ export default Object.freeze({
         "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
     },
     FRANCE: { text: "Origine France" },
-    CIRCUIT_COURT: { text: "Origine France : dont circuit-court" },
-    LOCAL: { text: "Origine France : dont local" },
+    CIRCUIT_COURT: { text: "Origine France (dont circuit-court)" },
+    LOCAL: { text: "Origine France (dont local)" },
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts

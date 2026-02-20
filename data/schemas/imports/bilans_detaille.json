@@ -935,112 +935,112 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_circuit_court",
-      "title": "Viandes et volailles fraîches et surgelées, Circuit-court",
+      "title": "Viandes et volailles fraîches et surgelées, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_circuit_court",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Circuit-court",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_circuit_court",
-      "title": "Fruits et légumes frais et surgelés, Circuit-court",
+      "title": "Fruits et légumes frais et surgelés, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_circuit_court",
-      "title": "Charcuterie, Circuit-court",
+      "title": "Charcuterie, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_circuit_court",
-      "title": "BOF (Produits laitiers, beurre et œufs), Circuit-court",
+      "title": "BOF (Produits laitiers, beurre et œufs), Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_circuit_court",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Circuit-court",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_circuit_court",
-      "title": "Boissons, Circuit-court",
+      "title": "Boissons, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_circuit_court",
-      "title": "Autres produits frais, surgelés et d'épicerie, Circuit-court",
+      "title": "Autres produits frais, surgelés et d'épicerie, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_local",
-      "title": "Viandes et volailles fraîches et surgelées, Produit local",
+      "title": "Viandes et volailles fraîches et surgelées, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_local",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Produit local",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_local",
-      "title": "Fruits et légumes frais et surgelés, Produit local",
+      "title": "Fruits et légumes frais et surgelés, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_local",
-      "title": "Charcuterie, Produit local",
+      "title": "Charcuterie, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_local",
-      "title": "BOF (Produits laitiers, beurre et œufs), Produit local",
+      "title": "BOF (Produits laitiers, beurre et œufs), Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_local",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Produit local",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_local",
-      "title": "Boissons, Produit local",
+      "title": "Boissons, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_local",
-      "title": "Autres produits frais, surgelés et d'épicerie, Produit local",
+      "title": "Autres produits frais, surgelés et d'épicerie, Origine France (dont local)",
       "type": "number"
     }
   ],

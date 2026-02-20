@@ -63,7 +63,7 @@ class Purchase(SoftDeletionModel):
         COMMERCE_EQUITABLE = "COMMERCE_EQUITABLE", "Commerce équitable"
         PERFORMANCE = "PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"
         EQUIVALENTS = "EQUIVALENTS", "Produits équivalents"  # not used anymore
-        FRANCE = "FRANCE", "Provenance France"
+        FRANCE = "FRANCE", "Origine France"
         CIRCUIT_COURT = "CIRCUIT_COURT", "Circuit-court"
         LOCAL = "LOCAL", "Produit local"
 
