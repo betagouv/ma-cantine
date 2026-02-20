@@ -38,7 +38,7 @@ const rows = computed(() => {
     const name = canteensTableService.getNameInfos(canteen)
     const siret = canteensTableService.getSiretOrSirenInfos(canteen)
     const city = canteensTableService.getCityInfos(canteen)
-    const productionType = canteensTableService.getProductionTypeInfos(canteen)
+    const productionType = canteensTableService.getProductionTypeInfos(canteen) || "Non renseigné"
     const diagnostic = canteensTableService.getDiagnosticInfos(canteen, props.campaign)
     const actions = getDropdownLinks(canteen)
 
