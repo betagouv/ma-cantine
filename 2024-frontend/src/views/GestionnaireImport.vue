@@ -6,65 +6,106 @@ import { useRootStore } from "@/stores/root"
 /* Pages */
 const staffPages = [
 {
-    title: "Ajouter des gestionnaires",
+    title: "Ajouter des gestionnaires aux cantines",
     to: { name: "GestionnaireImportCantinesGestionnaires" },
-    description: "Vous voulez ajouter des gestionnaires en masse via le SIRET des cantines sans envoyer d'invitation email.",
-    detail: "Réservé aux utilisateurs administrateurs",
+    description: "Pour ajouter des gestionnaires à des cantines sans envoyer d'invitation email.",
+    detail: "Pour les utilisateurs administrateurs seulement",
+    badges: [
+      {
+        label: "SIRET",
+        noIcon: true,
+        type: "info",
+      }
+    ],
   },
 ]
 const commonPages = [
   {
     title: "Créer des cantines",
     to: { name: "GestionnaireImportCantinesCreer" },
-    description: "Vous voulez créer des cantines en masse à partir de leur numéro SIRET.",
+    description: "Pour créer des cantines en masse avec un numéro SIRET.",
+    badges: [
+      {
+        label: "SIRET",
+        noIcon: true,
+        type: "info",
+      }
+    ],
   },
   {
     title: "Modifier des cantines",
     to: { name: "GestionnaireImportCantinesModifier" },
-    description: "Vous voulez modifier des cantines dont vous êtes gestionnaire.",
+    description: "Pour mettre à jour les informations des cantines dont vous êtes gestionnaire. Pour les cantines inscrites avec SIRET ou rattachées à une unité légale.",
+    detail: "Cet import n'est pas utilisable pour les groupes de restaurants satellites",
+    badges: [
+      {
+        label: "ID",
+        noIcon: true,
+        type: "info",
+      }
+    ],
   },
   {
-    title: "Importer des achats via ID",
+    title: "Ajouter des achats",
     to: { name: "GestionnaireImportAchats" },
-    description: "Vous voulez importer des données d'achat pour des groupes de restaurants satellites ou des cantines rattachées à une unité légale.",
-    detail: "Pour toutes les cantines",
+    description: "Pour ajouter des achats à des cantines dont vous êtes gestionnaire.",
+    detail: "Pour les cantines et les groupes de restaurants satellites",
     badges: [
       {
-        label: "Nouveauté",
-        noIcon: false,
-        type: "new",
+        label: "ID",
+        noIcon: true,
+        type: "info",
       }
     ],
   },
   {
-    title: "Importer des achats",
+    title: "Ajouter des achats via le SIRET de la cantine",
     to: { name: "GestionnaireImportAchatsSIRET" },
-    description: "Vous voulez importer des données d'achat pour des cantines existantes.",
-    detail: "Pour les cantines inscrites avec SIRET",
-  },
-  {
-    title: "Importer des bilans simples via ID",
-    to: { name: "GestionnaireImportBilansSimples" },
-    detail: "Pour toutes les cantines",
-    description: "Vous voulez importer des bilans simples pour des cantines, des groupes de restaurants satellites ou des cantines rattachées à une unité légale.",
+    description: "Pour ajouter des achat à des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
     badges: [
       {
-        label: "Nouveauté",
-        noIcon: false,
-        type: "new",
+        label: "SIRET",
+        noIcon: true,
+        type: "info",
       }
     ],
   },
   {
-    title: "Importer des bilans simples via SIRET",
-    to: { name: "GestionnaireImportBilansSimplesSIRET" },
-    description: "Vous voulez importer des bilans simples pour des cantines existantes.",
-    detail: "Pour les cantines inscrites avec SIRET",
+    title: "Créer ou modifier des bilans simples",
+    to: { name: "GestionnaireImportBilansSimples" },
+    description: "Pour créer ou modifier des bilans simples pour des cantines, des groupes de restaurants satellites ou des cantines rattachées à une unité légale.",
+    detail: "Pour les cantines et les groupes de restaurants satellites",
+    badges: [
+      {
+        label: "ID",
+        noIcon: true,
+        type: "info",
+      }
+    ],
   },
   {
-    title: "Importer des bilans détaillés",
+    title: "Créer ou modifier des bilans simples via le SIRET de la cantine",
+    to: { name: "GestionnaireImportBilansSimplesSIRET" },
+    description: "Pour créer ou modifier des bilans simples pour des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
+    badges: [
+      {
+        label: "SIRET",
+        noIcon: true,
+        type: "info",
+      }
+    ],
+  },
+  {
+    title: "Créer ou modifier des bilans détaillés via le SIRET de la cantine",
     to: { name: "GestionnaireImportBilansDetailles" },
-    description: "Vous voulez importer des bilans détaillés pour des cantines existantes.",
+    description: "Pour créer ou modifier des bilans détaillés pour des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
+    badges: [
+      {
+        label: "SIRET",
+        noIcon: true,
+        type: "info",
+      }
+    ],
   },
 ]
 
