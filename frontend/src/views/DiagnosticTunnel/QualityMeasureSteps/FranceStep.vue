@@ -185,10 +185,10 @@
           />
         </div>
 
-        <!-- Autres produits frais, surgelés et d’épicerie -->
+        <!-- Autres produits frais, surgelés et d'épicerie -->
         <div class="mt-4">
           <label class="ml-4 ml-md-0" for="valeurAutresFrance">
-            Total (en € HT) de mes achats origine France - Autres produits frais, surgelés et d’épicerie
+            Total (en € HT) de mes achats origine France - Autres produits frais, surgelés et d'épicerie
             <span class="fr-hint-text grey--text">
               Optionnel
             </span>
@@ -205,7 +205,7 @@
             v-if="displayPurchaseHints"
             v-model="payload.valeurAutresFrance"
             @autofill="updatePayload"
-            purchaseType="« autres produits frais, surgelés et d’épicerie origine France »"
+            purchaseType="« Autres produits frais, surgelés et d'épicerie origine France »"
             :amount="purchasesSummary.valeurAutresFrance"
             :class="$vuetify.breakpoint.mdAndUp ? 'narrow-field' : ''"
           />

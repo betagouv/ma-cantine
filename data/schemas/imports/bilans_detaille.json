@@ -179,14 +179,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_bio",
-      "title": "Autres produits frais, surgelés et d’épicerie, Bio",
+      "title": "Autres produits frais, surgelés et d'épicerie, Bio",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_bio_dont_commerce_equitable",
-      "title": "Autres produits frais, surgelés et d’épicerie, Bio dont commerce équitable",
+      "title": "Autres produits frais, surgelés et d'épicerie, Bio dont commerce équitable",
       "type": "number"
     },
     {
@@ -253,7 +253,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_label_rouge",
-      "title": "Boissons, Label rouge",
+      "title": "Boissons, Label rouge (non applicable)",
       "type": "number"
     },
     {
@@ -263,7 +263,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_label_rouge",
-      "title": "Autres produits frais, surgelés et d’épicerie, Label rouge",
+      "title": "Autres produits frais, surgelés et d'épicerie, Label rouge",
       "type": "number"
     },
     {
@@ -343,7 +343,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_aocaop_igp_stg",
-      "title": "Autres produits frais, surgelés et d’épicerie, AOC / AOP / IGP / STG",
+      "title": "Autres produits frais, surgelés et d'épicerie, AOC / AOP / IGP / STG",
       "type": "number"
     },
     {
@@ -423,63 +423,63 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_hve",
-      "title": "Autres produits frais, surgelés et d’épicerie, Haute valeur environnementale",
+      "title": "Autres produits frais, surgelés et d'épicerie, Haute valeur environnementale",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_peche_durable",
-      "title": "Viandes et volailles fraîches et surgelées, Pêche durable",
+      "title": "Viandes et volailles fraîches et surgelées, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_peche_durable",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Pêche durable",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_peche_durable",
-      "title": "Fruits et légumes frais et surgelés, Pêche durable",
+      "title": "Fruits et légumes frais et surgelés, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_peche_durable",
-      "title": "Charcuterie, Pêche durable",
+      "title": "Charcuterie, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_peche_durable",
-      "title": "BOF (Produits laitiers, beurre et œufs), Pêche durable",
+      "title": "BOF (Produits laitiers, beurre et œufs), Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_peche_durable",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Pêche durable",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_peche_durable",
-      "title": "Boissons, Pêche durable",
+      "title": "Boissons, Pêche durable (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_peche_durable",
-      "title": "Autres produits frais, surgelés et d’épicerie, Pêche durable",
+      "title": "Autres produits frais, surgelés et d'épicerie, Pêche durable (non applicable)",
       "type": "number"
     },
     {
@@ -559,7 +559,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_rup",
-      "title": "Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique",
+      "title": "Autres produits frais, surgelés et d'épicerie, Région ultrapériphérique",
       "type": "number"
     },
     {
@@ -639,7 +639,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_commerce_equitable",
-      "title": "Autres produits frais, surgelés et d’épicerie, Commerce équitable",
+      "title": "Autres produits frais, surgelés et d'épicerie, Commerce équitable",
       "type": "number"
     },
     {
@@ -656,14 +656,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_fermier",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Fermier",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Fermier (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_fermier",
-      "title": "Fruits et légumes frais et surgelés, Fermier",
+      "title": "Fruits et légumes frais et surgelés, Fermier (non applicable)",
       "type": "number"
     },
     {
@@ -690,21 +690,21 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_fermier",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Fermier",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Fermier (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_fermier",
-      "title": "Boissons, Fermier",
+      "title": "Boissons, Fermier (non applicable)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_fermier",
-      "title": "Autres produits frais, surgelés et d’épicerie, Fermier",
+      "title": "Autres produits frais, surgelés et d'épicerie, Fermier (non applicable)",
       "type": "number"
     },
     {
@@ -760,7 +760,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_externalites",
-      "title": "Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Autres produits frais, surgelés et d'épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
       "type": "number"
     },
     {
@@ -816,231 +816,231 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_performance",
-      "title": "Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Autres produits frais, surgelés et d'épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_non_egalim",
-      "title": "Viandes et volailles fraîches et surgelées, non-EGalim.",
+      "title": "Viandes et volailles fraîches et surgelées, non-EGalim",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_non_egalim",
-      "title": "Poissons, produits de la mer et de l'aquaculture, non-EGalim.",
+      "title": "Poissons, produits de la mer et de l'aquaculture, non-EGalim",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_non_egalim",
-      "title": "Fruits et légumes frais et surgelés, non-EGalim.",
+      "title": "Fruits et légumes frais et surgelés, non-EGalim",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_non_egalim",
-      "title": "Charcuterie, non-EGalim.",
+      "title": "Charcuterie, non-EGalim",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_non_egalim",
-      "title": "BOF (Produits laitiers, beurre et œufs), non-EGalim.",
+      "title": "BOF (Produits laitiers, beurre et œufs), non-EGalim",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_non_egalim",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, non-EGalim.",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, non-EGalim",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_non_egalim",
-      "title": "Boissons, non-EGalim.",
+      "title": "Boissons, non-EGalim",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_non_egalim",
-      "title": "Autres produits frais, surgelés et d’épicerie, non-EGalim.",
+      "title": "Autres produits frais, surgelés et d'épicerie, non-EGalim",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_france",
-      "title": "Viandes et volailles fraîches et surgelées, Provenance France",
+      "title": "Viandes et volailles fraîches et surgelées, Origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_france",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Provenance France",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_france",
-      "title": "Fruits et légumes frais et surgelés, Provenance France",
+      "title": "Fruits et légumes frais et surgelés, Origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_france",
-      "title": "Charcuterie, Provenance France",
+      "title": "Charcuterie, Origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_france",
-      "title": "BOF (Produits laitiers, beurre et œufs), Provenance France",
+      "title": "BOF (Produits laitiers, beurre et œufs), Origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_france",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Provenance France",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_france",
-      "title": "Boissons, Provenance France",
+      "title": "Boissons, Origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_france",
-      "title": "Autres produits frais, surgelés et d’épicerie, Provenance France",
+      "title": "Autres produits frais, surgelés et d'épicerie, Origine France",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_circuit_court",
-      "title": "Viandes et volailles fraîches et surgelées, Circuit-court",
+      "title": "Viandes et volailles fraîches et surgelées, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_circuit_court",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Circuit-court",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_circuit_court",
-      "title": "Fruits et légumes frais et surgelés, Circuit-court",
+      "title": "Fruits et légumes frais et surgelés, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_circuit_court",
-      "title": "Charcuterie, Circuit-court",
+      "title": "Charcuterie, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_circuit_court",
-      "title": "BOF (Produits laitiers, beurre et œufs), Circuit-court",
+      "title": "BOF (Produits laitiers, beurre et œufs), Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_circuit_court",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Circuit-court",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_circuit_court",
-      "title": "Boissons, Circuit-court",
+      "title": "Boissons, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_circuit_court",
-      "title": "Autres produits frais, surgelés et d’épicerie, Circuit-court",
+      "title": "Autres produits frais, surgelés et d'épicerie, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_local",
-      "title": "Viandes et volailles fraîches et surgelées, Produit local",
+      "title": "Viandes et volailles fraîches et surgelées, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_local",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Produit local",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_local",
-      "title": "Fruits et légumes frais et surgelés, Produit local",
+      "title": "Fruits et légumes frais et surgelés, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_local",
-      "title": "Charcuterie, Produit local",
+      "title": "Charcuterie, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_local",
-      "title": "BOF (Produits laitiers, beurre et œufs), Produit local",
+      "title": "BOF (Produits laitiers, beurre et œufs), Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_local",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Produit local",
+      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_local",
-      "title": "Boissons, Produit local",
+      "title": "Boissons, Origine France (dont local)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_local",
-      "title": "Autres produits frais, surgelés et d’épicerie, Produit local",
+      "title": "Autres produits frais, surgelés et d'épicerie, Origine France (dont local)",
       "type": "number"
     }
   ],

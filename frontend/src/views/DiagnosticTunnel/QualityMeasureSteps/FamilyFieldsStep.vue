@@ -262,7 +262,7 @@ export default {
         if (!isViandesVolailles || !value) return
         const isEgalim = egalimFields.includes(field)
 
-        // Note that it can be both egalim and provenance France
+        // Note that it can be both EGalim and Origine France
         if (isEgalim) viandesVolaillesEgalim += value
         if (field.endsWith("France")) viandesVolaillesFrance = value // only one France meat field
       })

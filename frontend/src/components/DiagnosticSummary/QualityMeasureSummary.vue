@@ -312,7 +312,7 @@ export default {
           key: "valeurBoissonsFrance",
         },
         {
-          text: "Total (en € HT) de mes achats origine France - Autres produits frais, surgelés et d’épicerie",
+          text: "Total (en € HT) de mes achats origine France - Autres produits frais, surgelés et d'épicerie",
           key: "valeurAutresFrance",
         },
       ],
@@ -350,7 +350,7 @@ export default {
         },
         {
           text:
-            "Total (en € HT) de mes achats Autres produits frais, surgelés et d’épicerie dont Bio et Commerce équitable",
+            "Total (en € HT) de mes achats Autres produits frais, surgelés et d'épicerie dont Bio et Commerce équitable",
           key: "valeurAutresBioDontCommerceEquitable",
         },
       ],

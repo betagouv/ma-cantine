@@ -281,8 +281,8 @@ class DiagnosticTeledeclarationPdfView(APIView):
             "performance": "Performance environnementale",
             "non_egalim": "Non-EGalim",
             "france": "Origine France",
-            "circuit_court": "Origine France : dont circuit-court",
-            "local": "Origine France : dont local",
+            "circuit_court": "Origine France (dont circuit-court)",
+            "local": "Origine France (dont local)",
         }
         family_variable_to_display = {
             "viandes_volailles": "Viandes et volailles",

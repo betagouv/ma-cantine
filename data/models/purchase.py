@@ -43,7 +43,7 @@ class Purchase(SoftDeletionModel):
         PRODUITS_LAITIERS = "PRODUITS_LAITIERS", "BOF (Produits laitiers, beurre et œufs)"
         BOULANGERIE = "BOULANGERIE", "Boulangerie/Pâtisserie fraîches et surgelées"
         BOISSONS = "BOISSONS", "Boissons"
-        AUTRES = "AUTRES", "Autres produits frais, surgelés et d’épicerie"
+        AUTRES = "AUTRES", "Autres produits frais, surgelés et d'épicerie"
 
     class Characteristic(models.TextChoices):
         BIO = "BIO", "Bio"
@@ -63,7 +63,7 @@ class Purchase(SoftDeletionModel):
         COMMERCE_EQUITABLE = "COMMERCE_EQUITABLE", "Commerce équitable"
         PERFORMANCE = "PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"
         EQUIVALENTS = "EQUIVALENTS", "Produits équivalents"  # not used anymore
-        FRANCE = "FRANCE", "Provenance France"
+        FRANCE = "FRANCE", "Origine France"
         CIRCUIT_COURT = "CIRCUIT_COURT", "Circuit-court"
         LOCAL = "LOCAL", "Produit local"
 

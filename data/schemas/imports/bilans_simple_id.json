@@ -171,7 +171,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_france",
-      "title": "Autres produits frais, surgelés et d’épicerie, origine France",
+      "title": "Autres produits frais, surgelés et d'épicerie, origine France",
       "type": "number"
     }
   ],

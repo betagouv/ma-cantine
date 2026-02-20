@@ -832,7 +832,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         """
         canteen = CanteenFactory(managers=[authenticate.user])
 
-        # Should be counted both on EGalim and "Provenance France"
+        # Should be counted both on EGalim and Origine France
         PurchaseFactory(
             canteen=canteen,
             date="2020-01-01",
