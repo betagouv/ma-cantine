@@ -6,6 +6,50 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.16.0](https://github.com/betagouv/ma-cantine/compare/v2026.15.1...v2026.16.0) (2026-02-20)
+
+
+### Nouveautés
+
+* **Export:** ajoute les cantines enregistrées via SIREN ([#6409](https://github.com/betagouv/ma-cantine/issues/6409)) ([09ddaf2](https://github.com/betagouv/ma-cantine/commit/09ddaf2fe8d508faa8a15ee57e4002a6f704b600))
+* **Header:** supprime le bandeau rappel conso ([#6384](https://github.com/betagouv/ma-cantine/issues/6384)) ([d7468bc](https://github.com/betagouv/ma-cantine/commit/d7468bc6baa5d96ce6b30667dc9d0af1e1cc4149))
+* **Imports:** Bilans détaillés: nouvelle page dédié aux imports de bilans détaillés ([#6397](https://github.com/betagouv/ma-cantine/issues/6397)) ([f80fe49](https://github.com/betagouv/ma-cantine/commit/f80fe495751eb5f6b9060a4f451273fa38172d0c))
+* **Imports:** Bilans détaillés: schéma dédié (compatible Validata) et logique backend pour permettre leur imports ([#6394](https://github.com/betagouv/ma-cantine/issues/6394)) ([f07b0f6](https://github.com/betagouv/ma-cantine/commit/f07b0f6fb3528ac526c8e473674c7efd951b0688))
+* **Imports:** Bilans: création d'un nouvel import via id de la cantine ([#6393](https://github.com/betagouv/ma-cantine/issues/6393)) ([4a9de8d](https://github.com/betagouv/ma-cantine/commit/4a9de8d9ed52fec61e931c797410aa01dff0bcac))
+* **Imports:** Cantines: création d'un fichier d'import pour les gestionnaires seulement ([#6383](https://github.com/betagouv/ma-cantine/issues/6383)) ([aaa743b](https://github.com/betagouv/ma-cantine/commit/aaa743b0dfb99eeb3bac846776f9e72b24c642f0))
+* **Imports:** Cantines: création d'un fichier dédié pour la modification des cantines ([#6407](https://github.com/betagouv/ma-cantine/issues/6407)) ([c877578](https://github.com/betagouv/ma-cantine/commit/c877578c8daa7199d3acbdcade48c99c64cabb78))
+* **Imports:** Cantines: créer un fichier dédié à la création de cantine ([#6395](https://github.com/betagouv/ma-cantine/issues/6395)) ([bc118a3](https://github.com/betagouv/ma-cantine/commit/bc118a3bd8baf57795494ab479973155a0f6594d))
+* **Imports:** Cantines: supprime l'import admin ([#6387](https://github.com/betagouv/ma-cantine/issues/6387)) ([19716e8](https://github.com/betagouv/ma-cantine/commit/19716e8effa0c19418c82f7f320c866f3077d911))
+* **Imports:** Mise à jour des textes de la page tampon ([#6411](https://github.com/betagouv/ma-cantine/issues/6411)) ([f8310c0](https://github.com/betagouv/ma-cantine/commit/f8310c0adc6c2a9e13237a70c9ee1f83c7db9b0a))
+
+
+### Améliorations
+
+* **Diagnostic:** repasse sur les champs et améliorer leur verbose_name (apostrophe, origine France, non applicable...) ([#6402](https://github.com/betagouv/ma-cantine/issues/6402)) ([5f59d84](https://github.com/betagouv/ma-cantine/commit/5f59d844112714c41821a4d0b231e4bec3fe281d))
+* **Imports:** Cantines: créer un fichier pour les tests du schémas ([#6408](https://github.com/betagouv/ma-cantine/issues/6408)) ([a65b0ab](https://github.com/betagouv/ma-cantine/commit/a65b0abc45c5f9fdc177cbc84c5bf2f55d8b39d2))
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** ne pas exclure les TD groupes des calculs TD (en attendant 1TD1Site) ([#6399](https://github.com/betagouv/ma-cantine/issues/6399)) ([81aa5de](https://github.com/betagouv/ma-cantine/commit/81aa5de9afb9cfec8da797eed7e16110b5dd7f50))
+* **Cantines:** ne pas vérifier les champs de la cantine lors de sa revendication ([#6388](https://github.com/betagouv/ma-cantine/issues/6388)) ([d7d6ff1](https://github.com/betagouv/ma-cantine/commit/d7d6ff1cbe95931a566a6129eb8e945746b58f74))
+* **Imports:** Achats: corrige l'erreur sur les prix ([#6389](https://github.com/betagouv/ma-cantine/issues/6389)) ([b386a54](https://github.com/betagouv/ma-cantine/commit/b386a54005052a79685efdbae539b03407c54be8))
+* **Imports:** Bilans détaillés: répare le lien vers le fichier d'exemple ([#6404](https://github.com/betagouv/ma-cantine/issues/6404)) ([d2e4e68](https://github.com/betagouv/ma-cantine/commit/d2e4e683bdc40cb581981805e810aacd8d53b011))
+* **Tableau de bord:** corrige l'erreur bloquante si une cantine n'a pas de mode de production ([#6410](https://github.com/betagouv/ma-cantine/issues/6410)) ([23e4994](https://github.com/betagouv/ma-cantine/commit/23e499465ed2274e2df2cd8aef628f607d4fe255))
+* **Tests:** répare un test suite aux modifs géo récentes ([#6385](https://github.com/betagouv/ma-cantine/issues/6385)) ([cddd058](https://github.com/betagouv/ma-cantine/commit/cddd0588e300edc2fcbbef5a9b39a5bc99fe50e1))
+
+
+### Technique
+
+* **Imports:** Bilans simple: prefixer les tests & les fichiers (en amont des imports bilans détaillés) ([#6392](https://github.com/betagouv/ma-cantine/issues/6392)) ([cbb6673](https://github.com/betagouv/ma-cantine/commit/cbb6673dc79d40e5e5766432a3d2574986bf5824))
+* **Imports:** Bilans: script pour générer (et mettre à jour) automatiquement le schéma ([#6398](https://github.com/betagouv/ma-cantine/issues/6398)) ([84f4c8c](https://github.com/betagouv/ma-cantine/commit/84f4c8c1b4f95c8444e355a0f1ab200c6a63d423))
+* **Sentry:** ajoute les nouveaux imports cantines dans les erreurs à ignorer ([#6412](https://github.com/betagouv/ma-cantine/issues/6412)) ([c0c6f1a](https://github.com/betagouv/ma-cantine/commit/c0c6f1aa3dac9042d6b39574593c50d5ea01d50b))
+
+
+### Documentation
+
+* **Télédéclaration:** ajoute + d'infos dans le tableau des versions ([#6401](https://github.com/betagouv/ma-cantine/issues/6401)) ([b96f216](https://github.com/betagouv/ma-cantine/commit/b96f216596d008dc9e1f063b6ce669f29acaf443))
+
 ## [2026.15.1](https://github.com/betagouv/ma-cantine/compare/v2026.15.0...v2026.15.1) (2026-02-13)
 
 
