@@ -11,7 +11,7 @@ const emit = defineEmits(["close"])
     @close="emit('close')"
   >
     <p>
-      Cet export contient l'ensemble des données d’information relatives aux cantines que vous gérez enregistrées avec un SIRET ou rattachées à une unité légale via le numéro SIREN.
+      Cet export contient l'ensemble des données relatives aux cantines que vous gérez, enregistrées avec un SIRET ou rattachées à une unité légale via le numéro SIREN.
       Vous pourrez modifier ce fichier et le ré-utiliser tel quel depuis la page
       <router-link :to="{ name: 'GestionnaireImportCantinesModifier' }">modifier des cantines</router-link>
       pour mettre à jour les informations de ces cantines en masse.
