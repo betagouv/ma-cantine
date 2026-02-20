@@ -22,7 +22,7 @@
       <DsfrCard
         class="gestionnaire-empty-canteen__card"
         title="Créer plus de 5 cantines via import de fichier"
-        :link="{ name: 'GestionnaireImportCantines' }"
+        :link="{ name: 'GestionnaireImportCantinesCreer' }"
         endDetail="Importer toutes vos cantines"
         description="Notre outil d’import de masse vous permet de créer vos cantines ou de modifier vos cantines existantes d’un coup. Il concerne uniquement les gestionnaires qui ont plus de 5 cantines."
       />

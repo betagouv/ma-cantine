@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
-from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
 
 from api.serializers import FullCanteenSerializer
@@ -16,13 +15,13 @@ from .canteen import AddManagerView
 from .utils import camelize
 
 
-CANTEEN_SCHEMA_FILE_NAME = "cantines.json"
+CANTEEN_SCHEMA_FILE_NAME = "cantines_creer.json"
 CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
 CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{CANTEEN_SCHEMA_FILE_PATH}"
 
 
-class CanteensImportView(BaseImportView):
-    import_type = ImportType.CANTEEN_ONLY
+class CanteensCreateImportView(BaseImportView):
+    import_type = ImportType.CANTEEN_CREATE
     model_class = Canteen
 
     manager_column_idx = 11  # gestionnaires_additionnels
@@ -32,7 +31,7 @@ class CanteensImportView(BaseImportView):
         self.canteens_created = {}
 
     def _get_schema_config(self):
-        """Return schema config based on user role"""
+        """Return schema config"""
         return {
             "name": CANTEEN_SCHEMA_FILE_NAME,
             "url": CANTEEN_SCHEMA_URL,
@@ -40,7 +39,7 @@ class CanteensImportView(BaseImportView):
         }
 
     def _process_file(self, data):
-        """Process file and track canteens needing geolocation"""
+        """Process file"""
         for row_number, row in enumerate(data, start=1):
             if row_number == 1:  # skip header
                 continue
@@ -57,7 +56,7 @@ class CanteensImportView(BaseImportView):
     def _save_data_from_row(self, row):
         """Process and save canteen data from row"""
         manager_emails = self._get_manager_emails_to_notify(row)
-        canteen = self._update_or_create_canteen(row, manager_emails)
+        canteen = self._create_canteen(row, manager_emails)
         return canteen
 
     @staticmethod
@@ -92,19 +91,19 @@ class CanteensImportView(BaseImportView):
         try:
             manager_emails = []
             if len(row) > self.manager_column_idx and row[self.manager_column_idx]:
-                manager_emails = CanteensImportView._get_manager_emails(row[self.manager_column_idx])
+                manager_emails = CanteensCreateImportView._get_manager_emails(row[self.manager_column_idx])
         except Exception:
             raise ValidationError(
                 {"email": f"Un adresse email des gestionnaires ({row[self.manager_column_idx]}) n'est pas valide."}
             )
         return manager_emails
 
-    def _update_or_create_canteen(
+    def _create_canteen(
         self,
         row,
         manager_emails,
     ):
-        # TODO: remove hardcoded indexes
+        # Fields cleaning
         siret = utils_utils.normalize_string(row[0])
         name = row[1].strip()
         central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
@@ -123,10 +122,23 @@ class CanteensImportView(BaseImportView):
         economic_model = next(
             (value for value, label in Canteen.EconomicModel.choices if row[8].strip() in [label, value]), None
         )
-
-        # Group custom validation
         groupe_id = row[9]
         groupe = None
+        line_ministry = (
+            next((value for value, label in Canteen.Ministries.choices if label == row[10].strip()), None)
+            if row[10]
+            else None
+        )
+
+        # Fields validations
+        canteen_exists = Canteen.objects.filter(siret=siret).exists()
+        if canteen_exists:
+            raise ValidationError(
+                {
+                    "siret": f"Vous ne pouvez pas créer de cantine avec le numéro SIRET « {siret} » car elle existe déjà sur la plateforme."
+                }
+            )
+
         if groupe_id:
             try:
                 groupe = Canteen.objects.get(id=groupe_id)
@@ -135,80 +147,29 @@ class CanteensImportView(BaseImportView):
                     {"groupe_id": f"Aucun groupe avec le numéro identifiant « {groupe_id} » trouvé sur la plateforme."}
                 )
 
-        line_ministry = (
-            next((value for value, label in Canteen.Ministries.choices if label == row[10].strip()), None)
-            if row[10]
-            else None
-        )
-
-        canteen_exists = Canteen.objects.filter(siret=siret).exists()
-        canteen = (
-            Canteen.objects.get(siret=siret)
-            if canteen_exists
-            else Canteen.objects.create(
-                name=name,
-                siret=siret,
-                daily_meal_count=daily_meal_count,
-                yearly_meal_count=yearly_meal_count,
-                sector_list=sector_list,
-                management_type=management_type,
-                production_type=production_type,
-                economic_model=economic_model,
-                central_producer_siret=central_producer_siret,
-                groupe=groupe,
-                line_ministry=line_ministry,
-                creation_source=CreationSource.IMPORT,
-            )
+        # Create canteen
+        canteen = Canteen.objects.create(
+            name=name,
+            siret=siret,
+            daily_meal_count=daily_meal_count,
+            yearly_meal_count=yearly_meal_count,
+            sector_list=sector_list,
+            management_type=management_type,
+            production_type=production_type,
+            economic_model=economic_model,
+            central_producer_siret=central_producer_siret,
+            groupe=groupe,
+            line_ministry=line_ministry,
+            creation_source=CreationSource.IMPORT,
         )
 
         if not canteen_exists:
             update_change_reason(canteen, f"Mass CSV import - canteen creation. {self.__class__.__name__[:100]}")
 
-        if canteen_exists and not self._has_canteen_permission(canteen):
-            raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
-
-        canteen.name = name
-        canteen.daily_meal_count = daily_meal_count
-        canteen.yearly_meal_count = yearly_meal_count
-        canteen.sector_list = sector_list
-        canteen.production_type = production_type
-        canteen.management_type = management_type
-        canteen.economic_model = economic_model
-        canteen.central_producer_siret = central_producer_siret
-        canteen.groupe = groupe
-        canteen.line_ministry = line_ministry
-
-        canteen.save()
-        update_change_reason(canteen, f"Mass CSV import. {self.__class__.__name__[:100]}")
-
         canteen.managers.add(self.request.user)
         if manager_emails:
-            CanteensImportView._add_managers_to_canteen(manager_emails, canteen)
+            CanteensCreateImportView._add_managers_to_canteen(manager_emails, canteen)
         return canteen
-
-    def _parse_errors(self, e, row, identifier=None):
-        """Extended error parsing for canteen-specific errors"""
-        errors = []
-
-        # Handle canteen-specific exceptions first
-        if isinstance(e, Canteen.MultipleObjectsReturned):
-            self._add_error(
-                errors,
-                f"Plusieurs cantines correspondent au SIRET {identifier}. Veuillez enlever les doublons.",
-            )
-            return errors
-        elif isinstance(e, FileFormatError):
-            self._add_error(errors, e.detail)
-            return errors
-
-        # Fall back to base class handling
-        return super()._parse_errors(e, row, identifier)
 
     def _get_generic_error_message(self):
         return "Une erreur s'est produite en créant une cantine pour cette ligne"
-
-
-class FileFormatError(Exception):
-    def __init__(self, detail, **kwargs):
-        self.detail = detail
-        super().__init__(detail)

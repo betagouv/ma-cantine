@@ -426,8 +426,8 @@ const vue3Routes = [
     name: "GestionnaireImportAchatsSIRET",
   },
   {
-    path: "/tableau-de-bord/imports/cantines",
-    name: "GestionnaireImportCantines",
+    path: "/tableau-de-bord/imports/cantines-creer",
+    name: "GestionnaireImportCantinesCreer",
   },
   {
     path: "/tableau-de-bord/cantines/ajouter",

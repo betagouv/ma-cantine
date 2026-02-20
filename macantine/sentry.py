@@ -12,7 +12,7 @@ def before_send(event, hint):
     exception_type, _, _ = hint.get("exc_info")
     module = hint.get("log_record").module
 
-    modules = ["canteen_import", "diagnostic_import", "purchase_import"]
+    modules = ["canteen_create_import", "diagnostic_import", "purchase_import"]
     exceptions = [
         PermissionDenied,
         ValidationError,

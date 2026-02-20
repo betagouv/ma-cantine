@@ -2,7 +2,8 @@ from django.db import models
 
 
 class ImportType(models.TextChoices):
-    CANTEEN_ONLY = "CANTEEN_ONLY", "Cantines seules"
+    CANTEEN_ONLY = "CANTEEN_ONLY", "Cantines seules"  # plus utilisé
+    CANTEEN_CREATE = "CANTEEN_CREATE", "Cantines créées"
     CANTEEN_MANAGERS = "CANTEEN_MANAGERS", "Cantines avec gestionnaires"
     CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE = (
         "CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE",
