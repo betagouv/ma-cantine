@@ -597,8 +597,11 @@ class CanteenExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Canteen
         fields = (
+            "id",
             "siret",
+            "siren_unite_legale",
             "nom",
+            "city_insee_code",
             "siret_cuisine_centrale",
             "nombre_repas_jour",
             "nombre_repas_an",

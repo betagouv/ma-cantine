@@ -19,8 +19,11 @@ class UserCanteenListExportView(ListAPIView, XLSXFileMixin):
     # same as data/schemas/imports/cantines.json
     column_header = {
         "titles": [
+            "id",
             "siret",
+            "siren_unite_legale",
             "nom",
+            "city_insee_code",
             "siret_cuisine_centrale",
             "nombre_repas_jour",
             "nombre_repas_an",
