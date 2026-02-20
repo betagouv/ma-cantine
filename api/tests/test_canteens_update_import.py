@@ -149,6 +149,30 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0]["message"], "Champ 'siret' : 14 caractères numériques sont attendus")
 
+    @authenticate
+    def test_error_missing_city_insee_code(self):
+        """
+        City insee code is required when siren_unite_legale is provided
+        """
+        canteen = CanteenFactory(id=9999999997)
+        canteen.managers.add(authenticate.user)
+
+        file_path = "./api/tests/files/canteens/canteens_update_bad_missing_insee_code.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(
+            errors[0]["message"],
+            "Champ 'Code INSEE' : Le code INSEE est obligatoire pour les cantines avec le 'siren_unite_legale' de renseigné.",
+        )
+
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteensUpdateImportApiSuccessTest(APITestCase):

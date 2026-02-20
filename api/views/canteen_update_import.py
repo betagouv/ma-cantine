@@ -118,8 +118,14 @@ class CanteensUpdateImportView(BaseImportView):
 
         city_insee_code = utils_utils.normalize_string(row[4]) if row[4] else None
         # Validate city_insee_code
-        if siren_unite_legale and city_insee_code:
-            if len(city_insee_code) != 5:
+        if siren_unite_legale:
+            if not city_insee_code:
+                raise ValidationError(
+                    {
+                        "city_insee_code": "Le code INSEE est obligatoire pour les cantines avec le 'siren_unite_legale' de renseigné."
+                    }
+                )
+            elif len(city_insee_code) != 5:
                 raise ValidationError(
                     {
                         "city_insee_code": f"Le code INSEE « {city_insee_code} » n'est pas valide, il doit contenir 5 caractères (ex : 75056)."
