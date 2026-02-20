@@ -579,7 +579,7 @@ class SatelliteTeledeclarationSerializer(serializers.ModelSerializer):
         fields = CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS
 
 
-# same as data/schemas/imports/cantines.json
+# same as data/schemas/imports/cantines_modifier.json
 class CanteenExportSerializer(serializers.ModelSerializer):
     # siret = serializers.CharField(source="siret", read_only=True)
     nom = serializers.CharField(source="name", read_only=True)
