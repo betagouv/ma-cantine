@@ -8,6 +8,7 @@ import ImportFileUpload from "@/components/ImportFileUpload.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 // import ImportFilesExample from "@/components/ImportFilesExample.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
+import ImportAdminCallout from "@/components/ImportAdminCallout.vue"
 
 /* Router */
 const route = useRoute()
@@ -60,6 +61,7 @@ const success = (count) => {
   <ImportFilesExample :filePreviews />
   -->
   <ImportSchemaTable :schemaFile />
+  <ImportAdminCallout />
   <ImportFileUpload
     @success="success"
     apiUrl="importCanteens/update"
