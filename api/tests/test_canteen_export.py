@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase
 from api.tests.utils import authenticate
 
 from data.factories import CanteenFactory
+from data.models import Canteen
 
 
 class CanteenListExportApiTest(APITestCase):
@@ -29,10 +30,21 @@ class CanteenListExportApiTest(APITestCase):
 
     @authenticate
     def test_excel_export_only_canteens_with_siret(self):
-        CanteenFactory(managers=[authenticate.user], siret=None, siren_unite_legale="123456789")
-        CanteenFactory(managers=[authenticate.user])
+        CanteenFactory(
+            managers=[authenticate.user],
+            siret=None,
+            siren_unite_legale="390702058",
+            production_type=Canteen.ProductionType.ON_SITE,
+        )
+        CanteenFactory(
+            siret="39070205800012",
+            managers=[authenticate.user],
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+        )
+
+        self.assertEqual(Canteen.objects.count(), 2)
 
         response = self.client.get(reverse("user_canteen_list_export"))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)

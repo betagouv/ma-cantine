@@ -10,9 +10,8 @@ const emit = defineEmits(["close"])
     title="Export des informations de mes cantines avec SIRET"
     @close="emit('close')"
   >
-    <DsfrHighlight text="Prochainement : export des cantines sans SIRET et des groupes de restaurants satellites." class="fr-mt-4w fr-ml-0"/>
     <p>
-      Cet export contient l'ensemble des données d’information relatives aux cantines enregistrées avec un SIRET que vous gérez.
+      Cet export contient l'ensemble des données relatives aux cantines que vous gérez, enregistrées avec un SIRET ou rattachées à une unité légale via le numéro SIREN.
       Vous pourrez modifier ce fichier et le ré-utiliser tel quel depuis la page
       <router-link :to="{ name: 'GestionnaireImportCantinesModifier' }">modifier des cantines</router-link>
       pour mettre à jour les informations de ces cantines en masse.
