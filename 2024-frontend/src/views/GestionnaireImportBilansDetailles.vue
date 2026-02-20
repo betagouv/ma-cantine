@@ -14,7 +14,7 @@ const route = useRoute()
 /* Data */
 const schemaFile = "bilans_detaille.json"
 const exampleFile = {
-  name: "importer_des_bilans_detaille_exemple.xlsx",
+  name: "importer_des_bilans_detailles_exemple.xlsx",
   size: "9 ko",
 }
 const links = [
