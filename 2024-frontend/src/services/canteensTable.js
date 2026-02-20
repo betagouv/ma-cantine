@@ -38,6 +38,7 @@ const getCityInfos = (canteen) => {
 }
 
 const getProductionTypeInfos = (canteen) => {
+  if (!canteen.productionType) return
   const slug = canteen.productionType
   const index = cantines.productionType.findIndex((type) => type.value === slug)
   return cantines.productionType[index].label
