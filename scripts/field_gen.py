@@ -17,8 +17,8 @@ labels = [
     ),
     ("PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"),
     ("FRANCE", "Origine France"),
-    ("CIRCUIT_COURT", "Circuit-court"),
-    ("LOCAL", "Produit local"),
+    ("CIRCUIT_COURT", "Origine France (dont circuit-court)"),
+    ("LOCAL", "Origine France (dont local)"),
 ]
 families = [
     ("VIANDES_VOLAILLES", "Viandes et volailles fraîches et surgelées"),
