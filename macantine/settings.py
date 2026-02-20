@@ -51,7 +51,6 @@ ENFORCE_HOST = os.getenv("ENFORCE_HOST", None)
 DEBUG_PERFORMANCE = os.getenv("DEBUG") == "True" and os.getenv("DEBUG_PERFORMANCE") == "True"
 
 ENVIRONMENT = os.getenv("ENVIRONMENT")
-GIT_BRANCH = os.getenv("GIT_BRANCH", "staging" if ENVIRONMENT == "dev" else "main")
 
 INTERNAL_IPS = []
 
@@ -237,6 +236,14 @@ LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/s-identifier"
 
 HOSTNAME = os.getenv("HOSTNAME")
+
+
+# Github repo
+# ------------------------------------------------------------------------------
+
+GITHUB_REPO_URL = "https://github.com/betagouv/ma-cantine"
+GITHUB_RAW_BASE_URL = "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main"
+GIT_BRANCH = os.getenv("GIT_BRANCH", "staging" if ENVIRONMENT == "dev" else "main")
 
 
 # Sentry
