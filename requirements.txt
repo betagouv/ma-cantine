@@ -4,6 +4,10 @@ amqp==5.3.1
     # via
     #   kombu
     #   ma-cantine
+annotated-doc==0.0.4
+    # via typer
+annotated-types==0.7.0
+    # via pydantic
 anyascii==0.3.2
     # via
     #   ma-cantine
@@ -34,6 +38,7 @@ async-timeout==4.0.3
     #   redis
 attrs==24.2.0
     # via
+    #   frictionless
     #   jsonschema
     #   ma-cantine
     #   referencing
@@ -74,6 +79,7 @@ cfgv==3.4.0
     #   pre-commit
 chardet==5.2.0
     # via
+    #   frictionless
     #   ma-cantine
     #   reportlab
 charset-normalizer==3.3.2
@@ -89,6 +95,7 @@ click==8.1.7
     #   djlint
     #   ma-cantine
     #   pyhanko
+    #   typer
 click-didyoumean==0.3.1
     # via
     #   celery
@@ -276,6 +283,8 @@ filetype==1.2.0
     #   willow
 freezegun==1.5.2
     # via ma-cantine
+frictionless==5.18.1
+    # via ma-cantine
 fsspec==2024.9.0
     # via ma-cantine
 greenlet==3.2.2 ; (python_full_version < '3.13' and platform_machine == 'AMD64') or (python_full_version < '3.13' and platform_machine == 'WIN32') or (python_full_version < '3.13' and platform_machine == 'aarch64') or (python_full_version < '3.13' and platform_machine == 'amd64') or (python_full_version < '3.13' and platform_machine == 'ppc64le') or (python_full_version < '3.13' and platform_machine == 'win32') or (python_full_version < '3.13' and platform_machine == 'x86_64')
@@ -290,6 +299,8 @@ html5lib==1.1
     # via
     #   ma-cantine
     #   xhtml2pdf
+humanize==4.15.0
+    # via frictionless
 identify==2.6.2
     # via
     #   ma-cantine
@@ -310,12 +321,16 @@ ipython==9.5.0
     # via ma-cantine
 ipython-pygments-lexers==1.1.1
     # via ipython
+isodate==0.7.2
+    # via frictionless
 isort==5.13.2
     # via
     #   ma-cantine
     #   pylint
 jedi==0.19.2
     # via ipython
+jinja2==3.1.6
+    # via frictionless
 jmespath==1.0.1
     # via
     #   boto3
@@ -333,6 +348,7 @@ json5==0.9.25
 jsonschema==4.23.0
     # via
     #   drf-spectacular
+    #   frictionless
     #   ma-cantine
 jsonschema-specifications==2024.10.1
     # via
@@ -360,12 +376,20 @@ lxml==5.3.0
     # via
     #   ma-cantine
     #   svglib
+markdown-it-py==4.0.0
+    # via rich
+marko==2.2.2
+    # via frictionless
+markupsafe==3.0.3
+    # via jinja2
 matplotlib-inline==0.1.7
     # via ipython
 mccabe==0.6.1
     # via
     #   ma-cantine
     #   pylint
+mdurl==0.1.2
+    # via markdown-it-py
 mypy-extensions==1.0.0
     # via ma-cantine
 nodeenv==1.9.1
@@ -408,6 +432,8 @@ pathspec==0.12.1
     # via
     #   djlint
     #   ma-cantine
+petl==1.7.17
+    # via frictionless
 pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
     # via ipython
 pillow==10.4.0
@@ -457,10 +483,15 @@ pycparser==2.22
     # via
     #   cffi
     #   ma-cantine
+pydantic==2.11.10
+    # via frictionless
+pydantic-core==2.33.2
+    # via pydantic
 pygments==2.19.2
     # via
     #   ipython
     #   ipython-pygments-lexers
+    #   rich
 pyhanko==0.25.1
     # via
     #   ma-cantine
@@ -507,11 +538,14 @@ python-dateutil==2.9.0.post0
     #   celery
     #   faker
     #   freezegun
+    #   frictionless
     #   ma-cantine
     #   pandas
     #   sib-api-v3-sdk
 python-dotenv==1.0.1
     # via ma-cantine
+python-slugify==8.0.4
+    # via frictionless
 pytz==2024.2
     # via
     #   l18n
@@ -521,6 +555,7 @@ pyyaml==6.0.2
     # via
     #   djlint
     #   drf-spectacular
+    #   frictionless
     #   ma-cantine
     #   pre-commit
     #   pyhanko
@@ -548,6 +583,7 @@ requests==2.32.4
     # via
     #   django-anymail
     #   django-oauth-toolkit
+    #   frictionless
     #   ma-cantine
     #   pyhanko
     #   pyhanko-certvalidator
@@ -555,6 +591,10 @@ requests==2.32.4
     #   wagtail
 requests-mock==1.12.1
     # via ma-cantine
+rfc3986==2.0.0
+    # via frictionless
+rich==14.3.2
+    # via typer
 rpds-py==0.21.0
     # via
     #   jsonschema
@@ -568,8 +608,12 @@ s3transfer==0.10.4
     #   ma-cantine
 sentry-sdk==2.10.0
     # via ma-cantine
+shellingham==1.5.4
+    # via typer
 sib-api-v3-sdk==7.6.0
     # via ma-cantine
+simpleeval==1.0.3
+    # via frictionless
 six==1.17.0
     # via
     #   cssbeautifier
@@ -597,12 +641,16 @@ svglib==1.5.1
     # via
     #   ma-cantine
     #   xhtml2pdf
+tabulate==0.9.0
+    # via frictionless
 telepath==0.3.1
     # via
     #   ma-cantine
     #   wagtail
 text-unidecode==1.3
-    # via ma-cantine
+    # via
+    #   ma-cantine
+    #   python-slugify
 tinycss2==1.4.0
     # via
     #   cssselect2
@@ -625,13 +673,21 @@ traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
+typer==0.23.1
+    # via frictionless
 typing-extensions==4.12.2
     # via
+    #   frictionless
     #   ipython
     #   jwcrypto
     #   ma-cantine
+    #   pydantic
+    #   pydantic-core
     #   qrcode
     #   sqlalchemy
+    #   typing-inspection
+typing-inspection==0.4.2
+    # via pydantic
 tzdata==2024.2
     # via
     #   celery
@@ -660,6 +716,8 @@ urllib3==2.2.3
     #   requests
     #   sentry-sdk
     #   sib-api-v3-sdk
+validators==0.35.0
+    # via frictionless
 vine==5.1.0
     # via
     #   amqp
