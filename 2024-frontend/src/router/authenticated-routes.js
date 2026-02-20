@@ -76,7 +76,7 @@ const routes = [
         name: "GestionnaireImportAchats",
         component: GestionnaireImportAchats,
         meta: {
-          title: "Importer des achats via ID",
+          title: "Ajouter des achats via l'ID de la cantine",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
@@ -88,7 +88,7 @@ const routes = [
         name: "GestionnaireImportAchatsSIRET",
         component: GestionnaireImportAchatsSIRET,
         meta: {
-          title: "Importer des achats via SIRET",
+          title: "Ajouter des achats via le SIRET de la cantine",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
@@ -100,7 +100,7 @@ const routes = [
         name: "GestionnaireImportBilansSimples",
         component: GestionnaireImportBilansSimples,
         meta: {
-          title: "Importer des bilans simples via ID",
+          title: "Créer ou modifier des bilans simples via l'ID de la cantine",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
@@ -112,7 +112,7 @@ const routes = [
         name: "GestionnaireImportBilansSimplesSIRET",
         component: GestionnaireImportBilansSimplesSIRET,
         meta: {
-          title: "Importer des bilans simples via SIRET",
+          title: "Créer ou modifier des bilans simples via le SIRET de la cantine",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
@@ -124,7 +124,7 @@ const routes = [
         name: "GestionnaireImportBilansDetailles",
         component: GestionnaireImportBilansDetailles,
         meta: {
-          title: "Importer des bilans détaillés",
+          title: "Créer ou modifier des bilans détaillés",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
