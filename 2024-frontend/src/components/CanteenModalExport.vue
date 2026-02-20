@@ -14,7 +14,7 @@ const emit = defineEmits(["close"])
     <p>
       Cet export contient l'ensemble des données d’information relatives aux cantines enregistrées avec un SIRET que vous gérez.
       Vous pourrez modifier ce fichier et le ré-utiliser tel quel depuis la page
-      <router-link :to="{ name: 'GestionnaireImports' }">importer des cantines</router-link>
+      <router-link :to="{ name: 'GestionnaireImportCantinesModifier' }">modifier des cantines</router-link>
       pour mettre à jour les informations de ces cantines en masse.
     </p>
     <p class="ma-cantine--bold">Pour rappel, pour modifier les cantines via imports ou créer des bilans, vous devez être gestionnaire de celles-ci.</p>
