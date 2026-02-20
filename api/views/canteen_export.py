@@ -16,7 +16,7 @@ class UserCanteenListExportView(ListAPIView, XLSXFileMixin):
     def get_queryset(self):
         return self.request.user.canteens.is_serving().order_by("id")
 
-    # same as data/schemas/imports/cantines.json
+    # same as data/schemas/imports/cantines_modifier.json
     column_header = {
         "titles": [
             "id",
