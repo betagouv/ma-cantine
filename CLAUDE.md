@@ -2,8 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# Copilot Instructions for ma-cantine
-
 ## Mission & Context
 
 **Ma Cantine** is a French government service (beta.gouv.fr) that helps collective catering actors offer quality, healthy, and sustainable meals. The platform features diagnostics, performance tracking, and teledeclaration systems for compliance with EGalim regulations.
