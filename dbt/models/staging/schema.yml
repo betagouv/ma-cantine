@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: stg_teledeclarations
+    description: >
+      Télédéclarations from the data warehouse (loaded by the Python ETL).
+      One row per canteen per campaign year.
