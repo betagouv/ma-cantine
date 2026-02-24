@@ -16,18 +16,18 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="diagnostic",
-            name="generated_from_central_kitchen_diagnostic",
+            name="generated_from_groupe_diagnostic",
             field=models.BooleanField(
                 default=False,
-                verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan de la cuisine centrale",
+                verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan du groupe",
             ),
         ),
         migrations.AddField(
             model_name="historicaldiagnostic",
-            name="generated_from_central_kitchen_diagnostic",
+            name="generated_from_groupe_diagnostic",
             field=models.BooleanField(
                 default=False,
-                verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan de la cuisine centrale",
+                verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan du groupe",
             ),
         ),
         migrations.AlterField(
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 choices=[
                     ("DRAFT", "Brouillon"),
                     ("SUBMITTED", "Télédéclaré"),
-                    ("OVERRIDEN_BY_CC", "Ecrasé par la cuisine centrale"),
+                    ("SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE", "Télédéclaré mais écrasé par le groupe"),
                 ],
                 default="DRAFT",
                 max_length=255,
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                 choices=[
                     ("DRAFT", "Brouillon"),
                     ("SUBMITTED", "Télédéclaré"),
-                    ("OVERRIDEN_BY_CC", "Ecrasé par la cuisine centrale"),
+                    ("SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE", "Télédéclaré mais écrasé par le groupe"),
                 ],
                 default="DRAFT",
                 max_length=255,
@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="diagnostic",
             constraint=models.UniqueConstraint(
-                fields=("canteen", "year", "generated_from_central_kitchen_diagnostic"),
+                fields=("canteen", "year", "generated_from_groupe_diagnostic"),
                 name="annual_diagnostic",
             ),
         ),

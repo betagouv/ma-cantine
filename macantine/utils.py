@@ -183,15 +183,38 @@ def get_year_campaign_end_date_or_today_date(year):
         return None
 
 
-def distribute_appro_values_between_satellites(diag, fields, nbre_satellites) -> dict:
+def divide_appro_values(diagnostic, satellite=None) -> dict:
     """
-    Generate a dict with appro values distributed to satellites from a central kitchen diagnostic
-    The method used is to divide the central kitchen appro values by the number of satellites.
+    Generate a dict with appro values distributed to satellites from a groupe diagnostic
+
+    Rules:
+    - in 2024 (and before), we divide by the number of satellites
+    - in 2025, we divide by the yearly_meal_count
     """
-    updated_appro_fields = {}
+    from data.models import Canteen, Diagnostic  # avoid circular import
+
+    appro_fields_satellite = {}
+
+    # fields to distribute
+    fields = Diagnostic.AGGREGATED_APPRO_FIELDS
+    if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
+        fields += Diagnostic.SIMPLE_APPRO_FIELDS
+    else:
+        fields += Diagnostic.COMPLETE_APPRO_FIELDS
+
+    # get the divisor
+    if diagnostic.year == 2025:
+        divisor = satellite.yearly_meal_count
+    else:  # 2024 and before
+        divisor = len(diagnostic.satellites_snapshot) if diagnostic.satellites_snapshot else 0
+        if diagnostic.canteen_snapshot["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
+            divisor += 1  # we also include the central serving kitchen itself in the divisor
+
+    # divide values
     for field in fields:
         try:
-            updated_appro_fields[field] = getattr(diag, field) / nbre_satellites
+            appro_fields_satellite[field] = getattr(diagnostic, field) / divisor
         except TypeError:
-            updated_appro_fields[field] = None
-    return updated_appro_fields
+            appro_fields_satellite[field] = None
+
+    return appro_fields_satellite
