@@ -54,7 +54,7 @@ dependencies = [
     "django-otp==1.5.2",
     "django-permissionedforms==0.1",
     "django-simple-history==3.7.0",
-    "django-storages==1.14.4",
+    "django-storages==1.14.6",
     "django-taggit==5.0.1",
     "django-treebeard==4.7.1",
     "django-vite-plugin==4.1.2",

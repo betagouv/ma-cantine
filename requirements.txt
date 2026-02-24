@@ -212,7 +212,7 @@ django-permissionedforms==0.1
     #   wagtail
 django-simple-history==3.7.0
     # via ma-cantine
-django-storages==1.14.4
+django-storages==1.14.6
     # via ma-cantine
 django-stubs-ext==5.2.9
     # via django-tasks
