@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0214_diagnostic_value_egalim_hors_bio_ht_agg_and_more"),
+        ("data", "0245_alter_diagnostic_verbose_names"),
     ]
 
     operations = [
