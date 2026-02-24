@@ -338,8 +338,8 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         body = response.json()
-        self.assertEqual(body["periodStartDate"][0], "Ce champ est obligatoire.")
-        self.assertEqual(body["periodEndDate"][0], "Ce champ est obligatoire.")
+        self.assertEqual(body["periodStartDate"][0], "Champ requis.")
+        self.assertEqual(body["periodEndDate"][0], "Champ requis.")
 
     @authenticate
     @freeze_time("2024-08-10")

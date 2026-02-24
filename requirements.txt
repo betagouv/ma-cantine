@@ -146,7 +146,7 @@ distlib==0.3.9
     # via
     #   ma-cantine
     #   virtualenv
-django==5.1.15
+django==5.2.11
     # via
     #   django-anymail
     #   django-celery-results
@@ -163,7 +163,9 @@ django==5.1.15
     #   django-permissionedforms
     #   django-simple-history
     #   django-storages
+    #   django-stubs-ext
     #   django-taggit
+    #   django-tasks
     #   django-treebeard
     #   djangorestframework
     #   drf-base64
@@ -212,10 +214,14 @@ django-simple-history==3.7.0
     # via ma-cantine
 django-storages==1.14.4
     # via ma-cantine
+django-stubs-ext==5.2.9
+    # via django-tasks
 django-taggit==5.0.1
     # via
     #   ma-cantine
     #   wagtail
+django-tasks==0.7.0
+    # via wagtail
 django-treebeard==4.7.1
     # via
     #   ma-cantine
@@ -224,7 +230,7 @@ django-vite-plugin==4.1.2
     # via ma-cantine
 django-webpack-loader==3.1.0
     # via ma-cantine
-djangorestframework==3.15.2
+djangorestframework==3.16.1
     # via
     #   drf-base64
     #   drf-excel
@@ -243,9 +249,9 @@ drf-base64==2.0
     # via ma-cantine
 drf-excel==2.4.1
     # via ma-cantine
-drf-spectacular==0.28.0
+drf-spectacular==0.29.0
     # via ma-cantine
-drf-spectacular-sidecar==2024.7.1
+drf-spectacular-sidecar==2026.1.1
     # via ma-cantine
 editorconfig==0.12.4
     # via
@@ -347,9 +353,7 @@ kombu==5.4.2
     #   celery
     #   ma-cantine
 l18n==2021.3
-    # via
-    #   ma-cantine
-    #   wagtail
+    # via ma-cantine
 laces==0.1.1
     # via
     #   ma-cantine
@@ -627,6 +631,8 @@ traitlets==5.14.3
     #   matplotlib-inline
 typing-extensions==4.12.2
     # via
+    #   django-stubs-ext
+    #   django-tasks
     #   ipython
     #   jwcrypto
     #   ma-cantine
@@ -670,7 +676,7 @@ virtualenv==20.26.6
     # via
     #   ma-cantine
     #   pre-commit
-wagtail==6.3
+wagtail==7.0.5
     # via ma-cantine
 wcwidth==0.2.13
     # via
@@ -682,10 +688,8 @@ webencodings==0.5.1
     #   html5lib
     #   ma-cantine
     #   tinycss2
-willow==1.9.0
-    # via
-    #   ma-cantine
-    #   wagtail
+willow==1.11.0
+    # via wagtail
 wrapt==1.17.2
     # via
     #   deprecated
