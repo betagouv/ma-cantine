@@ -104,37 +104,34 @@ class DiagnosticGenerateCsatFromCCCommandTest(TestCase):
         self.assertEqual(Diagnostic.objects.in_year(2024).filter(status=Diagnostic.DiagnosticStatus.DRAFT).count(), 1)
         self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 4)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024)
-            .teledeclared()
-            .filter(generated_from_central_kitchen_diagnostic=False)
-            .count(),
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=False).count(),
             4,
         )
 
         # Run the command
-        call_command("diagnostic_generate_csat_from_cc", year=2024, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         # There should be 3 new diagnostics: 2 for the satellites, 1 for the central serving kitchen
         self.assertEqual(Diagnostic.objects.in_year(2024).filter(status=Diagnostic.DiagnosticStatus.DRAFT).count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).filter(status=Diagnostic.DiagnosticStatus.OVERRIDEN_BY_CC).count(), 1
+            Diagnostic.objects.in_year(2024)
+            .filter(status=Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE)
+            .count(),
+            1,
         )
         self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 4 - 1 + 3)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024)
-            .teledeclared()
-            .filter(generated_from_central_kitchen_diagnostic=True)
-            .count(),
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
             3,
         )
 
     def test_command_creates_satellite_diagnostics_with_split_appro(self):
-        call_command("diagnostic_generate_csat_from_cc", year=2024, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         # There should be a new diagnostic for each satellite
         diag_sat1 = Diagnostic.objects.teledeclared().get(
-            canteen=self.satellite_1, year=2024, generated_from_central_kitchen_diagnostic=True
+            canteen=self.satellite_1, year=2024, generated_from_groupe_diagnostic=True
         )
         diag_sat2 = Diagnostic.objects.teledeclared().get(
-            canteen=self.satellite_2, year=2024, generated_from_central_kitchen_diagnostic=True
+            canteen=self.satellite_2, year=2024, generated_from_groupe_diagnostic=True
         )
         # The satellite canteen data should be set
         # The appro values should be split equally (1000/2, 200/2)
@@ -146,22 +143,22 @@ class DiagnosticGenerateCsatFromCCCommandTest(TestCase):
         self.assertEqual(diag_sat2.value_bio_ht, 100)
 
     def test_command_does_not_remove_original_cc_diag(self):
-        call_command("diagnostic_generate_csat_from_cc", year=2024, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         self.assertTrue(Diagnostic.objects.filter(canteen=self.central_kitchen, year=2024).exists())
 
     def test_command_does_not_edit_on_site_kitchen_diag(self):
-        call_command("diagnostic_generate_csat_from_cc", year=2024, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         self.assertTrue(Diagnostic.objects.filter(canteen=self.kitchen_1, year=2024).exists())
 
     def test_command_create_a_central_serving_diag(self):
-        call_command("diagnostic_generate_csat_from_cc", year=2024, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         self.assertTrue(
             Diagnostic.objects.filter(
-                canteen=self.central_serving_kitchen, year=2024, generated_from_central_kitchen_diagnostic=True
+                canteen=self.central_serving_kitchen, year=2024, generated_from_groupe_diagnostic=True
             ).exists()
         )
         self.assertTrue(
             Diagnostic.objects.filter(
-                canteen=self.central_serving_kitchen, year=2024, generated_from_central_kitchen_diagnostic=False
+                canteen=self.central_serving_kitchen, year=2024, generated_from_groupe_diagnostic=False
             ).exists()
         )
