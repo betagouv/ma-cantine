@@ -1,5 +1,7 @@
 # Copilot Instructions for ma-cantine
 
+This file provides guidance to Github Copilot (github.com/features/copilot) when working with code in this repository.
+
 ## Mission & Context
 
 **Ma Cantine** is a French government service (beta.gouv.fr) that helps collective catering actors offer quality, healthy, and sustainable meals. The platform features diagnostics, performance tracking, and teledeclaration systems for compliance with EGalim regulations.
