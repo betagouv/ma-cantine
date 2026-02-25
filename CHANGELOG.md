@@ -6,6 +6,25 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.16.1](https://github.com/betagouv/ma-cantine/compare/v2026.16.0...v2026.16.1) (2026-02-25)
+
+
+### Améliorations
+
+* **IA:** Claude & Github Copilot instructions (.md) ([#6419](https://github.com/betagouv/ma-cantine/issues/6419)) ([1f9ed03](https://github.com/betagouv/ma-cantine/commit/1f9ed0367b088f501353f64f240844909a59dd46))
+* **Télédéclarations:** nouveau champ `invalid_reason_list` pour indiquer la raison de la non prise en compte de certains bilans dans les stats (chaîne de traitement) [1TD1Site] ([#5753](https://github.com/betagouv/ma-cantine/issues/5753)) ([307b20d](https://github.com/betagouv/ma-cantine/commit/307b20d989e728ae1fa24604fbb0acd30e235537))
+* **Utilisateurs:** stocker toutes les nuits le nombre de bilans à TD (NB_CANTINES_TD_TODO_2025) ([#6424](https://github.com/betagouv/ma-cantine/issues/6424)) ([caf40f5](https://github.com/betagouv/ma-cantine/commit/caf40f5201784926b998ce98121169e36d2afdd2))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclarations:** lorsqu'une TD est annulée, vider aussi les snapshots ([#6423](https://github.com/betagouv/ma-cantine/issues/6423)) ([736c13a](https://github.com/betagouv/ma-cantine/commit/736c13aaa54e82dc69b240ef4bf2534a670023dc))
+
+
+### Technique
+
+* **deps:** mise à jour Django de 5.1.15 à 5.2.11 (et aussi DRF & Wagtail) ([#6390](https://github.com/betagouv/ma-cantine/issues/6390)) ([5e3bf0b](https://github.com/betagouv/ma-cantine/commit/5e3bf0b4c60aa65ef6786864a933ff293764326c))
+
 ## [2026.16.0](https://github.com/betagouv/ma-cantine/compare/v2026.15.1...v2026.16.0) (2026-02-20)
 
 
