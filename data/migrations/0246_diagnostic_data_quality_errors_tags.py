@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="diagnostic",
-            name="tags",
+            name="data_quality_error_tags",
             field=data.fields.ChoiceArrayField(
                 base_field=models.CharField(
                     choices=[
@@ -33,12 +33,12 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 size=None,
-                verbose_name="tags de qualité des données",
+                verbose_name="tags de qualité des données (erreur)",
             ),
         ),
         migrations.AddField(
             model_name="historicaldiagnostic",
-            name="tags",
+            name="data_quality_error_tags",
             field=data.fields.ChoiceArrayField(
                 base_field=models.CharField(
                     choices=[
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 size=None,
-                verbose_name="tags de qualité des données",
+                verbose_name="tags de qualité des données (erreur)",
             ),
         ),
     ]

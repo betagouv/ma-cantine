@@ -330,7 +330,7 @@ class Diagnostic(models.Model):
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
 
-    class DataQuality(models.TextChoices):
+    class DataQualityError(models.TextChoices):
         VALUE_TOTAL_HT_VIDE = "VALUE_TOTAL_HT_VIDE", "Valeur totale des achats vide"
         VALUE_BIO_HT_VIDE = "VALUE_BIO_HT_VIDE", "Valeur totale des achats bio vide"
         CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE = (
@@ -1485,12 +1485,12 @@ class Diagnostic(models.Model):
     )
 
     # Data quality
-    tags = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=DataQuality.choices),
+    data_quality_error_tags = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=DataQualityError.choices),
         blank=True,
         null=True,
         size=None,
-        verbose_name="tags de qualité des données",
+        verbose_name="tags de qualité des données (erreur)",
     )
 
     def __str__(self):
