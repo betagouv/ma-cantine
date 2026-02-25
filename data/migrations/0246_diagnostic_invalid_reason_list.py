@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="diagnostic",
-            name="data_quality_error_tags",
+            name="invalid_reason_list",
             field=data.fields.ChoiceArrayField(
                 base_field=models.CharField(
                     choices=[
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                         ),
                         ("CANTINE_SANS_SIRET_OU_SIREN", "Cantine sans siret ou siren"),
                         ("VALEURS_ABERRANTES", "Valeurs aberrantes"),
-                        ("DOUBLON_SATELLITE_CENTRALE", "Doublon satellite / centrale"),
+                        ("DOUBLON_1TD1SITE", "Doublon 1TD1Site"),
                         ("VALEURS_INCOHERENTES", "Valeurs incohérentes"),
                     ],
                     max_length=255,
@@ -33,12 +33,12 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 size=None,
-                verbose_name="tags de qualité des données (erreur)",
+                verbose_name="bilan ignoré dans le rapport (raisons)",
             ),
         ),
         migrations.AddField(
             model_name="historicaldiagnostic",
-            name="data_quality_error_tags",
+            name="invalid_reason_list",
             field=data.fields.ChoiceArrayField(
                 base_field=models.CharField(
                     choices=[
@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
                         ),
                         ("CANTINE_SANS_SIRET_OU_SIREN", "Cantine sans siret ou siren"),
                         ("VALEURS_ABERRANTES", "Valeurs aberrantes"),
-                        ("DOUBLON_SATELLITE_CENTRALE", "Doublon satellite / centrale"),
+                        ("DOUBLON_1TD1SITE", "Doublon 1TD1Site"),
                         ("VALEURS_INCOHERENTES", "Valeurs incohérentes"),
                     ],
                     max_length=255,
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 size=None,
-                verbose_name="tags de qualité des données (erreur)",
+                verbose_name="bilan ignoré dans le rapport (raisons)",
             ),
         ),
     ]

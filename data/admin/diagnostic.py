@@ -147,7 +147,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             "Metadonnées",
             {
                 "fields": (
-                    "data_quality_error_tags",
+                    "invalid_reason_list",
                     *Diagnostic.CREATION_META_FIELDS,
                 )
             },
@@ -162,7 +162,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "canteen_snapshot_pretty",
         "satellites_snapshot_pretty",
         "applicant_snapshot_pretty",
-        "data_quality_error_tags",
+        "invalid_reason_list",
         *Diagnostic.CREATION_META_FIELDS,
     )
 
