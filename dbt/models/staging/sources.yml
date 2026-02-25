@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: datawarehouse
+    description: >
+      Tables already present in the data warehouse, loaded by the existing Python ETL.
+      These can be used as sources immediately without FDW.
+    schema: public
+    tables:
+      - name: teledeclarations
+        description: Télédéclarations loaded by the Python ETL.
+      - name: canteens
+        description: Canteens loaded by the Python ETL.
+
