@@ -56,13 +56,7 @@ class UserQuerySet(models.QuerySet):
             nb_cantines_bilan_todo_2025=Count("canteens", distinct=True) - F("nb_cantines_bilan_2025"),
             # TDs
             nb_cantines_td_2025=Count("canteens", filter=Q(canteens__declaration_donnees_2025=True), distinct=True),
-            nb_cantines_td_todo_2025=Count(
-                "canteens",
-                filter=Q(canteens__declaration_donnees_2025=False)
-                & Q(canteens__groupe_id=None)
-                & Q(canteens__diagnostics__year=2025),
-                distinct=True,
-            ),
+            nb_cantines_td_todo_2025=Count("canteens", distinct=True) - F("nb_cantines_td_2025"),
         )
 
 

@@ -109,9 +109,7 @@ class UserModelTest(TestCase):
         self.assertEqual(user_with_canteens.nb_cantines_bilan_2025, 3)
         self.assertEqual(user_with_canteens.nb_cantines_bilan_todo_2025, 3)  # nb_cantines - nb_bilans_2025
         self.assertEqual(user_with_canteens.nb_cantines_td_2025, 1)  # canteen_centrale
-        self.assertEqual(
-            user_with_canteens.nb_cantines_td_todo_2025, 1
-        )  # canteen_site_armee (has a diagnostic but not teledeclared)
+        self.assertEqual(user_with_canteens.nb_cantines_td_todo_2025, 5)  # nb_cantines - nb_td_2025
 
         self.assertEqual(user_without_canteens.nb_cantines_bilan_2025, 0)
         self.assertEqual(user_without_canteens.nb_cantines_bilan_todo_2025, 0)
@@ -134,7 +132,7 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_2025"], 3)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_todo_2025"], 3)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_td_2025"], 1)
-        self.assertEqual(self.user_with_canteens.data["nb_cantines_td_todo_2025"], 1)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines_td_todo_2025"], 5)
 
         self.user_without_canteens = user_qs.get(id=self.user_without_canteens.id)
         self.user_without_canteens.update_data()
