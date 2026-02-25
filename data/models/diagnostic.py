@@ -1490,7 +1490,7 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         size=None,
-        verbose_name="bilan ignoré dans le rapport (raisons)",
+        verbose_name="bilan ignoré dans les stats (raisons)",
     )
 
     def __str__(self):

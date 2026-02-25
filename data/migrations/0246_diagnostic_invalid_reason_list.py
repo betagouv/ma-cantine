@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 size=None,
-                verbose_name="bilan ignoré dans le rapport (raisons)",
+                verbose_name="bilan ignoré dans les stats (raisons)",
             ),
         ),
         migrations.AddField(
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 size=None,
-                verbose_name="bilan ignoré dans le rapport (raisons)",
+                verbose_name="bilan ignoré dans les stats (raisons)",
             ),
         ),
     ]
