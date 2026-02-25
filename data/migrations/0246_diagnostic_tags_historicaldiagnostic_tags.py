@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0217_alter_canteen_production_type_and_more"),
+        ("data", "0245_alter_diagnostic_verbose_names"),
     ]
 
     operations = [
