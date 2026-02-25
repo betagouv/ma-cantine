@@ -330,6 +330,18 @@ class Diagnostic(models.Model):
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
 
+    class InvalidReason(models.TextChoices):
+        VALUE_TOTAL_HT_VIDE = "VALUE_TOTAL_HT_VIDE", "Valeur totale des achats vide"
+        VALUE_BIO_HT_VIDE = "VALUE_BIO_HT_VIDE", "Valeur totale des achats bio vide"
+        CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE = (
+            "CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE",
+            "Cantine supprimée pendant la campagne",
+        )
+        CANTINE_SANS_SIRET_OU_SIREN = "CANTINE_SANS_SIRET_OU_SIREN", "Cantine sans siret ou siren"
+        VALEURS_ABERRANTES = "VALEURS_ABERRANTES", "Valeurs aberrantes"
+        DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
+        VALEURS_INCOHERENTES = "VALEURS_INCOHERENTES", "Valeurs incohérentes"
+
     APPRO_FAMILIES = [
         "viandes_volailles",
         "produits_de_la_mer",
@@ -1470,6 +1482,15 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         encoder=CustomJSONEncoder,
+    )
+
+    # Data quality
+    invalid_reason_list = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=InvalidReason.choices),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="bilan ignoré dans les stats (raisons)",
     )
 
     def __str__(self):
