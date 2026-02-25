@@ -48,8 +48,6 @@ class UserQuerySet(models.QuerySet):
         )
 
     def with_canteen_diagnostic_stats(self):
-        from data.models import Canteen
-
         return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
             # bilans
             nb_cantines_bilan_2025=Count(
@@ -61,7 +59,7 @@ class UserQuerySet(models.QuerySet):
             nb_cantines_td_todo_2025=Count(
                 "canteens",
                 filter=Q(canteens__declaration_donnees_2025=False)
-                & ~Q(canteens__production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+                & Q(canteens__groupe_id=None)
                 & Q(canteens__diagnostics__year=2025),
                 distinct=True,
             ),

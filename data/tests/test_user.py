@@ -34,6 +34,7 @@ class UserModelTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             management_type=Canteen.ManagementType.DIRECT,
             economic_model=Canteen.EconomicModel.PUBLIC,
+            groupe=cls.canteen_groupe,
             managers=[cls.user_with_canteens],
         )
         cls.canteen_site_armee = CanteenFactory(
