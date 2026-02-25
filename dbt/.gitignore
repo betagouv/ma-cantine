@@ -2,4 +2,3 @@ target/
 dbt_packages/
 logs/
 .user.yml
-setup/fdw_setup.sql

@@ -5,11 +5,7 @@ Transforms data from the data warehouse into analytics-ready tables and views.
 ## Architecture
 
 ```
-Production DB (Django)
-      │
-      │  Foreign Data Wrapper (FDW)       ← one-time setup by a sysadmin
-      ▼
-Data Warehouse — schema: production       ← source tables (read)
+Data Warehouse — schema: public           ← source tables (loaded by Python ETL)
       │
       │  dbt
       ▼
@@ -18,9 +14,6 @@ Data Warehouse — schema: dbt_prod_staging ← staging views (prod)
 Data Warehouse — schema: dbt_dev_marts    ← mart tables (dev)
 Data Warehouse — schema: dbt_prod_marts   ← mart tables (prod)
 ```
-
-> **Note:** Until FDW is set up, the `datawarehouse` source (existing ETL tables in
-> the `public` schema) can be used directly as a source without any additional setup.
 
 ## Setup
 
@@ -84,10 +77,3 @@ dbt/
 1. Create a `.sql` file in `models/staging/` or `models/marts/`
 2. Reference sources with `{{ source('datawarehouse', 'table_name') }}`
 3. Run `make dbt-run` to deploy it
-
-## FDW setup (sysadmin only)
-
-To connect dbt to the production database via Foreign Data Wrapper, a sysadmin must run
-`dbt/setup/fdw_setup.sql` on the data warehouse with superuser credentials.
-This creates the `production` schema on the DWH, which mirrors the production `public` schema.
-This is a one-time operation.
