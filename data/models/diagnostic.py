@@ -1809,9 +1809,9 @@ class Diagnostic(models.Model):
 
         self.status = Diagnostic.DiagnosticStatus.DRAFT
         self.applicant = None
-        self.teledeclaration_date = None
-        self.teledeclaration_mode = None
-        self.teledeclaration_version = None
-        self.teledeclaration_id = None
+        for field in self.TELEDECLARATION_SNAPSHOT_FIELDS:
+            setattr(self, field, None)
+        for field in self.TELEDECLARATION_FIELDS:
+            setattr(self, field, None)
 
         self.save()
