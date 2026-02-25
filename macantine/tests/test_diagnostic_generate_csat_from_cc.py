@@ -8,9 +8,41 @@ from data.factories import CanteenFactory, DiagnosticFactory
 
 
 class DiagnosticGenerateCsatFromCC2024CommandTest(TestCase):
+    @authenticate
+    def test_canteen_sites_diagnostics_teledeclared_are_not_modified(self):
+        """
+        Test that the diagnostics of the canteen sites are generated when the command is run.
+        """
+        site_1 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        site_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            diagnostic_site_1 = DiagnosticFactory(
+                canteen=site_1,
+                year=2024,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            )
+            diagnostic_site_2 = DiagnosticFactory(
+                canteen=site_2,
+                year=2024,
+                diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            )
+            diagnostic_site_1.teledeclare(applicant=authenticate.user)
+            diagnostic_site_2.teledeclare(applicant=authenticate.user)
+
+        self.assertEqual(Canteen.objects.count(), 2)
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 2)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+        )
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+        )
 
     # TESTS TO DO :
-    # def test_canteen_sites_diagnostics_teledeclared_are_not_modified(self):
     # def test_sat_without_central_diagnostic_teledeclared_is_not_modified(self):
     # def test_central_teledeclare_diagnostic_are_generated(self):
     # def test_central_serving_teledeclare_diagnostic_are_generated(self):
