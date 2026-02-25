@@ -6,7 +6,7 @@ from data.factories import UserFactory
 from data.models import Canteen, Diagnostic
 
 
-class DiagnosticGenerateCsatFromCCCommandTest(TestCase):
+class DiagnosticGenerateCsatFromCC2024CommandTest(TestCase):
     def setUp(self):
         # Create a central kitchen
         self.central_kitchen = Canteen.objects.create(
@@ -42,13 +42,13 @@ class DiagnosticGenerateCsatFromCCCommandTest(TestCase):
             central_producer_siret=self.central_kitchen.siret,
         )
         # Create 2 regular kitchens to check they remain intact
-        self.kitchen_1 = Canteen.objects.create(
+        self.site_1 = Canteen.objects.create(
             name="Kitchen",
             siret="444444444444444",
             yearly_meal_count=1000,
             production_type=Canteen.ProductionType.ON_SITE,
         )
-        self.kitchen_2 = Canteen.objects.create(
+        self.site_2 = Canteen.objects.create(
             name="Kitchen 2",
             siret="444444444444445",
             yearly_meal_count=1000,
@@ -83,7 +83,7 @@ class DiagnosticGenerateCsatFromCCCommandTest(TestCase):
             self.diagnostic_satellite_1.teledeclare(applicant=UserFactory())
             # Create a diagnostic for the on site canteen
             self.diagnostic_on_site_kitchen_1 = Diagnostic.objects.create(
-                canteen=self.kitchen_1,
+                canteen=self.site_1,
                 year=2024,
                 value_total_ht=100,
                 value_bio_ht=20,
@@ -91,7 +91,7 @@ class DiagnosticGenerateCsatFromCCCommandTest(TestCase):
             self.diagnostic_on_site_kitchen_1.teledeclare(applicant=UserFactory())
             # Create a diagnostic for the on site canteen 2 (don't teledeclare it)
             self.diagnostic_on_site_kitchen_2 = Diagnostic.objects.create(
-                canteen=self.kitchen_2,
+                canteen=self.site_2,
                 year=2024,
                 value_total_ht=100,
                 value_bio_ht=20,
@@ -148,7 +148,7 @@ class DiagnosticGenerateCsatFromCCCommandTest(TestCase):
 
     def test_command_does_not_edit_on_site_kitchen_diag(self):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
-        self.assertTrue(Diagnostic.objects.filter(canteen=self.kitchen_1, year=2024).exists())
+        self.assertTrue(Diagnostic.objects.filter(canteen=self.site_1, year=2024).exists())
 
     def test_command_create_a_central_serving_diag(self):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
