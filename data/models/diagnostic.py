@@ -341,7 +341,6 @@ class Diagnostic(models.Model):
         VALEURS_ABERRANTES = "VALEURS_ABERRANTES", "Valeurs aberrantes"
         DOUBLON_SATELLITE_CENTRALE = "DOUBLON_SATELLITE_CENTRALE", "Doublon satellite / centrale"
         VALEURS_INCOHERENTES = "VALEURS_INCOHERENTES", "Valeurs incohérentes"
-        RAPPORT = "RAPPORT", "Présent dans le rapport"
 
     APPRO_FAMILIES = [
         "viandes_volailles",
