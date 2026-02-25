@@ -204,7 +204,7 @@ def divide_appro_values(diagnostic, satellite=None) -> dict:
 
     # get the divisor
     if diagnostic.year == 2025:
-        divisor = satellite.yearly_meal_count
+        divisor = satellite.get("yearly_meal_count")
     else:  # 2024 and before
         divisor = len(diagnostic.satellites_snapshot) if diagnostic.satellites_snapshot else 0
         if diagnostic.canteen_snapshot["production_type"] == Canteen.ProductionType.CENTRAL_SERVING:
