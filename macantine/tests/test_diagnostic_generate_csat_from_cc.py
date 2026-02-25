@@ -72,8 +72,45 @@ class DiagnosticGenerateCsatFromCC2024CommandTest(TestCase):
             Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
         )
 
+    @authenticate
+    def test_central_teledeclare_satellites_diagnostic_are_generated(self):
+        """
+        Test that the diagnostics for the satellites of a central canteen are generated when the command is run.
+        """
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
+        )
+        satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
+        )
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+
+        # Diagnostics are generated
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 3)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).get(canteen=satellite_1).generated_from_groupe_diagnostic, True
+        )
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).get(canteen=satellite_2).generated_from_groupe_diagnostic, True
+        )
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2
+        )
+
+        # TODO :  Diagnostic central is ignored
+
     # TESTS TO DO :
-    # def test_central_teledeclare_diagnostic_are_generated(self):
     # def test_central_serving_teledeclare_diagnostic_are_generated(self):
     # def test_command_delete_previous_generated_diagnostics(self):
     # def test_command_split_appro_for_satellites_is_correct(self):
@@ -82,3 +119,4 @@ class DiagnosticGenerateCsatFromCC2024CommandTest(TestCase):
     # def test_sat_with_diagnostic_teledeclared_is_overwritten(self):
     # def test_sat_with_two_diagnostics(self):
     # def test_generated_diagnostics_contains_canteen_data(self):
+    # renommer le fichier pour préciser 1TD1Site
