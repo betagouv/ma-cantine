@@ -310,7 +310,7 @@ class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
     def get_queryset(self):
         return (
             Diagnostic.objects.with_meal_price()
-            .historical_valid_td(CAMPAIGN_DATES.keys())
+            .historical_valid_td_site(CAMPAIGN_DATES.keys())
             .order_by("teledeclaration_date")
         )
 
@@ -321,4 +321,4 @@ class DiagnosticTeledeclaredOpenDataListView(ListAPIView):
     ordering_fields = ["creation_date"]
 
     def get_queryset(self, year):
-        return Diagnostic.objects.publicly_visible().valid_td_by_year(year).order_by("teledeclaration_date")
+        return Diagnostic.objects.publicly_visible().valid_td_site_by_year(year).order_by("teledeclaration_date")

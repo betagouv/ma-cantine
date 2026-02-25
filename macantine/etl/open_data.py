@@ -175,4 +175,3 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
         logger.info("TD campagne: Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
-        # TODO: self.flatten_central_kitchen_td()
