@@ -48,9 +48,8 @@ class UserQuerySet(models.QuerySet):
         )
 
     def with_canteen_diagnostic_stats(self):
-        """
-        # TODO: clarify nb_cantines_td_todo_2025
-        """
+        from data.models import Canteen
+
         return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
             # bilans
             nb_cantines_bilan_2025=Count(
@@ -59,13 +58,13 @@ class UserQuerySet(models.QuerySet):
             nb_cantines_bilan_todo_2025=Count("canteens", distinct=True) - F("nb_cantines_bilan_2025"),
             # TDs
             nb_cantines_td_2025=Count("canteens", filter=Q(canteens__declaration_donnees_2025=True), distinct=True),
-            # nb_cantines_td_todo_2025=F("nb_cantines_bilan_2025") - Count(
-            #     "canteens",
-            #     filter=Q(
-            #         canteens__declaration_donnees_2025=False
-            #     ),
-            #     distinct=True
-            # ),
+            nb_cantines_td_todo_2025=Count(
+                "canteens",
+                filter=Q(canteens__declaration_donnees_2025=False)
+                & ~Q(canteens__production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+                & Q(canteens__diagnostics__year=2025),
+                distinct=True,
+            ),
         )
 
 
@@ -145,7 +144,7 @@ class User(AbstractUser):
         "nb_cantines_bilan_2025",
         "nb_cantines_bilan_todo_2025",
         "nb_cantines_td_2025",
-        # "nb_cantines_td_todo_2025",
+        "nb_cantines_td_todo_2025",
     ]
 
     objects = UserManager.from_queryset(UserQuerySet)()

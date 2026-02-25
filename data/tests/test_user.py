@@ -50,6 +50,7 @@ class UserModelTest(TestCase):
         )
 
         cls.canteen_centrale_diagnostic_teledeclared = DiagnosticFactory(year=2025, canteen=cls.canteen_centrale)
+        cls.canteen_satellite_diagnostic = DiagnosticFactory(year=2025, canteen=cls.canteen_satellite)
         cls.canteen_site_armee_diagnostic = DiagnosticFactory(year=2025, canteen=cls.canteen_site_armee)
 
         with freeze_time("2026-01-30"):  # during the 2025 campaign
@@ -104,15 +105,17 @@ class UserModelTest(TestCase):
         user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
         user_without_canteens = user_qs.get(id=self.user_without_canteens.id)
 
-        self.assertEqual(user_with_canteens.nb_cantines_bilan_2025, 2)
-        self.assertEqual(user_with_canteens.nb_cantines_bilan_todo_2025, 4)  # nb_cantines - nb_bilans_2025
-        self.assertEqual(user_with_canteens.nb_cantines_td_2025, 1)
-        # self.assertEqual(user_with_canteens.nb_cantines_td_todo_2025, 1)  # nb_bilans_2025 - nb_td_2025
+        self.assertEqual(user_with_canteens.nb_cantines_bilan_2025, 3)
+        self.assertEqual(user_with_canteens.nb_cantines_bilan_todo_2025, 3)  # nb_cantines - nb_bilans_2025
+        self.assertEqual(user_with_canteens.nb_cantines_td_2025, 1)  # canteen_centrale
+        self.assertEqual(
+            user_with_canteens.nb_cantines_td_todo_2025, 1
+        )  # canteen_site_armee (has a diagnostic but not teledeclared)
 
         self.assertEqual(user_without_canteens.nb_cantines_bilan_2025, 0)
         self.assertEqual(user_without_canteens.nb_cantines_bilan_todo_2025, 0)
         self.assertEqual(user_without_canteens.nb_cantines_td_2025, 0)
-        # self.assertEqual(user_without_canteens.nb_cantines_td_todo_2025, 0)
+        self.assertEqual(user_without_canteens.nb_cantines_td_todo_2025, 0)
 
     def test_model_method_update_data(self):
         self.assertIsNone(self.user_with_canteens.data)
@@ -127,10 +130,10 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user_with_canteens.data["nb_cantines_site"], 2)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_satellite"], 1)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_gestion_concedee"], 1)
-        self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_2025"], 2)
-        self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_todo_2025"], 4)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_2025"], 3)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_todo_2025"], 3)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_td_2025"], 1)
-        # self.assertEqual(self.user_with_canteens.data["nb_cantines_td_todo_2025"], 1)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines_td_todo_2025"], 1)
 
         self.user_without_canteens = user_qs.get(id=self.user_without_canteens.id)
         self.user_without_canteens.update_data()
@@ -144,4 +147,4 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user_without_canteens.data["nb_cantines_bilan_2025"], 0)
         self.assertEqual(self.user_without_canteens.data["nb_cantines_bilan_todo_2025"], 0)
         self.assertEqual(self.user_without_canteens.data["nb_cantines_td_2025"], 0)
-        # self.assertEqual(self.user_without_canteens.data["nb_cantines_td_todo_2025"], 0)
+        self.assertEqual(self.user_without_canteens.data["nb_cantines_td_todo_2025"], 0)

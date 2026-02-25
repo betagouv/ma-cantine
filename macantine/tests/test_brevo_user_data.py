@@ -78,6 +78,7 @@ class BrevoUserDataTest(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_2025"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_TODO_2025"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_TD_2025"), 0)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_TD_TODO_2025"), 1)
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
@@ -103,6 +104,7 @@ class BrevoUserDataTest(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_2025"), 1)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_TODO_2025"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_TD_2025"), 1)
+        self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_TD_TODO_2025"), 0)
 
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
