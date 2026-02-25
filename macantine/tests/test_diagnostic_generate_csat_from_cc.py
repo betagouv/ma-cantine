@@ -2,8 +2,9 @@ from django.core.management import call_command
 from django.test import TestCase
 from freezegun import freeze_time
 
-from data.factories import UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic
+from api.tests.utils import authenticate
 
 
 class DiagnosticGenerateCsatFromCC2024CommandTest(TestCase):
