@@ -24,7 +24,11 @@ from data.models import Canteen, User
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
-from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS, ETL_CANTEEN_RAW
+from .etl.analysis import (
+    ETL_ANALYSIS_CANTEEN,
+    ETL_ANALYSIS_CANTEEN_RAW,
+    ETL_ANALYSIS_TELEDECLARATIONS,
+)
 from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 
 logger = logging.getLogger(__name__)
@@ -291,7 +295,8 @@ def export_dataset_raw_analysis():
     """
     logger.info("Starting export_dataset_raw_analysis")
     datasets = {
-        "canteens_raw_analysis": ETL_CANTEEN_RAW(),
+        "canteens_raw_analysis": ETL_ANALYSIS_CANTEEN_RAW(),
+        # "purchases_raw_analysis": ETL_ANALYSIS_PURCHASE_RAW(),
     }
     export_datasets(datasets)
 
@@ -356,3 +361,14 @@ def export_dataset_canteen_opendata():
     result = export_datasets(datasets)
 
     return result
+
+@app.task()
+def export_canteen_raw():
+    """
+    Export raw canteen table to analysis warehouse (no transformations, uses PostgreSQL COPY).
+    """
+    logger.info("Starting export_canteen_raw")
+    etl = ETL_ANALYSIS_CANTEEN_RAW()
+    etl.extract_dataset()
+    etl.transform_dataset()
+    etl.load_dataset()
