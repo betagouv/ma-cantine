@@ -27,7 +27,15 @@ class DataWareHouse:
 
     def insert_dataframe(self, dataframe, table, dtype=None):
         start = time.time()
-        dataframe.to_sql(name=table, con=self.engine, if_exists="replace", index=False, dtype=dtype, chunksize=1000)
+        dataframe.to_sql(
+            name=table,
+            con=self.engine,
+            if_exists="replace",
+            index=False,
+            dtype=dtype,
+            chunksize=2000,
+            method="multi",  # Batch INSERTs for 2-3x speedup
+        )
         end = time.time()
         logger.info(f"Inserted {len(dataframe)} rows into table {table} in {end - start:.2f} seconds")
 
