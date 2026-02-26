@@ -1,13 +1,14 @@
 import json
 import logging
+import time
 from datetime import datetime
 
 import pandas as pd
 
-from data.models.sector import get_sector_lib_list_from_canteen_snapshot, get_category_lib_list_from_canteen_snapshot
 from api.views.canteen import CanteenAnalysisListView
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredAnalysisListView
 from data.models import Canteen
+from data.models.sector import get_category_lib_list_from_canteen_snapshot, get_sector_lib_list_from_canteen_snapshot
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
 from macantine.utils import CAMPAIGN_DATES
@@ -179,3 +180,43 @@ class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
         # Calling this method is still needed to respect the structure of the code
         # TODO : Make it possible to stop calling transform_dataset()
         logger.info("No more transformation needed here !")
+
+
+class ETL_CANTEEN_RAW(etl.TRANSFORMER_LOADER):
+    """
+    Export raw canteen table to analysis warehouse without transformations.
+    Uses pandas to_sql for loading.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.extracted_table_name = "canteens_raw"
+        self.warehouse = DataWareHouse()
+        self.source_schema = "public"
+        self.source_table = "data_canteen"
+
+    def extract_dataset(self):
+        """
+        Load raw table into a dataframe.
+        """
+        start = time.time()
+        queryset = Canteen.all_objects.all().values()
+        self.df = pd.DataFrame(list(queryset))
+        if self.df.empty:
+            logger.warning("Dataset is empty. Creating an empty dataframe")
+        end = time.time()
+        logger.info(f"Time spent on raw canteen extraction: {end - start}")
+
+    def transform_dataset(self):
+        """No transformations for raw export."""
+        logger.info("Raw export requested. Skipping transformations.")
+
+    def load_dataset(self):
+        """
+        Load raw table into the warehouse using to_sql.
+        """
+        if self.df is None:
+            logger.warning("No dataframe available. Skipping raw canteen export.")
+            return
+        logger.info(f"Loading {len(self.df)} rows into {self.extracted_table_name}")
+        self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
