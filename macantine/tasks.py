@@ -20,11 +20,11 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 from data.models import Canteen, User
+from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
-from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
+from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS, ETL_CANTEEN_RAW
 from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 
 logger = logging.getLogger(__name__)
@@ -285,6 +285,18 @@ def export_datasets(datasets: dict):
 
 
 @app.task()
+def export_dataset_raw_analysis():
+    """
+    Export the raw datasets for analysis (Metabase)
+    """
+    logger.info("Starting export_dataset_raw_analysis")
+    datasets = {
+        "canteens_raw_analysis": ETL_CANTEEN_RAW(),
+    }
+    export_datasets(datasets)
+
+
+@app.task()
 def export_dataset_td_analysis():
     """
     Export the Teledeclaration datasets for analysis (Metabase)
@@ -292,7 +304,7 @@ def export_dataset_td_analysis():
     logger.info("Starting export_dataset_td_analysis task")
 
     datasets = {
-        "td_analyses": ETL_ANALYSIS_TELEDECLARATIONS(),
+        "td_analysis": ETL_ANALYSIS_TELEDECLARATIONS(),
     }
     result = export_datasets(datasets)
 
@@ -308,9 +320,6 @@ def export_dataset_td_opendata():
     logger.info("Starting export_dataset_td_opendata task")
 
     datasets = {
-        "campagne teledeclaration 2021": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
-        "campagne teledeclaration 2022": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
-        "campagne teledeclaration 2023": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
         "campagne teledeclaration 2024": ETL_OPEN_DATA_TELEDECLARATIONS(2024),
         # "campagne teledeclaration 2025": ETL_OPEN_DATA_TELEDECLARATIONS(2025),  # wait for report to be published
     }
@@ -327,7 +336,7 @@ def export_dataset_canteen_analysis():
     logger.info("Starting export_dataset_canteen_analysis task")
 
     datasets = {
-        "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
+        "cantines_analysis": ETL_ANALYSIS_CANTEEN(),
     }
     result = export_datasets(datasets)
 
