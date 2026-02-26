@@ -1,4 +1,5 @@
 import logging
+import time
 import os
 
 import pandas as pd
@@ -25,8 +26,10 @@ class DataWareHouse:
         )
 
     def insert_dataframe(self, dataframe, table, dtype=None):
+        start = time.time()
         dataframe.to_sql(name=table, con=self.engine, if_exists="replace", index=False, dtype=dtype, chunksize=2000)
-        logger.info(f"Inserted {len(dataframe)} rows into {table}")
+        end = time.time()
+        logger.info(f"Inserted {len(dataframe)} rows into {table} in {end - start:.2f} seconds")
 
     def read_dataframe(self, table_name):
         return pd.read_sql(sql=table_name, index_col="id", con=self.engine)

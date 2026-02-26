@@ -7,7 +7,7 @@ import pandas as pd
 
 from api.views.canteen import CanteenAnalysisListView
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredAnalysisListView
-from data.models import Canteen
+from data.models import Canteen, Purchase
 from data.models.sector import get_category_lib_list_from_canteen_snapshot, get_sector_lib_list_from_canteen_snapshot
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
@@ -38,7 +38,7 @@ class ANALYSIS(etl.TRANSFORMER_LOADER):
         self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
 
 
-class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
+class ETL_ANALYSIS_TELEDECLARATIONS(etl.EXTRACTOR, ANALYSIS):
     """
     Create a dataset for analysis in a Data Warehouse
     * Extract data from prod
@@ -57,7 +57,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
 
     def transform_dataset(self):
         if self.df.empty:
-            logger.warning("Dataset is empty. Skipping transformation")
+            logger.warning("Dataset is empty. Skipping transformations.")
             return
 
         self.flatten_central_kitchen_td()
@@ -182,7 +182,7 @@ class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
         logger.info("No more transformation needed here !")
 
 
-class ETL_CANTEEN_RAW(etl.TRANSFORMER_LOADER):
+class ETL_ANALYSIS_CANTEEN_RAW(ANALYSIS):
     """
     Export raw canteen table to analysis warehouse without transformations.
     Uses pandas to_sql for loading.
@@ -192,8 +192,6 @@ class ETL_CANTEEN_RAW(etl.TRANSFORMER_LOADER):
         super().__init__()
         self.extracted_table_name = "canteens_raw"
         self.warehouse = DataWareHouse()
-        self.source_schema = "public"
-        self.source_table = "data_canteen"
 
     def extract_dataset(self):
         """
@@ -205,18 +203,42 @@ class ETL_CANTEEN_RAW(etl.TRANSFORMER_LOADER):
         if self.df.empty:
             logger.warning("Dataset is empty. Creating an empty dataframe")
         end = time.time()
-        logger.info(f"Time spent on raw canteen extraction: {end - start}")
+        logger.info(f"Time spent on extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
         """No transformations for raw export."""
         logger.info("Raw export requested. Skipping transformations.")
 
     def load_dataset(self):
+        super().load_dataset()
+
+
+class ETL_ANALYSIS_PURCHASE_RAW(ANALYSIS):
+    """
+    Export raw purchase table to analysis warehouse without transformations.
+    Uses pandas to_sql for loading.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.extracted_table_name = "purchases_raw"
+        self.warehouse = DataWareHouse()
+
+    def extract_dataset(self):
         """
-        Load raw table into the warehouse using to_sql.
+        Load raw table into a dataframe.
         """
-        if self.df is None:
-            logger.warning("No dataframe available. Skipping raw canteen export.")
-            return
-        logger.info(f"Loading {len(self.df)} rows into {self.extracted_table_name}")
-        self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
+        start = time.time()
+        queryset = Purchase.all_objects.all().values()
+        self.df = pd.DataFrame(list(queryset))
+        if self.df.empty:
+            logger.warning("Dataset is empty. Creating an empty dataframe")
+        end = time.time()
+        logger.info(f"Time spent on extraction: {end - start:.2f} seconds")
+
+    def transform_dataset(self):
+        """No transformations for raw export."""
+        logger.info("Raw export requested. Skipping transformations.")
+
+    def load_dataset(self):
+        super().load_dataset()
