@@ -233,8 +233,10 @@ class Teledeclaration1Td1SiteDiagnosticGeneratedHaveCorrectInformations(TestCase
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         central_diagnostic.refresh_from_db()
         self.central_diagnostic = central_diagnostic
+        self.number_of_satellites = self.central_diagnostic.canteen.satellites.count()
         self.sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
         self.sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
+        self.assertEqual(self.number_of_satellites, 2)
 
         # After script is run
         self.verify_teledeclaration_generated_after_script_run()
@@ -275,8 +277,10 @@ class Teledeclaration1Td1SiteDiagnosticGeneratedHaveCorrectInformations(TestCase
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         central_diagnostic.refresh_from_db()
         self.central_diagnostic = central_diagnostic
+        self.number_of_satellites = self.central_diagnostic.canteen.satellites.count()
         self.sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
         self.sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
+        self.assertEqual(self.number_of_satellites, 2)
 
         # After script is run
         self.verify_teledeclaration_generated_after_script_run()
@@ -317,8 +321,10 @@ class Teledeclaration1Td1SiteDiagnosticGeneratedHaveCorrectInformations(TestCase
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         central_diagnostic.refresh_from_db()
         self.central_diagnostic = central_diagnostic
+        self.number_of_satellites = self.central_diagnostic.canteen.satellites.count()
         self.sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
         self.sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
+        self.assertEqual(self.number_of_satellites, 2)
 
         # After script is run
         self.verify_teledeclaration_generated_after_script_run()
@@ -359,8 +365,10 @@ class Teledeclaration1Td1SiteDiagnosticGeneratedHaveCorrectInformations(TestCase
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         central_diagnostic.refresh_from_db()
         self.central_diagnostic = central_diagnostic
+        self.number_of_satellites = self.central_diagnostic.canteen.satellites.count()
         self.sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
         self.sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
+        self.assertEqual(self.number_of_satellites, 2)
 
         # After script is run
         self.verify_teledeclaration_generated_after_script_run()
@@ -387,9 +395,10 @@ class Teledeclaration1Td1SiteDiagnosticGeneratedHaveCorrectInformations(TestCase
         """
         Test the generated diagnostics are correctly created.
         """
-        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 3)
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1 + self.number_of_satellites)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            self.number_of_satellites,
         )
         # TODO : after rebase
         # self.assertEqual(
@@ -450,8 +459,12 @@ class Teledeclaration1Td1SiteDiagnosticGeneratedHaveCorrectInformations(TestCase
 
         Is it true ??
         """
-        expected_yearly_meal_count = self.central_snapshot_canteen_before_script["yearly_meal_count"] / 2
-        expected_daily_meal_count = self.central_snapshot_canteen_before_script["daily_meal_count"] / 2
+        expected_yearly_meal_count = (
+            self.central_snapshot_canteen_before_script["yearly_meal_count"] / self.number_of_satellites
+        )
+        expected_daily_meal_count = (
+            self.central_snapshot_canteen_before_script["daily_meal_count"] / self.number_of_satellites
+        )
         self.assertEqual(
             self.sat_1_diagnostic.canteen_snapshot["yearly_meal_count"],
             expected_yearly_meal_count,
@@ -473,7 +486,7 @@ class Teledeclaration1Td1SiteDiagnosticGeneratedHaveCorrectInformations(TestCase
         for field in fields:
             central_value = self.central_snapshot_before_script[field]
             if central_value is not None:
-                expected_value = central_value / 2
+                expected_value = central_value / self.number_of_satellites
                 self.assertEqual(
                     getattr(self.sat_1_diagnostic, field),
                     expected_value,
