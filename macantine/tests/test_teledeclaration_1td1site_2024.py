@@ -10,7 +10,7 @@ from data.factories import CanteenFactory, DiagnosticFactory
 # TODO : test tag doublon after rebase
 
 
-class Teledeclaration1Td1SiteForDiagnosticsAreNotGenerated(TestCase):
+class Teledeclaration1Td1SiteDiagnosticsAreNotGenerated(TestCase):
     """
     Test the teledeclaration of canteen not concerned by the 1td1site script are not modified when the command is run.
     """
