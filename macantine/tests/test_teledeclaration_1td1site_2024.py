@@ -8,12 +8,13 @@ from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
 
-class Teledeclaration1Td1SiteForCanteenNotConcerned(TestCase):
+class Teledeclaration1Td1SiteForDiagnosticsAreNotGenerated(TestCase):
+    """
+    Test the teledeclaration of canteen not concerned by the 1td1site script are not modified when the command is run.
+    """
+
     @authenticate
     def test_for_canteen_site(self):
-        """
-        The teledeclaration of canteen sites are not modified when the command is run.
-        """
         site_1 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
         site_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
 
@@ -61,9 +62,6 @@ class Teledeclaration1Td1SiteForCanteenNotConcerned(TestCase):
 
     @authenticate
     def test_for_satellite_with_central_siret_unknown(self):
-        """
-        The teledeclaration of a satellite canteen with a central SIRET that doesn't match any canteen is not modified when the command is run.
-        """
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="19622299600015"
         )
@@ -103,9 +101,6 @@ class Teledeclaration1Td1SiteForCanteenNotConcerned(TestCase):
 
     @authenticate
     def test_for_satellite_with_central_siret_empty(self):
-        """
-        The teledeclaration of a satellite canteen without a central SIRET is not modified when the command is run.
-        """
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="")
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             satellite_diagnostic = DiagnosticFactory(
@@ -139,7 +134,11 @@ class Teledeclaration1Td1SiteForCanteenNotConcerned(TestCase):
         self.assertEqual(satellite_diagnostic.satellites_snapshot, satellite_snapshot_satellites_before_script)
 
 
-class Teledeclaration1Td1SiteForCentralWithSatellitesWithoutDiagnostic(TestCase):
+class Teledeclaration1Td1SiteDiagnosticGeneratedHaveCorrectInformations(TestCase):
+    """
+    Test the generated diagnostics are correctly created and the original central diagnostic is not modified.
+    """
+
     @classmethod
     def setUpTestData(cls):
         cls.central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
