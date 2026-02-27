@@ -7,10 +7,8 @@ from data.models.sector import Sector
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
-# TODO : on devrait stocker l'id de la TD de la génération non ?
+# TODO : on devrait stocker l'id du diagnostic à partir duquel on a fait la génération non ?
 # TODO : SAT avec les doublons after rebase avec le tag "DOUBLON_1TD1SITE"
-# TODO : test sat sans meal count devrait avoir le chiffre de sa centrale diviser par le nombre de satellites
-# TODO : champs non appro ceux supprimés de 2024 ??
 
 
 class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
@@ -488,6 +486,39 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
             central_serving.daily_meal_count / number_of_satellites,
         )  # Correct ?
         self.assertEqual(diagnostic_generated.canteen_snapshot["central_producer_siret"], central_serving.siret)
+
+    @authenticate
+    def test_satellite_without_meal_count_has_central_divided_values(self):
+        """
+        If a satellite has no meal count, it should have the values of the central divided by the number of satellites.
+        """
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=10000, daily_meal_count=100
+        )
+        satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
+        )
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
+        satellite.yearly_meal_count = None
+        satellite.daily_meal_count = None
+        satellite.save(skip_validations=True)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        diagnostic_generated = Diagnostic.objects.in_year(2024).get(
+            canteen=satellite, generated_from_groupe_diagnostic=True
+        )
+        self.assertEqual(
+            diagnostic_generated.canteen_snapshot["yearly_meal_count"], int(central.yearly_meal_count / 3)
+        )
+        self.assertEqual(diagnostic_generated.canteen_snapshot["daily_meal_count"], int(central.daily_meal_count / 3))
 
     @authenticate
     def test_generated_diagnostics_metadata_copied_from_central_diagnostic(self):
