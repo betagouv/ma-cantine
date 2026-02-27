@@ -11,7 +11,7 @@ class Teledeclaration1Td1SiteCanteenNotConcerned(TestCase):
     @authenticate
     def test_for_canteen_site(self):
         """
-        Test that the diagnostics of the canteen sites are generated when the command is run.
+        The teledeclaration of canteen sites are not modified when the command is run.
         """
         site_1 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
         site_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
@@ -59,7 +59,7 @@ class Teledeclaration1Td1SiteCanteenNotConcerned(TestCase):
     @authenticate
     def test_for_satellite_with_central_siret_unknown(self):
         """
-        Test that a satellite canteen with a central SIRET that doesn't match any canteen is not modified when the command is run.
+        The teledeclaration of a satellite canteen with a central SIRET that doesn't match any canteen is not modified when the command is run.
         """
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="19622299600015"
@@ -100,7 +100,7 @@ class Teledeclaration1Td1SiteCanteenNotConcerned(TestCase):
     @authenticate
     def test_for_satellite_with_central_siret_empty(self):
         """
-        Test that a satellite canteen without a central SIRET that teledeclares is not modified when the command is run.
+        The teledeclaration of a satellite canteen without a central SIRET is not modified when the command is run.
         """
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="")
         with freeze_time("2025-03-30"):  # during the 2024 campaign
