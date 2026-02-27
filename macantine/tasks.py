@@ -340,15 +340,3 @@ def export_dataset_canteen_opendata():
         "cantines": ETL_OPEN_DATA_CANTEEN(),
     }
     export_datasets(datasets)
-
-
-@app.task()
-def export_canteen_raw():
-    """
-    Export raw canteen table to analysis warehouse (no transformations, uses PostgreSQL COPY).
-    """
-    logger.info("Starting export_canteen_raw")
-    etl = ETL_ANALYSIS_CANTEEN_RAW()
-    etl.extract_dataset()
-    etl.transform_dataset()
-    etl.load_dataset()
