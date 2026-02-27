@@ -33,8 +33,8 @@ class DataWareHouse:
             if_exists="replace",
             index=False,
             dtype=dtype,
-            chunksize=2000,
-            method="multi",  # Batch INSERTs for 2-3x speedup
+            chunksize=1000,
+            # method="multi",  # Batch INSERTs for 2-3x speedup
         )
         end = time.time()
         logger.info(f"Inserted {len(dataframe)} rows into {table} in {end - start:.2f} seconds")
