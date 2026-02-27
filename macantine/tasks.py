@@ -298,14 +298,17 @@ def export_dataset_raw_analysis():
     """
     Export the raw datasets for analysis (Metabase)
     """
-    logger.info("Starting export_dataset_raw_analysis")
+    logger.info("Starting export_dataset_raw_analysis task")
+
     datasets = {
         "teledeclarations_raw_analysis": ETL_ANALYSIS_TELEDECLARATION_RAW(),
         "canteens_raw_analysis": ETL_ANALYSIS_CANTEEN_RAW(),
         # "purchases_raw_analysis": ETL_ANALYSIS_PURCHASE_RAW(),
         "users_raw_analysis": ETL_ANALYSIS_USER_RAW(),
     }
-    export_datasets(datasets)
+    result = export_datasets(datasets)
+
+    return result
 
 
 @app.task()
@@ -368,14 +371,3 @@ def export_dataset_canteen_opendata():
     result = export_datasets(datasets)
 
     return result
-
-@app.task()
-def export_canteen_raw():
-    """
-    Export raw canteen table to analysis warehouse (no transformations, uses PostgreSQL COPY).
-    """
-    logger.info("Starting export_canteen_raw")
-    etl = ETL_ANALYSIS_CANTEEN_RAW()
-    etl.extract_dataset()
-    etl.transform_dataset()
-    etl.load_dataset()
