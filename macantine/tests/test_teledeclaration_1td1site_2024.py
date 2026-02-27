@@ -133,6 +133,42 @@ class Teledeclaration1Td1SiteForDiagnosticsAreNotGenerated(TestCase):
         self.assertEqual(satellite_diagnostic.canteen_snapshot, satellite_snapshot_canteen_before_script)
         self.assertEqual(satellite_diagnostic.satellites_snapshot, satellite_snapshot_satellites_before_script)
 
+    @authenticate
+    def test_for_central_with_satellite_deleted(self):
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="19622299600015")
+        satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="19622299600015"
+        )
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        satellite.hard_delete()
+
+        # Before the script is run
+        self.assertEqual(Canteen.objects.count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+        )
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        central_diagnostic.refresh_from_db()
+
+        # After the script is run
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+        )
+
 
 class Teledeclaration1Td1SiteDiagnosticGeneratedHaveCorrectInformations(TestCase):
     """
