@@ -30,17 +30,31 @@ class Teledeclaration1Td1SiteCanteenNotConcerned(TestCase):
             diagnostic_site_1.teledeclare(applicant=authenticate.user)
             diagnostic_site_2.teledeclare(applicant=authenticate.user)
 
+        site_1_snapshot_canteen_before_script = diagnostic_site_1.canteen_snapshot
+        site_1_snapshot_satellites_before_script = diagnostic_site_1.satellites_snapshot
+        site_2_snapshot_canteen_before_script = diagnostic_site_2.canteen_snapshot
+        site_2_snapshot_satellites_before_script = diagnostic_site_2.satellites_snapshot
+
+        # Before the script is run
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Diagnostic.objects.in_year(2024).count(), 2)
         self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+        )
 
-        self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
-        )
+        # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 2)
         self.assertEqual(
             Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
         )
+        self.assertEqual(diagnostic_site_1.canteen_snapshot, site_1_snapshot_canteen_before_script)
+        self.assertEqual(diagnostic_site_1.satellites_snapshot, site_1_snapshot_satellites_before_script)
+        self.assertEqual(diagnostic_site_2.canteen_snapshot, site_2_snapshot_canteen_before_script)
+        self.assertEqual(diagnostic_site_2.satellites_snapshot, site_2_snapshot_satellites_before_script)
 
     @authenticate
     def test_for_satellite_with_central_siret_unknown(self):
