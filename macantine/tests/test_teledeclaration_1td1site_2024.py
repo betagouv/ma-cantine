@@ -8,7 +8,6 @@ from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
 # TODO : test pour les autres volets en mode all
-# TODO : test années hors scripts ne sont pas modifiées
 # TODO : test les généré sont supprimé si le script est relancé
 # TODO : une centrale sans SAT ?
 # TODO : les SAT avec les doublon after rebase pur le tag
@@ -176,6 +175,56 @@ class Teledeclaration1Td1SiteDiagnosticsAreNotGenerated(TestCase):
         self.assertEqual(
             Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
         )
+
+    @authenticate
+    def test_teledeclaration_other_year_are_not_generated(self):
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+        )
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
+
+        with freeze_time("2024-03-30"):  # during the 2023 campaign
+            central_diagnostic_2023 = DiagnosticFactory(
+                canteen=central,
+                year=2023,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic_2023.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic_2024 = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic_2024.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2026-03-30"):  # during the 2025 campaign
+            central_diagnostic_2025 = DiagnosticFactory(
+                canteen=central,
+                year=2025,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic_2025.teledeclare(applicant=authenticate.user)
+
+        # Before the script is run
+        self.assertEqual(Diagnostic.objects.count(), 3)
+        self.assertEqual(Diagnostic.objects.in_year(2023).count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2025).count(), 1)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        self.assertEqual(Diagnostic.objects.count(), 5)
+        self.assertEqual(Diagnostic.objects.in_year(2023).count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 3)
+        self.assertEqual(Diagnostic.objects.in_year(2025).count(), 1)
 
 
 class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
