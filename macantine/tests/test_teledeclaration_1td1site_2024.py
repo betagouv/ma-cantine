@@ -46,6 +46,8 @@ class Teledeclaration1Td1SiteForCanteenNotConcerned(TestCase):
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        diagnostic_site_1.refresh_from_db()
+        diagnostic_site_2.refresh_from_db()
 
         # After the script is run
         self.assertEqual(Diagnostic.objects.in_year(2024).count(), 2)
@@ -89,6 +91,7 @@ class Teledeclaration1Td1SiteForCanteenNotConcerned(TestCase):
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        satellite_diagnostic.refresh_from_db()
 
         # After the script is run
         self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
@@ -125,6 +128,7 @@ class Teledeclaration1Td1SiteForCanteenNotConcerned(TestCase):
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        satellite_diagnostic.refresh_from_db()
 
         # After the script is run
         self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
