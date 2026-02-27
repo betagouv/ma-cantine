@@ -7,9 +7,9 @@ from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
 
-class DiagnosticGenerateCsatFromCC2024CommandTest(TestCase):
+class Teledeclaration1Td1SiteCanteenNotConcerned(TestCase):
     @authenticate
-    def test_canteen_sites_diagnostics_teledeclared_are_not_modified(self):
+    def test_for_canteen_site(self):
         """
         Test that the diagnostics of the canteen sites are generated when the command is run.
         """
@@ -43,7 +43,7 @@ class DiagnosticGenerateCsatFromCC2024CommandTest(TestCase):
         )
 
     @authenticate
-    def test_sat_without_central_diagnostic_teledeclared_is_not_modified(self):
+    def test_for_satellite_with_central_siret_unknown(self):
         """
         Test that the diagnostics of the satellites without central diagnostic are not modified when the command is run.
         """
@@ -72,6 +72,8 @@ class DiagnosticGenerateCsatFromCC2024CommandTest(TestCase):
             Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
         )
 
+
+class Teledeclaration1Td1SiteCanteenCentralWithSatellitesWithoutDiagnostic(TestCase):
     @authenticate
     def test_central_teledeclare_satellites_diagnostic_are_generated(self):
         """
