@@ -8,14 +8,14 @@ from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
 # TODO : on devrait stocker l'id de la TD de la génération non ?
-# TODO : les SAT avec les doublon after rebase pur le tag
-# TODO : test sat sans meal count en auront des un chiffre lié à la division de la central ??
+# TODO : SAT avec les doublons after rebase avec le tag "DOUBLON_1TD1SITE"
+# TODO : test sat sans meal count devrait avoir le chiffre de sa centrale diviser par le nombre de satellites
 # TODO : champs non appro ceux supprimés de 2024 ??
 
 
-class Teledeclaration1Td1SiteDiagnosticsAreNotGenerated(TestCase):
+class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
     """
-    Test the teledeclaration of canteen not concerned by the 1td1site script are not modified when the command is run.
+    Test the teledeclaration of canteen or diagnostic not concerned by the 1td1site script are not modified when the command is run.
     """
 
     @authenticate
@@ -242,6 +242,28 @@ class Teledeclaration1Td1SiteDiagnosticsAreNotGenerated(TestCase):
         self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+
+    @authenticate
+    def test_draft_diagnostics_are_not_modified(self):
+        """
+        Test that when a diagnostic is draft, it is not modified when the script is run.
+        """
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+            )
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+        self.assertEqual(Diagnostic.objects.teledeclared().in_year(2024).count(), 0)
+        self.assertEqual(Diagnostic.objects.in_year(2024).filter(generated_from_groupe_diagnostic=True).count(), 0)
 
 
 class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
@@ -572,7 +594,7 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
         self.assertEqual(diagnostic_generated.status, Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE)
 
 
-class Teledeclaration1Td1SiteFieldsValuesAreGenerated(TestCase):
+class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.central = CanteenFactory(
