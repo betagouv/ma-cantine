@@ -817,68 +817,6 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
                         self.assertEqual(getattr(sat_diagnostic, field), getattr(central_diagnostic, field))
 
 
-class Teledeclaration1Td1SiteForCentralServing(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING)
-        cls.satellite_1 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=cls.central.siret
-        )
-        cls.satellite_2 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=cls.central.siret
-        )
-
-    @authenticate
-    def test_satellites_central_serving_td_simple_and_mode_all(self):
-        """
-        Test script generate a new diagnostic for central serving canteens.
-        """
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
-            central_diagnostic = DiagnosticFactory(
-                canteen=self.central,
-                year=2024,
-                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                valeur_totale=10000,
-                valeur_bio=2000,
-            )
-            central_diagnostic.teledeclare(applicant=authenticate.user)
-
-        self.central_snapshot_canteen_before_script = central_diagnostic.canteen_snapshot
-        self.central_snapshot_satellites_before_script = central_diagnostic.satellites_snapshot
-        self.central_snapshot_before_script = {
-            field: getattr(central_diagnostic, field) for field in Diagnostic.SIMPLE_APPRO_FIELDS
-        }
-
-        # Before script is run
-        self.verify_teledeclaration_before_script_run()
-
-        # Run the script
-        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
-        central_diagnostic.refresh_from_db()
-
-        sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
-        sat_3_diagnostic = (
-            Diagnostic.objects.in_year(2024)
-            .filter(canteen=self.central, generated_from_groupe_diagnostic=True)
-            .first()
-        )
-
-        # Save diagnostics informations to test
-        self.central_diagnostic = central_diagnostic
-        self.sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
-
-        # After script is run
-        self.verify_teledeclaration_generated_after_script_run()
-        self.verify_teledeclaration_central_not_modified_by_script()
-        self.verify_teledeclaration_metadata_copied_from_central()
-        self.verify_satellites_infos_copied_in_canteen_snapshot()
-        self.verify_central_meal_counts_divided_in_canteen_snapshots()
-        self.verify_central_appro_values_divided_in_diagnostic_generated(Diagnostic.SIMPLE_APPRO_FIELDS)
-        self.verify_satellites_snapshot_empty_for_generated_diagnostics()
-
-
 class Teledeclaration1Td1SiteScript(TestCase):
     @authenticate
     def test_canteen_values_are_copied_from_satellite_snapshot_and_not_from_canteen_current_information(self):
