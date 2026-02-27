@@ -107,16 +107,3 @@ class DiagnosticGenerateCsatFromCC2024CommandTest(TestCase):
         self.assertEqual(
             Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2
         )
-
-        # TODO :  Diagnostic central is ignored
-
-    # TESTS TO DO :
-    # def test_central_serving_teledeclare_diagnostic_are_generated(self):
-    # def test_command_delete_previous_generated_diagnostics(self):
-    # def test_command_split_appro_for_satellites_is_correct(self):
-    # def test_other_year_diagnostics_are_not_modified(self):
-    # def test_sat_with_diagnostic_not_teledeclared_is_overwritten(self):
-    # def test_sat_with_diagnostic_teledeclared_is_overwritten(self):
-    # def test_sat_with_two_diagnostics(self):
-    # def test_generated_diagnostics_contains_canteen_data(self):
-    # renommer le fichier pour préciser 1TD1Site
