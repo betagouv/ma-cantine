@@ -382,6 +382,18 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
             )
             central_diagnostic.teledeclare(applicant=authenticate.user)
 
+        # Change satellite informations
+        satellite_siren.yearly_meal_count = 2000
+        satellite_siren.daily_meal_count = 20
+        satellite_siren.sector_list = [Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE]
+        satellite_siren.line_ministry = None
+        satellite_siren.department = "93"
+        satellite_siren.economic_model = Canteen.EconomicModel.PRIVATE
+        satellite_siren.management_type = Canteen.ManagementType.CONCEDED
+        satellite_siren.production_type = Canteen.ProductionType.ON_SITE
+        satellite_siren.save(skip_validations=True)
+        satellite_siren.refresh_from_db()
+
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
@@ -818,66 +830,6 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
 
 
 class Teledeclaration1Td1SiteScript(TestCase):
-    @authenticate
-    def test_canteen_values_are_copied_from_satellite_snapshot_and_not_from_canteen_current_information(self):
-        """
-        Test that when a satellites changes its informations after the teledeclaration,
-        the values are copied from the canteen snapshot and not the canteen current information.
-        """
-        central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL,
-            yearly_meal_count=420,
-            daily_meal_count=3,
-        )
-        satellite = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=central.siret,
-            sector_list=[Sector.EDUCATION_AUTRE],
-            line_ministry=Canteen.Ministries.ENSEIGNEMENT_SUPERIEUR,
-            yearly_meal_count=1000,
-            daily_meal_count=10,
-            economic_model=Canteen.EconomicModel.PUBLIC,
-            management_type=Canteen.ManagementType.DIRECT,
-            department="92",
-        )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
-            central_diagnostic = DiagnosticFactory(
-                canteen=central,
-                year=2024,
-                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                valeur_totale=10000,
-                valeur_bio=2000,
-            )
-            central_diagnostic.teledeclare(applicant=authenticate.user)
-
-        # Change the satellite informations after the teledeclaration
-        satellite.yearly_meal_count = 2000
-        satellite.daily_meal_count = 20
-        satellite.sector_list = [Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE]
-        satellite.line_ministry = None
-        satellite.department = "93"
-        satellite.economic_model = Canteen.EconomicModel.PRIVATE
-        satellite.management_type = Canteen.ManagementType.CONCEDED
-        satellite.production_type = Canteen.ProductionType.ON_SITE
-        satellite.save(skip_validations=True)
-
-        # Run the script
-        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
-
-        # After the script is run
-        sat_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=satellite, generated_from_groupe_diagnostic=True)
-        self.assertEqual(sat_diagnostic.canteen_snapshot["yearly_meal_count"], 1000)
-        self.assertEqual(sat_diagnostic.canteen_snapshot["daily_meal_count"], 10)
-        self.assertEqual(central_diagnostic.satellites_snapshot[0]["sector_list"], [Sector.EDUCATION_AUTRE])
-        self.assertEqual(central_diagnostic.satellites_snapshot[0]["line_ministry"], Canteen.Ministries.EDUCATION)
-        self.assertEqual(central_diagnostic.satellites_snapshot[0]["department"], "92")
-        self.assertEqual(central_diagnostic.satellites_snapshot[0]["economic_model"], Canteen.EconomicModel.PUBLIC)
-        self.assertEqual(central_diagnostic.satellites_snapshot[0]["management_type"], Canteen.ManagementType.DIRECT)
-        self.assertEqual(
-            central_diagnostic.satellites_snapshot[0]["production_type"], Canteen.ProductionType.ON_SITE_CENTRAL
-        )
-
     @authenticate
     def test_script_run_again_does_not_generate_new_diagnostics(self):
         """
