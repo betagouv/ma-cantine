@@ -19,7 +19,7 @@ class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
     """
 
     @authenticate
-    def test_for_canteen_site(self):
+    def test_canteen_site(self):
         site_1 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
         site_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
 
@@ -66,7 +66,7 @@ class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
         self.assertEqual(diagnostic_site_2.satellites_snapshot, site_2_snapshot_satellites_before_script)
 
     @authenticate
-    def test_for_satellite_with_central_siret_unknown(self):
+    def test_satellite_with_central_siret_unknown(self):
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="19622299600015"
         )
@@ -105,7 +105,7 @@ class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
         self.assertEqual(satellite_diagnostic.satellites_snapshot, satellite_snapshot_satellites_before_script)
 
     @authenticate
-    def test_for_satellite_with_central_siret_empty(self):
+    def test_satellite_with_central_siret_empty(self):
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="")
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             satellite_diagnostic = DiagnosticFactory(
@@ -139,7 +139,7 @@ class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
         self.assertEqual(satellite_diagnostic.satellites_snapshot, satellite_snapshot_satellites_before_script)
 
     @authenticate
-    def test_for_central_with_satellite_deleted(self):
+    def test_fcentral_with_satellite_deleted(self):
         central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="19622299600015")
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="19622299600015"
@@ -244,7 +244,7 @@ class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
         self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
 
     @authenticate
-    def test_draft_diagnostics_are_not_modified(self):
+    def test_central_with_diagnostic_not_teledeclared(self):
         """
         Test that when a diagnostic is draft, it is not modified when the script is run.
         """
@@ -268,7 +268,7 @@ class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
 
 class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
     @authenticate
-    def test_correct_number_of_diagnostics_generated_for_central_with_satellites(self):
+    def test_correct_number_of_diagnostics_generated_for_central(self):
         """
         For a central with satellites, the script should generate a new diagnostic for each satellite.
         """
@@ -304,7 +304,7 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
         self.assertEqual(diagnostics_generated.count(), 2)
 
     @authenticate
-    def test_correct_number_of_diagnostics_generated_for_central_serving_with_satellites(self):
+    def test_correct_number_of_diagnostics_generated_for_central_serving(self):
         """
         For a central serving with satellites, the script should generate a new diagnostic for each satellite and one for the central.
         """
@@ -344,7 +344,7 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
         self.assertEqual(diagnostics_generated.count(), 3)
 
     @authenticate
-    def test_satellites_informations_copied_in_canteen_snapshot_for_generated_diagnostics(self):
+    def test_canteen_informations_copied_canteen_exact_datetime_teledeclaration(self):
         central = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
             yearly_meal_count=420,
@@ -478,7 +478,7 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
         self.assertEqual(diagnostic_generated.canteen_snapshot["central_producer_siret"], central_serving.siret)
 
     @authenticate
-    def test_generated_diagnostics_metadata_copied_from_central(self):
+    def test_generated_diagnostics_metadata_copied_from_central_diagnostic(self):
         """
         The metadata from the central diagnostic is copied in the generated diagnostics.
         """
@@ -541,7 +541,7 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
         self.assertIsNone(diagnostic_central_generated.satellites_snapshot)
 
     @authenticate
-    def test_satellites_with_teledeclaration_also_teledeclare_by_central_are_flagged(self):
+    def test_satellite_with_teledeclaration_reteledeclare_by_central_are_archived(self):
         """
         Test that when a satellite canteen has a teledeclaration, then it's also teledeclare with the central teledeclaration, the script flags it.
         """
@@ -643,7 +643,7 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
                             )
 
     @authenticate
-    def test_central_td_type_simple(self):
+    def test_central_type_simple(self):
         """
         Test that when a central canteen teledeclares with mode ALL.
         """
@@ -676,7 +676,7 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
         )
 
     @authenticate
-    def test_central_serving_td_type_simple(self):
+    def test_central_serving_type_simple(self):
         """
         Test that when a central serving canteen teledeclares with mode ALL.
         """
@@ -716,7 +716,7 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
         )
 
     @authenticate
-    def test_central_td_type_complete(self):
+    def test_central_type_complete(self):
         """
         Test that when a central canteen teledeclares in mode ALL with COMPLETE type.
         """
@@ -749,7 +749,7 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
         )
 
     @authenticate
-    def test_central_serving_td_type_complete(self):
+    def test_central_serving_type_complete(self):
         """
         Test that when a central serving canteen teledeclares with mode ALL.
         """
@@ -789,7 +789,7 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
         )
 
     @authenticate
-    def test_central_mode_all_non_appro_fields_are_copied(self):
+    def test_mode_all_non_appro_fields_are_copied(self):
         """
         Test that when a central canteen teledeclares in mode ALL with non appro fields, the values are copied in the generated diagnostics.
         """
