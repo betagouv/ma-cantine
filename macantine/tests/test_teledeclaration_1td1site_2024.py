@@ -175,6 +175,37 @@ class VerifyTeledeclarationGeneratedInformations(TestCase):
     Helper method to verify the generated informations are correct created and the original diagnostic is not modified.
     """
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        # create field previsously allowed for central
+        cls.central.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
+        cls.central.sector_list = [Sector.SANTE_HOPITAL, Sector.EDUCATION_AUTRE]
+        cls.central.yearly_meal_count = 420
+        cls.central.daily_meal_count = 3
+        cls.central.department = "75"
+        cls.central.region = "11"
+        cls.central.save(skip_validations=True)
+        cls.satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=cls.central.siret,
+            department="92",
+            region="11",
+        )
+        cls.satellite_1.yearly_meal_count = None
+        cls.satellite_1.daily_meal_count = None
+        cls.satellite_1.save(skip_validations=True)
+        cls.satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=cls.central.siret,
+            department="93",
+            region="11",
+            siret=None,
+            siren_unite_legale="123456789",
+            yearly_meal_count=555,
+            daily_meal_count=55,
+        )
+
     def verify_teledeclaration_before_script_run(self):
         """
         Test the before script the correct number of diagnostics are presents.
@@ -300,35 +331,6 @@ class VerifyTeledeclarationGeneratedInformations(TestCase):
 
 
 class Teledeclaration1Td1SiteForCentral(VerifyTeledeclarationGeneratedInformations):
-    @classmethod
-    def setUpTestData(cls):
-        cls.central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
-        # create field previsously allowed for central
-        cls.central.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
-        cls.central.sector_list = [Sector.SANTE_HOPITAL, Sector.EDUCATION_AUTRE]
-        cls.central.yearly_meal_count = 420
-        cls.central.daily_meal_count = 3
-        cls.central.department = "75"
-        cls.central.region = "11"
-        cls.central.save(skip_validations=True)
-        cls.satellite_1 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=cls.central.siret,
-            department="92",
-            region="11",
-        )
-        cls.satellite_1.yearly_meal_count = None
-        cls.satellite_1.daily_meal_count = None
-        cls.satellite_1.save(skip_validations=True)
-        cls.satellite_2 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=cls.central.siret,
-            department="93",
-            region="11",
-            siret=None,
-            siren_unite_legale="123456789",
-        )
-
     @authenticate
     def test_central_td_simple_and_mode_all(self):
         """
