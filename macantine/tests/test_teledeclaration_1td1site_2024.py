@@ -11,7 +11,6 @@ from data.factories import CanteenFactory, DiagnosticFactory
 # TODO : les SAT avec les doublon after rebase pur le tag
 # TODO : test sat sans meal count en auront des un chiffre lié à la division de la central ??
 # TODO : champs non appro ceux supprimés de 2024 ??
-# TODO : test avec un SIREN dans le setup
 
 
 class Teledeclaration1Td1SiteDiagnosticsAreNotGenerated(TestCase):
