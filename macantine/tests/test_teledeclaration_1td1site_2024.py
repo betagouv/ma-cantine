@@ -7,6 +7,8 @@ from data.models.sector import Sector
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
+# TODO : test tag doublon after rebase
+
 
 class Teledeclaration1Td1SiteForDiagnosticsAreNotGenerated(TestCase):
     """
@@ -175,9 +177,119 @@ class VerifyTeledeclarationGeneratedInformations(TestCase):
     Helper method to verify the generated informations are correct created and the original diagnostic is not modified.
     """
 
+    def verify_teledeclaration_before_script_run(self):
+        """
+        Test the before script the correct number of diagnostics are presents.
+        """
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+        )
+
+    def verify_teledeclaration_generated_after_script_run(self):
+        """
+        Test the generated diagnostics are correctly created.
+        """
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1 + len(self.sat_diagnostics_generated))
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            len(self.sat_diagnostics_generated),
+        )
+        for sat_diagnostic in self.sat_diagnostics_generated:
+            with self.subTest(canteen_id=sat_diagnostic.canteen_id):
+                self.assertTrue(sat_diagnostic.generated_from_groupe_diagnostic)
+
+    def verify_teledeclaration_central_not_modified_by_script(self):
+        """
+        The central diagnostic informations should not be modified by the script.
+        """
+        self.assertEqual(self.central_diagnostic.canteen_snapshot, self.central_snapshot_canteen_before_script)
+        self.assertEqual(self.central_diagnostic.satellites_snapshot, self.central_snapshot_satellites_before_script)
+
+    def verify_teledeclaration_metadata_copied_from_central(self):
+        """
+        The teledeclaration metadata should not be changed for the generated diagnostics.
+        """
+        for sat_diagnostic in self.sat_diagnostics_generated:
+            with self.subTest(canteen_id=sat_diagnostic.canteen_id):
+                self.assertEqual(sat_diagnostic.teledeclaration_id, self.central_diagnostic.teledeclaration_id)
+                self.assertEqual(sat_diagnostic.teledeclaration_date, self.central_diagnostic.teledeclaration_date)
+                self.assertEqual(sat_diagnostic.applicant_snapshot, self.central_diagnostic.applicant_snapshot)
+
+    def verify_satellites_infos_copied_in_canteen_snapshot(self):
+        """
+        The informations from the satellites are copied in the canteen_snapshot of the generated diagnostics.
+        """
+        for sat_diagnostic in self.sat_diagnostics_generated:
+            with self.subTest(canteen_id=sat_diagnostic.canteen_id):
+                satellite = next(
+                    filter(lambda x: x["id"] == sat_diagnostic.canteen_id, self.central_diagnostic.satellites_snapshot)
+                )
+                self.assertEqual(sat_diagnostic.canteen_snapshot["id"], satellite["id"])
+                self.assertEqual(sat_diagnostic.canteen_snapshot["name"], satellite["name"])
+                self.assertEqual(sat_diagnostic.canteen_snapshot["siret"], satellite["siret"])
+                self.assertEqual(
+                    sat_diagnostic.canteen_snapshot["siren_unite_legale"], satellite["siren_unite_legale"]
+                )
+                self.assertEqual(sat_diagnostic.canteen_snapshot["sector_list"], satellite["sector_list"])
+                self.assertEqual(sat_diagnostic.canteen_snapshot["line_ministry"], satellite["line_ministry"])
+                self.assertEqual(sat_diagnostic.canteen_snapshot["department"], satellite["department"])
+                self.assertEqual(sat_diagnostic.canteen_snapshot["region"], satellite["region"])
+
+    def verify_central_meal_counts_divided_in_canteen_snapshots(self):
+        """
+        The meal counts for the generated diagnostics should be divided equally between the satellites.
+        """
+        expected_yearly_meal_count = self.central_diagnostic.canteen_snapshot["yearly_meal_count"] / len(
+            self.sat_diagnostics_generated
+        )
+        expected_daily_meal_count = self.central_diagnostic.canteen_snapshot["daily_meal_count"] / len(
+            self.sat_diagnostics_generated
+        )
+        for sat_diagnostic in self.sat_diagnostics_generated:
+            with self.subTest(canteen_id=sat_diagnostic.canteen_id):
+                self.assertEqual(
+                    sat_diagnostic.canteen_snapshot["yearly_meal_count"],
+                    expected_yearly_meal_count,
+                )
+                self.assertEqual(
+                    sat_diagnostic.canteen_snapshot["daily_meal_count"],
+                    expected_daily_meal_count,
+                )
+
+    def verify_central_appro_values_divided_in_diagnostic_generated(self, fields):
+        """
+        The appro values for the generated diagnostics should be divided equally between the satellites.
+        """
+        number_of_generated_diagnostics = len(self.sat_diagnostics_generated)
+        for sat_diagnostic in self.sat_diagnostics_generated:
+            with self.subTest(canteen_id=sat_diagnostic.canteen_id):
+                for field in fields:
+                    with self.subTest(field=field):
+                        central_value = getattr(self.central_diagnostic, field)
+                        if central_value is not None:
+                            expected_value = central_value / number_of_generated_diagnostics
+                            self.assertEqual(
+                                getattr(sat_diagnostic, field),
+                                expected_value,
+                            )
+
+    def verify_satellites_snapshot_empty_for_generated_diagnostics(self):
+        """
+        The satellites_snapshot should be empty for the generated diagnostics since they have been removed by the script.
+        """
+        for sat_diagnostic in self.sat_diagnostics_generated:
+            with self.subTest(canteen_id=sat_diagnostic.canteen_id):
+                self.assertIsNone(sat_diagnostic.satellites_snapshot)
+
+
+class Teledeclaration1Td1SiteForCentral(VerifyTeledeclarationGeneratedInformations):
     @classmethod
     def setUpTestData(cls):
-        cls.central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        cls.central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+        )
         # create field previsously allowed for central
         cls.central.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
         cls.central.sector_list = [Sector.SANTE_HOPITAL, Sector.EDUCATION_AUTRE]
@@ -206,131 +318,6 @@ class VerifyTeledeclarationGeneratedInformations(TestCase):
             daily_meal_count=55,
         )
 
-    def verify_teledeclaration_before_script_run(self):
-        """
-        Test the before script the correct number of diagnostics are presents.
-        """
-        self.assertEqual(Canteen.objects.count(), 3)
-        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
-        self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
-        )
-
-    def verify_teledeclaration_generated_after_script_run(self):
-        """
-        Test the generated diagnostics are correctly created.
-        """
-        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1 + self.number_of_satellites)
-        self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
-            self.number_of_satellites,
-        )
-        # TODO : after rebase
-        # self.assertEqual(
-        #     Diagnostic.objects.in_year(2024).filter(invalid_reason_list__contains=["DOUBLON_1TD1SITE"]).count(), 0
-        # )
-        self.assertTrue(self.sat_1_diagnostic.generated_from_groupe_diagnostic)
-        self.assertTrue(self.sat_2_diagnostic.generated_from_groupe_diagnostic)
-
-    def verify_teledeclaration_central_not_modified_by_script(self):
-        self.assertEqual(self.central_diagnostic.canteen_snapshot, self.central_snapshot_canteen_before_script)
-        self.assertEqual(self.central_diagnostic.satellites_snapshot, self.central_snapshot_satellites_before_script)
-
-    def verify_teledeclaration_metadata_copied_from_central(self):
-        """
-        The teledeclaration metadata should not be changed for the generated diagnostics.
-        """
-        self.assertEqual(self.sat_1_diagnostic.teledeclaration_id, self.central_diagnostic.teledeclaration_id)
-        self.assertEqual(self.sat_2_diagnostic.teledeclaration_id, self.central_diagnostic.teledeclaration_id)
-        self.assertEqual(self.sat_1_diagnostic.teledeclaration_date, self.central_diagnostic.teledeclaration_date)
-        self.assertEqual(self.sat_2_diagnostic.teledeclaration_date, self.central_diagnostic.teledeclaration_date)
-        self.assertEqual(self.sat_1_diagnostic.applicant_snapshot, self.central_diagnostic.applicant_snapshot)
-        self.assertEqual(self.sat_2_diagnostic.applicant_snapshot, self.central_diagnostic.applicant_snapshot)
-
-    def verify_satellites_infos_copied_in_canteen_snapshot(self):
-        """
-        The id, name, siret and siren_unite_legale from the satellites are now the canteen informations.
-        """
-        self.assertEqual(self.sat_1_diagnostic.canteen_snapshot["id"], self.satellite_1.id)
-        self.assertEqual(self.sat_2_diagnostic.canteen_snapshot["id"], self.satellite_2.id)
-        self.assertEqual(self.sat_1_diagnostic.canteen_snapshot["name"], self.satellite_1.name)
-        self.assertEqual(self.sat_2_diagnostic.canteen_snapshot["name"], self.satellite_2.name)
-        self.assertEqual(self.sat_1_diagnostic.canteen_snapshot["siret"], self.satellite_1.siret)
-        self.assertIsNone(self.sat_1_diagnostic.canteen_snapshot["siren_unite_legale"])
-        self.assertEqual(
-            self.sat_2_diagnostic.canteen_snapshot["siren_unite_legale"], self.satellite_2.siren_unite_legale
-        )
-        self.assertIsNone(self.sat_2_diagnostic.canteen_snapshot["siret"])
-
-    def verify_central_infos_copied_in_canteen_snapshots(self):
-        """
-        The sectors and line_ministry from the central should be copied in the canteen_snapshot of the generated diagnostics.
-        """
-        # Verify sectors and line_ministry from central are copied
-        self.assertEqual(self.sat_1_diagnostic.canteen_snapshot["sector_list"], self.satellite_1.sector_list)
-        self.assertEqual(self.sat_2_diagnostic.canteen_snapshot["sector_list"], self.satellite_2.sector_list)
-        self.assertEqual(self.sat_1_diagnostic.canteen_snapshot["line_ministry"], self.satellite_1.line_ministry)
-        self.assertEqual(self.sat_2_diagnostic.canteen_snapshot["line_ministry"], self.satellite_2.line_ministry)
-
-        # Verify geographic data from central are copied
-        self.assertEqual(self.sat_1_diagnostic.canteen_snapshot["department"], self.satellite_1.department)
-        self.assertEqual(self.sat_2_diagnostic.canteen_snapshot["department"], self.satellite_2.department)
-        self.assertEqual(self.sat_1_diagnostic.canteen_snapshot["region"], self.satellite_1.region)
-        self.assertEqual(self.sat_2_diagnostic.canteen_snapshot["region"], self.satellite_2.region)
-
-    def verify_central_meal_counts_divided_in_canteen_snapshots(self):
-        """
-        The meal counts for the generated diagnostics should be divided equally between the satellites.
-
-        Is it true ??
-        """
-        expected_yearly_meal_count = (
-            self.central_snapshot_canteen_before_script["yearly_meal_count"] / self.number_of_satellites
-        )
-        expected_daily_meal_count = (
-            self.central_snapshot_canteen_before_script["daily_meal_count"] / self.number_of_satellites
-        )
-        self.assertEqual(
-            self.sat_1_diagnostic.canteen_snapshot["yearly_meal_count"],
-            expected_yearly_meal_count,
-        )
-        self.assertEqual(self.sat_2_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
-        self.assertEqual(
-            self.sat_1_diagnostic.canteen_snapshot["daily_meal_count"],
-            expected_daily_meal_count,
-        )
-        self.assertEqual(
-            self.sat_2_diagnostic.canteen_snapshot["daily_meal_count"],
-            expected_daily_meal_count,
-        )
-
-    def verify_central_appro_values_divided_in_diagnostic_generated(self, fields):
-        """
-        The appro values for the generated diagnostics should be divided equally between the satellites.
-        """
-        for field in fields:
-            central_value = self.central_snapshot_before_script[field]
-            if central_value is not None:
-                expected_value = central_value / self.number_of_satellites
-                self.assertEqual(
-                    getattr(self.sat_1_diagnostic, field),
-                    expected_value,
-                )
-                self.assertEqual(
-                    getattr(self.sat_2_diagnostic, field),
-                    expected_value,
-                )
-
-    def verify_satellites_snapshot_empty_for_generated_diagnostics(self):
-        """
-        The satellites_snapshot should be empty for the generated diagnostics since they have been removed by the script.
-        """
-        self.assertIsNone(self.sat_1_diagnostic.satellites_snapshot)
-        self.assertIsNone(self.sat_2_diagnostic.satellites_snapshot)
-
-
-class Teledeclaration1Td1SiteForCentral(VerifyTeledeclarationGeneratedInformations):
     @authenticate
     def test_central_td_simple_and_mode_all(self):
         """
@@ -359,18 +346,18 @@ class Teledeclaration1Td1SiteForCentral(VerifyTeledeclarationGeneratedInformatio
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         central_diagnostic.refresh_from_db()
+        sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
+
+        # Save diagnostics informations to test
         self.central_diagnostic = central_diagnostic
-        self.number_of_satellites = self.central_diagnostic.canteen.satellites.count()
-        self.sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
-        self.sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
-        self.assertEqual(self.number_of_satellites, 2)
+        self.sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
 
         # After script is run
         self.verify_teledeclaration_generated_after_script_run()
         self.verify_teledeclaration_central_not_modified_by_script()
         self.verify_teledeclaration_metadata_copied_from_central()
         self.verify_satellites_infos_copied_in_canteen_snapshot()
-        self.verify_central_infos_copied_in_canteen_snapshots()
         self.verify_central_meal_counts_divided_in_canteen_snapshots()
         self.verify_central_appro_values_divided_in_diagnostic_generated(Diagnostic.SIMPLE_APPRO_FIELDS)
         self.verify_satellites_snapshot_empty_for_generated_diagnostics()
@@ -403,18 +390,18 @@ class Teledeclaration1Td1SiteForCentral(VerifyTeledeclarationGeneratedInformatio
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         central_diagnostic.refresh_from_db()
+        sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
+
+        # Save diagnostics informations to test
         self.central_diagnostic = central_diagnostic
-        self.number_of_satellites = self.central_diagnostic.canteen.satellites.count()
-        self.sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
-        self.sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
-        self.assertEqual(self.number_of_satellites, 2)
+        self.sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
 
         # After script is run
         self.verify_teledeclaration_generated_after_script_run()
         self.verify_teledeclaration_central_not_modified_by_script()
         self.verify_teledeclaration_metadata_copied_from_central()
         self.verify_satellites_infos_copied_in_canteen_snapshot()
-        self.verify_central_infos_copied_in_canteen_snapshots()
         self.verify_central_meal_counts_divided_in_canteen_snapshots()
         self.verify_central_appro_values_divided_in_diagnostic_generated(Diagnostic.COMPLETE_APPRO_FIELDS)
         self.verify_satellites_snapshot_empty_for_generated_diagnostics()
@@ -447,18 +434,18 @@ class Teledeclaration1Td1SiteForCentral(VerifyTeledeclarationGeneratedInformatio
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         central_diagnostic.refresh_from_db()
+        sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
+
+        # Save diagnostics informations to test
         self.central_diagnostic = central_diagnostic
-        self.number_of_satellites = self.central_diagnostic.canteen.satellites.count()
-        self.sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
-        self.sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
-        self.assertEqual(self.number_of_satellites, 2)
+        self.sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
 
         # After script is run
         self.verify_teledeclaration_generated_after_script_run()
         self.verify_teledeclaration_central_not_modified_by_script()
         self.verify_teledeclaration_metadata_copied_from_central()
         self.verify_satellites_infos_copied_in_canteen_snapshot()
-        self.verify_central_infos_copied_in_canteen_snapshots()
         self.verify_central_meal_counts_divided_in_canteen_snapshots()
         self.verify_central_appro_values_divided_in_diagnostic_generated(Diagnostic.SIMPLE_APPRO_FIELDS)
         self.verify_satellites_snapshot_empty_for_generated_diagnostics()
@@ -491,18 +478,18 @@ class Teledeclaration1Td1SiteForCentral(VerifyTeledeclarationGeneratedInformatio
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         central_diagnostic.refresh_from_db()
+        sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
+
+        # Save diagnostics informations to test
         self.central_diagnostic = central_diagnostic
-        self.number_of_satellites = self.central_diagnostic.canteen.satellites.count()
-        self.sat_1_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_1)
-        self.sat_2_diagnostic = Diagnostic.objects.in_year(2024).get(canteen=self.satellite_2)
-        self.assertEqual(self.number_of_satellites, 2)
+        self.sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
 
         # After script is run
         self.verify_teledeclaration_generated_after_script_run()
         self.verify_teledeclaration_central_not_modified_by_script()
         self.verify_teledeclaration_metadata_copied_from_central()
         self.verify_satellites_infos_copied_in_canteen_snapshot()
-        self.verify_central_infos_copied_in_canteen_snapshots()
         self.verify_central_meal_counts_divided_in_canteen_snapshots()
         self.verify_central_appro_values_divided_in_diagnostic_generated(Diagnostic.COMPLETE_APPRO_FIELDS)
         self.verify_satellites_snapshot_empty_for_generated_diagnostics()
