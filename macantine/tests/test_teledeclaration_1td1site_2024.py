@@ -59,7 +59,7 @@ class Teledeclaration1Td1SiteCanteenNotConcerned(TestCase):
     @authenticate
     def test_for_satellite_with_central_siret_unknown(self):
         """
-        Test that the diagnostics of the satellites without central diagnostic are not modified when the command is run.
+        Test that a satellite canteen with a central SIRET that doesn't match any canteen is not modified when the command is run.
         """
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="19622299600015"
@@ -72,19 +72,66 @@ class Teledeclaration1Td1SiteCanteenNotConcerned(TestCase):
             )
             satellite_diagnostic.teledeclare(applicant=authenticate.user)
 
+        satellite_snapshot_canteen_before_script = satellite_diagnostic.canteen_snapshot
+        satellite_snapshot_satellites_before_script = satellite_diagnostic.satellites_snapshot
+
+        # Before the script is run
         self.assertEqual(
             Canteen.objects.filter(siret="19622299600015").count(), 0
         )  # no central canteen exist with the siret used in sat
+        self.assertEqual(Canteen.objects.count(), 1)
         self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
         self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+        )
 
-        self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
-        )
+        # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
         self.assertEqual(
             Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
         )
+        self.assertEqual(satellite_diagnostic.canteen_snapshot, satellite_snapshot_canteen_before_script)
+        self.assertEqual(satellite_diagnostic.satellites_snapshot, satellite_snapshot_satellites_before_script)
+
+    @authenticate
+    def test_for_satellite_with_central_siret_empty(self):
+        """
+        Test that a satellite canteen without a central SIRET that teledeclares is not modified when the command is run.
+        """
+        satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="")
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            satellite_diagnostic = DiagnosticFactory(
+                canteen=satellite,
+                year=2024,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            )
+            satellite_diagnostic.teledeclare(applicant=authenticate.user)
+
+        satellite_snapshot_canteen_before_script = satellite_diagnostic.canteen_snapshot
+        satellite_snapshot_satellites_before_script = satellite_diagnostic.satellites_snapshot
+
+        # Before the script is run
+        self.assertEqual(Canteen.objects.count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+        )
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+        )
+        self.assertEqual(satellite_diagnostic.canteen_snapshot, satellite_snapshot_canteen_before_script)
+        self.assertEqual(satellite_diagnostic.satellites_snapshot, satellite_snapshot_satellites_before_script)
 
 
 class Teledeclaration1Td1SiteCanteenCentralWithSatellitesWithoutDiagnostic(TestCase):
