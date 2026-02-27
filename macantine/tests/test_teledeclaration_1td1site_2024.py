@@ -137,7 +137,7 @@ class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
         self.assertEqual(satellite_diagnostic.satellites_snapshot, satellite_snapshot_satellites_before_script)
 
     @authenticate
-    def test_fcentral_with_satellite_deleted(self):
+    def test_central_with_satellite_deleted(self):
         central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="19622299600015")
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="19622299600015"
