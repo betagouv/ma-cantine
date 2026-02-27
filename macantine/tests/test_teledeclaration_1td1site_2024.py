@@ -8,11 +8,9 @@ from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
 # TODO : on devrait stocker l'id de la TD de la génération non ?
-# TODO : une centrale sans SAT ?
 # TODO : les SAT avec les doublon after rebase pur le tag
 # TODO : test sat sans meal count en auront des un chiffre lié à la division de la central ??
 # TODO : champs non appro ceux supprimés de 2024 ??
-# TODO : status=Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE
 
 
 class Teledeclaration1Td1SiteDiagnosticsAreNotGenerated(TestCase):
@@ -519,6 +517,59 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
         )
         self.assertIsNone(diagnostic_generated.satellites_snapshot)
         self.assertIsNone(diagnostic_central_generated.satellites_snapshot)
+
+    @authenticate
+    def test_satellites_with_teledeclaration_also_teledeclare_by_central_are_flagged(self):
+        """
+        Test that when a satellite canteen has a teledeclaration, then it's also teledeclare with the central teledeclaration, the script flags it.
+        """
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            satellite_diagnostic = DiagnosticFactory(
+                canteen=satellite,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            satellite_diagnostic.teledeclare(applicant=authenticate.user)
+
+        self.assertEqual(Diagnostic.objects.teledeclared().in_year(2024).count(), 1)
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            satellite.central_producer_siret = central.siret
+            satellite.save(skip_validations=True)
+            self.assertEqual(satellite.central_producer_siret, central.siret)
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 2)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 3)
+        self.assertEqual(Diagnostic.objects.in_year(2024).filter(canteen=satellite).count(), 2)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024).filter(canteen=satellite, generated_from_groupe_diagnostic=True).count(),
+            1,
+        )
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024)
+            .filter(status=Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE)
+            .count(),
+            1,
+        )
+        diagnostic_generated = Diagnostic.objects.in_year(2024).get(
+            canteen=satellite, generated_from_groupe_diagnostic=True
+        )
+        self.assertEqual(diagnostic_generated.status, Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE)
 
 
 class Teledeclaration1Td1SiteFieldsValuesAreGenerated(TestCase):
