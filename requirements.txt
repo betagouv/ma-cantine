@@ -268,7 +268,7 @@ executing==2.2.1
     # via stack-data
 factory-boy==3.3.3
     # via ma-cantine
-faker==27.0.0
+faker==40.5.1
     # via
     #   factory-boy
     #   ma-cantine
