@@ -528,7 +528,7 @@ pyyaml==6.0.2
     #   ma-cantine
     #   pre-commit
     #   pyhanko
-qrcode==7.4.2
+qrcode==8.2
     # via
     #   ma-cantine
     #   pyhanko
