@@ -12,8 +12,6 @@ from data.factories import CanteenFactory, DiagnosticFactory
 # test_correct_number_of_diagnostics_generated_for_central_serving => j'ai lancé le script groupe est-ce la bonne solution ?
 # test_divide_meal_count_by_number_of_satellites => comment on gère les arrondis ?
 
-# TODO : tester avec une annulation la TD n'est pas régénérée
-
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
     @authenticate
@@ -1187,6 +1185,31 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
                 year=2024,
                 valeur_totale=10000,
             )
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 0)
+        self.assertEqual(Diagnostic.objects.in_year(2024).filter(generated_from_groupe_diagnostic=True).count(), 0)
+
+    @authenticate
+    def test_cancelled_central_diagnostics(self):
+        """
+        If a teledeclaration is cancelled, no diagnostics should be generated.
+        """
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+            central_diagnostic.cancel()
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
