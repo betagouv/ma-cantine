@@ -23,7 +23,7 @@ const approBadge = "/static/images/badges/appro.svg"
         title="En savoir plus sur la loi"
       />
     </ObservatoryBadgeTitle>
-    <DsfrAlert v-if="stats.notes.alert" :title="stats.notes.alert.title" :description="stats.notes.alert.message" type="error" class="fr-mb-4w" />
+    <DsfrNotice v-if="stats.notes.alert" :title="stats.notes.alert.title" :desc="stats.notes.alert.message" type="warning" class="fr-mb-4w" />
     <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
       <li class="fr-mb-8w">
         <ObservatoryGraphEgalim :approPercent="stats.approPercent" />
