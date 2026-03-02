@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.17.0](https://github.com/betagouv/ma-cantine/compare/v2026.16.1...v2026.17.0) (2026-03-02)
+
+
+### Nouveautés
+
+* **Observatoire:** ajoute un message d'alerte pour prévenir de l'incohérence des chiffres ([#6446](https://github.com/betagouv/ma-cantine/issues/6446)) ([aa9d899](https://github.com/betagouv/ma-cantine/commit/aa9d89951c2052a7e25015c2022191cde0beccb6))
+* **Ressources:** ajout tableur xlsx suivis des achats ([#6426](https://github.com/betagouv/ma-cantine/issues/6426)) ([d1384de](https://github.com/betagouv/ma-cantine/commit/d1384ded331fb1185cec903a8e1612d12e6eae15))
+
+
+### Corrections (bugs, typos...)
+
+* **Import:** corrige l'affichage de la modale de succès alors que l'import n'a pas fonctionné ([#6448](https://github.com/betagouv/ma-cantine/issues/6448)) ([4e8c2d6](https://github.com/betagouv/ma-cantine/commit/4e8c2d614541f6bc3037bb2e57fb1ac5cb483ff3))
+
 ## [2026.16.1](https://github.com/betagouv/ma-cantine/compare/v2026.16.0...v2026.16.1) (2026-02-25)
 
 
