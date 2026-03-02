@@ -640,6 +640,34 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
         )
         self.assertEqual(diagnostic_generated.status, Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE)
 
+    @authenticate
+    def test_teledeclaration_mode_is_site_in_generated_diagnostics(self):
+        """
+        Test the teledeclaration mode value is updated in the generated diagnostics.
+        """
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        diagnostic_generated = (
+            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True)
+        )
+        for diagnostic in diagnostic_generated:
+            self.assertEqual(diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
+
 
 class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
     @classmethod
