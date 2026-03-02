@@ -683,7 +683,7 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
                         central_value = getattr(central_diagnostic, field)
                         if central_value is not None:
                             expected_value = central_value / divisor
-                            expected_value_rounded = round(expected_value, 2)  # The value saved has 2 decimal
+                            expected_value_rounded = round(expected_value, 2)  # The value saved has 2 decimals
                             self.assertEqual(
                                 float(getattr(sat_diagnostic, field)),
                                 expected_value_rounded,
@@ -713,6 +713,13 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
         sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
+
+        # Total value
+        expected_total_value = round(
+            central_diagnostic.valeur_totale / number_of_generated_diagnostics, 2
+        )  # The value saved has 2 decimals
+        self.assertEqual(sat_1_diagnostic.valeur_totale, expected_total_value)
+        self.assertEqual(sat_2_diagnostic.valeur_totale, expected_total_value)
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
@@ -756,6 +763,14 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
+        # Total value
+        expected_total_value = round(
+            central_diagnostic.valeur_totale / number_of_generated_diagnostics, 2
+        )  # The value saved has 2 decimals
+        self.assertEqual(float(sat_1_diagnostic.valeur_totale), expected_total_value)
+        self.assertEqual(float(sat_2_diagnostic.valeur_totale), expected_total_value)
+        self.assertEqual(float(sat_3_diagnostic.valeur_totale), expected_total_value)
+
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
             Diagnostic.SIMPLE_APPRO_FIELDS,
@@ -788,6 +803,13 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
         sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
+
+        # Total value
+        expected_total_value = round(
+            central_diagnostic.valeur_totale / number_of_generated_diagnostics, 2
+        )  # The value saved has 2 decimals
+        self.assertEqual(float(sat_1_diagnostic.valeur_totale), expected_total_value)
+        self.assertEqual(float(sat_2_diagnostic.valeur_totale), expected_total_value)
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
@@ -830,6 +852,14 @@ class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
         )
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
+
+        # Total value
+        expected_total_value = round(
+            central_diagnostic.valeur_totale / number_of_generated_diagnostics, 2
+        )  # The value saved has 2 decimals
+        self.assertEqual(float(sat_1_diagnostic.valeur_totale), expected_total_value)
+        self.assertEqual(float(sat_2_diagnostic.valeur_totale), expected_total_value)
+        self.assertEqual(float(sat_3_diagnostic.valeur_totale), expected_total_value)
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
