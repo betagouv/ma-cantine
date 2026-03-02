@@ -7,24 +7,24 @@ from data.models.sector import Sector
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
-# TODO : Tester que l'id de la teledeclaration_id est bien celle du diagnostic de la central
 # TODO : Tester que les bilans des SATs télédéclarés sont écrasés si la central a un mode ALL (old : test_satellite_with_teledeclaration_reteledeclare_by_central_are_archived)
 # TODO : Tester que les bilans des SATs télédéclarés avec des appros sont écrasés si la central a un mode APPRO ONLY ? on est ok avec ça ?
 # TODO : Tester si un bilan d'une centrale a le champ "invalid_reason_list" il est aussi copié dans ceux des SATs générés
 # TODO : Tester à la relance du script : les bilans qui ont eut le tag "DOUBLON1_TD1SITE" est enlevé puis sera remis ensuite par le script (si les conditions ne changent pas)
+# TODO : Lancer script Groupe ?
 
-# TODO : dans "test_when_script_run_again_delete_previous_generated_diagnostics" => vérifie que les ID des deux diags générés ne sont pas les mêmes
+# TODO : refaire "test_satellite_with_teledeclaration_reteledeclare_by_central_are_archived"
+# TODO : dans "test_canteen_informations_copied_canteen_exact_datetime_teledeclaration" => ne pas tester aves les informations de la centrale utilisé pour les SAT
+# TODO : dans "test_canteen_informations_copied_canteen_exact_datetime_teledeclaration" => ajouter un test avec le repas modifiés l'année d'après
 
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
     @authenticate
     def test_correct_number_of_diagnostics_generated_for_central(self):
         """
-        For a central with satellites, the script should generate a new diagnostic for each satellite.
+        The script should generate one diagnostic for each satellite saved in snapshot.
         """
-        central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
-        )
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
 
@@ -48,36 +48,30 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)  # Central + 2 satellites
-        diagnostics_generated = (
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True)
-        )
-        self.assertEqual(diagnostics_generated.count(), 2)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2)
 
     @authenticate
     def test_correct_number_of_diagnostics_generated_for_central_serving(self):
         """
-        For a central serving with satellites, the script should generate a new diagnostic for each satellite and one for the central.
+        The script should generate one diagnostic for each satellite saved in snapshot (the central serving is already in the snapshot)
         """
         central_serving = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING)
-        CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_serving.siret
-        )
-        CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_serving.siret
-        )
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_serving.siret)
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            central_diagnostic = DiagnosticFactory(
+            central_serving_diagnostic = DiagnosticFactory(
                 canteen=central_serving,
                 year=2024,
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=authenticate.user)
+            central_serving_diagnostic.teledeclare(applicant=authenticate.user)
+            # Need to add satellites to the snapshot with gorupe migration
+            call_command("canteen_migrate_central_to_groupe", apply=True)
 
         # Before the script is run
-        self.assertEqual(Canteen.objects.count(), 3)
+        self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
             Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
@@ -87,46 +81,122 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().count(), 4
-        )  # Central + 2 satellites + 1 for the central serving
-        diagnostics_generated = (
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True)
-        )
-        self.assertEqual(diagnostics_generated.count(), 3)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2)
 
     @authenticate
     def test_when_script_run_again_delete_previous_generated_diagnostics(self):
         """
-        Test that when the script is run again, it does not generate new diagnostics.
+        Test that when the script is run again, it deletes the previous generated diagnostics and create one.
         """
-        central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
-        )
-        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
-
+        central_1 = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        central_2 = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        satellite_1 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_1.siret)
+        satellite_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_2.siret)
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            central_diagnostic = DiagnosticFactory(
-                canteen=central,
+            central_1_diagnostic = DiagnosticFactory(
+                canteen=central_1,
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=authenticate.user)
+            central_2_diagnostic = DiagnosticFactory(
+                canteen=central_2,
+                year=2024,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_1_diagnostic.teledeclare(applicant=authenticate.user)
+            central_2_diagnostic.teledeclare(applicant=authenticate.user)
 
         # Before the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
 
         # Run the script first time
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
-        self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 1
-        )
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 4)
+        first_time_generated_diagnostic_satellite_1 = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=satellite_1, generated_from_groupe_diagnostic=True)
+        first_time_generated_diagnostic_satellite_2 = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
 
         # Re-run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 4)
+        second_time_generated_diagnostic_satellite_1 = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=satellite_1, generated_from_groupe_diagnostic=True)
+        second_time_generated_diagnostic_satellite_2 = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
+
+        # The generated diagnostics are incremented
+        self.assertNotEqual(first_time_generated_diagnostic_satellite_1.id, second_time_generated_diagnostic_satellite_1.id)
+        self.assertNotEqual(first_time_generated_diagnostic_satellite_2.id, second_time_generated_diagnostic_satellite_2.id)
+
+    @authenticate
+    def test_satellite_with_teledeclaration_reteledeclare_by_central_are_archived(self):
+        """
+        Test that when a satellite canteen has a teledeclaration, then it's also teledeclare with the central teledeclaration, the script flags it.
+        """
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            satellite_diagnostic = DiagnosticFactory(
+                canteen=satellite,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            satellite_diagnostic.teledeclare(applicant=authenticate.user)
+
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            satellite.central_producer_siret = central.siret
+            satellite.save(skip_validations=True)
+            self.assertEqual(satellite.central_producer_siret, central.siret)
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 2)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().filter(canteen=satellite).count(), 2)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024)
+            .teledeclared()
+            .filter(canteen=satellite, generated_from_groupe_diagnostic=True)
+            .count(),
+            1,
+        )
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024)
+            .teledeclared()
+            .filter(canteen=satellite, generated_from_groupe_diagnostic=False)
+            .count(),
+            1,
+        )
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024)
+            .filter(status=Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE)
+            .count(),
+            1,
+        )
+        diagnostic_generated = (
+            Diagnostic.objects.in_year(2024)
+            .teledeclared()
+            .get(canteen=satellite, generated_from_groupe_diagnostic=True)
+        )
+        self.assertEqual(diagnostic_generated.status, Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE)
+
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
         self.assertEqual(
