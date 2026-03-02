@@ -11,7 +11,7 @@ from data.factories import CanteenFactory, DiagnosticFactory
 # TODO : SAT avec les doublons after rebase avec le tag "DOUBLON_1TD1SITE"
 
 
-class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
+class Teledeclaration1Td1SiteNoTeledeclarationGeneratedTest(TestCase):
     """
     Test the teledeclaration of canteen or diagnostic not concerned by the 1td1site script are not modified when the command is run.
     """
@@ -254,7 +254,7 @@ class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
         self.assertEqual(Diagnostic.objects.in_year(2024).filter(generated_from_groupe_diagnostic=True).count(), 0)
 
 
-class Teledeclaration1Td1SiteDiagnosticsGeneration(TestCase):
+class Teledeclaration1Td1SiteDiagnosticsGenerationTest(TestCase):
     @authenticate
     def test_correct_number_of_diagnostics_generated_for_central(self):
         """
@@ -669,7 +669,7 @@ class Teledeclaration1Td1SiteDiagnosticsGeneration(TestCase):
             self.assertEqual(diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
 
 
-class Teledeclaration1Td1SiteTunnelFieldsValuesAreGenerated(TestCase):
+class Teledeclaration1Td1SiteTunnelFieldsValuesAreGeneratedTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.central = CanteenFactory(
@@ -926,7 +926,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesAreGenerated(TestCase):
                         self.assertEqual(getattr(sat_diagnostic, field), getattr(central_diagnostic, field))
 
 
-class Teledeclaration1Td1SiteScript(TestCase):
+class Teledeclaration1Td1SiteScriptTest(TestCase):
     @authenticate
     def test_script_run_again_does_not_generate_new_diagnostics(self):
         """
