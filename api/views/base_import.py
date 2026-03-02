@@ -253,6 +253,8 @@ class BaseImportView(ABC, APIView):
             "errors": self.errors,
             "seconds": time.time() - self.start_time,
         }
+        if len(self.errors) > 0:
+            response_data["count"] = 0
         return JsonResponse({**response_data, **base_response}, status=status.HTTP_200_OK)
 
     def _parse_errors(self, e, row, identifier=None):
