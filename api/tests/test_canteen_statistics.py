@@ -453,6 +453,19 @@ class CanteenStatsApiTest(APITestCase):
         )  # dernier jour de la campagne 2024
         self.assertFalse("campaignInfo" in body["notes"])
 
+    def test_notes_alert(self):
+        response_2023 = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        self.assertEqual(response_2023.status_code, status.HTTP_200_OK)
+        body_2023 = response_2023.json()
+        self.assertEqual(
+            body_2023["notes"]["alert"]["title"],
+            "Les chiffres indiqués sont légèrement inexacts en raison de l’évolution récente de la plateforme ma cantine.",
+        )  # en 2023
+        response_2025 = self.client.get(reverse("canteen_statistics"), {"year": 2025})
+        self.assertEqual(response_2025.status_code, status.HTTP_200_OK)
+        body_2025 = response_2025.json()
+        self.assertNotIn("alert", body_2025["notes"])
+
     def test_cache_mechanism(self):
         # first time: no cache
         self.assertEqual(Canteen.objects.count(), 6)

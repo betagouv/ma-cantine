@@ -152,6 +152,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     @staticmethod
     def generate_notes(year, egalim_group):
         data = {}
+        # Display an alert message while waiting for the stats to be corrected
         if int(year) < 2025:
             data["alert"] = {
                 "title": "Les chiffres indiqués sont légèrement inexacts en raison de l’évolution récente de la plateforme ma cantine.",
