@@ -254,7 +254,7 @@ class Teledeclaration1Td1SiteNoTeledeclarationGenerated(TestCase):
         self.assertEqual(Diagnostic.objects.in_year(2024).filter(generated_from_groupe_diagnostic=True).count(), 0)
 
 
-class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
+class Teledeclaration1Td1SiteDiagnosticsGeneration(TestCase):
     @authenticate
     def test_correct_number_of_diagnostics_generated_for_central(self):
         """
@@ -669,7 +669,7 @@ class Teledeclaration1Td1SiteDiagnosticsAreGenerated(TestCase):
             self.assertEqual(diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
 
 
-class Teledeclaration1Td1SiteDiagnosticsFieldsValuesAreGenerated(TestCase):
+class Teledeclaration1Td1SiteTunnelFieldsValuesAreGenerated(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.central = CanteenFactory(
