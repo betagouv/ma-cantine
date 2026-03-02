@@ -383,6 +383,19 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(errors[0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
+    @authenticate
+    def test_when_errors_count_is_0(self):
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_one_error.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertTrue(len(body["errors"]) > 0)
+
 
 class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
     @freeze_time("2025-02-10")  # during the 2024 campaign
