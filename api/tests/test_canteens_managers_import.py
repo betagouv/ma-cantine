@@ -174,6 +174,23 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         self.assertIn("n'est pas valide", errors[0]["message"])
 
     @authenticate
+    def test_when_errors_count_is_0(self):
+        user = authenticate.user
+        user.is_staff = True
+        user.save()
+        CanteenFactory(siret="21340172201787")
+        CanteenFactory(siret="40419443300078")
+
+        file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_one_error.csv"
+        with open(file_path) as managers_file:
+            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertTrue(len(body["errors"]) > 0)
+
+    @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     def test_file_above_max_size(self):
         """

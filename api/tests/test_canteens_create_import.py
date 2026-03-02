@@ -264,6 +264,17 @@ class CanteensImportApiErrorTest(APITestCase):
         )
 
     @authenticate
+    def test_when_errors_count_is_0(self):
+        file_path = "./api/tests/files/canteens/canteens_bad_one_error.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertTrue(len(body["errors"]) > 0)
+
+    @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     def test_file_above_max_size(self):
         self.assertEqual(Canteen.objects.count(), 0)
