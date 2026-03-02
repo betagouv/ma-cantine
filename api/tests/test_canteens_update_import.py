@@ -173,6 +173,19 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
             "Champ 'Code INSEE' : Le code INSEE est obligatoire pour les cantines avec le 'siren_unite_legale' de renseigné.",
         )
 
+    @authenticate
+    def test_when_errors_count_is_0(self):
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=9999999993)
+
+        file_path = "./api/tests/files/canteens/canteens_update_bad_one_error.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertTrue(len(body["errors"]) > 0)
+
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteensUpdateImportApiSuccessTest(APITestCase):

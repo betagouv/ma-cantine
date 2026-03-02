@@ -382,6 +382,20 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(errors[0]["status"], 400)
 
     @authenticate
+    def test_when_errors_count_is_0(self):
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_bad_one_error.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertTrue(len(body["errors"]) > 0)
+
+    @authenticate
     def test_import_corrupt_purchases_file(self):
         """
         A reasonable error should be thrown
