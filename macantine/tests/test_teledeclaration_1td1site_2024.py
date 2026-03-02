@@ -10,8 +10,8 @@ from data.factories import CanteenFactory, DiagnosticFactory
 # Questions :
 # test_tag_satellites_with_teledeclaration_and_teledeclare_by_central_mode_appro => ok est ok avec ça ? Comment on différencie les diag TD des autres volets ?
 # test_correct_number_of_diagnostics_generated_for_central_serving => j'ai lancé le script groupe est-ce la bonne solution ?
+# test_divide_meal_count_by_number_of_satellites => comment on gère les arrondis ?
 
-# TODO : dans "test_canteen_informations_copied_canteen_exact_datetime_teledeclaration" => ajouter un test avec le repas modifiés l'année d'après
 # TODO : tester avec une annulation la TD n'est pas régénérée
 
 
@@ -593,8 +593,8 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            yearly_meal_count=500,
-            daily_meal_count=50,
+            yearly_meal_count=420,
+            daily_meal_count=3,
         )
         satellite_2 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -629,8 +629,67 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             .get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
         )
 
-        expected_yearly_meal_count = central.yearly_meal_count / number_of_satellites
-        expected_daily_meal_count = central.daily_meal_count / number_of_satellites
+        expected_yearly_meal_count = central_diagnostic.canteen_snapshot["yearly_meal_count"] / number_of_satellites
+        expected_daily_meal_count = central_diagnostic.canteen_snapshot["daily_meal_count"] / number_of_satellites
+
+        self.assertEqual(satellite_1_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
+        self.assertEqual(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
+        self.assertEqual(satellite_1_diagnostic.canteen_snapshot["daily_meal_count"], expected_daily_meal_count)
+        self.assertEqual(satellite_1_diagnostic.canteen_snapshot["daily_meal_count"], expected_daily_meal_count)
+
+    @authenticate
+    def test_keep_history_meal_count(self):
+        """
+        If the central changes its meal count, the satellite meal count is the same as in the year of the script.
+        """
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1000, daily_meal_count=100
+        )
+        satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            yearly_meal_count=420,
+            daily_meal_count=3,
+        )
+        satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            central_producer_siret=central.siret,
+            yearly_meal_count=420,
+            daily_meal_count=3,
+        )
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        # Change the meal count of the central
+        central.yearly_meal_count = 9999
+        central.daily_meal_count = 99
+        central.save(skip_validations=True)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        number_of_satellites = 2
+        satellite_1_diagnostic = (
+            Diagnostic.objects.in_year(2024)
+            .teledeclared()
+            .get(canteen=satellite_1, generated_from_groupe_diagnostic=True)
+        )
+        satellite_2_diagnostic = (
+            Diagnostic.objects.in_year(2024)
+            .teledeclared()
+            .get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
+        )
+
+        expected_yearly_meal_count = central_diagnostic.canteen_snapshot["yearly_meal_count"] / number_of_satellites
+        expected_daily_meal_count = central_diagnostic.canteen_snapshot["daily_meal_count"] / number_of_satellites
 
         self.assertEqual(satellite_1_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
         self.assertEqual(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
