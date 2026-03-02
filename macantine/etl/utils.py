@@ -160,6 +160,32 @@ def datetimes_to_str(df):
     return df
 
 
+def arrays_to_json(df):
+    """
+    Convert list/array columns and dict/JSON columns to JSON strings to prevent pandas to_sql type confusion.
+    PostgreSQL ArrayFields come through as Python lists and JSONFields as dicts.
+    Both types may contain datetime objects which need special handling.
+    """
+    import json
+    from datetime import datetime
+
+    class DateTimeEncoder(json.JSONEncoder):
+        """Custom JSON encoder that handles datetime objects."""
+
+        def default(self, obj):
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            return super().default(obj)
+
+    for column in df.columns:
+        # Check if column contains lists/arrays or dicts/JSON objects
+        if df[column].apply(lambda x: isinstance(x, (list, dict))).any():
+            df[column] = df[column].apply(
+                lambda x: json.dumps(x, cls=DateTimeEncoder) if isinstance(x, (list, dict)) else x
+            )
+    return df
+
+
 def filter_dataframe_with_schema_cols(df, schema: Dict):
     columns = [i["name"] for i in schema["fields"]]
     df = df.loc[:, ~df.columns.duplicated()].copy()

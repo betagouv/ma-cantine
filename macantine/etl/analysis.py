@@ -179,8 +179,10 @@ class ETL_ANALYSIS_TELEDECLARATION_RAW(ANALYSIS):
         logger.info(f"Time spent on raw teledeclaration extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
-        """No transformations for raw export."""
-        logger.info("Raw export requested. Skipping transformations.")
+        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
+        logger.info("Converting array fields to JSON strings for safe export")
+        if not self.df.empty:
+            self.df = utils.arrays_to_json(self.df)
 
     def load_dataset(self):
         super().load_dataset()
@@ -235,8 +237,10 @@ class ETL_ANALYSIS_CANTEEN_RAW(ANALYSIS):
         logger.info(f"Time spent on extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
-        """No transformations for raw export."""
-        logger.info("Raw export requested. Skipping transformations.")
+        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
+        logger.info("Converting array fields to JSON strings for safe export")
+        if not self.df.empty:
+            self.df = utils.arrays_to_json(self.df)
 
     def load_dataset(self):
         super().load_dataset()
@@ -266,8 +270,10 @@ class ETL_ANALYSIS_PURCHASE_RAW(ANALYSIS):
         logger.info(f"Time spent on raw purchase extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
-        """No transformations for raw export."""
-        logger.info("Raw export requested. Skipping transformations.")
+        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
+        logger.info("Converting array fields to JSON strings for safe export")
+        if not self.df.empty:
+            self.df = utils.arrays_to_json(self.df)
 
     def load_dataset(self):
         super().load_dataset()
@@ -297,8 +303,10 @@ class ETL_ANALYSIS_USER_RAW(ANALYSIS):
         logger.info(f"Time spent on raw user extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
-        """No transformations for raw export."""
-        logger.info("Raw export requested. Skipping transformations.")
+        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
+        logger.info("Converting array fields to JSON strings for safe export")
+        if not self.df.empty:
+            self.df = utils.arrays_to_json(self.df)
 
     def load_dataset(self):
         super().load_dataset()
