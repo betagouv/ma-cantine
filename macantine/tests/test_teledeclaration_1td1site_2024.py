@@ -11,7 +11,6 @@ from data.factories import CanteenFactory, DiagnosticFactory
 # test_tag_satellites_with_teledeclaration_and_teledeclare_by_central_mode_appro => ok est ok avec ça ? Comment on différencie les diag TD des autres volets ?
 # test_correct_number_of_diagnostics_generated_for_central_serving => j'ai lancé le script groupe est-ce la bonne solution ?
 
-# TODO : Tester à la relance du script : les bilans qui ont eut le tag "DOUBLON1_TD1SITE" est enlevé (exemple SAT sort de la centrale entre temps)
 # TODO : dans "test_canteen_informations_copied_canteen_exact_datetime_teledeclaration" => ajouter un test avec le repas modifiés l'année d'après
 # TODO : tester avec une annulation la TD n'est pas régénérée
 
@@ -241,6 +240,60 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         satellite_diagnostic.refresh_from_db()
         self.assertFalse(satellite_diagnostic.generated_from_groupe_diagnostic)
         self.assertEqual(satellite_diagnostic.invalid_reason_list, [Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
+
+    @authenticate
+    def test_when_script_run_again_remove_tag_doublon(self):
+        """
+        If a satellite has the tag "DOUBLON1_TD1SITE" when the script is rerun, it should be removed.
+        """
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            satellite_diagnostic = DiagnosticFactory(
+                canteen=satellite,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            satellite_diagnostic.teledeclare(applicant=authenticate.user)
+            satellite.central_producer_siret = central.siret
+            satellite.save(skip_validations=True)
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024)
+            .teledeclared()
+            .filter(invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
+            .count(),
+            1,
+        )
+
+        # Upate de SAT
+        central_diagnostic.cancel()
+        central_diagnostic.save()
+        satellite.central_producer_siret = None
+        satellite.save(skip_validations=True)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+
+        # Re-run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+        self.assertEqual(
+            Diagnostic.objects.in_year(2024)
+            .teledeclared()
+            .filter(invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
+            .count(),
+            0,
+        )
 
 
 class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
