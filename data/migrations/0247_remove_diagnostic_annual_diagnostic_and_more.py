@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0245_alter_diagnostic_verbose_names"),
+        ("data", "0246_diagnostic_invalid_reason_list"),
     ]
 
     operations = [
