@@ -7,14 +7,13 @@ from data.models.sector import Sector
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
-# TODO : Tester que les bilans des SATs télédéclarés sont écrasés si la central a un mode ALL (old : test_satellite_with_teledeclaration_reteledeclare_by_central_are_archived)
-# TODO : Tester que les bilans des SATs télédéclarés avec des appros sont écrasés si la central a un mode APPRO ONLY ? on est ok avec ça ?
-# TODO : Tester à la relance du script : les bilans qui ont eut le tag "DOUBLON1_TD1SITE" est enlevé puis sera remis ensuite par le script (si les conditions ne changent pas)
-# TODO : Lancer script Groupe ?
+# Questions :
+# test_tag_satellites_with_teledeclaration_and_teledeclare_by_central_mode_appro => ok est ok avec ça ? Comment on différencie les diag TD des autres volets ?
+# test_correct_number_of_diagnostics_generated_for_central_serving => j'ai lancé le script groupe est-ce la bonne solution ?
 
-# TODO : refaire "test_satellite_with_teledeclaration_reteledeclare_by_central_are_archived"
-# TODO : dans "test_canteen_informations_copied_canteen_exact_datetime_teledeclaration" => ne pas tester aves les informations de la centrale utilisé pour les SAT
+# TODO : Tester à la relance du script : les bilans qui ont eut le tag "DOUBLON1_TD1SITE" est enlevé (exemple SAT sort de la centrale entre temps)
 # TODO : dans "test_canteen_informations_copied_canteen_exact_datetime_teledeclaration" => ajouter un test avec le repas modifiés l'année d'après
+# TODO : tester avec une annulation la TD n'est pas régénérée
 
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
@@ -162,9 +161,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         )
 
     @authenticate
-    def test_satellite_with_teledeclaration_reteledeclare_by_central_are_archived(self):
+    def test_tag_satellites_with_teledeclaration_and_teledeclare_by_central_mode_all(self):
         """
-        Test that when a satellite canteen has a teledeclaration, then it's also teledeclare with the central teledeclaration, the script flags it.
+        Test when a satellite canteen has a teledeclaration, and it's also teledeclared by the central the script tags it as doublon.
         """
         central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None)
@@ -188,43 +187,60 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 year=2024,
                 valeur_totale=10000,
                 valeur_bio=2000,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user)
 
-        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 2)
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().filter(canteen=satellite).count(), 2)
-        self.assertEqual(
-            Diagnostic.objects.in_year(2024)
-            .teledeclared()
-            .filter(canteen=satellite, generated_from_groupe_diagnostic=True)
-            .count(),
-            1,
-        )
-        self.assertEqual(
-            Diagnostic.objects.in_year(2024)
-            .teledeclared()
-            .filter(canteen=satellite, generated_from_groupe_diagnostic=False)
-            .count(),
-            1,
-        )
-        self.assertEqual(
-            Diagnostic.objects.in_year(2024)
-            .filter(status=Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE)
-            .count(),
-            1,
-        )
-        diagnostic_generated = (
-            Diagnostic.objects.in_year(2024)
-            .teledeclared()
-            .get(canteen=satellite, generated_from_groupe_diagnostic=True)
-        )
-        self.assertEqual(diagnostic_generated.status, Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE)
+        satellite_diagnostic.refresh_from_db()
+        self.assertFalse(satellite_diagnostic.generated_from_groupe_diagnostic)
+        self.assertEqual(satellite_diagnostic.invalid_reason_list, [Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
+
+    @authenticate
+    def test_tag_satellites_with_teledeclaration_and_teledeclare_by_central_mode_appro(self):
+        """
+        Test when a satellite canteen has a teledeclaration, and it's also teledeclared by the central with mode "appro only" the script does not tag it as doublon.
+        """
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
+        satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            satellite_diagnostic = DiagnosticFactory(
+                canteen=satellite,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            satellite_diagnostic.teledeclare(applicant=authenticate.user)
+
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            satellite.central_producer_siret = central.siret
+            satellite.save(skip_validations=True)
+            self.assertEqual(satellite.central_producer_siret, central.siret)
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        satellite_diagnostic.refresh_from_db()
+        self.assertFalse(satellite_diagnostic.generated_from_groupe_diagnostic)
+        self.assertEqual(satellite_diagnostic.invalid_reason_list, [Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
 
 
 class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
