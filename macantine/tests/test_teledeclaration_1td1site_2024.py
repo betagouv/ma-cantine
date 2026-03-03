@@ -249,7 +249,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None)
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time("2025-03-29"):  # during the 2024 campaign
             satellite_diagnostic = DiagnosticFactory(
                 canteen=satellite,
                 year=2024,
@@ -279,9 +279,10 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         )
 
         # Upate de SAT
-        central_diagnostic.cancel()
-        satellite.central_producer_siret = None
-        satellite.save(skip_validations=True)
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic.cancel()
+            satellite.central_producer_siret = None
+            satellite.save(skip_validations=True)
         self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
         self.assertEqual(
             Diagnostic.objects.in_year(2024)
@@ -292,7 +293,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         )
 
         # Teledeclare the central again but without the satellite
-        with freeze_time("2025-03-31"):  # during the 2024 campaign
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
             central_diagnostic.teledeclare(applicant=authenticate.user)
 
         # Re-run the script
@@ -784,6 +785,11 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
             call_command("canteen_migrate_central_to_groupe", apply=True)
+            # Save satellite canteen created
+            new_canteen_id = central_diagnostic.satellites_snapshot[len(central_diagnostic.satellites_snapshot) - 1][
+                "id"
+            ]
+            sat_created = Canteen.objects.get(id=new_canteen_id)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -791,11 +797,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         # After the script is run
         sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
         sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_3_diagnostic = (
-            Diagnostic.objects.in_year(2024)
-            .teledeclared()
-            .get(canteen=self.central, generated_from_groupe_diagnostic=True)
-        )
+        sat_3_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=sat_created)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
@@ -876,6 +878,11 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
             call_command("canteen_migrate_central_to_groupe", apply=True)
+            # Save satellite canteen created
+            new_canteen_id = central_diagnostic.satellites_snapshot[len(central_diagnostic.satellites_snapshot) - 1][
+                "id"
+            ]
+            sat_created = Canteen.objects.get(id=new_canteen_id)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -883,11 +890,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         # After the script is run
         sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
         sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_3_diagnostic = (
-            Diagnostic.objects.in_year(2024)
-            .teledeclared()
-            .get(canteen=self.central, generated_from_groupe_diagnostic=True)
-        )
+        sat_3_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=sat_created)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
