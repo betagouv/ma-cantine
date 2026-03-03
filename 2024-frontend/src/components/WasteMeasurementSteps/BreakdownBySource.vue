@@ -62,7 +62,9 @@ const genericPayloadKeys = ["totalKey", "sortedKey", "edibleKey", "inedibleKey"]
 const sumCheck = () => {
   if (!payload.totalKey) return true
   if (!(payload.edibleKey > 0) || !(payload.inedibleKey > 0)) return true
-  return payload.edibleKey + payload.inedibleKey === payload.totalKey
+  const sum = payload.edibleKey + payload.inedibleKey
+  const sumFixed = Number(sum.toFixed(2)) // to avoid floating point precision issues
+  return sumFixed === payload.totalKey
 }
 const combination = helpers.withMessage(
   "La somme de denrées comestibles et non comestibles devrait être égale au total",
