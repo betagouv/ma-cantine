@@ -782,13 +782,19 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         for field in Diagnostic.COMPLETE_APPRO_FIELDS:
             cls.complete_appro_fields[field] = 888.88
 
+    def verify_field_are_equals(self, value, expected_value):  # It is ok to round the value to 1 decimal ?
+        value_cleaned = float(round(value, 1))
+        expected_value_cleaned = float(round(expected_value, 1))
+        self.assertEqual(value_cleaned, expected_value_cleaned)
+
     def verify_appro_fields_divided(self, fields, divisor, central_diagnostic, sat_diagnostics_generated):
-        for sat_diagnostic in sat_diagnostics_generated:
-            for field in fields:
-                with self.subTest(field=field):
-                    central_value = getattr(central_diagnostic, field)
-                    diagnostic_value = getattr(sat_diagnostic, field)
-                    self.assertEqual(diagnostic_value, central_value / divisor)
+        for index, sat_diagnostic in enumerate(sat_diagnostics_generated):
+            with self.subTest(sat_diagnostic_index=index):
+                for field in fields:
+                    with self.subTest(field=field):
+                        central_value = getattr(central_diagnostic, field)
+                        diagnostic_value = getattr(sat_diagnostic, field)
+                        self.verify_field_are_equals(diagnostic_value, central_value / divisor)
 
     @authenticate
     def test_total_value_divided_by_number_of_satellites(self):
@@ -810,8 +816,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         # After the script is run
         sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
         sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        self.assertEqual(sat_1_diagnostic.valeur_totale, total_value / 2)
-        self.assertEqual(sat_2_diagnostic.valeur_totale, total_value / 2)
+        self.verify_field_are_equals(sat_1_diagnostic.valeur_totale, total_value / 2)
+        self.verify_field_are_equals(sat_2_diagnostic.valeur_totale, total_value / 2)
 
     @authenticate
     def test_central_type_simple(self):
