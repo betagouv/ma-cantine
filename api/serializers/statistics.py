@@ -193,7 +193,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
             for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED:
                 data[field] = None
             data["notes"]["campaign_info"] = (
-                f"Le détail des données de {year} télédéclarées durant la campagne {year + 1} seront disponibles d'ici la fin d'année dès lors que le rapport statistique sera validé par le parlement."
+                f"Le détail des données de {year} télédéclarées durant la campagne {year + 1} sera disponible dès la publication du bilan statistique annuel (rapport du gouvernement au parlement)."
             )
         else:
             pass  # report is published, do not hide data
