@@ -178,8 +178,11 @@ class DiagnosticQuerySet(models.QuerySet):
         return results.select_related("canteen")
 
     def publicly_visible(self):
-        # TODO: avoid group (ex-central) TD data in Open Data & stats (after 1TD1Site)
-        return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+        return (
+            self.select_related("canteen")
+            .exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+            .exclude(canteen_snapshot__line_ministry=Canteen.Ministries.ARMEE)
+        )
 
     def with_appro_percent_stats(self):
         """
