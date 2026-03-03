@@ -164,7 +164,7 @@ dependencies = [
     "urllib3==2.2.3",
     "vine==5.1.0",
     "virtualenv==20.26.6",
-    "wagtail==7.0.5",
+    "wagtail==7.0.6",
     "wcwidth==0.2.13",
     "webencodings==0.5.1",
     "wrapt==1.17.2",
