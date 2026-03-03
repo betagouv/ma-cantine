@@ -219,11 +219,12 @@ def archive_existing_diagnostic_teledeclared_satellite(canteen_id, year, apply=F
         logger.warning(
             f"Task warning: Multiple diagnostics found for Canteen: {canteen_id} / Year: {year}. Only the first one will be archived."
         )
-    else:
+    else:  # diagnostic_qs.count() == 1
         if apply:
-            diagnostic = diagnostic_qs.first()
-            invalid_reason_list = diagnostic.invalid_reason_list or []
-            invalid_reason_list += [Diagnostic.InvalidReason.DOUBLON_1TD1SITE]
-            # TODO: bulk update doesn't add a history entry...
-            # TODO: use array function instead?
-            Diagnostic.objects.filter(pk=diagnostic.pk).update(invalid_reason_list=invalid_reason_list)
+            diagnostic_qs.update(
+                invalid_reason_list=Func(
+                    F("invalid_reason_list"),
+                    Value(Diagnostic.InvalidReason.DOUBLON_1TD1SITE),
+                    function="array_append",
+                )
+            )
