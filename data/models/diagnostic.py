@@ -227,10 +227,6 @@ class Diagnostic(models.Model):
     class DiagnosticStatus(models.TextChoices):
         DRAFT = "DRAFT", "Brouillon"
         SUBMITTED = "SUBMITTED", "Télédéclaré"
-        SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE = (
-            "SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE",
-            "Télédéclaré mais écrasé par le groupe",
-        )
 
     # NB: if the label of the choice changes, double check that the teledeclaration PDF
     # doesn't need an update as well, since the logic in the templates is based on the label

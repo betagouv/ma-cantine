@@ -30,34 +30,6 @@ class Migration(migrations.Migration):
                 verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan du groupe",
             ),
         ),
-        migrations.AlterField(
-            model_name="diagnostic",
-            name="status",
-            field=models.CharField(
-                choices=[
-                    ("DRAFT", "Brouillon"),
-                    ("SUBMITTED", "Télédéclaré"),
-                    ("SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE", "Télédéclaré mais écrasé par le groupe"),
-                ],
-                default="DRAFT",
-                max_length=255,
-                verbose_name="status",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="historicaldiagnostic",
-            name="status",
-            field=models.CharField(
-                choices=[
-                    ("DRAFT", "Brouillon"),
-                    ("SUBMITTED", "Télédéclaré"),
-                    ("SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE", "Télédéclaré mais écrasé par le groupe"),
-                ],
-                default="DRAFT",
-                max_length=255,
-                verbose_name="status",
-            ),
-        ),
         migrations.AddConstraint(
             model_name="diagnostic",
             constraint=models.UniqueConstraint(
