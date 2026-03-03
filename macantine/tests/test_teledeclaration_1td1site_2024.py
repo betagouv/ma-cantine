@@ -10,7 +10,6 @@ from data.factories import CanteenFactory, DiagnosticFactory
 # TODO :
 # test_divide_meal_count_by_number_of_satellites => comment on gère les arrondis ?
 # test test_mode_all_non_appro_fields_are_copied => passer des valeurs manuellement et non via la factory
-# faire un test dédié pour la valeur du total et éviter de se répéter dans Teledeclaration1Td1SiteTunnelFieldsValuesTest
 
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
@@ -790,6 +789,29 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                     central_value = getattr(central_diagnostic, field)
                     diagnostic_value = getattr(sat_diagnostic, field)
                     self.assertEqual(diagnostic_value, central_value / divisor)
+
+    @authenticate
+    def test_total_value_divided_by_number_of_satellites(self):
+        """
+        Test that the total value is divided by the number of satellites.
+        """
+        total_value = 14824.57
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=self.central,
+                year=2024,
+                valeur_totale=total_value,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        self.assertEqual(sat_1_diagnostic.valeur_totale, total_value / 2)
+        self.assertEqual(sat_2_diagnostic.valeur_totale, total_value / 2)
 
     @authenticate
     def test_central_type_simple(self):
