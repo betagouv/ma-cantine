@@ -131,6 +131,26 @@ class DiagnosticQuerySet(models.QuerySet):
     def teledeclared_for_year(self, year):
         return self.teledeclared().in_year(year).in_campaign(year)
 
+    def teledeclared_site_for_year(self, year):
+        """
+        Only return sites
+        - exclude groupes (2025+)
+        - exclude central & central servings (2024 and before)
+        - exclude sites if 1TD1Site script generated a new TD from its groupe TD
+        """
+        return (
+            self.teledeclared_for_year(year)
+            .annotate(canteen_snapshot_production_type=F("canteen_snapshot__production_type"))
+            .exclude(
+                canteen_snapshot_production_type__in=[
+                    Canteen.ProductionType.GROUPE,
+                    Canteen.ProductionType.CENTRAL,
+                    Canteen.ProductionType.CENTRAL_SERVING,
+                ]
+            )
+            .exclude(invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
+        )
+
     def with_meal_price(self):
         """
         Le coût denrées est calculé en divisant la valeur d'achat alimentaire total par le nombre de repas annuels.
@@ -191,10 +211,29 @@ class DiagnosticQuerySet(models.QuerySet):
         else:
             return self.none()
 
-    def historical_valid_td(self, years: list):
+    def valid_td_site_by_year(self, year):
+        year = int(year)
+        if year in CAMPAIGN_DATES.keys():
+            return (
+                self.teledeclared_site_for_year(year)
+                .exclude(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
+                .filter(valeur_bio_agg__isnull=False)  # Chaîne de traitement n°5
+                .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
+                .exclude_aberrant_values()  # Chaîne de traitement n°8
+            )
+        else:
+            return self.none()
+
+    def valid_td_all_years(self, years: list):
         results = self.none()
         for year in years:
             results = results | self.valid_td_by_year(year)
+        return results.select_related("canteen")
+
+    def valid_td_site_all_years(self, years: list):
+        results = self.none()
+        for year in years:
+            results = results | self.valid_td_site_by_year(year)
         return results.select_related("canteen")
 
     def publicly_visible(self):

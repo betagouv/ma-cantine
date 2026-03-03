@@ -446,6 +446,16 @@ class DiagnosticQuerySetTest(TestCase):
         diagnostics = Diagnostic.objects.teledeclared_for_year(year_data - 1)
         self.assertEqual(diagnostics.count(), 6)
 
+    def test_teledeclared_site_for_year(self):
+        self.assertEqual(Diagnostic.objects.count(), 17)
+        diagnostics = Diagnostic.objects.teledeclared_site_for_year(year_data)
+        self.assertEqual(diagnostics.count(), 10)
+        self.assertNotIn(self.diagnostic_canteen_valid_1, diagnostics)
+        self.assertIn(self.diagnostic_canteen_missing_siret, diagnostics)
+        self.assertIn(self.diagnostic_canteen_deleted, diagnostics)
+        diagnostics = Diagnostic.objects.teledeclared_site_for_year(year_data - 1)
+        self.assertEqual(diagnostics.count(), 5)
+
     def test_valid_td_by_year(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.valid_td_by_year(year_data)
@@ -454,14 +464,23 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
-    def test_historical_valid_td(self):
+    def test_valid_td_all_years(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.historical_valid_td([year_data])
+        diagnostics = Diagnostic.objects.valid_td_all_years([year_data])
         self.assertEqual(diagnostics.count(), 8)
-        diagnostics = Diagnostic.objects.historical_valid_td([year_data - 1])
+        diagnostics = Diagnostic.objects.valid_td_all_years([year_data - 1])
         self.assertEqual(diagnostics.count(), 6)
-        diagnostics = Diagnostic.objects.historical_valid_td([year_data, year_data - 1])
+        diagnostics = Diagnostic.objects.valid_td_all_years([year_data, year_data - 1])
         self.assertEqual(diagnostics.count(), 8 + 6)
+
+    def test_valid_td_site_all_years(self):
+        self.assertEqual(Diagnostic.objects.count(), 17)
+        diagnostics = Diagnostic.objects.valid_td_site_all_years([year_data])
+        self.assertEqual(diagnostics.count(), 7)
+        diagnostics = Diagnostic.objects.valid_td_site_all_years([year_data - 1])
+        self.assertEqual(diagnostics.count(), 5)
+        diagnostics = Diagnostic.objects.valid_td_site_all_years([year_data, year_data - 1])
+        self.assertEqual(diagnostics.count(), 7 + 5)
 
     def test_with_meal_price(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
