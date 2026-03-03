@@ -151,7 +151,7 @@ def process_groupe_diagnostic_teledeclared(diagnostic, apply=False):
         for satellite in diagnostic.satellites_snapshot:
             updated_appro_fields = divide_appro_values(diagnostic, satellite)
             create_diagnostic_teledeclared_for_satellite(
-                diagnostic, satellite["id"], updated_appro_fields, central_serving=False, apply=apply
+                diagnostic, satellite["id"], updated_appro_fields, apply=apply
             )
             archive_existing_diagnostic_teledeclared_satellite(satellite["id"], diagnostic.year, apply=apply)
 
@@ -221,7 +221,9 @@ def archive_existing_diagnostic_teledeclared_satellite(canteen_id, year, apply=F
         )
     else:
         if apply:
-            invalid_reason_list = diagnostic_qs.first().invalid_reason_list or []
+            diagnostic = diagnostic_qs.first()
+            invalid_reason_list = diagnostic.invalid_reason_list or []
             invalid_reason_list += [Diagnostic.InvalidReason.DOUBLON_1TD1SITE]
-            diagnostic_qs.first().invalid_reason_list = invalid_reason_list
-            diagnostic_qs.first().save()
+            # TODO: bulk update doesn't add a history entry...
+            # TODO: use array function instead?
+            Diagnostic.objects.filter(pk=diagnostic.pk).update(invalid_reason_list=invalid_reason_list)
