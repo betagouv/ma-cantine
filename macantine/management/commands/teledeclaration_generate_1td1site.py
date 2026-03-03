@@ -94,7 +94,7 @@ class Command(BaseCommand):
             generated_from_groupe_diagnostic=True, year=year
         )
         diagnostic_teledeclared_archived_qs = Diagnostic.objects.filter(
-            status=Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE, year=year
+            year=year, invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE]
         )
         logger.info(
             f"Task completed. Generated {diagnostic_teledeclared_generated_qs.count()} diagnostics for {year} in {time.time() - start_time:.2f} seconds"
@@ -116,13 +116,15 @@ def cleanup_before_task(year, apply=False):
 
     # unarchive diagnostics of satellites that were archived
     diagnostic_csat_to_unarchive_qs = Diagnostic.objects.filter(
-        status=Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE, year=year
+        year=year, invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE]
     )
     logger.info(
         f"Found {diagnostic_csat_to_unarchive_qs.count()} diagnostics to unarchive (overriden by groupe for the year {year})"
     )
     if apply:
-        diagnostic_csat_to_unarchive_qs.update(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic_csat_to_unarchive_qs.update(
+            invalid_reason_list=Func("array_remove", "invalid_reason_list", Diagnostic.InvalidReason.DOUBLON_1TD1SITE)
+        )
         logger.info("They have been unarchived")
 
 
@@ -244,5 +246,7 @@ def archive_existing_diagnostic_teledeclared_satellite(canteen_id, year, apply=F
         )
     else:
         if apply:
-            diagnostic_qs.first().status = Diagnostic.DiagnosticStatus.SUBMITTED_BUT_OVERRIDDEN_BY_GROUPE
+            invalid_reason_list = diagnostic_qs.first().invalid_reason_list or []
+            invalid_reason_list += [Diagnostic.InvalidReason.DOUBLON_1TD1SITE]
+            diagnostic_qs.first().invalid_reason_list = invalid_reason_list
             diagnostic_qs.first().save()
