@@ -9,7 +9,6 @@ from data.factories import CanteenFactory, DiagnosticFactory
 
 # TODO :
 # test_divide_meal_count_by_number_of_satellites => comment on gère les arrondis ?
-# test test_mode_all_non_appro_fields_are_copied => passer des valeurs manuellement et non via la factory
 
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
