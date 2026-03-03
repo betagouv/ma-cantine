@@ -59,11 +59,11 @@ class Command(BaseCommand):
             logger.info("Dry run mode, no changes will be applied.")
 
         # Step 1: cleanup
-        logger.info("Step 1: Cleanup before task")
+        logger.info("Step 1: Cleanup existing diagnostics previously generated for this year")
         cleanup_before_task(year, apply=apply)
 
         # Step 2: queryset
-        logger.info("Step 2: Fetch all valid groupe diagnostics that have been teledeclared for the given year")
+        logger.info("Step 2: Fetch all groupe diagnostics teledeclared for the given year")
         diagnostic_qs = (
             Diagnostic.objects.teledeclared_for_year(year=year)
             .annotate(canteen_snapshot_production_type=F("canteen_snapshot__production_type"))
@@ -83,11 +83,15 @@ class Command(BaseCommand):
         logger.info(f"Found {diagnostic_qs.count()} diagnostics teledeclared of groupes to process")
 
         # Step 3: loop & create diagnostics for satellites
-        logger.info("Step 3: Loop on the diagnostics of the groupes, and generate diagnostics for their satellites")
+        logger.info(
+            "Step 3: Loop on the diagnostics of the groupes, and generate diagnostics teledeclared for their satellites"
+        )
         for index, diagnostic in enumerate(diagnostic_qs):
-            process_diagnostic_teledeclared(diagnostic, apply=apply)
+            process_groupe_diagnostic_teledeclared(diagnostic, apply=apply)
             if index % 100 == 0:
-                logger.info(f"Processed {index} / {diagnostic_qs.count()} groupe diagnostics")
+                logger.info(
+                    f"Processed {index} / {diagnostic_qs.count()} groupe diagnostics teledeclared for the year {year}"
+                )
 
         # Done!
         diagnostic_teledeclared_generated_qs = Diagnostic.objects.filter(
@@ -128,9 +132,15 @@ def cleanup_before_task(year, apply=False):
         logger.info("They have been unarchived")
 
 
-def process_diagnostic_teledeclared_groupe(diagnostic, apply=False):
+def process_groupe_diagnostic_teledeclared(diagnostic, apply=False):
     """
-    starting 2025
+    2024 and before
+    - central & central_serving (very similar to groups)
+    - except that each satellite will have the same appro values
+    - no distinction between central and central serving (following macantine/management/commands/canteen_migrate_central_to_groupe.py)
+
+    2025
+    - each satellite will have its own appro values based on its yearly_meal_count
     """
     # for each satellite, create a diagnostic (and archive any existing diagnostic)
     if diagnostic.satellites_count:
@@ -142,46 +152,7 @@ def process_diagnostic_teledeclared_groupe(diagnostic, apply=False):
             archive_existing_diagnostic_teledeclared_satellite(satellite["id"], diagnostic.year, apply=apply)
 
 
-def process_diagnostic_teledeclared_central(diagnostic, apply=False):
-    """
-    2024 and before
-    - very similar to groups
-    - except that each satellite has the same appro values
-    """
-    if diagnostic.satellites_count:
-        updated_appro_fields = divide_appro_values(diagnostic, satellite=None)
-        for satellite in diagnostic.satellites_snapshot:
-            create_diagnostic_teledeclared_for_satellite(
-                diagnostic, satellite["id"], updated_appro_fields, central_serving=False, apply=apply
-            )
-            archive_existing_diagnostic_teledeclared_satellite(satellite["id"], diagnostic.year, apply=apply)
-
-
-def process_diagnostic_teledeclared_central_serving(diagnostic, apply=False):
-    """
-    2024 and before
-    """
-    # we consider that the central serving kitchen is like a central, and we generate a diagnostic for each of its satellites
-    process_diagnostic_teledeclared_central(diagnostic, apply=apply)
-    # we also generate a diagnostic for the central serving kitchen itself
-    updated_appro_fields = divide_appro_values(diagnostic, satellite=None)
-    create_diagnostic_teledeclared_for_satellite(
-        diagnostic, diagnostic.canteen.id, updated_appro_fields, central_serving=True, apply=apply
-    )
-
-
-def process_diagnostic_teledeclared(diagnostic, apply=False):
-    if diagnostic.canteen_snapshot_production_type == Canteen.ProductionType.GROUPE:
-        process_diagnostic_teledeclared_groupe(diagnostic, apply=apply)
-    elif diagnostic.canteen_snapshot_production_type == Canteen.ProductionType.CENTRAL:
-        process_diagnostic_teledeclared_central(diagnostic, apply=apply)
-    elif diagnostic.canteen_snapshot_production_type == Canteen.ProductionType.CENTRAL_SERVING:
-        process_diagnostic_teledeclared_central_serving(diagnostic, apply=apply)
-
-
-def create_diagnostic_teledeclared_for_satellite(
-    diagnostic, canteen_id, updated_appro_fields, central_serving=False, apply=False
-):
+def create_diagnostic_teledeclared_for_satellite(diagnostic, canteen_id, updated_appro_fields, apply=False):
     """
     Create a new diagnostic for a satellite canteen, based on the groupe's diagnostic.
     """
@@ -193,19 +164,19 @@ def create_diagnostic_teledeclared_for_satellite(
 
     # change the canteen FK
     # we fetch the canteen satellite as of the creation date of the diagnostic, for accurate snapshot
-    if not central_serving:
-        try:
-            canteen_asof_date_extraction = Canteen.history.as_of(diagnostic.teledeclaration_date).get(pk=canteen_id)
-        except Exception:
-            try:
-                canteen_asof_date_extraction = Canteen.all_objects.get(pk=canteen_id)
-            except Canteen.DoesNotExist:
-                logger.warning(
-                    f"Task warning: The canteen {canteen_id} does not exist anymore, thus the diagnostic cannot be generated"
-                )
-                return
-
+    try:
+        canteen_asof_date_extraction = Canteen.history.as_of(diagnostic.teledeclaration_date).get(pk=canteen_id)
         diagnostic_satellite.canteen = canteen_asof_date_extraction
+    except Exception:
+        try:
+            canteen_asof_date_extraction = Canteen.all_objects.get(pk=canteen_id)
+            diagnostic_satellite.canteen = canteen_asof_date_extraction
+        except Canteen.DoesNotExist:
+            # TODO: use satellite snapshot, instead of exiting
+            logger.warning(
+                f"Task warning: The canteen {canteen_id} does not exist anymore, thus the diagnostic cannot be generated"
+            )
+            return
 
     # change the appro fields
     for field in updated_appro_fields.keys():
