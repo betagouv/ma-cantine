@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from django.db.models import F, Func, IntegerField
+from django.db.models import F, Func, IntegerField, Value
 
 from api.serializers import CanteenTeledeclarationSerializer
 from data.models import Canteen, Diagnostic
@@ -127,7 +127,11 @@ def cleanup_before_task(year, apply=False):
     )
     if apply:
         diagnostic_csat_to_unarchive_qs.update(
-            invalid_reason_list=Func("array_remove", "invalid_reason_list", Diagnostic.InvalidReason.DOUBLON_1TD1SITE)
+            invalid_reason_list=Func(
+                F("invalid_reason_list"),
+                Value(Diagnostic.InvalidReason.DOUBLON_1TD1SITE),
+                function="array_remove",
+            )
         )
         logger.info("They have been unarchived")
 
