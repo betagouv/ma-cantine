@@ -9,9 +9,8 @@ from data.factories import CanteenFactory, DiagnosticFactory
 
 # TODO :
 # test_divide_meal_count_by_number_of_satellites => comment on gère les arrondis ?
-# test appro field diag mode complete => est-ce que les champs ne sont pas tous à None avec la factory ?
-# test diag appro field simple et complete => passer des valeurs manuellement et non via la factory
 # test test_mode_all_non_appro_fields_are_copied => passer des valeurs manuellement et non via la factory
+# faire un test dédié pour la valeur du total et éviter de se répéter dans Teledeclaration1Td1SiteTunnelFieldsValuesTest
 
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
@@ -776,19 +775,21 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             siren_unite_legale="123456789",
         )
 
+        cls.simple_appro_fields = {}
+        for field in Diagnostic.SIMPLE_APPRO_FIELDS:
+            cls.simple_appro_fields[field] = 9999.99
+
+        cls.complete_appro_fields = {}
+        for field in Diagnostic.COMPLETE_APPRO_FIELDS:
+            cls.complete_appro_fields[field] = 888.88
+
     def verify_appro_fields_divided(self, fields, divisor, central_diagnostic, sat_diagnostics_generated):
         for sat_diagnostic in sat_diagnostics_generated:
-            with self.subTest(sat_diagnostic=sat_diagnostic):
-                for field in fields:
-                    with self.subTest(field=field):
-                        central_value = getattr(central_diagnostic, field)
-                        if central_value is not None:
-                            expected_value = central_value / divisor
-                            expected_value_rounded = round(expected_value, 2)  # The value saved has 2 decimals
-                            self.assertEqual(
-                                float(getattr(sat_diagnostic, field)),
-                                expected_value_rounded,
-                            )
+            for field in fields:
+                with self.subTest(field=field):
+                    central_value = getattr(central_diagnostic, field)
+                    diagnostic_value = getattr(sat_diagnostic, field)
+                    self.assertEqual(diagnostic_value, central_value / divisor)
 
     @authenticate
     def test_central_type_simple(self):
@@ -801,10 +802,9 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                valeur_totale=10000,
-                valeur_bio=2000,
+                **self.simple_appro_fields,
             )
-            central_diagnostic.teledeclare(applicant=authenticate.user)
+            central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -814,13 +814,6 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
-
-        # Total value
-        expected_total_value = round(
-            central_diagnostic.valeur_totale / number_of_generated_diagnostics, 2
-        )  # The value saved has 2 decimals
-        self.assertEqual(sat_1_diagnostic.valeur_totale, expected_total_value)
-        self.assertEqual(sat_2_diagnostic.valeur_totale, expected_total_value)
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
@@ -845,8 +838,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                valeur_totale=10000,
-                valeur_bio=2000,
+                **self.simple_appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
@@ -867,14 +859,6 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
-        # Total value
-        expected_total_value = round(
-            central_diagnostic.valeur_totale / number_of_generated_diagnostics, 2
-        )  # The value saved has 2 decimals
-        self.assertEqual(float(sat_1_diagnostic.valeur_totale), expected_total_value)
-        self.assertEqual(float(sat_2_diagnostic.valeur_totale), expected_total_value)
-        self.assertEqual(float(sat_3_diagnostic.valeur_totale), expected_total_value)
-
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
             Diagnostic.SIMPLE_APPRO_FIELDS,
@@ -894,10 +878,9 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                valeur_totale=10000,
-                valeur_bio=2000,
+                **self.complete_appro_fields,
             )
-            central_diagnostic.teledeclare(applicant=authenticate.user)
+            central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -907,13 +890,6 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
-
-        # Total value
-        expected_total_value = round(
-            central_diagnostic.valeur_totale / number_of_generated_diagnostics, 2
-        )  # The value saved has 2 decimals
-        self.assertEqual(float(sat_1_diagnostic.valeur_totale), expected_total_value)
-        self.assertEqual(float(sat_2_diagnostic.valeur_totale), expected_total_value)
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
@@ -938,8 +914,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                valeur_totale=10000,
-                valeur_bio=2000,
+                **self.complete_appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
@@ -959,14 +934,6 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         sat_3_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=sat_created)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
-
-        # Total value
-        expected_total_value = round(
-            central_diagnostic.valeur_totale / number_of_generated_diagnostics, 2
-        )  # The value saved has 2 decimals
-        self.assertEqual(float(sat_1_diagnostic.valeur_totale), expected_total_value)
-        self.assertEqual(float(sat_2_diagnostic.valeur_totale), expected_total_value)
-        self.assertEqual(float(sat_3_diagnostic.valeur_totale), expected_total_value)
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
@@ -988,7 +955,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
             )
-            central_diagnostic.teledeclare(applicant=authenticate.user)
+            central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
