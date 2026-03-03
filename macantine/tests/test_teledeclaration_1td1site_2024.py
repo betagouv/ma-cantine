@@ -7,9 +7,6 @@ from data.models.sector import Sector
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
-# TODO :
-# test_divide_meal_count_by_number_of_satellites => comment on gère les arrondis ?
-
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
     @authenticate
@@ -627,7 +624,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
     @authenticate
     def test_divide_meal_count_by_number_of_satellites(self):
         """
-        The yearly meal count is divided by the number of satellites.
+        The yearly meal count is divided by the number of satellites, value not rounded keep decimal.
         """
         central = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1000, daily_meal_count=100
@@ -669,10 +666,16 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             .get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
         )
 
-        expected_yearly_meal_count = central_diagnostic.canteen_snapshot["yearly_meal_count"] / number_of_satellites
-
-        self.assertEqual(satellite_1_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
-        self.assertEqual(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
+        expected_yearly_meal_count = round(
+            central_diagnostic.canteen_snapshot["yearly_meal_count"] / number_of_satellites, 2
+        )
+        self.assertIsNotNone(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"])
+        self.assertEqual(
+            round(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"], 2), expected_yearly_meal_count
+        )
+        self.assertEqual(
+            round(satellite_1_diagnostic.canteen_snapshot["yearly_meal_count"], 2), expected_yearly_meal_count
+        )
 
     @authenticate
     def test_keep_history_meal_count(self):
