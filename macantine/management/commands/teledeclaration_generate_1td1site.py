@@ -3,12 +3,15 @@ import time
 from copy import deepcopy
 
 from django.core.management.base import BaseCommand
-from django.db.utils import IntegrityError
 from django.db.models import F, Func, IntegerField, Value
+from django.db.utils import IntegrityError
 
 from api.serializers import CanteenTeledeclarationSerializer
 from data.models import Canteen, Diagnostic
-from macantine.utils import divide_appro_values
+from macantine.utils import (
+    set_satellite_common_fields_from_groupe_diagnostic,
+    set_satellite_diagnostic_appro_values_from_groupe_diagnostic,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -148,15 +151,12 @@ def process_groupe_diagnostic_teledeclared(diagnostic, apply=False):
     """
     # for each satellite, create a diagnostic (and archive any existing diagnostic)
     if diagnostic.satellites_count:
-        for satellite in diagnostic.satellites_snapshot:
-            updated_appro_fields = divide_appro_values(diagnostic, satellite)
-            create_diagnostic_teledeclared_for_satellite(
-                diagnostic, satellite["id"], updated_appro_fields, apply=apply
-            )
-            archive_existing_diagnostic_teledeclared_satellite(satellite["id"], diagnostic.year, apply=apply)
+        for satellite_dict in diagnostic.satellites_snapshot:
+            create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, apply=apply)
+            archive_existing_diagnostic_teledeclared_satellite(satellite_dict, diagnostic.year, apply=apply)
 
 
-def create_diagnostic_teledeclared_for_satellite(diagnostic, canteen_id, updated_appro_fields, apply=False):
+def create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, apply=False):
     """
     Create a new diagnostic for a satellite canteen, based on the groupe's diagnostic.
     """
@@ -166,33 +166,40 @@ def create_diagnostic_teledeclared_for_satellite(diagnostic, canteen_id, updated
     # change the id (to create a new object)
     diagnostic_satellite.pk = None
 
-    # change the canteen FK
+    # change the canteen FK & canteen_snapshot
+    diagnostic_satellite.canteen = None
     # we fetch the canteen satellite as of the creation date of the diagnostic, for accurate snapshot
     try:
-        canteen_asof_date_extraction = Canteen.history.as_of(diagnostic.teledeclaration_date).get(pk=canteen_id)
-        diagnostic_satellite.canteen = canteen_asof_date_extraction
+        diagnostic_satellite.canteen = Canteen.history.as_of(diagnostic.teledeclaration_date).get(
+            pk=satellite_dict["id"]
+        )
     except Exception:
         try:
-            canteen_asof_date_extraction = Canteen.all_objects.get(pk=canteen_id)
-            diagnostic_satellite.canteen = canteen_asof_date_extraction
+            diagnostic_satellite.canteen = Canteen.all_objects.get(pk=satellite_dict["id"])
         except Canteen.DoesNotExist:
-            # TODO: use satellite snapshot, instead of exiting
             logger.warning(
-                f"Task warning: The canteen {canteen_id} does not exist anymore, thus the diagnostic cannot be generated"
+                f"Task warning: The canteen {satellite_dict['id']} does not exist, thus we use the satellites_snapshot dict"
             )
-            return
+    if diagnostic_satellite.canteen:
+        diagnostic_satellite.canteen_snapshot = CanteenTeledeclarationSerializer(diagnostic_satellite.canteen).data
+    else:
+        diagnostic_satellite.canteen_snapshot = satellite_dict
 
-    # change the appro fields
-    for field in updated_appro_fields.keys():
-        setattr(diagnostic_satellite, field, updated_appro_fields[field])
+    # override some canteen fields (from groupe)
+    updated_common_fields = set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dict)
+    for field in updated_common_fields.keys():
+        diagnostic_satellite.canteen_snapshot[field] = updated_common_fields[field]
 
-    # change other fields: yearly_meal_count ?
+    # update diagnostic appro fields (from groupe)
+    updated_diagnostic_appro_fields = set_satellite_diagnostic_appro_values_from_groupe_diagnostic(
+        diagnostic, satellite_dict
+    )
+    for field in updated_diagnostic_appro_fields.keys():
+        setattr(diagnostic_satellite, field, updated_diagnostic_appro_fields[field])
 
-    # change the snapshots
-    diagnostic_satellite.canteen_snapshot = CanteenTeledeclarationSerializer(diagnostic_satellite.canteen).data
+    # change some last fields
+    diagnostic_satellite.teledeclaration_mode = Diagnostic.TeledeclarationMode.SITE
     diagnostic_satellite.satellites_snapshot = None
-
-    # change some metadata fields
     diagnostic_satellite.generated_from_groupe_diagnostic = True
 
     if apply:
@@ -200,24 +207,24 @@ def create_diagnostic_teledeclared_for_satellite(diagnostic, canteen_id, updated
             diagnostic_satellite.save()
         except IntegrityError:
             logger.error(
-                f"Task error: Cannot save generated diagnostic as it would create a duplicate. Diagnostic: {diagnostic.id} / Canteen: {canteen_id}"
+                f"Task error: Cannot save generated diagnostic as it would create a duplicate. Diagnostic: {diagnostic.id} / Canteen: {satellite_dict['id']}"
             )
 
 
-def archive_existing_diagnostic_teledeclared_satellite(canteen_id, year, apply=False):
+def archive_existing_diagnostic_teledeclared_satellite(satellite_dict, year, apply=False):
     """
     Some satellite canteens may already have a submitted diagnostic for the given year.
     How come? If they had teledeclared individually before being linked to the groupe.
     We need to archive these diagnostics, as they are now overriden by the one generated from their groupe's diagnostic.
     """
     diagnostic_qs = Diagnostic.objects.teledeclared().filter(
-        canteen__id=canteen_id, year=year, generated_from_groupe_diagnostic=False
+        canteen__id=satellite_dict["id"], year=year, generated_from_groupe_diagnostic=False
     )
     if diagnostic_qs.count() == 0:
         return
     elif diagnostic_qs.count() > 1:
         logger.warning(
-            f"Task warning: Multiple diagnostics found for Canteen: {canteen_id} / Year: {year}. Only the first one will be archived."
+            f"Task warning: Multiple diagnostics found for Canteen: {satellite_dict['id']} / Year: {year}. Only the first one will be archived."
         )
     else:  # diagnostic_qs.count() == 1
         if apply:

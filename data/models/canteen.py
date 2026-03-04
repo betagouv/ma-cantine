@@ -997,6 +997,7 @@ def fill_geo_fields_from_siret(sender, instance, created, **kwargs):
     """
     from macantine import tasks
 
+    print("fill_geo_fields_from_siret", created)
     if created:
         if instance.siret and not instance.city_insee_code:
             tasks.update_canteen_geo_fields_from_siret(instance)
