@@ -191,6 +191,16 @@ def mock_fetch_communes(mock, success=True):
                         "codesPostaux": ["59100"],
                         "population": 98286,
                     },
+                    {
+                        "nom": "Montpellier",
+                        "code": "34172",
+                        "codeDepartement": "34",
+                        "siren": "213401722",
+                        "codeEpci": "243400017",
+                        "codeRegion": "76",
+                        "codesPostaux": ["34000"],
+                        "population": 290053,
+                    },
                 ]
             ),
         )
@@ -208,6 +218,7 @@ def mock_fetch_epcis(mock, success=True):
                     {"nom": "CC Faucigny - Glières", "code": "200000172"},
                     {"nom": "Grenoble-Alpes-Métropole", "code": "200040715"},
                     {"nom": "Métropole Européenne de Lille", "code": "200093201"},
+                    {"nom": "Montpellier Méditerranée Métropole", "code": "243400017"},
                 ]
             ),
         )
