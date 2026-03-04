@@ -1,3 +1,5 @@
+import requests_mock
+
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase, TransactionTestCase
@@ -7,6 +9,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, U
 from data.models import Canteen, Diagnostic, Sector, SectorCategory, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region
+from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 
 
 class CanteenModelSaveTest(TransactionTestCase):
@@ -491,7 +494,9 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertFalse(canteen.is_dirty())
         self.assertEqual(canteen.get_dirty_fields(), {})
 
-    def test_update_geo_fields_on_save(self):
+    @requests_mock.Mocker()
+    def test_update_geo_fields_on_save(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
         # CanteenFactory skips the post_save signal
         # so we need to call save() to trigger the signal
         canteen = CanteenFactory.build(
