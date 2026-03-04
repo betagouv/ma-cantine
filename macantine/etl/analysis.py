@@ -63,7 +63,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         self.delete_duplicates_cc_csat()
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
-    def load_dataset(self, versionning=False):
+    def load_dataset(self, versionning=True):
         """
         Load in database with versionning. This function is called by a manually launched task
         """
@@ -72,7 +72,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                 f"Loading {len(self.df)} objects in db. Version {self.extracted_table_name + '_' + datetime.today().strftime('%Y_%m_%d')}"
             )
             self.warehouse.insert_dataframe(
-                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d")
+                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d") + "_site_2024"
             )
         else:
             super().load_dataset()

@@ -204,13 +204,13 @@ def set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dic
         for field in fields_overridden_by_groupe:
             if field in diagnostic.canteen_snapshot:
                 updated_common_fields[field] = diagnostic.canteen_snapshot[field]
-        fields_divided_by_groupe_satellites_ = ["yearly_meal_count"]
         divisor = len(diagnostic.satellites_snapshot) if diagnostic.satellites_snapshot else 0
-        for field in fields_divided_by_groupe_satellites_:
-            try:
-                updated_common_fields[field] = diagnostic.canteen_snapshot[field] / divisor
-            except (TypeError, ZeroDivisionError):
-                updated_common_fields[field] = None
+        try:
+            updated_common_fields["yearly_meal_count"] = round(
+                diagnostic.canteen_snapshot["yearly_meal_count"] / divisor
+            )
+        except (TypeError, ZeroDivisionError):
+            updated_common_fields["yearly_meal_count"] = None
 
     return updated_common_fields
 
