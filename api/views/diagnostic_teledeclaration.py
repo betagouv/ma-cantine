@@ -308,8 +308,7 @@ class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
 
     def get_queryset(self):
         return (
-            Diagnostic.objects.with_meal_price()
-            .valid_td_site_all_years(CAMPAIGN_DATES.keys())
+            Diagnostic.objects.valid_td_site_all_years(CAMPAIGN_DATES.keys())
             .filter(year=2024)
             .order_by("teledeclaration_date")
         )

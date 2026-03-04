@@ -39,6 +39,9 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     modele_economique = serializers.CharField(source="canteen_snapshot.economic_model", read_only=True)
     management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
     production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
+    satellite_canteens_count = serializers.CharField(
+        source="canteen_snapshot.satellite_canteens_count", read_only=True
+    )
     declaration_donnees_2021 = serializers.SerializerMethodField()
     declaration_donnees_2022 = serializers.SerializerMethodField()
     declaration_donnees_2023 = serializers.SerializerMethodField()
@@ -114,6 +117,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "modele_economique",
             "management_type",
             "production_type",
+            "satellite_canteens_count",
             "declaration_donnees_2021",
             "declaration_donnees_2022",
             "declaration_donnees_2023",
@@ -157,7 +161,8 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_cout_denrees(self, obj):
-        return obj.meal_price if obj.meal_price else -1
+        # return obj.meal_price if obj.meal_price else -1
+        return -1
 
     def get_cuisine_centrale(self, obj):
         production_type = obj.canteen_snapshot.get("production_type", None)

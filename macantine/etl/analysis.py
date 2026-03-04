@@ -59,8 +59,8 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             logger.warning("Dataset is empty. Skipping transformation")
             return
 
-        self.flatten_central_kitchen_td()
-        self.delete_duplicates_cc_csat()
+        # self.flatten_central_kitchen_td()
+        # self.delete_duplicates_cc_csat()
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
     def load_dataset(self, versionning=True):
@@ -72,7 +72,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                 f"Loading {len(self.df)} objects in db. Version {self.extracted_table_name + '_' + datetime.today().strftime('%Y_%m_%d')}"
             )
             self.warehouse.insert_dataframe(
-                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d") + "_site_2024"
+                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d") + "_site_2024_2"
             )
         else:
             super().load_dataset()

@@ -136,7 +136,6 @@ class DiagnosticQuerySet(models.QuerySet):
         Only return sites
         - exclude groupes (2025+)
         - exclude central & central servings (2024 and before)
-        - exclude sites if 1TD1Site script generated a new TD from its groupe TD
         """
         return (
             self.teledeclared_for_year(year)
@@ -148,7 +147,6 @@ class DiagnosticQuerySet(models.QuerySet):
                     Canteen.ProductionType.CENTRAL_SERVING,
                 ]
             )
-            .exclude(invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
         )
 
     def with_meal_price(self):
@@ -216,10 +214,11 @@ class DiagnosticQuerySet(models.QuerySet):
         if year in CAMPAIGN_DATES.keys():
             return (
                 self.teledeclared_site_for_year(year)
-                .exclude(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
-                .filter(valeur_bio_agg__isnull=False)  # Chaîne de traitement n°5
-                .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
-                .exclude_aberrant_values()  # Chaîne de traitement n°8
+                # .exclude(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
+                # .filter(valeur_bio_agg__isnull=False)  # Chaîne de traitement n°5
+                # .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
+                # .exclude_aberrant_values()  # Chaîne de traitement n°8
+                .filter(Q(invalid_reason_list=None) | Q(invalid_reason_list__len=0))
             )
         else:
             return self.none()
