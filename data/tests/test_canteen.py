@@ -9,6 +9,8 @@ from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, U
 from data.models import Canteen, Diagnostic, Sector, SectorCategory, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region
+from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
+from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 
 
@@ -497,6 +499,10 @@ class CanteenModelSaveTest(TransactionTestCase):
     @requests_mock.Mocker()
     def test_update_geo_fields_on_save(self, mock):
         mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
         # CanteenFactory skips the post_save signal
         # so we need to call save() to trigger the signal
         canteen = CanteenFactory.build(
