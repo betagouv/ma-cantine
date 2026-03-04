@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
 
 def fill_invalid_reason_VALUE_TOTAL_HT_VIDE(diagnostic_qs):
-    invalid_reason = "VALUE_TOTAL_HT_VIDE"
+    invalid_reason = Diagnostic.InvalidReason.VALUE_TOTAL_HT_VIDE
 
     # Step 1: cleanup
     _remove_invalid_reason_item(invalid_reason)
@@ -82,7 +82,7 @@ def fill_invalid_reason_VALUE_TOTAL_HT_VIDE(diagnostic_qs):
 
 
 def fill_invalid_reason_VALUE_BIO_HT_VIDE(diagnostic_qs):
-    invalid_reason = "VALUE_BIO_HT_VIDE"
+    invalid_reason = Diagnostic.InvalidReason.VALUE_BIO_HT_VIDE
 
     # Step 1: cleanup
     _remove_invalid_reason_item(invalid_reason)
@@ -97,7 +97,7 @@ def fill_invalid_reason_VALUE_BIO_HT_VIDE(diagnostic_qs):
 
 
 def fill_invalid_reason_CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE(diagnostic_qs, year):
-    invalid_reason = "CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE"
+    invalid_reason = Diagnostic.InvalidReason.CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE
 
     # Step 1: cleanup
     _remove_invalid_reason_item(invalid_reason)
@@ -112,7 +112,7 @@ def fill_invalid_reason_CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE(diagnostic_qs, year):
 
 
 def fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs):
-    invalid_reason = "CANTINE_SANS_SIRET_OU_SIREN"
+    invalid_reason = Diagnostic.InvalidReason.CANTINE_SANS_SIRET_OU_SIREN
 
     # Step 1: cleanup
     _remove_invalid_reason_item(invalid_reason)
@@ -127,7 +127,7 @@ def fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs):
 
 
 def fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs):
-    invalid_reason = "VALEURS_ABERRANTES"
+    invalid_reason = Diagnostic.InvalidReason.VALEURS_ABERRANTES
 
     # Step 1: cleanup
     _remove_invalid_reason_item(invalid_reason)
@@ -142,7 +142,7 @@ def fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs):
 
 
 def fill_invalid_reason_VALEURS_INCOHERENTES(diagnostic_qs):
-    invalid_reason = "VALEURS_INCOHERENTES"
+    invalid_reason = Diagnostic.InvalidReason.VALEURS_INCOHERENTES
 
     # Step 1: cleanup
     _remove_invalid_reason_item(invalid_reason)
