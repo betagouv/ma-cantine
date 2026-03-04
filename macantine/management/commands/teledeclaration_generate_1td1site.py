@@ -107,7 +107,7 @@ class Command(BaseCommand):
             f"Task completed. Generated {diagnostic_teledeclared_generated_qs.count()} diagnostics for {year} in {time.time() - start_time:.2f} seconds"
         )
         logger.info(
-            f"Archived {diagnostic_teledeclared_archived_qs.count()} diagnostics of satellites that were overriden by their groupe's diagnostic for {year}"
+            f"Archived {diagnostic_teledeclared_archived_qs.count()} diagnostics of satellites that were overridden by their groupe's diagnostic for {year}"
         )
 
 
@@ -126,7 +126,7 @@ def cleanup_before_task(year, apply=False):
         year=year, invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE]
     )
     logger.info(
-        f"Found {diagnostic_csat_to_unarchive_qs.count()} diagnostics to unarchive (overriden by groupe for the year {year})"
+        f"Found {diagnostic_csat_to_unarchive_qs.count()} diagnostics to unarchive (overridden by groupe for the year {year})"
     )
     if apply:
         diagnostic_csat_to_unarchive_qs.update(
@@ -215,7 +215,7 @@ def archive_existing_diagnostic_teledeclared_satellite(satellite_dict, year, app
     """
     Some satellite canteens may already have a submitted diagnostic for the given year.
     How come? If they had teledeclared individually before being linked to the groupe.
-    We need to archive these diagnostics, as they are now overriden by the one generated from their groupe's diagnostic.
+    We need to archive these diagnostics, as they are now overridden by the one generated from their groupe's diagnostic.
     """
     diagnostic_qs = Diagnostic.objects.teledeclared().filter(
         canteen__id=satellite_dict["id"], year=year, generated_from_groupe_diagnostic=False
