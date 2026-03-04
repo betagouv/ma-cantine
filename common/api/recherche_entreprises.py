@@ -177,12 +177,13 @@ MOCK_SIREN_923412845_RESULTS = [
 def mock_fetch_geo_data_from_siren(mock, siren, success=True):
     api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siren}"
     if success:
+        results = eval(f"MOCK_SIREN_{siren}_RESULTS")
         mock.get(
             api_url,
             text=json.dumps(
                 {
-                    "results": eval(f"MOCK_SIREN_{siren}_RESULTS"),
-                    "total_results": 1,
+                    "results": results,
+                    "total_results": len(results),
                 }
             ),
         )
@@ -289,12 +290,13 @@ MOCK_SIRET_21380185500072_RESULTS = [
 def mock_fetch_geo_data_from_siret(mock, siret, success=True):
     api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siret}"
     if success:
+        results = eval(f"MOCK_SIRET_{siret}_RESULTS")
         mock.get(
             api_url,
             text=json.dumps(
                 {
-                    "results": eval(f"MOCK_SIRET_{siret}_RESULTS"),
-                    "total_results": 1,
+                    "results": results,
+                    "total_results": len(results),
                 }
             ),
         )

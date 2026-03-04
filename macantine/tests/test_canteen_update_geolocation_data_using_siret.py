@@ -1,3 +1,4 @@
+import requests_mock
 from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
@@ -7,6 +8,7 @@ from data.models import Canteen
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 
 
+@requests_mock.Mocker()
 class CanteenUpdateGeolocationDataUsingSiretCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -19,10 +21,10 @@ class CanteenUpdateGeolocationDataUsingSiretCommandTest(TestCase):
         cls.canteen_siret_city_insee_code_ok = CanteenFactory(siret="92341284500011", city_insee_code="59512")
         Canteen.objects.filter(id=cls.canteen_siret_city_insee_code_mismatch.id).update(siret="92341284500011")
 
-    def test_command(self):
-        mock_fetch_geo_data_from_siret(self.client, siret="00000000000000", success=True)
-        mock_fetch_geo_data_from_siret(self.client, siret="21380185500072", success=True)
-        mock_fetch_geo_data_from_siret(self.client, siret="92341284500011", success=True)
+    def test_command(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="00000000000000", success=True)
+        mock_fetch_geo_data_from_siret(mock, siret="21380185500072", success=True)
+        mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
 
         self.assertEqual(Canteen.all_objects.count(), 5)
         self.assertEqual(Canteen.objects.count(), 4)

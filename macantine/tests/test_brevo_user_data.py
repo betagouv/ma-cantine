@@ -177,7 +177,11 @@ class BrevoUserDataTest(TestCase):
         batch_update_mock.assert_not_called()
 
         # user_with_canteen_groupe
-        payload = create_contact_mock.call_args_list[0].args[0]
+        payload = next(
+            call.args[0]
+            for call in create_contact_mock.call_args_list
+            if call.args[0].email == user_with_canteen_groupe.email
+        )
         attributes = payload.attributes
         self.assertEqual(attributes.get("NOM_COMPLET"), user_with_canteen_groupe.get_full_name())
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 1)
@@ -187,7 +191,11 @@ class BrevoUserDataTest(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_TODO_2025"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_TD_2025"), 1)
         # user_with_canteen_sat
-        payload = create_contact_mock.call_args_list[1].args[0]
+        payload = next(
+            call.args[0]
+            for call in create_contact_mock.call_args_list
+            if call.args[0].email == user_with_canteen_sat.email
+        )
         attributes = payload.attributes
         self.assertEqual(attributes.get("NOM_COMPLET"), user_with_canteen_sat.get_full_name())
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 1)
