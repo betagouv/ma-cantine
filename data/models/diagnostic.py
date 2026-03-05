@@ -430,8 +430,8 @@ class Diagnostic(models.Model):
         "valeur_siqo_agg",
         "valeur_externalites_performance_agg",
         "valeur_egalim_autres_agg",
-        # "valeur_egalim_hors_bio_agg",
-        # "valeur_egalim_agg",
+        "valeur_egalim_hors_bio_agg",
+        "valeur_egalim_agg",
     ]
 
     APPRO_FIELDS = [
