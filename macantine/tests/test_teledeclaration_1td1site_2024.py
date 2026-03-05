@@ -942,7 +942,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -986,7 +986,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1018,7 +1018,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1062,7 +1062,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1094,7 +1094,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1138,7 +1138,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
