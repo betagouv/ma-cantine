@@ -82,6 +82,16 @@ def diagnostic_type_complete_is_filled_query():
     return diagnostic_type_complete_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
 
 
+def canteen_soft_deleted_during_campaign_query(year):
+    year = int(year)
+    return Q(
+        canteen__deletion_date__range=(
+            CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+            CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+        )
+    )
+
+
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
         return self.filter(diagnostic_type_simple_is_filled_query() | diagnostic_type_complete_is_filled_query())
@@ -132,15 +142,6 @@ class DiagnosticQuerySet(models.QuerySet):
             .exclude(year=2022, teledeclaration_id__in=[9656, 8037])
         )
 
-    def canteen_not_deleted_during_campaign(self, year):
-        year = int(year)
-        return self.exclude(
-            canteen__deletion_date__range=(
-                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-            )
-        )
-
     def canteen_has_siret_or_siren_unite_legale(self):
         return self.annotate(
             canteen_siret=F("canteen_snapshot__siret"),
@@ -154,7 +155,7 @@ class DiagnosticQuerySet(models.QuerySet):
         return (
             self.select_related("canteen")
             .exclude(canteen_id__isnull=True)
-            .canteen_not_deleted_during_campaign(year)  # Chaîne de traitement n°6
+            .exclude(canteen_soft_deleted_during_campaign_query(year))  # Chaîne de traitement n°6
             .canteen_has_siret_or_siren_unite_legale()  # Chaîne de traitement n°7
         )
 
