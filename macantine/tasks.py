@@ -20,12 +20,21 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 from data.models import Canteen, User
+from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
-from .etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
-from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
+from .etl.analysis import (
+    ETL_ANALYSIS_CANTEEN,
+    ETL_ANALYSIS_CANTEEN_RAW,
+    ETL_ANALYSIS_TELEDECLARATIONS,
+    ETL_ANALYSIS_TELEDECLARATION_RAW,
+    ETL_ANALYSIS_USER_RAW,
+)
+from .etl.open_data import (
+    ETL_OPEN_DATA_CANTEEN,
+    ETL_OPEN_DATA_TELEDECLARATIONS,
+)
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -266,13 +275,28 @@ def export_datasets(datasets: dict):
 
 
 @app.task()
+def export_dataset_raw_analysis():
+    """
+    Export the raw datasets for analysis (Metabase)
+    """
+    logger.info("Starting export_dataset_raw_analysis")
+    datasets = {
+        "teledeclarations_raw_analysis": ETL_ANALYSIS_TELEDECLARATION_RAW(),
+        "canteens_raw_analysis": ETL_ANALYSIS_CANTEEN_RAW(),
+        # "purchases_raw_analysis": ETL_ANALYSIS_PURCHASE_RAW(),
+        "users_raw_analysis": ETL_ANALYSIS_USER_RAW(),
+    }
+    export_datasets(datasets)
+
+
+@app.task()
 def export_dataset_td_analysis():
     """
     Export the Teledeclaration datasets for analysis (Metabase)
     """
-    logger.info("Starting manual datasets export")
+    logger.info("Starting export_dataset_td_analysis")
     datasets = {
-        "td_analyses": ETL_ANALYSIS_TELEDECLARATIONS(),
+        "td_analysis": ETL_ANALYSIS_TELEDECLARATIONS(),
     }
     export_datasets(datasets)
 
@@ -283,7 +307,7 @@ def export_dataset_td_opendata():
     Export the Teledeclaration datasets for opendata (data.gouv.fr) (1 per year)
     This datasets are updated every year by adding a new campaign
     """
-    logger.info("Starting manual datasets export")
+    logger.info("Starting export_dataset_td_opendata")
     datasets = {
         "campagne teledeclaration 2021": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
         "campagne teledeclaration 2022": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
@@ -299,9 +323,9 @@ def export_dataset_canteen_analysis():
     """
     Export the Canteen datasets for analysis (Metabase)
     """
-    logger.info("Starting datasets extractions")
+    logger.info("Starting export_dataset_canteen_analysis")
     datasets = {
-        "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
+        "cantines_analysis": ETL_ANALYSIS_CANTEEN(),
     }
     export_datasets(datasets)
 
@@ -311,7 +335,7 @@ def export_dataset_canteen_opendata():
     """
     Export the Canteen datasets for opendata (data.gouv.fr)
     """
-    logger.info("Starting datasets extractions")
+    logger.info("Starting export_dataset_canteen_opendata")
     datasets = {
         "cantines": ETL_OPEN_DATA_CANTEEN(),
     }
