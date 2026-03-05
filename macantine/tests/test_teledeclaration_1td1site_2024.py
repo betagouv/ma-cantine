@@ -904,7 +904,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         """
         Test that the total value is divided by the number of satellites.
         """
-        total_value = 14824.57
+        total_value = 15000.50
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
