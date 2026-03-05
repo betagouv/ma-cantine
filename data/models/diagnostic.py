@@ -11,6 +11,7 @@ from simple_history.models import HistoricalRecords
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models import Canteen
+from data.utils import has_arrayfield_missing_query
 from data.models.creation_source import CreationSource
 from data.utils import CustomJSONEncoder, make_optional_positive_decimal_field, sum_int_with_potential_null
 from data.validators import diagnostic as diagnostic_validators
@@ -158,6 +159,24 @@ class DiagnosticQuerySet(models.QuerySet):
     def teledeclared_for_year(self, year):
         return self.teledeclared().in_year(year).in_campaign(year)
 
+    def teledeclared_site_for_year(self, year):
+        """
+        Only return site TDs
+        - exclude groupes (2025+)
+        - exclude central & central servings (2024 and before)
+        """
+        return (
+            self.teledeclared_for_year(year)
+            .annotate(canteen_snapshot_production_type=F("canteen_snapshot__production_type"))
+            .exclude(
+                canteen_snapshot_production_type__in=[
+                    Canteen.ProductionType.GROUPE,
+                    Canteen.ProductionType.CENTRAL,
+                    Canteen.ProductionType.CENTRAL_SERVING,
+                ]
+            )
+        )
+
     def with_meal_price(self):
         """
         Le coût denrées est calculé en divisant la valeur d'achat alimentaire total par le nombre de repas annuels.
@@ -185,14 +204,19 @@ class DiagnosticQuerySet(models.QuerySet):
     def valid_td_by_year(self, year):
         year = int(year)
         if year in CAMPAIGN_DATES.keys():
-            return (
-                self.teledeclared_for_year(year)
-                .exclude(teledeclaration_mode_satellite_without_appro_query())
-                .filter(valeur_bio_agg_is_filled_query())  # Chaîne de traitement n°5
-                .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
-                .exclude_aberrant_values()  # Chaîne de traitement n°8
-                .exclude(incoherent_values_query())  # Chaîne de traitement n°8
-            )
+            if year in [2024]:
+                return self.teledeclared_site_for_year(year).filter(
+                    has_arrayfield_missing_query("invalid_reason_list")
+                )
+            else:
+                return (
+                    self.teledeclared_for_year(year)
+                    .exclude(teledeclaration_mode_satellite_without_appro_query())
+                    .filter(valeur_bio_agg_is_filled_query())  # Chaîne de traitement n°5
+                    .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
+                    .exclude_aberrant_values()  # Chaîne de traitement n°8
+                    .exclude(incoherent_values_query())  # Chaîne de traitement n°8
+                )
         else:
             return self.none()
 
