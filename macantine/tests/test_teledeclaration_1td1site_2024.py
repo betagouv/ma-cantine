@@ -39,18 +39,20 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
 
         # Before the script is run
         self.assertEqual(Canteen.objects.count(), 3)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 3)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            2,
         )
 
     @authenticate
@@ -75,18 +77,20 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             call_command("canteen_migrate_central_to_groupe", apply=True)
 
         # Before the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 3)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            2,
         )
 
     @authenticate
@@ -123,32 +127,32 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             central_2_diagnostic.teledeclare(applicant=authenticate.user)
 
         # Before the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
 
         # Run the script first time
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 4)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 4)
         first_time_generated_diagnostic_satellite_1 = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_1, generated_from_groupe_diagnostic=True)
         )
         first_time_generated_diagnostic_satellite_2 = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
         )
 
         # Re-run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 4)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 4)
         second_time_generated_diagnostic_satellite_1 = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_1, generated_from_groupe_diagnostic=True)
         )
         second_time_generated_diagnostic_satellite_2 = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
         )
@@ -177,7 +181,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             )
             satellite_diagnostic.teledeclare(applicant=authenticate.user)
 
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             satellite.central_producer_siret = central.siret
@@ -192,7 +196,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             )
             central_diagnostic.teledeclare(applicant=authenticate.user)
 
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -218,7 +222,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             )
             satellite_diagnostic.teledeclare(applicant=authenticate.user)
 
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             satellite.central_producer_siret = central.siret
@@ -233,7 +237,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             )
             central_diagnostic.teledeclare(applicant=authenticate.user)
 
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -270,9 +274,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 3)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .filter(invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
             .count(),
@@ -284,9 +288,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             central_diagnostic.cancel()
             satellite.central_producer_siret = None
             satellite.save(skip_validations=True)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .filter(invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
             .count(),
@@ -299,9 +303,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
 
         # Re-run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .filter(invalid_reason_list__contains=[Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
             .count(),
@@ -329,18 +333,20 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         central.delete()
 
         # Before the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 3)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            2,
         )
 
     @authenticate
@@ -366,18 +372,20 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         satellite_1.delete()
 
         # Before the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 3)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            2,
         )
 
     @authenticate
@@ -404,18 +412,20 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         satellite_1.hard_delete()
 
         # Before the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 3)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 2
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            2,
         )
 
 
@@ -445,7 +455,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        diagnostic_generated = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=satellite)
+        diagnostic_generated = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=satellite)
         self.assertIsNone(diagnostic_generated.satellites_snapshot)
 
     @authenticate
@@ -471,7 +481,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
 
         # After the script is run
         diagnostic_generated = (
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True)
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True)
         )
         for diagnostic in diagnostic_generated:
             self.assertEqual(diagnostic.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
@@ -501,8 +511,8 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        diagnostic_generated = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=satellite)
-        diagnostic_central = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=central)
+        diagnostic_generated = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=satellite)
+        diagnostic_central = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=central)
         self.assertEqual(diagnostic_generated.teledeclaration_id, diagnostic_central.teledeclaration_id)
         self.assertEqual(diagnostic_generated.teledeclaration_date, diagnostic_central.teledeclaration_date)
         self.assertEqual(diagnostic_generated.teledeclaration_version, diagnostic_central.teledeclaration_version)
@@ -532,8 +542,8 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        diagnostic_generated = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=satellite)
-        diagnostic_central = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=central)
+        diagnostic_generated = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=satellite)
+        diagnostic_central = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=central)
         self.assertEqual(diagnostic_generated.applicant_snapshot, diagnostic_central.applicant_snapshot)
         self.assertEqual(diagnostic_generated.applicant, diagnostic_central.applicant)
 
@@ -563,7 +573,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
 
         # After the script is run
         diagnostic_generated = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite, generated_from_groupe_diagnostic=True)
         )
@@ -635,12 +645,12 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
 
         # After the script is run
         diagnostic_satellite_siret = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_siret, generated_from_groupe_diagnostic=True)
         )
         diagnostic_satellite_siren = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_siren, generated_from_groupe_diagnostic=True)
         )
@@ -697,7 +707,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        diagnostic_generated = Diagnostic.objects.in_year(2024).get(
+        diagnostic_generated = Diagnostic.all_objects.in_year(2024).get(
             canteen=satellite, generated_from_groupe_diagnostic=True
         )
 
@@ -747,12 +757,12 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         # After the script is run
         number_of_satellites = 2
         satellite_1_diagnostic = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_1, generated_from_groupe_diagnostic=True)
         )
         satellite_2_diagnostic = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
         )
@@ -802,12 +812,12 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         # After the script is run
         number_of_satellites = 2
         satellite_1_diagnostic = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_1, generated_from_groupe_diagnostic=True)
         )
         satellite_2_diagnostic = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
         )
@@ -839,7 +849,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
 
         # After the script is run
         satellite_diagnostic = (
-            Diagnostic.objects.in_year(2024)
+            Diagnostic.all_objects.in_year(2024)
             .teledeclared()
             .get(canteen=satellite, generated_from_groupe_diagnostic=True)
         )
@@ -911,8 +921,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
         self.verify_field_are_equals(sat_1_diagnostic.valeur_totale, total_value / 2)
         self.verify_field_are_equals(sat_2_diagnostic.valeur_totale, total_value / 2)
 
@@ -935,8 +945,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
@@ -978,9 +988,9 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_3_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=sat_created)
+        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_3_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=sat_created)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
@@ -1011,8 +1021,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
@@ -1054,9 +1064,9 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_3_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=sat_created)
+        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_3_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=sat_created)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
@@ -1087,8 +1097,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
@@ -1130,9 +1140,9 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_3_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=sat_created)
+        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_3_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=sat_created)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
         number_of_generated_diagnostics = len(sat_diagnostics_generated)
 
@@ -1162,8 +1172,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
         sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
 
         for sat_diagnostic in sat_diagnostics_generated:
@@ -1202,9 +1212,10 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
 
         # Before the script is run
         self.assertEqual(Canteen.objects.count(), 2)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
 
         # Run the script
@@ -1213,9 +1224,10 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         diagnostic_site_2.refresh_from_db()
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 2)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
         self.assertEqual(diagnostic_site_1, diagnostic_site_1_before_script)
         self.assertEqual(diagnostic_site_2, diagnostic_site_2_before_script)
@@ -1240,9 +1252,10 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
             Canteen.objects.filter(siret="19622299600015").count(), 0
         )  # no central canteen exist with the siret used in sat
         self.assertEqual(Canteen.objects.count(), 1)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
 
         # Run the script
@@ -1250,9 +1263,10 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         satellite_diagnostic.refresh_from_db()
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
         self.assertEqual(satellite_diagnostic, satellite_diagnostic_before_script)
 
@@ -1272,9 +1286,10 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
 
         # Before the script is run
         self.assertEqual(Canteen.objects.count(), 1)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
 
         # Run the script
@@ -1282,9 +1297,10 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         satellite_diagnostic.refresh_from_db()
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         self.assertEqual(
-            Diagnostic.objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(), 0
+            Diagnostic.all_objects.in_year(2024).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            0,
         )
         self.assertEqual(satellite_diagnostic.canteen_snapshot, satellite_snapshot_canteen_before_script)
         self.assertEqual(satellite_diagnostic.satellites_snapshot, satellite_snapshot_satellites_before_script)
@@ -1325,19 +1341,19 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
             central_diagnostic_2025.teledeclare(applicant=authenticate.user)
 
         # Before the script is run
-        self.assertEqual(Diagnostic.objects.count(), 3)
-        self.assertEqual(Diagnostic.objects.in_year(2023).teledeclared().count(), 1)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
-        self.assertEqual(Diagnostic.objects.in_year(2025).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.count(), 3)
+        self.assertEqual(Diagnostic.all_objects.in_year(2023).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2025).teledeclared().count(), 1)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.count(), 5)
-        self.assertEqual(Diagnostic.objects.in_year(2023).teledeclared().count(), 1)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 3)
-        self.assertEqual(Diagnostic.objects.in_year(2025).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.count(), 5)
+        self.assertEqual(Diagnostic.all_objects.in_year(2023).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 3)
+        self.assertEqual(Diagnostic.all_objects.in_year(2025).teledeclared().count(), 1)
 
     @authenticate
     def test_central_without_satellites(self):
@@ -1354,9 +1370,9 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
             )
             central_diagnostic.teledeclare(applicant=authenticate.user)
 
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
     @authenticate
     def test_central_with_diagnostic_not_teledeclared(self):
@@ -1376,9 +1392,9 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 0)
-        self.assertEqual(Diagnostic.objects.in_year(2024).filter(generated_from_groupe_diagnostic=True).count(), 0)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 0)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).filter(generated_from_groupe_diagnostic=True).count(), 0)
 
     @authenticate
     def test_cancelled_central_diagnostics(self):
@@ -1401,6 +1417,6 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        self.assertEqual(Diagnostic.objects.in_year(2024).count(), 1)
-        self.assertEqual(Diagnostic.objects.in_year(2024).teledeclared().count(), 0)
-        self.assertEqual(Diagnostic.objects.in_year(2024).filter(generated_from_groupe_diagnostic=True).count(), 0)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).count(), 1)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 0)
+        self.assertEqual(Diagnostic.all_objects.in_year(2024).filter(generated_from_groupe_diagnostic=True).count(), 0)
