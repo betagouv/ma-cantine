@@ -228,7 +228,7 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
     appro_fields_satellite = {}
 
     # fields to distribute
-    fields = [*Diagnostic.AGGREGATED_APPRO_FIELDS, *Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS]
+    fields = Diagnostic.AGGREGATED_APPRO_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
 
     # get the divisor
     if diagnostic.year == 2025:
