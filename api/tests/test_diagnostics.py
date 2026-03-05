@@ -349,12 +349,12 @@ class DiagnosticCreateApiTest(APITestCase):
         """
         canteen = CanteenFactory(managers=[authenticate.user])
 
-        payload = {"year": 2020, "generated_from_groupe_diagnostic": False, "value_bio_ht": 10}
+        payload = {"year": 2020, "generated_from_groupe_diagnostic": False, "valeur_bio": 10}
         self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
 
         try:
             with transaction.atomic():
-                payload = {"year": 2020, "generated_from_groupe_diagnostic": False, "value_bio_ht": 1000}
+                payload = {"year": 2020, "generated_from_groupe_diagnostic": False, "valeur_bio": 1000}
                 response = self.client.post(
                     reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}),
                     payload,
