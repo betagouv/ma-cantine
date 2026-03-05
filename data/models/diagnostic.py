@@ -51,7 +51,11 @@ def diagnostic_type_complete_query():
 
 
 def valeur_totale_is_filled_query():
-    return Q(valeur_totale__isnull=False) & ~Q(valeur_totale=0)
+    return Q(valeur_totale__isnull=False)
+
+
+def valeur_totale_is_filled_and_not_zero_query():
+    return Q(valeur_totale_is_filled_query() & ~Q(valeur_totale=0))
 
 
 def valeur_bio_agg_is_filled_query():
@@ -69,7 +73,7 @@ def diagnostic_type_simple_is_filled_query():
     after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025}
     )
-    return diagnostic_type_simple_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
+    return diagnostic_type_simple_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
 
 
 def diagnostic_type_complete_is_filled_query():
@@ -83,7 +87,7 @@ def diagnostic_type_complete_is_filled_query():
     after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025}
     )
-    return diagnostic_type_complete_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
+    return diagnostic_type_complete_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
 
 
 def teledeclaration_mode_satellite_without_appro_query():

@@ -5,10 +5,14 @@ from django.db.models import F, Func, Value
 
 from data.models import Diagnostic
 from data.models.diagnostic import (
+    canteen_deleted_query,
     canteen_has_siret_or_siren_unite_legale_query,
     canteen_soft_deleted_during_campaign_query,
+    teledeclaration_mode_satellite_without_appro_query,
     aberrant_values_query,
     incoherent_values_query,
+    valeur_bio_agg_is_filled_query,
+    valeur_totale_is_filled_query,
 )
 
 logger = logging.getLogger(__name__)
@@ -78,7 +82,7 @@ def fill_invalid_reason_CANTINE_SUPPRIMEE(diagnostic_qs):
 
     # Step 2: queryset
     logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
-    diagnostic_qs = diagnostic_qs.filter(canteen_id__isnull=True)
+    diagnostic_qs = diagnostic_qs.filter(canteen_deleted_query())
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with canteen deleted")
 
     # Step 3: update
@@ -123,7 +127,7 @@ def fill_invalid_reason_TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO(diagnostic_
 
     # Step 2: queryset
     logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
-    diagnostic_qs = diagnostic_qs.filter(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
+    diagnostic_qs = diagnostic_qs.filter(teledeclaration_mode_satellite_without_appro_query())
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with mode teledeclaration satellite without appro")
 
     # Step 3: update
@@ -138,7 +142,7 @@ def fill_invalid_reason_VALEUR_TOTALE_VIDE(diagnostic_qs):
 
     # Step 2: queryset
     logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
-    diagnostic_qs = diagnostic_qs.filter(valeur_totale__isnull=True)
+    diagnostic_qs = diagnostic_qs.exclude(valeur_totale_is_filled_query())
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with valeur_totale null")
 
     # Step 3: update
@@ -153,7 +157,7 @@ def fill_invalid_reason_VALEUR_BIO_AGG_VIDE(diagnostic_qs):
 
     # Step 2: queryset
     logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
-    diagnostic_qs = diagnostic_qs.filter(valeur_bio_agg__isnull=True)
+    diagnostic_qs = diagnostic_qs.exclude(valeur_bio_agg_is_filled_query())
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with valeur_bio_agg null")
 
     # Step 3: update
