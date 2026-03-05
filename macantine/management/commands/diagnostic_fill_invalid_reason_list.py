@@ -119,7 +119,7 @@ def fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs):
 
     # Step 2: queryset
     logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
-    diagnostic_qs = diagnostic_qs.filter(canteen_has_siret_or_siren_unite_legale_query())
+    diagnostic_qs = diagnostic_qs.exclude(canteen_has_siret_or_siren_unite_legale_query())
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with canteen siret or siren_unite_legale null")
 
     # Step 3: update
@@ -134,7 +134,7 @@ def fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs):
 
     # Step 2: queryset
     logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
-    diagnostic_qs = diagnostic_qs.filter(aberrant_values_query())
+    diagnostic_qs = diagnostic_qs.with_meal_price().filter(aberrant_values_query())
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with aberrant values")
 
     # Step 3: update
