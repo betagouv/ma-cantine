@@ -98,7 +98,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         else:
             return self.none()
 
-    def historical_valid_td(self, years: list):
+    def valid_td_all_years(self, years: list):
         results = self.none()
         for year in years:
             results = results | self.valid_td_by_year(year)
