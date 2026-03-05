@@ -362,6 +362,7 @@ class DiagnosticQuerySetTest(TestCase):
             with freeze_time(date_in_last_teledeclaration_campaign):
                 diagnostic_last_year.teledeclare(applicant=UserFactory(), skip_validations=True)
             setattr(cls, f"diagnostic_canteen_valid_{index + 1}", diagnostic)
+            setattr(cls, f"diagnostic_last_year_canteen_valid_{index + 1}", diagnostic_last_year)
 
         cls.diagnostic_canteen_missing_siret = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -370,6 +371,7 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_missing_siret,
             valeur_totale=1000.00,
             valeur_bio=200.00,
+            invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SANS_SIRET_OU_SIREN],
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory(), skip_validations=True)
@@ -414,6 +416,7 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_deleted,
             valeur_totale=1000.00,
             valeur_bio=200.00,
+            invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE],
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_deleted.teledeclare(applicant=UserFactory())
@@ -449,9 +452,12 @@ class DiagnosticQuerySetTest(TestCase):
 
     def test_valid_td_by_year(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
+        diagnostics = Diagnostic.objects.valid_td_by_year(year_data - 1)
+        self.assertEqual(diagnostics.count(), 6)
+        self.assertIn(self.diagnostic_last_year_canteen_valid_1, diagnostics)  # groupe (but 2023)
         diagnostics = Diagnostic.objects.valid_td_by_year(year_data)
         self.assertEqual(diagnostics.count(), 8)
-        self.assertIn(self.diagnostic_canteen_valid_1, diagnostics)
+        self.assertNotIn(self.diagnostic_canteen_valid_1, diagnostics)  # groupe (and 2024)
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
