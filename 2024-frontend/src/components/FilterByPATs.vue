@@ -2,12 +2,15 @@
 import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
-import { getPATOptionsFromSearch } from "@/services/filters"
+import { getPATOptionsFromSearch, getPATsCount } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
 const PATsSelected = computed(() => storeFilters.getParam("pats"))
 const route = useRoute()
+
+/* Count */
+const count = computed(() => getPATsCount())
 
 /* Search */
 const search = ref("")
@@ -23,6 +26,10 @@ if (query.pats) storeFilters.setFromQuery("pats", query.pats, allPATs)
 </script>
 <template>
   <FilterByBase label="PAT">
+    <p>
+      {{ count }} PAT existants<br />
+      <span class="fr-hint-text">Utilisez la barre de recherche pour sélectionner le ou les PAT souhaités.</span>
+    </p>
     <DsfrSearchBar v-model="search" placeholder="Rechercher un PAT" />
     <DsfrCheckboxSet
       :modelValue="PATsSelected"

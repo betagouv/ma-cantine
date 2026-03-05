@@ -2,12 +2,15 @@
 import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
-import { getEPCIOptionsFromSearch } from "@/services/filters"
+import { getEPCIOptionsFromSearch, getEPCIsCount } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
 const EPCIsSelected = computed(() => storeFilters.getParam("epcis"))
 const route = useRoute()
+
+/* Count */
+const count = computed(() => getEPCIsCount())
 
 /* Search */
 const search = ref("")
@@ -23,6 +26,10 @@ if (query.epcis) storeFilters.setFromQuery("epcis", query.epcis, allEPCIs)
 </script>
 <template>
   <FilterByBase label="EPCI">
+    <p>
+      {{ count }} EPCI existants<br />
+      <span class="fr-hint-text">Utilisez la barre de recherche pour sélectionner le ou les EPCI souhaités.</span>
+    </p>
     <DsfrSearchBar v-model="search" placeholder="Rechercher un EPCI" />
     <DsfrCheckboxSet
       :modelValue="EPCIsSelected"

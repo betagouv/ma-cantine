@@ -2,12 +2,15 @@
 import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { useStoreFilters } from "@/stores/filters"
-import { getCitiesOptionsFromSearch } from "@/services/filters"
+import { getCitiesOptionsFromSearch, getCitiesCount } from "@/services/filters"
 import FilterByBase from "@/components/FilterByBase.vue"
 
 const storeFilters = useStoreFilters()
 const citiesSelected = computed(() => storeFilters.getParam("cities"))
 const route = useRoute()
+
+/* Count */
+const count = computed(() => getCitiesCount())
 
 /* Search */
 const search = ref("")
@@ -23,6 +26,10 @@ if (query.cities) storeFilters.setFromQuery("cities", query.cities, allCities)
 </script>
 <template>
   <FilterByBase label="Communes">
+    <p>
+      {{ count }} communes existantes<br />
+      <span class="fr-hint-text">Utilisez la barre de recherche pour sélectionner la ou les communes souhaitées.</span>
+    </p>
     <DsfrSearchBar v-model="search" placeholder="Rechercher une commune" />
     <DsfrCheckboxSet
       :modelValue="citiesSelected"
