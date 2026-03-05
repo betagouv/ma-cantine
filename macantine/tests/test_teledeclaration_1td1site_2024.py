@@ -719,9 +719,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         """
         The yearly meal count is divided by the number of satellites, value not rounded keep decimal.
         """
-        central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1000, daily_meal_count=100
-        )
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011)
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
@@ -759,16 +757,12 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             .get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
         )
 
-        expected_yearly_meal_count = round(
-            central_diagnostic.canteen_snapshot["yearly_meal_count"] / number_of_satellites, 2
+        expected_yearly_meal_count = int(
+            central_diagnostic.canteen_snapshot["yearly_meal_count"] / number_of_satellites
         )
         self.assertIsNotNone(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"])
-        self.assertEqual(
-            round(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"], 2), expected_yearly_meal_count
-        )
-        self.assertEqual(
-            round(satellite_1_diagnostic.canteen_snapshot["yearly_meal_count"], 2), expected_yearly_meal_count
-        )
+        self.assertEqual(int(satellite_1_diagnostic.canteen_snapshot["yearly_meal_count"]), expected_yearly_meal_count)
+        self.assertEqual(int(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"]), expected_yearly_meal_count)
 
     @authenticate
     def test_keep_history_meal_count(self):
@@ -877,17 +871,15 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             siren_unite_legale="123456789",
         )
 
-        cls.simple_appro_fields = {}
+        cls.appro_fields = {}
         for field in Diagnostic.SIMPLE_APPRO_FIELDS:
-            cls.simple_appro_fields[field] = 9999.99
-
-        cls.complete_appro_fields = {}
+            cls.appro_fields[field] = 10000.50
         for field in Diagnostic.COMPLETE_APPRO_FIELDS:
-            cls.complete_appro_fields[field] = 888.88
+            cls.appro_fields[field] = 500.75
 
-    def verify_field_are_equals(self, value, expected_value):  # It is ok to round the value to 1 decimal ?
-        value_cleaned = float(round(value, 1))
-        expected_value_cleaned = float(round(expected_value, 1))
+    def verify_field_are_equals(self, value, expected_value):
+        value_cleaned = float(value)
+        expected_value_cleaned = round(expected_value, 2)
         self.assertEqual(value_cleaned, expected_value_cleaned)
 
     def verify_appro_fields_divided(self, fields, divisor, central_diagnostic, sat_diagnostics_generated):
@@ -897,6 +889,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                     with self.subTest(field=field):
                         central_value = getattr(central_diagnostic, field)
                         diagnostic_value = getattr(sat_diagnostic, field)
+                        self.assertIsNotNone(central_value)
+                        self.assertIsNotNone(diagnostic_value)
                         self.verify_field_are_equals(diagnostic_value, central_value / divisor)
 
     @authenticate
@@ -904,7 +898,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         """
         Test that the total value is divided by the number of satellites.
         """
-        total_value = 14824.57
+        total_value = 15000.50
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
@@ -933,7 +927,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                **self.simple_appro_fields,
+                **self.appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
 
@@ -948,7 +942,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            Diagnostic.SIMPLE_APPRO_FIELDS,
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -969,7 +963,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                **self.simple_appro_fields,
+                **self.appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
@@ -992,7 +986,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            Diagnostic.SIMPLE_APPRO_FIELDS,
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1009,7 +1003,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                **self.complete_appro_fields,
+                **self.appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
 
@@ -1024,7 +1018,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            Diagnostic.COMPLETE_APPRO_FIELDS,
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1045,7 +1039,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                **self.complete_appro_fields,
+                **self.appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
@@ -1068,7 +1062,83 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            Diagnostic.COMPLETE_APPRO_FIELDS,
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
+            number_of_generated_diagnostics,
+            central_diagnostic,
+            sat_diagnostics_generated,
+        )
+
+    @authenticate
+    def test_central_no_type(self):
+        """
+        Test that when a central canteen teledeclares without mode.
+        """
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=self.central,
+                year=2024,
+                diagnostic_type=None,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                **self.appro_fields,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
+        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+
+        # Appro fields are divided and copied in the generated diagnostics
+        self.verify_appro_fields_divided(
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
+            number_of_generated_diagnostics,
+            central_diagnostic,
+            sat_diagnostics_generated,
+        )
+
+    @authenticate
+    def test_central_serving_no_type(self):
+        """
+        Test that when a central serving canteen teledeclares with no type.
+        """
+        # Change the production type of the central to central serving
+        self.central.production_type = Canteen.ProductionType.CENTRAL_SERVING
+        self.central.save(skip_validations=True)
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=self.central,
+                year=2024,
+                diagnostic_type=None,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                **self.appro_fields,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
+            # Need to add satellites to the snapshot with groupe migration
+            call_command("canteen_migrate_central_to_groupe", apply=True)
+            # Save satellite canteen created
+            new_canteen_id = central_diagnostic.satellites_snapshot[len(central_diagnostic.satellites_snapshot) - 1][
+                "id"
+            ]
+            sat_created = Canteen.objects.get(id=new_canteen_id)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_3_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=sat_created)
+        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
+        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+
+        # Appro fields are divided and copied in the generated diagnostics
+        self.verify_appro_fields_divided(
+            Diagnostic.APPRO_1TD1SITE_FIELDS,
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
