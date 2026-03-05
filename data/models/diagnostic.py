@@ -242,6 +242,19 @@ class DiagnosticQuerySet(models.QuerySet):
         )
 
 
+class DiagnosticManager(models.Manager):
+    queryset_model = DiagnosticQuerySet
+
+    def __init__(self, *args, **kwargs):
+        self.exclude_generated = kwargs.pop("exclude_generated", False)
+        super().__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        if self.exclude_generated:
+            return self.queryset_model(self.model).filter(generated_from_groupe_diagnostic=False)
+        return self.queryset_model(self.model)
+
+
 class Diagnostic(models.Model):
     class Meta:
         verbose_name = "diagnostic"
@@ -757,7 +770,8 @@ class Diagnostic(models.Model):
         "applicant_snapshot",
     ]
 
-    objects = models.Manager.from_queryset(DiagnosticQuerySet)()
+    objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)(exclude_generated=True)
+    all_objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
