@@ -460,8 +460,8 @@ class Diagnostic(models.Model):
         "valeur_siqo_agg",
         "valeur_externalites_performance_agg",
         "valeur_egalim_autres_agg",
-        # "valeur_egalim_hors_bio_agg",
-        # "valeur_egalim_agg",
+        "valeur_egalim_hors_bio_agg",
+        "valeur_egalim_agg",
     ]
 
     APPRO_FIELDS = [
@@ -709,6 +709,8 @@ class Diagnostic(models.Model):
         "communicates_on_food_quality",
         "communication_frequency",
     ]
+
+    APPRO_1TD1SITE_FIELDS = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + AGGREGATED_APPRO_FIELDS
 
     NON_APPRO_FIELDS = WASTE_FIELDS + DIVERSIFICATION_FIELDS + PLASTIC_FIELDS + INFO_FIELDS
 
