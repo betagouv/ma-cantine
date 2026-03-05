@@ -99,6 +99,15 @@ def canteen_has_siret_or_siren_unite_legale_query():
     )
 
 
+def aberrant_values_query():
+    # requires meal_price annotation
+    return Q(meal_price__isnull=False, meal_price__gt=20, valeur_totale__gt=1000000)
+
+
+def incoherent_values_query():
+    return Q(year=2022, teledeclaration_id__in=[9656, 8037])
+
+
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
         return self.filter(diagnostic_type_simple_is_filled_query() | diagnostic_type_complete_is_filled_query())
@@ -137,17 +146,20 @@ class DiagnosticQuerySet(models.QuerySet):
 
     def exclude_aberrant_values(self):
         """
-        Ici nous supprimons les TD dont les déclarations paraissent erronées et sont impactantes.
-        1) Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
+        Ici nous supprimons les TD dont les déclarations paraissent erronées et sont impactantes :
+        - Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
         Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
         nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
         2) Durant la campagne 2023, nous avons aussi identifié deux TD dont les valeurs étaient aberrantes.
         """
-        return (
-            self.with_meal_price()
-            .exclude(meal_price__isnull=False, meal_price__gt=20, valeur_totale__gt=1000000)
-            .exclude(year=2022, teledeclaration_id__in=[9656, 8037])
-        )
+        return self.with_meal_price().exclude(aberrant_values_query())
+
+    def exclude_incoherent_values(self):
+        """
+        Ici nous supprimons les TD dont les déclarations paraissent erronées et sont impactantes :
+        - Durant la campagne 2023, nous avons identifié deux TD dont les valeurs étaient aberrantes.
+        """
+        return self.exclude(incoherent_values_query())
 
     def canteen_for_stat(self, year):
         return (
@@ -166,6 +178,7 @@ class DiagnosticQuerySet(models.QuerySet):
                 .filter(valeur_bio_agg__isnull=False)  # Chaîne de traitement n°5
                 .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
                 .exclude_aberrant_values()  # Chaîne de traitement n°8
+                .exclude_incoherent_values()  # Chaîne de traitement n°8
             )
         else:
             return self.none()
