@@ -227,13 +227,6 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
 
     appro_fields_satellite = {}
 
-    # fields to distribute
-    fields = Diagnostic.AGGREGATED_APPRO_FIELDS
-    if diagnostic.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
-        fields += Diagnostic.SIMPLE_APPRO_FIELDS
-    else:
-        fields += Diagnostic.COMPLETE_APPRO_FIELDS
-
     # get the divisor
     if diagnostic.year == 2025:
         divisor = satellite_dict.get("yearly_meal_count")
@@ -242,7 +235,7 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
         # no +1 for central_serving? we already added it in canteen_migrate_central_to_groupe.py
 
     # divide values
-    for field in fields:
+    for field in Diagnostic.APPRO_1TD1SITE_FIELDS:
         try:
             appro_fields_satellite[field] = getattr(diagnostic, field) / divisor
         except (TypeError, ZeroDivisionError):
