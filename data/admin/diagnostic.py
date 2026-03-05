@@ -47,7 +47,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "creation_date",
         "modification_date",
     )
-    list_filter = ("year", "diagnostic_type", "status", "creation_source", "generated_from_groupe_diagnostic")
+    list_filter = ("year", "diagnostic_type", "status", "creation_source")
     search_fields = (
         "id",
         "canteen__name",
