@@ -51,7 +51,11 @@ def diagnostic_type_complete_query():
 
 
 def valeur_totale_is_filled_query():
-    return Q(valeur_totale__isnull=False) & ~Q(valeur_totale=0)
+    return Q(valeur_totale__isnull=False)
+
+
+def valeur_totale_is_filled_and_not_zero_query():
+    return Q(valeur_totale_is_filled_query() & ~Q(valeur_totale=0))
 
 
 def valeur_bio_agg_is_filled_query():
@@ -69,7 +73,7 @@ def diagnostic_type_simple_is_filled_query():
     after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025}
     )
-    return diagnostic_type_simple_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
+    return diagnostic_type_simple_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
 
 
 def diagnostic_type_complete_is_filled_query():
@@ -83,7 +87,7 @@ def diagnostic_type_complete_is_filled_query():
     after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025}
     )
-    return diagnostic_type_complete_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
+    return diagnostic_type_complete_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
 
 
 def teledeclaration_mode_satellite_without_appro_query():
@@ -356,16 +360,21 @@ class Diagnostic(models.Model):
         SITE = "SITE", "Cantine déclarant ses propres données"
 
     class InvalidReason(models.TextChoices):
-        VALUE_TOTAL_HT_VIDE = "VALUE_TOTAL_HT_VIDE", "Valeur totale des achats vide"
-        VALUE_BIO_HT_VIDE = "VALUE_BIO_HT_VIDE", "Valeur totale des achats bio vide"
-        CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE = (
-            "CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE",
-            "Cantine supprimée pendant la campagne",
+        CANTINE_SUPPRIMEE = "CANTINE_SUPPRIMEE", "Cantine supprimée"
+        CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE = (
+            "CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE",
+            "Cantine soft supprimée pendant la campagne",
         )
         CANTINE_SANS_SIRET_OU_SIREN = "CANTINE_SANS_SIRET_OU_SIREN", "Cantine sans siret ou siren"
+        TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO = (
+            "TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO",
+            "Télédeclaration mode satellite without appro",
+        )
+        VALEUR_TOTALE_VIDE = "VALEUR_TOTALE_VIDE", "Valeur totale des achats vide"
+        VALEUR_BIO_AGG_VIDE = "VALEUR_BIO_AGG_VIDE", "Valeur totale des achats bio vide"
         VALEURS_ABERRANTES = "VALEURS_ABERRANTES", "Valeurs aberrantes"
-        DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
         VALEURS_INCOHERENTES = "VALEURS_INCOHERENTES", "Valeurs incohérentes"
+        DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
 
     APPRO_FAMILIES = [
         "viandes_volailles",
