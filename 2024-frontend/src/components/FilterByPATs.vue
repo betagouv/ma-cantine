@@ -31,7 +31,9 @@ if (query.pats) storeFilters.setFromQuery("pats", query.pats, allPATs)
       <span class="fr-hint-text">Utilisez la barre de recherche pour sélectionner le ou les PAT souhaités.</span>
     </p>
     <DsfrSearchBar v-model="search" placeholder="Rechercher un PAT" />
+    <p v-if="search.length > 0 && options.length === 0" class="fr-error-text fr-mb-0">Aucun PAT trouvé pour la recherche « {{ search }} »</p>
     <DsfrCheckboxSet
+      v-if="options.length > 0"
       :modelValue="PATsSelected"
       @update:modelValue="storeFilters.set('pats', $event)"
       :options="options"

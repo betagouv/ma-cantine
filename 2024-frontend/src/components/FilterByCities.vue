@@ -31,7 +31,9 @@ if (query.cities) storeFilters.setFromQuery("cities", query.cities, allCities)
       <span class="fr-hint-text">Utilisez la barre de recherche pour sélectionner la ou les communes souhaitées.</span>
     </p>
     <DsfrSearchBar v-model="search" placeholder="Rechercher une commune" />
+    <p v-if="search.length > 0 && options.length === 0" class="fr-error-text fr-mb-0">Aucune commune trouvée pour la recherche « {{ search }} »</p>
     <DsfrCheckboxSet
+      v-if="options.length > 0"
       :modelValue="citiesSelected"
       @update:modelValue="storeFilters.set('cities', $event)"
       :options="options"

@@ -31,7 +31,9 @@ if (query.epcis) storeFilters.setFromQuery("epcis", query.epcis, allEPCIs)
       <span class="fr-hint-text">Utilisez la barre de recherche pour sélectionner le ou les EPCI souhaités.</span>
     </p>
     <DsfrSearchBar v-model="search" placeholder="Rechercher un EPCI" />
+    <p v-if="search.length > 0 && options.length === 0" class="fr-error-text fr-mb-0">Aucun EPCI trouvé pour la recherche « {{ search }} »</p>
     <DsfrCheckboxSet
+      v-if="options.length > 0"
       :modelValue="EPCIsSelected"
       @update:modelValue="storeFilters.set('epcis', $event)"
       :options="options"
