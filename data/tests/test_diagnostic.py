@@ -490,6 +490,12 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).pourcentage_bio, 20)
         self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).pourcentage_egalim, 50)
 
+    def test_exclude_generated(self):
+        self.assertEqual(Diagnostic.objects.count(), 17)
+        DiagnosticFactory(generated_from_groupe_diagnostic=True)
+        self.assertEqual(Diagnostic.objects.count(), 17)
+        self.assertEqual(Diagnostic.all_objects.count(), 18)
+
 
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
