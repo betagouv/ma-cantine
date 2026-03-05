@@ -9,6 +9,8 @@ from data.models.sector import Sector
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
+# TODO : ajouter un test si pas de diagnostic mode on par sur du central appro
+
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
     def setUp(self):
@@ -944,7 +946,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            Diagnostic.SIMPLE_APPRO_FIELDS,
+            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -988,7 +990,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            Diagnostic.SIMPLE_APPRO_FIELDS,
+            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1020,7 +1022,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            Diagnostic.COMPLETE_APPRO_FIELDS,
+            [*Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1064,7 +1066,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            Diagnostic.COMPLETE_APPRO_FIELDS,
+            [*Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
