@@ -893,8 +893,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                     with self.subTest(field=field):
                         central_value = getattr(central_diagnostic, field)
                         diagnostic_value = getattr(sat_diagnostic, field)
-                        self.assertIsNotNone(central_value)  # Test can be flaky
-                        self.assertIsNotNone(diagnostic_value)  # Test can be flaky
+                        self.assertIsNotNone(central_value)
+                        self.assertIsNotNone(diagnostic_value)
                         self.verify_field_are_equals(diagnostic_value, central_value / divisor)
 
     @authenticate
