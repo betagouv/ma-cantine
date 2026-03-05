@@ -251,7 +251,7 @@ class DiagnosticManager(models.Manager):
 
     def get_queryset(self):
         if self.exclude_generated:
-            return self.queryset_model(self.model).filter(generated_from_groupe_diagnostic=False)
+            return self.queryset_model(self.model).exclude(generated_from_groupe_diagnostic=True)
         return self.queryset_model(self.model)
 
 
