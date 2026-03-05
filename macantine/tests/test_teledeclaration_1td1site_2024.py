@@ -885,9 +885,9 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         for field in Diagnostic.COMPLETE_APPRO_FIELDS:
             cls.complete_appro_fields[field] = 888.88
 
-    def verify_field_are_equals(self, value, expected_value):  # It is ok to round the value to 1 decimal ?
-        value_cleaned = float(round(value, 1))
-        expected_value_cleaned = float(round(expected_value, 1))
+    def verify_field_are_equals(self, value, expected_value):
+        value_cleaned = float(value)
+        expected_value_cleaned = round(expected_value, 2)
         self.assertEqual(value_cleaned, expected_value_cleaned)
 
     def verify_appro_fields_divided(self, fields, divisor, central_diagnostic, sat_diagnostics_generated):
