@@ -26,7 +26,7 @@ if (query.cities) storeFilters.setFromQuery("cities", query.cities, allCities)
 </script>
 <template>
   <FilterByBase label="Communes">
-    <p>
+    <p class="fr-mb-1w">
       {{ count }} communes existantes<br />
       <span class="fr-hint-text">Utilisez la barre de recherche pour sélectionner la ou les communes souhaitées.</span>
     </p>

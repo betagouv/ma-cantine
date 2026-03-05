@@ -26,7 +26,7 @@ if (query.epcis) storeFilters.setFromQuery("epcis", query.epcis, allEPCIs)
 </script>
 <template>
   <FilterByBase label="EPCI">
-    <p>
+    <p class="fr-mb-1w">
       {{ count }} EPCI existants<br />
       <span class="fr-hint-text">Utilisez la barre de recherche pour sélectionner le ou les EPCI souhaités.</span>
     </p>

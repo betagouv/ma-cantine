@@ -26,7 +26,7 @@ if (query.pats) storeFilters.setFromQuery("pats", query.pats, allPATs)
 </script>
 <template>
   <FilterByBase label="PAT">
-    <p>
+    <p class="fr-mb-1w">
       {{ count }} PAT existants<br />
       <span class="fr-hint-text">Utilisez la barre de recherche pour sélectionner le ou les PAT souhaités.</span>
     </p>
