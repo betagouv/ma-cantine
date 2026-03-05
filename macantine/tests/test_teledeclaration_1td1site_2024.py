@@ -9,8 +9,6 @@ from data.models.sector import Sector
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 
-# TODO : ajouter un test si pas de diagnostic mode on par sur du central appro
-
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
     def setUp(self):
@@ -873,13 +871,11 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             siren_unite_legale="123456789",
         )
 
-        cls.simple_appro_fields = {}
+        cls.appro_fields = {}
         for field in Diagnostic.SIMPLE_APPRO_FIELDS:
-            cls.simple_appro_fields[field] = 10000.50
-
-        cls.complete_appro_fields = {}
+            cls.appro_fields[field] = 10000.50
         for field in Diagnostic.COMPLETE_APPRO_FIELDS:
-            cls.complete_appro_fields[field] = 500.75
+            cls.appro_fields[field] = 500.75
 
     def verify_field_are_equals(self, value, expected_value):
         value_cleaned = float(value)
@@ -931,7 +927,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                **self.simple_appro_fields,
+                **self.appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
 
@@ -946,7 +942,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -967,7 +963,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                **self.simple_appro_fields,
+                **self.appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
@@ -990,7 +986,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1007,7 +1003,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                **self.complete_appro_fields,
+                **self.appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
 
@@ -1022,7 +1018,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
@@ -1043,7 +1039,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 year=2024,
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                **self.complete_appro_fields,
+                **self.appro_fields,
             )
             central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
@@ -1066,7 +1062,83 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         # Appro fields are divided and copied in the generated diagnostics
         self.verify_appro_fields_divided(
-            [*Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            number_of_generated_diagnostics,
+            central_diagnostic,
+            sat_diagnostics_generated,
+        )
+
+    @authenticate
+    def test_central_no_type(self):
+        """
+        Test that when a central canteen teledeclares without mode.
+        """
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=self.central,
+                year=2024,
+                diagnostic_type=None,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                **self.appro_fields,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
+        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+
+        # Appro fields are divided and copied in the generated diagnostics
+        self.verify_appro_fields_divided(
+            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
+            number_of_generated_diagnostics,
+            central_diagnostic,
+            sat_diagnostics_generated,
+        )
+
+    @authenticate
+    def test_central_serving_no_type(self):
+        """
+        Test that when a central serving canteen teledeclares with no type.
+        """
+        # Change the production type of the central to central serving
+        self.central.production_type = Canteen.ProductionType.CENTRAL_SERVING
+        self.central.save(skip_validations=True)
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=self.central,
+                year=2024,
+                diagnostic_type=None,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                **self.appro_fields,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
+            # Need to add satellites to the snapshot with groupe migration
+            call_command("canteen_migrate_central_to_groupe", apply=True)
+            # Save satellite canteen created
+            new_canteen_id = central_diagnostic.satellites_snapshot[len(central_diagnostic.satellites_snapshot) - 1][
+                "id"
+            ]
+            sat_created = Canteen.objects.get(id=new_canteen_id)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        sat_1_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        sat_2_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        sat_3_diagnostic = Diagnostic.objects.in_year(2024).teledeclared().get(canteen=sat_created)
+        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
+        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+
+        # Appro fields are divided and copied in the generated diagnostics
+        self.verify_appro_fields_divided(
+            [*Diagnostic.SIMPLE_APPRO_FIELDS, *Diagnostic.COMPLETE_APPRO_FIELDS, *Diagnostic.AGGREGATED_APPRO_FIELDS],
             number_of_generated_diagnostics,
             central_diagnostic,
             sat_diagnostics_generated,
