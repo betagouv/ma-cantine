@@ -510,6 +510,11 @@ class CanteenStats1Td1SiteApiTest(APITestCase):
                 canteen=cls.central, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             diagnostic.teledeclare(applicant=UserFactory())
+            # Create a fake diagnostic for 2023 generated
+            generated_diagnostic = DiagnosticFactory(year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+            generated_diagnostic.teledeclare(applicant=UserFactory())
+            generated_diagnostic.generated_from_groupe_diagnostic = True
+            generated_diagnostic.save(skip_validations=True)
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(
