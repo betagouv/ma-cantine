@@ -8,7 +8,11 @@ from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Sector
-from data.models.diagnostic import Diagnostic, canteen_soft_deleted_during_campaign_query
+from data.models.diagnostic import (
+    Diagnostic,
+    canteen_soft_deleted_during_campaign_query,
+    canteen_has_siret_or_siren_unite_legale_query,
+)
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -420,9 +424,9 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(diagnostics.count(), 1)
         self.assertIn(self.diagnostic_canteen_deleted, diagnostics)
 
-    def test_canteen_has_siret_or_siren_unite_legale(self):
+    def test_canteen_has_siret_or_siren_unite_legale_query(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.canteen_has_siret_or_siren_unite_legale()
+        diagnostics = Diagnostic.objects.filter(canteen_has_siret_or_siren_unite_legale_query())
         self.assertEqual(diagnostics.count(), 16)
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)
 
