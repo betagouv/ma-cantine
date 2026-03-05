@@ -55,49 +55,38 @@ class Command(BaseCommand):
         year = options["year"]
         logger.info(f"Starting task: diagnostic_fill_invalid_reason_list, campaign {year}")
 
-        diagnostic_qs = Diagnostic.objects.teledeclared_for_year(year=year)
+        diagnostic_qs = Diagnostic.objects.teledeclared_for_year(year=year).filter(
+            generated_from_groupe_diagnostic=False
+        )
 
-        fill_invalid_reason_VALUE_TOTAL_HT_VIDE(diagnostic_qs)
-        fill_invalid_reason_VALUE_BIO_HT_VIDE(diagnostic_qs)
-        fill_invalid_reason_CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE(diagnostic_qs, year)
+        fill_invalid_reason_CANTINE_SUPPRIMEE(diagnostic_qs)
+        fill_invalid_reason_CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE(diagnostic_qs, year)
         fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs)
+        fill_invalid_reason_TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO(diagnostic_qs)
+        fill_invalid_reason_VALEUR_TOTALE_VIDE(diagnostic_qs)
+        fill_invalid_reason_VALEUR_BIO_AGG_VIDE(diagnostic_qs)
         fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs)
         fill_invalid_reason_VALEURS_INCOHERENTES(diagnostic_qs)
         # fill_invalid_reason_DOUBLON_1TD1SITE()  # done in teledeclaration_generate_1td1site.py
 
 
-def fill_invalid_reason_VALUE_TOTAL_HT_VIDE(diagnostic_qs):
-    invalid_reason = Diagnostic.InvalidReason.VALUE_TOTAL_HT_VIDE
+def fill_invalid_reason_CANTINE_SUPPRIMEE(diagnostic_qs):
+    invalid_reason = Diagnostic.InvalidReason.CANTINE_SUPPRIMEE
 
     # Step 1: cleanup
     _remove_invalid_reason_item(invalid_reason)
 
     # Step 2: queryset
     logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
-    diagnostic_qs = diagnostic_qs.filter(valeur_totale__isnull=True)
-    logger.info(f"Found {diagnostic_qs.count()} diagnostics with valeur_totale null")
+    diagnostic_qs = diagnostic_qs.filter(canteen_id__isnull=True)
+    logger.info(f"Found {diagnostic_qs.count()} diagnostics with canteen deleted")
 
     # Step 3: update
     _append_invalid_reason_item(diagnostic_qs, invalid_reason)
 
 
-def fill_invalid_reason_VALUE_BIO_HT_VIDE(diagnostic_qs):
-    invalid_reason = Diagnostic.InvalidReason.VALUE_BIO_HT_VIDE
-
-    # Step 1: cleanup
-    _remove_invalid_reason_item(invalid_reason)
-
-    # Step 2: queryset
-    logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
-    diagnostic_qs = diagnostic_qs.filter(valeur_bio_agg__isnull=True)
-    logger.info(f"Found {diagnostic_qs.count()} diagnostics with valeur_bio_agg null")
-
-    # Step 3: update
-    _append_invalid_reason_item(diagnostic_qs, invalid_reason)
-
-
-def fill_invalid_reason_CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE(diagnostic_qs, year):
-    invalid_reason = Diagnostic.InvalidReason.CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE
+def fill_invalid_reason_CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE(diagnostic_qs, year):
+    invalid_reason = Diagnostic.InvalidReason.CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE
 
     # Step 1: cleanup
     _remove_invalid_reason_item(invalid_reason)
@@ -121,6 +110,51 @@ def fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs):
     logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
     diagnostic_qs = diagnostic_qs.exclude(canteen_has_siret_or_siren_unite_legale_query())
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with canteen siret or siren_unite_legale null")
+
+    # Step 3: update
+    _append_invalid_reason_item(diagnostic_qs, invalid_reason)
+
+
+def fill_invalid_reason_TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO(diagnostic_qs):
+    invalid_reason = Diagnostic.InvalidReason.TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO
+
+    # Step 1: cleanup
+    _remove_invalid_reason_item(invalid_reason)
+
+    # Step 2: queryset
+    logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
+    diagnostic_qs = diagnostic_qs.filter(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
+    logger.info(f"Found {diagnostic_qs.count()} diagnostics with mode teledeclaration satellite without appro")
+
+    # Step 3: update
+    _append_invalid_reason_item(diagnostic_qs, invalid_reason)
+
+
+def fill_invalid_reason_VALEUR_TOTALE_VIDE(diagnostic_qs):
+    invalid_reason = Diagnostic.InvalidReason.VALEUR_TOTALE_VIDE
+
+    # Step 1: cleanup
+    _remove_invalid_reason_item(invalid_reason)
+
+    # Step 2: queryset
+    logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
+    diagnostic_qs = diagnostic_qs.filter(valeur_totale__isnull=True)
+    logger.info(f"Found {diagnostic_qs.count()} diagnostics with valeur_totale null")
+
+    # Step 3: update
+    _append_invalid_reason_item(diagnostic_qs, invalid_reason)
+
+
+def fill_invalid_reason_VALEUR_BIO_AGG_VIDE(diagnostic_qs):
+    invalid_reason = Diagnostic.InvalidReason.VALEUR_BIO_AGG_VIDE
+
+    # Step 1: cleanup
+    _remove_invalid_reason_item(invalid_reason)
+
+    # Step 2: queryset
+    logger.info(f"Start filling invalid_reason_list for {invalid_reason}")
+    diagnostic_qs = diagnostic_qs.filter(valeur_bio_agg__isnull=True)
+    logger.info(f"Found {diagnostic_qs.count()} diagnostics with valeur_bio_agg null")
 
     # Step 3: update
     _append_invalid_reason_item(diagnostic_qs, invalid_reason)
