@@ -156,6 +156,42 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         return row
 
 
+class ETL_ANALYSIS_TELEDECLARATIONS_1TD1SITE(ANALYSIS, etl.EXTRACTOR):
+    """
+    1TD1Site version of Teledeclarations
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.years = CAMPAIGN_DATES.keys()
+        self.extracted_table_name = "teledeclarations_site"
+        self.warehouse = DataWareHouse()
+        self.schema = json.load(open("data/schemas/export_analysis/schema_teledeclarations.json"))
+        self.columns = [field["name"] for field in self.schema["fields"]]
+        self.view = DiagnosticTeledeclaredAnalysisListView
+
+    def transform_dataset(self):
+        if self.df.empty:
+            logger.warning("Dataset is empty. Skipping transformation")
+            return
+
+        self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
+
+    def load_dataset(self, versionning=False):
+        """
+        Load in database with versionning. This function is called by a manually launched task
+        """
+        if versionning:
+            logger.info(
+                f"Loading {len(self.df)} objects in db. Version {self.extracted_table_name + '_' + datetime.today().strftime('%Y_%m_%d')}"
+            )
+            self.warehouse.insert_dataframe(
+                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d")
+            )
+        else:
+            super().load_dataset()
+
+
 class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
     """
     Create a dataset for analysis in a Data Warehouse
