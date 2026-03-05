@@ -873,11 +873,11 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
 
         cls.simple_appro_fields = {}
         for field in Diagnostic.SIMPLE_APPRO_FIELDS:
-            cls.simple_appro_fields[field] = 9999.99
+            cls.simple_appro_fields[field] = 10000.50
 
         cls.complete_appro_fields = {}
         for field in Diagnostic.COMPLETE_APPRO_FIELDS:
-            cls.complete_appro_fields[field] = 888.88
+            cls.complete_appro_fields[field] = 500.75
 
     def verify_field_are_equals(self, value, expected_value):
         value_cleaned = float(value)
