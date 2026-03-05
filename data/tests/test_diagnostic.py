@@ -10,8 +10,8 @@ from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Sector
 from data.models.diagnostic import (
     Diagnostic,
-    canteen_soft_deleted_during_campaign_query,
     canteen_has_siret_or_siren_unite_legale_query,
+    canteen_soft_deleted_during_campaign_query,
 )
 
 year_data = 2024
@@ -455,13 +455,13 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
-    def test_historical_valid_td(self):
+    def test_valid_td_all_years(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.historical_valid_td([year_data])
+        diagnostics = Diagnostic.objects.valid_td_all_years([year_data])
         self.assertEqual(diagnostics.count(), 8)
-        diagnostics = Diagnostic.objects.historical_valid_td([year_data - 1])
+        diagnostics = Diagnostic.objects.valid_td_all_years([year_data - 1])
         self.assertEqual(diagnostics.count(), 6)
-        diagnostics = Diagnostic.objects.historical_valid_td([year_data, year_data - 1])
+        diagnostics = Diagnostic.objects.valid_td_all_years([year_data, year_data - 1])
         self.assertEqual(diagnostics.count(), 8 + 6)
 
     def test_with_meal_price(self):

@@ -5,7 +5,7 @@ from freezegun import freeze_time
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Diagnostic, Teledeclaration, Sector
+from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -150,12 +150,12 @@ class TeledeclarationQuerySetTest(TestCase):
         self.assertNotIn(self.invalid_canteen_td, teledeclarations)  # canteen without siret
         self.assertNotIn(self.deleted_canteen_td, teledeclarations)  # canteen deleted
 
-    def test_historical_valid_td(self):
-        teledeclarations = Teledeclaration.objects.historical_valid_td([year_data])
+    def test_valid_td_all_years(self):
+        teledeclarations = Teledeclaration.objects.valid_td_all_years([year_data])
         self.assertEqual(teledeclarations.count(), 5)
-        teledeclarations = Teledeclaration.objects.historical_valid_td([year_data - 1])
+        teledeclarations = Teledeclaration.objects.valid_td_all_years([year_data - 1])
         self.assertEqual(teledeclarations.count(), 4)
-        teledeclarations = Teledeclaration.objects.historical_valid_td([year_data, year_data - 1])
+        teledeclarations = Teledeclaration.objects.valid_td_all_years([year_data, year_data - 1])
         self.assertEqual(teledeclarations.count(), 5 + 4)
 
     def test_meal_price(self):
