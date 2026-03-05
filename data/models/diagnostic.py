@@ -356,16 +356,21 @@ class Diagnostic(models.Model):
         SITE = "SITE", "Cantine déclarant ses propres données"
 
     class InvalidReason(models.TextChoices):
-        VALUE_TOTAL_HT_VIDE = "VALUE_TOTAL_HT_VIDE", "Valeur totale des achats vide"
-        VALUE_BIO_HT_VIDE = "VALUE_BIO_HT_VIDE", "Valeur totale des achats bio vide"
-        CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE = (
-            "CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE",
-            "Cantine supprimée pendant la campagne",
+        CANTINE_SUPPRIMEE = "CANTINE_SUPPRIMEE", "Cantine supprimée"
+        CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE = (
+            "CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE",
+            "Cantine soft supprimée pendant la campagne",
         )
         CANTINE_SANS_SIRET_OU_SIREN = "CANTINE_SANS_SIRET_OU_SIREN", "Cantine sans siret ou siren"
+        TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO = (
+            "TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO",
+            "Télédeclaration mode satellite without appro",
+        )
+        VALEUR_TOTALE_VIDE = "VALEUR_TOTALE_VIDE", "Valeur totale des achats vide"
+        VALEUR_BIO_AGG_VIDE = "VALEUR_BIO_AGG_VIDE", "Valeur totale des achats bio vide"
         VALEURS_ABERRANTES = "VALEURS_ABERRANTES", "Valeurs aberrantes"
-        DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
         VALEURS_INCOHERENTES = "VALEURS_INCOHERENTES", "Valeurs incohérentes"
+        DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
 
     APPRO_FAMILIES = [
         "viandes_volailles",
