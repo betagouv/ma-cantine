@@ -362,6 +362,7 @@ class DiagnosticQuerySetTest(TestCase):
             with freeze_time(date_in_last_teledeclaration_campaign):
                 diagnostic_last_year.teledeclare(applicant=UserFactory(), skip_validations=True)
             setattr(cls, f"diagnostic_canteen_valid_{index + 1}", diagnostic)
+            setattr(cls, f"diagnostic_last_year_canteen_valid_{index + 1}", diagnostic_last_year)
 
         cls.diagnostic_canteen_missing_siret = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -370,6 +371,7 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_missing_siret,
             valeur_totale=1000.00,
             valeur_bio=200.00,
+            invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SANS_SIRET_OU_SIREN],
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory(), skip_validations=True)
@@ -381,6 +383,7 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_meal_price_aberrant,
             valeur_totale=1000000.00,  # meal_price > 20
             valeur_bio=200.00,
+            invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_meal_price_aberrant.teledeclare(applicant=UserFactory())
@@ -392,6 +395,7 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_valeur_totale_aberrant,
             valeur_totale=1000001.00,  # aberrant but meal_price < 20
             valeur_bio=200.00,
+            invalid_reason_list=[],
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_valeur_totale_aberrant.teledeclare(applicant=UserFactory())
@@ -403,6 +407,7 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_aberrant,
             valeur_totale=1000001.00,  # aberrant AND meal_price > 20
             valeur_bio=200.00,
+            invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_aberrant.teledeclare(applicant=UserFactory())
@@ -414,6 +419,7 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_deleted,
             valeur_totale=1000.00,
             valeur_bio=200.00,
+            invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE],
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_deleted.teledeclare(applicant=UserFactory())
@@ -449,9 +455,24 @@ class DiagnosticQuerySetTest(TestCase):
 
     def test_valid_td_by_year(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
+        diagnostics = Diagnostic.objects.valid_td_by_year(year_data - 1)
+        self.assertEqual(diagnostics.count(), 6)
+        self.assertIn(self.diagnostic_last_year_canteen_valid_1, diagnostics)  # groupe (but 2023)
         diagnostics = Diagnostic.objects.valid_td_by_year(year_data)
         self.assertEqual(diagnostics.count(), 8)
-        self.assertIn(self.diagnostic_canteen_valid_1, diagnostics)
+        self.assertIn(self.diagnostic_canteen_valid_1, diagnostics)  # groupe (and 2024)
+        self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
+        self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
+
+    def test_valid_td_site_by_year(self):
+        self.assertEqual(Diagnostic.objects.count(), 17)
+        self.assertEqual(Diagnostic.all_objects.count(), 17)  # we didn't generate 1TD1Site for now
+        diagnostics = Diagnostic.all_objects.valid_td_site_by_year(year_data - 1)
+        self.assertEqual(diagnostics.count(), 6)
+        self.assertIn(self.diagnostic_last_year_canteen_valid_1, diagnostics)  # groupe (but 2023)
+        diagnostics = Diagnostic.all_objects.valid_td_site_by_year(year_data)
+        self.assertEqual(diagnostics.count(), 6)
+        self.assertNotIn(self.diagnostic_canteen_valid_1, diagnostics)  # groupe (and 2024)  # difference
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
@@ -463,6 +484,16 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(diagnostics.count(), 6)
         diagnostics = Diagnostic.objects.valid_td_all_years([year_data, year_data - 1])
         self.assertEqual(diagnostics.count(), 8 + 6)
+
+    def test_valid_td_site_all_years(self):
+        self.assertEqual(Diagnostic.objects.count(), 17)
+        self.assertEqual(Diagnostic.all_objects.count(), 17)  # we didn't generate 1TD1Site for now
+        diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data])
+        self.assertEqual(diagnostics.count(), 6)  # difference
+        diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data - 1])
+        self.assertEqual(diagnostics.count(), 6)
+        diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data, year_data - 1])
+        self.assertEqual(diagnostics.count(), 6 + 6)
 
     def test_with_meal_price(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
