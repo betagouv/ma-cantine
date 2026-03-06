@@ -14,8 +14,10 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="canteen_snapshot.name", read_only=True)
     siret = serializers.CharField(source="canteen_snapshot.siret", read_only=True)
     siren_unite_legale = serializers.CharField(source="canteen_snapshot.siren_unite_legale", read_only=True)
-    daily_meal_count = serializers.IntegerField(source="canteen_snapshot.daily_meal_count", read_only=True)
-    yearly_meal_count = serializers.IntegerField(source="canteen_snapshot.yearly_meal_count", read_only=True)
+    # daily_meal_count = serializers.IntegerField(source="canteen_snapshot.daily_meal_count", read_only=True)
+    # yearly_meal_count = serializers.IntegerField(source="canteen_snapshot.yearly_meal_count", read_only=True)
+    daily_meal_count = serializers.SerializerMethodField()
+    yearly_meal_count = serializers.SerializerMethodField()
     cout_denrees = serializers.SerializerMethodField()
     cuisine_centrale = serializers.SerializerMethodField()
     central_producer_siret = serializers.CharField(source="canteen_snapshot.central_producer_siret", read_only=True)
@@ -45,13 +47,17 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     declaration_donnees_2024 = serializers.SerializerMethodField()
     declaration_donnees_2025 = serializers.SerializerMethodField()
 
-    valeur_bio = serializers.FloatField(source="valeur_bio_agg", read_only=True)
-    valeur_siqo = serializers.FloatField(source="valeur_siqo_agg", read_only=True)
-    valeur_externalites_performance = serializers.FloatField(
-        source="valeur_externalites_performance_agg", read_only=True
+    valeur_bio = serializers.DecimalField(max_digits=20, decimal_places=2, source="valeur_bio_agg", read_only=True)
+    valeur_siqo = serializers.DecimalField(max_digits=20, decimal_places=2, source="valeur_siqo_agg", read_only=True)
+    valeur_externalites_performance = serializers.DecimalField(
+        max_digits=20, decimal_places=2, source="valeur_externalites_performance_agg", read_only=True
     )
-    valeur_egalim_autres = serializers.FloatField(source="valeur_egalim_autres_agg", read_only=True)
-    valeur_somme_egalim_avec_bio = serializers.FloatField(source="valeur_egalim_agg", read_only=True)
+    valeur_egalim_autres = serializers.DecimalField(
+        max_digits=20, decimal_places=2, source="valeur_egalim_autres_agg", read_only=True
+    )
+    valeur_somme_egalim_avec_bio = serializers.DecimalField(
+        max_digits=20, decimal_places=2, source="valeur_egalim_agg", read_only=True
+    )
     valeur_somme_egalim_hors_bio = serializers.SerializerMethodField()
     valeur_viandes_volailles_produits_de_la_mer = serializers.SerializerMethodField()
     valeur_viandes_volailles_produits_de_la_mer_egalim = serializers.SerializerMethodField()
@@ -156,8 +162,19 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
+    def get_daily_meal_count(self, obj):
+        daily_meal_count = obj.canteen_snapshot.get("daily_meal_count", None)
+        if daily_meal_count:
+            return int(daily_meal_count)
+
+    def get_yearly_meal_count(self, obj):
+        yearly_meal_count = obj.canteen_snapshot.get("yearly_meal_count", None)
+        if yearly_meal_count:
+            return int(yearly_meal_count)
+
     def get_cout_denrees(self, obj):
-        return obj.meal_price if obj.meal_price else -1
+        return -1
+        # return obj.meal_price if obj.meal_price else -1
 
     def get_cuisine_centrale(self, obj):
         production_type = obj.canteen_snapshot.get("production_type", None)

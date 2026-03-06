@@ -214,7 +214,7 @@ class DiagnosticQuerySet(models.QuerySet):
                     .exclude(teledeclaration_mode_satellite_without_appro_query())
                     .filter(valeur_bio_agg_is_filled_query())  # Chaîne de traitement n°5
                     .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
-                    .exclude_aberrant_values()  # Chaîne de traitement n°8
+                    # .exclude_aberrant_values()  # Chaîne de traitement n°8
                     .exclude(incoherent_values_query())  # Chaîne de traitement n°8
                 )
         else:

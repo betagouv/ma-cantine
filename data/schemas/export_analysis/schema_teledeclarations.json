@@ -82,10 +82,6 @@
       "type": "string"
     },
     {
-      "name": "satellite_canteens_count",
-      "type": "integer"
-    },
-    {
       "name": "departement",
       "type": "string"
     },

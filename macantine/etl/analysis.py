@@ -59,11 +59,11 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
             logger.warning("Dataset is empty. Skipping transformation")
             return
 
-        self.flatten_central_kitchen_td()
-        self.delete_duplicates_cc_csat()
+        # self.flatten_central_kitchen_td()
+        # self.delete_duplicates_cc_csat()
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
-    def load_dataset(self, versionning=False):
+    def load_dataset(self, versionning=True):
         """
         Load in database with versionning. This function is called by a manually launched task
         """
@@ -150,7 +150,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         appro_columns = [col_appro for col_appro in self.columns if "valeur" in col_appro]
         for col in appro_columns + ["yearly_meal_count"]:
             if col in row and row[col] not in (None, "nan") and nbre_satellites:
-                row[col] = row[col] / nbre_satellites
+                row[col] = int(row[col] / nbre_satellites)
             else:
                 row[col] = None
         return row
@@ -177,7 +177,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS_1TD1SITE(ANALYSIS, etl.EXTRACTOR):
 
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
-    def load_dataset(self, versionning=False):
+    def load_dataset(self, versionning=True):  # activate versionning until it's stable
         """
         Load in database with versionning. This function is called by a manually launched task
         """
