@@ -204,19 +204,26 @@ class DiagnosticQuerySet(models.QuerySet):
     def valid_td_by_year(self, year):
         year = int(year)
         if year in CAMPAIGN_DATES.keys():
+            return (
+                self.teledeclared_for_year(year)
+                .exclude(teledeclaration_mode_satellite_without_appro_query())
+                .filter(valeur_bio_agg_is_filled_query())  # Chaîne de traitement n°5
+                .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
+                .exclude_aberrant_values()  # Chaîne de traitement n°8
+                .exclude(incoherent_values_query())  # Chaîne de traitement n°8
+            )
+        else:
+            return self.none()
+
+    def valid_td_site_by_year(self, year):
+        year = int(year)
+        if year in CAMPAIGN_DATES.keys():
             if year in [2024]:
                 return self.teledeclared_site_for_year(year).filter(
                     has_arrayfield_missing_query("invalid_reason_list")
                 )
             else:
-                return (
-                    self.teledeclared_for_year(year)
-                    .exclude(teledeclaration_mode_satellite_without_appro_query())
-                    .filter(valeur_bio_agg_is_filled_query())  # Chaîne de traitement n°5
-                    .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
-                    .exclude_aberrant_values()  # Chaîne de traitement n°8
-                    .exclude(incoherent_values_query())  # Chaîne de traitement n°8
-                )
+                return self.valid_td_by_year(year)
         else:
             return self.none()
 
@@ -224,6 +231,12 @@ class DiagnosticQuerySet(models.QuerySet):
         results = self.none()
         for year in years:
             results = results | self.valid_td_by_year(year)
+        return results.select_related("canteen")
+
+    def valid_td_site_all_years(self, years: list):
+        results = self.none()
+        for year in years:
+            results = results | self.valid_td_site_by_year(year)
         return results.select_related("canteen")
 
     def publicly_visible(self):
