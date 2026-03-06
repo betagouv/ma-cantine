@@ -206,6 +206,7 @@ class DiagnosticQuerySet(models.QuerySet):
         if year in CAMPAIGN_DATES.keys():
             return (
                 self.teledeclared_for_year(year)
+                .exclude(generated_from_groupe_diagnostic=True)  # just to be sure, in case all_objects is used
                 .exclude(teledeclaration_mode_satellite_without_appro_query())
                 .filter(valeur_bio_agg_is_filled_query())  # Chaîne de traitement n°5
                 .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
