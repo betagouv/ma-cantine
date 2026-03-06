@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
-from django.db.models import Case, F, FloatField, IntegerField, Q, Sum, When
+from django.db.models import Case, F, IntegerField, Q, Sum, When
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
 from django.utils import timezone
@@ -183,9 +183,7 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         # Cast to FloatField first to handle legacy float values in JSON, then to IntegerField
         return self.annotate(
-            canteen_yearly_meal_count=Cast(
-                Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=FloatField()), output_field=IntegerField()
-            )
+            canteen_yearly_meal_count=Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField())
         ).annotate(
             meal_price=Case(
                 When(canteen_yearly_meal_count__gt=0, then=F("valeur_totale") / F("canteen_yearly_meal_count")),
