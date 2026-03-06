@@ -511,10 +511,13 @@ class CanteenStats1Td1SiteApiTest(APITestCase):
             )
             diagnostic.teledeclare(applicant=UserFactory())
             # Create a fake diagnostic for 2023 generated
-            generated_diagnostic = DiagnosticFactory(year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-            generated_diagnostic.teledeclare(applicant=UserFactory())
-            generated_diagnostic.generated_from_groupe_diagnostic = True
-            generated_diagnostic.save()
+            fake_satellite_generated = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+            fake_satellite_generated_diagnostic = DiagnosticFactory(
+                year=2023, canteen=fake_satellite_generated, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
+            fake_satellite_generated_diagnostic.teledeclare(applicant=UserFactory())
+            fake_satellite_generated_diagnostic.generated_from_groupe_diagnostic = True
+            fake_satellite_generated_diagnostic.save()
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(
@@ -527,12 +530,12 @@ class CanteenStats1Td1SiteApiTest(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["canteenCount"], 4)
         self.assertEqual(body["teledeclarationsCount"], 2)
 
     def test_not_use_1td1site_diagnostics_for_2023(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": 2023})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["canteenCount"], 4)
         self.assertEqual(body["teledeclarationsCount"], 1)
