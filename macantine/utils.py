@@ -221,7 +221,8 @@ def set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dic
     Generate a dict with common fields values for a satellite from a groupe diagnostic
 
     Rules:
-    - in 2024 (and before), we keep the group values for: city, city_insee_code, department, region, sector_list, line_ministry
+    - in 2024 (and before), we keep the group values for: city, city_insee_code, department, region, sector_list, line_ministry.
+    We also change the yearly_meal_count (divided by the number of satellites)
     """
     from data.models import Canteen  # avoid circular import
 
@@ -237,13 +238,14 @@ def set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dic
         for field in fields_overridden_by_groupe:
             if field in diagnostic.canteen_snapshot:
                 updated_common_fields[field] = diagnostic.canteen_snapshot[field]
-        fields_divided_by_groupe_satellites_ = ["yearly_meal_count"]
+        # yearly_meal_count
         divisor = len(diagnostic.satellites_snapshot) if diagnostic.satellites_snapshot else 0
-        for field in fields_divided_by_groupe_satellites_:
-            try:
-                updated_common_fields[field] = diagnostic.canteen_snapshot[field] / divisor
-            except (TypeError, ZeroDivisionError):
-                updated_common_fields[field] = None
+        try:
+            updated_common_fields["yearly_meal_count"] = int(
+                diagnostic.canteen_snapshot["yearly_meal_count"] / divisor
+            )
+        except (TypeError, ZeroDivisionError):
+            updated_common_fields["yearly_meal_count"] = None
 
     return updated_common_fields
 
@@ -270,7 +272,8 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
     # divide values
     for field in Diagnostic.APPRO_1TD1SITE_FIELDS:
         try:
-            appro_fields_satellite[field] = getattr(diagnostic, field) / divisor
+            value = getattr(diagnostic, field) / divisor
+            appro_fields_satellite[field] = round(value, 2)
         except (TypeError, ZeroDivisionError):
             appro_fields_satellite[field] = None
 
