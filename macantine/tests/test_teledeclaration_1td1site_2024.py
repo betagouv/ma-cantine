@@ -727,7 +727,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
     @authenticate
     def test_divide_meal_count_by_number_of_satellites(self):
         """
-        The yearly meal count is divided by the number of satellites, value not rounded keep decimal.
+        The yearly meal count is divided by the number of satellites (and converted to integer)
         """
         central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011)
         satellite_1 = CanteenFactory(
@@ -822,7 +822,9 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             .get(canteen=satellite_2, generated_from_groupe_diagnostic=True)
         )
 
-        expected_yearly_meal_count = central_diagnostic.canteen_snapshot["yearly_meal_count"] / number_of_satellites
+        expected_yearly_meal_count = int(
+            central_diagnostic.canteen_snapshot["yearly_meal_count"] / number_of_satellites
+        )
 
         self.assertEqual(satellite_1_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
         self.assertEqual(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
@@ -888,9 +890,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             cls.appro_fields[field] = 500.75
 
     def verify_field_are_equals(self, value, expected_value):
-        value_cleaned = float(value)
-        expected_value_cleaned = round(expected_value, 2)
-        self.assertEqual(value_cleaned, expected_value_cleaned)
+        self.assertAlmostEqual(float(value), float(expected_value), places=2)
 
     def verify_appro_fields_divided(self, fields, divisor, central_diagnostic, sat_diagnostics_generated):
         for index, sat_diagnostic in enumerate(sat_diagnostics_generated):
