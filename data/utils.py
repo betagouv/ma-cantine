@@ -23,7 +23,7 @@ def has_charfield_missing_query(field_name):
 
 
 def has_arrayfield_missing_query(field_name):
-    return Q(**{f"{field_name}__isnull": True}) | Q(**{f"{field_name}": []}) | Q(**{f"{field_name}": None})
+    return Q(**{f"{field_name}__isnull": True}) | Q(**{f"{field_name}__len": 0}) | Q(**{f"{field_name}": None})
 
 
 def _needs_rotation(pillow_image):

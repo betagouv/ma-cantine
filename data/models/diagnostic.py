@@ -252,13 +252,14 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         Note: we use Sum/default instead of F to better manage None values.
         """
-        return self.annotate(
-            bio_percent=100 * Sum("valeur_bio_agg", default=0) / Sum("valeur_totale"),
-            egalim_percent=100 * F("valeur_egalim_agg") / Sum("valeur_totale"),
+        return self.annotate(valeur_totale_sum=Sum("valeur_totale")).annotate(
+            bio_percent=100 * Sum("valeur_bio_agg", default=0) / F("valeur_totale_sum"),
+            egalim_percent=100 * F("valeur_egalim_agg") / F("valeur_totale_sum"),
         )
 
     def egalim_objectives_reached(self):
-        return self.filter(
+        # TODO: filter on canteen_snapshot__region instead
+        return self.select_related("canteen").filter(
             Q(
                 bio_percent__gte=EGALIM_OBJECTIVES["hexagone"]["bio_percent"],
                 egalim_percent__gte=EGALIM_OBJECTIVES["hexagone"]["egalim_percent"],
