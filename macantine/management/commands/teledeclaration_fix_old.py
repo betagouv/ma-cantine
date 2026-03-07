@@ -182,15 +182,16 @@ class Command(BaseCommand):
         for diagnostic in diagnostic_qs:
             canteen_snapshot_temp = diagnostic.canteen_snapshot
             if canteen_snapshot_temp:
+                sector_list_new = []
                 if "sectors" in canteen_snapshot_temp:
                     sectors_old = canteen_snapshot_temp["sectors"]
                     sector_list_new = get_sector_list_from_old_sector_dict_list(sectors_old)
-                    if apply:
-                        canteen_snapshot_temp["sector_list"] = sector_list_new
-                        diagnostic.canteen_snapshot = canteen_snapshot_temp
-                        diagnostic.save(update_fields=["canteen_snapshot"])
-                        update_change_reason(diagnostic, "Script: set sector_list from sectors M2M")
-                    diagnostics_updated_count += 1
+                if apply:
+                    canteen_snapshot_temp["sector_list"] = sector_list_new
+                    diagnostic.canteen_snapshot = canteen_snapshot_temp
+                    diagnostic.save(update_fields=["canteen_snapshot"])
+                    update_change_reason(diagnostic, "Script: set sector_list from sectors M2M")
+                diagnostics_updated_count += 1
 
         print("Done! Diagnostics updated:", diagnostics_updated_count)
 
@@ -205,14 +206,15 @@ class Command(BaseCommand):
             satellites_snapshot_temp = diagnostic.satellites_snapshot
             if satellites_snapshot_temp:
                 for satellite in satellites_snapshot_temp:
+                    sector_list_new = []
                     if "sectors" in satellite:
                         sectors_old = satellite["sectors"]
                         sector_list_new = get_sector_list_from_old_sector_dict_list(sectors_old)
-                        if apply:
-                            satellite["sector_list"] = sector_list_new
-                            diagnostic.satellites_snapshot = satellites_snapshot_temp
-                            diagnostic.save(update_fields=["satellites_snapshot"])
-                            update_change_reason(diagnostic, "Script: set satellite sector_list from sectors M2M")
-                        diagnostics_updated_count += 1
+                    if apply:
+                        satellite["sector_list"] = sector_list_new
+                        diagnostic.satellites_snapshot = satellites_snapshot_temp
+                        diagnostic.save(update_fields=["satellites_snapshot"])
+                        update_change_reason(diagnostic, "Script: set satellite sector_list from sectors M2M")
+                    diagnostics_updated_count += 1
 
         print("Done! Diagnostics updated:", diagnostics_updated_count)
