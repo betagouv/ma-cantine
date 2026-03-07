@@ -122,9 +122,17 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                         satellite_row["production_type"] = satellite["production_type"]
                         satellite_row["management_type"] = satellite["management_type"]
                         satellite_row["modele_economique"] = satellite["economic_model"]
-                        satellite_row["code_insee_commune"] = satellite.get("city_insee_code", None)
-                        satellite_row["departement"] = satellite.get("department", None)
-                        satellite_row["region"] = satellite.get("region", None)
+                        for field_name in Canteen.GEO_FIELDS:
+                            if field_name == "city_insee_code":
+                                satellite_row["code_insee_commune"] = satellite.get("city_insee_code", None)
+                            elif field_name == "department":
+                                satellite_row["departement"] = satellite.get("department", None)
+                            elif field_name == "department_lib":
+                                satellite_row["lib_departement"] = satellite.get("department_lib", None)
+                            elif field_name == "region_lib":
+                                satellite_row["lib_region"] = satellite.get("region_lib", None)
+                            else:
+                                satellite_row[field_name] = satellite.get(field_name, None)
                         satellite_row["secteur"] = ",".join(get_sector_lib_list_from_canteen_snapshot(satellite))
                         satellite_row["categorie"] = ",".join(get_category_lib_list_from_canteen_snapshot(satellite))
                     # split numerical values

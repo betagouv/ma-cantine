@@ -72,10 +72,12 @@ class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__department=None).count(), 1)
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="region").count(), 3)
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__region=None).count(), 1)
-        self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="epci").count(), 0)
+        self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="epci").count(), 4)
         call_command("teledeclaration_fill_missing_canteen_geolocation_data")
-        self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="department").count(), 4)
+        self.assertEqual(
+            Teledeclaration.objects.filter(declared_data__canteen__has_key="department").count(), 4
+        )  # filled
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__department=None).count(), 0)
-        self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="region").count(), 4)
+        self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="region").count(), 4)  # filled
         self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__region=None).count(), 0)
-        self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="epci").count(), 0)
+        self.assertEqual(Teledeclaration.objects.filter(declared_data__canteen__has_key="epci").count(), 4)
