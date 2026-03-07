@@ -64,7 +64,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(etl.EXTRACTOR, ANALYSIS):
         self.delete_duplicates_cc_csat()
         self.df = utils.filter_dataframe_with_schema_cols(self.df, self.schema)
 
-    def load_dataset(self, versionning=False):
+    def load_dataset(self, versionning=True):
         """
         Load in database with versionning. This function is called by a manually launched task
         """
