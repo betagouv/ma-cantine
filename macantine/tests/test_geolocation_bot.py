@@ -29,7 +29,7 @@ class SiretToGeoDataBotTest(TestCase):
 
         tasks.update_canteen_geo_fields_from_siret(canteen_without_city_insee_code)
 
-        self.assertEqual(mock.call_count, 5)
+        self.assertEqual(mock.call_count, 6)
         canteen_without_city_insee_code.refresh_from_db()
         self.assertEqual(canteen_without_city_insee_code.city_insee_code, "59512")
         self.assertEqual(canteen_without_city_insee_code.city, "Roubaix")
@@ -104,7 +104,7 @@ class CityInseeCodeToGeoFieldsGeoBotTest(TestCase):
 
         tasks.fill_missing_geolocation_data_using_insee_code()
 
-        self.assertEqual(mock.call_count, 4)
+        self.assertEqual(mock.call_count, 5)
 
     def test_geolocation_data_filled(self, mock):
         """

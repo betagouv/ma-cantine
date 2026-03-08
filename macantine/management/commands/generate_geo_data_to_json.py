@@ -3,10 +3,20 @@ import json
 from django.core.management.base import BaseCommand
 
 from common.api.datagouv import fetch_pats
-from common.api.decoupage_administratif import fetch_communes, fetch_departements, fetch_epcis, fetch_regions
+from common.api.decoupage_administratif import (
+    fetch_communes,
+    fetch_communes_with_more_fields,
+    fetch_departements,
+    fetch_epcis,
+    fetch_regions,
+)
 
 
 class Command(BaseCommand):
+    """
+    Usage: python manage.py generate_geo_data_to_json --scope region
+    """
+
     help = "Generate geo data to JSON file for a specific scope"
 
     def add_arguments(self, parser):
@@ -14,7 +24,7 @@ class Command(BaseCommand):
             "--scope",
             dest="scope",
             type=str,
-            choices=["region", "department", "pat", "epci", "city"],
+            choices=["region", "department", "pat", "epci", "city", "city_with_epci"],
             required=True,
             help="Scope of the geo data to generate (region, department, pat, epci, city)",
         )
@@ -75,6 +85,24 @@ class Command(BaseCommand):
                     "nom": city["nom"],
                     "codeDepartement": city["codeDepartement"],
                     # "codeRegion": city["codeRegion"],
+                }
+                for city in city_list
+            ]
+            # export to JSON file
+            with open(f"{scope}.json", "w", encoding="utf-8") as f:
+                json.dump(city_list_filtered, f, ensure_ascii=False, indent=4)
+
+        elif scope == "city_with_epci":
+            city_list = fetch_communes_with_more_fields()
+            city_list_filtered = [
+                {
+                    "code": city["code"],
+                    "nom": city["nom"],
+                    "siren": city["siren"] if "siren" in city else None,
+                    "population": city["population"] if "population" in city else None,
+                    "codeDepartement": city["codeDepartement"],
+                    "codeRegion": city["codeRegion"],
+                    "codeEpci": city["codeEpci"] if "codeEpci" in city else None,
                 }
                 for city in city_list
             ]

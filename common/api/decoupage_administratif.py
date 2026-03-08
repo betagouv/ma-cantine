@@ -12,6 +12,24 @@ logger = logging.getLogger(__name__)
 
 DECOUPAGE_ADMINISTRATIF_API_URL = "https://geo.api.gouv.fr"
 
+CITY_WITH_ARRONDISSEMENTS = [
+    {
+        "code": "13055",
+        "nom": "Marseille",
+        "codeArrondissementPrefix": "132",
+    },
+    {
+        "code": "69123",
+        "nom": "Lyon",
+        "codeArrondissementPrefix": "6938",
+    },
+    {
+        "code": "75056",
+        "nom": "Paris",
+        "codeArrondissementPrefix": "751",
+    },
+]
+
 
 # ------------------------------------------------------------------------------
 # Caching
@@ -22,7 +40,8 @@ CACHE_TIMEOUT = 60 * 60 * 24 * 7  # 7 days
 
 def fetch_communes():
     """
-    Fields returned: nom, code, codeDepartement, siren, codeEpci, codeRegion, codesPostaux, population
+    Fields returned: nom, code, codeDepartement, codeRegion, codesPostaux, population
+    - missing: siren, codeEpci
     """
     cache_key = f"{CACHE_KEY_PREFIX}_communes"
     cached_response = cache.get(cache_key)
@@ -32,9 +51,70 @@ def fetch_communes():
     api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes?type=arrondissement-municipal,commune-actuelle"
     response = requests.get(api_url, timeout=50)
     response.raise_for_status()
+    response_json = response.json()
+
+    # order by code
+    response_json = sorted(response_json, key=lambda x: x["code"])
+
     # cache mechanism: store the result
-    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
-    return response.json()
+    cache.set(cache_key, response_json, timeout=CACHE_TIMEOUT)
+    return response_json
+
+
+def fetch_communes_with_more_fields(with_arrondissements=True):
+    """
+    Fields returned: nom, code, codeDepartement, siren, codeEpci, codeRegion, codesPostaux, population
+    - missing: department, region
+    - missing: arrondissements (132**, 6938*, 751**)
+    """
+    cache_key = f"{CACHE_KEY_PREFIX}_communes_with_more_fields"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        return cached_response
+
+    api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes"
+    response = requests.get(api_url, timeout=50)
+    response.raise_for_status()
+    response_json = response.json()
+
+    if with_arrondissements:
+        # we do another query to also get the arrondissements
+        communes_json = fetch_communes()
+        # keep only the arrondissements
+        code_arrondisement_prefix_list = [city["codeArrondissementPrefix"] for city in CITY_WITH_ARRONDISSEMENTS]
+        communes_json_arrondissements = [
+            commune
+            for commune in communes_json
+            if any(commune["code"].startswith(prefix) for prefix in code_arrondisement_prefix_list)
+        ]
+        # set the extra fields
+        for index, arrondissement in enumerate(communes_json_arrondissements):
+            arrondissement_mapping = next(
+                (
+                    city
+                    for city in CITY_WITH_ARRONDISSEMENTS
+                    if arrondissement["code"].startswith(city["codeArrondissementPrefix"])
+                ),
+                None,
+            )
+            commune = next(
+                (commune for commune in response_json if commune["code"] == arrondissement_mapping["code"]), None
+            )
+            if commune:
+                communes_json_arrondissements[index]["siren"] = commune["siren"]
+                communes_json_arrondissements[index]["population"] = None
+                communes_json_arrondissements[index]["codeEpci"] = commune["codeEpci"]
+                # communes_json_arrondissements[index]["codeDepartement"] = commune["codeDepartement"]
+                # communes_json_arrondissements[index]["codeRegion"] = commune["codeRegion"]
+        # merge the two lists (arrondissements at the top, similar to fetch_communes)
+        response_json = communes_json_arrondissements + response_json
+
+    # order by code
+    response_json = sorted(response_json, key=lambda x: x["code"])
+
+    # cache mechanism: store the result
+    cache.set(cache_key, response_json, timeout=CACHE_TIMEOUT)
+    return response_json
 
 
 def fetch_epcis():
@@ -49,6 +129,7 @@ def fetch_epcis():
     api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code"
     response = requests.get(api_url, timeout=50)
     response.raise_for_status()
+
     # cache mechanism: store the result
     cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
     return response.json()
@@ -76,6 +157,7 @@ def fetch_departements():
     api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/departements?zone=metro,drom,com"
     response = requests.get(api_url, timeout=5)
     response.raise_for_status()
+
     # cache mechanism: store the result
     cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
     return response.json()
@@ -93,6 +175,7 @@ def fetch_regions():
     api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/regions?zone=metro,drom,com"
     response = requests.get(api_url, timeout=5)
     response.raise_for_status()
+
     # cache mechanism: store the result
     cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
     return response.json()
@@ -106,7 +189,7 @@ def map_communes_infos():
     """
     commune_details = {}
     try:
-        communes = fetch_communes()
+        communes = fetch_communes_with_more_fields()
         for commune in communes:
             commune_details[commune["code"]] = {}
             commune_details[commune["code"]]["city"] = commune.get("nom", None)
@@ -157,9 +240,11 @@ def fetch_epci_name(code_insee_epci, epcis_names):
 
 def mock_fetch_communes(mock, success=True):
     api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes?type=arrondissement-municipal,commune-actuelle"
+    api_url_with_more_fields = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes"
     if success:
+        mock.get(api_url, text=json.dumps([]))
         mock.get(
-            api_url,
+            api_url_with_more_fields,
             text=json.dumps(
                 [
                     {
@@ -167,6 +252,7 @@ def mock_fetch_communes(mock, success=True):
                         "code": "01002",
                         "codeDepartement": "01",
                         "siren": "210100020",
+                        "codeEpci": "240100883",
                         "codeRegion": "84",
                         "codesPostaux": ["01640"],
                         "population": "267",
@@ -206,6 +292,7 @@ def mock_fetch_communes(mock, success=True):
         )
     else:
         mock.get(api_url, text="", status_code=403)
+        mock.get(api_url_with_more_fields, text="", status_code=403)
 
 
 def mock_fetch_epcis(mock, success=True):
