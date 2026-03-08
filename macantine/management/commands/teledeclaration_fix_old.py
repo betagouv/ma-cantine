@@ -22,17 +22,17 @@ class Command(BaseCommand):
         - python manage.py teledeclaration_fix_old --command recreate_canteen_hard_deleted
         - python manage.py teledeclaration_fix_old --command recreate_canteen_hard_deleted --apply
 
-    set_canteen_sector_list_from_sectors_m2m
+    set_canteen_snapshot_sector_list_from_sectors_m2m
     - Description: avant 2025, il y avait une relation M2M entre Canteen et Sector. Entre 2023 et 2025, cette relation était dans canteen_snapshot. En 2026 cela a été remplacé par le champ sector_list.
     - Usage:
-        - python manage.py teledeclaration_fix_old --command set_canteen_sector_list_from_sectors_m2m
-        - python manage.py teledeclaration_fix_old --command set_canteen_sector_list_from_sectors_m2m --apply
+        - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_sector_list_from_sectors_m2m
+        - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_sector_list_from_sectors_m2m --apply
 
-    set_satellite_sector_list_from_sectors_m2m
+    set_satellites_snapshot_sector_list_from_sectors_m2m
     - Description: avant 2025, il y avait une relation M2M entre Canteen et Sector. Entre 2023 et 2025, cette relation était dans satellites_snapshot. En 2026 cela a été remplacé par le champ sector_list.
     - Usage:
-        - python manage.py teledeclaration_fix_old --command set_satellite_sector_list_from_sectors_m2m
-        - python manage.py teledeclaration_fix_old --command set_satellite_sector_list_from_sectors_m2m --apply
+        - python manage.py teledeclaration_fix_old --command set_satellites_snapshot_sector_list_from_sectors_m2m
+        - python manage.py teledeclaration_fix_old --command set_satellites_snapshot_sector_list_from_sectors_m2m --apply
     """
 
     help = "One-time commands to fix old teledeclarations"
@@ -45,10 +45,10 @@ class Command(BaseCommand):
             choices=[
                 "set_canteen_id_before_v4",
                 "recreate_canteen_hard_deleted",
-                "set_canteen_sector_list_from_sectors_m2m",
-                "set_satellite_sector_list_from_sectors_m2m",
+                "set_canteen_snapshot_sector_list_from_sectors_m2m",
+                "set_satellites_snapshot_sector_list_from_sectors_m2m",
             ],
-            help="Command to run. Options are: 'set_canteen_id_before_v4', 'recreate_canteen_hard_deleted', 'set_canteen_sector_list_from_sectors_m2m', 'set_satellite_sector_list_from_sectors_m2m'",
+            help="Command to run. Options are: 'set_canteen_id_before_v4', 'recreate_canteen_hard_deleted', 'set_canteen_snapshot_sector_list_from_sectors_m2m', 'set_satellites_snapshot_sector_list_from_sectors_m2m'",
         )
         parser.add_argument(
             "--apply",
@@ -70,10 +70,10 @@ class Command(BaseCommand):
             self.set_canteen_id_before_v4(apply)
         elif command == "recreate_canteen_hard_deleted":
             self.recreate_canteen_hard_deleted(apply)
-        elif command == "set_canteen_sector_list_from_sectors_m2m":
-            self.set_canteen_sector_list_from_sectors_m2m(apply)
-        elif command == "set_satellite_sector_list_from_sectors_m2m":
-            self.set_satellite_sector_list_from_sectors_m2m(apply)
+        elif command == "set_canteen_snapshot_sector_list_from_sectors_m2m":
+            self.set_canteen_snapshot_sector_list_from_sectors_m2m(apply)
+        elif command == "set_satellites_snapshot_sector_list_from_sectors_m2m":
+            self.set_satellites_snapshot_sector_list_from_sectors_m2m(apply)
 
     def set_canteen_id_before_v4(self, apply):
         diagnostic_updated_count = 0
@@ -81,7 +81,7 @@ class Command(BaseCommand):
         diagnostic_qs = (
             Diagnostic.objects.select_related("canteen").teledeclared().exclude(teledeclaration_version__gte=4)
         )
-        print("Diagnostics teledeclared with version < 4:", diagnostic_qs.count())
+        print("Diagnostics teledeclared (with version < 4):", diagnostic_qs.count())
         print("List of versions found:", Counter(diagnostic_qs.values_list("teledeclaration_version", flat=True)))
         print("List of years found:", Counter(diagnostic_qs.values_list("year", flat=True)))
 
@@ -172,11 +172,11 @@ class Command(BaseCommand):
 
         print("Done! Canteens recreated:", canteens_created_count)
 
-    def set_canteen_sector_list_from_sectors_m2m(self, apply):
+    def set_canteen_snapshot_sector_list_from_sectors_m2m(self, apply):
         diagnostic_qs = Diagnostic.objects.teledeclared().filter(
             teledeclaration_version__gte=9, teledeclaration_version__lte=15
         )
-        print("Diagnostics teledeclared between v9 & v15:", diagnostic_qs.count())
+        print("Diagnostics teledeclared (between v9 & v15):", diagnostic_qs.count())
 
         diagnostics_updated_count = 0
         for diagnostic in diagnostic_qs:
@@ -195,11 +195,11 @@ class Command(BaseCommand):
 
         print("Done! Diagnostics updated:", diagnostics_updated_count)
 
-    def set_satellite_sector_list_from_sectors_m2m(self, apply):
+    def set_satellites_snapshot_sector_list_from_sectors_m2m(self, apply):
         diagnostic_qs = Diagnostic.objects.teledeclared().filter(
             teledeclaration_version__gte=9, teledeclaration_version__lte=15
         )
-        print("Diagnostics teledeclared between v9 & v15:", diagnostic_qs.count())
+        print("Diagnostics teledeclared (between v9 & v15):", diagnostic_qs.count())
 
         diagnostics_updated_count = 0
         for diagnostic in diagnostic_qs:
