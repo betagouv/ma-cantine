@@ -1,6 +1,5 @@
-from django.core.cache import cache
 import requests_mock
-
+from django.core.cache import cache
 from django.core.management import call_command
 from django.test import TestCase
 from freezegun import freeze_time
@@ -18,7 +17,7 @@ class TestTeledeclarationFixOldCommandTest(TestCase):
         cache.clear()  # clear cache before each test
 
     @requests_mock.Mocker()
-    def test_set_canteen_snapshot_epci_and_pat_from_city_insee_code(self, mock):
+    def test_set_canteen_snapshot_epci_and_pat_list_from_city_insee_code(self, mock):
         mock_fetch_communes(mock)
         mock_get_pat_dataset_resource(mock)
         mock_get_pat_csv(mock)
@@ -80,7 +79,7 @@ class TestTeledeclarationFixOldCommandTest(TestCase):
         # call command
         call_command(
             "teledeclaration_fix_old",
-            command="set_canteen_snapshot_epci_and_pat_from_city_insee_code",
+            command="set_canteen_snapshot_epci_and_pat_list_from_city_insee_code",
             apply=True,
         )
 
