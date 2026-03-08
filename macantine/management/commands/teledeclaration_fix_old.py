@@ -179,7 +179,7 @@ class Command(BaseCommand):
         print("Diagnostics teledeclared (between v9 & v15):", diagnostic_qs.count())
 
         diagnostics_updated_count = 0
-        for diagnostic in diagnostic_qs:
+        for index, diagnostic in enumerate(diagnostic_qs):
             canteen_snapshot_temp = diagnostic.canteen_snapshot
             if canteen_snapshot_temp:
                 sector_list_new = []
@@ -192,6 +192,8 @@ class Command(BaseCommand):
                     diagnostic.save(update_fields=["canteen_snapshot"])
                     update_change_reason(diagnostic, "Script: set sector_list from sectors M2M")
                 diagnostics_updated_count += 1
+            if index % 5000 == 0:
+                print(f"Processed {index} diagnostics out of {diagnostic_qs.count()}")
 
         print("Done! Diagnostics updated:", diagnostics_updated_count)
 
@@ -202,7 +204,7 @@ class Command(BaseCommand):
         print("Diagnostics teledeclared (between v9 & v15):", diagnostic_qs.count())
 
         diagnostics_updated_count = 0
-        for diagnostic in diagnostic_qs:
+        for index, diagnostic in enumerate(diagnostic_qs):
             satellites_snapshot_temp = diagnostic.satellites_snapshot
             if satellites_snapshot_temp:
                 for satellite in satellites_snapshot_temp:
@@ -216,5 +218,7 @@ class Command(BaseCommand):
                         diagnostic.save(update_fields=["satellites_snapshot"])
                         update_change_reason(diagnostic, "Script: set satellite sector_list from sectors M2M")
                     diagnostics_updated_count += 1
+            if index % 5000 == 0:
+                print(f"Processed {index} diagnostics out of {diagnostic_qs.count()}")
 
         print("Done! Diagnostics updated:", diagnostics_updated_count)
