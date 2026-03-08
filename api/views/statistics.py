@@ -91,7 +91,7 @@ class CanteenStatisticsView(APIView):
         canteens = self._apply_query_filters(canteen_qs, filters)
 
         teledeclaration_qs = Diagnostic.all_objects.publicly_visible().valid_td_site_by_year(year)
-        teledeclarations = self._apply_query_filters(teledeclaration_qs, filters, prefix="canteen__")
+        teledeclarations = self._apply_query_filters(teledeclaration_qs, filters, prefix="canteen_snapshot__")
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
         data["notes"] = self.serializer_class.generate_notes(year, egalim_group)
