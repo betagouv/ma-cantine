@@ -258,27 +258,7 @@ class DiagnosticQuerySet(models.QuerySet):
         )
 
     def egalim_objectives_reached(self):
-        return self.filter(
-            Q(
-                bio_percent__gte=EGALIM_OBJECTIVES["hexagone"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["hexagone"]["egalim_percent"],
-            )
-            | Q(
-                canteen_snapshot__region__in=EGALIM_OBJECTIVES["groupe_1"]["region_list"],
-                bio_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"],
-            )
-            | Q(
-                canteen_snapshot__region__in=EGALIM_OBJECTIVES["groupe_2"]["region_list"],
-                bio_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"],
-            )
-            | Q(
-                canteen_snapshot__region__in=EGALIM_OBJECTIVES["groupe_3"]["region_list"],
-                bio_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"],
-            )
-        )
+        return self.filter(has_egalim_objectives_reached=True)
 
 
 class DiagnosticManager(models.Manager):
