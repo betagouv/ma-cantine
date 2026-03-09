@@ -1580,6 +1580,24 @@ class Diagnostic(models.Model):
         encoder=CustomJSONEncoder,
     )
 
+    bio_percent = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    egalim_percent = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    has_egalim_objectives_reached = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="objectifs EGalim atteints",
+    )
+
     # Data quality
     invalid_reason_list = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=InvalidReason.choices),
@@ -1647,6 +1665,11 @@ class Diagnostic(models.Model):
         self.valeur_egalim_hors_bio_agg = self.label_group_group_sum("egalim_hors_bio")
         self.valeur_egalim_agg = self.label_group_group_sum("egalim")
 
+    def populate_egalim_stats(self):
+        self.bio_percent = self.compute_bio_percent()
+        self.egalim_percent = self.compute_egalim_percent()
+        self.has_egalim_objectives_reached = self.compute_has_egalim_objectives_reached()
+
     def label_sum(self, label: str):
         sum = 0
         is_null = True
@@ -1689,6 +1712,30 @@ class Diagnostic(models.Model):
         return sum_int_with_potential_null(
             [getattr(self, f"valeur_{group}") for group in Diagnostic.APPRO_LABELS_GROUPS_GROUPS_MAPPING["egalim"]]
         )
+
+    def compute_bio_percent(self):
+        if self.valeur_totale and self.valeur_bio_agg:
+            return round(100 * self.valeur_bio_agg / self.valeur_totale, 2)
+
+    def compute_egalim_percent(self):
+        if self.valeur_totale and self.valeur_egalim_agg:
+            return round(100 * self.valeur_egalim_agg / self.valeur_totale, 2)
+
+    def compute_has_egalim_objectives_reached(self):
+        if self.valeur_totale and self.bio_percent and self.egalim_percent:
+            bio_threshold = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
+            combined_threshold = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
+            if self.canteen_snapshot["region"] in EGALIM_OBJECTIVES["groupe_1"]["region_list"]:
+                bio_threshold = EGALIM_OBJECTIVES["groupe_1"]["bio_percent"]
+                combined_threshold = EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"]
+            elif self.canteen_snapshot["region"] in EGALIM_OBJECTIVES["groupe_2"]["region_list"]:
+                bio_threshold = EGALIM_OBJECTIVES["groupe_2"]["bio_percent"]
+                combined_threshold = EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"]
+            elif self.canteen_snapshot["region"] in EGALIM_OBJECTIVES["groupe_3"]["region_list"]:
+                bio_threshold = EGALIM_OBJECTIVES["groupe_3"]["bio_percent"]
+                combined_threshold = EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"]
+
+            return self.bio_percent >= bio_threshold and self.egalim_percent >= combined_threshold
 
     @property
     def valeur_totale_is_filled(self):
@@ -1897,9 +1944,10 @@ class Diagnostic(models.Model):
             "email": applicant.email,
         }
 
-        # aggregated data
+        # aggregated data & stats
         # TODO: compute on save() instead
         self.populate_aggregated_values()
+        self.populate_egalim_stats()
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
@@ -1930,5 +1978,6 @@ class Diagnostic(models.Model):
             setattr(self, field, None)
         for field in self.TELEDECLARATION_FIELDS:
             setattr(self, field, None)
+        # TODO: clear aggregated values & stats as well?
 
         self.save()
