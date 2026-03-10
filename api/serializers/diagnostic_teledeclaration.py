@@ -345,7 +345,9 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
         return None
 
     def get_teledeclaration_ratio_bio(self, obj):
-        return obj.valeur_bio_agg / obj.valeur_totale
+        if obj.bio_percent:
+            return obj.bio_percent / 100
 
     def get_teledeclaration_ratio_egalim_hors_bio(self, obj):
-        return obj.valeur_egalim_hors_bio_agg / obj.valeur_totale
+        if obj.egalim_hors_bio_percent:
+            return obj.egalim_hors_bio_percent / 100
