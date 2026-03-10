@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
-from django.db.models import Case, F, IntegerField, Q, Sum, When
+from django.db.models import Case, F, IntegerField, Q, When
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
 from django.utils import timezone
@@ -246,15 +246,6 @@ class DiagnosticQuerySet(models.QuerySet):
             self.select_related("canteen")
             .exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
             .exclude(canteen_snapshot__line_ministry=Canteen.Ministries.ARMEE)
-        )
-
-    def with_appro_percent_stats(self):
-        """
-        Note: we use Sum/default instead of F to better manage None values.
-        """
-        return self.annotate(valeur_totale_sum=Sum("valeur_totale")).annotate(
-            bio_percent=100 * Sum("valeur_bio_agg", default=0) / F("valeur_totale_sum"),
-            egalim_percent=100 * F("valeur_egalim_agg") / F("valeur_totale_sum"),
         )
 
     def egalim_objectives_reached(self):
@@ -1694,15 +1685,17 @@ class Diagnostic(models.Model):
         )
 
     def compute_bio_percent(self):
-        if self.valeur_totale and self.valeur_bio_agg:
-            return round(100 * self.valeur_bio_agg / self.valeur_totale, 2)
+        if self.valeur_totale and self.valeur_bio_agg is not None:
+            if self.valeur_totale >= self.valeur_bio_agg:
+                return round(100 * self.valeur_bio_agg / self.valeur_totale, 2)
 
     def compute_egalim_percent(self):
-        if self.valeur_totale and self.valeur_egalim_agg:
-            return round(100 * self.valeur_egalim_agg / self.valeur_totale, 2)
+        if self.valeur_totale and self.valeur_egalim_agg is not None:
+            if self.valeur_totale >= self.valeur_egalim_agg:
+                return round(100 * self.valeur_egalim_agg / self.valeur_totale, 2)
 
     def compute_has_egalim_objectives_reached(self):
-        if self.valeur_totale and self.bio_percent and self.egalim_percent:
+        if self.valeur_totale and self.bio_percent is not None and self.egalim_percent is not None:
             bio_threshold = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
             combined_threshold = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
             if self.canteen_snapshot["region"] in EGALIM_OBJECTIVES["groupe_1"]["region_list"]:

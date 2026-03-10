@@ -514,13 +514,6 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(Diagnostic.objects.count(), 17)
         self.assertEqual(Diagnostic.objects.publicly_visible().count(), 15)  # army excluded
 
-    def test_with_appro_percent_stats(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.with_appro_percent_stats()
-        self.assertEqual(diagnostics.count(), 17)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).bio_percent, 20)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).egalim_percent, 50)
-
     def test_exclude_generated(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
         DiagnosticFactory(generated_from_groupe_diagnostic=True)
@@ -610,6 +603,34 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
         ]:
             with self.subTest(diagnostic=diagnostic):
                 self.assertFalse(diagnostic.is_filled)
+
+
+class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
+    def test_compute_bio_percent_method(self):
+        for valeur_totale, valeur_bio_agg, bio_percent in [
+            (1000, 200, 20),
+            (1000, 0, 0),
+            (1000, None, None),
+            (0, 200, None),
+            (None, 200, None),
+            (None, None, None),
+        ]:
+            with self.subTest(valeur_totale=valeur_totale, valeur_bio_agg=valeur_bio_agg):
+                diagnostic = DiagnosticFactory(valeur_totale=valeur_totale, valeur_bio_agg=valeur_bio_agg)
+                self.assertEqual(diagnostic.compute_bio_percent(), bio_percent)
+
+    def test_compute_egalim_percent_method(self):
+        for valeur_totale, valeur_egalim_agg, egalim_percent in [
+            (1000, 200, 20),
+            (1000, 0, 0),
+            (1000, None, None),
+            (0, 200, None),
+            (None, 200, None),
+            (None, None, None),
+        ]:
+            with self.subTest(valeur_totale=valeur_totale, valeur_egalim_agg=valeur_egalim_agg):
+                diagnostic = DiagnosticFactory(valeur_totale=valeur_totale, valeur_egalim_agg=valeur_egalim_agg)
+                self.assertEqual(diagnostic.compute_egalim_percent(), egalim_percent)
 
 
 class DiagnosticModelDeleteTest(TestCase):
