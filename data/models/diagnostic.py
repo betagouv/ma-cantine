@@ -777,6 +777,7 @@ class Diagnostic(models.Model):
     TELEDECLARATION_EGALIM_FIELDS = [
         "bio_percent",
         "egalim_percent",
+        "egalim_hors_bio_percent",
         "has_egalim_objectives_reached",
     ]
     TELEDECLARATION_SNAPSHOT_FIELDS = [
@@ -1568,6 +1569,12 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
     )
+    egalim_hors_bio_percent = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
     has_egalim_objectives_reached = models.BooleanField(
         blank=True,
         null=True,
@@ -1644,6 +1651,7 @@ class Diagnostic(models.Model):
     def populate_egalim_stats(self):
         self.bio_percent = self.compute_bio_percent()
         self.egalim_percent = self.compute_egalim_percent()
+        self.egalim_hors_bio_percent = self.compute_egalim_hors_bio_percent()
         self.has_egalim_objectives_reached = self.compute_has_egalim_objectives_reached()
 
     def label_sum(self, label: str):
@@ -1698,6 +1706,11 @@ class Diagnostic(models.Model):
         if self.valeur_totale and self.valeur_egalim_agg is not None:
             if self.valeur_totale >= self.valeur_egalim_agg:
                 return round(100 * self.valeur_egalim_agg / self.valeur_totale, 2)
+
+    def compute_egalim_hors_bio_percent(self):
+        if self.valeur_totale and self.valeur_egalim_hors_bio_agg is not None:
+            if self.valeur_totale >= self.valeur_egalim_hors_bio_agg:
+                return round(100 * self.valeur_egalim_hors_bio_agg / self.valeur_totale, 2)
 
     def compute_has_egalim_objectives_reached(self):
         if self.valeur_totale and self.bio_percent is not None and self.egalim_percent is not None:

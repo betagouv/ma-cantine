@@ -632,6 +632,21 @@ class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
                 diagnostic = DiagnosticFactory(valeur_totale=valeur_totale, valeur_egalim_agg=valeur_egalim_agg)
                 self.assertEqual(diagnostic.compute_egalim_percent(), egalim_percent)
 
+    def test_egalim_hors_bio_percent_method(self):
+        for valeur_totale, valeur_egalim_hors_bio_agg, egalim_hors_bio_percent in [
+            (1000, 200, 20),
+            (1000, 0, 0),
+            (1000, None, None),
+            (0, 200, None),
+            (None, 200, None),
+            (None, None, None),
+        ]:
+            with self.subTest(valeur_totale=valeur_totale, valeur_egalim_hors_bio_agg=valeur_egalim_hors_bio_agg):
+                diagnostic = DiagnosticFactory(
+                    valeur_totale=valeur_totale, valeur_egalim_hors_bio_agg=valeur_egalim_hors_bio_agg
+                )
+                self.assertEqual(diagnostic.compute_egalim_hors_bio_percent(), egalim_hors_bio_percent)
+
 
 class DiagnosticModelDeleteTest(TestCase):
     @classmethod
