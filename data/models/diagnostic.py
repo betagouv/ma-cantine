@@ -774,6 +774,11 @@ class Diagnostic(models.Model):
         "teledeclaration_version",
         "teledeclaration_id",
     ]
+    TELEDECLARATION_EGALIM_FIELDS = [
+        "bio_percent",
+        "egalim_percent",
+        "has_egalim_objectives_reached",
+    ]
     TELEDECLARATION_SNAPSHOT_FIELDS = [
         "canteen_snapshot",
         "satellites_snapshot",
@@ -1951,6 +1956,7 @@ class Diagnostic(models.Model):
             setattr(self, field, None)
         for field in self.TELEDECLARATION_FIELDS:
             setattr(self, field, None)
-        # TODO: clear aggregated values & stats as well?
+        for field in self.TELEDECLARATION_EGALIM_FIELDS:
+            setattr(self, field, None)
 
         self.save()

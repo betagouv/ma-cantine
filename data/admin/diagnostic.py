@@ -135,6 +135,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             {
                 "fields": (
                     *Diagnostic.TELEDECLARATION_FIELDS,
+                    *Diagnostic.TELEDECLARATION_EGALIM_FIELDS,
                     "applicant",
                     # *Diagnostic.TELEDECLARATION_SNAPSHOT_FIELDS
                     "canteen_snapshot_pretty",
@@ -158,6 +159,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         *Diagnostic.MATOMO_FIELDS,
         *Diagnostic.TUNNEL_PROGRESS_FIELDS,
         *Diagnostic.TELEDECLARATION_FIELDS,
+        *Diagnostic.TELEDECLARATION_EGALIM_FIELDS,
         "applicant",
         "canteen_snapshot_pretty",
         "satellites_snapshot_pretty",
