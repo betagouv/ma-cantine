@@ -2,9 +2,10 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
-from django.db.models import Case, F, IntegerField, Q, Sum, When
+from django.db.models import Case, F, Func, IntegerField, Q, Sum, When
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
+from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
@@ -118,6 +119,38 @@ class DiagnosticQuerySet(models.QuerySet):
             )
         )
 
+    def with_annotate_for_stats(self):
+        # needed for __in filters
+        for field_name in [
+            "region",
+            "department",
+            "epci",
+            "city_insee_code",
+            "management_type",
+            "production_type",
+            "economic_model",
+        ]:
+            self = self.annotate(
+                **{
+                    f"canteen_{field_name}": Cast(
+                        KT(f"canteen_snapshot__{field_name}"), output_field=models.CharField()
+                    )
+                }
+            )
+        # needed for __overlap filters
+        for field_name in ["sector_list", "pat_list"]:
+            self = self.annotate(
+                **{
+                    f"canteen_{field_name}": Func(
+                        Cast(KT(f"canteen_snapshot__{field_name}"), output_field=models.JSONField()),
+                        function="jsonb_array_elements_text",
+                        template="ARRAY(SELECT %(function)s(%(expressions)s))",
+                        output_field=ArrayField(base_field=models.TextField()),
+                    )
+                }
+            )
+        return self
+
     def exclude_aberrant_values(self):
         """
         Ici nous supprimons les TD dont les déclarations paraissent erronées et sont impactantes.
@@ -180,6 +213,7 @@ class DiagnosticQuerySet(models.QuerySet):
     def publicly_visible(self):
         return (
             self.select_related("canteen")
+            .exclude(canteen_snapshot__production_type=Canteen.ProductionType.GROUPE)  # TODO: CENTRAL & CENTRAL_SERVING
             .exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
             .exclude(canteen_snapshot__line_ministry=Canteen.Ministries.ARMEE)
         )
