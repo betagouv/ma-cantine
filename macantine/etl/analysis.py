@@ -25,9 +25,9 @@ class ANALYSIS(etl.TRANSFORMER_LOADER):
 
     def __init__(self):
         super().__init__()
+        self.warehouse = DataWareHouse()
         self.dataset_name = ""
         self.schema = ""
-        self.warehouse = DataWareHouse()
 
     def load_dataset(self):
         """
@@ -47,9 +47,9 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
 
     def __init__(self):
         super().__init__()
+        self.warehouse = DataWareHouse()
         self.years = CAMPAIGN_DATES.keys()
         self.dataset_name = "teledeclarations"
-        self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/export_analysis/schema_teledeclarations.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]
         self.view = DiagnosticTeledeclaredAnalysisListView
@@ -167,8 +167,8 @@ class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
 
     def __init__(self):
         super().__init__()
-        self.dataset_name = "canteens"
         self.warehouse = DataWareHouse()
+        self.dataset_name = "canteens"
         self.schema = json.load(open("data/schemas/export_analysis/schema_cantines.json"))
         self.view = CanteenAnalysisListView
 

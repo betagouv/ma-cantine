@@ -46,7 +46,7 @@ def update_user_data():
     for user in users:
         user.update_data()
     end = time.time()
-    logger.info(f"update_user_data task ended. Duration : {end - start} seconds")
+    logger.info(f"update_user_data task ended. Duration : {end - start:.2f} seconds")
 
 
 ##########################################################################
@@ -88,7 +88,7 @@ def update_brevo_contacts():
     brevo.update_existing_brevo_contacts(chunks, timezone.now())
 
     end = time.time()
-    logger.info(f"update_brevo_contacts task ended. Duration : {end - start} seconds")
+    logger.info(f"update_brevo_contacts task ended. Duration : {end - start:.2f} seconds")
 
 
 @app.task()
