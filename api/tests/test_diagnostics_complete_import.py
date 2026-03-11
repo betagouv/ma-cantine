@@ -1,8 +1,10 @@
 import json
+from unittest import skipIf
 
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from django.conf import settings
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -27,6 +29,7 @@ class DiagnosticsCompleteSchemaTest(TestCase):
     # no regex patterns to test
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsCompleteImportApiErrorTest(APITestCase):
     def test_unauthenticated(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -291,6 +294,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertTrue(len(body["errors"]) > 0)
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
     @freeze_time("2025-02-10")  # during the 2024 campaign
     @authenticate

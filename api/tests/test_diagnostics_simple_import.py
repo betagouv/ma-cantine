@@ -1,10 +1,12 @@
 import json
 from decimal import Decimal
+from unittest import skipIf
 
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -28,6 +30,7 @@ class DiagnosticsSimpleSchemaTest(TestCase):
     # no regex patterns to test
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     def test_unauthenticated(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -397,6 +400,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertTrue(len(body["errors"]) > 0)
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
     @freeze_time("2025-02-10")  # during the 2024 campaign
     @authenticate
@@ -542,6 +546,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic.valeur_bio, 500)
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
     @authenticate
     def test_canteen_not_found_with_id(self):
@@ -577,6 +582,7 @@ class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
         self.assertEqual(errors[0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
     @freeze_time("2025-02-10")  # during the 2024 campaign
     @authenticate

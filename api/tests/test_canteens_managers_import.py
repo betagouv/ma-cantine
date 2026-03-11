@@ -43,6 +43,7 @@ class CanteensManagersImportApiNonAdminErrorTest(APITestCase):
         )
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteensManagersImportApiErrorTest(APITestCase):
     @authenticate
     def test_validata_missing_header_error(self):
