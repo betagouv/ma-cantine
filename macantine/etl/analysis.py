@@ -25,7 +25,7 @@ class ANALYSIS(etl.TRANSFORMER_LOADER):
 
     def __init__(self):
         super().__init__()
-        self.extracted_table_name = ""
+        self.dataset_name = ""
         self.schema = ""
         self.warehouse = DataWareHouse()
 
@@ -34,7 +34,7 @@ class ANALYSIS(etl.TRANSFORMER_LOADER):
         Load in database
         """
         logger.info(f"Loading {len(self.df)} objects in db")
-        self.warehouse.insert_dataframe(self.df, self.extracted_table_name)
+        self.warehouse.insert_dataframe(self.df, self.dataset_name)
 
 
 class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
@@ -48,7 +48,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
     def __init__(self):
         super().__init__()
         self.years = CAMPAIGN_DATES.keys()
-        self.extracted_table_name = "teledeclarations"
+        self.dataset_name = "teledeclarations"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/export_analysis/schema_teledeclarations.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]
@@ -68,12 +68,9 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
         Load in database with versionning. This function is called by a manually launched task
         """
         if versionning:
-            logger.info(
-                f"Loading {len(self.df)} objects in db. Version {self.extracted_table_name + '_' + datetime.today().strftime('%Y_%m_%d')}"
-            )
-            self.warehouse.insert_dataframe(
-                self.df, self.extracted_table_name + "_" + datetime.today().strftime("%Y_%m_%d")
-            )
+            self.dataset_name = self.dataset_name + "_" + datetime.today().strftime("%Y_%m_%d")
+            logger.info(f"Loading {len(self.df)} objects in db. Version {self.dataset_name}")
+            self.warehouse.insert_dataframe(self.df, self.dataset_name)
         else:
             super().load_dataset()
 
@@ -170,7 +167,7 @@ class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
 
     def __init__(self):
         super().__init__()
-        self.extracted_table_name = "canteens"
+        self.dataset_name = "canteens"
         self.warehouse = DataWareHouse()
         self.schema = json.load(open("data/schemas/export_analysis/schema_cantines.json"))
         self.view = CanteenAnalysisListView
