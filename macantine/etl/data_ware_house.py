@@ -1,8 +1,12 @@
+import logging
 import os
+import time
 
 import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import URL, create_engine
+
+logger = logging.getLogger(__name__)
 
 
 class DataWareHouse:
@@ -22,7 +26,18 @@ class DataWareHouse:
         )
 
     def insert_dataframe(self, dataframe, table, dtype=None):
-        dataframe.to_sql(name=table, con=self.engine, if_exists="replace", index=False, dtype=dtype, chunksize=1000)
+        start = time.time()
+        dataframe.to_sql(
+            name=table,
+            con=self.engine,
+            if_exists="replace",
+            index=False,
+            dtype=dtype,
+            chunksize=1000,
+            # method="multi",  # Batch INSERTs for 2-3x speedup
+        )
+        end = time.time()
+        logger.info(f"Inserted {len(dataframe)} rows into {table} in {end - start:.2f} seconds")
 
     def read_dataframe(self, table_name):
         return pd.read_sql(sql=table_name, index_col="id", con=self.engine)
