@@ -1487,6 +1487,12 @@ class Diagnostic(models.Model):
         encoder=CustomJSONEncoder,
     )
 
+    teledeclaration_in_rapport = models.BooleanField(
+        verbose_name="la télédéclaration est utilisée dans le rapport",
+        blank=True,
+        null=True,
+    )
+
     # Data quality
     invalid_reason_list = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=InvalidReason.choices),
