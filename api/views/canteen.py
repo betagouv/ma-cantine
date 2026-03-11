@@ -13,6 +13,7 @@ from django.db.models.functions import Cast
 from django.http import JsonResponse
 from django_filters import BaseInFilter, CharFilter
 from django_filters import rest_framework as django_filters
+from drf_spectacular.openapi import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
@@ -299,6 +300,8 @@ class UserCanteensView(ListCreateAPIView):
         return FullCanteenSerializer(*args, **kwargs)
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Canteen.objects.none()
         return self.request.user.canteens.all()
 
     @transaction.atomic
@@ -348,6 +351,8 @@ class UserCanteenPreviews(ListAPIView):
     required_scopes = ["canteen"]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Canteen.objects.none()
         return self.request.user.canteens.all()
 
 
@@ -367,6 +372,8 @@ class UserCanteenSummaries(ListAPIView):
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Canteen.objects.none()
         return self.request.user.canteens.all()
 
 
@@ -432,6 +439,10 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
         instance.delete(skip_validations=True)
 
 
+@extend_schema(
+    summary="Obtenir les informations d'une cantine par SIRET.",
+    responses={200: OpenApiTypes.OBJECT, 204: None},
+)
 class CanteenStatusBySiretView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
@@ -450,6 +461,10 @@ class CanteenStatusBySiretView(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    summary="Obtenir les informations des cantines d'une unité légale par SIREN.",
+    responses={200: OpenApiTypes.OBJECT, 204: None},
+)
 class CanteenStatusBySirenView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]

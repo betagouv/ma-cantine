@@ -2,10 +2,10 @@ import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 from django_filters import rest_framework as django_filters
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
-from drf_spectacular.utils import extend_schema, extend_schema_view
 from api.permissions import (
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManager,
@@ -61,6 +61,8 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
         return canteen
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return WasteMeasurement.objects.none()
         canteen = self._get_canteen()
         return WasteMeasurement.objects.filter(canteen=canteen).order_by("-period_start_date")
 
@@ -72,7 +74,7 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
 
 
 @extend_schema_view(
-    post=extend_schema(
+    patch=extend_schema(
         summary="Modifier une évaluation du gaspillage alimentaire existante.",
         description="",
     )

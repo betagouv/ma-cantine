@@ -72,9 +72,6 @@ class DiagnosticCreateView(CreateAPIView):
         summary="Modifier un diagnostic existant.",
         description="À noter qu'un diagnostic ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
     ),
-    put=extend_schema(
-        exclude=True,
-    ),
 )
 class DiagnosticUpdateView(UpdateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
