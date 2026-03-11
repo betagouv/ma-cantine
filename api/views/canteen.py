@@ -280,7 +280,7 @@ class UserCanteensFilterSet(django_filters.FilterSet):
 )
 class UserCanteensView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    model = Canteen
+    queryset = Canteen.objects.none()
     serializer_class = FullCanteenSerializer
     pagination_class = UserCanteensPagination
     filter_backends = [
@@ -300,8 +300,6 @@ class UserCanteensView(ListCreateAPIView):
         return FullCanteenSerializer(*args, **kwargs)
 
     def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return Canteen.objects.none()
         return self.request.user.canteens.all()
 
     @transaction.atomic
@@ -345,19 +343,17 @@ class UserCanteensView(ListCreateAPIView):
     ),
 )
 class UserCanteenPreviews(ListAPIView):
-    model = Canteen
+    queryset = Canteen.objects.none()
     serializer_class = CanteenPreviewSerializer
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
 
     def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return Canteen.objects.none()
         return self.request.user.canteens.all()
 
 
 class UserCanteenSummaries(ListAPIView):
-    model = Canteen
+    queryset = Canteen.objects.none()
     serializer_class = CanteenSummarySerializer
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
@@ -372,8 +368,6 @@ class UserCanteenSummaries(ListAPIView):
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
     def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return Canteen.objects.none()
         return self.request.user.canteens.all()
 
 
@@ -407,9 +401,8 @@ class UserCanteenActions(ListAPIView):
 )
 class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManager]
-    model = Canteen
-    serializer_class = FullCanteenSerializer
     queryset = Canteen.objects.all()
+    serializer_class = FullCanteenSerializer
     required_scopes = ["canteen"]
 
     def put(self, request, *args, **kwargs):

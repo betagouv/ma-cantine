@@ -38,7 +38,7 @@ class WasteMeasurementFilterSet(django_filters.FilterSet):
 )
 class CanteenWasteMeasurementsView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    model = WasteMeasurement
+    queryset = WasteMeasurement.objects.none()
     serializer_class = WasteMeasurementSerializer
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -61,8 +61,6 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
         return canteen
 
     def get_queryset(self):
-        if getattr(self, "swagger_fake_view", False):
-            return WasteMeasurement.objects.none()
         canteen = self._get_canteen()
         return WasteMeasurement.objects.filter(canteen=canteen).order_by("-period_start_date")
 
