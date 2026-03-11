@@ -20,7 +20,18 @@ dotenv.load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 
 app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", include=["macantine.tasks"])
-app.config_from_object(dict(worker_hijack_root_logger=False, result_extended=True))
+app.config_from_object(
+    dict(
+        worker_hijack_root_logger=False,
+        result_extended=True,
+        # Timeout settings for long-running tasks
+        task_soft_time_limit=600,  # 10 minutes soft limit (raises exception)
+        task_time_limit=900,  # 15 minutes hard limit (kills worker)
+        # Worker lifecycle settings
+        worker_max_tasks_per_child=1000,  # Restart worker after 1000 tasks (prevents memory leaks)
+        worker_prefetch_multiplier=1,  # Fetch one task at a time (better for long tasks)
+    )
+)
 
 every_minute = crontab(minute="*/1")  # For testing purposes
 hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
