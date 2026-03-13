@@ -20,6 +20,9 @@ REQUIRED_FIELDS = ("year",)
 
 
 class DiagnosticSerializer(serializers.ModelSerializer):
+    is_teledeclared = serializers.BooleanField(read_only=True)  # property
+    is_filled = serializers.BooleanField(read_only=True)  # property
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if (

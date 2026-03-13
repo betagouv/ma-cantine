@@ -13,6 +13,7 @@ from django.db.models.functions import Cast
 from django.http import JsonResponse
 from django_filters import BaseInFilter, CharFilter
 from django_filters import rest_framework as django_filters
+from drf_spectacular.openapi import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
@@ -279,7 +280,7 @@ class UserCanteensFilterSet(django_filters.FilterSet):
 )
 class UserCanteensView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    model = Canteen
+    queryset = Canteen.objects.none()
     serializer_class = FullCanteenSerializer
     pagination_class = UserCanteensPagination
     filter_backends = [
@@ -342,7 +343,7 @@ class UserCanteensView(ListCreateAPIView):
     ),
 )
 class UserCanteenPreviews(ListAPIView):
-    model = Canteen
+    queryset = Canteen.objects.none()
     serializer_class = CanteenPreviewSerializer
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
@@ -352,7 +353,7 @@ class UserCanteenPreviews(ListAPIView):
 
 
 class UserCanteenSummaries(ListAPIView):
-    model = Canteen
+    queryset = Canteen.objects.none()
     serializer_class = CanteenSummarySerializer
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
@@ -400,9 +401,8 @@ class UserCanteenActions(ListAPIView):
 )
 class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManager]
-    model = Canteen
-    serializer_class = FullCanteenSerializer
     queryset = Canteen.objects.all()
+    serializer_class = FullCanteenSerializer
     required_scopes = ["canteen"]
 
     def put(self, request, *args, **kwargs):
@@ -432,6 +432,10 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
         instance.delete(skip_validations=True)
 
 
+@extend_schema(
+    summary="Obtenir les informations d'une cantine par SIRET.",
+    responses={200: OpenApiTypes.OBJECT, 204: None},
+)
 class CanteenStatusBySiretView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
@@ -450,6 +454,10 @@ class CanteenStatusBySiretView(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    summary="Obtenir les informations des cantines d'une unité légale par SIREN.",
+    responses={200: OpenApiTypes.OBJECT, 204: None},
+)
 class CanteenStatusBySirenView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
