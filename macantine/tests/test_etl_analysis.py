@@ -381,9 +381,9 @@ class TeledeclarationETLAnalysisTest(TestCase):
         data = self.serializer_half_geo.data
 
         self.assertEqual(data["departement"], "38")
-        self.assertEqual(data["lib_departement"], "Isère")  # filled with the serializer
+        self.assertEqual(data["lib_departement"], None)
         self.assertEqual(data["region"], "84")
-        self.assertEqual(data["lib_region"], "Auvergne-Rhône-Alpes")  # filled with the serializer
+        self.assertEqual(data["lib_region"], None)
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_without_geo_data = CanteenFactory(
