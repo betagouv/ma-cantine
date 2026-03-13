@@ -352,7 +352,7 @@ export default {
       loading: false,
       visiblePurchases: null,
       purchaseCount: null,
-      limit: 10,
+      limit: 500,
       options: {
         sortBy: [],
         sortDesc: [],
