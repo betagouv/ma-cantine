@@ -22,9 +22,9 @@ class ETL(ABC):
 
     def __init__(self):
         self.df = None
+        self.dataset_name = ""
         self.schema = None
         self.schema_url = ""
-        self.dataset_name = ""
         self.columns = []
         self.view = None
 
@@ -101,7 +101,7 @@ class EXTRACTOR(ETL):
             logger.warning("Dataset is empty. Creating an empty dataframe with columns from the schema")
             self.df = pd.DataFrame(columns=self.columns)
         end = time.time()
-        logger.info(f"Time spent on {self.dataset_name} extraction : {end - start}")
+        logger.info(f"Time spent on {self.dataset_name} extraction: {end - start:.2f} seconds")
 
 
 class TRANSFORMER_LOADER(ETL):
