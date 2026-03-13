@@ -248,6 +248,9 @@
         @click:row="onRowClick"
         v-model="selectedPurchases"
         show-select
+        :footer-props="{
+          pageText: footerText,
+        }"
       >
         <template v-slot:[`item.description`]="{ item }">
           <router-link :to="{ name: 'PurchasePage', params: { id: item.id } }">
@@ -390,6 +393,11 @@ export default {
     }
   },
   computed: {
+    footerText() {
+      const pageMax = this.offset + this.limit
+      const currentMax = pageMax > this.purchaseCount ? this.purchaseCount : pageMax
+      return `${this.offset + 1} - ${currentMax} des ${this.purchaseCount} achats`
+    },
     offset() {
       return (this.options.page - 1) * this.limit
     },
