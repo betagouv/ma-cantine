@@ -423,6 +423,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         )
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class PurchasesImportApiSuccessTest(APITestCase):
     @authenticate
     def test_import_good_purchases(self):
@@ -625,6 +626,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(Purchase.objects.first().price_ht, Decimal("90.11"))
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class PurchasesImportIdApiErrorTest(APITestCase):
     @authenticate
     def test_canteen_not_found_with_id(self):
@@ -643,6 +645,7 @@ class PurchasesImportIdApiErrorTest(APITestCase):
         self.assertEqual(errors.pop(0)["message"], "Une cantine avec l'id « 949 » n'existe pas sur la plateforme.")
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class PurchasesImportIdApiSuccessTest(APITestCase):
     @authenticate
     def test_import_default_type_is_id(self):
