@@ -87,9 +87,10 @@ jobs:
           CONTACT_EMAIL: contact@example.com
           REDIS_URL: redis://localhost:6379/0
           GIT_BRANCH: ${{ github.head_ref }}
+          TESTS_PARALLEL: 2
         run: |
           echo "GIT_BRANCH=$GIT_BRANCH"
-          uv run python manage.py test
+          uv run python manage.py test --parallel $TESTS_PARALLEL
 
       - name: Setup Node
         uses: actions/setup-node@v4
