@@ -232,6 +232,7 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
     publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
     is_managed_by_user = serializers.BooleanField(read_only=True)
+    can_be_claimed = serializers.BooleanField(read_only=True)
     action = serializers.CharField(allow_null=True)
 
     class Meta:
@@ -269,6 +270,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
+    satellites_count = serializers.IntegerField(read_only=True)
     satellites_missing_data_count = serializers.IntegerField(read_only=True)
     satellites_already_teledeclared_count = serializers.IntegerField(read_only=True)
     badges = BadgesSerializer(source="*", read_only=True)

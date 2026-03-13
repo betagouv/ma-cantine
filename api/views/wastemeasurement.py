@@ -2,10 +2,10 @@ import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 from django_filters import rest_framework as django_filters
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
-from drf_spectacular.utils import extend_schema, extend_schema_view
 from api.permissions import (
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManager,
@@ -38,7 +38,7 @@ class WasteMeasurementFilterSet(django_filters.FilterSet):
 )
 class CanteenWasteMeasurementsView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    model = WasteMeasurement
+    queryset = WasteMeasurement.objects.none()
     serializer_class = WasteMeasurementSerializer
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -72,7 +72,7 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
 
 
 @extend_schema_view(
-    post=extend_schema(
+    patch=extend_schema(
         summary="Modifier une évaluation du gaspillage alimentaire existante.",
         description="",
     )

@@ -4,6 +4,9 @@ from data.models import WasteMeasurement
 
 
 class WasteMeasurementSerializer(serializers.ModelSerializer):
+    days_in_period = serializers.IntegerField(read_only=True)  # property
+    total_yearly_waste_estimation = serializers.FloatField(read_only=True, allow_null=True)  # property
+
     class Meta:
         model = WasteMeasurement
         read_only_fields = ("id",)

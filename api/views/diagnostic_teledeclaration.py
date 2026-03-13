@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from django.utils.text import slugify
 from django_filters import rest_framework as django_filters
+from drf_spectacular.openapi import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import ListAPIView, get_object_or_404
@@ -59,7 +60,11 @@ class DiagnosticTeledeclarationCancelView(APIView):
 
 
 @extend_schema_view(
-    get=extend_schema(summary="Obtenir une représentation PDF de la télédéclaration.", tags=["teledeclaration"]),
+    get=extend_schema(
+        summary="Obtenir une représentation PDF de la télédéclaration.",
+        tags=["teledeclaration"],
+        responses={(200, "application/pdf"): OpenApiTypes.BINARY},
+    ),
 )
 class DiagnosticTeledeclarationPdfView(APIView):
     """
