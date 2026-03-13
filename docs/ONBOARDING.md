@@ -52,7 +52,7 @@ Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md)
 
 Les dépendances du backend se trouvent dans `pyproject.toml`.
 
-`uv` va installer les dépendances dans un environment virtuel : 
+`uv` va installer les dépendances dans un environment virtuel :
 
 ```
 uv sync
@@ -270,7 +270,7 @@ python manage.py test
 Sur VSCode, ces tests peuvent être debuggés avec la configuration "Python: Tests", présente sur le menu "Run".
 
 Tips :
-- lancer les tests plus rapidement : `python manage.py test --keepdb`
+- lancer les tests plus rapidement : `python manage.py test --keepdb --parallel 2`
 - lancer les tests qui ne nécessitent pas internet : `SKIP_TESTS_THAT_REQUIRE_INTERNET=True python manage.py test`
 
 ### Vue2
