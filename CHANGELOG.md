@@ -6,6 +6,22 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.19.1](https://github.com/betagouv/ma-cantine/compare/v2026.19.0...v2026.19.1) (2026-03-13)
+
+
+### Améliorations
+
+* **Données Géo:** nouveau script pour récupérer toutes les communes AVEC leur codes EPCI ([#6476](https://github.com/betagouv/ma-cantine/issues/6476)) ([5da578d](https://github.com/betagouv/ma-cantine/commit/5da578d8b8d4fabcae5847da3758f2390662c229))
+
+
+### Technique
+
+* **API:** Swagger: répare tous les warnings renvoyés quand la page est chargée ([#6482](https://github.com/betagouv/ma-cantine/issues/6482)) ([544df18](https://github.com/betagouv/ma-cantine/commit/544df185a4f3ba0f70be996923916fcab7dfee8e))
+* **Cantines:** rajoute un prefetch_related sur annotate_with_is_managed_by_user ([#6487](https://github.com/betagouv/ma-cantine/issues/6487)) ([657932f](https://github.com/betagouv/ma-cantine/commit/657932f39bb348d7b1d335f4831e9fc9017bc0ff))
+* **ETL:** afficher la durée prise par pandas pour insert l'export. Améliorer le dataset_name ([#6485](https://github.com/betagouv/ma-cantine/issues/6485)) ([81ddb65](https://github.com/betagouv/ma-cantine/commit/81ddb6560df3608b310de4ef90266348bdfbe32a))
+* **Tests:** les faire tourner 2x plus rapidement grâce à --parallel ([#6483](https://github.com/betagouv/ma-cantine/issues/6483)) ([b8307c4](https://github.com/betagouv/ma-cantine/commit/b8307c4332be17953ac21b7f2389fd549ddc434a))
+* **Tests:** rajouter SKIP_TESTS_THAT_REQUIRE_INTERNET aux récentes suites de tests liés aux imports ([#6484](https://github.com/betagouv/ma-cantine/issues/6484)) ([98e2e88](https://github.com/betagouv/ma-cantine/commit/98e2e888f2f04617a2f8533a1532c2828540c970))
+
 ## [2026.19.0](https://github.com/betagouv/ma-cantine/compare/v2026.18.0...v2026.19.0) (2026-03-06)
 
 
