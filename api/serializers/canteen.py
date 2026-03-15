@@ -101,7 +101,6 @@ class BadgesSerializer(serializers.ModelSerializer):
 
 
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     appro_diagnostic = PublicApproDiagnosticSerializer(source="latest_published_appro_diagnostic", read_only=True)
     lead_image = CanteenImageSerializer()
     badges = BadgesSerializer(source="*", read_only=True)
@@ -123,7 +122,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sector_list",
-            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "production_type",
             "management_type",
@@ -135,7 +133,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     appro_diagnostics = PublicApproDiagnosticSerializer(
         source="published_appro_diagnostics", many=True, read_only=True
     )
@@ -168,7 +165,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sector_list",
-            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "production_type",
             "management_type",
