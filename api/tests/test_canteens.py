@@ -440,6 +440,23 @@ class CanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["badges"]["year"], 2022)
 
+    @authenticate
+    def test_canteen_returns_only_diagnostics_with_year(self):
+        """
+        The endpoint for canteen managers should not return diagnostics without year
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        DiagnosticFactory(canteen=canteen, year=2024)
+        DiagnosticFactory(canteen=canteen, year=2023)
+        DiagnosticFactory(canteen=canteen, year=None)
+
+        self.assertEqual(canteen.diagnostics.count(), 3)
+
+        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["diagnostics"]), 2)
+
 
 class CanteenCreateApiTest(APITestCase):
     @classmethod

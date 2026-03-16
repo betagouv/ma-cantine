@@ -260,7 +260,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(
         source="sectors_m2m", many=True, queryset=SectorM2M.objects.all(), required=False
     )
-    diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
+    diagnostics = serializers.SerializerMethodField(method_name="get_diagnostics_with_year")
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     managers = CanteenManagerSerializer(many=True, read_only=True)
@@ -362,6 +362,10 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         )
 
         extra_kwargs = {"name": {"required": True}, "siret": {"required": True}}
+
+    def get_diagnostics_with_year(self, obj):
+        diagnostics_with_year = obj.diagnostics.exclude(year__isnull=True)
+        return FullDiagnosticSerializer(diagnostics_with_year, many=True).data
 
     def __init__(self, *args, **kwargs):
         action = kwargs.pop("action", None)
