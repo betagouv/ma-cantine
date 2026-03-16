@@ -14,8 +14,18 @@ const canteenTitle = computed(() => {
   return props.canteensCount <= 1 ? "Cantine inscrite sur la plateforme" : "Cantines inscrites sur la plateforme"
 })
 
+/* 1TD1SITE */
+const is1td1siteYear = computed(() => {
+  const yearsWith1td1site = [2024]
+  return filtersParams.year && yearsWith1td1site.includes(filtersParams.year)
+})
+
 /* Teledeclaration */
-const teledeclarationTitle = computed(() => (props.teledeclarationsCount <= 1 ? "Télédéclaration" : "Télédéclarations"))
+const teledeclarationTitle = computed(() => {
+  const pluralizeResult = props.teledeclarationsCount <= 1
+  if (is1td1siteYear.value) return pluralizeResult ? "Site télédéclaré" : "Sites télédéclarés"
+  else return pluralizeResult ? "Télédéclaration" : "Télédéclarations"
+})
 const hasTeledeclarationCount = computed(() => props.teledeclarationsCount !== null)
 
 /* Tile */
