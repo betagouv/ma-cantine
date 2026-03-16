@@ -100,6 +100,12 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             return self.filter(creation_date__lt=canteen_created_before_date)
         return self.none()
 
+    def not_deleted_before_year_campaign_end_date(self, year):
+        canteen_deleted_after_date = get_year_campaign_end_date_or_today_date(year)
+        if canteen_deleted_after_date:
+            return self.filter(Q(deletion_date__isnull=True) | Q(deletion_date__gt=canteen_deleted_after_date))
+        return self.none()
+
     def is_groupe(self):
         return self.filter(is_groupe_query())
 

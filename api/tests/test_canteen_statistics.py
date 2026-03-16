@@ -164,6 +164,31 @@ class CanteenStatsApiTest(APITestCase):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_canteen_count_include_deletion_and_creation_dates(self):
+        # During the campaign
+        with freeze_time(date_in_2023_teledeclaration_campaign):
+            self.canteen_1.delete()
+
+        # After the campaign
+        with freeze_time("2024-06-15"):
+            self.canteen_3.delete()
+            CanteenFactory()
+
+        # We have :
+        # - 5 canteens created before or during the campaign in the setup
+        # - 1 canteen deleted during the campaign
+        # - 1 canteen deleted after the campaign
+        # - 1 canteen created after the campaign
+        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)  # 5 - 1
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2025})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)  # 5 - 1 - 1 + 1
+
     def test_canteen_statistics(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
 
