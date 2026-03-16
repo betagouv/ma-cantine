@@ -458,7 +458,10 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     )
 
     city_insee_code = models.TextField(
-        null=True, blank=True, verbose_name="Code INSEE"
+        null=True,
+        blank=True,
+        verbose_name="Code INSEE",
+        help_text="Le code INSEE est récupéré automatiquement grâce au SIRET ou code postal pour les cantines sans SIRET. Si ce dernier est incorrect : ne pas le corriger directement mais passer le champ à vide, il sera automatiquement renseigné avec les informations d'annuaires entreprises pour les cantines avec SIRET dans les 24 heures.",
     )  # nécessaire pour remplir les autres champs geo
     city = models.TextField(null=True, blank=True, verbose_name="ville")
     postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
