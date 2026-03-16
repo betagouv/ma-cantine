@@ -1692,8 +1692,6 @@ class Diagnostic(models.Model):
 
     @property
     def is_filled(self):
-        if not self.year:
-            return False  # Legacy : we have some diagnostics without year
         return self.is_filled_simple or self.is_filled_complete
 
     @property
