@@ -32,7 +32,7 @@ class Command(BaseCommand):
         fields = Diagnostic.TELEDECLARATION_EGALIM_FIELDS
 
         logger.info("Step 1: reset the field for all the diagnostics")
-        Diagnostic.objects.all().update(**{field_name: None for field_name in fields})
+        Diagnostic.objects.teledeclared().update(**{field_name: None for field_name in fields})
 
         logger.info("Step 2: find the diagnostics that have a teledeclaration for the specified year")
         diagnostics_teledeclared = Diagnostic.objects.teledeclared_for_year(year)

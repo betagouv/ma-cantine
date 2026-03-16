@@ -5,7 +5,7 @@ from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestD
 from data.models import Diagnostic
 
 
-class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
+class TeledeclarationFillEgalimFieldsCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         ETLCommonSetUpTestData(cls, with_diagnostics=True)
