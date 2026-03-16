@@ -103,7 +103,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         (
             "Informations géographiques",
             {
-                "description": "Les informations ci-dessous viennent de l’annuaire des entreprises et de France PAT. Celles-ci ne sont pas modifiable.",
+                "description": "ℹ️ Les informations ci-dessous viennent de l’annuaire des entreprises et de France PAT. Celles-ci ne sont pas modifiable.</br></br>ℹ️ Le code INSEE est récupéré automatiquement grâce au SIRET ou code postal pour les cantines sans SIRET. Si ce dernier est incorrect : ne pas le corriger directement mais passer le champ à vide, il sera automatiquement renseigné avec les informations d'annuaires entreprises pour les cantines avec SIRET dans les 24 heures.<br /><br /><hr />",
                 "fields": Canteen.GEO_FIELDS,
             },
         ),
