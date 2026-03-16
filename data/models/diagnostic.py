@@ -258,6 +258,12 @@ class DiagnosticQuerySet(models.QuerySet):
             egalim_percent=100 * F("valeur_egalim_agg") / F("valeur_totale_sum"),
         )
 
+    def teledeclaration_objectifs_egalim_atteints(self):
+        """
+        The field 'objectifs_egalim_atteints' is only filled for teledeclared diagnostics.
+        """
+        return self.filter(objectifs_egalim_atteints=True)
+
     def egalim_objectives_reached(self):
         # TODO: filter on canteen_snapshot__region instead
         return self.select_related("canteen").filter(
