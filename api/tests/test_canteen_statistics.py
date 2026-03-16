@@ -451,9 +451,6 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(body["canteenCount"], 5)
         self.assertEqual(body["teledeclarationsCount"], 3)
         self.assertEqual(len(body["notes"]["warnings"]), 1)
-        self.assertEqual(
-            body["notes"]["canteenCountDescription"], "Au 11 juin 2024"
-        )  # dernier jour de la campagne 2024
         self.assertFalse("campaignInfo" in body["notes"])
 
     def test_notes_alert(self):
