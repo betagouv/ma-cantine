@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 class PurchasesPagination(LimitOffsetPagination):
     default_limit = 10
-    max_limit = 50
+    max_limit = 500
     families = []
     characteristics = []
     canteens = []
