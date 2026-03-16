@@ -249,13 +249,16 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         return utils.compute_ratio(obj.valeur_viandes_volailles_egalim, obj.valeur_viandes_volailles)
 
     def get_ratio_bio(self, obj):
-        return utils.compute_ratio(obj.valeur_bio_agg, obj.valeur_totale)
+        if obj.pourcentage_bio:
+            return obj.pourcentage_bio / 100
 
     def get_ratio_egalim_avec_bio(self, obj):
-        return utils.compute_ratio(obj.valeur_egalim_agg, obj.valeur_totale)
+        if obj.pourcentage_egalim:
+            return obj.pourcentage_egalim / 100
 
     def get_ratio_egalim_sans_bio(self, obj):
-        return utils.compute_ratio(self.get_valeur_somme_egalim_hors_bio(obj), obj.valeur_totale)
+        if obj.pourcentage_egalim_hors_bio:
+            return obj.pourcentage_egalim_hors_bio / 100
 
     def get_genere_par_cuisine_centrale(self, obj):
         return obj.is_teledeclared_by_cc

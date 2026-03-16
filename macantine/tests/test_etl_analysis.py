@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 
 import numpy as np
 import pandas as pd
@@ -214,7 +215,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                     "valeur_siqo_agg": 10,
                     "valeur_egalim_autres_agg": 10,
                 },
-                "expected_outcome": 30,
+                "expected_outcome": Decimal("0.3"),
             },
             {
                 "name": "2",
@@ -227,7 +228,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                     "valeur_siqo_agg": 10,
                     "valeur_egalim_autres_agg": None,
                 },
-                "expected_outcome": 20,
+                "expected_outcome": Decimal("0.2"),
             },
         ]
 
@@ -258,7 +259,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                     instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
                 )
                 data = self.serializer.data
-                self.assertEqual(int(data["ratio_egalim_sans_bio"]), tc["expected_outcome"])
+                self.assertEqual(data["ratio_egalim_sans_bio"], tc["expected_outcome"])
 
     def test_transform_sector_column(self):
         data = {
