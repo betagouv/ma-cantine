@@ -120,6 +120,31 @@ SECTOR_HAS_LINE_MINISTRY_LIST = [
     Sector.SOCIAL_PJJ,
 ]
 
+MAPPING_OLD_SECTOR_NAME_TO_NEW_SECTOR_VALUE = {
+    # current mappings
+    **{Sector(sector).label: sector for sector in Sector.values},
+    # old mappings
+    "Restaurants administratifs d’Etat (RA)": Sector.ADMINISTRATION_ADMINISTRATIF,
+    "Restaurants des armées/police/gendarmerie": Sector.ADMINISTRATION_ARMEE,
+    "Etablissements publics d’Etat (EPA ou EPIC)": Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC,
+    "Restaurants inter-administratifs d’Etat (RIA)": Sector.ADMINISTRATION_INTER_ADMINISTRATIF,
+    "Restaurants inter-administratifs d’État (RIA)": Sector.ADMINISTRATION_INTER_ADMINISTRATIF,
+    "Autres établissements du secteur public": Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC,  # we don't have a ADMINISTRATION_AUTRE. decision to map to ADMINISTRATION_ETABLISSEMENT_PUBLIC (cf old Mattermost discussion)
+    "Autres etablissements du secteur public": Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC,  # same
+    "Restaurants d’entreprises": Sector.ENTERPRISE_ENTREPRISE,
+    "Secondaire lycée agricole": Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE,
+    "Secondaire Lycée agricole": Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE,
+    "Etablissements d’enseignement agricole": Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE,
+    "Autres structures d’enseignement": Sector.EDUCATION_AUTRE,
+    "IME/ITEP": Sector.SOCIAL_IME,
+    "ESAT/Etablissements spécialisés": Sector.SOCIAL_ESAT,
+    "ESAT/établissements spécialisés": Sector.SOCIAL_ESAT,
+    "EHPAD/ maisons de retraite / foyers de personnes âgées": Sector.SOCIAL_EHPAD,
+    "Autres établissements sociaux et médicaux sociaux": Sector.SOCIAL_AUTRE,
+    "Centre de vacances/sportif": Sector.LOISIR_CENTRE_VACANCES,
+    "Autres etablissements non listés": Sector.AUTRES_AUTRE,
+}
+
 
 def get_sector_lib_list_from_sector_list(sector_list: list[str]) -> list[str]:
     return [Sector(sector).label for sector in (sector_list or []) if sector in Sector.values]
@@ -138,6 +163,19 @@ def get_sector_lib_list_from_canteen_snapshot(canteen_snapshot: dict) -> list[st
             if len(canteen_snapshot["sectors"]) > 0:
                 return [x.get("name") for x in (canteen_snapshot.get("sectors") or []) if x and x.get("name")]
     return []
+
+
+def get_sector_list_from_old_sector_dict_list(old_sector_dict_list: list[dict]) -> list[str]:
+    sector_list = []
+    for old_sector_dict in old_sector_dict_list or []:
+        if old_sector_dict and old_sector_dict.get("name"):
+            old_sector_name = old_sector_dict.get("name")
+            new_sector_value = MAPPING_OLD_SECTOR_NAME_TO_NEW_SECTOR_VALUE.get(old_sector_name)
+            if new_sector_value:
+                sector_list.append(new_sector_value)
+            else:
+                print(f"Warning: no mapping found for old sector name '{old_sector_name}'")
+    return list(dict.fromkeys(sector_list))  # remove duplicates while preserving order
 
 
 def get_sector_category_from_sector(sector: str) -> str:

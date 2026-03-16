@@ -5,18 +5,34 @@ from django.db.models import Func, IntegerField
 from simple_history.utils import update_change_reason
 
 from data.models import Canteen, Diagnostic
+from data.models.sector import get_sector_list_from_old_sector_dict_list
 
 
 class Command(BaseCommand):
     """
-    set_canteen_id_before_v4 : Dans les premières versions de la télédéclaration (avant v4), le canteen_id n'était pas stocké dans le canteen_snapshot du diagnostic. On peut le récupérer via la FK vers Canteen.
-    recreate_canteen_hard_deleted : Certains diagnostics télédéclarés font référence à des cantines supprimées (dans le satellite_snapshot). On recréé celles dont le SIRET n'existe pas déjà dans la base.
+    set_canteen_id_before_v4
+    - Description: dans les premières versions de la télédéclaration (avant v4), le canteen_id n'était pas stocké dans le canteen_snapshot du diagnostic. On peut le récupérer via la FK vers Canteen.
+    - Usage:
+        - python manage.py teledeclaration_fix_old --command set_canteen_id_before_v4
+        - python manage.py teledeclaration_fix_old --command set_canteen_id_before_v4 --apply
 
-    Usage:
-    - python manage.py teledeclaration_fix_old --command set_canteen_id_before_v4
-    - python manage.py teledeclaration_fix_old --command set_canteen_id_before_v4 --apply
-    - python manage.py teledeclaration_fix_old --command recreate_canteen_hard_deleted
-    - python manage.py teledeclaration_fix_old --command recreate_canteen_hard_deleted --apply
+    recreate_canteen_hard_deleted
+    - Description: certains diagnostics télédéclarés font référence à des cantines supprimées (dans le satellite_snapshot). On recréé celles dont le SIRET n'existe pas déjà dans la base.
+    - Usage:
+        - python manage.py teledeclaration_fix_old --command recreate_canteen_hard_deleted
+        - python manage.py teledeclaration_fix_old --command recreate_canteen_hard_deleted --apply
+
+    set_canteen_snapshot_sector_list_from_sectors_m2m
+    - Description: durant l'année 2025 la relation M2M entre Canteen et Sector a été remplacée par un ChoiceArrayField. Pour les versions de TD antérieure et égale à v15, cette relation M2M était donc stockée dans le canteen_snapshot "sectors", mais à partir de la v16 cela a été remplacé par le nouveau ChoiceArrayField "sector_list".
+    - Usage:
+        - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_sector_list_from_sectors_m2m
+        - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_sector_list_from_sectors_m2m --apply
+
+    set_satellites_snapshot_sector_list_from_sectors_m2m
+    - Description: durant l'année 2025 la relation M2M entre Canteen et Sector a été remplacée par un ChoiceArrayField. Pour les versions de TD antérieure et égale à v15, cette relation M2M était donc stockée dans le satellites_snapshot "sectors", mais à partir de la v16 cela a été remplacé par le nouveau ChoiceArrayField "sector_list".
+    - Usage:
+        - python manage.py teledeclaration_fix_old --command set_satellites_snapshot_sector_list_from_sectors_m2m
+        - python manage.py teledeclaration_fix_old --command set_satellites_snapshot_sector_list_from_sectors_m2m --apply
     """
 
     help = "One-time commands to fix old teledeclarations"
@@ -26,8 +42,13 @@ class Command(BaseCommand):
             "--command",
             type=str,
             required=True,
-            choices=["set_canteen_id_before_v4", "recreate_canteen_hard_deleted"],
-            help="Command to run. Options are: 'set_canteen_id_before_v4', 'recreate_canteen_hard_deleted'",
+            choices=[
+                "set_canteen_id_before_v4",
+                "recreate_canteen_hard_deleted",
+                "set_canteen_snapshot_sector_list_from_sectors_m2m",
+                "set_satellites_snapshot_sector_list_from_sectors_m2m",
+            ],
+            help="Command to run. Options are: 'set_canteen_id_before_v4', 'recreate_canteen_hard_deleted', 'set_canteen_snapshot_sector_list_from_sectors_m2m', 'set_satellites_snapshot_sector_list_from_sectors_m2m'",
         )
         parser.add_argument(
             "--apply",
@@ -49,6 +70,10 @@ class Command(BaseCommand):
             self.set_canteen_id_before_v4(apply)
         elif command == "recreate_canteen_hard_deleted":
             self.recreate_canteen_hard_deleted(apply)
+        elif command == "set_canteen_snapshot_sector_list_from_sectors_m2m":
+            self.set_canteen_snapshot_sector_list_from_sectors_m2m(apply)
+        elif command == "set_satellites_snapshot_sector_list_from_sectors_m2m":
+            self.set_satellites_snapshot_sector_list_from_sectors_m2m(apply)
 
     def set_canteen_id_before_v4(self, apply):
         diagnostic_updated_count = 0
@@ -56,7 +81,7 @@ class Command(BaseCommand):
         diagnostic_qs = (
             Diagnostic.objects.select_related("canteen").teledeclared().exclude(teledeclaration_version__gte=4)
         )
-        print("Diagnostics teledeclared with version < 4:", diagnostic_qs.count())
+        print("Diagnostics teledeclared (with version < 4):", diagnostic_qs.count())
         print("List of versions found:", Counter(diagnostic_qs.values_list("teledeclaration_version", flat=True)))
         print("List of years found:", Counter(diagnostic_qs.values_list("year", flat=True)))
 
@@ -146,3 +171,54 @@ class Command(BaseCommand):
                     print(f"Canteen satellite in Diagnostic {diagnostic.id} has no id, skipping")
 
         print("Done! Canteens recreated:", canteens_created_count)
+
+    def set_canteen_snapshot_sector_list_from_sectors_m2m(self, apply):
+        diagnostic_qs = Diagnostic.objects.teledeclared().filter(
+            teledeclaration_version__gte=9, teledeclaration_version__lte=15
+        )
+        print("Diagnostics teledeclared (between v9 & v15):", diagnostic_qs.count())
+
+        diagnostics_updated_count = 0
+        for index, diagnostic in enumerate(diagnostic_qs):
+            canteen_snapshot_temp = diagnostic.canteen_snapshot
+            if canteen_snapshot_temp:
+                sector_list_new = []
+                if "sectors" in canteen_snapshot_temp:
+                    sectors_old = canteen_snapshot_temp["sectors"]
+                    sector_list_new = get_sector_list_from_old_sector_dict_list(sectors_old)
+                if apply:
+                    canteen_snapshot_temp["sector_list"] = sector_list_new
+                    diagnostic.canteen_snapshot = canteen_snapshot_temp
+                    diagnostic.save(update_fields=["canteen_snapshot"])
+                    update_change_reason(diagnostic, "Script: set sector_list from sectors M2M")
+                diagnostics_updated_count += 1
+            if index % 5000 == 0:
+                print(f"Processed {index} diagnostics out of {diagnostic_qs.count()}")
+
+        print("Done! Diagnostics updated:", diagnostics_updated_count)
+
+    def set_satellites_snapshot_sector_list_from_sectors_m2m(self, apply):
+        diagnostic_qs = Diagnostic.objects.teledeclared().filter(
+            teledeclaration_version__gte=9, teledeclaration_version__lte=15
+        )
+        print("Diagnostics teledeclared (between v9 & v15):", diagnostic_qs.count())
+
+        diagnostics_updated_count = 0
+        for index, diagnostic in enumerate(diagnostic_qs):
+            satellites_snapshot_temp = diagnostic.satellites_snapshot
+            if satellites_snapshot_temp:
+                for satellite in satellites_snapshot_temp:
+                    sector_list_new = []
+                    if "sectors" in satellite:
+                        sectors_old = satellite["sectors"]
+                        sector_list_new = get_sector_list_from_old_sector_dict_list(sectors_old)
+                    if apply:
+                        satellite["sector_list"] = sector_list_new
+                        diagnostic.satellites_snapshot = satellites_snapshot_temp
+                        diagnostic.save(update_fields=["satellites_snapshot"])
+                        update_change_reason(diagnostic, "Script: set satellite sector_list from sectors M2M")
+                    diagnostics_updated_count += 1
+            if index % 5000 == 0:
+                print(f"Processed {index} diagnostics out of {diagnostic_qs.count()}")
+
+        print("Done! Diagnostics updated:", diagnostics_updated_count)
