@@ -670,6 +670,25 @@ class CanteenCreatedBeforeQuerySetTest(TestCase):
         self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2025).count(), 4)
 
 
+class CanteenNotDeletedBeforeQuerySetTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        CanteenFactory()
+        canteen_deleted_before_2024_campaign_end = CanteenFactory()
+        canteen_deleted_during_2024_campaign = CanteenFactory()
+        canteen_deleted_after_2024_campaign = CanteenFactory()
+        with freeze_time("2025-01-01"):  # before the 2024 campaign
+            canteen_deleted_before_2024_campaign_end.delete()
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            canteen_deleted_during_2024_campaign.delete()
+        with freeze_time("2025-06-30"):  # after the 2024 campaign
+            canteen_deleted_after_2024_campaign.delete()
+
+    def test_not_deleted_before_year_campaign_end_date(self):
+        self.assertEqual(Canteen.all_objects.count(), 4)
+        self.assertEqual(Canteen.all_objects.not_deleted_before_year_campaign_end_date(2024).count(), 2)
+
+
 class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
