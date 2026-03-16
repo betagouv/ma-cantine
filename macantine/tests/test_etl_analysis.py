@@ -258,7 +258,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                     instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
                 )
                 data = self.serializer.data
-                self.assertEqual(int(data["ratio_egalim_sans_bio"]), tc["expected_outcome"])
+                self.assertEqual(data["ratio_egalim_sans_bio"], tc["expected_outcome"])
 
     def test_transform_sector_column(self):
         data = {
