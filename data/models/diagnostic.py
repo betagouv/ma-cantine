@@ -20,6 +20,7 @@ from macantine.utils import (
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
     is_in_teledeclaration_or_correction,
+    objectifs_egalim_atteints,
 )
 
 
@@ -804,6 +805,12 @@ class Diagnostic(models.Model):
         "teledeclaration_version",
         "teledeclaration_id",
     ]
+    TELEDECLARATION_EGALIM_FIELDS = [
+        "pourcentage_bio",
+        "pourcentage_egalim",
+        "pourcentage_egalim_hors_bio",
+        "objectifs_egalim_atteints",
+    ]
     TELEDECLARATION_SNAPSHOT_FIELDS = [
         "canteen_snapshot",
         "satellites_snapshot",
@@ -1581,6 +1588,30 @@ class Diagnostic(models.Model):
         encoder=CustomJSONEncoder,
     )
 
+    # EGalim
+    pourcentage_bio = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    pourcentage_egalim = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    pourcentage_egalim_hors_bio = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
+    objectifs_egalim_atteints = models.BooleanField(
+        blank=True,
+        null=True,
+    )
+
     # Data quality
     invalid_reason_list = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=InvalidReason.choices),
@@ -1648,6 +1679,12 @@ class Diagnostic(models.Model):
         self.valeur_egalim_hors_bio_agg = self.label_group_group_sum("egalim_hors_bio")
         self.valeur_egalim_agg = self.label_group_group_sum("egalim")
 
+    def populate_egalim_stats(self):
+        self.pourcentage_bio = self.compute_pourcentage_bio()
+        self.pourcentage_egalim = self.compute_pourcentage_egalim()
+        self.pourcentage_egalim_hors_bio = self.compute_pourcentage_egalim_hors_bio()
+        self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
+
     def label_sum(self, label: str):
         sum = 0
         is_null = True
@@ -1690,6 +1727,26 @@ class Diagnostic(models.Model):
         return sum_int_with_potential_null(
             [getattr(self, f"valeur_{group}") for group in Diagnostic.APPRO_LABELS_GROUPS_GROUPS_MAPPING["egalim"]]
         )
+
+    def compute_pourcentage_bio(self):
+        if self.valeur_totale and self.valeur_bio_agg is not None:
+            if self.valeur_totale >= self.valeur_bio_agg:
+                return round(100 * self.valeur_bio_agg / self.valeur_totale, 2)
+
+    def compute_pourcentage_egalim(self):
+        if self.valeur_totale and self.valeur_egalim_agg is not None:
+            if self.valeur_totale >= self.valeur_egalim_agg:
+                return round(100 * self.valeur_egalim_agg / self.valeur_totale, 2)
+
+    def compute_pourcentage_egalim_hors_bio(self):
+        if self.valeur_totale and self.valeur_egalim_hors_bio_agg is not None:
+            if self.valeur_totale >= self.valeur_egalim_hors_bio_agg:
+                return round(100 * self.valeur_egalim_hors_bio_agg / self.valeur_totale, 2)
+
+    def compute_objectifs_egalim_atteints(self):
+        if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
+            canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
+            return objectifs_egalim_atteints(self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
 
     @property
     def valeur_totale_is_filled(self):
@@ -1898,9 +1955,10 @@ class Diagnostic(models.Model):
             "email": applicant.email,
         }
 
-        # aggregated data
+        # aggregated data & EGalim stats
         # TODO: compute on save() instead
         self.populate_aggregated_values()
+        self.populate_egalim_stats()
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
@@ -1930,6 +1988,8 @@ class Diagnostic(models.Model):
         for field in self.TELEDECLARATION_SNAPSHOT_FIELDS:
             setattr(self, field, None)
         for field in self.TELEDECLARATION_FIELDS:
+            setattr(self, field, None)
+        for field in self.TELEDECLARATION_EGALIM_FIELDS:
             setattr(self, field, None)
 
         self.save()

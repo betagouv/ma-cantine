@@ -77,6 +77,37 @@ def get_egalim_group(region_list):
     return "hexagone"  # default
 
 
+def objectifs_egalim_atteints(pourcentage_bio, pourcentage_egalim, canteen_region):
+    """
+    Determine if the EGALIM objectives are met.
+
+    Args:
+        pourcentage_bio (float): The percentage of organic products.
+        pourcentage_egalim (float): The percentage of EGALIM-compliant products.
+        canteen_region (str): The region of the canteen.
+
+    Returns:
+        bool: True if the objectives are met, False otherwise.
+    """
+    # default thresholds
+    bio_threshold = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
+    egalim_threshold = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
+
+    # override thresholds for specific regions
+    if canteen_region:
+        if canteen_region in EGALIM_OBJECTIVES["groupe_1"]["region_list"]:
+            bio_threshold = EGALIM_OBJECTIVES["groupe_1"]["bio_percent"]
+            egalim_threshold = EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"]
+        elif canteen_region in EGALIM_OBJECTIVES["groupe_2"]["region_list"]:
+            bio_threshold = EGALIM_OBJECTIVES["groupe_2"]["bio_percent"]
+            egalim_threshold = EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"]
+        elif canteen_region in EGALIM_OBJECTIVES["groupe_3"]["region_list"]:
+            bio_threshold = EGALIM_OBJECTIVES["groupe_3"]["bio_percent"]
+            egalim_threshold = EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"]
+
+    return pourcentage_bio >= bio_threshold and pourcentage_egalim >= egalim_threshold
+
+
 CAMPAIGN_DATES = {
     2021: {
         "teledeclaration_start_date": datetime(2022, 7, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
