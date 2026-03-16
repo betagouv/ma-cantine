@@ -111,11 +111,9 @@ export default {
         })
         .catch(() => {
           this.$set(this, "canteen", null)
-          this.$router.replace({ name: "GestionnaireTableauDeBord" }).then(() => {
-            this.$store.dispatch("notify", {
-              message: "Nous n'avons pas trouvé cette cantine",
-              status: "error",
-            })
+          this.$store.dispatch("notify", {
+            message: "Nous n'avons pas trouvé cette cantine",
+            status: "error",
           })
         })
     },
