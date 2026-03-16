@@ -33,7 +33,6 @@ from data.utils import (
     has_arrayfield_missing_query,
     optimize_image,
 )
-from macantine.utils import CAMPAIGN_DATES
 from data.validators import canteen as canteen_validators
 from macantine.utils import get_year_campaign_end_date_or_today_date, is_in_correction, is_in_teledeclaration
 
@@ -102,9 +101,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.none()
 
     def not_deleted_before_year_campaign_end_date(self, year):
-        year = int(year)
-        end_campaign_date = CAMPAIGN_DATES[year]["teledeclaration_end_date"]
-        return self.filter(Q(deletion_date__isnull=True) | Q(deletion_date__gt=end_campaign_date))
+        canteen_deleted_after_date = get_year_campaign_end_date_or_today_date(year)
+        if canteen_deleted_after_date:
+            return self.filter(Q(deletion_date__isnull=True) | Q(deletion_date__gt=canteen_deleted_after_date))
+        return self.none()
 
     def is_groupe(self):
         return self.filter(is_groupe_query())
