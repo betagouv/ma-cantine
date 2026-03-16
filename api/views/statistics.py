@@ -107,7 +107,7 @@ class CanteenStatisticsView(APIView):
         )
         canteens = self._apply_canteen_filters(canteen_qs, filters)
 
-        teledeclaration_qs = Diagnostic.objects.publicly_visible().valid_td_by_year(year)
+        teledeclaration_qs = Diagnostic.objects.publicly_visible().valid_td_site_by_year(year)
         teledeclarations = self._apply_snapshot_filters(teledeclaration_qs, filters)
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
