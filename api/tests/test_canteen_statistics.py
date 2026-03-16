@@ -499,16 +499,10 @@ class CanteenStats1Td1SiteApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         with freeze_time(date_in_2023_teledeclaration_campaign):
-            cls.central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
-            CanteenFactory(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=cls.central.siret
-            )
-            CanteenFactory(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=cls.central.siret
-            )
-            diagnostic = DiagnosticFactory(
-                canteen=cls.central, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            )
+            groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+            CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
+            CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
+            diagnostic = DiagnosticFactory(canteen=groupe, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
             diagnostic.teledeclare(applicant=UserFactory())
             # Create a fake diagnostic for 2023 generated
             fake_satellite_generated = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
@@ -520,9 +514,7 @@ class CanteenStats1Td1SiteApiTest(APITestCase):
             fake_satellite_generated_diagnostic.save()
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            diagnostic = DiagnosticFactory(
-                canteen=cls.central, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            )
+            diagnostic = DiagnosticFactory(canteen=groupe, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
             diagnostic.teledeclare(applicant=UserFactory())
             call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
@@ -530,12 +522,12 @@ class CanteenStats1Td1SiteApiTest(APITestCase):
         response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["canteenCount"], 3)
         self.assertEqual(body["teledeclarationsCount"], 2)
 
     def test_not_use_1td1site_diagnostics_for_2023(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": 2023})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)
+        self.assertEqual(body["canteenCount"], 3)
         self.assertEqual(body["teledeclarationsCount"], 1)
