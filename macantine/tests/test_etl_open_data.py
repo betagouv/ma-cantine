@@ -1,5 +1,6 @@
 import json
 import os
+from decimal import Decimal
 
 import pandas as pd
 import requests_mock
@@ -205,11 +206,8 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["canteen_region_lib"], "Auvergne-Rhône-Alpes")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_sector_list"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_line_ministry"], None)
-        self.assertGreater(
-            canteen_site_diagnostic_2024["teledeclaration_ratio_bio"],
-            0,
-            "The bio value is aggregated from bio fields and should be greater than 0",
-        )
+        self.assertEqual(canteen_site_diagnostic_2024["teledeclaration_ratio_bio"], Decimal("0.4"))
+        self.assertEqual(canteen_site_diagnostic_2024["teledeclaration_ratio_egalim_hors_bio"], Decimal("0.3"))
 
     @freeze_time("2023-05-14")  # during the 2022 campaign
     def test_update_ressource(self, mock):
