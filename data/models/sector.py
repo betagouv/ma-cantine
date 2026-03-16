@@ -129,8 +129,8 @@ MAPPING_OLD_SECTOR_NAME_TO_NEW_SECTOR_VALUE = {
     "Etablissements publics d’Etat (EPA ou EPIC)": Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC,
     "Restaurants inter-administratifs d’Etat (RIA)": Sector.ADMINISTRATION_INTER_ADMINISTRATIF,
     "Restaurants inter-administratifs d’État (RIA)": Sector.ADMINISTRATION_INTER_ADMINISTRATIF,
-    "Autres établissements du secteur public": Sector.AUTRES_AUTRE,  # we don't have a ADMINISTRATION_AUTRE
-    "Autres etablissements du secteur public": Sector.AUTRES_AUTRE,  # we don't have a ADMINISTRATION_AUTRE
+    "Autres établissements du secteur public": Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC,  # we don't have a ADMINISTRATION_AUTRE. decision to map to ADMINISTRATION_ETABLISSEMENT_PUBLIC (cf old Mattermost discussion)
+    "Autres etablissements du secteur public": Sector.ADMINISTRATION_ETABLISSEMENT_PUBLIC,  # same
     "Restaurants d’entreprises": Sector.ENTERPRISE_ENTREPRISE,
     "Secondaire lycée agricole": Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE,
     "Secondaire Lycée agricole": Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE,
