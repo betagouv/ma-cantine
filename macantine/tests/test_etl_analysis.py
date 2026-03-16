@@ -1,5 +1,4 @@
 import json
-from decimal import Decimal
 
 import numpy as np
 import pandas as pd
@@ -215,7 +214,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                     "valeur_siqo_agg": 10,
                     "valeur_egalim_autres_agg": 10,
                 },
-                "expected_outcome": Decimal("0.3"),
+                "expected_outcome": 30,
             },
             {
                 "name": "2",
@@ -228,7 +227,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                     "valeur_siqo_agg": 10,
                     "valeur_egalim_autres_agg": None,
                 },
-                "expected_outcome": Decimal("0.2"),
+                "expected_outcome": 20,
             },
         ]
 
