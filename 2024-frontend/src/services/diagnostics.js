@@ -62,4 +62,16 @@ const getTeledeclareButton = (action) => {
   }
 }
 
-export default { getBadge, getTeledeclareButton }
+const getCompleteButton = (action) => {
+  if (!toCompleteActions.includes(action)) return false
+
+  return {
+    label: "À compléter",
+    name: "MyProgress",
+    type: "secondary",
+    noIcon: true,
+    measure: "etablissement",
+  }
+}
+
+export default { getBadge, getTeledeclareButton, getCompleteButton }
