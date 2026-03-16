@@ -4,6 +4,8 @@ from django.core.management.base import BaseCommand
 from django.db.models import Func, IntegerField
 from simple_history.utils import update_change_reason
 
+from common.api.datagouv import map_pat_list_to_communes_insee_code
+from common.api.decoupage_administratif import map_communes_infos
 from data.models import Canteen, Diagnostic
 from data.models.sector import get_sector_list_from_old_sector_dict_list
 
@@ -33,6 +35,12 @@ class Command(BaseCommand):
     - Usage:
         - python manage.py teledeclaration_fix_old --command set_satellites_snapshot_sector_list_from_sectors_m2m
         - python manage.py teledeclaration_fix_old --command set_satellites_snapshot_sector_list_from_sectors_m2m --apply
+
+    set_canteen_snapshot_epci_and_pat_list_from_city_insee_code
+    - Description: jusqu'à 2025, on n'avait pas toutes les données géo dans les canteen_snapshot. On avait city_insee_code, department & region. Mais pas epci ni pat_list.
+    - Usage:
+        - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_epci_and_pat_list_from_city_insee_code
+        - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_epci_and_pat_list_from_city_insee_code --apply
     """
 
     help = "One-time commands to fix old teledeclarations"
@@ -47,8 +55,9 @@ class Command(BaseCommand):
                 "recreate_canteen_hard_deleted",
                 "set_canteen_snapshot_sector_list_from_sectors_m2m",
                 "set_satellites_snapshot_sector_list_from_sectors_m2m",
+                "set_canteen_snapshot_epci_and_pat_list_from_city_insee_code",
             ],
-            help="Command to run. Options are: 'set_canteen_id_before_v4', 'recreate_canteen_hard_deleted', 'set_canteen_snapshot_sector_list_from_sectors_m2m', 'set_satellites_snapshot_sector_list_from_sectors_m2m'",
+            help="Command to run. Options are: 'set_canteen_id_before_v4', 'recreate_canteen_hard_deleted', 'set_canteen_snapshot_sector_list_from_sectors_m2m', 'set_satellites_snapshot_sector_list_from_sectors_m2m', 'set_canteen_snapshot_epci_and_pat_list_from_city_insee_code'",
         )
         parser.add_argument(
             "--apply",
@@ -74,6 +83,8 @@ class Command(BaseCommand):
             self.set_canteen_snapshot_sector_list_from_sectors_m2m(apply)
         elif command == "set_satellites_snapshot_sector_list_from_sectors_m2m":
             self.set_satellites_snapshot_sector_list_from_sectors_m2m(apply)
+        elif command == "set_canteen_snapshot_epci_and_pat_list_from_city_insee_code":
+            self.set_canteen_snapshot_epci_and_pat_list_from_city_insee_code(apply)
 
     def set_canteen_id_before_v4(self, apply):
         diagnostic_updated_count = 0
@@ -217,6 +228,34 @@ class Command(BaseCommand):
                         diagnostic.satellites_snapshot = satellites_snapshot_temp
                         diagnostic.save(update_fields=["satellites_snapshot"])
                         update_change_reason(diagnostic, "Script: set satellite sector_list from sectors M2M")
+                    diagnostics_updated_count += 1
+            if index % 5000 == 0:
+                print(f"Processed {index} diagnostics out of {diagnostic_qs.count()}")
+
+        print("Done! Diagnostics updated:", diagnostics_updated_count)
+
+    def set_canteen_snapshot_epci_and_pat_list_from_city_insee_code(self, apply):
+        diagnostic_qs = Diagnostic.objects.teledeclared().filter(teledeclaration_version__lte=16)
+        print("Diagnostics teledeclared (until v16 included):", diagnostic_qs.count())
+
+        communes_details = map_communes_infos()
+        pat_mapping = map_pat_list_to_communes_insee_code()
+
+        diagnostics_updated_count = 0
+        for index, diagnostic in enumerate(diagnostic_qs):
+            canteen_snapshot_temp = diagnostic.canteen_snapshot
+            if canteen_snapshot_temp:
+                city_insee_code = canteen_snapshot_temp.get("city_insee_code")
+                if city_insee_code:
+                    # get epci & pat from city_insee_code
+                    epci = communes_details.get(city_insee_code, {}).get("epci")
+                    pat_list = pat_mapping.get(city_insee_code, [])
+                    if apply:
+                        canteen_snapshot_temp["epci"] = epci
+                        canteen_snapshot_temp["pat_list"] = [pat["pat"] for pat in pat_list]
+                        diagnostic.canteen_snapshot = canteen_snapshot_temp
+                        diagnostic.save(update_fields=["canteen_snapshot"])
+                        update_change_reason(diagnostic, "Script: set epci and pat_list from city_insee_code")
                     diagnostics_updated_count += 1
             if index % 5000 == 0:
                 print(f"Processed {index} diagnostics out of {diagnostic_qs.count()}")
