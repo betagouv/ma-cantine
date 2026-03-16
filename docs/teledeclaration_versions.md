@@ -12,7 +12,7 @@ Actuellement les dates sont celles des 1ères créations de TD avec la version c
 |12|2024|07/01/2025|05/03/2025|4879|- Nouveau champ Diagnostic.service_type (et arrêter de remplir Diagnostic.vegetarian_menu_type)|
 |11||||0|- Check pour s'assurer que Diagnostic.declaration_mode est rempli pour les cuisines centrales|
 |10|2022, 2023|26/06/2023|11/06/2024|12123|- Ajout du champ Canteen.department<br>- Ajout du champ Canteen.region|
-|9|2021, 2022|13/02/2023|26/06/2023|4724|- Suppression de certains champs : Diagnostic.value_pat_ht, Diagnostic.value_label_hve, Diagnostic.value_label_rouge, Diagnostic.value_label_aoc_igp, Diagnostic.value_pat_ht<br>- Ajout des champs Declared data>teledeclaration>Year, Gaspi & Vege|
+|9|2022|13/02/2023|26/06/2023|4724|- Suppression de certains champs : Diagnostic.value_pat_ht, Diagnostic.value_label_hve, Diagnostic.value_label_rouge, Diagnostic.value_label_aoc_igp, Diagnostic.value_pat_ht<br>- Ajout des champs Declared data>teledeclaration>Year, Gaspi & Vege<br>- Ajout de satellites_snapshot (id, name, siret, sectors, daily_meal_count, yearly_meal_count)|
 |8||||0||
 |7||||0||
 |6||||0||
