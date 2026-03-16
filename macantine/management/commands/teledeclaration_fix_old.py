@@ -252,7 +252,7 @@ class Command(BaseCommand):
                     pat_list = pat_mapping.get(city_insee_code, [])
                     if apply:
                         canteen_snapshot_temp["epci"] = epci
-                        canteen_snapshot_temp["pat_list"] = pat_list
+                        canteen_snapshot_temp["pat_list"] = [pat["pat"] for pat in pat_list]
                         diagnostic.canteen_snapshot = canteen_snapshot_temp
                         diagnostic.save(update_fields=["canteen_snapshot"])
                         update_change_reason(diagnostic, "Script: set epci and pat_list from city_insee_code")

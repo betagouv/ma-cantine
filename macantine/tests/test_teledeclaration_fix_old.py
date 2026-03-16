@@ -90,5 +90,5 @@ class TestTeledeclarationFixOldCommandTest(TestCase):
             diagnostic_canteen_without_geo_data,
         ]:
             diagnostic.refresh_from_db()
-            self.assertIsNotNone(diagnostic.canteen_snapshot.get("epci"))
-            self.assertIsNotNone(diagnostic.canteen_snapshot.get("pat_list"))
+            self.assertEqual(diagnostic.canteen_snapshot.get("epci"), "200040715")
+            self.assertEqual(diagnostic.canteen_snapshot.get("pat_list"), ["1294", "1295"])
