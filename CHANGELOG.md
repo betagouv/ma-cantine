@@ -6,6 +6,31 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.20.0](https://github.com/betagouv/ma-cantine/compare/v2026.19.1...v2026.20.0) (2026-03-16)
+
+
+### Nouveautés
+
+* **Tableau de bord:** remplacer le badge "À compléter" par un bouton qui renvoit vers le bilan ([#6492](https://github.com/betagouv/ma-cantine/issues/6492)) ([e623dd6](https://github.com/betagouv/ma-cantine/commit/e623dd611bdc00613e29d197b86effec146fb268))
+* **Télédéclarations:** stocker le pourcentage_bio, pourcentage_egalim, pourcentage_egalim_hors_bio & objectifs_egalim_atteints + afficher dans l'admin + calculer à chaque TD + commande pour remplir les anciennes TD ([#6481](https://github.com/betagouv/ma-cantine/issues/6481)) ([903ee65](https://github.com/betagouv/ma-cantine/commit/903ee65096a541d26b5bb2290fd1abc433bb2e2f))
+
+
+### Améliorations
+
+* **Admin:** Cantines: ajout d'une phrase d'explication pour le champs declaration_donnees_2025 (frequence nuit) ([#6495](https://github.com/betagouv/ma-cantine/issues/6495)) ([84f260f](https://github.com/betagouv/ma-cantine/commit/84f260fa048518ac3cc45ec1216201b159f7589a))
+* **Admin:** Cantines: ajout des phrases explicatives pour les champs géo et le code insee ([#6493](https://github.com/betagouv/ma-cantine/issues/6493)) ([afd81db](https://github.com/betagouv/ma-cantine/commit/afd81dbb77aabb151af46e18848e6a28a291ea8a))
+* **Metabase:** Télédéclarations: rajoute le champ is_filled aux exports ([#6491](https://github.com/betagouv/ma-cantine/issues/6491)) ([f6b8930](https://github.com/betagouv/ma-cantine/commit/f6b8930aa329afe9989503b739f7f021d4db073f))
+
+
+### Corrections (bugs, typos...)
+
+* **Suivi des achats:** augmente la pagination de 10 à 500 ([#6489](https://github.com/betagouv/ma-cantine/issues/6489)) ([96d6dd0](https://github.com/betagouv/ma-cantine/commit/96d6dd01eeb7da1736a1edbfdaa2902e87daff0c))
+
+
+### Technique
+
+* **Brevo:** simplifie le code d'inscription à la newsletter ([#6486](https://github.com/betagouv/ma-cantine/issues/6486)) ([9679ac9](https://github.com/betagouv/ma-cantine/commit/9679ac9061251dff3f3b8df9a1df9466e63bc28d))
+
 ## [2026.19.1](https://github.com/betagouv/ma-cantine/compare/v2026.19.0...v2026.19.1) (2026-03-13)
 
 
