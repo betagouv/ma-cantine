@@ -87,7 +87,11 @@ class CanteenStatisticsView(APIView):
         filters = self._extract_query_filters(request)
         egalim_group = self._get_egalim_group(filters)
 
-        canteen_qs = Canteen.objects.publicly_visible().created_before_year_campaign_end_date(year)
+        canteen_qs = (
+            Canteen.all_objects.publicly_visible()
+            .created_before_year_campaign_end_date(year)
+            .not_deleted_before_year_campaign_end_date(year)
+        )
         canteens = self._apply_query_filters(canteen_qs, filters)
 
         teledeclaration_qs = Diagnostic.all_objects.publicly_visible().valid_td_site_by_year(year)
