@@ -6,6 +6,24 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.20.1](https://github.com/betagouv/ma-cantine/compare/v2026.20.0...v2026.20.1) (2026-03-16)
+
+
+### Améliorations
+
+* **API Stats:** utiliser le nouveau champ 'objectifs_egalim_atteints' pour calculer le pourcentage de 'Télédéclarations qui ont atteint l'objectif EGalim' ([#6501](https://github.com/betagouv/ma-cantine/issues/6501)) ([5fd9135](https://github.com/betagouv/ma-cantine/commit/5fd9135a0f9a29635e04a27a5ca1664fca7c84b2))
+* **Celery:** config supplémentaire pour tenter de mieux gérer le timeout ([#6444](https://github.com/betagouv/ma-cantine/issues/6444)) ([1e42d64](https://github.com/betagouv/ma-cantine/commit/1e42d64b74d42b3b04c11561c84e1380aa3f5494))
+* **Metabase:** Télédéclarations: utiliser les nouveaux champs pourcentage_* pour les ratio_* au lieu de les recalculer ([#6502](https://github.com/betagouv/ma-cantine/issues/6502)) ([c1924a5](https://github.com/betagouv/ma-cantine/commit/c1924a5b8fdbdcec9142a355e11b4f246e7072d3))
+* **Observatoire:** prend en compte la date de suppression d'une cantine pour le filtre année ([#6504](https://github.com/betagouv/ma-cantine/issues/6504)) ([fd7adf7](https://github.com/betagouv/ma-cantine/commit/fd7adf7b3a0f3477c19892fdf1fc56ad00a14434))
+* **Open Data:** Télédéclarations: utiliser les nouveaux champs pourcentage_* pour les ratio_* au lieu de les recalculer ([#6503](https://github.com/betagouv/ma-cantine/issues/6503)) ([62c64b6](https://github.com/betagouv/ma-cantine/commit/62c64b6e4c52236fb5b432490d64e96e4895cfe9))
+* **Télédéclarations:** pour les TD des campagnes 2023 à 2025, remplir leur sector_list à partir de leur sectors ([#6400](https://github.com/betagouv/ma-cantine/issues/6400)) ([497fc79](https://github.com/betagouv/ma-cantine/commit/497fc7908591d1855eea220685a05d3818790fd2))
+* **Télédéclarations:** remplir les canteen_snapshot avec les epci & pat_list (à partir de leur city_insee_code) ([#6475](https://github.com/betagouv/ma-cantine/issues/6475)) ([2cfe61c](https://github.com/betagouv/ma-cantine/commit/2cfe61cbf28cea3633afa4b51c4ebfbd5ffec9b9))
+
+
+### Corrections (bugs, typos...)
+
+* **Observatoire:** affiche la date du jour si la date de fin de la campagne est supérieure ([#6505](https://github.com/betagouv/ma-cantine/issues/6505)) ([93c0993](https://github.com/betagouv/ma-cantine/commit/93c0993cec62c490c61b6a5468096ec5bba99fc4))
+
 ## [2026.20.0](https://github.com/betagouv/ma-cantine/compare/v2026.19.1...v2026.20.0) (2026-03-16)
 
 
