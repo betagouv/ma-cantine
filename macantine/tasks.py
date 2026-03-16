@@ -27,8 +27,9 @@ from .celery import app
 from .etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_CANTEEN_RAW,
+    ETL_ANALYSIS_CANTEEN_MANAGER_RAW,
     ETL_ANALYSIS_TELEDECLARATIONS,
-    ETL_ANALYSIS_TELEDECLARATION_RAW,
+    ETL_ANALYSIS_DIAGNOSTIC_RAW,
     ETL_ANALYSIS_USER_RAW,
 )
 from .etl.open_data import (
@@ -301,10 +302,11 @@ def export_dataset_raw_analysis():
     logger.info("Starting export_dataset_raw_analysis task")
 
     datasets = {
-        "teledeclarations_raw_analysis": ETL_ANALYSIS_TELEDECLARATION_RAW(),
+        "diagnostics_raw_analysis": ETL_ANALYSIS_DIAGNOSTIC_RAW(),
         "canteens_raw_analysis": ETL_ANALYSIS_CANTEEN_RAW(),
         # "purchases_raw_analysis": ETL_ANALYSIS_PURCHASE_RAW(),
         "users_raw_analysis": ETL_ANALYSIS_USER_RAW(),
+        "canteen_managers_raw_analysis": ETL_ANALYSIS_CANTEEN_MANAGER_RAW(),
     }
     result = export_datasets(datasets)
 
