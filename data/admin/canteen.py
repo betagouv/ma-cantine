@@ -121,7 +121,13 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             "Informations supplémentaires",
             {"fields": ("logo", "is_filled", "publication_status_display", "has_been_claimed")},
         ),
-        ("Télédéclaration", {"fields": Canteen.TD_FIELDS}),
+        (
+            "Télédéclaration",
+            {
+                "description": "ℹ️ Champ calculé toutes les nuits (pendant la campagne) <br /><br /><hr />",
+                "fields": Canteen.TD_FIELDS,
+            },
+        ),
         (
             "Lien tracké lors de la création",
             {"fields": Canteen.MATOMO_FIELDS},
