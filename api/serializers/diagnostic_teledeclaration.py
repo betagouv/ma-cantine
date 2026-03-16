@@ -39,6 +39,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     modele_economique = serializers.CharField(source="canteen_snapshot.economic_model", read_only=True)
     management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
     production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
+    is_filled = serializers.BooleanField(source="canteen_snapshot.is_filled", read_only=True)
     declaration_donnees_2021 = serializers.SerializerMethodField()
     declaration_donnees_2022 = serializers.SerializerMethodField()
     declaration_donnees_2023 = serializers.SerializerMethodField()
@@ -114,6 +115,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "modele_economique",
             "management_type",
             "production_type",
+            "is_filled",
             "declaration_donnees_2021",
             "declaration_donnees_2022",
             "declaration_donnees_2023",

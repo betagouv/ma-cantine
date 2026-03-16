@@ -124,6 +124,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(ANALYSIS, etl.EXTRACTOR):
                         satellite_row["region"] = satellite.get("region", None)
                         satellite_row["secteur"] = ",".join(get_sector_lib_list_from_canteen_snapshot(satellite))
                         satellite_row["categorie"] = ",".join(get_category_lib_list_from_canteen_snapshot(satellite))
+                        satellite_row["is_filled"] = satellite.get("is_filled", None)
                     # split numerical values
                     satellite_row = self.split_cc_values(satellite_row, nbre_satellites)
                     # append
