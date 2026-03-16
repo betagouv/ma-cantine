@@ -100,7 +100,13 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     filter_vertical = ("managers",)
     fieldsets = (
         (None, {"fields": ("name", "siret", "siren_unite_legale")}),
-        ("Informations géographiques", {"fields": Canteen.GEO_FIELDS}),
+        (
+            "Informations géographiques",
+            {
+                "description": "Les informations ci-dessous viennent de l’annuaire des entreprises et de France PAT. Celles-ci ne sont pas modifiable.",
+                "fields": Canteen.GEO_FIELDS,
+            },
+        ),
         (
             "Informations générales",
             {
