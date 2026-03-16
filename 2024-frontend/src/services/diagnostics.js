@@ -51,11 +51,12 @@ const getBadge = (name, campaignDates) => {
 }
 
 const getTeledeclareButton = (action) => {
-  if (action !== "40_teledeclare") return false
+  if (!toTeledeclareActions.includes(action)) return false
 
   return {
     label: "Télédéclarer",
     name: "MyProgress",
+    type: "primary",
     icon: "fr-icon-send-plane-line",
     measure: "etablissement",
   }
