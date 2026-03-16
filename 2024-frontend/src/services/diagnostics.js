@@ -68,7 +68,7 @@ const getCompleteButton = (action) => {
   return {
     label: "À compléter",
     name: "MyProgress",
-    type: "secondary",
+    type: "tertiary",
     noIcon: true,
     measure: "etablissement",
   }
