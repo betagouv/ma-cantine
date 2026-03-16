@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.core.management import call_command
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -492,3 +493,41 @@ class CanteenStatsApiTest(APITestCase):
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class CanteenStats1Td1SiteApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        with freeze_time(date_in_2023_teledeclaration_campaign):
+            groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+            CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
+            CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
+            diagnostic = DiagnosticFactory(canteen=groupe, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+            diagnostic.teledeclare(applicant=UserFactory())
+            # Create a fake diagnostic for 2023 generated
+            fake_satellite_generated = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+            fake_satellite_generated_diagnostic = DiagnosticFactory(
+                year=2023, canteen=fake_satellite_generated, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
+            fake_satellite_generated_diagnostic.teledeclare(applicant=UserFactory())
+            fake_satellite_generated_diagnostic.generated_from_groupe_diagnostic = True
+            fake_satellite_generated_diagnostic.save()
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(canteen=groupe, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+            diagnostic.teledeclare(applicant=UserFactory())
+            call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+    def test_use_1td1site_diagnostics_for_2024(self):
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["teledeclarationsCount"], 2)
+
+    def test_not_use_1td1site_diagnostics_for_2023(self):
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2023})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["teledeclarationsCount"], 1)
