@@ -23,13 +23,13 @@ class Command(BaseCommand):
         - python manage.py teledeclaration_fix_old --command recreate_canteen_hard_deleted --apply
 
     set_canteen_snapshot_sector_list_from_sectors_m2m
-    - Description: avant 2025, il y avait une relation M2M entre Canteen et Sector. Entre 2023 et 2025, cette relation était dans canteen_snapshot. En 2026 cela a été remplacé par le champ sector_list.
+    - Description: durant l'année 2025 la relation M2M entre Canteen et Sector a été remplacée par un ChoiceArrayField. Pour les versions de TD antérieure et égale à v15, cette relation M2M était donc stockée dans le canteen_snapshot "sectors", mais à partir de la v16 cela a été remplacé par le nouveau ChoiceArrayField "sector_list".
     - Usage:
         - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_sector_list_from_sectors_m2m
         - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_sector_list_from_sectors_m2m --apply
 
     set_satellites_snapshot_sector_list_from_sectors_m2m
-    - Description: avant 2025, il y avait une relation M2M entre Canteen et Sector. Entre 2023 et 2025, cette relation était dans satellites_snapshot. En 2026 cela a été remplacé par le champ sector_list.
+    - Description: durant l'année 2025 la relation M2M entre Canteen et Sector a été remplacée par un ChoiceArrayField. Pour les versions de TD antérieure et égale à v15, cette relation M2M était donc stockée dans le satellites_snapshot "sectors", mais à partir de la v16 cela a été remplacé par le nouveau ChoiceArrayField "sector_list".
     - Usage:
         - python manage.py teledeclaration_fix_old --command set_satellites_snapshot_sector_list_from_sectors_m2m
         - python manage.py teledeclaration_fix_old --command set_satellites_snapshot_sector_list_from_sectors_m2m --apply
