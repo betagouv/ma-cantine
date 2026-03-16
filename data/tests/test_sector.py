@@ -81,6 +81,14 @@ class SectorTextChoicesTest(TestCase):
                 ],
                 [Sector.EDUCATION_AUTRE, Sector.SANTE_HOPITAL],
             ),
+            (
+                [
+                    {"name": "ESAT/Etablissements spécialisés"},
+                    {"name": "Autres établissements non listés"},
+                    {"name": "ESAT/établissements spécialisés"},
+                ],
+                [Sector.SOCIAL_ESAT, Sector.AUTRES_AUTRE],
+            ),
         ]:
             with self.subTest(TUPLE=TUPLE):
                 self.assertEqual(get_sector_list_from_old_sector_dict_list(TUPLE[0]), TUPLE[1])
