@@ -20,7 +20,19 @@ dotenv.load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 
 app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", include=["macantine.tasks"])
-app.config_from_object(dict(worker_hijack_root_logger=False, result_extended=True))
+app.config_from_object(
+    dict(
+        worker_hijack_root_logger=False,
+        result_extended=True,
+        # ack after execution so broker can redeliver if worker crashes
+        task_acks_late=True,
+        task_reject_on_worker_lost=True,
+        # recycle workers periodically to limit long-term memory growth
+        worker_max_tasks_per_child=50,
+        # reserve fewer tasks per worker process for fairer scheduling
+        worker_prefetch_multiplier=1,
+    )
+)
 
 every_minute = crontab(minute="*/1")  # For testing purposes
 hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
