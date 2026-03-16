@@ -194,6 +194,12 @@ class DiagnosticQuerySet(models.QuerySet):
             egalim_percent=100 * F("valeur_egalim_agg") / Sum("valeur_totale"),
         )
 
+    def teledeclaration_objectifs_egalim_atteints(self):
+        """
+        The field 'objectifs_egalim_atteints' is only filled for teledeclared diagnostics.
+        """
+        return self.filter(objectifs_egalim_atteints=True)
+
     def egalim_objectives_reached(self):
         return self.filter(
             Q(

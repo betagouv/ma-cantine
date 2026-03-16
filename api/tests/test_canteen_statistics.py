@@ -10,7 +10,7 @@ from data.models import Canteen, Diagnostic, Sector, SectorCategory
 
 year_data = 2023
 date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
-STATS_ENDPOINT_QUERY_COUNT = 8
+STATS_ENDPOINT_QUERY_COUNT = 7
 
 
 class CanteenStatsApiTest(APITestCase):
@@ -166,6 +166,7 @@ class CanteenStatsApiTest(APITestCase):
 
     def test_canteen_statistics(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)
@@ -224,6 +225,7 @@ class CanteenStatsApiTest(APITestCase):
             canteen_diagnostic.teledeclare(applicant=UserFactory())
 
         response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)  # canteens created in 2024 are not returned
@@ -266,6 +268,7 @@ class CanteenStatsApiTest(APITestCase):
             canteen_diagnostic.teledeclare(applicant=UserFactory())
 
         response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)  # canteens created in 2024 are not returned
@@ -476,8 +479,8 @@ class CanteenStatsApiTest(APITestCase):
         with self.assertNumQueries(0 + CACHE_GET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # another year: no cache (1 less query because no TDs during this year)
-        with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT - 1 + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
+        # another year: no cache
+        with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 1})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # another year again: cache hit
