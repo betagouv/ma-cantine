@@ -28,6 +28,12 @@ def send_sib_template(template_id, parameters, to_email, to_name):
     email_api_instance.send_transac_email(send_smtp_email)
 
 
+def create_newsletter_contact(email):
+    create_contact = sib_api_v3_sdk.CreateContact(email=email, update_enabled=True)
+    create_contact.list_ids = [int(settings.NEWSLETTER_SENDINBLUE_LIST_ID)]
+    contacts_api_instance.create_contact(create_contact)
+
+
 def user_to_brevo_payload(user, bulk=True):
     """
     The user payload for Brevo API.
