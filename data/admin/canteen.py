@@ -123,7 +123,10 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         ),
         (
             "Télédéclaration",
-            {"description": "Champ calculé toutes les nuits (pendant la campagne)", "fields": Canteen.TD_FIELDS},
+            {
+                "description": "ℹ️ Champ calculé toutes les nuits (pendant la campagne) <br /><br /><hr />",
+                "fields": Canteen.TD_FIELDS,
+            },
         ),
         (
             "Lien tracké lors de la création",
