@@ -47,15 +47,17 @@ const getProductionTypeInfos = (canteen) => {
 const getDiagnosticInfos = (canteen, campaign) => {
   const action = canteen.action
   const badge = diagnosticService.getBadge(action, campaign)
-  const button = getTeledeclareButton(canteen)
+  const button = getDiagnosticButton(canteen)
   return { badge, button }
 }
 
-const getTeledeclareButton = (canteen) => {
-  const button = diagnosticService.getTeledeclareButton(canteen.action)
-  if (!button) return false
+const getDiagnosticButton = (canteen) => {
+  const teledeclareButton = diagnosticService.getTeledeclareButton(canteen.action)
+  const completeButton = diagnosticService.getCompleteButton(canteen.action)
+  if (!teledeclareButton && !completeButton) return false
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
   const lastYear = new Date().getFullYear() - 1
+  const button = teledeclareButton || completeButton
   return { ...button, canteenUrlComponent, year: lastYear }
 }
 

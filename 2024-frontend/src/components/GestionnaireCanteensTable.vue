@@ -131,6 +131,7 @@ const getDropdownLinks = (canteen) => {
               :icon="cell.button.icon"
               size="small"
               class="fr-mr-1v"
+              :[cell.button.type]="true"
             />
           </router-link>
           <DsfrBadge v-else small :label="cell.badge.label" :type="cell.badge.type" no-icon />
