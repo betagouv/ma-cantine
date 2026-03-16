@@ -477,10 +477,28 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(body["canteenCount"], 5)
         self.assertEqual(body["teledeclarationsCount"], 3)
         self.assertEqual(len(body["notes"]["warnings"]), 1)
-        self.assertEqual(
-            body["notes"]["canteenCountDescription"], "Au 11 juin 2024"
-        )  # dernier jour de la campagne 2024
         self.assertFalse("campaignInfo" in body["notes"])
+
+    def test_notes_canteen_count_description_during_campaign(self):
+        with freeze_time(date_in_2023_teledeclaration_campaign):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 1 avril 2024")
+
+    def test_notes_canteen_count_description_after_campaign(self):
+        with freeze_time("2024-11-01"):
+            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 11 juin 2024")
+
+    def test_notes_canteen_count_description_campaign_not_found(self):
+        with freeze_time(date_in_2023_teledeclaration_campaign):
+            response = self.client.get(reverse("canteen_statistics"), {"year": 9999})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 1 avril 2024")
 
     def test_notes_alert(self):
         response_2023 = self.client.get(reverse("canteen_statistics"), {"year": year_data})
