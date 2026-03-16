@@ -458,9 +458,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     )
 
     city_insee_code = models.TextField(
-        null=True,
-        blank=True,
-        verbose_name="Code INSEE",
+        null=True, blank=True, verbose_name="Code INSEE"
     )  # nécessaire pour remplir les autres champs geo
     city = models.TextField(null=True, blank=True, verbose_name="ville")
     postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
