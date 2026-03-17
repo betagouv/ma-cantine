@@ -53,6 +53,6 @@ class Command(BaseCommand):
         Canteen.all_objects.filter(id__in=canteens_with_teledeclarations).update(**{field_name: True})
 
         # Done!
-        logger.info(
-            f"Task completed: {Canteen.all_objects.filter(**{field_name: True}).count()} canteens teledeclared for year {year}"
-        )
+        result = f"{Canteen.all_objects.filter(**{field_name: True}).count()} canteens teledeclared for year {year}"
+        logger.info(f"Task completed: {result}")
+        return result
