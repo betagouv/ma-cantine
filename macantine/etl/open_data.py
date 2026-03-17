@@ -175,4 +175,28 @@ class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
         self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
         logger.info("TD campagne: Fill geo name...")
         self.transform_canteen_geo_data(prefix="canteen_")
-        # TODO: self.flatten_central_kitchen_td()
+
+
+class ETL_OPEN_DATA_TELEDECLARATIONS_SITE(etl.EXTRACTOR, OPEN_DATA):
+    """
+    1TD1Site version of ETL_OPEN_DATA_TELEDECLARATIONS
+    """
+
+    def __init__(self, year: int):
+        super().__init__()
+        self.years = [year]
+        self.year = year
+        self.dataset_name = f"campagne_td_sites_{year}"
+        self.datagouv_dataset_id = MA_CANTINE_DATAGOUV_TELEDECLARATION_DATASET_ID
+        self.schema = json.load(open(MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_PATH))
+        self.schema_url = MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL
+        self.view = DiagnosticTeledeclaredOpenDataListView
+        self.df = None
+
+    def transform_dataset(self):
+        logger.info("TD campagne: Clean dataset...")
+        self._clean_dataset()
+        logger.info("TD campagne: Format the decimals...")
+        self._format_decimals(["teledeclaration_ratio_bio", "teledeclaration_ratio_egalim_hors_bio"])
+        logger.info("TD campagne: Fill geo name...")
+        self.transform_canteen_geo_data(prefix="canteen_")

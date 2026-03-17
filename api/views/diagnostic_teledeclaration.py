@@ -325,4 +325,4 @@ class DiagnosticTeledeclaredOpenDataListView(ListAPIView):
     ordering_fields = ["creation_date"]
 
     def get_queryset(self, year):
-        return Diagnostic.objects.publicly_visible().valid_td_by_year(year).order_by("teledeclaration_date")
+        return Diagnostic.objects.publicly_visible().valid_td_site_by_year(year).order_by("teledeclaration_date")

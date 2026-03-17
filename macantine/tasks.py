@@ -32,10 +32,7 @@ from .etl.analysis import (
     ETL_ANALYSIS_DIAGNOSTIC_RAW,
     ETL_ANALYSIS_USER_RAW,
 )
-from .etl.open_data import (
-    ETL_OPEN_DATA_CANTEEN,
-    ETL_OPEN_DATA_TELEDECLARATIONS,
-)
+from .etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS, ETL_OPEN_DATA_TELEDECLARATIONS_SITE
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -341,6 +338,7 @@ def export_dataset_td_opendata():
         "teledeclarations_2022_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
         "teledeclarations_2023_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
         "teledeclarations_2024_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2024),
+        "teledeclarations_site_2024_opendata": ETL_OPEN_DATA_TELEDECLARATIONS_SITE(2024),
         # "teledeclarations_2025_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2025),  # wait for report to be published
     }
     result = export_datasets(datasets)
