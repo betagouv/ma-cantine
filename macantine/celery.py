@@ -36,7 +36,9 @@ app.config_from_object(
 
 every_minute = crontab(minute="*/1")  # For testing purposes
 hourly = crontab(hour="*", minute=0, day_of_week="*")  # Every hour
-every_6_hours = crontab(hour="*/6", minute=0, day_of_week="*")  # Every 6 hours
+every_6_hours_0 = crontab(hour="*/6", minute=0, day_of_week="*")  # Every 6 hours
+every_6_hours_10 = crontab(hour="*/6", minute=10, day_of_week="*")  # Every 6 hours at :10
+every_6_hours_20 = crontab(hour="*/6", minute=20, day_of_week="*")  # Every 6 hours at :20
 daily_week = crontab(hour=10, minute=0, day_of_week="1-5")  # Monday to Friday 10AM
 nightly_0 = crontab(hour=0, minute=0, day_of_week="*")  # Every day at midnight
 nightly_0_10 = crontab(hour=0, minute=10, day_of_week="*")  # Every day at 12:10AM
@@ -52,7 +54,7 @@ app.conf.beat_schedule = {
     # Canteen data (needed for User data task, analysis & opendata)
     "canteen_fill_declaration_donnees_year_field": {
         "task": "macantine.tasks.canteen_fill_declaration_donnees_year_field",
-        "schedule": nightly_0_10,
+        "schedule": every_6_hours_10,  # Campaign-related
     },
     # User data (needed for Brevo)
     "update_user_data": {
@@ -81,15 +83,15 @@ app.conf.beat_schedule = {
     # Dataset exports
     "export_dataset_td_analysis": {
         "task": "macantine.tasks.export_dataset_td_analysis",
-        "schedule": every_6_hours,  # Campaign-related
+        "schedule": every_6_hours_0,  # Campaign-related
     },
     "export_dataset_canteen_analysis": {
         "task": "macantine.tasks.export_dataset_canteen_analysis",
-        "schedule": nightly_5,
+        "schedule": every_6_hours_20,  # Campaign-related
     },
     "export_dataset_canteen_opendata": {
         "task": "macantine.tasks.export_dataset_canteen_opendata",
-        "schedule": nightly_5,
+        "schedule": every_6_hours_20,  # Campaign-related
     },
 }
 
