@@ -1,6 +1,8 @@
 import datetime
 from decimal import Decimal
 from io import BytesIO
+import csv
+import json
 
 from django.core.files.base import ContentFile
 from django.core.serializers.json import DjangoJSONEncoder
@@ -133,3 +135,14 @@ def sum_int_with_potential_null(values_to_sum):
         return 0
     else:
         return sum(value for value in values_to_sum if value is not None)
+
+
+def read_csv(filepath, delimiter=","):
+    with open(filepath, newline="") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=delimiter)
+        return list(reader)
+
+
+def read_json(filepath):
+    with open(filepath) as jsonfile:
+        return json.load(jsonfile)
