@@ -8,7 +8,12 @@ sources:
     schema: public
     tables:
       - name: teledeclarations
-        description: Télédéclarations loaded by the Python ETL.
-      - name: canteens
-        description: Canteens loaded by the Python ETL.
-
+        description: Télédéclarations loaded by the Python ETL. Will be obsolete once 1td1site is live.
+      - name: canteens_raw
+        description: Raw canteen data dumped from the production database.
+      - name: canteen_managers_raw
+        description: Raw canteen-manager relationships dumped from the production database.
+      - name: diagnostics_raw
+        description: Raw diagnostics dumped from the production database.
+      - name: users_raw
+        description: Raw user data dumped from the production database.
