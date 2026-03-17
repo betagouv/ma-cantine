@@ -221,7 +221,7 @@ def set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dic
     Generate a dict with common fields values for a satellite from a groupe diagnostic
 
     Rules:
-    - in 2024 (and before), we keep the group values for: city, city_insee_code, department, region, sector_list, line_ministry.
+    - in 2024 (and before), we keep the group values for: geo data, sector_list, line_ministry.
     We also change the yearly_meal_count (divided by the number of satellites)
     """
     from data.models import Canteen  # avoid circular import
@@ -234,7 +234,15 @@ def set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dic
 
     # rules depending on the campaign year
     if diagnostic.year <= 2024:
-        fields_overridden_by_groupe = ["city_insee_code", "department", "region", "sector_list", "line_ministry"]
+        fields_overridden_by_groupe = [
+            "city_insee_code",
+            "epci",
+            "pat_list",
+            "department",
+            "region",
+            "sector_list",
+            "line_ministry",
+        ]
         for field in fields_overridden_by_groupe:
             if field in diagnostic.canteen_snapshot:
                 updated_common_fields[field] = diagnostic.canteen_snapshot[field]
