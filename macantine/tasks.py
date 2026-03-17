@@ -321,7 +321,7 @@ def export_dataset_td_analysis():
     logger.info("Starting export_dataset_td_analysis task")
 
     datasets = {
-        "td_analysis": ETL_ANALYSIS_TELEDECLARATIONS(),
+        "teledeclarations_analysis": ETL_ANALYSIS_TELEDECLARATIONS(),
     }
     result = export_datasets(datasets)
 
@@ -337,8 +337,11 @@ def export_dataset_td_opendata():
     logger.info("Starting export_dataset_td_opendata task")
 
     datasets = {
-        "campagne teledeclaration 2024": ETL_OPEN_DATA_TELEDECLARATIONS(2024),
-        # "campagne teledeclaration 2025": ETL_OPEN_DATA_TELEDECLARATIONS(2025),  # wait for report to be published
+        "teledeclarations_2021_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
+        "teledeclarations_2022_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
+        "teledeclarations_2023_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
+        "teledeclarations_2024_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2024),
+        # "teledeclarations_2025_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2025),  # wait for report to be published
     }
     result = export_datasets(datasets)
 
@@ -353,7 +356,7 @@ def export_dataset_canteen_analysis():
     logger.info("Starting export_dataset_canteen_analysis task")
 
     datasets = {
-        "cantines_analysis": ETL_ANALYSIS_CANTEEN(),
+        "canteens_analysis": ETL_ANALYSIS_CANTEEN(),
     }
     result = export_datasets(datasets)
 
@@ -368,7 +371,7 @@ def export_dataset_canteen_opendata():
     logger.info("Starting export_dataset_canteen_opendata task")
 
     datasets = {
-        "cantines": ETL_OPEN_DATA_CANTEEN(),
+        "canteens_opendata": ETL_OPEN_DATA_CANTEEN(),
     }
     result = export_datasets(datasets)
 
