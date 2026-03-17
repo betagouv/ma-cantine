@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import Count, Q, F
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from dirtyfields import DirtyFieldsMixin
 
 import macantine.brevo as brevo
 
@@ -64,7 +65,7 @@ class UserManager(BaseUserManager):
     pass
 
 
-class User(AbstractUser):
+class User(DirtyFieldsMixin, AbstractUser):
     class LawAwareness(models.TextChoices):
         NONE = (
             "NONE",
@@ -221,10 +222,13 @@ class User(AbstractUser):
     # Django fields
     # last_login, date_joined, is_active, is_staff, is_superuser
 
-    def save(self, **kwargs):
+    def optimize_avatar(self):
         max_avatar_size = 640
         if self.avatar:
             self.avatar = optimize_image(self.avatar, self.avatar.name, max_avatar_size)
+
+    def save(self, **kwargs):
+        self.optimize_avatar()
         super().save(**kwargs)
 
     @property

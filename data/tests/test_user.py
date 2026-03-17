@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 from freezegun import freeze_time
 
@@ -147,3 +147,27 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user_without_canteens.data["nb_cantines_bilan_todo_2025"], 0)
         self.assertEqual(self.user_without_canteens.data["nb_cantines_td_2025"], 0)
         self.assertEqual(self.user_without_canteens.data["nb_cantines_td_todo_2025"], 0)
+
+
+class UserModelSaveTest(TransactionTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+
+    def test_user_dirty_fields_on_save(self):
+        user = UserFactory(email="user1@example.com")
+        self.assertFalse(user.is_dirty())
+        self.assertEqual(user.get_dirty_fields(), {})
+
+        user.email = "user1@example.com"  # same email
+        self.assertFalse(user.is_dirty())
+        self.assertEqual(user.get_dirty_fields(), {})
+
+        user.email = "user2@example.com"  # different email
+        self.assertTrue(user.is_dirty())
+        self.assertEqual(user.get_dirty_fields(), {"email": "user1@example.com"})
+
+        user.save()
+        self.assertEqual(user.email, "user2@example.com")
+        self.assertFalse(user.is_dirty())
+        self.assertEqual(user.get_dirty_fields(), {})
