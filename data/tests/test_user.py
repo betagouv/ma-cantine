@@ -171,3 +171,12 @@ class UserModelSaveTest(TransactionTestCase):
         self.assertEqual(user.email, "user2@example.com")
         self.assertFalse(user.is_dirty())
         self.assertEqual(user.get_dirty_fields(), {})
+
+    def test_update_brevo_fields_on_save(self):
+        user = UserFactory(email="user1@example.com", brevo_last_update_date=timezone.now(), brevo_is_deleted=True)
+        user.email = "user2@example.com"  # different email
+        user.save()
+        user.refresh_from_db()
+
+        self.assertEqual(user.brevo_last_update_date, None)
+        self.assertFalse(user.brevo_is_deleted)
