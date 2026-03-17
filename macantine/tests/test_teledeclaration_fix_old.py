@@ -24,39 +24,39 @@ class TestTeledeclarationFixOldCommandTest(TestCase):
 
         canteen_with_geo_data = CanteenFactory(
             city_insee_code="38185",
+            # epci="200040715",
+            # epci_lib="Grenoble-Alpes-Métropole",
+            # pat_list=["1294", "1295"],
+            # pat_lib_list=[
+            #     "PAT du Département de l'Isère",
+            #     "Projet Alimentaire inter Territorial de la Grande région grenobloise",
+            # ],
             department="38",
             department_lib="Isère",
             region="84",
             region_lib="Auvergne-Rhône-Alpes",
-            epci="200040715",
-            epci_lib="Grenoble-Alpes-Métropole",
-            pat_list=["1294", "1295"],
-            pat_lib_list=[
-                "PAT du Département de l'Isère",
-                "Projet Alimentaire inter Territorial de la Grande région grenobloise",
-            ],
         )
         canteen_half_geo_data = CanteenFactory(
             city_insee_code="38185",
+            # epci="200040715",
+            # epci_lib=None,
+            # pat_list=["1294", "1295"],
+            # pat_lib_list=[],
             department="38",
             department_lib=None,
             region="84",
             region_lib=None,
-            epci="200040715",
-            epci_lib=None,
-            pat_list=["1294", "1295"],
-            pat_lib_list=[],
         )
         canteen_without_geo_data = CanteenFactory(
             city_insee_code="38185",
+            # epci=None,
+            # epci_lib=None,
+            # pat_list=[],
+            # pat_lib_list=[],
             department=None,
             department_lib=None,
             region=None,
             region_lib=None,
-            epci=None,
-            epci_lib=None,
-            pat_list=[],
-            pat_lib_list=[],
         )
         diagnostic_canteen_with_geo_data = DiagnosticFactory(year=2024, canteen=canteen_with_geo_data)
         diagnostic_canteen_half_geo_data = DiagnosticFactory(year=2024, canteen=canteen_half_geo_data)
@@ -67,14 +67,14 @@ class TestTeledeclarationFixOldCommandTest(TestCase):
             diagnostic_canteen_half_geo_data.teledeclare(applicant=user)
             diagnostic_canteen_without_geo_data.teledeclare(applicant=user)
 
-        # before (epci is not in the snapshot fields)
+        # before (epci & pat_list were not in the snapshot fields)
         for diagnostic in [
             diagnostic_canteen_with_geo_data,
             diagnostic_canteen_half_geo_data,
             diagnostic_canteen_without_geo_data,
         ]:
             self.assertIsNone(diagnostic.canteen_snapshot.get("epci"))
-            self.assertIsNone(diagnostic.canteen_snapshot.get("pat_list"))
+            self.assertEqual(diagnostic.canteen_snapshot.get("pat_list"), [])
 
         # call command
         call_command(

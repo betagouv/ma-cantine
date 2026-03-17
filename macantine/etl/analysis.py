@@ -121,6 +121,8 @@ class ETL_ANALYSIS_TELEDECLARATIONS(etl.EXTRACTOR, ANALYSIS):
                         satellite_row["management_type"] = satellite["management_type"]
                         satellite_row["modele_economique"] = satellite["economic_model"]
                         satellite_row["code_insee_commune"] = satellite.get("city_insee_code", None)
+                        satellite_row["epci"] = satellite.get("epci", None)
+                        satellite_row["pat_list"] = ",".join(satellite.get("pat_list", []))
                         satellite_row["departement"] = satellite.get("department", None)
                         satellite_row["region"] = satellite.get("region", None)
                         satellite_row["secteur"] = ",".join(get_sector_lib_list_from_canteen_snapshot(satellite))

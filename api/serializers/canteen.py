@@ -552,6 +552,8 @@ CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS = (
     "siret",
     "siren_unite_legale",
     "city_insee_code",
+    "epci",
+    "pat_list",
     "department",
     "region",
     "daily_meal_count",
