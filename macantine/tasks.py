@@ -42,11 +42,13 @@ def update_user_data():
     """
     logger.info("Starting update_user_data task task")
     start = time.time()
-    users = User.objects.with_canteen_stats().with_canteen_diagnostic_stats()
-    for user in users:
+
+    users_qs = User.objects.with_canteen_stats().with_canteen_diagnostic_stats()
+    for user in users_qs:
         user.update_data()
+
     end = time.time()
-    result = f"update_user_data task ended. Duration: {end - start:.2f} seconds"
+    result = f"update_user_data task ended. Updated {users_qs.count()} in {end - start:.2f} seconds"
     logger.info(result)
     return result
 
@@ -81,16 +83,16 @@ def update_brevo_contacts():
     start = time.time()
 
     logger.info("Create individually new Brevo users (allowing the update flag to be set)")
-    users_to_create = User.objects.brevo_to_create()
-    brevo.create_new_brevo_contacts(users_to_create, timezone.now())
+    users_to_create_qs = User.objects.brevo_to_create()
+    brevo.create_new_brevo_contacts(users_to_create_qs, timezone.now())
 
     logger.info("Update existing Brevo contacts by batch")
-    users_to_update = User.objects.brevo_to_update()
-    chunks = batched(users_to_update, brevo.CONTACT_BULK_UPDATE_SIZE)
+    users_to_update_qs = User.objects.brevo_to_update()
+    chunks = batched(users_to_update_qs, brevo.CONTACT_BULK_UPDATE_SIZE)
     brevo.update_existing_brevo_contacts(chunks, timezone.now())
 
     end = time.time()
-    result = f"update_brevo_contacts task ended. Duration: {end - start:.2f} seconds"
+    result = f"update_brevo_contacts task ended. Created {users_to_create_qs.count()} and updated {users_to_update_qs.count()} contacts in {end - start:.2f} seconds"
     logger.info(result)
     return result
 
@@ -127,6 +129,7 @@ def update_canteen_geo_fields_from_siret(canteen):
     if update:
         canteen._change_reason = "Données de localisation MAJ"
         canteen.save(skip_validations=True)
+
     return True
 
 
