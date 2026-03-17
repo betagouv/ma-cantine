@@ -40,13 +40,15 @@ def update_user_data():
     """
     Update calculated fields in User.data JSONField
     """
-    logger.info("update_user_data task starting")
+    logger.info("Starting update_user_data task task")
     start = time.time()
     users = User.objects.with_canteen_stats().with_canteen_diagnostic_stats()
     for user in users:
         user.update_data()
     end = time.time()
-    logger.info(f"update_user_data task ended. Duration : {end - start:.2f} seconds")
+    result = f"update_user_data task ended. Duration: {end - start:.2f} seconds"
+    logger.info(result)
+    return result
 
 
 ##########################################################################
@@ -75,7 +77,7 @@ def update_brevo_contacts():
     Send custom information on Brevo contacts for automatisation
     API rate limit is 10 req per second : https://developers.brevo.com/docs/api-limits
     """
-    logger.info("update_brevo_contacts task starting")
+    logger.info("Starting update_brevo_contacts task")
     start = time.time()
 
     logger.info("Create individually new Brevo users (allowing the update flag to be set)")
@@ -88,7 +90,9 @@ def update_brevo_contacts():
     brevo.update_existing_brevo_contacts(chunks, timezone.now())
 
     end = time.time()
-    logger.info(f"update_brevo_contacts task ended. Duration : {end - start:.2f} seconds")
+    result = f"update_brevo_contacts task ended. Duration: {end - start:.2f} seconds"
+    logger.info(result)
+    return result
 
 
 @app.task()
@@ -98,6 +102,8 @@ def update_canteen_geo_fields_from_siret(canteen):
     Processing: API Recherche Entreprises + API Découpage Administratif (cached)
     Output: Fill canteen's city_insee_code field + geo fields
     """
+    logger.info("Starting update_canteen_geo_fields_from_siret task")
+
     update = False
     # Step 1: fetch city_insee_code from API Recherche Entreprises
     if not canteen.city_insee_code:
@@ -131,13 +137,11 @@ def fill_missing_insee_code_using_siret():
     Processing: API Recherche Entreprises
     Output: Fill canteen's city_insee_code field
     """
+    logger.info("Starting fill_missing_insee_code_using_siret task")
+
     candidate_canteens = Canteen.objects.candidates_for_siret_to_city_insee_code_bot()
     logger.info(f"Siret to insee_code Bot: found {candidate_canteens.count()} canteens")
     counter = 0
-
-    if len(candidate_canteens) == 0:
-        logger.info("No candidate canteens have been found. Nothing to do here...")
-        return
 
     for i, canteen in enumerate(candidate_canteens):
         logger.info(f"Traitement de la cantine {canteen.name} {canteen.siret}, appel #{i}")
@@ -224,14 +228,12 @@ def fill_missing_geolocation_data_using_insee_code():
     Processing: API Découpage Administratif
     Output: Fill canteen's postal_code, city, epci, department & region fields
     """
+    logger.info("Starting fill_missing_geolocation_data_using_insee_code task")
+
     candidate_canteens = Canteen.objects.candidates_for_city_insee_code_to_geo_data_bot()
     candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
     logger.info(f"INSEE Geolocation Bot: found {candidate_canteens.count()} canteens")
     counter = 0
-
-    if len(candidate_canteens) == 0:
-        logger.info("No candidate canteens have been found. Nothing to do here...")
-        return
 
     for i, canteen in enumerate(candidate_canteens):
         updated = _update_canteen_geo_data_from_insee_code(canteen)
@@ -245,24 +247,38 @@ def fill_missing_geolocation_data_using_insee_code():
 
 @app.task()
 def delete_old_historical_records():
+    logger.info("Starting delete_old_historical_records task")
+
     if not settings.MAX_DAYS_HISTORICAL_RECORDS:
         logger.info("Environment variable MAX_DAYS_HISTORICAL_RECORDS not set. Old history items will not be removed.")
         return
+
     logger.info(f"History items older than {settings.MAX_DAYS_HISTORICAL_RECORDS} days will be removed.")
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
 
 
 @app.task()
 def canteen_fill_declaration_donnees_year_field():
-    call_command("canteen_fill_declaration_donnees_year_field", year=2025)
+    logger.info("Starting canteen_fill_declaration_donnees_year_field task")
+
+    result = call_command("canteen_fill_declaration_donnees_year_field", year=2025)
+
+    return result
 
 
 def export_datasets(datasets: dict):
+    start = time.time()
+
     for key, etl in datasets.items():
         logger.info(f"Starting {key} dataset extraction")
         etl.extract_dataset()
         etl.transform_dataset()
         etl.load_dataset()
+
+    end = time.time()
+    result = f"Exported {len(datasets)} datasets in {end - start:.2f} seconds"
+    logger.info(result)
+    return result
 
 
 @app.task()
@@ -270,11 +286,14 @@ def export_dataset_td_analysis():
     """
     Export the Teledeclaration datasets for analysis (Metabase)
     """
-    logger.info("Starting manual datasets export")
+    logger.info("Starting export_dataset_td_analysis task")
+
     datasets = {
         "td_analyses": ETL_ANALYSIS_TELEDECLARATIONS(),
     }
-    export_datasets(datasets)
+    result = export_datasets(datasets)
+
+    return result
 
 
 @app.task()
@@ -283,7 +302,8 @@ def export_dataset_td_opendata():
     Export the Teledeclaration datasets for opendata (data.gouv.fr) (1 per year)
     This datasets are updated every year by adding a new campaign
     """
-    logger.info("Starting manual datasets export")
+    logger.info("Starting export_dataset_td_opendata task")
+
     datasets = {
         "campagne teledeclaration 2021": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
         "campagne teledeclaration 2022": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
@@ -291,7 +311,9 @@ def export_dataset_td_opendata():
         "campagne teledeclaration 2024": ETL_OPEN_DATA_TELEDECLARATIONS(2024),
         # "campagne teledeclaration 2025": ETL_OPEN_DATA_TELEDECLARATIONS(2025),  # wait for report to be published
     }
-    export_datasets(datasets)
+    result = export_datasets(datasets)
+
+    return result
 
 
 @app.task()
@@ -299,11 +321,14 @@ def export_dataset_canteen_analysis():
     """
     Export the Canteen datasets for analysis (Metabase)
     """
-    logger.info("Starting datasets extractions")
+    logger.info("Starting export_dataset_canteen_analysis task")
+
     datasets = {
         "cantines_analyses": ETL_ANALYSIS_CANTEEN(),
     }
-    export_datasets(datasets)
+    result = export_datasets(datasets)
+
+    return result
 
 
 @app.task()
@@ -311,8 +336,11 @@ def export_dataset_canteen_opendata():
     """
     Export the Canteen datasets for opendata (data.gouv.fr)
     """
-    logger.info("Starting datasets extractions")
+    logger.info("Starting export_dataset_canteen_opendata task")
+
     datasets = {
         "cantines": ETL_OPEN_DATA_CANTEEN(),
     }
-    export_datasets(datasets)
+    result = export_datasets(datasets)
+
+    return result
