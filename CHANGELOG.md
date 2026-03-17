@@ -6,6 +6,22 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.21.0](https://github.com/betagouv/ma-cantine/compare/v2026.20.1...v2026.21.0) (2026-03-17)
+
+
+### Nouveautés
+
+* **ETL:** scripts pour basculer certaines tables brutes vers le Data Warehouse ([#6427](https://github.com/betagouv/ma-cantine/issues/6427)) ([ecc4874](https://github.com/betagouv/ma-cantine/commit/ecc4874492b4538f9c0b85a16912301ac725e1b0))
+
+
+### Améliorations
+
+* **Brevo:** script pour comparer un export des contacts Brevo avec les utilisateurs Django ([#6510](https://github.com/betagouv/ma-cantine/issues/6510)) ([5324daf](https://github.com/betagouv/ma-cantine/commit/5324daf2aa4221d2466a9c439ffba67cdc9dcc35))
+* **Brevo:** Utilisateurs: détecter le changement d'email et réinitialiser les infos Brevo ([#6513](https://github.com/betagouv/ma-cantine/issues/6513)) ([a1d7142](https://github.com/betagouv/ma-cantine/commit/a1d7142adbe0fdf7f248da289548535750ea719d))
+* **Celery:** ajouter d'avantage d'info dans les résultats des tâches ([#6509](https://github.com/betagouv/ma-cantine/issues/6509)) ([0191f8d](https://github.com/betagouv/ma-cantine/commit/0191f8da47a0ec7de27c8b36cf3e0abc72abf858))
+* **Exports:** augmenter la fréquence des exports cantines (Metabase & Open Data) (toutes les nuits --&gt; toutes les 6h) ([#6508](https://github.com/betagouv/ma-cantine/issues/6508)) ([7e9f1e3](https://github.com/betagouv/ma-cantine/commit/7e9f1e3d937489bd4c68a069c18ad0262bf0f19b))
+* **Utilisateurs:** détecter un changement dans un champ grâce à django-dirtyfields ([#6511](https://github.com/betagouv/ma-cantine/issues/6511)) ([f31adf0](https://github.com/betagouv/ma-cantine/commit/f31adf0a71ffc620b0f7be3b9b99445205f26e20))
+
 ## [2026.20.1](https://github.com/betagouv/ma-cantine/compare/v2026.20.0...v2026.20.1) (2026-03-16)
 
 
