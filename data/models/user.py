@@ -227,8 +227,18 @@ class User(DirtyFieldsMixin, AbstractUser):
         if self.avatar:
             self.avatar = optimize_image(self.avatar, self.avatar.name, max_avatar_size)
 
+    def reset_brevo_fields_if_email_changed(self):
+        """
+        Cases where we need to reset Brevo fields:
+        - if email has changed: reset all Brevo fields (to recreate contact)
+        """
+        if self.id and self.is_dirty():
+            if "email" in self.get_dirty_fields():
+                self.reset_brevo_fields(with_save=False)
+
     def save(self, **kwargs):
         self.optimize_avatar()
+        self.reset_brevo_fields_if_email_changed()
         super().save(**kwargs)
 
     @property
@@ -251,6 +261,12 @@ class User(DirtyFieldsMixin, AbstractUser):
         return self.canteens.exists() and any(
             not x.has_diagnostic_teledeclared_for_year(year) for x in self.canteens.all()
         )
+
+    def reset_brevo_fields(self, with_save=True):
+        self.brevo_last_update_date = None
+        self.brevo_is_deleted = False
+        if with_save:
+            self.save()
 
     def update_data(self):
         # need to have called the user with 'with_canteen_stats' & 'with_canteen_diagnostic_stats' queryset method
