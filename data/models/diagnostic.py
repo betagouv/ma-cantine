@@ -11,9 +11,13 @@ from simple_history.models import HistoricalRecords
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models import Canteen
-from data.utils import has_arrayfield_missing_query
 from data.models.creation_source import CreationSource
-from data.utils import CustomJSONEncoder, make_optional_positive_decimal_field, sum_int_with_potential_null
+from data.utils import (
+    CustomJSONEncoder,
+    has_arrayfield_missing_query,
+    make_optional_positive_decimal_field,
+    sum_int_with_potential_null,
+)
 from data.validators import diagnostic as diagnostic_validators
 from macantine.utils import (
     CAMPAIGN_DATES,
@@ -869,12 +873,12 @@ class Diagnostic(models.Model):
         choices=CentralKitchenDiagnosticMode.choices,
         blank=True,
         null=True,
-        verbose_name="seulement pertinent pour les cuisines centrales : Quelles données sont déclarées par cette cuisine centrale ?",
+        verbose_name="Quelles données sont déclarées par ce groupe ? (seulement pertinent pour les groupes)",
     )
 
     # Relevant only for satellites
     generated_from_groupe_diagnostic = models.BooleanField(
-        verbose_name="seulement pertinent pour les satellites : A été automatiquement généré depuis le bilan du groupe",
+        verbose_name="A été automatiquement généré depuis le bilan du groupe (seulement pertinent pour les satellites)",
         default=False,
     )
 
