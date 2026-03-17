@@ -14,6 +14,7 @@ class Command(BaseCommand):
 
     in_django_but_not_in_brevo
     - Some Django users may have been deleted from Brevo, or have an email that was modified in Django but not synced to Brevo
+    - Apply: reset the user's Brevo fields (thus recreating the contact in Brevo during the next sync)
 
     in_brevo_but_not_in_django
     - filter only on contacts with 'MA_CANTINE_DATE_INSCRIPTION'
@@ -22,6 +23,7 @@ class Command(BaseCommand):
     Usage:
     - python manage.py user_brevo_contacts_sync path/to/brevo_export.csv
     - python manage.py user_brevo_contacts_sync path/to/brevo_export.csv --mode in_django_but_not_in_brevo
+    - python manage.py user_brevo_contacts_sync path/to/brevo_export.csv --mode in_django_but_not_in_brevo --apply
     - python manage.py user_brevo_contacts_sync path/to/brevo_export.csv --mode in_brevo_but_not_in_django
     """
 
@@ -38,9 +40,19 @@ class Command(BaseCommand):
             choices=["in_django_but_not_in_brevo", "in_brevo_but_not_in_django"],
             help="List Django emails missing in Brevo (opposite: Brevo emails missing in Django)",
         )
+        parser.add_argument(
+            "--apply",
+            action="store_true",
+            help="To apply changes, otherwise just show what would be done (dry run).",
+            default=False,
+        )
 
     def handle(self, *args, **options):
         brevo_contacts_csv_path = options["brevo_contacts_csv_path"]
+        apply = options["apply"]
+
+        if not apply:
+            print("Dry run mode, no changes will be applied.")
 
         # Brevo csv
         brevo_contacts = read_csv(brevo_contacts_csv_path, delimiter=";")
@@ -84,6 +96,13 @@ class Command(BaseCommand):
                 f"Scanned {scanned_users} users against {len(brevo_contacts_ma_cantine_emails)} Brevo contacts"
             )
             logger.info(f"Django-only users: {len(django_only_user_id_list)}")
+
+            if apply:
+                # reset Brevo fields to recreate the contact in Brevo during the next sync
+                for user_id in django_only_user_id_list:
+                    user = User.objects.get(id=user_id)
+                    user.reset_brevo_fields(with_save=True)
+                logger.info(f"Applied reset_brevo_fields to {len(django_only_user_id_list)} users")
 
         elif options["mode"] == "in_brevo_but_not_in_django":
             scanned_users = 0
