@@ -26,7 +26,7 @@ class TestTeledeclarationFixOldCommandTest(TestCase):
         mock_get_pat_dataset_resource(mock)
         mock_get_pat_csv(mock)
 
-        # before (at that time, the snapshots did not store epci & pat_list)
+        # before (at that time, the canteen_snapshot did not store epci & pat_list)
         canteen_snapshot_temp = self.canteen_site_diagnostic_2024.canteen_snapshot
         del canteen_snapshot_temp["epci"]
         del canteen_snapshot_temp["pat_list"]
@@ -49,3 +49,34 @@ class TestTeledeclarationFixOldCommandTest(TestCase):
         self.assertEqual(self.canteen_site_diagnostic_2024.canteen_snapshot.get("city_insee_code"), "38185")
         self.assertEqual(self.canteen_site_diagnostic_2024.canteen_snapshot.get("epci"), "200040715")
         self.assertEqual(self.canteen_site_diagnostic_2024.canteen_snapshot.get("pat_list"), ["1294", "1295"])
+
+    @requests_mock.Mocker()
+    def test_set_satellites_snapshot_epci_and_pat_list_from_city_insee_code(self, mock):
+        mock_fetch_communes(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        # before (at that time, the satellites_snapshot did not store epci & pat_list)
+        satellites_snapshot_temp = self.canteen_groupe_diagnostic_2025.satellites_snapshot
+        for satellite in satellites_snapshot_temp:
+            del satellite["epci"]
+            del satellite["pat_list"]
+        Diagnostic.objects.filter(id=self.canteen_groupe_diagnostic_2025.id).update(
+            satellites_snapshot=satellites_snapshot_temp
+        )
+        self.assertEqual(self.canteen_groupe_diagnostic_2025.satellites_snapshot[0].get("city_insee_code"), "38185")
+        self.assertNotIn("epci", self.canteen_groupe_diagnostic_2025.satellites_snapshot[0])
+        self.assertNotIn("pat_list", self.canteen_groupe_diagnostic_2025.satellites_snapshot[0])
+
+        # call command
+        call_command(
+            "teledeclaration_fix_old",
+            command="set_satellites_snapshot_epci_and_pat_list_from_city_insee_code",
+            apply=True,
+        )
+
+        # after
+        self.canteen_groupe_diagnostic_2025.refresh_from_db()
+        self.assertEqual(self.canteen_groupe_diagnostic_2025.satellites_snapshot[0].get("city_insee_code"), "38185")
+        self.assertEqual(self.canteen_groupe_diagnostic_2025.satellites_snapshot[0].get("epci"), "200040715")
+        self.assertEqual(self.canteen_groupe_diagnostic_2025.satellites_snapshot[0].get("pat_list"), ["1294", "1295"])
