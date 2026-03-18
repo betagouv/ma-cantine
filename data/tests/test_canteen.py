@@ -471,6 +471,15 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.region, None)
         # geobot will run again
 
+    def test_canteen_do_not_reset_geo_fields_when_siren_unite_legale_change_on_save(self):
+        canteen = CanteenFactory(siren_unite_legale="213401722", siret=None, city_insee_code="34172")
+        self.assertEqual(canteen.city_insee_code, "34172")
+
+        canteen.siren_unite_legale = "213401723"
+        canteen.save()
+
+        self.assertEqual(canteen.city_insee_code, "34172")
+
     def test_canteen_skip_validations_on_save(self):
         canteen = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
         canteen.siret = None
