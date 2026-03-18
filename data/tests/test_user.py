@@ -178,7 +178,10 @@ class UserModelSaveTest(TransactionTestCase):
         user_duplicate = UserFactory()
         User.objects.filter(id=user_duplicate.id).update(email="USER@EXAMPLE.COM")
         user_duplicate.refresh_from_db()
-        # email will be set to lower, and will conflict with an existing user
+        # email will not be set to lower
+        user_duplicate.save()
+        # change email. this time it will conflict
+        user_duplicate.email = "USER@example.com"
         with self.assertRaises(Exception):
             user_duplicate.save()
 
