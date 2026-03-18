@@ -169,4 +169,4 @@ class UsernameSuggestionView(APIView):
         chars = re.escape(string.punctuation).replace("_", "").replace("-", "")
         normalized_username = unicodedata.normalize("NFKD", username)
         unaccented_username = normalized_username.encode("ASCII", "ignore").decode("utf-8")
-        return re.sub(r"[" + chars + "]", "", unaccented_username.strip().replace(" ", "-"))
+        return re.sub(r"[" + chars + "]", "", unaccented_username.strip().lower().replace(" ", "-"))
