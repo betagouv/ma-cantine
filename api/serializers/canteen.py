@@ -4,7 +4,7 @@ import os
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from data.models import Canteen, CanteenImage, SectorM2M
+from data.models import Canteen, CanteenImage
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -101,7 +101,6 @@ class BadgesSerializer(serializers.ModelSerializer):
 
 
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     appro_diagnostic = PublicApproDiagnosticSerializer(source="latest_published_appro_diagnostic", read_only=True)
     lead_image = CanteenImageSerializer()
     badges = BadgesSerializer(source="*", read_only=True)
@@ -123,7 +122,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sector_list",
-            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "production_type",
             "management_type",
@@ -135,7 +133,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     appro_diagnostics = PublicApproDiagnosticSerializer(
         source="published_appro_diagnostics", many=True, read_only=True
     )
@@ -168,7 +165,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sector_list",
-            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "production_type",
             "management_type",
@@ -257,9 +253,6 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 
 
 class FullCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(
-        source="sectors_m2m", many=True, queryset=SectorM2M.objects.all(), required=False
-    )
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
@@ -318,7 +311,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sector_list",
-            "sectors",  # from "sectors_m2m"
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
@@ -425,7 +417,7 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
             "department_lib",
             "region",
             "region_lib",
-            "sectors",
+            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "yearly_meal_count",
             "siret",
