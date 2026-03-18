@@ -1721,6 +1721,17 @@ class Diagnostic(models.Model):
         return get_category_lib_list_from_canteen_snapshot(self.canteen_snapshot)
 
     @property
+    def canteen_and_satellites_snapshot_id_list(self):
+        id_list = []
+        if self.canteen_snapshot and self.canteen_snapshot.get("id"):
+            id_list.append(self.canteen_snapshot["id"])
+        if self.satellites_snapshot and isinstance(self.satellites_snapshot, list):
+            for satellite in self.satellites_snapshot:
+                if satellite.get("id"):
+                    id_list.append(satellite["id"])
+        return id_list
+
+    @property
     def latest_submitted_teledeclaration(self):
         submitted_teledeclarations = self.teledeclaration_set.submitted()
         if submitted_teledeclarations.count() == 0:
@@ -1921,18 +1932,14 @@ def update_canteen_declaration_donnees_year(sender, instance, created, **kwargs)
     """
     if not created:
         if instance.is_teledeclared:
-            canteen_id_list_to_update = [instance.canteen_snapshot["id"]]
-            if instance.satellites_snapshot:
-                canteen_id_list_to_update += [satellite["id"] for satellite in instance.satellites_snapshot]
-            Canteen.objects.filter(id__in=canteen_id_list_to_update).update(
+            canteen_id_list_to_update = instance.canteen_and_satellites_snapshot_id_list
+            Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
                 **{f"declaration_donnees_{instance.year}": True}
             )
         else:
             # only update if canteen declaration_donnees_year is True
             if getattr(instance.canteen, f"declaration_donnees_{instance.year}", False):
-                canteen_id_list_to_update = [instance.canteen.id]
-                if instance.satellites_snapshot:
-                    canteen_id_list_to_update += [satellite["id"] for satellite in instance.satellites_snapshot]
-                Canteen.objects.filter(id__in=canteen_id_list_to_update).update(
+                canteen_id_list_to_update = instance.canteen_and_satellites_snapshot_id_list
+                Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
                     **{f"declaration_donnees_{instance.year}": False}
                 )
