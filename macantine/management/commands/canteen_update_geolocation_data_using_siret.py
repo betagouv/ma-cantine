@@ -32,7 +32,7 @@ class Command(BaseCommand):
             "canteen_updated": 0,
         }
         logger.info("Start task: canteen_update_geolocation_data_using_siret")
-        canteen_qs = Canteen.all_objects.has_siret()
+        canteen_qs = Canteen.objects.has_siret()
         logger.info(f"Found {canteen_qs.count()} canteens with SIRET to process")
 
         for index, canteen in enumerate(canteen_qs):
@@ -51,7 +51,8 @@ class Command(BaseCommand):
                     logger.warning(
                         f"Canteen {canteen.id} - {canteen.siret} - mismatch (API: {response['cityInseeCode']} / Canteen: {canteen.city_insee_code})"
                     )
-                    # TODO: reset_geo_fields
+                    canteen.reset_geo_fields(with_city_insee_code=True, with_save=False)
+                    updated = True
                     results["canteen_siret_city_insee_code_mismatch"].append(canteen.id)
                 else:  # all good
                     results["canteen_siret_city_insee_code_ok"] += 1
@@ -71,6 +72,8 @@ class Command(BaseCommand):
 
             if index % 10 == 0:
                 time.sleep(1)  # avoid hitting API rate limits
+            if index % 5000 == 0:
+                logger.info(f"Processed {index} canteens")
 
         logger.info(f"canteen_siret_unknown: {len(results['canteen_siret_unknown'])}")
         logger.info(f"canteen_siret_closed: {len(results['canteen_siret_closed'])}")
@@ -80,3 +83,4 @@ class Command(BaseCommand):
         logger.info(f"canteen_siret_city_insee_code_ok: {results['canteen_siret_city_insee_code_ok']}")
         logger.info(f"canteen_updated: {results['canteen_updated']}")
         logger.info("End of task: canteen_update_geolocation_data_using_siret")
+        print(",".join(results["canteen_siret_city_insee_code_mismatch"]))
