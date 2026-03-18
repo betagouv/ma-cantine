@@ -69,6 +69,10 @@ jobs:
         run: |
           uv sync
 
+      - name: Install tblib for parallel test tracebacks
+        run: |
+          uv run python -m pip install tblib
+
       - name: Test Django
         env:
           DEBUG: True
