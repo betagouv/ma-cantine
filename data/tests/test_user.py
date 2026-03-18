@@ -154,6 +154,14 @@ class UserModelSaveTest(TransactionTestCase):
     def setUpTestData(cls):
         pass
 
+    def test_email_normalized_on_save(self):
+        user = UserFactory(email="user@example.com ")
+        self.assertEqual(user.email, "user@example.com")
+
+    def test_email_lower_on_save(self):
+        user = UserFactory(email="USER@EXAMPLE.COM")
+        self.assertEqual(user.email, "user@example.com")
+
     def test_user_dirty_fields_on_save(self):
         user = UserFactory(email="user1@example.com")
         self.assertFalse(user.is_dirty())
