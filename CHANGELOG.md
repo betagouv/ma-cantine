@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.21.1](https://github.com/betagouv/ma-cantine/compare/v2026.21.0...v2026.21.1) (2026-03-18)
+
+
+### Améliorations
+
+* **Cantines:** Données géo: ne pas les ré-initialiser au changement de SIREN ([#6522](https://github.com/betagouv/ma-cantine/issues/6522)) ([2535e08](https://github.com/betagouv/ma-cantine/commit/2535e0859544d5939436911b0ec1ee896a0569b9))
+* **ETL:** màj de pandas & sqlalchemy. permet de synchroniser les tables DW sans casser dbt ([#6521](https://github.com/betagouv/ma-cantine/issues/6521)) ([14ab5da](https://github.com/betagouv/ma-cantine/commit/14ab5da768cc68185ce8abcb6210e2c037a6cc9a))
+* **Télédéclarations:** ajouter les champs epci & pat_list dans les snapshots ([#6518](https://github.com/betagouv/ma-cantine/issues/6518)) ([6a3c8c4](https://github.com/betagouv/ma-cantine/commit/6a3c8c42a235e6842010bbe99390f3bb204d38f4))
+* **Télédéclarations:** remplir les satellites_snapshot avec les epci & pat_list (à partir de leur city_insee_code) (v16 only) ([#6520](https://github.com/betagouv/ma-cantine/issues/6520)) ([d09002b](https://github.com/betagouv/ma-cantine/commit/d09002b49b94cea39bcac467e39b9b907dd3dc47))
+* **Utilisateurs:** stocker l'email en minuscule pour éviter des erreurs de synchro Brevo ([#6524](https://github.com/betagouv/ma-cantine/issues/6524)) ([21f1d1a](https://github.com/betagouv/ma-cantine/commit/21f1d1a8208b4a538958bb44ab1237918a689726))
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** les filtres sont maintenant effectués sur les infos snapshot de la cantine qui a TD (et non la FK) ([#6498](https://github.com/betagouv/ma-cantine/issues/6498)) ([0f800fc](https://github.com/betagouv/ma-cantine/commit/0f800fc98cdac55071eb6cbc427b454e5a8c6f33))
+* **Imports:** Cantines: bloquer l'ajout de restaurants SAT si le groupe a un bilan télédéclaré pendant la campagne ([#6523](https://github.com/betagouv/ma-cantine/issues/6523)) ([7b34034](https://github.com/betagouv/ma-cantine/commit/7b34034346fbb1eeff05fb9e4a4e03e28cd9597a))
+
+
+### Technique
+
+* **Secteurs:** enlève la référence à l'ancien M2M sur qq serializers cantines ([#6490](https://github.com/betagouv/ma-cantine/issues/6490)) ([cb93359](https://github.com/betagouv/ma-cantine/commit/cb933592de16f3a2a6641407f0fa4d5729bbd10e))
+* **Tests:** suite à parallel, rajouter tblib pour avoir de meilleurs logs d'erreurs ([#6525](https://github.com/betagouv/ma-cantine/issues/6525)) ([3d3c279](https://github.com/betagouv/ma-cantine/commit/3d3c279c8e390bf8a629ca6a4e6e7c2da8f0f6ed))
+
 ## [2026.21.0](https://github.com/betagouv/ma-cantine/compare/v2026.20.1...v2026.21.0) (2026-03-17)
 
 
