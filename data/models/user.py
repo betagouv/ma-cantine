@@ -6,8 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from dirtyfields import DirtyFieldsMixin
 
-import macantine.brevo as brevo
-
+from macantine import brevo
+from common.utils import utils as utils_utils
 from data.models.geo import Department
 from data.fields import ChoiceArrayField
 from data.utils import optimize_image
@@ -222,6 +222,16 @@ class User(DirtyFieldsMixin, AbstractUser):
     # Django fields
     # last_login, date_joined, is_active, is_staff, is_superuser
 
+    def normalize_fields(self):
+        for field_name in ["email", "username"]:
+            setattr(self, field_name, utils_utils.normalize_string(getattr(self, field_name)))
+
+    def lowercase_fields(self):
+        for field_name in ["email", "username"]:
+            value = getattr(self, field_name)
+            if value:
+                setattr(self, field_name, value.lower())
+
     def optimize_avatar(self):
         max_avatar_size = 640
         if self.avatar:
@@ -237,6 +247,8 @@ class User(DirtyFieldsMixin, AbstractUser):
                 self.reset_brevo_fields(with_save=False)
 
     def save(self, **kwargs):
+        self.normalize_fields()
+        self.lowercase_fields()
         self.optimize_avatar()
         self.reset_brevo_fields_if_email_changed()
         super().save(**kwargs)
