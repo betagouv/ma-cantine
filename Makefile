@@ -30,3 +30,22 @@ docker-compose-sh:
 
 docker-compose-collectstatic:
 	$(DOCKER-RUN) server python manage.py collectstatic --no-input
+
+# dbt — loads credentials from .env then runs from the dbt/ directory
+# .env must define DATA_WARE_HOUSE_* variables (see .env.docker for the list)
+DBT = set -a && source .env && set +a && cd dbt && dbt
+
+dbt-run:
+	$(DBT) run
+
+dbt-run-prod:
+	$(DBT) run --target prod
+
+dbt-test:
+	$(DBT) test
+
+dbt-compile:
+	$(DBT) compile
+
+dbt-docs:
+	$(DBT) docs generate && $(DBT) docs serve
