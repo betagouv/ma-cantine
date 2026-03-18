@@ -128,7 +128,7 @@ cssselect2==0.7.0
     # via
     #   ma-cantine
     #   svglib
-datacompy==0.16.7
+datacompy==1.0.0a5
     # via ma-cantine
 decorator==5.2.1
     # via ipython
@@ -322,6 +322,8 @@ isort==5.13.2
     #   pylint
 jedi==0.19.2
     # via ipython
+jinja2==3.1.6
+    # via datacompy
 jmespath==1.0.1
     # via
     #   boto3
@@ -364,6 +366,8 @@ lxml==5.3.0
     # via
     #   ma-cantine
     #   svglib
+markupsafe==3.0.3
+    # via jinja2
 matplotlib-inline==0.1.7
     # via ipython
 mccabe==0.6.1
@@ -376,7 +380,7 @@ nodeenv==1.9.1
     # via
     #   ma-cantine
     #   pre-commit
-numpy==2.2.0
+numpy==2.4.1
     # via
     #   datacompy
     #   ma-cantine
@@ -401,7 +405,7 @@ packaging==24.2
     #   ma-cantine
     #   pipdeptree
     #   pytest
-pandas==2.2.2
+pandas==3.0.0
     # via
     #   datacompy
     #   ma-cantine
@@ -520,7 +524,6 @@ pytz==2024.2
     # via
     #   l18n
     #   ma-cantine
-    #   pandas
 pyyaml==6.0.2
     # via
     #   djlint
@@ -588,7 +591,7 @@ soupsieve==2.5
     # via
     #   beautifulsoup4
     #   ma-cantine
-sqlalchemy==2.0.35
+sqlalchemy==2.0.36
     # via ma-cantine
 sqlparse==0.5.3
     # via

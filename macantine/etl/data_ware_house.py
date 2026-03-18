@@ -30,7 +30,7 @@ class DataWareHouse:
         dataframe.to_sql(
             name=table,
             con=self.engine,
-            if_exists="replace",
+            if_exists="delete_rows",
             index=False,
             dtype=dtype,
             chunksize=1000,
