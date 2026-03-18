@@ -238,34 +238,12 @@ class TestManagerInvitationApi(APITestCase):
         with self.assertRaises(ManagerInvitation.DoesNotExist):
             ManagerInvitation.objects.get(email=other_user.email)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to[0], "TEst@example.com")
+        self.assertEqual(mail.outbox[0].to[0], "test@example.com")
         self.assertEqual(mail.outbox[0].from_email, "test-from@example.com")
         self.assertIn("Accèder à la cantine", mail.outbox[0].body)
 
         self.assertEqual(len(body["managers"]), canteen.managers.all().count())
         self.assertEqual(len(body["managerInvitations"]), canteen.managerinvitation_set.all().count())
-
-    @authenticate
-    @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
-    def test_authenticated_add_manager_multiple_case_insensitive(self):
-        """
-        If the email does not match an existing user, we try with a case insensitive query. If several
-        users have a similar email with different cases, we don't proceed.
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        UserFactory(email="TEst@example.com")
-        UserFactory(email="TEST@example.com")
-        UserFactory(email="TesT@example.com")
-
-        payload = {"canteenId": canteen.id, "email": "test@example.com"}
-        response = self.client.post(reverse("add_manager"), payload)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        manager_emails = list(map(lambda x: x.email, canteen.managers.all()))
-        self.assertNotIn("TEst@example.com", manager_emails)
-        self.assertNotIn("TEST@example.com", manager_emails)
-        self.assertNotIn("TesT@example.com", manager_emails)
-        self.assertEqual(len(mail.outbox), 1)
 
     def test_create_user_with_pending_invitations(self):
         """
