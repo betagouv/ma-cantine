@@ -262,6 +262,11 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
     """
     Generate a dict with appro values distributed to satellites from a groupe diagnostic
 
+    Note:
+    - we divide only the APPRO values
+    - the TELEDECLARATION_EGALIM_FIELDS (pourcentage_* & objectifs_egalim_atteints) stay the same
+    - the other fields (WASTE_FIELDS, DIVERSIFICATION_FIELDS, PLASTIC_FIELDS, INFO_FIELDS) stay the same
+
     Rules:
     - in 2024 (and before), we divide by the number of satellites
     - in 2025, we divide by the yearly_meal_count
