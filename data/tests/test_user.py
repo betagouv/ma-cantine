@@ -154,6 +154,16 @@ class UserModelSaveTest(TransactionTestCase):
     def setUpTestData(cls):
         pass
 
+    def test_email_unique(self):
+        UserFactory(email="user@example.com")
+        with self.assertRaises(Exception):
+            UserFactory(email="user@example.com")
+
+    def test_username_unique(self):
+        UserFactory(username="user1")
+        with self.assertRaises(Exception):
+            UserFactory(username="user1")
+
     def test_email_normalized_on_save(self):
         user = UserFactory(email="user@example.com ")
         self.assertEqual(user.email, "user@example.com")
@@ -161,6 +171,19 @@ class UserModelSaveTest(TransactionTestCase):
     def test_email_lower_on_save(self):
         user = UserFactory(email="USER@EXAMPLE.COM")
         self.assertEqual(user.email, "user@example.com")
+
+    def test_email_lower_unique_on_save(self):
+        UserFactory(email="user@example.com")
+        # some old users have capital letters in their email
+        user_duplicate = UserFactory()
+        User.objects.filter(id=user_duplicate.id).update(email="USER@EXAMPLE.COM")
+        user_duplicate.refresh_from_db()
+        # email will not be set to lower
+        user_duplicate.save()
+        # change email. this time it will conflict
+        user_duplicate.email = "USER@example.com"
+        with self.assertRaises(Exception):
+            user_duplicate.save()
 
     def test_user_dirty_fields_on_save(self):
         user = UserFactory(email="user1@example.com")

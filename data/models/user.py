@@ -224,13 +224,15 @@ class User(DirtyFieldsMixin, AbstractUser):
 
     def normalize_fields(self):
         for field_name in ["email", "username"]:
-            setattr(self, field_name, utils_utils.normalize_string(getattr(self, field_name)))
+            if field_name in self.get_dirty_fields():
+                setattr(self, field_name, utils_utils.normalize_string(getattr(self, field_name)))
 
     def lowercase_fields(self):
         for field_name in ["email", "username"]:
-            value = getattr(self, field_name)
-            if value:
-                setattr(self, field_name, value.lower())
+            if field_name in self.get_dirty_fields():
+                value = getattr(self, field_name)
+                if value:
+                    setattr(self, field_name, value.lower())
 
     def optimize_avatar(self):
         max_avatar_size = 640
