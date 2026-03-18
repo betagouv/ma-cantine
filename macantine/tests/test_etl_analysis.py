@@ -65,7 +65,7 @@ class CanteenETLAnalysisTest(TestCase):
         self.assertEqual(canteen_site["modele_economique"], "Public")
         self.assertEqual(canteen_site["secteur"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site["categorie"], "Santé,Social / Médico-social")
-        self.assertEqual(canteen_site["ministere_tutelle"], None)
+        self.assertTrue(pd.isna(canteen_site["ministere_tutelle"]))
         self.assertEqual(canteen_site["spe"], "Non")
         self.assertEqual(str(canteen_site["declaration_donnees_2022"]), "True")
         self.assertEqual(str(canteen_site["declaration_donnees_2025"]), "False")
@@ -148,7 +148,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["central_producer_siret"], None)
         self.assertEqual(canteen_site_diagnostic_2024["secteur"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site_diagnostic_2024["categorie"], "Santé,Social / Médico-social")
-        self.assertEqual(canteen_site_diagnostic_2024["line_ministry"], None)
+        self.assertTrue(pd.isna(canteen_site_diagnostic_2024["line_ministry"]))
         self.assertGreater(
             canteen_site_diagnostic_2024["ratio_bio"],
             0,
@@ -172,7 +172,9 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(
             canteen_groupe_diagnostic_2022_satellite["management_type"], self.canteen_groupe.management_type
         )  # groupe management_type
-        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["modele_economique"], None)  # groupe economic_model
+        self.assertTrue(
+            pd.isna(canteen_groupe_diagnostic_2022_satellite["modele_economique"])
+        )  # groupe economic_model
         self.assertEqual(canteen_groupe_diagnostic_2022_satellite["secteur"], "")  # groupe secteur
         self.assertEqual(canteen_groupe_diagnostic_2022_satellite["categorie"], "")  # groupe categorie
 

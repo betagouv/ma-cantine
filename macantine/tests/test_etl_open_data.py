@@ -65,7 +65,7 @@ class CanteenETLOpenDataTest(TestCase):
         self.assertEqual(canteen_site["production_type"], "site")
         self.assertEqual(canteen_site["economic_model"], "public")
         self.assertEqual(canteen_site["sector_list"], "Hôpitaux,Crèche")
-        self.assertEqual(canteen_site["line_ministry"], None)
+        self.assertTrue(pd.isna(canteen_site["line_ministry"]))
         self.assertTrue(canteen_site["declaration_donnees_2022"])
         self.assertFalse(canteen_site["declaration_donnees_2025"])
         self.assertTrue(canteen_site["active_on_ma_cantine"])
@@ -205,7 +205,7 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["canteen_region"], "84")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_region_lib"], "Auvergne-Rhône-Alpes")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_sector_list"], "Hôpitaux,Crèche")
-        self.assertEqual(canteen_site_diagnostic_2024["canteen_line_ministry"], None)
+        self.assertTrue(pd.isna(canteen_site_diagnostic_2024["canteen_line_ministry"]))
         self.assertEqual(canteen_site_diagnostic_2024["teledeclaration_ratio_bio"], Decimal("0.4"))
         self.assertEqual(canteen_site_diagnostic_2024["teledeclaration_ratio_egalim_hors_bio"], Decimal("0.3"))
 
