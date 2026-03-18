@@ -3,11 +3,12 @@ from unittest import skipIf
 from django.test.utils import override_settings
 from django.conf import settings
 from django.urls import reverse
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from data.factories import CanteenFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.creation_source import CreationSource
 
@@ -292,6 +293,90 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(
             errors.pop(0)["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
+
+
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
+class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.groupe_canteen = CanteenFactory(id=9999999992, production_type=Canteen.ProductionType.GROUPE)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.groupe_canteen)
+        cls.teledeclaration = DiagnosticFactory(canteen=cls.groupe_canteen, year=2024)
+
+    @freeze_time("2025-02-20")  # during the 2024 campaign
+    @authenticate
+    def test_error_groupe_with_teledeclaration_during_campaign(self):
+        """
+        User cannot add a satellite to a groupe that has a teledeclared diagnostic for the current campaign during the teledeclaration campaign
+        """
+        # Create a teledeclared diagnostic for the groupe
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        # Import
+        file_path = "./api/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 1)
+        self.assertIn(
+            "Vous ne pouvez pas ajouter de restaurant satellite au groupe « 9999999992 », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir ajouter le(s) restaurant(s) satellite(s).",
+            errors[0]["message"],
+        )
+
+    @authenticate
+    def test_success_groupe_with_teledeclaration_after_campaign(self):
+        """
+        User can add a satellite to a groupe that has a teledeclared diagnostic for the current campaign after the teledeclaration campaign
+        """
+        self.groupe_canteen.managers.add(authenticate.user)
+
+        # Create a teledeclared diagnostic for the groupe
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        # Import
+        with freeze_time("2025-07-20"):
+            file_path = "./api/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
+            with open(file_path) as canteen_file:
+                response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            errors = body["errors"]
+            self.assertEqual(body["count"], 1)
+            self.assertEqual(len(body["canteens"]), 1)
+            self.assertEqual(len(errors), 0)
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @authenticate
+    def test_success_groupe_teledeclaration_cancelled_during_campaign(self):
+        """
+        User can add a satellite to a groupe that does not have a teledeclared diagnostic for the current campaign during the campaign
+        """
+        # Create a teledeclared diagnostic for the groupe
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        # Cancel the teledeclared diagnostic
+        self.teledeclaration.cancel()
+
+        # Import
+        file_path = "./api/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(reverse("canteens_create_import"), {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["canteens"]), 1)
+        self.assertEqual(len(errors), 0)
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")

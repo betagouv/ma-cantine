@@ -5,11 +5,13 @@ from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
+from django.utils import timezone
 
 from api.serializers import FullCanteenSerializer
 from api.views.base_import import BaseImportView
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType, Sector
+from macantine.utils import is_in_teledeclaration_or_correction
 
 from .canteen import AddManagerView
 from .utils import camelize
@@ -152,12 +154,23 @@ class CanteensUpdateImportView(BaseImportView):
         # Group custom validation
         groupe_id = row[12]
         groupe = None
+        # Group exists
         if groupe_id:
             try:
                 groupe = Canteen.objects.get(id=groupe_id)
             except Exception:
                 raise ValidationError(
                     {"groupe_id": f"Aucun groupe avec le numéro identifiant « {groupe_id} » trouvé sur la plateforme."}
+                )
+        # Group did not teledeclare already
+        last_year = timezone.now().year - 1
+        if groupe and is_in_teledeclaration_or_correction():
+            has_diagnostic_teledeclared_for_year = groupe.has_diagnostic_teledeclared_for_year(last_year)
+            if has_diagnostic_teledeclared_for_year:
+                raise ValidationError(
+                    {
+                        "groupe_id": f"Vous ne pouvez pas ajouter de restaurant satellite au groupe « {groupe_id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir ajouter le(s) restaurant(s) satellite(s)."
+                    }
                 )
 
         line_ministry = (
