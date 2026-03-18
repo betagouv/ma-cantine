@@ -343,6 +343,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
     def test_geo_columns(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_with_geo_data = CanteenFactory(
+                pat_list=["1294", "1295"],
+                pat_lib_list=[
+                    "PAT du Département de l'Isère",
+                    "Projet Alimentaire inter Territorial de la Grande région grenobloise",
+                ],
                 department="38",
                 department_lib="Isère",
                 region="84",
@@ -358,6 +363,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
         )
         data = self.serializer.data
 
+        self.assertEqual(data["epci"], "200040715")
+        self.assertEqual(data["pat_list"], "1294,1295")
         self.assertEqual(data["departement"], "38")
         self.assertEqual(data["lib_departement"], "Isère")
         self.assertEqual(data["region"], "84")
@@ -365,12 +372,14 @@ class TeledeclarationETLAnalysisTest(TestCase):
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_half_geo_data = CanteenFactory(
+                epci="200040715",
+                epci_lib=None,
+                pat_list=["1294", "1295"],
+                pat_lib_list=[],
                 department="38",
                 department_lib=None,
                 region="84",
                 region_lib=None,
-                epci="200040715",
-                epci_lib=None,
             )
             diagnostic_half_geo = DiagnosticFactory(canteen=canteen_half_geo_data, year=2022)
             diagnostic_half_geo.teledeclare(applicant=UserFactory())
@@ -380,6 +389,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
         )
         data = self.serializer_half_geo.data
 
+        self.assertEqual(data["epci"], "200040715")
+        self.assertEqual(data["pat_list"], "1294,1295")
         self.assertEqual(data["departement"], "38")
         self.assertEqual(data["lib_departement"], "Isère")  # filled with the serializer
         self.assertEqual(data["region"], "84")
@@ -387,12 +398,14 @@ class TeledeclarationETLAnalysisTest(TestCase):
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_without_geo_data = CanteenFactory(
+                epci=None,
+                epci_lib=None,
+                pat_list=[],
+                pat_lib_list=[],
                 department=None,
                 department_lib=None,
                 region=None,
                 region_lib=None,
-                epci=None,
-                epci_lib=None,
             )
             diagnostic_without_geo = DiagnosticFactory(canteen=canteen_without_geo_data, year=2022)
             diagnostic_without_geo.teledeclare(applicant=UserFactory())
@@ -402,6 +415,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
         )
         data_no_geo = self.serializer_without_geo.data
 
+        self.assertEqual(data_no_geo["epci"], None)
+        self.assertEqual(data_no_geo["pat_list"], "")
         self.assertEqual(data_no_geo["departement"], None)
         self.assertEqual(data_no_geo["lib_departement"], None)
         self.assertEqual(data_no_geo["region"], None)
@@ -507,6 +522,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
                         "management_type": "direct",
                         "economic_model": "public",
                         "city_insee_code": "38185",
+                        "epci": "200040715",
+                        "pat_list": ["1294", "1295"],
                         "department": "38",
                         "region": "84",
                         "yearly_meal_count": 120,
@@ -527,6 +544,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
         # central (before 2025)
         self.assertEqual(len(etl.df[etl.df.canteen_id == 20]), 1)
         self.assertTrue(np.isnan(etl.df[etl.df.canteen_id == 20].iloc[0].code_insee_commune))
+        self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].epci))
+        self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].pat_list))
         self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].departement))
         self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].region))
         self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].secteur))
@@ -540,6 +559,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
         )  # Zeros are processed as zeros and not nulls
         # groupe (since 2025)
         self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].code_insee_commune, "38185")  # from satellite
+        self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].epci, "200040715")  # from satellite
+        self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].pat_list, "1294,1295")  # from satellite
         self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].departement, "38")  # from satellite
         self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].region, "84")  # from satellite
         self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].secteur, "Hôpitaux")  # from satellite

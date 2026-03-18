@@ -2,17 +2,21 @@ import requests_mock
 from django.core.cache import cache
 from django.core.management import call_command
 from django.test import TestCase
-from freezegun import freeze_time
 
+from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 from common.api.datagouv import (
     mock_get_pat_csv,
     mock_get_pat_dataset_resource,
 )
 from common.api.decoupage_administratif import mock_fetch_communes
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models import Diagnostic
 
 
 class TestTeledeclarationFixOldCommandTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        ETLCommonSetUpTestData(cls, with_diagnostics=True)
+
     def setUp(self):
         cache.clear()  # clear cache before each test
 
@@ -22,59 +26,16 @@ class TestTeledeclarationFixOldCommandTest(TestCase):
         mock_get_pat_dataset_resource(mock)
         mock_get_pat_csv(mock)
 
-        canteen_with_geo_data = CanteenFactory(
-            city_insee_code="38185",
-            department="38",
-            department_lib="Isère",
-            region="84",
-            region_lib="Auvergne-Rhône-Alpes",
-            epci="200040715",
-            epci_lib="Grenoble-Alpes-Métropole",
-            pat_list=["1294", "1295"],
-            pat_lib_list=[
-                "PAT du Département de l'Isère",
-                "Projet Alimentaire inter Territorial de la Grande région grenobloise",
-            ],
+        # before (at that time, the snapshots did not store epci & pat_list)
+        canteen_snapshot_temp = self.canteen_site_diagnostic_2024.canteen_snapshot
+        del canteen_snapshot_temp["epci"]
+        del canteen_snapshot_temp["pat_list"]
+        Diagnostic.objects.filter(id=self.canteen_site_diagnostic_2024.id).update(
+            canteen_snapshot=canteen_snapshot_temp
         )
-        canteen_half_geo_data = CanteenFactory(
-            city_insee_code="38185",
-            department="38",
-            department_lib=None,
-            region="84",
-            region_lib=None,
-            epci="200040715",
-            epci_lib=None,
-            pat_list=["1294", "1295"],
-            pat_lib_list=[],
-        )
-        canteen_without_geo_data = CanteenFactory(
-            city_insee_code="38185",
-            department=None,
-            department_lib=None,
-            region=None,
-            region_lib=None,
-            epci=None,
-            epci_lib=None,
-            pat_list=[],
-            pat_lib_list=[],
-        )
-        diagnostic_canteen_with_geo_data = DiagnosticFactory(year=2024, canteen=canteen_with_geo_data)
-        diagnostic_canteen_half_geo_data = DiagnosticFactory(year=2024, canteen=canteen_half_geo_data)
-        diagnostic_canteen_without_geo_data = DiagnosticFactory(year=2024, canteen=canteen_without_geo_data)
-        user = UserFactory()
-        with freeze_time("2025-03-30"):
-            diagnostic_canteen_with_geo_data.teledeclare(applicant=user)
-            diagnostic_canteen_half_geo_data.teledeclare(applicant=user)
-            diagnostic_canteen_without_geo_data.teledeclare(applicant=user)
-
-        # before (epci is not in the snapshot fields)
-        for diagnostic in [
-            diagnostic_canteen_with_geo_data,
-            diagnostic_canteen_half_geo_data,
-            diagnostic_canteen_without_geo_data,
-        ]:
-            self.assertIsNone(diagnostic.canteen_snapshot.get("epci"))
-            self.assertIsNone(diagnostic.canteen_snapshot.get("pat_list"))
+        self.assertEqual(self.canteen_site_diagnostic_2024.canteen_snapshot.get("city_insee_code"), "38185")
+        self.assertNotIn("epci", self.canteen_site_diagnostic_2024.canteen_snapshot)
+        self.assertNotIn("pat_list", self.canteen_site_diagnostic_2024.canteen_snapshot)
 
         # call command
         call_command(
@@ -84,11 +45,7 @@ class TestTeledeclarationFixOldCommandTest(TestCase):
         )
 
         # after
-        for diagnostic in [
-            diagnostic_canteen_with_geo_data,
-            diagnostic_canteen_half_geo_data,
-            diagnostic_canteen_without_geo_data,
-        ]:
-            diagnostic.refresh_from_db()
-            self.assertEqual(diagnostic.canteen_snapshot.get("epci"), "200040715")
-            self.assertEqual(diagnostic.canteen_snapshot.get("pat_list"), ["1294", "1295"])
+        self.canteen_site_diagnostic_2024.refresh_from_db()
+        self.assertEqual(self.canteen_site_diagnostic_2024.canteen_snapshot.get("city_insee_code"), "38185")
+        self.assertEqual(self.canteen_site_diagnostic_2024.canteen_snapshot.get("epci"), "200040715")
+        self.assertEqual(self.canteen_site_diagnostic_2024.canteen_snapshot.get("pat_list"), ["1294", "1295"])

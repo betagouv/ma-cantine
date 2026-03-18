@@ -20,8 +20,10 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     cuisine_centrale = serializers.SerializerMethodField()
     central_producer_siret = serializers.CharField(source="canteen_snapshot.central_producer_siret", read_only=True)
     code_insee_commune = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
-    # epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
+    epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
     # epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
+    pat_list = serializers.SerializerMethodField()
+    # pat_lib_list = serializers.ListField(source="canteen_snapshot.pat_lib_list", read_only=True)
     departement = serializers.CharField(source="canteen_snapshot.department", read_only=True)
     lib_departement = (
         serializers.SerializerMethodField()
@@ -98,9 +100,9 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "cuisine_centrale",
             "central_producer_siret",
             "code_insee_commune",
-            # "epci",
+            "epci",
             # "epci_lib",
-            # "pat_list",
+            "pat_list",
             # "pat_lib_list",
             "departement",
             "lib_departement",
@@ -175,6 +177,9 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
 
     def get_categorie(self, obj):
         return ",".join(obj.canteen.category_lib_list_from_sector_list or [])
+
+    def get_pat_list(self, obj):
+        return ",".join(obj.canteen_snapshot.get("pat_list", []) or [])
 
     def get_lib_departement(self, obj):
         department = obj.canteen_snapshot.get("department", None)

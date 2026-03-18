@@ -37,7 +37,7 @@ class Command(BaseCommand):
         - python manage.py teledeclaration_fix_old --command set_satellites_snapshot_sector_list_from_sectors_m2m --apply
 
     set_canteen_snapshot_epci_and_pat_list_from_city_insee_code
-    - Description: jusqu'à 2025, on n'avait pas toutes les données géo dans les canteen_snapshot. On avait city_insee_code, department & region. Mais pas epci ni pat_list.
+    - Description: jusqu'à 2025 (inclut), on n'avait pas toutes les données géo dans les canteen_snapshot. On avait city_insee_code, department & region. Mais pas epci ni pat_list.
     - Usage:
         - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_epci_and_pat_list_from_city_insee_code
         - python manage.py teledeclaration_fix_old --command set_canteen_snapshot_epci_and_pat_list_from_city_insee_code --apply
