@@ -530,14 +530,6 @@ export const selectListToObject = (selectList) => {
   }, {})
 }
 
-function hasValue(val) {
-  if (typeof val === "string") {
-    return !!val
-  } else {
-    return !strictIsNaN(val)
-  }
-}
-
 export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
   if (diagnostic?.creationSource === "APP") return !!diagnostic[keyMeasure.progressField]
   return !!diagnostic
