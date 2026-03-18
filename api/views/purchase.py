@@ -353,12 +353,21 @@ def complete_diag_data(purchases, data):
         # outside of EGalim (products can be counted twice across characteristics)
         purchase_family = purchases.filter(family=family.upper())
         other_labels_characteristics = []
-        for label in Diagnostic.APPRO_LABELS_FRANCE:
+        for label in Diagnostic.APPRO_LABELS_FRANCE_SUBCATEGORIES:
             characteristic = Purchase.Characteristic[label.upper()]
             purchase_family_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
             key = "valeur_" + family + "_" + label
             data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
             other_labels_characteristics.append(characteristic)
+        # France total
+        purchase_family_label = purchase_family.filter(
+            Q(characteristics__contains=[Purchase.Characteristic.FRANCE])
+            | Q(characteristics__contains=[Purchase.Characteristic.CIRCUIT_COURT])
+            | Q(characteristics__contains=[Purchase.Characteristic.LOCAL])
+        ).distinct()
+        key = "valeur_" + family + "_france"
+        data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+        other_labels_characteristics.append(Purchase.Characteristic.FRANCE)
         # Non-EGalim totals (contains no labels or only one or more of other_labels)
         non_egalim_purchases = purchase_family.filter(
             Q(characteristics__contained_by=(other_labels_characteristics + [""])) | Q(characteristics__len=0)
