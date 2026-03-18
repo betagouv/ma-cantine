@@ -1,3 +1,5 @@
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
@@ -1879,7 +1881,6 @@ class Diagnostic(models.Model):
         self.teledeclaration_version = TELEDECLARATION_CURRENT_VERSION
         self.teledeclaration_id = self.id
 
-        # save
         self.save()
 
     def cancel(self):
@@ -1905,3 +1906,33 @@ class Diagnostic(models.Model):
             setattr(self, field, None)
 
         self.save()
+
+
+@receiver(post_save, sender=Diagnostic)
+def update_canteen_declaration_donnees_year(sender, instance, created, **kwargs):
+    """
+    On diagnostic teledeclaration:
+    - set canteen declaration_donnees_year to True
+    - if a groupe, set all satellites declaration_donnees_year to True
+
+    On diagnostic teledeclared cancellation:
+    - set canteen declaration_donnees_year to False
+    - if a groupe, set all satellites declaration_donnees_year to False
+    """
+    if not created:
+        if instance.is_teledeclared:
+            canteen_id_list_to_update = [instance.canteen_snapshot["id"]]
+            if instance.satellites_snapshot:
+                canteen_id_list_to_update += [satellite["id"] for satellite in instance.satellites_snapshot]
+            Canteen.objects.filter(id__in=canteen_id_list_to_update).update(
+                **{f"declaration_donnees_{instance.year}": True}
+            )
+        else:
+            # only update if canteen declaration_donnees_year is True
+            if getattr(instance.canteen, f"declaration_donnees_{instance.year}", False):
+                canteen_id_list_to_update = [instance.canteen.id]
+                if instance.satellites_snapshot:
+                    canteen_id_list_to_update += [satellite["id"] for satellite in instance.satellites_snapshot]
+                Canteen.objects.filter(id__in=canteen_id_list_to_update).update(
+                    **{f"declaration_donnees_{instance.year}": False}
+                )
