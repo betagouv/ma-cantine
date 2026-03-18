@@ -1124,6 +1124,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 0)
 
+    @freeze_time("2024-02-10")  # during the 2023 campaign
     def test_td_diags_not_redacted(self):
         """
         A teledeclared diagnostic cannot be redacted
@@ -1131,7 +1132,8 @@ class PublishedCanteenDetailApiTest(APITestCase):
         canteen = CanteenFactory(redacted_appro_years=[2022, 2023])
 
         DiagnosticFactory(canteen=canteen, year=2022)
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2023, status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2023)
+        diagnostic.teledeclare(applicant=UserFactory())
         TeledeclarationFactory(
             diagnostic=diagnostic, status=Teledeclaration.TeledeclarationStatus.SUBMITTED, declared_data={"foo": "bar"}
         )
