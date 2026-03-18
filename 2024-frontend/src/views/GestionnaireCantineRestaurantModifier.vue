@@ -35,7 +35,7 @@ const saveCanteen = (props) => {
     .updateCanteen(form, canteenId)
     .then((canteen) => {
       if(canteen.id) goToCanteenPage(canteen)
-      else store.notifyServerError()
+      else store.notifyServerError(canteen)
   })
     .catch((e) => store.notifyServerError(e))
 }
