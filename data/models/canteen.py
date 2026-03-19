@@ -643,11 +643,19 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def reset_geo_fields_if_siret_changed(self):
         """
         Cases where we need to reset geo fields:
-        - if siret has changed: reset all geo fields (including city_insee_code)
+        - the canteen already exists in the database
+        - AND the siret has changed (city_insee_code will also be reset)
+        - OR the city_insee_code has changed (and previous city_insee_code must not be have been empty)
         """
         if self.id and self.is_dirty():
             if "siret" in self.get_dirty_fields() and self.siret:
                 self.reset_geo_fields(with_city_insee_code=True, with_save=False)
+            elif (
+                "city_insee_code" in self.get_dirty_fields()
+                and self.city_insee_code
+                and self.get_dirty_fields()["city_insee_code"]
+            ):
+                self.reset_geo_fields(with_city_insee_code=False, with_save=False)
 
     def set_is_filled(self):
         self.is_filled = self._is_filled()
