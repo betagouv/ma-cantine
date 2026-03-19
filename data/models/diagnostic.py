@@ -1,5 +1,3 @@
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
@@ -8,6 +6,7 @@ from django.db.models import Case, F, IntegerField, Q, Sum, When
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
 from django.utils import timezone
+from django.db import transaction
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
@@ -1892,7 +1891,13 @@ class Diagnostic(models.Model):
         self.teledeclaration_version = TELEDECLARATION_CURRENT_VERSION
         self.teledeclaration_id = self.id
 
-        self.save()
+        # update declaration_donnees_year to True & save
+        canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
+        with transaction.atomic():
+            Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
+                **{f"declaration_donnees_{self.year}": True}
+            )
+            self.save()
 
     def cancel(self):
         """
@@ -1907,6 +1912,10 @@ class Diagnostic(models.Model):
         if not self.is_teledeclared:
             raise ValidationError("Ce diagnostic doit avoir été télédéclaré")
 
+        # before deleting the snapshots
+        canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
+
+        # reset fields
         self.status = Diagnostic.DiagnosticStatus.DRAFT
         self.applicant = None
         for field in self.TELEDECLARATION_SNAPSHOT_FIELDS:
@@ -1916,30 +1925,9 @@ class Diagnostic(models.Model):
         for field in self.TELEDECLARATION_EGALIM_FIELDS:
             setattr(self, field, None)
 
-        self.save()
-
-
-@receiver(post_save, sender=Diagnostic)
-def update_canteen_declaration_donnees_year(sender, instance, created, **kwargs):
-    """
-    On diagnostic teledeclaration:
-    - set canteen declaration_donnees_year to True
-    - if a groupe, set all satellites declaration_donnees_year to True
-
-    On diagnostic teledeclared cancellation:
-    - set canteen declaration_donnees_year to False
-    - if a groupe, set all satellites declaration_donnees_year to False
-    """
-    if not created:
-        if instance.is_teledeclared:
-            canteen_id_list_to_update = instance.canteen_and_satellites_snapshot_id_list
+        # update declaration_donnees_year to True & save
+        with transaction.atomic():
             Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
-                **{f"declaration_donnees_{instance.year}": True}
+                **{f"declaration_donnees_{self.year}": False}
             )
-        else:
-            # only update if canteen declaration_donnees_year is True
-            if getattr(instance.canteen, f"declaration_donnees_{instance.year}", False):
-                canteen_id_list_to_update = instance.canteen_and_satellites_snapshot_id_list
-                Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
-                    **{f"declaration_donnees_{instance.year}": False}
-                )
+            self.save()
