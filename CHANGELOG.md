@@ -6,6 +6,24 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.21.2](https://github.com/betagouv/ma-cantine/compare/v2026.21.1...v2026.21.2) (2026-03-19)
+
+
+### Améliorations
+
+* **Cantines:** lorsque le city_insee_code est modifié, réinitialiser les champs géo ([#6534](https://github.com/betagouv/ma-cantine/issues/6534)) ([bc29b13](https://github.com/betagouv/ma-cantine/commit/bc29b1335b30b8b1af2a35380807cbe0f7f95a47))
+* **Open Data:** Data Gouv: dans l'url des fichiers exportés, indiquer l'heure en plus de la date ([#6536](https://github.com/betagouv/ma-cantine/issues/6536)) ([461f5ae](https://github.com/betagouv/ma-cantine/commit/461f5aec95e61faf6828250b26db7b68a1f5e8d5))
+* **Utilisateurs:** ne pas tenter de mettre en minuscule les emails des qq utilisateurs qui conflictent avec un autre compte ([#6529](https://github.com/betagouv/ma-cantine/issues/6529)) ([a8788c9](https://github.com/betagouv/ma-cantine/commit/a8788c989961854047b8b9a3cc0008d6a188754e))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** ne plus rendre le champs "siret" obligatoire pour la modification d'une cantine via API ([#6527](https://github.com/betagouv/ma-cantine/issues/6527)) ([f1d4698](https://github.com/betagouv/ma-cantine/commit/f1d4698ea2e3761d9ba363c81b2546cc7c5ba003))
+* **Télédéclaration:** corrige l'affichage du badge "À télédéclarer" pour un RSAT qui rejoind un groupe après avoir fait son bilan ([#6535](https://github.com/betagouv/ma-cantine/issues/6535)) ([e221002](https://github.com/betagouv/ma-cantine/commit/e221002913310db5bba89a1d62d4dfb69b493e6d))
+* **Télédéclarations:** corrige le total de remplissage automatique pour la catégorie France ([#6532](https://github.com/betagouv/ma-cantine/issues/6532)) ([0597446](https://github.com/betagouv/ma-cantine/commit/059744645906efc08cfe608c4a068093128cff39))
+* **Télédéclarations:** corrige les montants incorrectes de la modale de prévisualisation ([#6528](https://github.com/betagouv/ma-cantine/issues/6528)) ([d1b3ebf](https://github.com/betagouv/ma-cantine/commit/d1b3ebf0504351f43a1130af81732c472538c84c))
+* **Télédéclarations:** ne pas calculer le champ viande origine France si la valeur est "je ne sais pas" dans la TD ([#6533](https://github.com/betagouv/ma-cantine/issues/6533)) ([c7d95ef](https://github.com/betagouv/ma-cantine/commit/c7d95efc31ec804b242bcf49889e402744d76e87))
+
 ## [2026.21.1](https://github.com/betagouv/ma-cantine/compare/v2026.21.0...v2026.21.1) (2026-03-18)
 
 
