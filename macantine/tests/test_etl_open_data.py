@@ -257,7 +257,7 @@ class TeledeclarationETLOpenDataTest(TestCase):
             f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}/resources/{resource_id}",
             headers=expected_header,
             json={
-                "url": "https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim-prod/media/open_data/registre_cantines.xlsx?v=230514"
+                "url": "https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim-prod/media/open_data/registre_cantines.xlsx?v=2305140000"
             },
             status_code=200,
         )

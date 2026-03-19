@@ -110,7 +110,7 @@ def update_dataset_resources(dataset_id):
         for resource in resources:
             if resource["format"] in ["xlsx", "csv"]:
                 today = date.today()
-                updated_url = resource["url"].split("?v=")[0] + "?v=" + today.strftime("%Y%m%d")
+                updated_url = resource["url"].split("?v=")[0] + "?v=" + today.strftime("%Y%m%d%H%M")
                 response = requests.put(
                     f"{DATAGOUV_API_URL}/datasets/{dataset_id}/resources/{resource['id']}",
                     headers=DATAGOUV_API_HEADER,
