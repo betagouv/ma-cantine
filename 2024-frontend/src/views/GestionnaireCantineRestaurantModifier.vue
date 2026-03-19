@@ -30,12 +30,12 @@ canteenService
 /* Save canteen */
 const saveCanteen = (props) => {
   const { form } = props
-  if (form.hasSiret === "no-siret") delete form.siret
+  if (form.hasSiret === "no-siret") form.siret = null
   canteenService
     .updateCanteen(form, canteenId)
     .then((canteen) => {
       if(canteen.id) goToCanteenPage(canteen)
-      else store.notifyServerError()
+      else store.notifyServerError(canteen)
   })
     .catch((e) => store.notifyServerError(e))
 }

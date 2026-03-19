@@ -415,10 +415,6 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
     def partial_update(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")
-        if "siret" in request.data and not canteen_siret:
-            return JsonResponse(
-                {"siret": ["Le numéro SIRET ne peut pas être vide."]}, status=status.HTTP_400_BAD_REQUEST
-            )
         error_response = get_cantine_from_siret(canteen_siret, request)
         if error_response and error_response.get("id") != kwargs.get("pk"):
             raise DuplicateException(additional_data=error_response)

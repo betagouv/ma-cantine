@@ -676,19 +676,26 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.production_type, Canteen.ProductionType.ON_SITE_CENTRAL)
 
     @authenticate
-    def test_cannot_update_canteen_with_new_empty_siret(self):
+    def test_cannot_update_canteen_if_empty_siret_and_siren(self):
         self.assertEqual(self.canteen.siret, "92341284500011")
         self.canteen.managers.add(authenticate.user)
 
-        for siret in ["", None]:
-            payload = {"siret": siret}
+        for empty in ["", None]:
+            payload = {"siret": empty, "siren_unite_legale": empty}
             response = self.client.patch(
                 reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json"
             )
 
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
             body = response.json()
-            self.assertEqual(body["siret"], ["Le numéro SIRET ne peut pas être vide."])
+            self.assertEqual(
+                body["siret"],
+                ["Le champ SIRET ou le champ SIREN unité légale ne peuvent pas être vides en même temps."],
+            )
+            self.assertEqual(
+                body["sirenUniteLegale"],
+                ["Le champ SIRET ou le champ SIREN unité légale ne peuvent pas être vides en même temps."],
+            )
             self.canteen.refresh_from_db()
             self.assertEqual(self.canteen.siret, "92341284500011")
 
