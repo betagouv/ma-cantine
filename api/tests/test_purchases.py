@@ -1088,6 +1088,43 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         self.assertEqual(diag_cc.valeur_totale, 20)
         self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")
 
+    @freeze_time("2026-01-20")
+    @authenticate
+    def test_create_diagnostics_from_purchases_france_value(self):
+        """
+        Test that the france total value is calculated correctly
+        """
+        canteen = CanteenFactory(managers=[authenticate.user])
+        PurchaseFactory(
+            canteen=canteen,
+            date="2024-11-01",
+            price_ht=10,
+            characteristics=[Purchase.Characteristic.FRANCE],
+            family=Purchase.Family.BOULANGERIE,
+        )
+        PurchaseFactory(
+            canteen=canteen,
+            date="2024-11-01",
+            price_ht=50,
+            characteristics=[Purchase.Characteristic.CIRCUIT_COURT],
+            family=Purchase.Family.BOULANGERIE,
+        )
+        PurchaseFactory(
+            canteen=canteen,
+            date="2024-11-01",
+            price_ht=15,
+            characteristics=[Purchase.Characteristic.LOCAL],
+            family=Purchase.Family.BOULANGERIE,
+        )
+        response = self.client.get(
+            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["valeurBoulangerieFrance"], 75)
+        self.assertEqual(body["valeurBoulangerieCircuitCourt"], 50)
+        self.assertEqual(body["valeurBoulangerieLocal"], 15)
+
     def test_unauthorised_create_diagnostics_from_purchases(self):
         """
         If not logged in, throw a 403
