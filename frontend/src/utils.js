@@ -509,18 +509,10 @@ export const approTotals = (diagnostic) => {
 
 export const approSummary = (diagnostic) => {
   if (diagnostic.valeurTotale > 0) {
-    const { bioTotal, siqoTotal, externalitesPerformanceTotal, egalimAutresTotal } = approTotals(diagnostic)
-    let qualityTotal
-    if (siqoTotal || externalitesPerformanceTotal || egalimAutresTotal) {
-      qualityTotal = (siqoTotal || 0) + (externalitesPerformanceTotal || 0) + (egalimAutresTotal || 0)
-    }
+    const { bio, allSustainable } = getApproPercentages(diagnostic)
     let summary = []
-    if (hasValue(bioTotal)) {
-      summary.push(`${getPercentage(bioTotal, diagnostic.valeurTotale)} % bio`)
-    }
-    if (hasValue(qualityTotal)) {
-      summary.push(`${getPercentage(qualityTotal, diagnostic.valeurTotale)} % de qualité et durable`)
-    }
+    if (bio) summary.push(`${bio} % bio`)
+    if (allSustainable) summary.push(`${allSustainable} % de qualité et durable`)
     return summary.join(", ")
   }
   return "Incomplet"
@@ -536,14 +528,6 @@ export const selectListToObject = (selectList) => {
     acc[val.value] = val.label
     return acc
   }, {})
-}
-
-function hasValue(val) {
-  if (typeof val === "string") {
-    return !!val
-  } else {
-    return !strictIsNaN(val)
-  }
 }
 
 export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {
