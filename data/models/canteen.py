@@ -272,6 +272,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         conditions = [
             When(
                 is_satellite_query()
+                & Q(groupe_id__isnull=False)
                 & is_filled_query()
                 & Q(
                     diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
@@ -281,6 +282,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             ),
             When(
                 is_satellite_query()
+                & Q(groupe_id__isnull=False)
                 & Q(
                     diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                     has_diagnostic_teledeclared_for_year=True,
