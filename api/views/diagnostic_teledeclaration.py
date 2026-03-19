@@ -180,7 +180,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
     @staticmethod
     def _get_canteen_override_data(diagnostic):
         """
-        Returns the JSON data of the canteen parameters that need to be overriden in order for
+        Returns the JSON data of the canteen parameters that need to be overridden in order for
         them to be human-readable (e.g., replacing keys with labels)
         """
         return {
@@ -210,7 +210,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
     @staticmethod
     def _get_teledeclaration_override_data(diagnostic):
         """
-        Returns the JSON data of the teledeclaration parameters that need to be overriden in order for
+        Returns the JSON data of the teledeclaration parameters that need to be overridden in order for
         them to be human-readable (e.g., replacing keys with labels and merging multiple choice with
         "other" editable choices)
         """
@@ -314,7 +314,7 @@ class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
     def get_queryset(self):
         return (
             Diagnostic.objects.with_meal_price()
-            .historical_valid_td(CAMPAIGN_DATES.keys())
+            .valid_td_all_years(CAMPAIGN_DATES.keys())
             .order_by("teledeclaration_date")
         )
 

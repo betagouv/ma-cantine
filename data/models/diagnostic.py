@@ -12,7 +12,12 @@ from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models import Canteen
 from data.models.creation_source import CreationSource
-from data.utils import CustomJSONEncoder, make_optional_positive_decimal_field, sum_int_with_potential_null
+from data.utils import (
+    CustomJSONEncoder,
+    has_arrayfield_missing_query,
+    make_optional_positive_decimal_field,
+    sum_int_with_potential_null,
+)
 from data.validators import diagnostic as diagnostic_validators
 from macantine.utils import (
     CAMPAIGN_DATES,
@@ -52,7 +57,15 @@ def diagnostic_type_complete_query():
 
 
 def valeur_totale_is_filled_query():
-    return Q(valeur_totale__isnull=False) & ~Q(valeur_totale=0)
+    return Q(valeur_totale__isnull=False)
+
+
+def valeur_totale_is_filled_and_not_zero_query():
+    return Q(valeur_totale_is_filled_query() & ~Q(valeur_totale=0))
+
+
+def valeur_bio_agg_is_filled_query():
+    return Q(valeur_bio_agg__isnull=False)
 
 
 def diagnostic_type_simple_is_filled_query():
@@ -66,7 +79,7 @@ def diagnostic_type_simple_is_filled_query():
     after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025}
     )
-    return diagnostic_type_simple_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
+    return diagnostic_type_simple_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
 
 
 def diagnostic_type_complete_is_filled_query():
@@ -80,7 +93,52 @@ def diagnostic_type_complete_is_filled_query():
     after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025}
     )
-    return diagnostic_type_complete_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
+    return diagnostic_type_complete_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
+
+
+def teledeclaration_mode_satellite_without_appro_query():
+    return Q(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
+
+
+def canteen_deleted_query():
+    return Q(canteen_id__isnull=True)
+
+
+def canteen_soft_deleted_during_campaign_query(year):
+    year = int(year)
+    return Q(
+        canteen__deletion_date__range=(
+            CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+            CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+        )
+    )
+
+
+def canteen_has_siret_or_siren_unite_legale_query():
+    return Q(
+        ~Q(canteen_snapshot__siret=None) & ~Q(canteen_snapshot__siret="")
+        | ~Q(canteen_snapshot__siren_unite_legale=None) & ~Q(canteen_snapshot__siren_unite_legale="")
+    )
+
+
+def aberrant_values_query():
+    """
+    Ici nous filtrons les TD dont les déclarations paraissent aberrantes et sont impactantes :
+    - Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
+    Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
+    nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
+
+    Note: requires meal_price annotation
+    """
+    return Q(meal_price__isnull=False, meal_price__gt=20, valeur_totale__gt=1000000)
+
+
+def incoherent_values_query():
+    """
+    Ici nous filtrons les TD dont les déclarations paraissent incohérentes et sont impactantes :
+    - Durant la campagne 2023, nous avons identifié deux TD dont les valeurs étaient incohérentes.
+    """
+    return Q(year=2022, teledeclaration_id__in=[9656, 8037])
 
 
 class DiagnosticQuerySet(models.QuerySet):
@@ -106,10 +164,29 @@ class DiagnosticQuerySet(models.QuerySet):
     def teledeclared_for_year(self, year):
         return self.teledeclared().in_year(year).in_campaign(year)
 
+    def teledeclared_site_for_year(self, year):
+        """
+        Only return site TDs
+        - exclude groupes (2025+)
+        - exclude central & central servings (2024 and before)
+        """
+        return (
+            self.teledeclared_for_year(year)
+            .annotate(canteen_snapshot_production_type=F("canteen_snapshot__production_type"))
+            .exclude(
+                canteen_snapshot_production_type__in=[
+                    Canteen.ProductionType.GROUPE,
+                    Canteen.ProductionType.CENTRAL,
+                    Canteen.ProductionType.CENTRAL_SERVING,
+                ]
+            )
+        )
+
     def with_meal_price(self):
         """
         Le coût denrées est calculé en divisant la valeur d'achat alimentaire total par le nombre de repas annuels.
         """
+        # Cast to FloatField first to handle legacy float values in JSON, then to IntegerField
         return self.annotate(
             canteen_yearly_meal_count=Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField())
         ).annotate(
@@ -120,43 +197,14 @@ class DiagnosticQuerySet(models.QuerySet):
         )
 
     def exclude_aberrant_values(self):
-        """
-        Ici nous supprimons les TD dont les déclarations paraissent erronées et sont impactantes.
-        1) Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
-        Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
-        nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
-        2) Durant la campagne 2023, nous avons aussi identifié deux TD dont les valeurs étaient aberrantes.
-        """
-        return (
-            self.with_meal_price()
-            .exclude(meal_price__isnull=False, meal_price__gt=20, valeur_totale__gt=1000000)
-            .exclude(year=2022, teledeclaration_id__in=[9656, 8037])
-        )
-
-    def canteen_not_deleted_during_campaign(self, year):
-        year = int(year)
-        return self.exclude(
-            canteen__deletion_date__range=(
-                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
-            )
-        )
-
-    def canteen_has_siret_or_siren_unite_legale(self):
-        return self.annotate(
-            canteen_siret=F("canteen_snapshot__siret"),
-            canteen_siren_unite_legale=F("canteen_snapshot__siren_unite_legale"),
-        ).filter(
-            ~Q(canteen_siret=None) & ~Q(canteen_siret="")
-            | ~Q(canteen_siren_unite_legale=None) & ~Q(canteen_siren_unite_legale="")
-        )
+        return self.with_meal_price().exclude(aberrant_values_query())
 
     def canteen_for_stat(self, year):
         return (
             self.select_related("canteen")
-            .exclude(canteen_id__isnull=True)
-            .canteen_not_deleted_during_campaign(year)  # Chaîne de traitement n°6
-            .canteen_has_siret_or_siren_unite_legale()  # Chaîne de traitement n°7
+            .exclude(canteen_deleted_query())
+            .exclude(canteen_soft_deleted_during_campaign_query(year))  # Chaîne de traitement n°6
+            .filter(canteen_has_siret_or_siren_unite_legale_query())  # Chaîne de traitement n°7
         )
 
     def valid_td_by_year(self, year):
@@ -164,18 +212,38 @@ class DiagnosticQuerySet(models.QuerySet):
         if year in CAMPAIGN_DATES.keys():
             return (
                 self.teledeclared_for_year(year)
-                .exclude(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
-                .filter(valeur_bio_agg__isnull=False)  # Chaîne de traitement n°5
+                .exclude(generated_from_groupe_diagnostic=True)  # just to be sure, in case all_objects is used
+                .exclude(teledeclaration_mode_satellite_without_appro_query())
+                .filter(valeur_bio_agg_is_filled_query())  # Chaîne de traitement n°5
                 .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
                 .exclude_aberrant_values()  # Chaîne de traitement n°8
+                .exclude(incoherent_values_query())  # Chaîne de traitement n°8
             )
         else:
             return self.none()
 
-    def historical_valid_td(self, years: list):
+    def valid_td_site_by_year(self, year):
+        year = int(year)
+        if year in CAMPAIGN_DATES.keys():
+            if year in [2024]:
+                return self.teledeclared_site_for_year(year).filter(
+                    has_arrayfield_missing_query("invalid_reason_list")
+                )
+            else:
+                return self.valid_td_by_year(year)
+        else:
+            return self.none()
+
+    def valid_td_all_years(self, years: list):
         results = self.none()
         for year in years:
             results = results | self.valid_td_by_year(year)
+        return results.select_related("canteen")
+
+    def valid_td_site_all_years(self, years: list):
+        results = self.none()
+        for year in years:
+            results = results | self.valid_td_site_by_year(year)
         return results.select_related("canteen")
 
     def publicly_visible(self):
@@ -189,9 +257,9 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         Note: we use Sum/default instead of F to better manage None values.
         """
-        return self.annotate(
-            bio_percent=100 * Sum("valeur_bio_agg", default=0) / Sum("valeur_totale"),
-            egalim_percent=100 * F("valeur_egalim_agg") / Sum("valeur_totale"),
+        return self.annotate(valeur_totale_sum=Sum("valeur_totale")).annotate(
+            bio_percent=100 * Sum("valeur_bio_agg", default=0) / F("valeur_totale_sum"),
+            egalim_percent=100 * F("valeur_egalim_agg") / F("valeur_totale_sum"),
         )
 
     def teledeclaration_objectifs_egalim_atteints(self):
@@ -201,7 +269,8 @@ class DiagnosticQuerySet(models.QuerySet):
         return self.filter(objectifs_egalim_atteints=True)
 
     def egalim_objectives_reached(self):
-        return self.filter(
+        # TODO: filter on canteen_snapshot__region instead
+        return self.select_related("canteen").filter(
             Q(
                 bio_percent__gte=EGALIM_OBJECTIVES["hexagone"]["bio_percent"],
                 egalim_percent__gte=EGALIM_OBJECTIVES["hexagone"]["egalim_percent"],
@@ -224,18 +293,32 @@ class DiagnosticQuerySet(models.QuerySet):
         )
 
 
+class DiagnosticManager(models.Manager):
+    queryset_model = DiagnosticQuerySet
+
+    def __init__(self, *args, **kwargs):
+        self.exclude_generated = kwargs.pop("exclude_generated", False)
+        super().__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        if self.exclude_generated:
+            return self.queryset_model(self.model).exclude(generated_from_groupe_diagnostic=True)
+        return self.queryset_model(self.model)
+
+
 class Diagnostic(models.Model):
     class Meta:
         verbose_name = "diagnostic"
         verbose_name_plural = "diagnostics"
         constraints = [
-            models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
+            models.UniqueConstraint(
+                fields=["canteen", "year", "generated_from_groupe_diagnostic"], name="annual_diagnostic"
+            ),
         ]
 
     class DiagnosticStatus(models.TextChoices):
         DRAFT = "DRAFT", "Brouillon"
         SUBMITTED = "SUBMITTED", "Télédéclaré"
-        # CANCELLED = "CANCELLED", "Annulé"
 
     # NB: if the label of the choice changes, double check that the teledeclaration PDF
     # doesn't need an update as well, since the logic in the templates is based on the label
@@ -341,16 +424,21 @@ class Diagnostic(models.Model):
         SITE = "SITE", "Cantine déclarant ses propres données"
 
     class InvalidReason(models.TextChoices):
-        VALUE_TOTAL_HT_VIDE = "VALUE_TOTAL_HT_VIDE", "Valeur totale des achats vide"
-        VALUE_BIO_HT_VIDE = "VALUE_BIO_HT_VIDE", "Valeur totale des achats bio vide"
-        CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE = (
-            "CANTINE_SUPPRIMEE_PENDANT_CAMPAGNE",
-            "Cantine supprimée pendant la campagne",
+        CANTINE_SUPPRIMEE = "CANTINE_SUPPRIMEE", "Cantine supprimée"
+        CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE = (
+            "CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE",
+            "Cantine soft supprimée pendant la campagne",
         )
         CANTINE_SANS_SIRET_OU_SIREN = "CANTINE_SANS_SIRET_OU_SIREN", "Cantine sans siret ou siren"
+        TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO = (
+            "TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO",
+            "Télédeclaration mode satellite without appro",
+        )
+        VALEUR_TOTALE_VIDE = "VALEUR_TOTALE_VIDE", "Valeur totale des achats vide"
+        VALEUR_BIO_AGG_VIDE = "VALEUR_BIO_AGG_VIDE", "Valeur totale des achats bio vide"
         VALEURS_ABERRANTES = "VALEURS_ABERRANTES", "Valeurs aberrantes"
-        DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
         VALEURS_INCOHERENTES = "VALEURS_INCOHERENTES", "Valeurs incohérentes"
+        DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
 
     APPRO_FAMILIES = [
         "viandes_volailles",
@@ -436,8 +524,8 @@ class Diagnostic(models.Model):
         "valeur_siqo_agg",
         "valeur_externalites_performance_agg",
         "valeur_egalim_autres_agg",
-        # "valeur_egalim_hors_bio_agg",
-        # "valeur_egalim_agg",
+        "valeur_egalim_hors_bio_agg",
+        "valeur_egalim_agg",
     ]
 
     APPRO_FIELDS = [
@@ -686,6 +774,8 @@ class Diagnostic(models.Model):
         "communication_frequency",
     ]
 
+    APPRO_1TD1SITE_FIELDS = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + AGGREGATED_APPRO_FIELDS
+
     NON_APPRO_FIELDS = WASTE_FIELDS + DIVERSIFICATION_FIELDS + PLASTIC_FIELDS + INFO_FIELDS
 
     META_FIELDS = [
@@ -702,6 +792,7 @@ class Diagnostic(models.Model):
         "creation_date",
         "modification_date",
         "creation_source",
+        "generated_from_groupe_diagnostic",
     ]
 
     MATOMO_FIELDS = [
@@ -736,7 +827,8 @@ class Diagnostic(models.Model):
         "applicant_snapshot",
     ]
 
-    objects = models.Manager.from_queryset(DiagnosticQuerySet)()
+    objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)(exclude_generated=True)
+    all_objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
@@ -781,7 +873,13 @@ class Diagnostic(models.Model):
         choices=CentralKitchenDiagnosticMode.choices,
         blank=True,
         null=True,
-        verbose_name="seulement pertinent pour les cuisines centrales : Quelles données sont déclarées par cette cuisine centrale ?",
+        verbose_name="Quelles données sont déclarées par ce groupe ? (seulement pertinent pour les groupes)",
+    )
+
+    # Relevant only for satellites
+    generated_from_groupe_diagnostic = models.BooleanField(
+        verbose_name="A été automatiquement généré depuis le bilan du groupe (seulement pertinent pour les satellites)",
+        default=False,
     )
 
     # progress fields
