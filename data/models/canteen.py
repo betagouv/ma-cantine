@@ -187,18 +187,25 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         diagnostics = Diagnostic.objects.filter(
             Q(canteen=OuterRef("groupe_id")) | Q(canteen=OuterRef("pk")), year=year
         )
+        canteen_diagnostics = diagnostics.filter(canteen=OuterRef("pk"))
+        groupe_diagnostics = diagnostics.filter(canteen=OuterRef("groupe_id"))
         diagnostics_filled = diagnostics.filled()
         diagnostic_for_year_with_cc_mode = Diagnostic.objects.filter(
-            pk=OuterRef("diagnostic_for_year"),
+            pk=OuterRef("groupe_diagnostic_for_year"),
             central_kitchen_diagnostic_mode__isnull=False,
         ).exclude(central_kitchen_diagnostic_mode="")
         diagnostics_teledeclared = diagnostics.teledeclared()
+        diagnostic_groupe_mode_all = canteen_diagnostics.filter(
+            teledeclaration_mode__in=[Diagnostic.TeledeclarationMode.CENTRAL_ALL]
+        )
         return self.annotate(
             diagnostic_for_year=Subquery(diagnostics.values("id")[:1]),
+            groupe_diagnostic_for_year=Subquery(groupe_diagnostics.values("id")[:1]),
             has_diagnostic_filled_for_year=Exists(Subquery(diagnostics_filled)),
             diagnostic_for_year_cc_mode=Subquery(
                 diagnostic_for_year_with_cc_mode.values("central_kitchen_diagnostic_mode")[:1]
             ),
+            groupe_mode=Subquery(diagnostic_groupe_mode_all.values("teledeclaration_mode")[:1]),
             has_diagnostic_teledeclared_for_year=Exists(Subquery(diagnostics_teledeclared)),
         )
 
@@ -304,7 +311,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
             When(has_diagnostic_filled_for_year=False, then=Value(Canteen.Actions.FILL_DIAGNOSTIC)),
             When(
-                (is_groupe_query() & Q(diagnostic_for_year_cc_mode=None)),
+                (is_groupe_query() & Q(groupe_mode=Diagnostic.TeledeclarationMode.CENTRAL_ALL)),
                 then=Value(Canteen.Actions.FILL_DIAGNOSTIC),
             ),
             When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
