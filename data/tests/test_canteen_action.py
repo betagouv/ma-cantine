@@ -416,6 +416,40 @@ class CanteenActionTestCase(TestCase):
         )
         self.assertEqual(canteen_qs.get(id=self.canteen_satellite_11.id).action, Canteen.Actions.NOTHING)
 
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_groupe_satellite_when_diag_already_done(self):
+        # Create the diags
+        DiagnosticFactory(
+            canteen=self.canteen_satellite,
+            year=2024,
+        )
+        DiagnosticFactory(
+            canteen=self.canteen_groupe_1_with_satellites,
+            year=2024,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+        )
+        # RSAT can teledeclare
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_satellite.id).action,
+            Canteen.Actions.TELEDECLARE,
+        )
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_satellite_11.id).action,
+            Canteen.Actions.NOTHING_SATELLITE,
+        )
+
+        # SAT join the groupe
+        self.canteen_satellite.groupe = self.canteen_groupe_1_with_satellites
+        self.canteen_satellite.save(skip_validations=True)
+
+        # RSAT must wait
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_satellite.id).action,
+            Canteen.Actions.NOTHING_SATELLITE,
+        )
+
     # TODO: test before campaign
     # TODO: test during correction campaign
     # TODO: test after campaign
