@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.21.3](https://github.com/betagouv/ma-cantine/compare/v2026.21.2...v2026.21.3) (2026-03-20)
+
+
+### Améliorations
+
+* **Cantines:** Données géo: améliorer le script de réinitialisation des données géo en cas d'incohérences (pour cleaner la base) ([#6540](https://github.com/betagouv/ma-cantine/issues/6540)) ([e0884e8](https://github.com/betagouv/ma-cantine/commit/e0884e88b7c3728227d90e297c538c35b14c6039))
+* **Cantines:** Données géo: script pour récupérer toutes les infos géo d'API Recherche Entreprises (par siret) et stocker dans un fichier csv ([#6538](https://github.com/betagouv/ma-cantine/issues/6538)) ([dd7ee3e](https://github.com/betagouv/ma-cantine/commit/dd7ee3e5944c93be5477d40047296c932a16f3c4))
+* **Ressources:** ajout d'1 pdf & modification d'1 xlsx ([#6537](https://github.com/betagouv/ma-cantine/issues/6537)) ([f2c0ecd](https://github.com/betagouv/ma-cantine/commit/f2c0ecd529df588f0fb4148744ee1655eee2a32d))
+
+
+### Technique
+
+* **Cantines:** Données géo: lancer le géobot aussi sur les cantines supprimées. Ajout de logs ([#6542](https://github.com/betagouv/ma-cantine/issues/6542)) ([29b9bde](https://github.com/betagouv/ma-cantine/commit/29b9bde5fbff09cadc7e44ff6b9954c1cf40c005))
+
 ## [2026.21.2](https://github.com/betagouv/ma-cantine/compare/v2026.21.1...v2026.21.2) (2026-03-19)
 
 
