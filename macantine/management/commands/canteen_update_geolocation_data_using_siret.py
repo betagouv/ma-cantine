@@ -4,6 +4,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
 
+from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.models import Canteen
 from data.utils import read_csv
 
@@ -65,14 +66,13 @@ class Command(BaseCommand):
         }
         logger.info("Start task: canteen_update_geolocation_data_using_siret")
         logger.info("Mode: %s", "apply" if apply_changes else "dry-run")
-        canteen_qs = Canteen.objects.has_siret().order_by("siret")
+        canteen_qs = Canteen.all_objects.has_siret().order_by("siret")
         logger.info(f"Found {canteen_qs.count()} canteens with SIRET to process")
 
         for index, canteen in enumerate(canteen_qs):
             pending_changes = {}
             response, source = self._get_geo_data(canteen.siret, cache_by_siret)
             if not response:
-                pass
                 if enable_logging:
                     logger.warning(f"Canteen {canteen.id} - {canteen.siret} - city_insee_code absent")
                 if not canteen.siret_inconnu:
@@ -93,7 +93,7 @@ class Command(BaseCommand):
                     results["canteen_siret_city_insee_code_mismatch"].append(canteen.id)
                 else:  # all good
                     results["canteen_siret_city_insee_code_ok"] += 1
-
+                    # also check if postal code matches (only for canteens with matching city_insee_code, to avoid noise)
                     if canteen.postal_code and canteen.postal_code != postal_code:
                         if enable_logging:
                             logger.warning(
@@ -120,13 +120,14 @@ class Command(BaseCommand):
             if should_update:
                 results["canteen_to_update"] += 1
                 if apply_changes:
-                    if len(pending_changes) > 0:
-                        for field_name, field_value in pending_changes.items():
-                            setattr(canteen, field_name, field_value)
                     if canteen.id in results["canteen_siret_city_insee_code_mismatch"]:
                         canteen.reset_geo_fields(with_city_insee_code=True, with_save=False)
                     elif canteen.id in results["canteen_siret_postal_code_mismatch"]:
                         canteen.reset_geo_fields(with_city_insee_code=False, with_save=False)
+                    # after reset_geo_fields, because siret_* have been reset
+                    if len(pending_changes) > 0:
+                        for field_name, field_value in pending_changes.items():
+                            setattr(canteen, field_name, field_value)
 
                     canteen._change_reason = "Données de localisation MAJ"
                     canteen.save(skip_validations=True)
@@ -190,5 +191,4 @@ class Command(BaseCommand):
             if cache_response != "fallback_to_api":
                 return cache_response, "cache"
 
-        # return fetch_geo_data_from_siret(siret), "api"
-        return None, None
+        return fetch_geo_data_from_siret(siret), "api"
