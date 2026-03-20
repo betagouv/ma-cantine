@@ -17,9 +17,8 @@ class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
     def setUpTestData(cls):
         cls.diagnostic_not_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=None)
         cls.diagnostic_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=1000)
-        cls.diagnostic_filled_submitted = DiagnosticFactory(
-            canteen=CanteenFactory(), valeur_totale=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED
-        )
+        cls.diagnostic_filled_submitted = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=1000)
+        cls.diagnostic_filled_submitted.teledeclare(applicant=UserFactory())
 
     def test_teledeclared_queryset(self):
         self.assertEqual(Diagnostic.objects.all().count(), 3)
@@ -135,8 +134,31 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
         self.assertEqual(self.diagnostic_groupe.teledeclaration_version, 16)
         self.assertEqual(self.diagnostic_groupe.teledeclaration_id, self.diagnostic_groupe.id)
         # for snapshots, see tests below
-        # try to teledeclare again
-        self.assertRaises(ValidationError, self.diagnostic_groupe.teledeclare, applicant=UserFactory())
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_site_teledeclare_post_save_declaration_donnees_year(self):
+        self.assertFalse(getattr(self.canteen_site, f"declaration_donnees_{year_data}"))
+
+        self.diagnostic_site.teledeclare(applicant=self.user)
+
+        self.canteen_site.refresh_from_db()
+        self.assertTrue(getattr(self.canteen_site, f"declaration_donnees_{year_data}"))
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_groupe_teledeclare_post_save_declaration_donnees_year(self):
+        self.assertFalse(getattr(self.canteen_groupe, f"declaration_donnees_{year_data}"))
+        self.assertFalse(getattr(self.canteen_satellite, f"declaration_donnees_{year_data}"))
+
+        # fill the diagnostic
+        self.diagnostic_groupe.valeur_totale = 1000
+        self.diagnostic_groupe.save()
+
+        self.diagnostic_groupe.teledeclare(applicant=self.user)
+
+        self.canteen_groupe.refresh_from_db()
+        self.canteen_satellite.refresh_from_db()
+        self.assertTrue(getattr(self.canteen_groupe, f"declaration_donnees_{year_data}"))
+        self.assertTrue(getattr(self.canteen_satellite, f"declaration_donnees_{year_data}"))
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_satellite_in_group_can_teledeclare_non_appro_fields_if_groupe_mode_appro(self):
@@ -162,7 +184,7 @@ class DiagnosticModelCancelMethodTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=cls.canteen_groupe,
         )
-        cls.diagnostic = DiagnosticFactory(
+        cls.canteen_groupe_diagnostic = DiagnosticFactory(
             canteen=cls.canteen_groupe,
             year=year_data,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -172,32 +194,45 @@ class DiagnosticModelCancelMethodTest(TestCase):
 
     @freeze_time(date_in_last_teledeclaration_campaign)
     def test_cannot_cancel_a_diagnostic_outside_of_campaign(self):
-        self.assertRaises(ValidationError, self.diagnostic.cancel)
+        self.assertRaises(ValidationError, self.canteen_groupe_diagnostic.cancel)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cannot_cancel_a_diagnostic_not_teledeclared(self):
-        self.assertRaises(ValidationError, self.diagnostic.cancel)
+        self.assertRaises(ValidationError, self.canteen_groupe_diagnostic.cancel)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cancel(self):
         # teledeclare the diagnostic
-        self.diagnostic.teledeclare(applicant=UserFactory())
-        self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
-        self.assertIsNotNone(self.diagnostic.applicant)
-        self.assertIsNotNone(self.diagnostic.teledeclaration_date)
-        self.assertIsNotNone(self.diagnostic.teledeclaration_mode)
-        self.assertIsNotNone(self.diagnostic.teledeclaration_version)
-        self.assertIsNotNone(self.diagnostic.teledeclaration_id)
+        self.canteen_groupe_diagnostic.teledeclare(applicant=UserFactory())
+        self.assertEqual(self.canteen_groupe_diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertIsNotNone(self.canteen_groupe_diagnostic.applicant)
+        self.assertIsNotNone(self.canteen_groupe_diagnostic.teledeclaration_date)
+        self.assertIsNotNone(self.canteen_groupe_diagnostic.teledeclaration_mode)
+        self.assertIsNotNone(self.canteen_groupe_diagnostic.teledeclaration_version)
+        self.assertIsNotNone(self.canteen_groupe_diagnostic.teledeclaration_id)
 
         # cancel
-        self.diagnostic.cancel()
+        self.canteen_groupe_diagnostic.cancel()
 
-        self.assertEqual(self.diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
-        self.assertIsNone(self.diagnostic.applicant)
-        self.assertIsNone(self.diagnostic.teledeclaration_date)
-        self.assertIsNone(self.diagnostic.teledeclaration_mode)
-        self.assertIsNone(self.diagnostic.teledeclaration_version)
-        self.assertIsNone(self.diagnostic.teledeclaration_id)
+        self.assertEqual(self.canteen_groupe_diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
+        self.assertIsNone(self.canteen_groupe_diagnostic.applicant)
+        self.assertIsNone(self.canteen_groupe_diagnostic.teledeclaration_date)
+        self.assertIsNone(self.canteen_groupe_diagnostic.teledeclaration_mode)
+        self.assertIsNone(self.canteen_groupe_diagnostic.teledeclaration_version)
+        self.assertIsNone(self.canteen_groupe_diagnostic.teledeclaration_id)
+
+    @freeze_time(date_in_teledeclaration_campaign)
+    def test_cancel_post_save_declaration_donnees_year(self):
+        # teledeclare the diagnostic
+        self.canteen_groupe_diagnostic.teledeclare(applicant=UserFactory())
+        self.canteen_groupe.refresh_from_db()
+        self.assertTrue(getattr(self.canteen_groupe, f"declaration_donnees_{year_data}"))
+
+        # cancel
+        self.canteen_groupe_diagnostic.cancel()
+
+        self.canteen_groupe.refresh_from_db()
+        self.assertFalse(getattr(self.canteen_groupe, f"declaration_donnees_{year_data}"))
 
 
 class DiagnosticTeledeclaredSnapshotsTest(TestCase):
