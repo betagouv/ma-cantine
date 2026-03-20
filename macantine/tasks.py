@@ -58,7 +58,7 @@ def update_user_data():
         user.update_data()
 
     end = time.time()
-    result = f"update_user_data task ended. Updated {users_qs.count()} in {end - start:.2f} seconds"
+    result = f"Updated {users_qs.count()} users in {end - start:.2f} seconds"
     logger.info(result)
     return result
 
@@ -102,7 +102,7 @@ def update_brevo_contacts():
     brevo.update_existing_brevo_contacts(chunks, timezone.now())
 
     end = time.time()
-    result = f"update_brevo_contacts task ended. Created {users_to_create_qs.count()} and updated {users_to_update_qs.count()} contacts in {end - start:.2f} seconds"
+    result = f"Created {users_to_create_qs.count()} and updated {users_to_update_qs.count()} contacts in {end - start:.2f} seconds"
     logger.info(result)
     return result
 
@@ -151,8 +151,9 @@ def fill_missing_insee_code_using_siret():
     Output: Fill canteen's city_insee_code field
     """
     logger.info("Starting fill_missing_insee_code_using_siret task")
+    start = time.time()
 
-    candidate_canteens = Canteen.objects.candidates_for_siret_to_city_insee_code_bot()
+    candidate_canteens = Canteen.all_objects.candidates_for_siret_to_city_insee_code_bot()
     logger.info(f"Siret to insee_code Bot: found {candidate_canteens.count()} canteens")
     counter = 0
 
@@ -169,7 +170,8 @@ def fill_missing_insee_code_using_siret():
             logger.info("200 appels réalisés maximum par minute...")
             time.sleep(60)
 
-    result = f"Updated {counter}/{candidate_canteens.count()} canteens"
+    end = time.time()
+    result = f"Updated {counter}/{candidate_canteens.count()} canteens in {end - start:.2f} seconds"
     logger.info(f"Siret to insee_code Bot: {result}")
     return result
 
@@ -242,8 +244,9 @@ def fill_missing_geolocation_data_using_insee_code():
     Output: Fill canteen's postal_code, city, epci, department & region fields
     """
     logger.info("Starting fill_missing_geolocation_data_using_insee_code task")
+    start = time.time()
 
-    candidate_canteens = Canteen.objects.candidates_for_city_insee_code_to_geo_data_bot()
+    candidate_canteens = Canteen.all_objects.candidates_for_city_insee_code_to_geo_data_bot()
     candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
     logger.info(f"INSEE Geolocation Bot: found {candidate_canteens.count()} canteens")
     counter = 0
@@ -253,7 +256,8 @@ def fill_missing_geolocation_data_using_insee_code():
         if updated:
             counter += 1
 
-    result = f"Updated {counter}/{candidate_canteens.count()} canteens"
+    end = time.time()
+    result = f"Updated {counter}/{candidate_canteens.count()} canteens in {end - start:.2f} seconds"
     logger.info(f"INSEE Geolocation Bot: {result}")
     return result
 
