@@ -19,7 +19,7 @@ class Command(BaseCommand):
     """
     Export Recherche Entreprises geodata for canteen SIRETs to a local CSV cache.
 
-    Examples:
+    Usage:
     - uv run python manage.py canteen_siret_recherche_entreprises_cache_csv --output stats/recherche_entreprises_cache.csv
     - uv run python manage.py canteen_siret_recherche_entreprises_cache_csv --output stats/recherche_entreprises_cache.csv --resume
     - uv run python manage.py canteen_siret_recherche_entreprises_cache_csv --output stats/recherche_entreprises_cache.csv --retry-errors
