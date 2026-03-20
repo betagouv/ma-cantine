@@ -138,7 +138,7 @@ def sum_int_with_potential_null(values_to_sum):
 
 
 def read_csv(filepath, delimiter=","):
-    with open(filepath, newline="") as csvfile:
+    with open(filepath, newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile, delimiter=delimiter)
         return list(reader)
 
