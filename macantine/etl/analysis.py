@@ -166,28 +166,27 @@ class ETL_ANALYSIS_DIAGNOSTIC_RAW(ANALYSIS):
     def __init__(self):
         super().__init__()
         self.warehouse = DataWareHouse()
-        self.dataset_name = "diagnostics_raw"
+        self.dataset_name = "diagnostics_raw_copy"
+        self.model = Diagnostic
 
     def extract_dataset(self):
         """
-        Load raw table into a dataframe.
+        Load raw table into a list of records.
         """
         start = time.time()
         queryset = Diagnostic.objects.all().values()
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
+        self.records = list(queryset)
+        if not self.records:
+            logger.warning("Dataset is empty")
         end = time.time()
         logger.info(f"Time spent on raw teledeclaration extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
+        pass  # complex type serialization is handled inside insert_records
 
     def load_dataset(self):
-        super().load_dataset()
+        logger.info(f"Loading {len(self.records)} objects in db")
+        self.warehouse.insert_records(self.records, self.dataset_name, model=self.model)
 
 
 class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
@@ -223,29 +222,28 @@ class ETL_ANALYSIS_CANTEEN_RAW(ANALYSIS):
 
     def __init__(self):
         super().__init__()
-        self.dataset_name = "canteens_raw"
+        self.dataset_name = "canteens_raw_copy"
         self.warehouse = DataWareHouse()
+        self.model = Canteen
 
     def extract_dataset(self):
         """
-        Load raw table into a dataframe.
+        Load raw table into a list of records.
         """
         start = time.time()
         queryset = Canteen.all_objects.all().values()
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
+        self.records = list(queryset)
+        if not self.records:
+            logger.warning("Dataset is empty")
         end = time.time()
         logger.info(f"Time spent on extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
+        pass  # complex type serialization is handled inside insert_records
 
     def load_dataset(self):
-        super().load_dataset()
+        logger.info(f"Loading {len(self.records)} objects in db")
+        self.warehouse.insert_records(self.records, self.dataset_name, model=self.model)
 
 
 class ETL_ANALYSIS_PURCHASE_RAW(ANALYSIS):
@@ -257,28 +255,27 @@ class ETL_ANALYSIS_PURCHASE_RAW(ANALYSIS):
     def __init__(self):
         super().__init__()
         self.warehouse = DataWareHouse()
-        self.dataset_name = "purchases_raw"
+        self.dataset_name = "purchases_raw_copy"
+        self.model = Purchase
 
     def extract_dataset(self):
         """
-        Load raw table into a dataframe.
+        Load raw table into a list of records.
         """
         start = time.time()
         queryset = Purchase.all_objects.all().values()
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
+        self.records = list(queryset)
+        if not self.records:
+            logger.warning("Dataset is empty")
         end = time.time()
         logger.info(f"Time spent on raw purchase extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
+        pass  # complex type serialization is handled inside insert_records
 
     def load_dataset(self):
-        super().load_dataset()
+        logger.info(f"Loading {len(self.records)} objects in db")
+        self.warehouse.insert_records(self.records, self.dataset_name, model=self.model)
 
 
 class ETL_ANALYSIS_USER_RAW(ANALYSIS):
@@ -290,28 +287,27 @@ class ETL_ANALYSIS_USER_RAW(ANALYSIS):
     def __init__(self):
         super().__init__()
         self.warehouse = DataWareHouse()
-        self.dataset_name = "users_raw"
+        self.dataset_name = "users_raw_copy"
+        self.model = User
 
     def extract_dataset(self):
         """
-        Load raw table into a dataframe.
+        Load raw table into a list of records.
         """
         start = time.time()
         queryset = User.objects.all().values()
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
+        self.records = list(queryset)
+        if not self.records:
+            logger.warning("Dataset is empty")
         end = time.time()
         logger.info(f"Time spent on raw user extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
+        pass  # complex type serialization is handled inside insert_records
 
     def load_dataset(self):
-        super().load_dataset()
+        logger.info(f"Loading {len(self.records)} objects in db")
+        self.warehouse.insert_records(self.records, self.dataset_name, model=self.model)
 
 
 class ETL_ANALYSIS_CANTEEN_MANAGER_RAW(ANALYSIS):
@@ -323,25 +319,24 @@ class ETL_ANALYSIS_CANTEEN_MANAGER_RAW(ANALYSIS):
     def __init__(self):
         super().__init__()
         self.warehouse = DataWareHouse()
-        self.dataset_name = "canteen_managers_raw"
+        self.dataset_name = "canteen_managers_raw_copy"
+        self.model = Canteen.managers.through
 
     def extract_dataset(self):
         """
-        Load raw table into a dataframe.
+        Load raw table into a list of records.
         """
         start = time.time()
         queryset = Canteen.managers.through.objects.values("canteen_id", "user_id")
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
+        self.records = list(queryset)
+        if not self.records:
+            logger.warning("Dataset is empty")
         end = time.time()
         logger.info(f"Time spent on raw canteen manager extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
+        pass  # complex type serialization is handled inside insert_records
 
     def load_dataset(self):
-        super().load_dataset()
+        logger.info(f"Loading {len(self.records)} objects in db")
+        self.warehouse.insert_records(self.records, self.dataset_name, model=self.model)
