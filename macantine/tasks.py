@@ -1,7 +1,6 @@
 import logging
 import time
 
-import redis as r
 from django.conf import settings
 from django.core.management import call_command
 from django.db.models import F
@@ -26,10 +25,10 @@ from data.models.geo import get_lib_department_from_code, get_lib_region_from_co
 from .celery import app
 from .etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
-    ETL_ANALYSIS_CANTEEN_RAW,
     ETL_ANALYSIS_CANTEEN_MANAGER_RAW,
-    ETL_ANALYSIS_TELEDECLARATIONS,
+    ETL_ANALYSIS_CANTEEN_RAW,
     ETL_ANALYSIS_DIAGNOSTIC_RAW,
+    ETL_ANALYSIS_TELEDECLARATIONS,
     ETL_ANALYSIS_USER_RAW,
 )
 from .etl.open_data import (
@@ -38,7 +37,6 @@ from .etl.open_data import (
 )
 
 logger = logging.getLogger(__name__)
-redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
 ##########################################################################

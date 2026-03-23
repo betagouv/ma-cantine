@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Backend:**
 - Python 3.11+, Django 5.1, Django REST Framework, Wagtail CMS
-- PostgreSQL database, Redis/Celery for async tasks
+- PostgreSQL database, Celery for async tasks
 - Sentry for error tracking, Brevo for email, S3-compatible storage
 
 **Frontend:**

@@ -1487,7 +1487,6 @@ dependencies = [
     { name = "pytz" },
     { name = "pyyaml" },
     { name = "qrcode" },
-    { name = "redis" },
     { name = "referencing" },
     { name = "regex" },
     { name = "reportlab" },
@@ -1655,7 +1654,6 @@ requires-dist = [
     { name = "pytz", specifier = "==2024.2" },
     { name = "pyyaml", specifier = "==6.0.2" },
     { name = "qrcode", specifier = "==7.4.2" },
-    { name = "redis", specifier = "==5.2.0" },
     { name = "referencing", specifier = "==0.35.1" },
     { name = "regex", specifier = "==2023.12.25" },
     { name = "reportlab", specifier = "==4.2.2" },
@@ -2540,18 +2538,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/30/35/ad6d4c5a547fe9a5baf85a9edbafff93fc6394b014fab30595877305fa59/qrcode-7.4.2.tar.gz", hash = "sha256:9dd969454827e127dbd93696b20747239e6d540e082937c90f14ac95b30f5845", size = 535974, upload-time = "2023-02-05T22:11:46.548Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/24/79/aaf0c1c7214f2632badb2771d770b1500d3d7cbdf2590ae62e721ec50584/qrcode-7.4.2-py3-none-any.whl", hash = "sha256:581dca7a029bcb2deef5d01068e39093e80ef00b4a61098a2182eac59d01643a", size = 46197, upload-time = "2023-02-05T22:11:43.4Z" },
-]
-
-[[package]]
-name = "redis"
-version = "5.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "async-timeout", marker = "python_full_version < '3.11.3'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/53/17/2f4a87ffa4cd93714cf52edfa3ea94589e9de65f71e9f99cbcfa84347a53/redis-5.2.0.tar.gz", hash = "sha256:0b1087665a771b1ff2e003aa5bdd354f15a70c9e25d5a7dbf9c722c16528a7b0", size = 4607878, upload-time = "2024-10-24T15:04:23.354Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/12/f5/ffa560ecc4bafbf25f7961c3d6f50d627a90186352e27e7d0ba5b1f6d87d/redis-5.2.0-py3-none-any.whl", hash = "sha256:ae174f2bb3b1bf2b09d54bf3e51fbc1469cf6c10aa03e21141f51969801a7897", size = 261428, upload-time = "2024-10-24T15:04:21.499Z" },
 ]
 
 [[package]]

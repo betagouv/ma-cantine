@@ -2,7 +2,6 @@ import logging
 from collections import OrderedDict
 from datetime import date
 
-import redis as r
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import BadRequest, ValidationError
@@ -55,7 +54,6 @@ from data.models.creation_source import CreationSource
 from data.utils import has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
-redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
 class PublishedCanteenSingleView(RetrieveAPIView):

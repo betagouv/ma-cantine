@@ -33,15 +33,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-      redis:
-        image: redis:5
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd="redis-cli ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
     # Skip if PR is in draft
     if: ${{ !github.event.pull_request.draft }}
 
@@ -89,7 +80,6 @@ jobs:
           EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
           DEFAULT_FROM_EMAIL: contact@example.com
           CONTACT_EMAIL: contact@example.com
-          REDIS_URL: redis://localhost:6379/0
           GIT_BRANCH: ${{ github.head_ref }}
           TESTS_PARALLEL: 2
         run: |
@@ -124,7 +114,6 @@ jobs:
         env:
           SECRET: test
           ALLOWED_HOSTS: localhost
-          REDIS_URL: redis://localhost:6379/0
           STATICFILES_STORAGE: django.contrib.staticfiles.storage.StaticFilesStorage
           DEFAULT_FILE_STORAGE: django.core.files.storage.FileSystemStorage
         run: |

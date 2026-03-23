@@ -1,4 +1,5 @@
 import os
+import urllib.parse
 
 import dotenv
 from celery import Celery
@@ -19,7 +20,17 @@ def void(*args, **kwargs):
 dotenv.load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 
-app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", include=["macantine.tasks"])
+
+def _db_broker_url():
+    user = urllib.parse.quote(os.getenv("DB_USER", ""), safe="")
+    password = urllib.parse.quote(os.getenv("DB_PASSWORD", ""), safe="")
+    host = os.getenv("DB_HOST", "localhost")
+    port = os.getenv("DB_PORT", "5432")
+    name = os.getenv("DB_NAME", "")
+    return f"sqla+postgresql+psycopg2://{user}:{password}@{host}:{port}/{name}"
+
+
+app = Celery("macantine", broker=_db_broker_url(), backend="django-db", include=["macantine.tasks"])
 app.config_from_object(
     dict(
         worker_hijack_root_logger=False,
