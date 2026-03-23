@@ -6,6 +6,7 @@ from django.db.models import Case, F, IntegerField, Q, Sum, When
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
 from django.utils import timezone
+from django.db import transaction
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
@@ -1719,6 +1720,17 @@ class Diagnostic(models.Model):
         return get_category_lib_list_from_canteen_snapshot(self.canteen_snapshot)
 
     @property
+    def canteen_and_satellites_snapshot_id_list(self):
+        id_list = []
+        if self.canteen_snapshot and self.canteen_snapshot.get("id"):
+            id_list.append(self.canteen_snapshot["id"])
+        if self.satellites_snapshot and isinstance(self.satellites_snapshot, list):
+            for satellite in self.satellites_snapshot:
+                if satellite.get("id"):
+                    id_list.append(satellite["id"])
+        return id_list
+
+    @property
     def latest_submitted_teledeclaration(self):
         submitted_teledeclarations = self.teledeclaration_set.submitted()
         if submitted_teledeclarations.count() == 0:
@@ -1879,8 +1891,13 @@ class Diagnostic(models.Model):
         self.teledeclaration_version = TELEDECLARATION_CURRENT_VERSION
         self.teledeclaration_id = self.id
 
-        # save
-        self.save()
+        # update declaration_donnees_year to True & save
+        canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
+        with transaction.atomic():
+            Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
+                **{f"declaration_donnees_{self.year}": True}
+            )
+            self.save()
 
     def cancel(self):
         """
@@ -1895,6 +1912,10 @@ class Diagnostic(models.Model):
         if not self.is_teledeclared:
             raise ValidationError("Ce diagnostic doit avoir été télédéclaré")
 
+        # before deleting the snapshots
+        canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
+
+        # reset fields
         self.status = Diagnostic.DiagnosticStatus.DRAFT
         self.applicant = None
         for field in self.TELEDECLARATION_SNAPSHOT_FIELDS:
@@ -1904,4 +1925,9 @@ class Diagnostic(models.Model):
         for field in self.TELEDECLARATION_EGALIM_FIELDS:
             setattr(self, field, None)
 
-        self.save()
+        # update declaration_donnees_year to True & save
+        with transaction.atomic():
+            Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
+                **{f"declaration_donnees_{self.year}": False}
+            )
+            self.save()

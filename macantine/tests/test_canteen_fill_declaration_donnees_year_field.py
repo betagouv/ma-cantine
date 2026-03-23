@@ -43,6 +43,7 @@ class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
             cls.canteen_groupe_diagnostic_teledeclared.teledeclare(applicant=UserFactory())
 
     def test_command(self):
+        # Note: since the addition of Diagnositc post_save signal, the declaration_donnees_YEAR field is automatically filled
         self.assertFalse(self.canteen_site_with_diagnostic_not_teledeclared.declaration_donnees_2024)
         self.assertFalse(self.canteen_satellite_with_diagnostic_teledeclared.declaration_donnees_2024)
         self.assertFalse(self.canteen_groupe_with_diagnostic_teledeclared.declaration_donnees_2024)
