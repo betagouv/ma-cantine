@@ -40,7 +40,7 @@ class Command(BaseCommand):
         Canteen.all_objects.all().update(**{field_name: False})
 
         logger.info("Step 2: find the canteens that have a teledeclaration for the specified year")
-        diagnostics_teledeclared = Diagnostic.objects.teledeclared_for_year(year)
+        diagnostics_teledeclared = Diagnostic.objects.valid_td_by_year(year)
         logger.info(f"Found {len(diagnostics_teledeclared)} teledeclarations for year {year}")
         canteens_with_teledeclarations = []
         for dtd in diagnostics_teledeclared.values("canteen_snapshot", "satellites_snapshot"):

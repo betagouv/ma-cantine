@@ -1891,8 +1891,10 @@ class Diagnostic(models.Model):
         self.teledeclaration_version = TELEDECLARATION_CURRENT_VERSION
         self.teledeclaration_id = self.id
 
-        # update declaration_donnees_year to True & save
-        canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
+        # update declaration_donnees_year to True & save (for non-SATELLITE_WITHOUT_APPRO TDs)
+        canteen_id_list_to_update = []
+        if self.teledeclaration_mode != Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
+            canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
         with transaction.atomic():
             Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
                 **{f"declaration_donnees_{self.year}": True}
@@ -1913,7 +1915,9 @@ class Diagnostic(models.Model):
             raise ValidationError("Ce diagnostic doit avoir été télédéclaré")
 
         # before deleting the snapshots
-        canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
+        canteen_id_list_to_update = []
+        if self.teledeclaration_mode != Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
+            canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
 
         # reset fields
         self.status = Diagnostic.DiagnosticStatus.DRAFT
@@ -1925,7 +1929,7 @@ class Diagnostic(models.Model):
         for field in self.TELEDECLARATION_EGALIM_FIELDS:
             setattr(self, field, None)
 
-        # update declaration_donnees_year to True & save
+        # update declaration_donnees_year to True & save (for non-SATELLITE_WITHOUT_APPRO TDs)
         with transaction.atomic():
             Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
                 **{f"declaration_donnees_{self.year}": False}
