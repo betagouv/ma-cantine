@@ -32,20 +32,18 @@ class Command(BaseCommand):
         fields = Diagnostic.TELEDECLARATION_EGALIM_FIELDS
 
         logger.info("Step 1: reset the field for all the diagnostics")
-        Diagnostic.objects.teledeclared().update(**{field_name: None for field_name in fields})
+        Diagnostic.objects.teledeclared_for_year(year).update(**{field_name: None for field_name in fields})
 
         logger.info("Step 2: find the diagnostics that have a teledeclaration for the specified year")
         diagnostics_teledeclared = Diagnostic.objects.teledeclared_for_year(year)
         logger.info(f"Found {diagnostics_teledeclared.count()} teledeclarations for year {year}")
 
         logger.info("Step 3: update the egalim fields for the diagnostics with teledeclaration")
-        counter = 0
-        for diagnostic in diagnostics_teledeclared:
+        for index, diagnostic in enumerate(diagnostics_teledeclared):
             diagnostic.populate_egalim_stats()
             diagnostic.save(update_fields=fields)
-            counter += 1
-            if counter % 5000 == 0:
-                logger.info(f"Updated {counter} diagnostics teledeclared for year {year}")
+            if index % 5000 == 0:
+                logger.info(f"Updated {index} diagnostics teledeclared for year {year}")
 
         # Done!
         logger.info(
