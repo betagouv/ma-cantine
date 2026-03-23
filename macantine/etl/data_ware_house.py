@@ -31,12 +31,15 @@ class DataWareHouse:
             echo=False,
         )
 
+    def read_dataframe(self, table_name):
+        return pd.read_sql(sql=table_name, index_col="id", con=self.engine)
+
     def insert_dataframe(self, dataframe, table, dtype=None):
         start = time.time()
         dataframe.to_sql(
             name=table,
             con=self.engine,
-            if_exists="delete_rows",
+            if_exists="delete_rows",  # "replace" (drops and recreates the table)
             index=False,
             dtype=dtype,
             chunksize=1000,
@@ -159,6 +162,3 @@ class DataWareHouse:
 
         end = time.time()
         logger.info(f"Inserted {len(records)} rows into table {table} in {end - start:.2f} seconds")
-
-    def read_dataframe(self, table_name):
-        return pd.read_sql(sql=table_name, index_col="id", con=self.engine)
