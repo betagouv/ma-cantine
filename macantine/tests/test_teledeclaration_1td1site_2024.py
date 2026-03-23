@@ -674,9 +674,11 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         central = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
-            city_insee_code="75056",
-            department="75",
-            region="11",
+            city_insee_code="38185",
+            epci="200040715",
+            pat_list=["1294", "1295"],
+            department="38",
+            region="84",
         )
         central.sector_list = [Sector.EDUCATION_AUTRE]
         central.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
@@ -685,10 +687,13 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            line_ministry=None,  # No line ministry for the satellite
-            city_insee_code=None,  # No city insee code for the satellite
-            department=None,  # No department for the satellite
-            region=None,  # No region for the satellite
+            # sector_list=[],
+            line_ministry=None,
+            city_insee_code=None,
+            epci=None,
+            pat_list=[],
+            department=None,
+            region=None,
             economic_model=Canteen.EconomicModel.PRIVATE,  # Private economic model for the satellite
         )
         satellite.sector_list = []
@@ -714,6 +719,8 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         # Fields to be copied
         field_to_be_copied = [
             "city_insee_code",
+            "epci",
+            "pat_list",
             "department",
             "region",
             "sector_list",
