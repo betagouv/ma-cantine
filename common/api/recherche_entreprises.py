@@ -71,12 +71,19 @@ def fetch_geo_data_from_siren(siren):
                 response["name"] = get_enseigne_name(etablissement) or result["nom_complet"]
                 response["city_insee_code"] = etablissement["commune"]
                 response["postal_code"] = etablissement["code_postal"]
-                response["city"] = etablissement["libelle_commune"]
+                response["city"] = etablissement["libelle_commune"]  # en majuscules
+                response["address"] = etablissement["adresse"]  # en majuscules
+                response["latitude"] = etablissement["latitude"]
+                response["longitude"] = etablissement["longitude"]
                 response["epci"] = etablissement["epci"]
                 response["department"] = etablissement["departement"]
                 response["region"] = etablissement["region"]
                 response["etat_administratif"] = etablissement["etat_administratif"]  # "A", "F"
+                response["date_creation"] = etablissement["date_creation"]
+                response["date_debut_activite"] = etablissement["date_debut_activite"]
                 response["date_fermeture"] = etablissement["date_fermeture"]
+                response["activite_principale"] = etablissement["activite_principale"]
+                response["activite_principale_naf25"] = etablissement["activite_principale_naf25"]
                 return response
             except KeyError as e:
                 logger.error(
@@ -103,7 +110,7 @@ def fetch_geo_data_from_siret(siret):
     API rate limit : 400/min
     Pour l'utilisation de cette méthode dans un script, penser à ne pas dépasser plus que 400 appels/min.
     Les paramètres de l'appel API à Recherche Entreprises:
-    * q={siret} : Terme de la recherche pour lequel nous utilions uniquemement le SIRET
+    * q={siret} : Terme de la recherche pour lequel nous utilisons uniquemement le SIRET
     * etat_administratif=A : Nous renvoyons uniquements les organismes actifs
     * page=1&per_page=1 : Un seul élément est demandé en réponse car la recherche par SIRET doit renvoyer un seul établissement.
     """
@@ -127,11 +134,18 @@ def fetch_geo_data_from_siret(siret):
                 response["city_insee_code"] = etablissement["commune"]
                 response["postal_code"] = etablissement["code_postal"]
                 response["city"] = etablissement["libelle_commune"]  # en majuscules
+                response["address"] = etablissement["adresse"]  # en majuscules
+                response["latitude"] = etablissement["latitude"]
+                response["longitude"] = etablissement["longitude"]
                 response["epci"] = etablissement["epci"]
                 # response["department"] = etablissement["departement"]  # not in response
                 response["region"] = etablissement["region"]
                 response["etat_administratif"] = etablissement["etat_administratif"]  # "A", "F"
+                response["date_creation"] = etablissement["date_creation"]
+                response["date_debut_activite"] = etablissement["date_debut_activite"]
                 response["date_fermeture"] = etablissement["date_fermeture"]
+                response["activite_principale"] = etablissement["activite_principale"]
+                response["activite_principale_naf25"] = etablissement["activite_principale_naf25"]
                 return response
             except KeyError as e:
                 logger.error(

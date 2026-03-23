@@ -16,9 +16,9 @@ class Command(BaseCommand):
     Script to cleanup the canteen geolocation data (using the SIRET) (API Recherche Entreprises)
     - empty API response: canteen SIRET is probably unknown, reset geolocation data (siret_inconnu will be updated)
     - API response with etat_administratif != "A": canteen SIRET is probably closed, reset geolocation data (siret_etat_administratif will be updated)
-    - API response with cityInseeCode different from canteen city_insee_code: reset geolocation data
-    - API response with postalCode different from canteen postal_code: reset geolocation data
-    - API response with cityInseeCode identical to canteen city_insee_code: update siret_etat_administratif
+    - API response with city_insee_code different from canteen city_insee_code: reset geolocation data
+    - API response with postal_code different from canteen postal_code: reset geolocation data
+    - API response with city_insee_code identical to canteen city_insee_code: update siret_etat_administratif
 
     Usage:
     - python manage.py canteen_update_geolocation_data_using_siret
