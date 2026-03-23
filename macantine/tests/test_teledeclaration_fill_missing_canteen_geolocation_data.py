@@ -1,11 +1,11 @@
-from unittest import skipIf
+import requests_mock
 
-from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Teledeclaration
+from common.api.decoupage_administratif import mock_fetch_communes
 
 
 class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
@@ -59,8 +59,9 @@ class TeledeclarationFillMissingCanteenGeolocationDataCommandTest(TestCase):
             region_lib=None,
         )
 
-    @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-    def test_teledeclaration_fill_missing_canteen_geolocation_data_command(self):
+    @requests_mock.Mocker()
+    def test_teledeclaration_fill_missing_canteen_geolocation_data_command(self, mock):
+        mock_fetch_communes(mock)
         for canteen in [
             self.canteen_with_geo_data,
             self.canteen_half_geo_data,
