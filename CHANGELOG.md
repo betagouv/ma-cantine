@@ -6,6 +6,26 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.21.4](https://github.com/betagouv/ma-cantine/compare/v2026.21.3...v2026.21.4) (2026-03-24)
+
+
+### Améliorations
+
+* **Télédéclarations:** lors de la màj du champ declaration_donnees_2025, ignorer les TD sans appro ([#6551](https://github.com/betagouv/ma-cantine/issues/6551)) ([43649ec](https://github.com/betagouv/ma-cantine/commit/43649ec477b27c3852bbd65456fd1d34ebd16330))
+* **Télédéclarations:** mettre à jour le champ declaration_donnees_2025 en temps réel post télédéclaration (et post annulation) ([#6531](https://github.com/betagouv/ma-cantine/issues/6531)) ([9a2e508](https://github.com/betagouv/ma-cantine/commit/9a2e508332c4bb811fd3bd82a082ac6f2e3b69d4))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclarations:** améliore le script qui stock les champs pourcentage_ & objectifs_egalim_atteints ([#6549](https://github.com/betagouv/ma-cantine/issues/6549)) ([048229e](https://github.com/betagouv/ma-cantine/commit/048229e787e032279d7268aa2aef101e6c1ce1de))
+
+
+### Technique
+
+* **Tâches asynchrones:** met le paramètre CONN_MAX_AGE à 0 coté Celery ([#6552](https://github.com/betagouv/ma-cantine/issues/6552)) ([b16c409](https://github.com/betagouv/ma-cantine/commit/b16c4099713d286c5b35dc3d933afdb1625f2ba7))
+* **Tâches asynchrones:** rajouter un health check sur la DB Postgres (pour éviter les connexions qui tombent) ([#6547](https://github.com/betagouv/ma-cantine/issues/6547)) ([1246f84](https://github.com/betagouv/ma-cantine/commit/1246f84bb5cfc5441077970f1ddf9c7aef322789))
+* **Télédéclarations:** bouge une ancienne commande pour les données géo des TD 2021-2022 dans le fichier commun ([#6545](https://github.com/betagouv/ma-cantine/issues/6545)) ([bc42030](https://github.com/betagouv/ma-cantine/commit/bc42030898c11c1925065628cdf5c8cbc719345c))
+
 ## [2026.21.3](https://github.com/betagouv/ma-cantine/compare/v2026.21.2...v2026.21.3) (2026-03-20)
 
 
