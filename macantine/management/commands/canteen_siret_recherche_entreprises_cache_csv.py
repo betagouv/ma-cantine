@@ -227,6 +227,7 @@ class Command(BaseCommand):
         response_data = {
             field: (api_response.get(field) if api_response else None) for field in CSV_HEADERS if field not in base
         }
+        # TODO: replace "[NON-DIFFUSIBLE]" with ""
         return {
             **base,
             **response_data,
