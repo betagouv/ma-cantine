@@ -20,12 +20,23 @@ class CustomJSONEncoder(DjangoJSONEncoder):
         return super().default(o)
 
 
-def has_charfield_missing_query(field_name):
+def has_charfield_missing_query(field_name: str):
     return Q(**{f"{field_name}__isnull": True}) | Q(**{f"{field_name}": ""}) | Q(**{f"{field_name}": None})
 
 
-def has_arrayfield_missing_query(field_name):
+def has_arrayfield_missing_query(field_name: str):
     return Q(**{f"{field_name}__isnull": True}) | Q(**{f"{field_name}": []}) | Q(**{f"{field_name}": None})
+
+
+def array_overlap_query(field_name: str, values: list):
+    """
+    For ArrayField, we can use __overlap with a list of values
+    But if the array is in a JSONField, we need to build a __contains OR query for each value.
+    """
+    query = Q()
+    for value in values:
+        query |= Q(**{f"{field_name}__contains": [value]})
+    return query
 
 
 def _needs_rotation(pillow_image):

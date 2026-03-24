@@ -4,19 +4,32 @@ from django.core.cache import cache
 from django.http import JsonResponse
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.serializers import CanteenStatisticsSerializer
 from api.views.utils import camelize
 from data.models import Canteen, Diagnostic
 from macantine.utils import get_egalim_group
+from data.utils import array_overlap_query
 
 logger = logging.getLogger(__name__)
 
 
 CACHE_KEY_PREFIX = "canteen_statistics"
 CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours  # TODO: reduce?
+
+FILTER_QUERY_FIELDS_IN = [
+    "region",
+    "department",
+    "epci",
+    "city",
+    "management_type",
+    "production_type",
+    "economic_model",
+]
+FILTER_QUERY_FIELDS_OVERLAP = ["pat", "sector"]  # fields that are lists in the model and need an overlap query
+FILTER_QUERY_FIELDS = FILTER_QUERY_FIELDS_IN + FILTER_QUERY_FIELDS_OVERLAP
 
 
 @extend_schema(
@@ -92,10 +105,10 @@ class CanteenStatisticsView(APIView):
             .created_before_year_campaign_end_date(year)
             .not_deleted_before_year_campaign_end_date(year)
         )
-        canteens = self._apply_query_filters(canteen_qs, filters)
+        canteens = self._apply_canteen_filters(canteen_qs, filters)
 
         teledeclaration_qs = Diagnostic.objects.publicly_visible().valid_td_by_year(year)
-        teledeclarations = self._apply_query_filters(teledeclaration_qs, filters, prefix="canteen_snapshot__")
+        teledeclarations = self._apply_snapshot_filters(teledeclaration_qs, filters)
 
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
         data["notes"] = self.serializer_class.generate_notes(year, egalim_group)
@@ -114,28 +127,36 @@ class CanteenStatisticsView(APIView):
         """
         Extract and clean filter parameters from the request.
         """
-        return {
-            "region__in": request.query_params.getlist("region"),
-            "department__in": request.query_params.getlist("department"),
-            "epci__in": request.query_params.getlist("epci"),
-            "pat_list__overlap": request.query_params.getlist("pat"),
-            "city_insee_code__in": request.query_params.getlist("city"),
-            "sector_list__overlap": request.query_params.getlist("sector"),
-            "management_type__in": request.query_params.getlist("management_type"),
-            "production_type__in": request.query_params.getlist("production_type"),
-            "economic_model__in": request.query_params.getlist("economic_model"),
-        }
+        return {field: request.query_params.getlist(field) for field in FILTER_QUERY_FIELDS}
 
-    def _apply_query_filters(self, queryset, filters, prefix=""):
+    def _apply_canteen_filters(self, queryset, filters):
         """
-        Apply filters to a queryset. If prefix is given, it is prepended to each filter key.
+        Apply filters to the canteen queryset.
         """
-        for key, value in filters.items():
-            if value:
-                filter_key = f"{prefix}{key}" if prefix else key
-                queryset = queryset.filter(**{filter_key: value})
+        for field in FILTER_QUERY_FIELDS_IN:
+            if filters[field]:
+                model_field = field if field != "city" else "city_insee_code"
+                queryset = queryset.filter(**{f"{model_field}__in": filters[field]})
+        for field in FILTER_QUERY_FIELDS_OVERLAP:
+            if filters[field]:
+                model_field = f"{field}_list"
+                queryset = queryset.filter(**{f"{model_field}__overlap": filters[field]})
+        return queryset.distinct()
+
+    def _apply_snapshot_filters(self, queryset, filters):
+        """
+        Apply filters to the diagnostic snapshot queryset.
+        """
+        for field in FILTER_QUERY_FIELDS_IN:
+            if filters[field]:
+                model_field = field if field != "city" else "city_insee_code"
+                queryset = queryset.filter(**{f"canteen_snapshot__{model_field}__in": filters[field]})
+        for field in FILTER_QUERY_FIELDS_OVERLAP:
+            if filters[field]:
+                model_field = f"{field}_list"
+                queryset = queryset.filter(array_overlap_query(f"canteen_snapshot__{model_field}", filters[field]))
         return queryset.distinct()
 
     def _get_egalim_group(self, filters):
-        region_filter = filters.get("region__in")
+        region_filter = filters.get("region")
         return get_egalim_group(region_filter)
