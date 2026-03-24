@@ -30,7 +30,6 @@ from data.utils import (
     get_diagnostic_lowest_limit_year,
     get_diagnostic_upper_limit_year,
     has_charfield_missing_query,
-    has_arrayfield_missing_query,
     optimize_image,
 )
 from data.validators import canteen as canteen_validators
@@ -125,13 +124,14 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.filter(is_public_query())
 
     def has_geo_data_missing(self):
+        """
+        Why is pat_list missing? Not all city_insee_code are linked to a PAT
+        """
         return self.filter(
             has_charfield_missing_query("city")
             | has_charfield_missing_query("postal_code")
             | has_charfield_missing_query("epci")
             | has_charfield_missing_query("epci_lib")
-            | has_arrayfield_missing_query("pat_list")
-            | has_arrayfield_missing_query("pat_lib_list")
             | has_charfield_missing_query("department")
             | has_charfield_missing_query("department_lib")
             | has_charfield_missing_query("region")
