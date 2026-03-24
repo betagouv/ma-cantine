@@ -395,13 +395,13 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
-        self.assertEqual(body["teledeclarationsCount"], 0)  # error
+        self.assertEqual(body["teledeclarationsCount"], 2)
 
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1", "2"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2 + 1)
-        self.assertEqual(body["teledeclarationsCount"], 0)
+        self.assertEqual(body["teledeclarationsCount"], 2 + 1)
 
     def test_filter_by_city(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["01034"]})
@@ -424,7 +424,7 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
-        self.assertEqual(body["teledeclarationsCount"], 0)  # error
+        self.assertEqual(body["teledeclarationsCount"], 2)
         sector_categories = body["sectorCategories"]
         self.assertEqual(sector_categories[SectorCategory.EDUCATION], 1)
         self.assertEqual(sector_categories[SectorCategory.ENTERPRISE], 2)
