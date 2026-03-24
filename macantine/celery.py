@@ -1,5 +1,6 @@
 import os
 import urllib.parse
+from functools import lru_cache
 
 import dotenv
 from celery import Celery
@@ -112,6 +113,21 @@ app.conf.beat_schedule = {
 }
 
 app.conf.timezone = "Europe/Paris"
+
+
+@lru_cache(maxsize=1)
+def ensure_sqlalchemy_broker_schema():
+    """Ensure SQLAlchemy broker tables exist using Kombu's own creation path."""
+    broker_url = app.conf.broker_url
+    if isinstance(broker_url, (list, tuple)):
+        broker_url = broker_url[0] if broker_url else ""
+    if not isinstance(broker_url, str) or not broker_url.startswith(("sqla+", "sqlalchemy+")):
+        return
+
+    with app.connection_for_write() as connection:
+        channel = connection.channel()
+        channel.close()
+
 
 if __name__ == "__main__":
     app.start()

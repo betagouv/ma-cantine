@@ -1,6 +1,9 @@
 from django.db import models
 
 
+# These unmanaged Django models mirror Kombu's SQLAlchemy transport tables.
+# Docs: https://docs.celeryq.dev/projects/kombu/en/stable/reference/kombu.transport.sqlalchemy.html
+# Source schema: kombu/transport/sqlalchemy/models.py in the installed Kombu package.
 class KombuQueue(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, unique=True)
