@@ -176,6 +176,17 @@ def fill_missing_insee_code_using_siret():
     return result
 
 
+@app.task()
+def update_canteen_geo_data_from_insee_code(canteen):
+    """
+    Similar to update_canteen_geo_fields_from_siret, but this time we already have the city_insee_code.
+    Processing: API Découpage Administratif (cached)
+    Output: Fill canteen's geo fields
+    """
+    if canteen.city_insee_code:
+        _update_canteen_geo_data_from_insee_code(canteen)
+
+
 def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
     # fetch geo data from API Découpage Administratif & DataGouv
     communes_details = map_communes_infos()
