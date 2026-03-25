@@ -1,0 +1,39 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='data' %}">Data</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="results">
+        <table id="result_list">
+            <thead>
+                <tr>
+                    <th scope="col">Label</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Canteen count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row.label }}</td>
+                    <td><code>{{ row.value }}</code></td>
+                    <td><a href="{{ row.canteen_changelist_url }}">{{ row.canteen_count }}</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">Aucune valeur trouvee.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
