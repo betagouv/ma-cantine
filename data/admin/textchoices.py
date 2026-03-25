@@ -7,7 +7,6 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 
 from data.models import Canteen
-from data.models.creation_source import CreationSource
 
 CANTEEN_TEXTCHOICES_PAGES = [
     {
@@ -37,13 +36,6 @@ CANTEEN_TEXTCHOICES_PAGES = [
         "object_name": "CanteenLineMinistryTextChoices",
         "field_name": "line_ministry",
         "choices": Canteen.Ministries.choices,
-    },
-    {
-        "key": "canteen-creation-source",
-        "title": "Cantines : source de création (TextChoices)",
-        "object_name": "CanteenCreationSourceTextChoices",
-        "field_name": "creation_source",
-        "choices": CreationSource.choices,
     },
 ]
 
