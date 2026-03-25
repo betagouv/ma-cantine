@@ -4,6 +4,7 @@ from django import forms
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
+from data.admin.utils import ReadOnlyAdminMixin
 
 from data.models import Diagnostic
 from data.models.creation_source import CreationSource
@@ -22,19 +23,12 @@ class DiagnosticForm(forms.ModelForm):
         }
 
 
-class DiagnosticInline(admin.TabularInline):
+class DiagnosticInline(ReadOnlyAdminMixin, admin.TabularInline):
     model = Diagnostic
     show_change_link = True
     fields = ("year", "diagnostic_type", "status", "creation_date", "modification_date")
     readonly_fields = fields
     extra = 0
-    can_delete = False
-
-    def has_add_permission(self, request, obj):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
 
 
 @admin.register(Diagnostic)
