@@ -317,7 +317,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         Test when a central is deleted after the teledeclaration, the script still generates diagnostics for its satellites.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="19622299600015")
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         with freeze_time("2025-03-30"):  # during the 2024 campaign
@@ -354,7 +354,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         Test when a satellite is deleted after the teledeclaration, it still has a generated diagnostic.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="19622299600015")
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
@@ -394,7 +394,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         Test when a satellite is hard deleted after the teledeclaration, it still has a generated diagnostic.
         Note: hard delete is not possible anymore
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, siret="19622299600015")
+        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
@@ -597,24 +597,24 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             # factory build + save: to circumvent the factory and create a history entry
             central = CanteenFactory.build(
-                production_type=Canteen.ProductionType.CENTRAL, siret="21340172201787", city_insee_code="34172"
+                siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL, city_insee_code="34172"
             )
             central.save()
             satellite_siret = CanteenFactory.build(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-                central_producer_siret=central.siret,
                 name="Mon premier nom SIRET",
                 siret="33533639200154",
+                central_producer_siret=central.siret,
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
                 management_type=Canteen.ManagementType.CONCEDED,
             )
             satellite_siret.save()
             satellite_siren = CanteenFactory.build(
-                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-                central_producer_siret=central.siret,
                 name="Mon premier nom SIREN",
                 siret=None,
                 siren_unite_legale="123456789",
+                central_producer_siret=central.siret,
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
                 management_type=Canteen.ManagementType.CONCEDED,
             )

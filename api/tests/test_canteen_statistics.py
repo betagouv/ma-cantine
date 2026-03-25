@@ -576,18 +576,19 @@ class CanteenStats1Td1SiteApiTest(APITestCase):
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=groupe, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
             diagnostic.teledeclare(applicant=UserFactory())
-            call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
     def test_use_1td1site_diagnostics_for_2024(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
-        self.assertEqual(body["teledeclarationsCount"], 2)
+        self.assertEqual(body["canteenCount"], 3)  # groupe ignored
+        self.assertEqual(body["teledeclarationsCount"], 2)  # 2 satellites
 
     def test_not_use_1td1site_diagnostics_for_2023(self):
         response = self.client.get(reverse("canteen_statistics"), {"year": 2023})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)
-        self.assertEqual(body["teledeclarationsCount"], 1)
+        self.assertEqual(body["canteenCount"], 3)  # groupe ignored
+        self.assertEqual(body["teledeclarationsCount"], 1)  # groupe
