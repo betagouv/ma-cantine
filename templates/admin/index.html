@@ -1,0 +1,24 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+<div id="content-main">
+    {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
+
+    <div class="app-referentiels module">
+        <table>
+            <caption>
+                <span class="section" title="Referentiels">Referentiels</span>
+            </caption>
+            <tbody>
+                <tr class="model-sector-textchoices">
+                    <th scope="row">
+                        <a href="{% url 'admin-sector-textchoices' %}">Secteurs d'activite</a>
+                    </th>
+                    <td>Lecture seule</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

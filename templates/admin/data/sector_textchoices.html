@@ -1,0 +1,43 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='data' %}">Data</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <p><strong>{{ total_count }}</strong> secteurs affiches</p>
+
+    <div class="results">
+        <table id="result_list">
+            <thead>
+                <tr>
+                    <th scope="col">Label</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Has line ministry</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row.label }}</td>
+                    <td><code>{{ row.value }}</code></td>
+                    <td>{{ row.category_label }}</td>
+                    <td>{% if row.has_line_ministry %}Oui{% else %}Non{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">Aucun secteur trouve pour ces filtres.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
