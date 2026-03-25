@@ -1023,6 +1023,8 @@ def fill_geo_fields_from_siret(sender, instance, created, **kwargs):
     if created:
         if instance.siret and not instance.city_insee_code:
             tasks.update_canteen_geo_fields_from_siret(instance)
+        elif instance.siren_unite_legale and instance.city_insee_code:
+            tasks.update_canteen_geo_data_from_insee_code(instance)
 
 
 class CanteenImage(models.Model):

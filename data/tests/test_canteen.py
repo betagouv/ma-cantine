@@ -472,7 +472,7 @@ class CanteenModelSaveTest(TransactionTestCase):
         # geobot will run again
 
     def test_canteen_do_not_reset_geo_fields_when_siren_unite_legale_change_on_save(self):
-        canteen = CanteenFactory(siren_unite_legale="213401722", id=1233, siret=None, city_insee_code="34172")
+        canteen = CanteenFactory(siret=None, siren_unite_legale="213401722", city_insee_code="34172")
         self.assertEqual(canteen.city_insee_code, "34172")
 
         canteen.siren_unite_legale = "213401723"
@@ -517,7 +517,7 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.get_dirty_fields(), {})
 
     @requests_mock.Mocker()
-    def test_update_geo_fields_on_save(self, mock):
+    def test_canteen_siret_create_update_geo_fields_on_save(self, mock):
         mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
@@ -533,8 +533,37 @@ class CanteenModelSaveTest(TransactionTestCase):
 
         self.assertEqual(canteen.city_insee_code, "34172")
         self.assertEqual(canteen.city, "Montpellier")
+        self.assertEqual(canteen.epci, "243400017")
+        self.assertEqual(canteen.pat_list, [])
         self.assertEqual(canteen.department, "34")
         self.assertEqual(canteen.region, "76")
+
+    @requests_mock.Mocker()
+    def test_canteen_siren_create_update_geo_fields_on_save(self, mock):
+        # mock_fetch_geo_data_from_siren(mock, siren="923412845", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+        # CanteenFactory skips the post_save signal
+        # so we need to call save() to trigger the signal
+        canteen = CanteenFactory.build(
+            siret=None,
+            siren_unite_legale="923412845",
+            city_insee_code="59512",
+            city=None,
+            department=None,
+            region=None,
+        )
+        canteen.save()
+        canteen.refresh_from_db()
+
+        self.assertEqual(canteen.city_insee_code, "59512")
+        self.assertEqual(canteen.city, "Roubaix")
+        self.assertEqual(canteen.epci, "200093201")
+        self.assertEqual(canteen.pat_list, ["1415"])
+        self.assertEqual(canteen.department, "59")
+        self.assertEqual(canteen.region, "32")
 
 
 class CanteenModelDeleteTest(TestCase):
