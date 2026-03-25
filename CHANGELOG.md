@@ -6,6 +6,32 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.22.0](https://github.com/betagouv/ma-cantine/compare/v2026.21.4...v2026.22.0) (2026-03-25)
+
+
+### Nouveautés
+
+* **Cantines:** SIREN: récupérer les données géo en temps réel (au lieu d'attendre 1h puis le lendemain) ([#6556](https://github.com/betagouv/ma-cantine/issues/6556)) ([75e3345](https://github.com/betagouv/ma-cantine/commit/75e3345db9a16e8cedc0330af99c41a9211c73fc))
+
+
+### Améliorations
+
+* **Admin:** Cantines: afficher les champs TextChoices et leurs valeurs (modes de gestion, modes de production, modèles économiques, administrations de tutelle) ([#6562](https://github.com/betagouv/ma-cantine/issues/6562)) ([656c75d](https://github.com/betagouv/ma-cantine/commit/656c75d262fed34c970f8da4f0fb716922919e1c))
+* **Admin:** Cantines: dans la vue list, ajouter un lien vers le groupe (et évite que ca prenne trop de px) ([#6558](https://github.com/betagouv/ma-cantine/issues/6558)) ([ac1e319](https://github.com/betagouv/ma-cantine/commit/ac1e31955b256201771615b96b47aea99c9de2a5))
+* **Admin:** Cantines: ne pas prefixer les noms avec 'Cantines' ([#6559](https://github.com/betagouv/ma-cantine/issues/6559)) ([f86ab7e](https://github.com/betagouv/ma-cantine/commit/f86ab7efa2a345cf0a2ef3e03c195495d6d695a1))
+* **Admin:** remplacer la liste des secteurs M2M par leur valeurs TextChoices ([#6557](https://github.com/betagouv/ma-cantine/issues/6557)) ([95320e7](https://github.com/betagouv/ma-cantine/commit/95320e70471c01afd4cda94e118a9c3b4bc869d5))
+
+
+### Corrections (bugs, typos...)
+
+* **API Stats:** répare les filtres sector & pat (sur les infos snapshots) ([#6553](https://github.com/betagouv/ma-cantine/issues/6553)) ([41b2b2e](https://github.com/betagouv/ma-cantine/commit/41b2b2e08f82e07c623edbbd2fc21af80503b05c))
+* **Cantines:** Données géo: ne pas lancer le géo bot si le pat est manquant (pas tous les communes sont rattachées à un pat) ([#6555](https://github.com/betagouv/ma-cantine/issues/6555)) ([be7dd23](https://github.com/betagouv/ma-cantine/commit/be7dd23fef7e1f47aec8240c264fde7f531ede85))
+
+
+### Technique
+
+* **Admin:** réutiliser ReadOnlyAdminMixin à certains endroits ([#6560](https://github.com/betagouv/ma-cantine/issues/6560)) ([4be03ce](https://github.com/betagouv/ma-cantine/commit/4be03cee2a32e8c3b53dc45db861d32fe63604c7))
+
 ## [2026.21.4](https://github.com/betagouv/ma-cantine/compare/v2026.21.3...v2026.21.4) (2026-03-24)
 
 
