@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 
@@ -65,7 +66,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "siret_or_siren_unite_legale_display",
         "city",
         "télédéclarée",
-        "groupe",
+        "groupe_with_link",
         "central_producer_siret",
         "management_type",
         "production_type",
@@ -185,6 +186,14 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     @admin.display(description="Siret (ou Siren)")
     def siret_or_siren_unite_legale_display(self, obj):
         return obj.siret_or_siren_unite_legale
+
+    def groupe_with_link(self, obj):
+        if not obj.groupe:
+            return "-"
+        url = reverse("admin:data_canteen_change", args=[obj.groupe_id])
+        return format_html(f'<a href="{url}">{obj.groupe}</a>')
+
+    groupe_with_link.short_description = Canteen._meta.get_field("groupe").verbose_name
 
     # TODO: update every year
     @admin.display(description="Télédéclarée (2025)")
