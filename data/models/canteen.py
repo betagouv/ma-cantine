@@ -895,7 +895,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         return Canteen.PublicationStatus.PUBLISHED
 
     def __str__(self):
-        return f'Cantine "{self.name}"'
+        return self.name
 
     def _get_region(self):
         return get_region_from_department(self.department)
