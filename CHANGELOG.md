@@ -6,6 +6,32 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.23.0](https://github.com/betagouv/ma-cantine/compare/v2026.22.0...v2026.23.0) (2026-03-25)
+
+
+### Nouveautés
+
+* **1TD1Site:** Script de génération des bilans des satellites pour 2024 ([#5627](https://github.com/betagouv/ma-cantine/issues/5627)) ([4072b3c](https://github.com/betagouv/ma-cantine/commit/4072b3c3f570ff52b5f477c3d9d4107d41bbea40))
+* **Observatoire:** brancher 1TD1Site pour 2024 ([#6472](https://github.com/betagouv/ma-cantine/issues/6472)) ([55c0219](https://github.com/betagouv/ma-cantine/commit/55c0219b1a76983ed14a52fb09dc54e62130fec4))
+* **Observatoire:** indique la mention de sites télédéclarés pour 2024 ([#6500](https://github.com/betagouv/ma-cantine/issues/6500)) ([29d6db2](https://github.com/betagouv/ma-cantine/commit/29d6db2263fc84e7976969ae494f4c4267343fb1))
+* **Télédéclarations:** exclure par défaut des querysets les bilans générés [1TD1Site] ([#6471](https://github.com/betagouv/ma-cantine/issues/6471)) ([f8a96d2](https://github.com/betagouv/ma-cantine/commit/f8a96d209b52a71ba03afc8b2d6ace4932286231))
+* **Télédéclarations:** met à jour les tests pour les données aggrégées dans le script 1TD1SITE ([#6469](https://github.com/betagouv/ma-cantine/issues/6469)) ([c7c6bf0](https://github.com/betagouv/ma-cantine/commit/c7c6bf079bcdbf79ebe224d52ce57ecfc0be91be))
+
+
+### Améliorations
+
+* **Diagnostics:** script pour remplir le champ `invalid_reason_list` ([#6455](https://github.com/betagouv/ma-cantine/issues/6455)) ([a58d906](https://github.com/betagouv/ma-cantine/commit/a58d906675939a7a8718fe0b8a22761a5f3cd202))
+
+
+### Technique
+
+* **1TD1Site:** améliore la gestion des arrondis dans le script de génération (yearly_meal_count en int ; decimal 2 places) ([#6473](https://github.com/betagouv/ma-cantine/issues/6473)) ([dc0707a](https://github.com/betagouv/ma-cantine/commit/dc0707a279aceb8594f206e90399e58810362ebc))
+* **1TD1Site:** derniers petits ajustements avant MEP (pour 2024) 🚀 ([#6517](https://github.com/betagouv/ma-cantine/issues/6517)) ([c86f4e3](https://github.com/betagouv/ma-cantine/commit/c86f4e3d5495f927685a1a150a4fffb984d4f54c))
+* **1TD1Site:** rebase sur staging ([942bca6](https://github.com/betagouv/ma-cantine/commit/942bca64a0175fd19289736176d3045843e63246))
+* **Diagnostics:** nouveaux querysets pour permettre d'utiliser les TD générées de 2024 [1TD1Site] ([#6468](https://github.com/betagouv/ma-cantine/issues/6468)) ([c379115](https://github.com/betagouv/ma-cantine/commit/c37911514881ade4328690463521bd36ab1c900f))
+* **Diagnostics:** renommer historical_valid_td en valid_td_all_years pour clarifier ([#6467](https://github.com/betagouv/ma-cantine/issues/6467)) ([44f87f8](https://github.com/betagouv/ma-cantine/commit/44f87f8d594c9dbe284ccae3380c8bc7843d711c))
+* **Diagnostics:** séparer certaines querysets en queries pour faciliter leur réutilisation [1TD1Site] ([#6466](https://github.com/betagouv/ma-cantine/issues/6466)) ([b5648d4](https://github.com/betagouv/ma-cantine/commit/b5648d42edf93d5cd649a4a1c0c4bef325ec3b33))
+
 ## [2026.22.0](https://github.com/betagouv/ma-cantine/compare/v2026.21.4...v2026.22.0) (2026-03-25)
 
 
