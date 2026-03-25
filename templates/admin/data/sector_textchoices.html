@@ -20,6 +20,7 @@
                     <th scope="col">Category Label</th>
                     <th scope="col">Category Value</th>
                     <th scope="col">Has line ministry</th>
+                    <th scope="col">Canteen count</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,10 +31,11 @@
                     <td>{{ row.category_label }}</td>
                     <td><code>{{ row.category }}</code></td>
                     <td>{% if row.has_line_ministry %}Oui{% else %}Non{% endif %}</td>
+                    <td><a href="{{ row.canteen_changelist_url }}">{{ row.canteen_count }}</a></td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5">Aucun secteur trouve.</td>
+                    <td colspan="6">Aucun secteur trouve.</td>
                 </tr>
                 {% endfor %}
             </tbody>

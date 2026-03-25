@@ -1,13 +1,25 @@
+from collections import Counter
+from urllib.parse import urlencode
+
 from django.contrib import admin
 from django.template.response import TemplateResponse
+from django.urls import reverse
 
+from data.models import Canteen
 from data.models.sector import Sector, get_sector_category_from_sector, is_sector_with_line_ministry
 
 
 def _build_sector_textchoices_rows():
+    # Build counts once from all canteens to avoid one query per sector value.
+    sector_counts = Counter()
+    for sector_list in Canteen.objects.values_list("sector_list", flat=True):
+        for sector_value in sector_list or []:
+            sector_counts[sector_value] += 1
+
     rows = []
     for value, label in Sector.choices:
         category = get_sector_category_from_sector(value)
+        canteen_changelist_url = f"{reverse('admin:data_canteen_changelist')}?{urlencode({'sector_list': value})}"
         rows.append(
             {
                 "label": label,
@@ -15,6 +27,8 @@ def _build_sector_textchoices_rows():
                 "category": category,
                 "category_label": category.label,
                 "has_line_ministry": is_sector_with_line_ministry(value),
+                "canteen_count": sector_counts.get(value, 0),
+                "canteen_changelist_url": canteen_changelist_url,
             }
         )
     return rows
