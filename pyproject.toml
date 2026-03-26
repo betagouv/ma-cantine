@@ -137,7 +137,7 @@ dependencies = [
     "referencing==0.35.1",
     "regex==2023.12.25",
     "reportlab==4.2.2",
-    "requests==2.32.4",
+    "requests==2.33.0",
     "requests-mock==1.12.1",
     "rpds-py==0.21.0",
     "ruff>=0.14.2",

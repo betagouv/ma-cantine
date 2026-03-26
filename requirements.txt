@@ -551,7 +551,7 @@ reportlab==4.2.2
     #   ma-cantine
     #   svglib
     #   xhtml2pdf
-requests==2.32.4
+requests==2.33.0
     # via
     #   django-anymail
     #   django-oauth-toolkit
