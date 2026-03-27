@@ -680,7 +680,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             department="38",
             region="84",
         )
-        central.sector_list = [Sector.EDUCATION_AUTRE]
+        central.sector_list = [Sector.ADMINISTRATION_INTER_ADMINISTRATIF]
         central.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
         central.save(skip_validations=True)
 
