@@ -1,18 +1,18 @@
 from urllib.parse import quote
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from dirtyfields import DirtyFieldsMixin
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import ValidationError
 from django.db import models
-from django.db.models import BooleanField, Case, Count, Exists, F, OuterRef, Q, Subquery, Value, When, Func
-from django.utils import timezone
+from django.db.models import BooleanField, Case, Count, Exists, F, Func, OuterRef, Q, Subquery, Value, When
 from django.db.models.functions import Coalesce, Length
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 from simple_history.utils import update_change_reason
-from dirtyfields import DirtyFieldsMixin
 
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
@@ -20,10 +20,10 @@ from data.fields import ChoiceArrayField
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region, get_region_from_department
 from data.models.sector import (
+    ADMINISTRATION_SECTOR_LIST,
     SECTOR_HAS_LINE_MINISTRY_LIST,
     Sector,
     SectorM2M,
-    ADMINISTRATION_SECTOR_LIST,
     annotate_with_sector_category_list,
 )
 from data.utils import (
@@ -649,16 +649,18 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
 
-    def reset_geo_fields_if_siret_changed(self):
+    def reset_geo_fields_if_siret_or_city_insee_code_changed(self):
         """
         Cases where we need to reset geo fields:
         - the canteen already exists in the database
         - AND the siret has changed (city_insee_code will also be reset)
+        # - OR the siren_unite_legale has changed (TODO. for now the city_insee_code should change as well for geo_fields to be reset)
         - OR the city_insee_code has changed (and previous city_insee_code must not be have been empty)
         """
         if self.id and self.is_dirty():
             if "siret" in self.get_dirty_fields() and self.siret:
                 self.reset_geo_fields(with_city_insee_code=True, with_save=False)
+            # elif "siren_unite_legale" in self.get_dirty_fields() and self.siren_unite_legale:
             elif (
                 "city_insee_code" in self.get_dirty_fields()
                 and self.city_insee_code
@@ -693,7 +695,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         """
         self.normalize_fields()
         self.optimize_logo()
-        self.reset_geo_fields_if_siret_changed()
+        self.reset_geo_fields_if_siret_or_city_insee_code_changed()
         if not skip_validations:
             self.full_clean()
         self.set_is_filled()
