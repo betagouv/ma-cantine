@@ -26,8 +26,11 @@ export default {
     }
   },
   computed: {
+    isAuthenticated() {
+      return !!this.$store.state.loggedUser
+    },
     bannerTitle() {
-      return this.$store.state.loggedUser && this.loggedBannerTitle ? this.loggedBannerTitle : this.publicBannerTitle
+      return this.isAuthenticated && this.loggedBannerTitle ? this.loggedBannerTitle : this.publicBannerTitle
     },
   },
 }
