@@ -3,6 +3,8 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
+from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
+from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 from data.factories import CanteenFactory
 from data.models import Canteen
@@ -32,6 +34,10 @@ class CanteenUpdateGeolocationDataUsingSiretCommandTest(TestCase):
         mock_fetch_geo_data_from_siret(mock, siret="21380185500072", success=True)
         mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
         mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
 
         self.assertEqual(Canteen.all_objects.count(), 7)
         self.assertEqual(Canteen.objects.count(), 6)
@@ -62,10 +68,10 @@ class CanteenUpdateGeolocationDataUsingSiretCommandTest(TestCase):
         self.assertEqual(self.canteen_siret_closed_deleted.siret_etat_administratif, "F")  # updated
         self.assertEqual(self.canteen_siret_city_insee_code_ok.city_insee_code, "59512")  # unchanged
         self.assertEqual(self.canteen_siret_city_insee_code_ok.siret_etat_administratif, "A")  # updated
-        self.assertEqual(self.canteen_siret_city_insee_code_mismatch.city_insee_code, None)  # reset
+        self.assertEqual(self.canteen_siret_city_insee_code_mismatch.city_insee_code, "59512")  # reset & updated
         self.assertEqual(self.canteen_siret_city_insee_code_mismatch.siret_etat_administratif, "A")  # updated
         self.assertEqual(self.canteen_siret_postal_code_ok.postal_code, "34070")  # unchanged
-        self.assertEqual(self.canteen_siret_postal_code_mismatch.postal_code, None)  # reset
+        self.assertEqual(self.canteen_siret_postal_code_mismatch.postal_code, "59100")  # reset & updated
         self.assertEqual(self.canteen_siret_postal_code_mismatch.siret_etat_administratif, "A")  # updated
 
     def test_command_dry_run(self, mock):
@@ -73,6 +79,10 @@ class CanteenUpdateGeolocationDataUsingSiretCommandTest(TestCase):
         mock_fetch_geo_data_from_siret(mock, siret="21380185500072", success=True)
         mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
         mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
 
         call_command("canteen_update_geolocation_data_using_siret")
 
