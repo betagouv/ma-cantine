@@ -1,5 +1,5 @@
 <template>
-  <div class="app-banner">
+  <div class="app-banner text-left">
     <div v-if="show" class="fr-notice fr-notice--info">
       <div class="fr-container">
         <div class="fr-notice__body">
