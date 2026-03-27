@@ -518,6 +518,47 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.department, "34")
         self.assertEqual(canteen.region, "76")
 
+    @requests_mock.Mocker()
+    def test_canteen_siret_change_to_siren_unite_legale_reset_geo_fields(self, mock):
+        mock_fetch_geo_data_from_siren(mock, siren="923412845", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
+        self.assertEqual(canteen.city_insee_code, "34172")
+
+        canteen.siret = None
+        canteen.siren_unite_legale = "923412845"
+        canteen.city_insee_code = "59512"
+        canteen.save()
+
+        self.assertEqual(canteen.siren_unite_legale, "923412845")
+        self.assertEqual(canteen.city_insee_code, "59512")
+        self.assertEqual(canteen.department, "59")
+        self.assertEqual(canteen.region, "32")
+
+    @requests_mock.Mocker()
+    def test_canteen_siren_unite_legale_change_to_siret_reset_geo_fields(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        canteen = CanteenFactory(siret=None, siren_unite_legale="923412845", city_insee_code="59512")
+        self.assertEqual(canteen.city_insee_code, "59512")
+
+        canteen.siret = "21340172201787"
+        canteen.siren_unite_legale = None
+        canteen.save()
+
+        self.assertEqual(canteen.siret, "21340172201787")
+        self.assertEqual(canteen.city_insee_code, "34172")
+        self.assertEqual(canteen.department, "34")
+        self.assertEqual(canteen.region, "76")
+
     def test_canteen_skip_validations_on_save(self):
         canteen = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
         canteen.siret = None
