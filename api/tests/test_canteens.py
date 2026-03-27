@@ -1,6 +1,7 @@
 import base64
 import os
 from decimal import Decimal
+import requests_mock
 
 from django.urls import reverse
 from freezegun import freeze_time
@@ -11,14 +12,17 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.models.creation_source import CreationSource
+from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
+from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
+from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 CANTEEN_SITE_DEFAULT_PAYLOAD = {
     "name": "My canteen",
-    "city": "Roubaix",
     "siret": "92341284500011",
+    "city": "Roubaix",
     "daily_meal_count": 12,
     "yearly_meal_count": 1000,
     "management_type": Canteen.ManagementType.DIRECT,
@@ -465,17 +469,34 @@ class CanteenCreateApiTest(APITestCase):
             ["La création de cantines de type CENTRAL ou CENTRAL_SERVING n'est plus autorisée."],
         )
 
+    @requests_mock.Mocker()
     @authenticate
-    def test_create_canteen(self):
+    def test_create_canteen(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
         response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(created_canteen.siret, "92341284500011")
+        self.assertEqual(created_canteen.city, "Roubaix")  # ROUBAIX
+        self.assertEqual(created_canteen.management_type, Canteen.ManagementType.DIRECT)
         self.assertIn(authenticate.user, created_canteen.managers.all())
 
+    @requests_mock.Mocker()
     @authenticate
-    def test_create_canteen_creation_source(self):
+    def test_create_canteen_creation_source(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
         # from the APP
         response = self.client.post(
             reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "APP"}
@@ -571,11 +592,18 @@ class CanteenCreateApiTest(APITestCase):
         self.assertTrue(body["isManagedByUser"])
         self.assertEqual(Canteen.objects.count(), 1)
 
+    @requests_mock.Mocker()
     @authenticate
-    def test_create_canteen_with_images(self):
+    def test_create_canteen_with_images(self, mock):
         """
         The app should create the necessary image models upon the creation of a canteen
         """
+        mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
         image_base_64 = None
         with open(image_path, "rb") as image:
@@ -594,11 +622,18 @@ class CanteenCreateApiTest(APITestCase):
         created_canteen = Canteen.objects.get(pk=body["id"])
         self.assertEqual(created_canteen.images.count(), 1)
 
+    @requests_mock.Mocker()
     @authenticate
-    def test_create_canteen_with_tracking_info(self):
+    def test_create_canteen_with_tracking_info(self, mock):
         """
         The app should store the mtm parameters on creation
         """
+        mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
         payload = CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
         payload["creation_mtm_source"] = "mtm_source_value"
         payload["creation_mtm_campaign"] = "mtm_campaign_value"
@@ -641,14 +676,23 @@ class CanteenUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @requests_mock.Mocker()
     @authenticate
-    def test_update_canteen(self):
+    def test_update_canteen(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.siret, "92341284500011")
         self.assertEqual(self.canteen.city, "Roubaix")
         self.canteen.managers.add(authenticate.user)
 
         payload = {
             "siret": "21340172201787",
-            "city": "Montpellier",  # siret changed, geo fields will be reset
+            "city": "Montpellier",  # siret changed, geo fields are reset and re-fetched
             "managementType": Canteen.ManagementType.CONCEDED,
             "reservationExpeParticipant": True,
         }
@@ -657,7 +701,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.canteen.refresh_from_db()
         self.assertEqual(self.canteen.siret, "21340172201787")
-        self.assertEqual(self.canteen.city, None)
+        self.assertEqual(self.canteen.city, "Montpellier")
         self.assertEqual(self.canteen.management_type, Canteen.ManagementType.CONCEDED)
         self.assertEqual(self.canteen.reservation_expe_participant, True)
 
@@ -737,20 +781,29 @@ class CanteenUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    @requests_mock.Mocker()
     @authenticate
-    def test_update_canteen_with_new_siret(self):
-        siret_2 = "21340172201787"
+    def test_update_canteen_with_new_siret(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
         self.assertEqual(self.canteen.siret, "92341284500011")
+        self.assertEqual(self.canteen.city, "Roubaix")
+        # self.assertEqual(self.canteen.city_insee_code, "59512")  # ROUBAIX
         self.canteen.managers.add(authenticate.user)
 
-        payload = {"siret": siret_2}
+        payload = {"siret": "21340172201787"}
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.canteen.refresh_from_db()
-        self.assertEqual(self.canteen.siret, siret_2)
-        self.assertEqual(self.canteen.city_insee_code, None)
+        self.assertEqual(self.canteen.siret, "21340172201787")
+        self.assertEqual(self.canteen.city, "Montpellier")
+        self.assertEqual(self.canteen.city_insee_code, "34172")
 
     @authenticate
     def test_cannot_update_canteen_image_if_not_manager(self):

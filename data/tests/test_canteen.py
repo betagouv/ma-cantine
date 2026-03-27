@@ -459,19 +459,25 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(creation_source=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, creation_source=VALUE_NOT_OK)
 
-    def test_canteen_reset_geo_fields_when_siret_change_on_save(self):
+    @requests_mock.Mocker()
+    def test_canteen_siret_change_save_reset_and_refetch_geo_fields(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="21380185500072", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
         canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
         self.assertEqual(canteen.city_insee_code, "34172")
 
-        canteen.siret = "21380185500015"
+        canteen.siret = "21380185500072"
         canteen.save()
 
-        self.assertEqual(canteen.city_insee_code, None)
-        self.assertEqual(canteen.department, None)
-        self.assertEqual(canteen.region, None)
-        # geobot will run again
+        self.assertEqual(canteen.city_insee_code, "38185")
+        self.assertEqual(canteen.department, "38")
+        self.assertEqual(canteen.region, "84")
 
-    def test_canteen_do_not_reset_geo_fields_when_siren_unite_legale_change_on_save(self):
+    def test_canteen_siren_unite_legale_change_save_do_not_reset_geo_fields(self):
         canteen = CanteenFactory(siret=None, siren_unite_legale="213401722", city_insee_code="34172")
         self.assertEqual(canteen.city_insee_code, "34172")
 
@@ -480,7 +486,7 @@ class CanteenModelSaveTest(TransactionTestCase):
 
         self.assertEqual(canteen.city_insee_code, "34172")
 
-    def test_canteen_reset_geo_fields_when_city_insee_code_change_on_save(self):
+    def test_canteen_city_insee_code_change_save_reset_geo_fields(self):
         canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
         self.assertEqual(canteen.city_insee_code, "34172")
 
@@ -517,7 +523,7 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.get_dirty_fields(), {})
 
     @requests_mock.Mocker()
-    def test_canteen_siret_create_update_geo_fields_on_save(self, mock):
+    def test_canteen_siret_create_fill_geo_fields(self, mock):
         mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
@@ -534,12 +540,12 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.city_insee_code, "34172")
         self.assertEqual(canteen.city, "Montpellier")
         self.assertEqual(canteen.epci, "243400017")
-        self.assertEqual(canteen.pat_list, [])
+        self.assertEqual(canteen.pat_list, ["1554", "1555"])
         self.assertEqual(canteen.department, "34")
         self.assertEqual(canteen.region, "76")
 
     @requests_mock.Mocker()
-    def test_canteen_siren_create_update_geo_fields_on_save(self, mock):
+    def test_canteen_siren_create_fill_geo_fields(self, mock):
         # mock_fetch_geo_data_from_siren(mock, siren="923412845", success=True)
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)

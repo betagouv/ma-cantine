@@ -1014,17 +1014,16 @@ def fill_geo_fields_from_siret(sender, instance, created, **kwargs):
     On canteen creation, we need to fill its geo fields
 
     Notes:
-    - if city_insee_code is (already) set, we don't override it
-    - GROUPE canteens don't have siret, so it won't be triggered for them
-    TODO: canteen edit (when the canteen changes siret)
+    - SIRET: if city_insee_code is (already) set, we don't override it
+    - SIREN: if city_insee_code is not set, we can't fill geo fields (we don't know which city to use), so we don't do anything
+    - GROUPE canteens: they don't have siret, so it won't be triggered for them
     """
     from macantine import tasks
 
-    if created:
-        if instance.siret and not instance.city_insee_code:
-            tasks.update_canteen_geo_fields_from_siret(instance)
-        elif instance.siren_unite_legale and instance.city_insee_code:
-            tasks.update_canteen_geo_data_from_insee_code(instance)
+    if instance.siret and not instance.city_insee_code:
+        tasks.update_canteen_geo_fields_from_siret(instance)
+    elif instance.siren_unite_legale and instance.city_insee_code:
+        tasks.update_canteen_geo_data_from_insee_code(instance)
 
 
 class CanteenImage(models.Model):
