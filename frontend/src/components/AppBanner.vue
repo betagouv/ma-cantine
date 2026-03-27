@@ -5,7 +5,10 @@
         <div class="fr-notice__body">
           <p class="mb-0">
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
-            <span class="fr-notice__title">Campagne de télédéclaration 2026 : du 12 janvier au 31 mars 2026.</span>
+            <span class="fr-notice__title">
+              Campagne de télédéclaration du 12 au 31 mars 2026. Une prolongation de quelques jours est prévue -
+              précisions le 31 mars.
+            </span>
           </p>
         </div>
       </div>
