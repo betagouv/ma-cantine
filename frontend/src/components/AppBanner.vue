@@ -5,10 +5,7 @@
         <div class="fr-notice__body">
           <p class="mb-0">
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
-            <span class="fr-notice__title">
-              Campagne de télédéclaration du 12 au 31 mars 2026. Une prolongation de quelques jours est prévue -
-              précisions le 31 mars.
-            </span>
+            <span class="fr-notice__title">{{ bannerTitle }}</span>
           </p>
         </div>
       </div>
@@ -22,7 +19,16 @@ export default {
   data() {
     return {
       show: window.SHOW_BANNER,
+      publicBannerTitle:
+        "Campagne de télédéclaration du 12 au 31 mars 2026. Une prolongation de quelques jours est prévue - précisions le 31 mars.",
+      loggedBannerTitle:
+        "Campagne de télédéclaration 2026 : du 12 janvier au 31 mars 2026. Prolongation : télédéclarations possibles jusqu'à la campagne de correction - précisions le 31 mars.",
     }
+  },
+  computed: {
+    bannerTitle() {
+      return this.$store.state.loggedUser && this.loggedBannerTitle ? this.loggedBannerTitle : this.publicBannerTitle
+    },
   },
 }
 </script>
