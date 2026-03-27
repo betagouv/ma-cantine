@@ -116,6 +116,9 @@ def update_canteen_geo_fields_from_siret(canteen):
     """
     logger.info("Starting update_canteen_geo_fields_from_siret task")
 
+    # clear dirty fields (and avoid possible recursion errors if coming from post_save)
+    canteen.refresh_from_db()
+
     update = False
     # Step 1: fetch city_insee_code from API Recherche Entreprises
     if not canteen.city_insee_code:
@@ -183,6 +186,9 @@ def update_canteen_geo_data_from_insee_code(canteen):
     Processing: API Découpage Administratif (cached)
     Output: Fill canteen's geo fields
     """
+    # clear dirty fields (and avoid possible recursion errors if coming from post_save)
+    canteen.refresh_from_db()
+
     if canteen.city_insee_code:
         _update_canteen_geo_data_from_insee_code(canteen)
 

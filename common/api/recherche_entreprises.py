@@ -172,6 +172,24 @@ MOCK_SIREN_923412845_RESULTS = [
         },
     }
 ]
+MOCK_SIREN_213401722_RESULTS = [
+    {
+        "siren": "213401722",
+        "nom_complet": "COMMUNE DE MONTPELLIER",
+        "siege": {
+            "code_postal": "34070",
+            "commune": "34172",
+            "date_fermeture": None,
+            "departement": "34",
+            "epci": "243400017",
+            "etat_administratif": "A",
+            "libelle_commune": "MONTPELLIER",
+            "liste_enseignes": ["MAIRIE"],
+            "region": "76",
+            "siret": "21340172201787",
+        },
+    }
+]
 
 
 def mock_fetch_geo_data_from_siren(mock, siren, success=True):
