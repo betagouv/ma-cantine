@@ -6,6 +6,21 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.24.0](https://github.com/betagouv/ma-cantine/compare/v2026.23.0...v2026.24.0) (2026-03-27)
+
+
+### Nouveautés
+
+* **Cantines:** SIRET & SIREN: récupérer les données géo en temps réel à la mise à jour aussi ([#6570](https://github.com/betagouv/ma-cantine/issues/6570)) ([c5efac6](https://github.com/betagouv/ma-cantine/commit/c5efac6ae34d40166328d22b741600c34512d00f))
+
+
+### Améliorations
+
+* **Bandeau:** Connecté, afficher un texte légèrement différent au sujet de la prolongation ([#6567](https://github.com/betagouv/ma-cantine/issues/6567)) ([680426b](https://github.com/betagouv/ma-cantine/commit/680426b88e9adca2d9e943ba2c058c8ae061dea0))
+* **Bandeau:** Coté publique, rajouter une phrase sur la prolongation ([#6566](https://github.com/betagouv/ma-cantine/issues/6566)) ([9d1b44d](https://github.com/betagouv/ma-cantine/commit/9d1b44db2c75174cda7bd92347b527f37a8dc76c))
+* **Open Data:** Data Gouv: dans l'url des fichiers exportés, indiquer l'heure en plus de la date (v2) ([#6572](https://github.com/betagouv/ma-cantine/issues/6572)) ([03f9ec8](https://github.com/betagouv/ma-cantine/commit/03f9ec8fdd1f92dfb4dd826d4a339e19d3004b4e))
+* **Secteurs d'activités:** enlever l'obligation 'administration de tutelle' pour le secteur 'Autres structures d'enseignement' ([#6569](https://github.com/betagouv/ma-cantine/issues/6569)) ([3a4f8b8](https://github.com/betagouv/ma-cantine/commit/3a4f8b86a8324d16512cbc3ebc8ec327f40201c9))
+
 ## [2026.23.0](https://github.com/betagouv/ma-cantine/compare/v2026.22.0...v2026.23.0) (2026-03-25)
 
 
