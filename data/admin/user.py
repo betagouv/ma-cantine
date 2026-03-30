@@ -139,6 +139,7 @@ class MaCanteenUserAdmin(UserAdmin):
 
 class UserInline(admin.TabularInline):
     model = User.canteens.through
+    fields = ("user", "help", "active")  # and "delete" checkbox
     autocomplete_fields = ("user",)
     readonly_fields = ("help", "active")
     extra = 0

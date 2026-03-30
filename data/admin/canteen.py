@@ -219,10 +219,15 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
 class CanteenInline(admin.TabularInline):
     model = Canteen.managers.through
+    fields = ("canteen", "help")  # and "delete" checkbox
     autocomplete_fields = ("canteen",)
     readonly_fields = ("help",)
     extra = 0
     verbose_name_plural = "Cantines gérées"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("canteen", "user")
 
     def has_add_permission(self, request, obj):
         return True
