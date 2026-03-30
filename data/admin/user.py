@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from data.models import User
 
 from .canteen import CanteenInline
+from .diagnostic import UserDiagnosticInline
 
 
 class UserForm(UserChangeForm):
@@ -49,7 +50,7 @@ class MaCanteenUserAdmin(UserAdmin):
     search_help_text = "La recherche est faite sur les champs : ID, prénom, nom, email, nom d'utilisateur."
 
     form = UserForm
-    inlines = (CanteenInline,)
+    inlines = (CanteenInline, UserDiagnosticInline)
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (
