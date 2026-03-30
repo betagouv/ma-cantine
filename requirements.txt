@@ -465,7 +465,7 @@ pycparser==2.22
     # via
     #   cffi
     #   ma-cantine
-pygments==2.19.2
+pygments==2.20.0
     # via
     #   ipython
     #   ipython-pygments-lexers
