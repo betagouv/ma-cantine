@@ -5,8 +5,8 @@ from django.utils import timezone
 from django.utils.html import format_html
 
 from data.admin.softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
-from data.models import Canteen
 from data.admin.utils import get_arrayfield_list_filter
+from data.models import Canteen
 from data.models.creation_source import CreationSource
 
 last_year = timezone.now().date().year - 1
@@ -96,7 +96,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     search_help_text = "La recherche est faite sur les champs : ID, nom, siret, siren de l'unité légale, siret de la cuisine centrale."
 
     form = CanteenForm
-    # inlines = (UserInline, DiagnosticInline,)  # see get_inlines
+    # inlines = (UserInline, CanteenDiagnosticInline,)  # see get_inlines
     autocomplete_fields = ("groupe",)
     filter_vertical = ("managers",)
     fieldsets = (
@@ -166,10 +166,10 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
     def get_inlines(self, request, obj):
         # to avoid circular import error
-        from data.admin.diagnostic import DiagnosticInline
+        from data.admin.diagnostic import CanteenDiagnosticInline
         from data.admin.user import UserInline
 
-        return (UserInline, DiagnosticInline)
+        return (UserInline, CanteenDiagnosticInline)
 
     def save_model(self, request, obj, form, change):
         """
