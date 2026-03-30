@@ -30,6 +30,10 @@ class CanteenDiagnosticInline(ReadOnlyAdminMixin, admin.TabularInline):
     readonly_fields = fields
     extra = 0
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("canteen", "applicant")
+
 
 @admin.register(Diagnostic)
 class DiagnosticAdmin(SimpleHistoryAdmin):
