@@ -6,6 +6,26 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.25.0](https://github.com/betagouv/ma-cantine/compare/v2026.24.0...v2026.25.0) (2026-03-30)
+
+
+### Nouveautés
+
+* **Ressources:** ajout clausier et mise à jour protocole de pesée ([#6576](https://github.com/betagouv/ma-cantine/issues/6576)) ([fd6dae4](https://github.com/betagouv/ma-cantine/commit/fd6dae4a51abfd36dfd189f3cf8b4bfefc8b526f))
+
+
+### Améliorations
+
+* **Admin:** Cantines: dans la liste des Diagnostics, afficher (et lien vers) le déclarant ([#6578](https://github.com/betagouv/ma-cantine/issues/6578)) ([aabdd2b](https://github.com/betagouv/ma-cantine/commit/aabdd2bbb4eefbf8f0ebd9b79c7a882357fb915a))
+* **Admin:** Utilisateurs: affiche en bas la liste des diagnostics télédéclarés ([#6581](https://github.com/betagouv/ma-cantine/issues/6581)) ([77fc1f3](https://github.com/betagouv/ma-cantine/commit/77fc1f30ade1ab2c92177f6f52ae6aa9944f28f1))
+* **Télédéclaration:** ajoute dans la config la nouvelle date de fin de campagne (prolongation au 15 avril minuit) ([#6575](https://github.com/betagouv/ma-cantine/issues/6575)) ([0638abe](https://github.com/betagouv/ma-cantine/commit/0638abe910788a3e453590b29a13f14df09dd9ee))
+
+
+### Technique
+
+* **Admin:** Cantines: accélère le chargement pour les cantines avec bcp de diagnostics (bon ok y'a pas eu encore tant de campagnes que ca :) ([#6580](https://github.com/betagouv/ma-cantine/issues/6580)) ([9d7faa6](https://github.com/betagouv/ma-cantine/commit/9d7faa62f6469b6d52d17c51679834fb81497588))
+* **Admin:** Utilisateurs: accélère le chargement pour les utilisateurs avec bcp de cantines ([#6579](https://github.com/betagouv/ma-cantine/issues/6579)) ([6d9ede3](https://github.com/betagouv/ma-cantine/commit/6d9ede30d87a842d195c5a1cba825fbc9d057e72))
+
 ## [2026.24.0](https://github.com/betagouv/ma-cantine/compare/v2026.23.0...v2026.24.0) (2026-03-27)
 
 
