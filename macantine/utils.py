@@ -150,7 +150,7 @@ CAMPAIGN_DATES = {
         ),
         "teledeclaration_end_date": (
             convert_date_string_to_datetime(settings.TELEDECLARATION_END_DATE_OVERRIDE, "end")
-            or datetime(2026, 3, 31, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+            or datetime(2026, 4, 15, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
         "correction_start_date": (convert_date_string_to_datetime(settings.CORRECTION_START_DATE_OVERRIDE) or None),
         "correction_end_date": (convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end") or None),
