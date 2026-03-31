@@ -18,10 +18,10 @@ clean-targets:
 models:
   ma_cantine:
     staging:
-      +materialized: view
+      +materialized: "{{ 'ephemeral' if target.name == 'prod' else 'view' }}"
       +schema: staging
     intermediate:
-      +materialized: view
+      +materialized: "{{ 'ephemeral' if target.name == 'prod' else 'view' }}"
       +schema: intermediate
     marts:
       +materialized: table
