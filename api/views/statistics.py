@@ -10,6 +10,8 @@ from rest_framework.views import APIView
 from api.serializers import CanteenStatisticsSerializer
 from api.views.utils import camelize
 from data.models import Canteen, Diagnostic
+from data.models.sector import Sector
+from data.models.geo import Department, Region
 from macantine.utils import get_egalim_group
 from data.utils import array_overlap_query
 
@@ -43,10 +45,18 @@ class CanteenStatisticsView(APIView):
         parameters=[
             OpenApiParameter(name="year", type=str, description="Filter by year of declared data", required=True),
             OpenApiParameter(
-                name="region", type=str, many=True, description="Filter by region(s), using their Insee code"
+                name="region",
+                type=str,
+                many=True,
+                description="Filter by region(s), using their Insee code",
+                enum=Region,
             ),
             OpenApiParameter(
-                name="department", type=str, many=True, description="Filter by department(s), using their Insee code"
+                name="department",
+                type=str,
+                many=True,
+                description="Filter by department(s), using their Insee code",
+                enum=Department,
             ),
             OpenApiParameter(
                 name="epci", type=str, many=True, description="Filter by EPCI(s), using their Insee code"
@@ -56,7 +66,11 @@ class CanteenStatisticsView(APIView):
                 name="city", type=str, many=True, description="Filter by city(ies), using their Insee code"
             ),
             OpenApiParameter(
-                name="sector", type=str, many=True, description="Filter by sector(s), using their full name"
+                name="sector",
+                type=str,
+                many=True,
+                description="Filter by sector(s), using their full name",
+                enum=Sector,
             ),
             OpenApiParameter(
                 name="management_type",
