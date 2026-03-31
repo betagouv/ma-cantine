@@ -12,6 +12,7 @@ from data.models.sector import get_category_lib_list_from_canteen_snapshot, get_
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
 from macantine.utils import CAMPAIGN_DATES
+from data.models.geo import Department, Region
 
 logger = logging.getLogger(__name__)
 
@@ -112,8 +113,8 @@ class ETL_ANALYSIS_TELEDECLARATIONS(etl.EXTRACTOR, ANALYSIS):
                     # override with satellite data
                     satellite_row["canteen_id"] = satellite["id"]
                     satellite_row["name"] = satellite["name"]
-                    satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
                     satellite_row["siret"] = satellite["siret"]
+                    satellite_row["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
                     satellite_row["satellite_canteens_count"] = 0
                     # since 2025: override more fields
                     if satellite_row["year"] >= 2025:
@@ -123,8 +124,14 @@ class ETL_ANALYSIS_TELEDECLARATIONS(etl.EXTRACTOR, ANALYSIS):
                         satellite_row["code_insee_commune"] = satellite.get("city_insee_code", None)
                         satellite_row["epci"] = satellite.get("epci", None)
                         satellite_row["pat_list"] = ",".join(satellite.get("pat_list", []))
-                        satellite_row["departement"] = satellite.get("department", None)
-                        satellite_row["region"] = satellite.get("region", None)
+                        department = satellite.get("department", None)
+                        satellite_row["departement"] = department
+                        satellite_row["lib_departement"] = (
+                            Department(department).label.split(" - ")[1].lstrip() if department else None
+                        )
+                        region = satellite.get("region", None)
+                        satellite_row["region"] = region
+                        satellite_row["lib_region"] = Region(region).label.split(" - ")[1].lstrip() if region else None
                         satellite_row["secteur"] = ",".join(get_sector_lib_list_from_canteen_snapshot(satellite))
                         satellite_row["categorie"] = ",".join(get_category_lib_list_from_canteen_snapshot(satellite))
                         satellite_row["is_filled"] = satellite.get("is_filled", None)

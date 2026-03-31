@@ -125,15 +125,15 @@ class TeledeclarationETLAnalysisTest(TestCase):
         etl_td.transform_dataset()
 
         canteen_site_earlier_diagnostic_2024 = etl_td.df[
-            etl_td.df.id == self.canteen_site_earlier_diagnostic_2024.teledeclaration_id
-        ][etl_td.df.year == 2024].iloc[0]
+            (etl_td.df.id == self.canteen_site_earlier_diagnostic_2024.teledeclaration_id) & (etl_td.df.year == 2024)
+        ].iloc[0]
         self.assertEqual(canteen_site_earlier_diagnostic_2024["secteur"], "Supérieur et Universitaire")
         self.assertEqual(
             canteen_site_earlier_diagnostic_2024["line_ministry"], "enseignement_superieur"
         )  # TODO: verbose_name
 
-        canteen_site_diagnostic_2024 = etl_td.df[etl_td.df.id == self.canteen_site_diagnostic_2024.teledeclaration_id][
-            etl_td.df.year == 2024
+        canteen_site_diagnostic_2024 = etl_td.df[
+            (etl_td.df.id == self.canteen_site_diagnostic_2024.teledeclaration_id) & (etl_td.df.year == 2024)
         ].iloc[0]
         self.assertEqual(canteen_site_diagnostic_2024["id"], self.canteen_site_diagnostic_2024.teledeclaration_id)
         self.assertEqual(canteen_site_diagnostic_2024["year"], 2024)
@@ -160,48 +160,58 @@ class TeledeclarationETLAnalysisTest(TestCase):
         etl_td.extract_dataset()
         etl_td.transform_dataset()
 
-        canteen_groupe_diagnostic_2022_satellite = etl_td.df[etl_td.df.canteen_id == self.canteen_satellite.id][
-            etl_td.df.year == 2022
+        canteen_groupe_diagnostic_2022_satellite = etl_td.df[
+            (etl_td.df.canteen_id == self.canteen_satellite.id) & (etl_td.df.year == 2022)
         ].iloc[0]
-        self.assertEqual(
-            canteen_groupe_diagnostic_2022_satellite["id"], self.canteen_groupe_diagnostic_2022.teledeclaration_id
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2022_satellite["production_type"], "site_cooked_elsewhere"
-        )  # hardcoded
-        self.assertEqual(
-            canteen_groupe_diagnostic_2022_satellite["management_type"], self.canteen_groupe.management_type
-        )  # groupe management_type
-        self.assertTrue(
-            pd.isna(canteen_groupe_diagnostic_2022_satellite["modele_economique"])
-        )  # groupe economic_model
-        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["secteur"], "")  # groupe secteur
-        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["categorie"], "")  # groupe categorie
+        # groupe fields
+        for TUPLE_GROUPE in [
+            ("id", self.canteen_groupe_diagnostic_2022.teledeclaration_id),
+            ("management_type", self.canteen_groupe.management_type),
+            ("secteur", ""),  # groupe doesn't have a sector
+            ("categorie", ""),  # groupe doesn't have a sector
+        ]:
+            with self.subTest(TUPLE_GROUPE[0]):
+                self.assertEqual(canteen_groupe_diagnostic_2022_satellite[TUPLE_GROUPE[0]], TUPLE_GROUPE[1])
+        # groupe fields (nan)
+        for GROUPE_NAN in ["modele_economique", "departement", "lib_departement"]:
+            with self.subTest(GROUPE_NAN):
+                self.assertTrue(pd.isna(canteen_groupe_diagnostic_2022_satellite[GROUPE_NAN]))
+        # satellite fields
+        for TUPLE_SATELLITE in [
+            ("siret", self.canteen_satellite.siret),
+            ("production_type", "site_cooked_elsewhere"),  # hardcoded
+            ("satellite_canteens_count", 0),  # hardcoded
+        ]:
+            with self.subTest(TUPLE_SATELLITE[0]):
+                self.assertEqual(canteen_groupe_diagnostic_2022_satellite[TUPLE_SATELLITE[0]], TUPLE_SATELLITE[1])
 
     def test_teledeclaration_transform_groupe_since_2025(self):
         etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_td.extract_dataset()
         etl_td.transform_dataset()
 
-        canteen_groupe_diagnostic_2025_satellite = etl_td.df[etl_td.df.canteen_id == self.canteen_satellite.id][
-            etl_td.df.year == 2025
+        canteen_groupe_diagnostic_2025_satellite = etl_td.df[
+            (etl_td.df.canteen_id == self.canteen_satellite.id) & (etl_td.df.year == 2025)
         ].iloc[0]
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["id"], self.canteen_groupe_diagnostic_2025.teledeclaration_id
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["production_type"], self.canteen_satellite.production_type
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["management_type"], self.canteen_satellite.management_type
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["modele_economique"], self.canteen_satellite.economic_model
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["secteur"], "Ecole primaire (maternelle et élémentaire)"
-        )
-        self.assertEqual(canteen_groupe_diagnostic_2025_satellite["categorie"], "Enseignement")
+        # groupe fields
+        for TUPLE_GROUPE in [
+            ("id", self.canteen_groupe_diagnostic_2025.teledeclaration_id),
+        ]:
+            with self.subTest(TUPLE_GROUPE[0]):
+                self.assertEqual(canteen_groupe_diagnostic_2025_satellite[TUPLE_GROUPE[0]], TUPLE_GROUPE[1])
+        # satellite fields
+        for TUPLE_SATELLITE in [
+            ("siret", self.canteen_satellite.siret),
+            ("production_type", self.canteen_satellite.production_type),
+            ("management_type", self.canteen_satellite.management_type),
+            ("modele_economique", self.canteen_satellite.economic_model),
+            ("departement", "38"),
+            ("lib_departement", "Isère"),
+            ("secteur", "Ecole primaire (maternelle et élémentaire)"),
+            ("categorie", "Enseignement"),
+        ]:
+            with self.subTest(TUPLE_SATELLITE[0]):
+                self.assertEqual(canteen_groupe_diagnostic_2025_satellite[TUPLE_SATELLITE[0]], TUPLE_SATELLITE[1])
 
     def test_get_egalim_sans_bio(self):
         test_cases = [
