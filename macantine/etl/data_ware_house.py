@@ -25,11 +25,11 @@ class DataWareHouse:
             echo=False,
         )
 
-    def _drop_table(self, table, cascade=False):
-        with self.engine.connect() as connection:
-            sql = text(f'DROP TABLE IF EXISTS "{table}" {"CASCADE" if cascade else ""}')
-            print(f"Executing SQL: {sql}")
-            connection.execute(sql)
+    def _drop_table_with_cascade(self, table):
+        with self.engine.begin() as connection:
+            connection.execute(text("DROP VIEW IF EXISTS dbt_dev_staging.stg_diagnostics CASCADE;"))
+        with self.engine.begin() as connection:
+            connection.execute(text(f"DROP TABLE IF EXISTS {table} CASCADE;"))
 
     def _insert_dataframe_delete_rows(self, dataframe, table):
         dataframe.to_sql(
@@ -56,8 +56,7 @@ class DataWareHouse:
         try:
             self._insert_dataframe_delete_rows(dataframe, table)
         except:  # noqa
-            print("=============== IN ====================")
-            self._drop_table(table, cascade=True)
+            self._drop_table_with_cascade(table)
             self._insert_dataframe_replace(dataframe, table)
         end = time.time()
         logger.info(f"Inserted {len(dataframe)} rows into table {table} in {end - start:.2f} seconds")
