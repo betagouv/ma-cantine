@@ -19,10 +19,8 @@ export default {
   data() {
     return {
       show: window.SHOW_BANNER,
-      publicBannerTitle:
-        "Campagne de télédéclaration du 12 au 31 mars 2026. Une prolongation de quelques jours est prévue - précisions le 31 mars.",
-      loggedBannerTitle:
-        "Campagne de télédéclaration 2026 : du 12 janvier au 31 mars 2026. Prolongation : télédéclarations possibles jusqu'à la campagne de correction - précisions le 31 mars.",
+      publicBannerTitle: "La campagne de télédéclaration 2026 est prolongé jusqu'au 15 avril 2026.",
+      loggedBannerTitle: "",
     }
   },
   computed: {
