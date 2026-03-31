@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       show: window.SHOW_BANNER,
-      publicBannerTitle: "La campagne de télédéclaration 2026 est prolongé jusqu'au 15 avril 2026.",
+      publicBannerTitle: "La campagne de télédéclaration 2026 est prolongée jusqu'au 15 avril 2026.",
       loggedBannerTitle: "",
     }
   },
