@@ -5,8 +5,8 @@ import { useRootStore } from "@/stores/root"
 const store = useRootStore()
 
 const show = window.SHOW_BANNER
-const publicBannerTitle = "Campagne de télédéclaration du 12 au 31 mars 2026. Une prolongation de quelques jours est prévue - précisions le 31 mars."
-const loggedBannerTitle = "Campagne de télédéclaration 2026 : du 12 janvier au 31 mars 2026. Prolongation : télédéclarations possibles jusqu'à la campagne de correction - précisions le 31 mars."
+const publicBannerTitle = "La campagne de télédéclaration 2026 est prolongée jusqu'au 15 avril 2026."
+const loggedBannerTitle = ""
 const bannerTitle = computed(() => {
   return !!store.loggedUser && loggedBannerTitle ? loggedBannerTitle : publicBannerTitle
 })
