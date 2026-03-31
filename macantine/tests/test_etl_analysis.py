@@ -167,6 +167,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
         for TUPLE_GROUPE in [
             ("id", self.canteen_groupe_diagnostic_2022.teledeclaration_id),
             ("management_type", self.canteen_groupe.management_type),
+            ("objectif_zone_geo", "non renseigné"),
             ("secteur", ""),  # groupe doesn't have a sector
             ("categorie", ""),  # groupe doesn't have a sector
         ]:
@@ -207,6 +208,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
             ("modele_economique", self.canteen_satellite.economic_model),
             ("departement", "38"),
             ("lib_departement", "Isère"),
+            ("objectif_zone_geo", "France métropolitaine"),
             ("secteur", "Ecole primaire (maternelle et élémentaire)"),
             ("categorie", "Enseignement"),
         ]:

@@ -132,6 +132,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(etl.EXTRACTOR, ANALYSIS):
                         region = satellite.get("region", None)
                         satellite_row["region"] = region
                         satellite_row["lib_region"] = Region(region).label.split(" - ")[1].lstrip() if region else None
+                        satellite_row["objectif_zone_geo"] = utils.get_objectif_zone_geo(department)
                         satellite_row["secteur"] = ",".join(get_sector_lib_list_from_canteen_snapshot(satellite))
                         satellite_row["categorie"] = ",".join(get_category_lib_list_from_canteen_snapshot(satellite))
                         satellite_row["is_filled"] = satellite.get("is_filled", None)
