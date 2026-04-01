@@ -382,8 +382,9 @@ export default {
         ? Number(this.payload.valeurViandesVolaillesNonEgalim.toFixed(2))
         : 0
       const sumMeat = viandesVolaillesEgalim + nonEgalimMeat
+      const sumMeatFixed = Number(sumMeat.toFixed(2)) // to avoid floating point precision issues
       const totalMeat = this.payload.valeurViandesVolailles
-      if (sumMeat > totalMeat) {
+      if (sumMeatFixed > totalMeat) {
         this.viandesVolaillesTotalErrorMessage = this.errorMessage(
           sumMeat,
           totalMeat,
@@ -396,8 +397,9 @@ export default {
         ? Number(this.payload.valeurProduitsDeLaMerNonEgalim.toFixed(2))
         : 0
       const sumFish = produitsDeLaMerEgalim + nonEgalimFish
+      const sumFishFixed = Number(sumFish.toFixed(2)) // to avoid floating point precision issues
       const totalFish = this.payload.valeurProduitsDeLaMer
-      if (sumFish > totalFish) {
+      if (sumFishFixed > totalFish) {
         this.produitsDeLaMerTotalErrorMessage = this.errorMessage(
           sumFish,
           totalFish,
