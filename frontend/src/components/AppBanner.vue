@@ -5,7 +5,14 @@
         <div class="fr-notice__body">
           <p class="mb-0">
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
-            <span class="fr-notice__title">{{ bannerTitle }}</span>
+            <span class="fr-notice__title">
+              {{ bannerTitle }} :
+              <a :href="bannerLink" target="_blank">
+                voir le communiqué de presse
+                <v-icon small class="fr-notice__icon ml-1">mdi-open-in-new</v-icon>
+              </a>
+              .
+            </span>
           </p>
         </div>
       </div>
@@ -19,8 +26,10 @@ export default {
   data() {
     return {
       show: window.SHOW_BANNER,
-      publicBannerTitle: "La campagne de télédéclaration 2026 est prolongée jusqu'au 15 avril 2026.",
+      publicBannerTitle: "La campagne de télédéclaration 2026 est prolongée jusqu'au 15 avril 2026",
       loggedBannerTitle: "",
+      bannerLink:
+        "https://agriculture.gouv.fr/exemplarite-de-letat-dans-la-restauration-collective-annie-genevard-et-david-amiel-mobilisent-les",
     }
   },
   computed: {
@@ -48,6 +57,10 @@ export default {
   &--info {
     background-color: #e8edff;
     color: #0063cb;
+  }
+
+  a {
+    color: inherit;
   }
 
   &__icon {
