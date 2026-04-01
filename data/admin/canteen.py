@@ -143,7 +143,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         (
             "Archiver la cantine",
             {
-                "description": "Une cantine archivée est une cantine 'supprimée' : elle ne sera plus visible sur la plateformen mais elle pourra être restaurée à tout moment.",
+                "description": "Une cantine archivée est une cantine 'supprimée' : elle ne sera plus visible sur la plateforme mais elle pourra être restaurée à tout moment.",
                 "fields": ("deletion_date",),
             },
         ),
