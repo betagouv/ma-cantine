@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
 from data.models import Canteen, Diagnostic
 
@@ -36,10 +37,7 @@ class Command(BaseCommand):
         logger.info(f"Start task: canteen_fill_declaration_donnees_year_field for year {year}")
         field_name = f"declaration_donnees_{year}"
 
-        logger.info("Step 1: reset the field for all the canteens")
-        Canteen.all_objects.all().update(**{field_name: False})
-
-        logger.info("Step 2: find the canteens that have a teledeclaration for the specified year")
+        logger.info("Step 1: find the canteens that have a teledeclaration for the specified year")
         diagnostics_teledeclared = Diagnostic.objects.valid_td_by_year(year)
         logger.info(f"Found {len(diagnostics_teledeclared)} teledeclarations for year {year}")
         canteens_with_teledeclarations = []
@@ -49,8 +47,10 @@ class Command(BaseCommand):
                 for satellite in dtd["satellites_snapshot"]:
                     canteens_with_teledeclarations.append(satellite["id"])
 
-        logger.info("Step 3: update the field")
-        Canteen.all_objects.filter(id__in=canteens_with_teledeclarations).update(**{field_name: True})
+        logger.info("Step 2: reset & update the field")
+        with transaction.atomic():
+            Canteen.all_objects.all().update(**{field_name: False})
+            Canteen.all_objects.filter(id__in=canteens_with_teledeclarations).update(**{field_name: True})
 
         # Done!
         result = f"{Canteen.all_objects.filter(**{field_name: True}).count()} canteens teledeclared for year {year}"
