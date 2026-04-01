@@ -9,7 +9,7 @@ const metabaseStatsUrl = "https://ma-cantine-metabase.cleverapps.io/public/dashb
       <h1>Statistiques publiques</h1>
       <p>
         Cette page présente les chiffres clés de la plateforme ma cantine mis à jour en temps réel.<br/>
-        Pour plus d'informations sur les données télédéclarées, consulter <a :href="documentation.rapportsBilansStatistiquesEgalim" target="_blank">les rapports annuels</a>
+        Pour plus d'informations sur les données télédéclarées, consulter <a :href="documentation.rapportsBilansStatistiquesEgalim" target="_blank">les rapports annuels</a>.
       </p>
     </section>
     <iframe class="statistiques__iframe fr-mt-4w" :src="metabaseStatsUrl" title="Statistiques d'usage du poduit ma-cantine"></iframe>
