@@ -11,6 +11,7 @@
                 voir le communiqué de presse
                 <v-icon small class="fr-notice__icon ml-1">mdi-open-in-new</v-icon>
               </a>
+              .
             </span>
           </p>
         </div>

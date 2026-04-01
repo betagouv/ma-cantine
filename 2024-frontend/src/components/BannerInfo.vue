@@ -15,6 +15,6 @@ const bannerLink = "https://agriculture.gouv.fr/exemplarite-de-letat-dans-la-res
 
 <template>
   <DsfrNotice v-if="show" type="info">
-    {{ bannerTitle }} : <a :href="bannerLink" target="_blank">voir le communiqué de presse</a>
+    {{ bannerTitle }} : <a :href="bannerLink" target="_blank">voir le communiqué de presse</a>.
   </DsfrNotice>
 </template>
