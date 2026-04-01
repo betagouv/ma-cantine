@@ -210,7 +210,7 @@ django-permissionedforms==0.1
     # via
     #   ma-cantine
     #   wagtail
-django-simple-history==3.7.0
+django-simple-history==3.11.0
     # via ma-cantine
 django-storages==1.14.4
     # via ma-cantine
