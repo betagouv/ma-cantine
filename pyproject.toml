@@ -67,7 +67,7 @@ dependencies = [
     "drf-excel==2.4.1",
     "drf-spectacular==0.29.0",
     "drf-spectacular-sidecar==2026.1.1",
-    "editorconfig==0.12.4",
+    "editorconfig==0.17.1",
     "et-xmlfile==1.1.0",
     "exceptiongroup==1.2.2",
     "factory-boy==3.3.3",

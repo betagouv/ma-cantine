@@ -892,9 +892,12 @@ wheels = [
 
 [[package]]
 name = "editorconfig"
-version = "0.12.4"
+version = "0.17.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/3d/85/7b5c2fac7fdc37d959fab714b13b9acb75884490dcc0e8b1dc5e64105084/EditorConfig-0.12.4.tar.gz", hash = "sha256:24857fa1793917dd9ccf0c7810a07e05404ce9b823521c7dce22a4fb5d125f80", size = 13278, upload-time = "2024-02-12T08:33:06.745Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/88/3a/a61d9a1f319a186b05d14df17daea42fcddea63c213bcd61a929fb3a6796/editorconfig-0.17.1.tar.gz", hash = "sha256:23c08b00e8e08cc3adcddb825251c497478df1dada6aefeb01e626ad37303745", size = 14695, upload-time = "2025-06-09T08:21:37.097Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/96/fd/a40c621ff207f3ce8e484aa0fc8ba4eb6e3ecf52e15b42ba764b457a9550/editorconfig-0.17.1-py3-none-any.whl", hash = "sha256:1eda9c2c0db8c16dbd50111b710572a5e6de934e39772de1959d41f64fc17c82", size = 16360, upload-time = "2025-06-09T08:21:35.654Z" },
+]
 
 [[package]]
 name = "et-xmlfile"
@@ -1589,7 +1592,7 @@ requires-dist = [
     { name = "drf-excel", specifier = "==2.4.1" },
     { name = "drf-spectacular", specifier = "==0.29.0" },
     { name = "drf-spectacular-sidecar", specifier = "==2026.1.1" },
-    { name = "editorconfig", specifier = "==0.12.4" },
+    { name = "editorconfig", specifier = "==0.17.1" },
     { name = "et-xmlfile", specifier = "==1.1.0" },
     { name = "exceptiongroup", specifier = "==1.2.2" },
     { name = "factory-boy", specifier = "==3.3.3" },

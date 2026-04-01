@@ -253,7 +253,7 @@ drf-spectacular==0.29.0
     # via ma-cantine
 drf-spectacular-sidecar==2026.1.1
     # via ma-cantine
-editorconfig==0.12.4
+editorconfig==0.17.1
     # via
     #   cssbeautifier
     #   jsbeautifier
