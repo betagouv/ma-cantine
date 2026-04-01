@@ -188,7 +188,7 @@ django-dirtyfields==1.9.8
     # via ma-cantine
 django-extensions==4.1
     # via ma-cantine
-django-filter==24.3
+django-filter==25.2
     # via
     #   ma-cantine
     #   wagtail
