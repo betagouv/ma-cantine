@@ -144,7 +144,7 @@ export default {
         },
         {
           text: "Statistiques",
-          href: "https://ma-cantine-metabase.cleverapps.io/public/dashboard/0589649a-fabc-4001-82d6-f5f4fc15710d",
+          to: { name: "Statistiques" },
         },
         {
           text: "Code source",
