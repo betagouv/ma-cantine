@@ -418,7 +418,7 @@ const vue3Routes = [
     name: "ConditionsGeneralesUtilisation",
   },
   {
-    path: "/statistiques",
+    path: "/stats",
     name: "Statistiques",
   },
   {
