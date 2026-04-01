@@ -239,12 +239,12 @@ const getMinistrieName = (canteenMinistrySlug) => {
   <section class="fr-container fr-background-alt--red-marianne fr-p-3w fr-mt-3w fr-grid-row fr-grid-row--center">
     <div class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
       <h2 class="fr-h5 fr-text-default--error">
-        <span class="mdi mdi-delete"></span>
-        Supprimer cet établissement
+        <span class="mdi mdi-archive"></span>
+        Archiver cet établissement
       </h2>
       <p class="fr-mb-0">
-        Vous ne souhaitez plus faire apparaître cet établissement sur la plateforme <em>ma-cantine</em>, vous pouvez le supprimer
-        <AppLinkRouter :to="{ name: 'GestionnaireCantineSupprimer' }" title="en cliquant ici" />
+        Vous ne souhaitez plus faire apparaître cet établissement sur la plateforme <em>ma-cantine</em>, vous pouvez l’archiver
+        <AppLinkRouter :to="{ name: 'GestionnaireCantineArchiver' }" title="en cliquant ici" />
       </p>
     </div>
   </section>

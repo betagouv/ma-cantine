@@ -15,7 +15,7 @@ const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 
 /* Delete */
-const deleleteButtonLabel = computed(() => `Je confirme vouloir supprimer « ${canteenName} »`)
+const deleleteButtonLabel = computed(() => `Je confirme vouloir archiver « ${canteenName} »`)
 const deleteCanteenLoading = ref(false)
 const deleteCanteen = () => {
   deleteCanteenLoading.value = true
@@ -24,7 +24,7 @@ const deleteCanteen = () => {
     .then((response) => {
       if(response.status === "error") displayError(response)
       else {
-        store.notify({message: `« ${canteenName} » a bien été supprimé, s'il s'agit d'une erreur vous pouvez nous contacter à l'adresse support-egalim@beta.gouv.fr.`, status: "success", title: "Suppression effectuée"})
+        store.notify({message: `L'établissement « ${canteenName} » a bien été archivé, s'il s'agit d'une erreur vous pouvez nous contacter à l'adresse support-egalim@beta.gouv.fr.`, status: "success", title: "Établissement archivé"})
         router.push({name: "GestionnaireTableauDeBord"})
       }
     })
@@ -40,9 +40,14 @@ const displayError = (error) => {
   <div class="fr-col-12 fr-col-md-8 fr-mb-3w">
     <h1>{{ route.meta.title }} «&nbsp;{{ canteenName }}&nbsp;»</h1>
     <p>
-      La suppression d'une cantine entraîne aussi celle des bilans associés. Aucun gestionnaire ne sera en mesure
-      d'accéder aux données après la suppression.
+      En archivant l'établissement :
     </p>
+    <ul class="fr-mb-4w">
+      <li>il sera automatiquement masqué de votre tableau de bord</li>
+      <li>il sera retiré du registre national des cantines</li>
+      <li>il sera retiré de l’annuaire des cantines</li>
+      <li>tous les bilans déjà déclarés seront conservés</li>
+    </ul>
     <DsfrButton primary :label="deleleteButtonLabel" icon="fr-icon-delete-line" @click="deleteCanteen" :disabled="deleteCanteenLoading" />
   </div>
 </template>

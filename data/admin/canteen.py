@@ -140,7 +140,13 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             {"fields": Canteen.MATOMO_FIELDS},
         ),
         ("Metadonnées", {"fields": Canteen.CREATION_META_FIELDS}),
-        ("Supprimer la cantine", {"fields": ("deletion_date",)}),
+        (
+            "Archiver la cantine",
+            {
+                "description": "Une cantine archivée est une cantine 'supprimée' : elle ne sera plus visible sur la plateforme mais elle pourra être restaurée à tout moment.",
+                "fields": ("deletion_date",),
+            },
+        ),
     )
     readonly_fields = (
         "satellites_display",
