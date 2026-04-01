@@ -19,6 +19,6 @@ const iframeUrl = "https://ma-cantine-metabase.cleverapps.io/public/dashboard/05
 <style scoped>
 .statistiques__iframe {
   width: 100%;
-  min-height: 80vh;
+  height: 90vh;
 }
 </style>
