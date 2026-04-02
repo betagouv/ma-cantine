@@ -319,6 +319,7 @@ class Diagnostic(models.Model):
 
     class DiagnosticStatus(models.TextChoices):
         DRAFT = "DRAFT", "Brouillon"
+        CORRECTION = "CORRECTION", "En correction"
         SUBMITTED = "SUBMITTED", "Télédéclaré"
 
     # NB: if the label of the choice changes, double check that the teledeclaration PDF
