@@ -221,6 +221,14 @@ class DiagnosticModelCancelMethodTest(TestCase):
         self.assertIsNone(self.canteen_groupe_diagnostic.teledeclaration_version)
         self.assertIsNone(self.canteen_groupe_diagnostic.teledeclaration_id)
 
+    def test_cancel_in_correction_campaign(self):
+        with freeze_time(date_in_teledeclaration_campaign):
+            self.canteen_groupe_diagnostic.teledeclare(applicant=UserFactory())
+
+        with freeze_time(date_in_correction_campaign):
+            self.canteen_groupe_diagnostic.cancel()
+            self.assertEqual(self.canteen_groupe_diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
+
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cancel_post_save_declaration_donnees_year(self):
         # teledeclare the diagnostic
