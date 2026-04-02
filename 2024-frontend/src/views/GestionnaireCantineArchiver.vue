@@ -48,6 +48,6 @@ const displayError = (error) => {
       <li>il sera retiré de l’annuaire des cantines</li>
       <li>tous les bilans déjà déclarés seront conservés</li>
     </ul>
-    <DsfrButton primary :label="deleleteButtonLabel" icon="fr-icon-delete-line" @click="deleteCanteen" :disabled="deleteCanteenLoading" />
+    <DsfrButton primary :label="deleleteButtonLabel" @click="deleteCanteen" :disabled="deleteCanteenLoading" />
   </div>
 </template>
