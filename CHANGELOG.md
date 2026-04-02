@@ -6,6 +6,39 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.26.0](https://github.com/betagouv/ma-cantine/compare/v2026.25.0...v2026.26.0) (2026-04-02)
+
+
+### Nouveautés
+
+* **Archiver une cantine:** remplace "supprimer" par "archiver" ([#6604](https://github.com/betagouv/ma-cantine/issues/6604)) ([32ead30](https://github.com/betagouv/ma-cantine/commit/32ead309b054cfbacf2a26b98ce59882102d4f69))
+* **Campagne de prolongation:** ajout du lien vers le communiqué de presse ([#6591](https://github.com/betagouv/ma-cantine/issues/6591)) ([eff7d8f](https://github.com/betagouv/ma-cantine/commit/eff7d8f39c82c9d1ca34f63ae893586456c03b56))
+* **Statistiques:** création d'une page interne avec l'affichage du Metabase avec iframe ([#6590](https://github.com/betagouv/ma-cantine/issues/6590)) ([6784253](https://github.com/betagouv/ma-cantine/commit/678425372490baed63951e3de7cb88d426357f6d))
+
+
+### Améliorations
+
+* **Bandeau:** indiquer la nouvelle date de fin (prolongation jusqu'au 15 avril) ([#6588](https://github.com/betagouv/ma-cantine/issues/6588)) ([36c173b](https://github.com/betagouv/ma-cantine/commit/36c173b67e9d0b7f0180b4267b263e778f379de3))
+* **ETL:** dbt: lancer DROP CASCADE si le schéma de la table exportée a changé ([#6587](https://github.com/betagouv/ma-cantine/issues/6587)) ([769c4d4](https://github.com/betagouv/ma-cantine/commit/769c4d41facf58fd9542d4a8d3b838dd560ff917))
+* **ETL:** TD analysis: Utiliser les infos satellites pour lib_departement, lib_region & objectif_zone_geo ([#6585](https://github.com/betagouv/ma-cantine/issues/6585)) ([f73e1e6](https://github.com/betagouv/ma-cantine/commit/f73e1e60d345852a0b922b92d60a3826fdd53027))
+
+
+### Corrections (bugs, typos...)
+
+* **Archiver une cantine:** supprime l'icône du bouton ([#6606](https://github.com/betagouv/ma-cantine/issues/6606)) ([726cf96](https://github.com/betagouv/ma-cantine/commit/726cf96c6270570fd5b7d49dda2727947ee2e5b9))
+* **Statistiques:** corrige l'affichage du nom ma-cantine ([#6608](https://github.com/betagouv/ma-cantine/issues/6608)) ([a9df9ef](https://github.com/betagouv/ma-cantine/commit/a9df9ef18d2e88a463ecab24f716864b8cecee1a))
+* **Télédéclaration:** corrige l'erreur d'arrondi des décimales pour les totaux viandes et poissons des familles en TD détaillées ([#6605](https://github.com/betagouv/ma-cantine/issues/6605)) ([4a07004](https://github.com/betagouv/ma-cantine/commit/4a070045bee053f142b71c17bbeadc36fc9333b4))
+
+
+### Technique
+
+* **Télédéclarations:** lancer la commande declaration_donnees_YEAR dans une transaction ([#6589](https://github.com/betagouv/ma-cantine/issues/6589)) ([ca1806d](https://github.com/betagouv/ma-cantine/commit/ca1806dcfc6052f9fa870d9366e51b37777c8335))
+
+
+### Documentation
+
+* **API Stats:** ajoute les enum pour les filtres sectors, departments & regions ([#6584](https://github.com/betagouv/ma-cantine/issues/6584)) ([30f7778](https://github.com/betagouv/ma-cantine/commit/30f77784d71c32812874135d6f7c69278b933b4f))
+
 ## [2026.25.0](https://github.com/betagouv/ma-cantine/compare/v2026.24.0...v2026.25.0) (2026-03-30)
 
 
