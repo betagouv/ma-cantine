@@ -295,6 +295,45 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
+    def test_can_link_satellite_when_groupe_has_cancelled_diagnostic(self):
+        self.canteen_groupe_1.managers.add(authenticate.user)
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(canteen=self.canteen_groupe_1, year=2024, valeur_totale=100)
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+            url = reverse(
+                "canteen_groupe_satellite_link",
+                kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
+            )
+            response = self.client.post(url)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(self.canteen_satellite_11.groupe, self.canteen_groupe_1)
+
+    @authenticate
+    def test_can_unlink_satellite_when_groupe_has_cancelled_diagnostic(self):
+        self.canteen_groupe_1.managers.add(authenticate.user)
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            self.canteen_satellite_11.groupe = self.canteen_groupe_1
+            self.canteen_satellite_11.save()
+            diagnostic = DiagnosticFactory(canteen=self.canteen_groupe_1, year=2024, valeur_totale=100)
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+            url = reverse(
+                "canteen_groupe_satellite_unlink",
+                kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+            )
+            response = self.client.post(url)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.canteen_satellite_11.refresh_from_db()
+            self.assertIsNone(self.canteen_satellite_11.groupe)
+
+    @authenticate
     def test_canteen_groupe_satellite_link_unlink(self):
         # set user as manager of group_1 and group_2
         self.canteen_groupe_1.managers.add(authenticate.user)
