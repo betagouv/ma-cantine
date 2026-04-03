@@ -293,22 +293,21 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         if is_in_correction():
             conditions.append(
                 When(
-                    ~is_satellite_query()
-                    & Q(
-                        has_diagnostic_teledeclared_for_year=False,
-                        diagnostic_for_year_status=Diagnostic.DiagnosticStatus.DRAFT,
-                    ),
-                    then=Value(Canteen.Actions.DID_NOT_TELEDECLARE),
-                )
-            )
-            conditions.append(
-                When(
                     is_satellite_query()
                     & Q(groupe_id__isnull=False)
                     & Q(
                         has_diagnostic_teledeclared_for_year=False,
                         diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                         groupe_diagnostic_for_year_status=Diagnostic.DiagnosticStatus.DRAFT,
+                    ),
+                    then=Value(Canteen.Actions.DID_NOT_TELEDECLARE),
+                )
+            )
+            conditions.append(
+                When(
+                    Q(
+                        has_diagnostic_teledeclared_for_year=False,
+                        diagnostic_for_year_status=Diagnostic.DiagnosticStatus.DRAFT,
                     ),
                     then=Value(Canteen.Actions.DID_NOT_TELEDECLARE),
                 )
