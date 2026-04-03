@@ -545,6 +545,32 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic.valeur_totale, 1000)
         self.assertEqual(diagnostic.valeur_bio, 500)
 
+    @authenticate
+    def test_update_diagnostic_cancelled_during_correction_campaign(self):
+        """
+        If a canteen has a cancelled diagnostic,
+        it can import a new diagnostic during the correction campaign
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
+
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+
+            file_path = (
+                "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+            )
+            with open(file_path) as diag_file:
+                response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            diagnostic.refresh_from_db()
+            self.assertEqual(diagnostic.valeur_totale, 1000)
+            self.assertEqual(diagnostic.valeur_bio, 500)
+
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
