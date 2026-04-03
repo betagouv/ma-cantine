@@ -230,6 +230,31 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
         )
 
     @authenticate
+    def test_success_groupe_with_teledeclaration_cancelled_during_correction_campaign(self):
+        """
+        User can add it canteen to a groupe if the groupe has cancelled its teledeclaration
+        """
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.satellite_canteen.managers.add(authenticate.user)
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            self.teledeclaration.cancel()
+
+            file_path = "./api/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+            with open(file_path) as canteen_file:
+                response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            errors = body["errors"]
+            self.assertEqual(body["count"], 1)
+            self.assertEqual(len(body["canteens"]), 1)
+            self.assertEqual(len(errors), 0)
+            self.assertEqual(self.satellite_canteen.groupe, self.groupe_canteen)
+
+    @authenticate
     def test_success_groupe_with_teledeclaration_after_campaign(self):
         """
         User can add a satellite to a groupe that has a teledeclared diagnostic for the current campaign after the teledeclaration campaign
