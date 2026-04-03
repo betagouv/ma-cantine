@@ -205,7 +205,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         )
         return self.annotate(
             diagnostic_for_year=Subquery(diagnostics.values("id")[:1]),
+            diagnostic_for_year_status=Subquery(diagnostics.values("status")[:1]),
             groupe_diagnostic_for_year=Subquery(groupe_diagnostics.values("id")[:1]),
+            groupe_diagnostic_for_year_status=Subquery(groupe_diagnostics.values("status")[:1]),
             has_diagnostic_filled_for_year=Exists(Subquery(diagnostics_filled)),
             diagnostic_for_year_cc_mode=Subquery(
                 diagnostic_for_year_with_cc_mode.values("central_kitchen_diagnostic_mode")[:1]
@@ -287,6 +289,30 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             conditions.append(
                 When(has_diagnostic_teledeclared_for_year=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE))
             )
+        # in correction but without a teledeclared diagnostic
+        if is_in_correction():
+            conditions.append(
+                When(
+                    ~is_satellite_query()
+                    & Q(
+                        has_diagnostic_teledeclared_for_year=False,
+                        diagnostic_for_year_status=Diagnostic.DiagnosticStatus.DRAFT,
+                    ),
+                    then=Value(Canteen.Actions.DID_NOT_TELEDECLARE),
+                )
+            )
+            conditions.append(
+                When(
+                    is_satellite_query()
+                    & Q(groupe_id__isnull=False)
+                    & Q(
+                        has_diagnostic_teledeclared_for_year=False,
+                        diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                        groupe_diagnostic_for_year_status=Diagnostic.DiagnosticStatus.DRAFT,
+                    ),
+                    then=Value(Canteen.Actions.DID_NOT_TELEDECLARE),
+                )
+            )
         # anytime of the year
         conditions.append(
             When(
@@ -301,6 +327,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             )
         )
         conditions.append(
+            )
+        )
+        conditions.append(
             When(
                 is_satellite_query()
                 & Q(groupe_id__isnull=False)
@@ -312,9 +341,15 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             )
         )
         conditions.append(
+            )
+        )
+        conditions.append(
             When(
                 has_diagnostic_teledeclared_for_year=True,
                 then=Value(Canteen.Actions.NOTHING),
+            )
+        )
+        conditions.append(
             )
         )
         conditions.append(
@@ -324,9 +359,17 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             )
         )
         conditions.append(
+            )
+        )
+        conditions.append(
             When(
                 Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
                 then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
+            )
+        )
+        conditions.append(When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)))
+        conditions.append(When(has_diagnostic_filled_for_year=False, then=Value(Canteen.Actions.FILL_DIAGNOSTIC)))
+        conditions.append(
             )
         )
         conditions.append(When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)))
@@ -339,16 +382,24 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         )
         conditions.append(When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)))
         conditions.append(
+            )
+        )
+        conditions.append(When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)))
+        conditions.append(
             When(
                 is_groupe_query() & Q(satellites_in_db_missing_data_count__gt=0),
                 then=Value(Canteen.Actions.FILL_SATELLITE_CANTEEN_DATA),
             )
         )
+            )
+        )
         if is_in_correction():
-            # TODO: figure out a way to detect that the canteen has indeed teledeclared during the teledeclaration campaign
             conditions.append(
                 When(
-                    Q(has_diagnostic_teledeclared_for_year=False),
+                    Q(
+                        has_diagnostic_teledeclared_for_year=False,
+                        diagnostic_for_year_status=Diagnostic.DiagnosticStatus.CORRECTION,
+                    ),
                     then=Value(Canteen.Actions.TELEDECLARE),
                 )
             )
