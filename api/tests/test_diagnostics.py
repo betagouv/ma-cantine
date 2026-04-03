@@ -663,6 +663,34 @@ class DiagnosticUpdateApiTest(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.year, 2020)
 
+    @authenticate
+    def test_edit_cancelled_diagnostic_during_correction_campaign(self):
+        """
+        A diagnostic can be edited during the correction campaign if its teledeclaration has been cancelled
+        """
+        diagnostic = DiagnosticFactory(year=2024, valeur_totale=1000, valeur_bio=200)
+        diagnostic.canteen.managers.add(authenticate.user)
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
+
+            payload = {"valeur_totale": 2000, "valeur_bio": 400}
+            response = self.client.patch(
+                reverse(
+                    "diagnostic_update",
+                    kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                ),
+                payload,
+            )
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            diagnostic.refresh_from_db()
+            self.assertEqual(diagnostic.valeur_totale, 2000)
+            self.assertEqual(diagnostic.valeur_bio, 400)
+
 
 class DiagnosticDeleteApiTest(APITestCase):
     @authenticate
