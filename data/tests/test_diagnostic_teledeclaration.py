@@ -242,6 +242,20 @@ class DiagnosticModelCancelMethodTest(TestCase):
         self.canteen_groupe.refresh_from_db()
         self.assertFalse(getattr(self.canteen_groupe, f"declaration_donnees_{year_data}"))
 
+    def test_cancelled_diagnostic_can_be_teledeclare_again(self):
+        with freeze_time(date_in_teledeclaration_campaign):
+            self.canteen_groupe_diagnostic.teledeclare(applicant=UserFactory())
+
+        with freeze_time(date_in_correction_campaign):
+            self.canteen_groupe_diagnostic.cancel()
+            self.canteen_groupe.name = "New Name"
+            self.canteen_groupe_diagnostic.teledeclare(applicant=UserFactory())
+
+            self.canteen_groupe.refresh_from_db()
+            self.canteen_satellite.refresh_from_db()
+            self.assertTrue(getattr(self.canteen_groupe, f"declaration_donnees_{year_data}"))
+            self.assertTrue(getattr(self.canteen_satellite, f"declaration_donnees_{year_data}"))
+
 
 class DiagnosticTeledeclaredSnapshotsTest(TestCase):
     @classmethod
