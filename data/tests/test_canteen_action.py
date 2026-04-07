@@ -25,7 +25,7 @@ class CanteenActionTestCase(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
         )
 
-    @freeze_time("2025-08-30")  # after the 2024 campaign
+    @freeze_time("2025-01-20")  # during the 2024 campaign
     def test_canteen_missing_data_actions(self):
         # has diagnostic, but missing data (yearly_meal_count)
         DiagnosticFactory(canteen=self.canteen_site, year=2024, valeur_totale=100)
