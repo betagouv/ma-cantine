@@ -221,8 +221,8 @@ def set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dic
     Generate a dict with common fields values for a satellite from a groupe diagnostic
 
     Rules:
-    - in 2024 (and before), we keep the group values for: geo data, sector_list, line_ministry.
-    We also change the yearly_meal_count (divided by the number of satellites)
+    - before 2025, we override the satellite with the groupe's values: geo data, sector_list, line_ministry. We also change the yearly_meal_count (divided by the number of satellites)
+    - in 2025, we stop overriding fields
     """
     from data.models import Canteen  # avoid circular import
 
@@ -243,10 +243,16 @@ def set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dic
             "sector_list",
             "line_ministry",
         ]
-        for field in fields_overridden_by_groupe:
-            if field in diagnostic.canteen_snapshot:
-                updated_common_fields[field] = diagnostic.canteen_snapshot[field]
-        # yearly_meal_count
+    elif diagnostic.year == 2025:
+        fields_overridden_by_groupe = []
+
+    # build dict
+    for field in fields_overridden_by_groupe:
+        if field in diagnostic.canteen_snapshot:
+            updated_common_fields[field] = diagnostic.canteen_snapshot[field]
+
+    # yearly_meal_count (before 2025)
+    if diagnostic.year <= 2024:
         divisor = len(diagnostic.satellites_snapshot) if diagnostic.satellites_snapshot else 0
         try:
             updated_common_fields["yearly_meal_count"] = int(
@@ -268,7 +274,7 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
     - the other fields (WASTE_FIELDS, DIVERSIFICATION_FIELDS, PLASTIC_FIELDS, INFO_FIELDS) stay the same
 
     Rules:
-    - in 2024 (and before), we divide by the number of satellites
+    - before 2025, we divide by the number of satellites
     - in 2025, we divide by the yearly_meal_count
     """
     from data.models import Diagnostic  # avoid circular import
@@ -276,13 +282,13 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
     appro_fields_satellite = {}
 
     # get the divisor
-    if diagnostic.year == 2025:
-        divisor = satellite_dict.get("yearly_meal_count")
-    else:  # 2024 and before
+    if diagnostic.year <= 2024:
         divisor = len(diagnostic.satellites_snapshot) if diagnostic.satellites_snapshot else 0
         # no +1 for central_serving? we already added it in canteen_migrate_central_to_groupe.py
+    elif diagnostic.year == 2025:
+        divisor = satellite_dict.get("yearly_meal_count")
 
-    # divide values
+    # build dict
     for field in Diagnostic.APPRO_1TD1SITE_FIELDS:
         try:
             value = getattr(diagnostic, field) / divisor
