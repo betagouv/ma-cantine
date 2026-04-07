@@ -33,7 +33,12 @@ from data.utils import (
     optimize_image,
 )
 from data.validators import canteen as canteen_validators
-from macantine.utils import get_year_campaign_end_date_or_today_date, is_in_correction, is_in_teledeclaration
+from macantine.utils import (
+    get_year_campaign_end_date_or_today_date,
+    is_in_correction,
+    is_in_teledeclaration,
+    is_in_teledeclaration_or_correction,
+)
 
 from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
 
@@ -277,6 +282,11 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         self = self.annotate_with_diagnostic_for_year(year)
         # annotate with action
         conditions = []
+        # outside the campaign without a teledeclared diagnostic
+        if not is_in_teledeclaration_or_correction():
+            conditions.append(
+                When(has_diagnostic_teledeclared_for_year=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE))
+            )
         # anytime of the year
         conditions.append(
             When(
@@ -345,10 +355,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         if is_in_teledeclaration():
             conditions.append(
                 When(has_diagnostic_teledeclared_for_year=False, then=Value(Canteen.Actions.TELEDECLARE))
-            )
-        else:
-            conditions.append(
-                When(has_diagnostic_teledeclared_for_year=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE))
             )
         return self.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
 
