@@ -12,6 +12,7 @@ const isTeledeclaredActions = [
   "95_nothing"
 ]
 const isWaitingActions = ["90_nothing_satellite"]
+const notTeledeclaredActions = ["45_did_not_teledeclare"]
 
 const getBadge = (name, campaignDates) => {
   let label = null
@@ -21,13 +22,14 @@ const getBadge = (name, campaignDates) => {
   const hasTeledeclared = isTeledeclaredActions.includes(name)
   const waitingCentral = isWaitingActions.includes(name)
   const needsFill = toCompleteActions.includes(name)
+  const notTeledeclared = notTeledeclaredActions.includes(name)
 
   switch (true) {
     case hasTeledeclared: // Always display if a diagnostic is teledeclared
       label = "Télédéclaré"
       type = "success"
       break
-    case !hasTeledeclared && !campaignDates.inTeledeclaration: // If not in teledeclaration campaign this is defaut badge for a diagnostic
+    case notTeledeclared: // If diagnostic is not teledeclared
       label = "Non télédéclaré"
       type = "neutral"
       break
