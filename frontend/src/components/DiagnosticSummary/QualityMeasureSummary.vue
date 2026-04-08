@@ -56,11 +56,6 @@
               de viandes et volailles EGalim
             </p>
           </v-col>
-          <v-col class="py-0" v-if="applicableRules.viandesVolaillesEgalimThreshold" cols="12" sm="4" md="3">
-            <p class="mb-0 grey--text text-darken-1">
-              <i>objectif : {{ applicableRules.viandesVolaillesEgalimThreshold }} %</i>
-            </p>
-          </v-col>
         </v-row>
         <v-row class="py-2 px-3">
           <p class="mb-0">
@@ -79,9 +74,14 @@
               de produits de la mer et aquaculture EGalim
             </p>
           </v-col>
-          <v-col class="py-0" v-if="applicableRules.produitsDeLaMerEgalimThreshold" cols="12" sm="4" md="3">
-            <p class="mb-0 grey--text text-darken-1">
-              <i>objectif : {{ applicableRules.produitsDeLaMerEgalimThreshold }} %</i>
+        </v-row>
+        <v-row class="py-2 pl-0 pr-3">
+          <v-col class="py-0">
+            <p class="mb-0">
+              <i>
+                Objectif de 60% pour l'ensemble Viandes, volailles et produits de la mer, non indépendamment. Cet
+                objectif est fixé à 100% pour les restaurants de l'État.
+              </i>
             </p>
           </v-col>
         </v-row>
