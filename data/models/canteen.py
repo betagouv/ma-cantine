@@ -326,9 +326,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             )
         )
         conditions.append(
-            )
-        )
-        conditions.append(
             When(
                 is_satellite_query()
                 & Q(groupe_id__isnull=False)
@@ -340,15 +337,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             )
         )
         conditions.append(
-            )
-        )
-        conditions.append(
             When(
                 has_diagnostic_teledeclared_for_year=True,
                 then=Value(Canteen.Actions.NOTHING),
-            )
-        )
-        conditions.append(
             )
         )
         conditions.append(
@@ -358,17 +349,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             )
         )
         conditions.append(
-            )
-        )
-        conditions.append(
             When(
                 Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
                 then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
-            )
-        )
-        conditions.append(When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)))
-        conditions.append(When(has_diagnostic_filled_for_year=False, then=Value(Canteen.Actions.FILL_DIAGNOSTIC)))
-        conditions.append(
             )
         )
         conditions.append(When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)))
@@ -381,15 +364,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         )
         conditions.append(When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)))
         conditions.append(
-            )
-        )
-        conditions.append(When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)))
-        conditions.append(
             When(
                 is_groupe_query() & Q(satellites_in_db_missing_data_count__gt=0),
                 then=Value(Canteen.Actions.FILL_SATELLITE_CANTEEN_DATA),
-            )
-        )
             )
         )
         if is_in_correction():
