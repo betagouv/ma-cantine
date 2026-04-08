@@ -131,21 +131,21 @@ class TeledeclarationETLOpenDataTest(TestCase):
             etl_td_2022.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
         )  # Order by teledeclaration created date ascending
 
-        # 2023: 1 teledeclaration (1 is cancelled, 1 is hidden (armee))
+        # 2023: 2 teledeclarations (1 groupe, 1 is cancelled, 1 is hidden (armee))
         etl_td_2023 = ETL_OPEN_DATA_TELEDECLARATIONS(2023)
         etl_td_2023.extract_dataset()
 
-        self.assertEqual(Diagnostic.objects.filter(year=2023).count(), 2)
-        self.assertEqual(Diagnostic.objects.filter(year=2023).teledeclared().count(), 1)
-        self.assertEqual(etl_td_2023.len_dataset(), 0)
+        self.assertEqual(Diagnostic.objects.filter(year=2023).count(), 3)
+        self.assertEqual(Diagnostic.objects.filter(year=2023).teledeclared().count(), 2)
+        self.assertEqual(etl_td_2023.len_dataset(), 1)
 
-        # 2024: 2 teledeclaratios
+        # 2024: 3 teledeclarations
         etl_td_2024 = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
         etl_td_2024.extract_dataset()
 
-        self.assertEqual(Diagnostic.objects.filter(year=2024).count(), 2)
-        self.assertEqual(Diagnostic.objects.filter(year=2024).teledeclared().count(), 2)
-        self.assertEqual(etl_td_2024.len_dataset(), 2)
+        self.assertEqual(Diagnostic.objects.filter(year=2024).count(), 3)
+        self.assertEqual(Diagnostic.objects.filter(year=2024).teledeclared().count(), 3)
+        self.assertEqual(etl_td_2024.len_dataset(), 3)
 
         # 2025: 1 teledeclaration (1 groupe) (TODO after 1TD1Site: remove groupe and split data by satellite)
         etl_td_2025 = ETL_OPEN_DATA_TELEDECLARATIONS(2025)
@@ -171,7 +171,7 @@ class TeledeclarationETLOpenDataTest(TestCase):
         # Check the schema matching
         self.assertEqual(len(etl_td_2024.df.columns), len(schema_cols))
         self.assertEqual(set(etl_td_2024.df.columns), set(schema_cols))
-        self.assertEqual(etl_td_2024.len_dataset(), 2)
+        self.assertEqual(etl_td_2024.len_dataset(), 3)
 
         canteen_site_earlier_diagnostic_2024 = etl_td_2024.df[
             etl_td_2024.df.canteen_id == self.canteen_site_earlier.id

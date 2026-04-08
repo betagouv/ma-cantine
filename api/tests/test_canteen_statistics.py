@@ -559,52 +559,38 @@ class CanteenStatsApiTest(APITestCase):
 class CanteenStats1Td1SiteApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        ETLCommonSetUpTestData(cls)
-        # with freeze_time(date_in_2023_teledeclaration_campaign):
-        #     groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
-        #     CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
-        #     CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
-        #     diagnostic = DiagnosticFactory(canteen=groupe, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-        #     diagnostic.teledeclare(applicant=UserFactory())
-        #     # Create a fake diagnostic for 2023 generated
-        #     fake_satellite_generated = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
-        #     fake_satellite_generated_diagnostic = DiagnosticFactory(
-        #         year=2023, canteen=fake_satellite_generated, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-        #     )
-        #     fake_satellite_generated_diagnostic.teledeclare(applicant=UserFactory())
-        #     fake_satellite_generated_diagnostic.generated_from_groupe_diagnostic = True
-        #     fake_satellite_generated_diagnostic.save()
-
-        # with freeze_time("2025-03-30"):  # during the 2024 campaign
-        #     diagnostic = DiagnosticFactory(canteen=groupe, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-        #     diagnostic.teledeclare(applicant=UserFactory())
+        ETLCommonSetUpTestData(cls, with_diagnostics=True)
 
         call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
         call_command("teledeclaration_generate_1td1site", year=2023, apply=True)
 
     def test_user_1td1site_diagnostics_for_2025(self):
-        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2025), 1 + 1)
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2025).count(), 1)  # 1 groupe
+        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2025).count(), 1 + 1)
 
         response = self.client.get(reverse("canteen_statistics"), {"year": 2025})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)  # groupe ignored
-        self.assertEqual(body["teledeclarationsCount"], 2)  # 2 satellites
+        self.assertEqual(body["teledeclarationsCount"], 1)  # 1 groupe with 1 satellite
 
     def test_use_1td1site_diagnostics_for_2024(self):
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2024).count(), 3)  # 1 groupe + 2 sites
+        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2024).count(), 3 + 1)
+
         response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)  # groupe ignored
-        self.assertEqual(body["teledeclarationsCount"], 2)  # 2 satellites
+        self.assertEqual(body["teledeclarationsCount"], 2 + 1)  # 1 groupe with 2 satellites + 2 sites
 
     def test_not_use_1td1site_diagnostics_for_2023(self):
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2023).count(), 2)  # 1 groupe + 1 site (1 armée)
+        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2023).count(), 2 + 1)
+
         response = self.client.get(reverse("canteen_statistics"), {"year": 2023})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 4)  # groupe ignored
-        self.assertEqual(body["teledeclarationsCount"], 1)  # groupe
+        self.assertEqual(body["teledeclarationsCount"], 1)  # 1 groupe
