@@ -152,8 +152,14 @@ CAMPAIGN_DATES = {
             convert_date_string_to_datetime(settings.TELEDECLARATION_END_DATE_OVERRIDE, "end")
             or datetime(2026, 4, 15, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
-        "correction_start_date": (convert_date_string_to_datetime(settings.CORRECTION_START_DATE_OVERRIDE) or None),
-        "correction_end_date": (convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end") or None),
+        "correction_start_date": (
+            convert_date_string_to_datetime(settings.CORRECTION_START_DATE_OVERRIDE)
+            or datetime(2026, 4, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+        ),
+        "correction_end_date": (
+            convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end")
+            or datetime(2026, 4, 29, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+        ),
         "rapport_parlement_url": None,
     },
     # Note: au moment d'ajouter une nouvelle année :
