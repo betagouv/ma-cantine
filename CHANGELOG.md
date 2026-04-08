@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.27.0](https://github.com/betagouv/ma-cantine/compare/v2026.26.0...v2026.27.0) (2026-04-08)
+
+
+### Nouveautés
+
+* **Campagne de correction:** ajout des dates de campagne ([#6607](https://github.com/betagouv/ma-cantine/issues/6607)) ([eef3659](https://github.com/betagouv/ma-cantine/commit/eef36595c1cbc30b7e4345c5a727d3d10ac5b028))
+* **Observatoire:** pour 2025 remplace "télédéclarations" par "sites télédéclarés" ([#6622](https://github.com/betagouv/ma-cantine/issues/6622)) ([71efe16](https://github.com/betagouv/ma-cantine/commit/71efe16168f1f4b525496670c2dd6a7b6d956d06))
+* **Observatoire:** supprime le message d'alerte sur les données incorrectes pour l'année 2024 ([#6620](https://github.com/betagouv/ma-cantine/issues/6620)) ([2d082ae](https://github.com/betagouv/ma-cantine/commit/2d082ae09980d2a35a0df0a34c86b27b4304cf74))
+* **Police Marianne:** création d'un fichier d'import dédié à la police et supprime l'import en double dans nos template ([#6621](https://github.com/betagouv/ma-cantine/issues/6621)) ([358d607](https://github.com/betagouv/ma-cantine/commit/358d6070069f51d6de3264902e6a4a1fd81be421))
+
+
+### Corrections (bugs, typos...)
+
+* **1TD1Site:** ajuste le creation_date (= teledeclaration_date du groupe) ([#6615](https://github.com/betagouv/ma-cantine/issues/6615)) ([64ed5c2](https://github.com/betagouv/ma-cantine/commit/64ed5c207f869659b16b289d153a33ef56a6c6ad))
+* **Synthèse télédéclaration:** regroupe l'affichage de l'objectif viande et poisson ([#6619](https://github.com/betagouv/ma-cantine/issues/6619)) ([54a352e](https://github.com/betagouv/ma-cantine/commit/54a352ea1bac6d07e47ad30062b3e75482bfd853))
+
+
+### Technique
+
+* **deps:** bump django from 5.2.11 to 5.2.13 ([#6623](https://github.com/betagouv/ma-cantine/issues/6623)) ([217abd3](https://github.com/betagouv/ma-cantine/commit/217abd3bab5caa56c48d66ba0183f0e4938ed1b3))
+
 ## [2026.26.0](https://github.com/betagouv/ma-cantine/compare/v2026.25.0...v2026.26.0) (2026-04-02)
 
 
