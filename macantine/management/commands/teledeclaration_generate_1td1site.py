@@ -156,7 +156,7 @@ def process_groupe_diagnostic_teledeclared(diagnostic, apply=False):
         for satellite_dict in diagnostic.satellites_snapshot:
             create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, apply=apply)
             archive_existing_diagnostic_teledeclared_satellite(diagnostic, satellite_dict, apply=apply)
-        update_diagnostic_teledeclared_creation_date(diagnostic, apply=apply)
+        update_generated_diagnostic_teledeclared_creation_date(diagnostic, apply=apply)
 
 
 def create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, apply=False):
@@ -201,7 +201,7 @@ def create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, app
         setattr(diagnostic_satellite, field, updated_diagnostic_appro_fields[field])
 
     # change some last fields
-    # diagnostic_satellite.creation_date = diagnostic.teledeclaration_date  # won't work. see update_diagnostic_teledeclared_creation_date
+    # diagnostic_satellite.creation_date = diagnostic.teledeclaration_date  # won't work. see update_generated_diagnostic_teledeclared_creation_date
     diagnostic_satellite.teledeclaration_mode = Diagnostic.TeledeclarationMode.SITE
     diagnostic_satellite.satellites_snapshot = None
     diagnostic_satellite.generated_from_groupe_diagnostic = True
@@ -239,7 +239,7 @@ def archive_existing_diagnostic_teledeclared_satellite(diagnostic, satellite_dic
             )
 
 
-def update_diagnostic_teledeclared_creation_date(diagnostic, apply=False):
+def update_generated_diagnostic_teledeclared_creation_date(diagnostic, apply=False):
     """
     To keep the creation_date of the diagnostic of the satellite aligned with the one of the groupe, we update it with the teledeclaration_date of the groupe's diagnostic.
     This way, if the groupe's diagnostic is created before the satellite teledeclares, the diagnostic of the satellite will have an older creation_date than its teledeclaration_date, which is coherent.
