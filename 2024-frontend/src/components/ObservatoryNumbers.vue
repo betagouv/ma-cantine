@@ -16,7 +16,7 @@ const canteenTitle = computed(() => {
 
 /* 1TD1SITE */
 const is1td1siteYear = computed(() => {
-  const yearsWith1td1site = [2024]
+  const yearsWith1td1site = [2024, 2025]
   return filtersParams.year && yearsWith1td1site.includes(filtersParams.year)
 })
 
