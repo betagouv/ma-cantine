@@ -431,6 +431,34 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
 
 class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
     @authenticate
+    def test_set_correct_creation_date(self):
+        """
+        The creation date of the generated diagnostics should be the date of the teledeclaration of the central diagnostic.
+        """
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+        )
+        satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
+        )
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2024,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+
+        # After the script is run
+        diagnostic_generated = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=satellite)
+        self.assertEqual(diagnostic_generated.creation_date, central_diagnostic.teledeclaration_date)
+
+    @authenticate
     def test_empty_satellites_snapshot(self):
         """
         The satellites_snapshot should be empty for the generated diagnostics.

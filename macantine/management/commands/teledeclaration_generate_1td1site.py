@@ -97,7 +97,7 @@ class Command(BaseCommand):
                 )
 
         # Done!
-        diagnostic_teledeclared_generated_qs = Diagnostic.objects.filter(
+        diagnostic_teledeclared_generated_qs = Diagnostic.all_objects.filter(
             generated_from_groupe_diagnostic=True, year=year
         )
         diagnostic_teledeclared_archived_qs = Diagnostic.objects.filter(
@@ -155,7 +155,8 @@ def process_groupe_diagnostic_teledeclared(diagnostic, apply=False):
     if diagnostic.satellites_count:
         for satellite_dict in diagnostic.satellites_snapshot:
             create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, apply=apply)
-            archive_existing_diagnostic_teledeclared_satellite(satellite_dict, diagnostic.year, apply=apply)
+            archive_existing_diagnostic_teledeclared_satellite(diagnostic, satellite_dict, apply=apply)
+        update_generated_diagnostic_teledeclared_creation_date(diagnostic, apply=apply)
 
 
 def create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, apply=False):
@@ -200,6 +201,7 @@ def create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, app
         setattr(diagnostic_satellite, field, updated_diagnostic_appro_fields[field])
 
     # change some last fields
+    # diagnostic_satellite.creation_date = diagnostic.teledeclaration_date  # won't work. see update_generated_diagnostic_teledeclared_creation_date
     diagnostic_satellite.teledeclaration_mode = Diagnostic.TeledeclarationMode.SITE
     diagnostic_satellite.satellites_snapshot = None
     diagnostic_satellite.generated_from_groupe_diagnostic = True
@@ -213,18 +215,18 @@ def create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, app
             )
 
 
-def archive_existing_diagnostic_teledeclared_satellite(satellite_dict, year, apply=False):
+def archive_existing_diagnostic_teledeclared_satellite(diagnostic, satellite_dict, apply=False):
     """
     Some satellite canteens may already have a submitted diagnostic for the given year.
     How come? If they had teledeclared individually before being linked to the groupe.
     We need to archive these diagnostics, as they are now overridden by the one generated from their groupe's diagnostic.
     """
-    diagnostic_qs = Diagnostic.objects.teledeclared().filter(canteen__id=satellite_dict["id"], year=year)
+    diagnostic_qs = Diagnostic.objects.teledeclared().filter(canteen__id=satellite_dict["id"], year=diagnostic.year)
     if diagnostic_qs.count() == 0:
         return
     elif diagnostic_qs.count() > 1:
         logger.warning(
-            f"Task warning: Multiple diagnostics found for Canteen: {satellite_dict['id']} / Year: {year}. Only the first one will be archived."
+            f"Task warning: Multiple diagnostics found for Canteen: {satellite_dict['id']} / Year: {diagnostic.year}. Only the first one will be archived."
         )
     else:  # diagnostic_qs.count() == 1
         if apply:
@@ -235,3 +237,17 @@ def archive_existing_diagnostic_teledeclared_satellite(satellite_dict, year, app
                     function="array_append",
                 )
             )
+
+
+def update_generated_diagnostic_teledeclared_creation_date(diagnostic, apply=False):
+    """
+    To keep the creation_date of the diagnostic of the satellite aligned with the one of the groupe, we update it with the teledeclaration_date of the groupe's diagnostic.
+    This way, if the groupe's diagnostic is created before the satellite teledeclares, the diagnostic of the satellite will have an older creation_date than its teledeclaration_date, which is coherent.
+    """
+    if apply:
+        diagnostic_qs = Diagnostic.all_objects.filter(
+            generated_from_groupe_diagnostic=True,
+            year=diagnostic.year,
+            teledeclaration_id=diagnostic.teledeclaration_id,
+        )
+        diagnostic_qs.update(creation_date=diagnostic.teledeclaration_date)
