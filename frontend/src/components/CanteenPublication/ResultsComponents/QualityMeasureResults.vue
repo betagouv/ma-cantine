@@ -3,12 +3,15 @@
     <CentralKitchenInfo :canteen="canteen" v-if="usesCentralKitchenDiagnostics" />
 
     <p>
-      La loi EGalim impose {{ applicableRules.qualityThreshold }} % de produits durables et de qualité et durable, dont
-      {{ applicableRules.bioThreshold }} % de bio
+      La loi EGalim impose : {{ applicableRules.qualityThreshold }} % de produits durables et de qualité et durable,
+      dont {{ applicableRules.bioThreshold }} % de bio,
       <span v-if="applicableRules.qualityThreshold !== 50">
-        - en respectant
+        en respectant
         <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les différents seuils fixés pour l'Outre-mer</a>
+        ,
       </span>
+      et 60% à l'ensemble Viandes, volailles et produits de la mer, non indépendamment, cet objectif est fixé à 100%
+      pour les restaurants de l'État.
     </p>
 
     <div v-if="tabs.length" class="mb-8">
@@ -97,12 +100,6 @@
                 <br />
                 EGalim
               </p>
-              <p
-                v-if="applicableRules.viandesVolaillesEgalimThreshold"
-                class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
-              >
-                <i>objectif : {{ applicableRules.viandesVolaillesEgalimThreshold }} %</i>
-              </p>
             </v-col>
             <v-col cols="12" sm="4" class="pa-4">
               <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
@@ -124,12 +121,6 @@
                 de produits de la mer
                 <br />
                 et aquaculture EGalim
-              </p>
-              <p
-                v-if="applicableRules.produitsDeLaMerEgalimThreshold"
-                class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
-              >
-                <i>objectif : {{ applicableRules.produitsDeLaMerEgalimThreshold }} %</i>
               </p>
             </v-col>
           </v-row>
