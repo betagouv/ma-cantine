@@ -524,8 +524,8 @@ class CanteenStatsApiTest(APITestCase):
         )  # en 2023
         response_2024 = self.client.get(reverse("canteen_statistics"), {"year": 2024})
         self.assertEqual(response_2024.status_code, status.HTTP_200_OK)
-        body_2025 = response_2024.json()
-        self.assertNotIn("alert", body_2025["notes"])
+        body_2024 = response_2024.json()
+        self.assertNotIn("alert", body_2024["notes"])
 
     def test_cache_mechanism(self):
         # first time: no cache
