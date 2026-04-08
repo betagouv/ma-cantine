@@ -2,14 +2,12 @@ import logging
 import zoneinfo
 from datetime import datetime
 
-import redis as r
 from django.conf import settings
 from django.utils import timezone
 
 from data.models.geo import REGION_HEXAGONE_LIST, Region
 
 logger = logging.getLogger(__name__)
-redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
 # increment this when the teledeclaration format changes

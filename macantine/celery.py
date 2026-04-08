@@ -1,4 +1,6 @@
 import os
+import urllib.parse
+from functools import lru_cache
 
 import dotenv
 from celery import Celery
@@ -19,7 +21,17 @@ def void(*args, **kwargs):
 dotenv.load_dotenv()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "macantine.settings")
 
-app = Celery("macantine", broker=os.getenv("REDIS_URL"), backend="django-db", include=["macantine.tasks"])
+
+def _db_broker_url():
+    user = urllib.parse.quote(os.getenv("DB_USER", ""), safe="")
+    password = urllib.parse.quote(os.getenv("DB_PASSWORD", ""), safe="")
+    host = os.getenv("DB_HOST", "localhost")
+    port = os.getenv("DB_PORT", "5432")
+    name = os.getenv("DB_NAME", "")
+    return f"sqla+postgresql+psycopg2://{user}:{password}@{host}:{port}/{name}"
+
+
+app = Celery("macantine", broker=_db_broker_url(), backend="django-db", include=["macantine.tasks"])
 app.config_from_object(
     dict(
         worker_hijack_root_logger=False,
@@ -101,6 +113,21 @@ app.conf.beat_schedule = {
 }
 
 app.conf.timezone = "Europe/Paris"
+
+
+@lru_cache(maxsize=1)
+def ensure_sqlalchemy_broker_schema():
+    """Ensure SQLAlchemy broker tables exist using Kombu's own creation path."""
+    broker_url = app.conf.broker_url
+    if isinstance(broker_url, (list, tuple)):
+        broker_url = broker_url[0] if broker_url else ""
+    if not isinstance(broker_url, str) or not broker_url.startswith(("sqla+", "sqlalchemy+")):
+        return
+
+    with app.connection_for_write() as connection:
+        channel = connection.channel()
+        channel.close()
+
 
 if __name__ == "__main__":
     app.start()

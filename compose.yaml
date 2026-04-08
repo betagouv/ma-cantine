@@ -73,9 +73,6 @@ services:
     command: ["celery", "-A", "macantine", "worker"]
     depends_on:
       - db
-      - redis
-  redis:
-    image: redis:latest
 volumes:
   # it's normal that this is empty, it simply defines the existance of persistent storage
   db-data:

@@ -43,4 +43,4 @@ ou, si la tâche n'est pas implémentée dans une commnde de management
 
 ### Dépendances
 
-L'application Celery (Worker & Orchestrateur) doit être lié à un message broker. Dans notre cas, c'est [Redis](redis.md).
+L'application Celery (Worker & Orchestrateur) doit être lié à un message broker. Dans notre cas, c'est la base de données PostgreSQL.

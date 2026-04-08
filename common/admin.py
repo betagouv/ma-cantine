@@ -1,10 +1,11 @@
 from django import forms
-from common.cache.admin import CacheAdmin  # needed to help Django discover the models in the subfolders  # noqa
-from django.contrib.auth.models import Group
 from django.contrib import admin
-from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
+from common.cache.admin import CacheAdmin  # needed to help Django discover the models in the subfolders  # noqa
+from common.kombu.admin import KombuMessageAdmin, KombuQueueAdmin  # noqa
 
 User = get_user_model()
 admin.site.unregister(Group)
