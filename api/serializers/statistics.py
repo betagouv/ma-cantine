@@ -150,7 +150,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     def generate_notes(year, egalim_group):
         data = {}
         # Display an alert message while waiting for the stats to be corrected
-        if int(year) < 2025:
+        if int(year) < 2024:
             data["alert"] = {
                 "title": "Les chiffres indiqués sont légèrement inexacts en raison de l’évolution récente de la plateforme ma cantine.",
                 "message": "En effet, le précédent modèle de données reposait sur une déclaration unique pouvant couvrir plusieurs sites, afin de faciliter la déclaration des cuisines centrales. Ce fonctionnement ayant atteint ses limites notamment en matière de transparence des données au niveau des restaurants satellites, nous avons fait évoluer le modèle vers une déclaration par site. Des travaux sont actuellement en cours afin d’adapter les statistiques de l’Observatoire à ce nouveau modèle.",
