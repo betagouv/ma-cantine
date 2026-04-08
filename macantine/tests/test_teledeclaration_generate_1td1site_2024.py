@@ -436,7 +436,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The creation date of the generated diagnostics should be the date of the teledeclaration of the central diagnostic.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -464,7 +464,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The satellites_snapshot should be empty for the generated diagnostics.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -520,7 +520,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The metadata from the central diagnostic are copied in the generated diagnostics.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -551,7 +551,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The applicant informations from the central diagnostic are copied in the generated diagnostics.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -815,17 +815,17 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         If the central changes its yearly meal count after the teledeclaraiont, the script uses the old value.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1000, daily_meal_count=100
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=100
         )
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            yearly_meal_count=420,
+            yearly_meal_count=450,
         )
         satellite_2 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            yearly_meal_count=420,
+            yearly_meal_count=550,
         )
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
@@ -905,7 +905,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         cls.satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -932,9 +932,10 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             with self.subTest(field=field):
                 central_value = getattr(central_diagnostic, field)
                 diagnostic_value = getattr(satellite_diagnostic, field)
+                expected_value = central_value / divisor
                 self.assertIsNotNone(central_value)
                 self.assertIsNotNone(diagnostic_value)
-                self.verify_field_are_equals(diagnostic_value, central_value / divisor)
+                self.verify_field_are_equals(diagnostic_value, expected_value)
 
     @authenticate
     def test_total_value_divided_by_number_of_satellites(self):
@@ -1353,7 +1354,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
     @authenticate
     def test_teledeclaration_other_year_are_not_generated(self):
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)

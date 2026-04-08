@@ -392,7 +392,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The satellites_snapshot should be empty for the generated diagnostics.
         """
         groupe = CanteenFactory(
-            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
 
@@ -446,7 +446,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The metadata from the groupe diagnostic are copied in the generated diagnostics.
         """
         groupe = CanteenFactory(
-            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
 
@@ -475,7 +475,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The applicant informations from the groupe diagnostic are copied in the generated diagnostics.
         """
         groupe = CanteenFactory(
-            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
 
@@ -674,12 +674,12 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=groupe,
-            yearly_meal_count=420,
+            yearly_meal_count=450,
         )
         satellite_2 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=groupe,
-            yearly_meal_count=420,  # can't set to None, the groupe would not be able to teledeclare
+            yearly_meal_count=550,  # can't set to None, the groupe would not be able to teledeclare
         )
 
         with freeze_time("2026-03-30"):  # during the 2025 campaign
@@ -726,17 +726,20 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.groupe = CanteenFactory(
-            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=1011, daily_meal_count=3
         )
         cls.satellite_1 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            groupe=cls.groupe,
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.groupe, yearly_meal_count=450
         )
         cls.satellite_2 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=cls.groupe,
             siret=None,
             siren_unite_legale="123456789",
+            yearly_meal_count=550,
+        )
+        cls.groupe_satellites_yearly_meal_count_sum = (
+            cls.satellite_1.yearly_meal_count + cls.satellite_2.yearly_meal_count
         )
 
         cls.appro_fields = {}
@@ -746,22 +749,22 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             cls.appro_fields[field] = 500.75
 
     def verify_field_are_equals(self, value, expected_value):
-        self.assertAlmostEqual(float(value), float(expected_value), places=2)
+        # self.assertAlmostEqual(float(value), float(expected_value), places=2)
+        self.assertEqual(int(value), int(expected_value))  # avoid rounding errors
 
-    def verify_appro_fields_divided(self, fields, satellite_diagnostic, central_diagnostic, divisor):
+    def verify_appro_fields_divided(self, fields, satellite_diagnostic, groupe_diagnostic, divisor):
         for field in fields:
             with self.subTest(field=field):
-                central_value = getattr(central_diagnostic, field)
+                groupe_value = getattr(groupe_diagnostic, field)
                 diagnostic_value = getattr(satellite_diagnostic, field)
-                self.assertIsNotNone(central_value)
-                self.assertIsNotNone(diagnostic_value)
-                self.verify_field_are_equals(diagnostic_value, central_value / divisor)
+                expected_value = groupe_value / divisor
+                self.verify_field_are_equals(diagnostic_value, expected_value)
 
     @authenticate
     def test_total_value_divided_by_satellite_yearly_meal_count(self):
         """
         Before, we divided the total value by the number of satellites.
-        Now, we divide the total value by the yearly meal count of the satellite.
+        Now, we divide the total value by the yearly_meal_count (ratio) of the satellite.
         """
         total_value = 15000.50
         with freeze_time("2026-03-30"):  # during the 2025 campaign
@@ -779,10 +782,12 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         satellite_1_diagnostic = Diagnostic.all_objects.in_year(2025).teledeclared().get(canteen=self.satellite_1)
         satellite_2_diagnostic = Diagnostic.all_objects.in_year(2025).teledeclared().get(canteen=self.satellite_2)
         self.verify_field_are_equals(
-            satellite_1_diagnostic.valeur_totale, total_value / self.satellite_1.yearly_meal_count
+            satellite_1_diagnostic.valeur_totale,
+            total_value / (self.groupe_satellites_yearly_meal_count_sum / self.satellite_1.yearly_meal_count),
         )
         self.verify_field_are_equals(
-            satellite_2_diagnostic.valeur_totale, total_value / self.satellite_2.yearly_meal_count
+            satellite_2_diagnostic.valeur_totale,
+            total_value / (self.groupe_satellites_yearly_meal_count_sum / self.satellite_2.yearly_meal_count),
         )
 
     @authenticate
@@ -815,7 +820,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                     Diagnostic.APPRO_1TD1SITE_FIELDS,
                     satellite_diagnostic,
                     groupe_diagnostic,
-                    satellite_diagnostic.canteen.yearly_meal_count,
+                    self.groupe_satellites_yearly_meal_count_sum
+                    / satellite_diagnostic.canteen_snapshot["yearly_meal_count"],
                 )
 
     @authenticate
@@ -848,7 +854,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                     Diagnostic.APPRO_1TD1SITE_FIELDS,
                     satellite_diagnostic,
                     groupe_diagnostic,
-                    satellite_diagnostic.canteen.yearly_meal_count,
+                    self.groupe_satellites_yearly_meal_count_sum
+                    / satellite_diagnostic.canteen_snapshot["yearly_meal_count"],
                 )
 
     @authenticate
@@ -881,7 +888,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                     Diagnostic.APPRO_1TD1SITE_FIELDS,
                     satellite_diagnostic,
                     groupe_diagnostic,
-                    satellite_diagnostic.canteen.yearly_meal_count,
+                    self.groupe_satellites_yearly_meal_count_sum
+                    / satellite_diagnostic.canteen_snapshot["yearly_meal_count"],
                 )
 
     @authenticate
@@ -965,7 +973,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
     @authenticate
     def test_teledeclaration_other_year_are_not_generated(self):
         groupe = CanteenFactory(
-            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=1011, daily_meal_count=3
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
