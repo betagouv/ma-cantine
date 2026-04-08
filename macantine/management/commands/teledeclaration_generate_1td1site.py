@@ -97,7 +97,7 @@ class Command(BaseCommand):
                 )
 
         # Done!
-        diagnostic_teledeclared_generated_qs = Diagnostic.objects.filter(
+        diagnostic_teledeclared_generated_qs = Diagnostic.all_objects.filter(
             generated_from_groupe_diagnostic=True, year=year
         )
         diagnostic_teledeclared_archived_qs = Diagnostic.objects.filter(
