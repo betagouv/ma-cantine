@@ -240,9 +240,11 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         cls.user = UserFactory()
         # groupe + satellite
         cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
-        cls.canteen_satellite = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            groupe=cls.canteen_groupe,
+        cls.canteen_satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe, yearly_meal_count=550
+        )
+        cls.canteen_satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe, yearly_meal_count=650
         )
         cls.diagnostic_groupe = DiagnosticFactory(
             canteen=cls.canteen_groupe,
@@ -273,8 +275,12 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         self.assertEqual(Diagnostic.objects.count(), 2)
         diagnostics = Diagnostic.objects.with_satellites_snapshot_stats()
         self.assertEqual(diagnostics.count(), 2)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_groupe.id).satellites_snapshot_count_annotated, 1)
+        # satellites_snapshot_count_annotated
+        self.assertEqual(diagnostics.get(id=self.diagnostic_groupe.id).satellites_snapshot_count_annotated, 2)
         self.assertEqual(diagnostics.get(id=self.diagnostic_site.id).satellites_snapshot_count_annotated, None)
+        # satellites_snapshot_yearly_meal_count_sum
+        self.assertEqual(diagnostics.get(id=self.diagnostic_groupe.id).satellites_snapshot_yearly_meal_count_sum, 1200)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_site.id).satellites_snapshot_yearly_meal_count_sum, None)
 
     def test_diagnostic_canteen_snapshot(self):
         # groupe
@@ -302,8 +308,11 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
     def test_diagnostic_satellites_snapshot(self):
         # groupe
         self.assertIsNotNone(self.diagnostic_groupe.satellites_snapshot)
-        self.assertEqual(len(self.diagnostic_groupe.satellites_snapshot), 1)
-        self.assertEqual(self.diagnostic_groupe.satellites_snapshot[0]["id"], self.canteen_satellite.id)
+        self.assertEqual(len(self.diagnostic_groupe.satellites_snapshot), 2)
+        self.assertEqual(
+            self.diagnostic_groupe.satellites_snapshot[0]["id"], self.canteen_satellite_2.id
+        )  # default ordering by -creation_date
+        self.assertEqual(self.diagnostic_groupe.satellites_snapshot[1]["id"], self.canteen_satellite_1.id)
         # site
         self.assertIsNone(self.diagnostic_site.satellites_snapshot)
 
