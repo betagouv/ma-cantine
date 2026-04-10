@@ -137,6 +137,9 @@ export default {
     diagnostic: Object,
     centralDiagnostic: Object,
     centralKitchenDiagnosticMode: String,
+    inTeledeclarationCampaign: Boolean,
+    inCorrectionCampaign: Boolean,
+    hasTeledeclarationToCorrect: Boolean,
   },
   components: {
     QualityMeasureInfo,

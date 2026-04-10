@@ -216,6 +216,9 @@
                 :diagnostic="diagnostic"
                 :centralDiagnostic="centralDiagnostic"
                 :centralKitchenDiagnosticMode="centralKitchenDiagnosticMode"
+                :inTeledeclarationCampaign="inTeledeclarationCampaign"
+                :inCorrectionCampaign="inCorrectionCampaign"
+                :hasTeledeclarationToCorrect="hasTeledeclarationToCorrect"
               />
               <v-row class="mt-6 align-center">
                 <v-col v-if="previousTab(item)">
