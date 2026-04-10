@@ -167,11 +167,11 @@ export default {
   },
   computed: {
     displayEditButton() {
-      const noTD = !this.hasActiveTeledeclaration
+      const notTeledeclared = !this.hasActiveTeledeclaration
       const notUseOtherDiagnostic = !this.usesOtherDiagnosticForMeasure
-      const hasCorrectionCampaignAllowed = this.inCorrectionCampaign && this.hasTeledeclarationToCorrect
-      const inCampaign = this.inTeledeclarationCampaign || hasCorrectionCampaignAllowed
-      return noTD && notUseOtherDiagnostic && inCampaign
+      const isAllowedCorrection = this.inCorrectionCampaign && this.hasTeledeclarationToCorrect
+      const inCampaign = this.inTeledeclarationCampaign || isAllowedCorrection
+      return notTeledeclared && notUseOtherDiagnostic && inCampaign
     },
     isApproTab() {
       return this.measureId === this.approId
