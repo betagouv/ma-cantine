@@ -6,8 +6,8 @@
         { to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' },
       ]"
     />
-    <v-row align="end">
-      <v-col v-if="canteen" cols="12" md="9" lg="10">
+    <v-row align="center">
+      <v-col v-if="canteen" cols="12" md="8">
         <DataInfoBadge
           :currentYear="+year === currentYear"
           :inTeledeclaration="inTeledeclarationCampaign"
@@ -22,16 +22,34 @@
           <span>SIREN : {{ canteen.sirenUniteLegale }}</span>
         </p>
       </v-col>
-      <v-col cols="12" md="3" lg="2">
-        <v-btn
-          v-if="canteenPreviews.length > 1"
-          outlined
-          color="primary"
-          class="fr-btn--tertiary"
-          :to="{ name: 'GestionnaireTableauDeBord' }"
-        >
-          Changer d'établissement
-        </v-btn>
+      <v-col cols="12" md="4">
+        <div v-if="hasActiveTeledeclaration">
+          <DsfrCallout v-if="inTeledeclarationCampaign || inCorrectionCampaign" class="mb-0">
+            <p>
+              En cas d'erreur, vous pouvez modifier vos données
+              <span v-if="campaignEndDate">
+                jusqu’au
+                {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }} (heure
+                de Paris).
+              </span>
+              <span v-else>
+                jusqu’à la fin de la campagne.
+              </span>
+            </p>
+            <TeledeclarationCancelDialog
+              v-model="cancelDialog"
+              v-if="inTeledeclarationCampaign || inCorrectionCampaign"
+              @cancel="cancelTeledeclaration"
+              :diagnostic="diagnostic"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn outlined small color="primary" class="fr-btn--tertiary px-2" v-on="on" v-bind="attrs">
+                  Corriger ma télédéclaration
+                </v-btn>
+              </template>
+            </TeledeclarationCancelDialog>
+          </DsfrCallout>
+        </div>
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-5 mt-md-10">
@@ -57,29 +75,6 @@
             target="_blank"
             class="mr-4"
           />
-          <p v-if="inTeledeclarationCampaign || inCorrectionCampaign">
-            En cas d'erreur, vous pouvez modifier vos données
-            <span v-if="campaignEndDate">
-              jusqu’au
-              {{ campaignEndDate.toLocaleString("fr-FR", { month: "long", day: "numeric", year: "numeric" }) }} (heure
-              de Paris).
-            </span>
-            <span v-else>
-              jusqu’à la fin de la campagne.
-            </span>
-          </p>
-          <TeledeclarationCancelDialog
-            v-model="cancelDialog"
-            v-if="inTeledeclarationCampaign || inCorrectionCampaign"
-            @cancel="cancelTeledeclaration"
-            :diagnostic="diagnostic"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn outlined small color="primary" class="fr-btn--tertiary px-2" v-on="on" v-bind="attrs">
-                Corriger ma télédéclaration
-              </v-btn>
-            </template>
-          </TeledeclarationCancelDialog>
         </div>
         <div v-else-if="isSatelliteWithCompleteCentralDiagnostic">
           <p>
@@ -275,6 +270,7 @@ import ProductionTypeTag from "@/components/ProductionTypeTag"
 import ProgressTab from "./ProgressTab"
 import DsfrTabsVue from "@/components/DsfrTabs"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
+import DsfrCallout from "@/components/DsfrCallout"
 import DownloadLink from "@/components/DownloadLink"
 import TeledeclarationPreview from "@/components/TeledeclarationPreview"
 import TeledeclarationCancelDialog from "@/components/TeledeclarationCancelDialog"
@@ -301,6 +297,7 @@ export default {
     ProgressTab,
     DsfrTabsVue,
     DsfrNativeSelect,
+    DsfrCallout,
     DownloadLink,
     TeledeclarationPreview,
     TeledeclarationCancelDialog,
