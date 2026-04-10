@@ -1,12 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
-from django.db import models
-from django.db.models import Case, F, IntegerField, Q, Sum, When
+from django.db import models, transaction
+from django.db.models import Case, F, Func, IntegerField, Q, Sum, When
+from django.db.models.expressions import RawSQL
 from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
 from django.utils import timezone
-from django.db import transaction
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
@@ -194,6 +194,19 @@ class DiagnosticQuerySet(models.QuerySet):
             meal_price=Case(
                 When(canteen_yearly_meal_count__gt=0, then=F("valeur_totale") / F("canteen_yearly_meal_count")),
                 default=None,
+            )
+        )
+
+    def with_satellites_snapshot_stats(self):
+        return self.annotate(
+            satellites_snapshot_count_annotated=Func(
+                "satellites_snapshot", function="jsonb_array_length", output_field=IntegerField()
+            )
+        ).annotate(
+            satellites_snapshot_yearly_meal_count_sum=RawSQL(
+                sql="(SELECT SUM((elem->>'yearly_meal_count')::integer) FROM jsonb_array_elements(satellites_snapshot) AS elem)",
+                params=[],
+                output_field=IntegerField(),
             )
         )
 

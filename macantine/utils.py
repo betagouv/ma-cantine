@@ -283,6 +283,7 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
     Rules:
     - before 2025, we divide by the number of satellites
     - in 2025, we divide by the satellite's yearly_meal_count (ratio)
+        - Note: requires with_satellites_snapshot_stats() queryset
     """
     from data.models import Diagnostic  # avoid circular import
 
@@ -293,13 +294,8 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
         divisor = len(diagnostic.satellites_snapshot) if diagnostic.satellites_snapshot else 0
         # no +1 for central_serving? we already added it in canteen_migrate_central_to_groupe.py
     elif diagnostic.year == 2025:
-        satellites_yearly_meal_count_sum = sum(
-            satellite["yearly_meal_count"]
-            for satellite in diagnostic.satellites_snapshot
-            if satellite.get("yearly_meal_count")
-        )
         divisor = (
-            satellites_yearly_meal_count_sum / satellite_dict.get("yearly_meal_count")
+            diagnostic.satellites_snapshot_yearly_meal_count_sum / satellite_dict.get("yearly_meal_count")
             if satellite_dict.get("yearly_meal_count")
             else 0
         )
