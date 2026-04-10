@@ -566,27 +566,38 @@ class CanteenStats1Td1SiteApiTest(APITestCase):
         call_command("teledeclaration_generate_1td1site", year=2023, apply=True)
 
     def test_user_1td1site_diagnostics_for_2025(self):
-        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2025).count(), 1)  # 1 groupe
+        """
+        - 1 groupe teledeclared (has 1 satellite)
+        """
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2025).count(), 1)
         self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2025).count(), 1 + 1)
 
         response = self.client.get(reverse("canteen_statistics"), {"year": 2025})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["teledeclarationsCount"], 1)  # 1 groupe with 1 satellite
+        self.assertEqual(body["teledeclarationsCount"], 1)  # 1 satellite
 
     def test_use_1td1site_diagnostics_for_2024(self):
-        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2024).count(), 3)  # 1 groupe + 2 sites
+        """
+        - 1 groupe teledeclared (has 1 satellite)
+        - 2 sites teledeclared
+        """
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2024).count(), 3)
         self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2024).count(), 3 + 1)
 
         response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["teledeclarationsCount"], 2 + 1)  # 1 groupe with 2 satellites + 2 sites
+        self.assertEqual(body["teledeclarationsCount"], 3)  # 1 satellite + 2 sites
 
     def test_not_use_1td1site_diagnostics_for_2023(self):
-        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2023).count(), 2)  # 1 groupe + 1 site (1 armée)
+        """
+        - 1 groupe teledeclared (has 1 satellite)
+        - 1 site teledeclared (armée)
+        """
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2023).count(), 2)
         self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2023).count(), 2 + 1)
 
         response = self.client.get(reverse("canteen_statistics"), {"year": 2023})
