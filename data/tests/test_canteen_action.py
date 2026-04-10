@@ -472,6 +472,40 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.NOTHING_SATELLITE,
         )
 
+    def test_canteen_site_cancel_teledeclaration_actions(self):
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic_site = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+            diagnostic_site.teledeclare(applicant=self.canteen_site.managers.first())
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            diagnostic_site.cancel()
+            canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+            self.assertEqual(
+                canteen_qs.get(id=self.canteen_site.id).action,
+                Canteen.Actions.TELEDECLARE,
+            )
+
+    def test_canteen_groupe_mode_all_cancel_teledeclaration_actions(self):
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic_groupe = DiagnosticFactory(
+                canteen=self.canteen_groupe_1_with_satellites,
+                year=2024,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            )
+            diagnostic_groupe.teledeclare(applicant=self.canteen_groupe_1_with_satellites.managers.first())
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            diagnostic_groupe.cancel()
+            canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+            self.assertEqual(
+                canteen_qs.get(id=self.canteen_groupe_1_with_satellites.id).action,
+                Canteen.Actions.TELEDECLARE,
+            )
+            self.assertEqual(
+                canteen_qs.get(id=self.canteen_satellite_11.id).action,
+                Canteen.Actions.NOTHING_SATELLITE,
+            )
+
     # TODO: test before campaign
     # TODO: test during correction campaign
     # TODO: test after campaign

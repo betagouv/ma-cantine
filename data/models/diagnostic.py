@@ -24,6 +24,7 @@ from macantine.utils import (
     CAMPAIGN_DATES,
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
+    is_in_correction,
     is_in_teledeclaration_or_correction,
     objectifs_egalim_atteints,
 )
@@ -332,6 +333,7 @@ class Diagnostic(models.Model):
 
     class DiagnosticStatus(models.TextChoices):
         DRAFT = "DRAFT", "Brouillon"
+        CORRECTION = "CORRECTION", "En correction"
         SUBMITTED = "SUBMITTED", "Télédéclaré"
 
     # NB: if the label of the choice changes, double check that the teledeclaration PDF
@@ -2031,7 +2033,11 @@ class Diagnostic(models.Model):
             canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
 
         # reset fields
-        self.status = Diagnostic.DiagnosticStatus.DRAFT
+        self.status = (
+            Diagnostic.DiagnosticStatus.CORRECTION
+            if is_in_correction(self.year)
+            else Diagnostic.DiagnosticStatus.DRAFT
+        )
         self.applicant = None
         for field in self.TELEDECLARATION_SNAPSHOT_FIELDS:
             setattr(self, field, None)
