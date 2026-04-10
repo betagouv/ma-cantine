@@ -245,6 +245,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "city",
             "postal_code",
             "daily_meal_count",
+            "yearly_meal_count",
             "can_be_claimed",
             "publication_status",  # property
             "is_managed_by_user",  # annotate
