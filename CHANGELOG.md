@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.28.0](https://github.com/betagouv/ma-cantine/compare/v2026.27.0...v2026.28.0) (2026-04-10)
+
+
+### Nouveautés
+
+* **1TD1Site:** améliorer le script de génération pour gérer 2025 ([#6618](https://github.com/betagouv/ma-cantine/issues/6618)) ([7ee5167](https://github.com/betagouv/ma-cantine/commit/7ee51679676e7a5578de736e4ce4b229d50c5ad7))
+* **Observatoire:** brancher 1TD1Site pour 2025 ([#6614](https://github.com/betagouv/ma-cantine/issues/6614)) ([4e56723](https://github.com/betagouv/ma-cantine/commit/4e5672372fd26fe2865cde7283eca30b6be51e48))
+
+
+### Technique
+
+* **1TD1Site:** nouveau queryset with_satellites_snapshot_stats pour pré-calculer certains champs dont on a besoin dans le script de génération ([#6627](https://github.com/betagouv/ma-cantine/issues/6627)) ([8831b54](https://github.com/betagouv/ma-cantine/commit/8831b54823261efebdcf9119248c6cd78408fdc9))
+
 ## [2026.27.0](https://github.com/betagouv/ma-cantine/compare/v2026.26.0...v2026.27.0) (2026-04-08)
 
 
