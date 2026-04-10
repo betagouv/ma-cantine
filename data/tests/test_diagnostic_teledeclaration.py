@@ -5,7 +5,6 @@ from freezegun import freeze_time
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector
 
-
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
 date_in_correction_campaign = "2025-04-20"
@@ -269,6 +268,13 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_groupe.teledeclare(applicant=cls.user)
             cls.diagnostic_site.teledeclare(applicant=cls.user)
+
+    def test_with_satellites_snapshot_stats_queryset(self):
+        self.assertEqual(Diagnostic.objects.count(), 2)
+        diagnostics = Diagnostic.objects.with_satellites_snapshot_stats()
+        self.assertEqual(diagnostics.count(), 2)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_groupe.id).satellites_snapshot_count_annotated, 1)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_site.id).satellites_snapshot_count_annotated, None)
 
     def test_diagnostic_canteen_snapshot(self):
         # groupe

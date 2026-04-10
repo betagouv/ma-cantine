@@ -3,7 +3,7 @@ import time
 from copy import deepcopy
 
 from django.core.management.base import BaseCommand
-from django.db.models import F, Func, IntegerField, Value
+from django.db.models import F, Func, Value
 from django.db.utils import IntegrityError
 
 from api.serializers import CanteenTeledeclarationSerializer
@@ -70,11 +70,7 @@ class Command(BaseCommand):
         diagnostic_qs = (
             Diagnostic.objects.teledeclared_for_year(year=year)
             .annotate(canteen_snapshot_production_type=F("canteen_snapshot__production_type"))
-            .annotate(
-                satellites_count_annotated=Func(
-                    "satellites_snapshot", function="jsonb_array_length", output_field=IntegerField()
-                )
-            )
+            .with_satellites_snapshot_stats()
             .filter(
                 canteen_snapshot_production_type__in=[
                     Canteen.ProductionType.CENTRAL,
@@ -152,7 +148,7 @@ def process_groupe_diagnostic_teledeclared(diagnostic, apply=False):
     - each satellite will have its own appro values based on its yearly_meal_count
     """
     # for each satellite, create a diagnostic (and archive any existing diagnostic)
-    if diagnostic.satellites_count_annotated:
+    if diagnostic.satellites_snapshot_count_annotated:
         for satellite_dict in diagnostic.satellites_snapshot:
             create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, apply=apply)
             archive_existing_diagnostic_teledeclared_satellite(diagnostic, satellite_dict, apply=apply)
