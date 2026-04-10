@@ -25,7 +25,7 @@ class CanteenActionTestCase(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
         )
 
-    @freeze_time("2025-08-30")  # after the 2024 campaign
+    @freeze_time("2025-01-20")  # during the 2024 campaign
     def test_canteen_missing_data_actions(self):
         # has diagnostic, but missing data (yearly_meal_count)
         DiagnosticFactory(canteen=self.canteen_site, year=2024, valeur_totale=100)
@@ -93,14 +93,36 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.FILL_CANTEEN_DATA,
         )
 
-        # has diagnostic and data filled
-        self.canteen_site.sector_list = [Sector.EDUCATION_PRIMAIRE]
-        self.canteen_site.save(skip_validations=True)
-
+    @freeze_time("2025-08-30")  # after the 2024 campaign
+    def test_canteen_site_did_not_teledeclare_actions(self):
+        # Without diagnostic
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
-
         self.assertEqual(
             canteen_qs.get(id=self.canteen_site.id).action,
+            Canteen.Actions.DID_NOT_TELEDECLARE,
+        )
+
+        # With diagnostic not teledeclared
+        DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_site.id).action,
+            Canteen.Actions.DID_NOT_TELEDECLARE,
+        )
+
+    @freeze_time("2025-08-30")  # after the 2024 campaign
+    def test_canteen_groupe_did_not_teledeclare_actions(self):
+        DiagnosticFactory(
+            canteen=self.canteen_groupe_1_with_satellites,
+            year=2024,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+        )
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_groupe_1_with_satellites.id).action,
+            Canteen.Actions.DID_NOT_TELEDECLARE,
+        )
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_satellite_11.id).action,
             Canteen.Actions.DID_NOT_TELEDECLARE,
         )
 
