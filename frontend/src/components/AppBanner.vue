@@ -1,6 +1,3 @@
-<script>
-/* eslint-disable */
-</script>
 <template>
   <div class="app-banner text-left">
     <div v-if="show" class="fr-notice fr-notice--info">
@@ -15,7 +12,8 @@
               <a :href="bannerLink" target="_blank">
                 voir l’article d’aide pour en savoir plus
                 <v-icon small class="fr-notice__icon ml-1">mdi-open-in-new</v-icon>
-              </a>.
+              </a>
+              .
             </span>
           </p>
         </div>
@@ -32,8 +30,7 @@ export default {
       show: window.SHOW_BANNER,
       publicBannerTitle: "DROIT À L’ERREUR : du 16 au 29 avril 2026.",
       loggedBannerTitle: "",
-      bannerLink:
-        "https://ma-cantine.crisp.help/fr/article/ou-trouver-lid-de-ma-cantine-ou-de-mon-groupe-th6t5u/",
+      bannerLink: "https://ma-cantine.crisp.help/fr/article/ou-trouver-lid-de-ma-cantine-ou-de-mon-groupe-th6t5u/",
     }
   },
   computed: {
