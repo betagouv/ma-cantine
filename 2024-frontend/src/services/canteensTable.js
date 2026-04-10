@@ -65,6 +65,10 @@ const getDailyMealCountInfos = (canteen) => {
   return canteen.dailyMealCount
 }
 
+const getYearlyMealCountInfos = (canteen) => {
+  return canteen.yearlyMealCount
+}
+
 const searchCanteensBySiretOrSirenOrName = (search, allCanteens) => {
   if (!search) return allCanteens
   const searchValue = search.trim()
@@ -85,5 +89,6 @@ export default {
   getProductionTypeInfos,
   getDiagnosticInfos,
   getDailyMealCountInfos,
+  getYearlyMealCountInfos,
   searchCanteensBySiretOrSirenOrName,
 }
