@@ -37,8 +37,8 @@ const tableHeaders = [
     label: "Commune </br> (code postal)",
   },
   {
-    key: "dailyMealCount",
-    label: "Couverts </br> par jour",
+    key: "yearlyMealCount",
+    label: "Couverts </br>annuels",
   },
   {
     key: "diagnostic",
@@ -57,7 +57,7 @@ const tableRows = computed(() => {
         const name = canteensTableService.getSatelliteNameInfos(sat)
         const siretSiren = canteensTableService.getSiretOrSirenInfos(sat)
         const city = canteensTableService.getCityInfos(sat)
-        const dailyMealCount = canteensTableService.getDailyMealCountInfos(sat)
+        const yearlyMealCount = canteensTableService.getYearlyMealCountInfos(sat)
         const diagnostic = diagnosticService.getBadge(sat.action, campaign.value)
         const actions =  {
           links: getDropdownLinks(sat),
@@ -68,7 +68,7 @@ const tableRows = computed(() => {
           name,
           siretSiren,
           city,
-          dailyMealCount,
+          yearlyMealCount,
           diagnostic,
           actions,
         }
