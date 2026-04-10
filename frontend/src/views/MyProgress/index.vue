@@ -6,7 +6,7 @@
         { to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' },
       ]"
     />
-    <v-row align="end">
+    <v-row align="center">
       <v-col v-if="canteen" cols="12" md="9" lg="10">
         <DataInfoBadge
           :currentYear="+year === currentYear"
@@ -23,15 +23,7 @@
         </p>
       </v-col>
       <v-col cols="12" md="3" lg="2">
-        <v-btn
-          v-if="canteenPreviews.length > 1"
-          outlined
-          color="primary"
-          class="fr-btn--tertiary"
-          :to="{ name: 'GestionnaireTableauDeBord' }"
-        >
-          Changer d'établissement
-        </v-btn>
+        ICI
       </v-col>
     </v-row>
     <v-row v-if="canteen" class="mt-5 mt-md-10">
