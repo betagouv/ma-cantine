@@ -226,7 +226,7 @@ class DiagnosticQuerySet(models.QuerySet):
     def valid_td_site_by_year(self, year):
         year = int(year)
         if year in CAMPAIGN_DATES.keys():
-            if year in [2024]:
+            if year in [2024, 2025]:
                 return self.teledeclared_site_for_year(year).filter(
                     has_arrayfield_missing_query("invalid_reason_list")
                 )

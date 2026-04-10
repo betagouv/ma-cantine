@@ -95,14 +95,14 @@ class TeledeclarationETLAnalysisTest(TestCase):
 
     def test_teledeclaration_extract(self):
         # all years combined
-        # 2022: 3 teledeclarations (1 groupe with 1 satellite)
-        # 2023: 1 teledeclaration (1 is cancelled, 1 armee)
-        # 2024: 2 teledeclarations
-        # 2025: 1 teledeclaration
+        # 2022: 3 teledeclarations: 1 groupe with 1 satellite + 2 sites
+        # 2023: 2 teledeclarations: 1 groupe with 1 satellite + 1 site (1 armee, 1 cancelled)
+        # 2024: 3 teledeclarations: 1 groupe with 1 satellite + 2 sites
+        # 2025: 1 teledeclaration: 1 groupe with 1 satellite
         etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_td.extract_dataset()
 
-        self.assertEqual(etl_td.len_dataset(), 3 + 1 + 2 + 1)
+        self.assertEqual(etl_td.len_dataset(), 3 + 2 + 3 + 1)
         self.assertEqual(
             etl_td.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
         )  # Order by teledeclaration created date ascending

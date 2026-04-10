@@ -8,6 +8,7 @@ from rest_framework.test import APITestCase
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, SectorCategory
+from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 
 year_data = 2023
 date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
@@ -558,37 +559,49 @@ class CanteenStatsApiTest(APITestCase):
 class CanteenStats1Td1SiteApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        with freeze_time(date_in_2023_teledeclaration_campaign):
-            groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
-            CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
-            CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
-            diagnostic = DiagnosticFactory(canteen=groupe, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-            diagnostic.teledeclare(applicant=UserFactory())
-            # Create a fake diagnostic for 2023 generated
-            fake_satellite_generated = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
-            fake_satellite_generated_diagnostic = DiagnosticFactory(
-                year=2023, canteen=fake_satellite_generated, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
-            )
-            fake_satellite_generated_diagnostic.teledeclare(applicant=UserFactory())
-            fake_satellite_generated_diagnostic.generated_from_groupe_diagnostic = True
-            fake_satellite_generated_diagnostic.save()
+        ETLCommonSetUpTestData(cls, with_diagnostics=True)
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
-            diagnostic = DiagnosticFactory(canteen=groupe, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-            diagnostic.teledeclare(applicant=UserFactory())
-
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2023, apply=True)
+
+    def test_user_1td1site_diagnostics_for_2025(self):
+        """
+        - 1 groupe teledeclared (has 1 satellite)
+        """
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2025).count(), 1)
+        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2025).count(), 1 + 1)
+
+        response = self.client.get(reverse("canteen_statistics"), {"year": 2025})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["teledeclarationsCount"], 1)  # 1 satellite
 
     def test_use_1td1site_diagnostics_for_2024(self):
+        """
+        - 1 groupe teledeclared (has 1 satellite)
+        - 2 sites teledeclared
+        """
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2024).count(), 3)
+        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2024).count(), 3 + 1)
+
         response = self.client.get(reverse("canteen_statistics"), {"year": 2024})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)  # groupe ignored
-        self.assertEqual(body["teledeclarationsCount"], 2)  # 2 satellites
+        self.assertEqual(body["teledeclarationsCount"], 3)  # 1 satellite + 2 sites
 
     def test_not_use_1td1site_diagnostics_for_2023(self):
+        """
+        - 1 groupe teledeclared (has 1 satellite)
+        - 1 site teledeclared (armée)
+        """
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2023).count(), 2)
+        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2023).count(), 2 + 1)
+
         response = self.client.get(reverse("canteen_statistics"), {"year": 2023})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["canteenCount"], 3)  # groupe ignored
-        self.assertEqual(body["teledeclarationsCount"], 1)  # groupe
+        self.assertEqual(body["teledeclarationsCount"], 1)  # 1 groupe
