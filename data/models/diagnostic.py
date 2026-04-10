@@ -168,8 +168,8 @@ class DiagnosticQuerySet(models.QuerySet):
     def teledeclared_site_for_year(self, year):
         """
         Only return site TDs
-        - exclude groupes (2025+)
-        - exclude central & central servings (2024 and before)
+        - before 2025: exclude central & central servings
+        - 2025: exclude groupes
         """
         return (
             self.teledeclared_for_year(year)

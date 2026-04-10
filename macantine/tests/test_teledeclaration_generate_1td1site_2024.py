@@ -254,7 +254,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL)
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None)
-        with freeze_time("2025-03-29"):  # during the 2024 campaign
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
             satellite_diagnostic = DiagnosticFactory(
                 canteen=satellite,
                 year=2024,
@@ -436,7 +436,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The creation date of the generated diagnostics should be the date of the teledeclaration of the central diagnostic.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -464,7 +464,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The satellites_snapshot should be empty for the generated diagnostics.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -520,7 +520,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The metadata from the central diagnostic are copied in the generated diagnostics.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -551,7 +551,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         The applicant informations from the central diagnostic are copied in the generated diagnostics.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -714,6 +714,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
 
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            economic_model=Canteen.EconomicModel.PRIVATE,  # Private economic model for the satellite
             central_producer_siret=central.siret,
             # sector_list=[],
             line_ministry=None,
@@ -722,7 +723,6 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             pat_list=[],
             department=None,
             region=None,
-            economic_model=Canteen.EconomicModel.PRIVATE,  # Private economic model for the satellite
         )
         satellite.sector_list = []
         satellite.save(skip_validations=True)
@@ -760,7 +760,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
                 self.assertEqual(diagnostic_generated.canteen_snapshot[field], getattr(central, field))
 
     @authenticate
-    def test_divide_meal_count_by_number_of_satellites(self):
+    def test_divide_yearly_meal_count_by_number_of_satellites(self):
         """
         The yearly meal count is divided by the number of satellites (and converted to integer)
         """
@@ -810,22 +810,22 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         self.assertEqual(int(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"]), expected_yearly_meal_count)
 
     @authenticate
-    def test_keep_history_meal_count(self):
+    def test_keep_history_yearly_meal_count(self):
         """
         If the central changes its yearly meal count after the teledeclaraiont, the script uses the old value.
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1000, daily_meal_count=100
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=100
         )
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            yearly_meal_count=420,
+            yearly_meal_count=450,
         )
         satellite_2 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
-            yearly_meal_count=420,
+            yearly_meal_count=550,
         )
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
@@ -865,7 +865,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         self.assertEqual(satellite_2_diagnostic.canteen_snapshot["yearly_meal_count"], expected_yearly_meal_count)
 
     @authenticate
-    def test_meal_count_is_none(self):
+    def test_yearly_meal_count_is_none(self):
         """
         Test that when the central has a None yearly meal count, the script generates a diagnostic with a None value.
         """
@@ -905,7 +905,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         cls.satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -927,16 +927,15 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
     def verify_field_are_equals(self, value, expected_value):
         self.assertAlmostEqual(float(value), float(expected_value), places=2)
 
-    def verify_appro_fields_divided(self, fields, divisor, central_diagnostic, sat_diagnostics_generated):
-        for index, sat_diagnostic in enumerate(sat_diagnostics_generated):
-            with self.subTest(sat_diagnostic_index=index):
-                for field in fields:
-                    with self.subTest(field=field):
-                        central_value = getattr(central_diagnostic, field)
-                        diagnostic_value = getattr(sat_diagnostic, field)
-                        self.assertIsNotNone(central_value)
-                        self.assertIsNotNone(diagnostic_value)
-                        self.verify_field_are_equals(diagnostic_value, central_value / divisor)
+    def verify_appro_fields_divided(self, fields, satellite_diagnostic, central_diagnostic, divisor):
+        for field in fields:
+            with self.subTest(field=field):
+                central_value = getattr(central_diagnostic, field)
+                diagnostic_value = getattr(satellite_diagnostic, field)
+                expected_value = central_value / divisor
+                self.assertIsNotNone(central_value)
+                self.assertIsNotNone(diagnostic_value)
+                self.verify_field_are_equals(diagnostic_value, expected_value)
 
     @authenticate
     def test_total_value_divided_by_number_of_satellites(self):
@@ -956,10 +955,10 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        self.verify_field_are_equals(sat_1_diagnostic.valeur_totale, total_value / 2)
-        self.verify_field_are_equals(sat_2_diagnostic.valeur_totale, total_value / 2)
+        satellite_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        satellite_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        self.verify_field_are_equals(satellite_1_diagnostic.valeur_totale, total_value / 2)
+        self.verify_field_are_equals(satellite_2_diagnostic.valeur_totale, total_value / 2)
 
     @authenticate
     def test_central_type_simple(self):
@@ -980,18 +979,20 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
-        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+        satellite_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        satellite_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        satellite_diagnostics_generated = [satellite_1_diagnostic, satellite_2_diagnostic]
+        number_of_generated_diagnostics = len(satellite_diagnostics_generated)
 
         # Appro fields are divided and copied in the generated diagnostics
-        self.verify_appro_fields_divided(
-            Diagnostic.APPRO_1TD1SITE_FIELDS,
-            number_of_generated_diagnostics,
-            central_diagnostic,
-            sat_diagnostics_generated,
-        )
+        for index, satellite_diagnostic in enumerate(satellite_diagnostics_generated):
+            with self.subTest(satellite_diagnostic_index=index):
+                self.verify_appro_fields_divided(
+                    Diagnostic.APPRO_1TD1SITE_FIELDS,
+                    satellite_diagnostic,
+                    central_diagnostic,
+                    number_of_generated_diagnostics,
+                )
 
     @authenticate
     def test_central_serving_type_simple(self):
@@ -1023,19 +1024,21 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_3_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=sat_created)
-        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
-        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+        satellite_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        satellite_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        satellite_3_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=sat_created)
+        satellite_diagnostics_generated = [satellite_1_diagnostic, satellite_2_diagnostic, satellite_3_diagnostic]
+        number_of_generated_diagnostics = len(satellite_diagnostics_generated)
 
         # Appro fields are divided and copied in the generated diagnostics
-        self.verify_appro_fields_divided(
-            Diagnostic.APPRO_1TD1SITE_FIELDS,
-            number_of_generated_diagnostics,
-            central_diagnostic,
-            sat_diagnostics_generated,
-        )
+        for index, satellite_diagnostic in enumerate(satellite_diagnostics_generated):
+            with self.subTest(satellite_diagnostic_index=index):
+                self.verify_appro_fields_divided(
+                    Diagnostic.APPRO_1TD1SITE_FIELDS,
+                    satellite_diagnostic,
+                    central_diagnostic,
+                    number_of_generated_diagnostics,
+                )
 
     @authenticate
     def test_central_type_complete(self):
@@ -1056,18 +1059,20 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
-        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+        satellite_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        satellite_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        satellite_diagnostics_generated = [satellite_1_diagnostic, satellite_2_diagnostic]
+        number_of_generated_diagnostics = len(satellite_diagnostics_generated)
 
         # Appro fields are divided and copied in the generated diagnostics
-        self.verify_appro_fields_divided(
-            Diagnostic.APPRO_1TD1SITE_FIELDS,
-            number_of_generated_diagnostics,
-            central_diagnostic,
-            sat_diagnostics_generated,
-        )
+        for index, satellite_diagnostic in enumerate(satellite_diagnostics_generated):
+            with self.subTest(satellite_diagnostic_index=index):
+                self.verify_appro_fields_divided(
+                    Diagnostic.APPRO_1TD1SITE_FIELDS,
+                    satellite_diagnostic,
+                    central_diagnostic,
+                    number_of_generated_diagnostics,
+                )
 
     @authenticate
     def test_central_serving_type_complete(self):
@@ -1099,19 +1104,21 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_3_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=sat_created)
-        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
-        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+        satellite_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        satellite_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        satellite_3_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=sat_created)
+        satellite_diagnostics_generated = [satellite_1_diagnostic, satellite_2_diagnostic, satellite_3_diagnostic]
+        number_of_generated_diagnostics = len(satellite_diagnostics_generated)
 
         # Appro fields are divided and copied in the generated diagnostics
-        self.verify_appro_fields_divided(
-            Diagnostic.APPRO_1TD1SITE_FIELDS,
-            number_of_generated_diagnostics,
-            central_diagnostic,
-            sat_diagnostics_generated,
-        )
+        for index, satellite_diagnostic in enumerate(satellite_diagnostics_generated):
+            with self.subTest(satellite_diagnostic_index=index):
+                self.verify_appro_fields_divided(
+                    Diagnostic.APPRO_1TD1SITE_FIELDS,
+                    satellite_diagnostic,
+                    central_diagnostic,
+                    number_of_generated_diagnostics,
+                )
 
     @authenticate
     def test_central_no_type(self):
@@ -1132,18 +1139,20 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
-        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+        satellite_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        satellite_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        satellite_diagnostics_generated = [satellite_1_diagnostic, satellite_2_diagnostic]
+        number_of_generated_diagnostics = len(satellite_diagnostics_generated)
 
         # Appro fields are divided and copied in the generated diagnostics
-        self.verify_appro_fields_divided(
-            Diagnostic.APPRO_1TD1SITE_FIELDS,
-            number_of_generated_diagnostics,
-            central_diagnostic,
-            sat_diagnostics_generated,
-        )
+        for index, satellite_diagnostic in enumerate(satellite_diagnostics_generated):
+            with self.subTest(satellite_diagnostic_index=index):
+                self.verify_appro_fields_divided(
+                    Diagnostic.APPRO_1TD1SITE_FIELDS,
+                    satellite_diagnostic,
+                    central_diagnostic,
+                    number_of_generated_diagnostics,
+                )
 
     @authenticate
     def test_central_serving_no_type(self):
@@ -1175,19 +1184,21 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_3_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=sat_created)
-        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic, sat_3_diagnostic]
-        number_of_generated_diagnostics = len(sat_diagnostics_generated)
+        satellite_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        satellite_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        satellite_3_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=sat_created)
+        satellite_diagnostics_generated = [satellite_1_diagnostic, satellite_2_diagnostic, satellite_3_diagnostic]
+        number_of_generated_diagnostics = len(satellite_diagnostics_generated)
 
         # Appro fields are divided and copied in the generated diagnostics
-        self.verify_appro_fields_divided(
-            Diagnostic.APPRO_1TD1SITE_FIELDS,
-            number_of_generated_diagnostics,
-            central_diagnostic,
-            sat_diagnostics_generated,
-        )
+        for index, satellite_diagnostic in enumerate(satellite_diagnostics_generated):
+            with self.subTest(satellite_diagnostic_index=index):
+                self.verify_appro_fields_divided(
+                    Diagnostic.APPRO_1TD1SITE_FIELDS,
+                    satellite_diagnostic,
+                    central_diagnostic,
+                    number_of_generated_diagnostics,
+                )
 
     @authenticate
     def test_mode_all_non_appro_fields_are_copied(self):
@@ -1207,11 +1218,11 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
 
         # After the script is run
-        sat_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
-        sat_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        sat_diagnostics_generated = [sat_1_diagnostic, sat_2_diagnostic]
+        satellite_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
+        satellite_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
+        satellite_diagnostics_generated = [satellite_1_diagnostic, satellite_2_diagnostic]
 
-        for sat_diagnostic in sat_diagnostics_generated:
+        for sat_diagnostic in satellite_diagnostics_generated:
             with self.subTest(sat_diagnostic=sat_diagnostic):
                 for field in Diagnostic.NON_APPRO_FIELDS:
                     with self.subTest(field=field):
@@ -1343,7 +1354,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
     @authenticate
     def test_teledeclaration_other_year_are_not_generated(self):
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=420, daily_meal_count=3
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)

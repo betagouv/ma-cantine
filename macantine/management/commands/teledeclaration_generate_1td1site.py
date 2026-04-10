@@ -23,9 +23,9 @@ class Command(BaseCommand):
     Notes:
     - groupe vs central:
         - before 2025, satellites were linked to CENTRAL & CENTRAL_SERVING
-        - in 2025, CENTRAL & CENTRAL_SERVING were migrated to GROUPE
+        - in 2025, satellites are now linked to GROUPE (CENTRAL & CENTRAL_SERVING were migrated)
     - appro values distribution:
-        - in 2024 (and before), we divide by the number of satellites
+        - before 2025, we divide by the number of satellites
         - in 2025, we divide by the yearly_meal_count
 
     Usage:
@@ -71,7 +71,7 @@ class Command(BaseCommand):
             Diagnostic.objects.teledeclared_for_year(year=year)
             .annotate(canteen_snapshot_production_type=F("canteen_snapshot__production_type"))
             .annotate(
-                satellites_count=Func(
+                satellites_count_annotated=Func(
                     "satellites_snapshot", function="jsonb_array_length", output_field=IntegerField()
                 )
             )
@@ -143,7 +143,7 @@ def cleanup_before_task(year, apply=False):
 
 def process_groupe_diagnostic_teledeclared(diagnostic, apply=False):
     """
-    2024 and before
+    before 2025
     - central & central_serving (very similar to groups)
     - except that each satellite will have the same appro values
     - no distinction between central and central serving (following macantine/management/commands/canteen_migrate_central_to_groupe.py)
@@ -152,7 +152,7 @@ def process_groupe_diagnostic_teledeclared(diagnostic, apply=False):
     - each satellite will have its own appro values based on its yearly_meal_count
     """
     # for each satellite, create a diagnostic (and archive any existing diagnostic)
-    if diagnostic.satellites_count:
+    if diagnostic.satellites_count_annotated:
         for satellite_dict in diagnostic.satellites_snapshot:
             create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, apply=apply)
             archive_existing_diagnostic_teledeclared_satellite(diagnostic, satellite_dict, apply=apply)
