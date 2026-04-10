@@ -306,12 +306,10 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         )
 
     def test_diagnostic_satellites_snapshot(self):
-        # groupe
+        # groupe (default canteen ordering when snapshot is -creation_date)
         self.assertIsNotNone(self.diagnostic_groupe.satellites_snapshot)
         self.assertEqual(len(self.diagnostic_groupe.satellites_snapshot), 2)
-        self.assertEqual(
-            self.diagnostic_groupe.satellites_snapshot[0]["id"], self.canteen_satellite_2.id
-        )  # default ordering by -creation_date
+        self.assertEqual(self.diagnostic_groupe.satellites_snapshot[0]["id"], self.canteen_satellite_2.id)
         self.assertEqual(self.diagnostic_groupe.satellites_snapshot[1]["id"], self.canteen_satellite_1.id)
         # site
         self.assertIsNone(self.diagnostic_site.satellites_snapshot)
