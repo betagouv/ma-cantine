@@ -67,7 +67,7 @@
           </v-col>
           <v-col class="text-right">
             <v-btn
-              v-if="isCanteenTab || (!hasActiveTeledeclaration && !usesOtherDiagnosticForMeasure)"
+              v-if="displayEditButton"
               outlined
               small
               color="primary"
@@ -137,6 +137,9 @@ export default {
     diagnostic: Object,
     centralDiagnostic: Object,
     centralKitchenDiagnosticMode: String,
+    inTeledeclarationCampaign: Boolean,
+    inCorrectionCampaign: Boolean,
+    hasTeledeclarationToCorrect: Boolean,
   },
   components: {
     QualityMeasureInfo,
@@ -163,6 +166,13 @@ export default {
     }
   },
   computed: {
+    displayEditButton() {
+      const notTeledeclared = !this.hasActiveTeledeclaration
+      const notUseOtherDiagnostic = !this.usesOtherDiagnosticForMeasure
+      const isAllowedCorrection = this.inCorrectionCampaign && this.hasTeledeclarationToCorrect
+      const inCampaign = this.inTeledeclarationCampaign || isAllowedCorrection
+      return notTeledeclared && notUseOtherDiagnostic && inCampaign
+    },
     isApproTab() {
       return this.measureId === this.approId
     },
