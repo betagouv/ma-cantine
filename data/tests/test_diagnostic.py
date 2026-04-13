@@ -87,6 +87,13 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    def test_can_edit_validation(self):
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+            diagnostic.full_clean()  # should not raise
+        with freeze_time("2025-08-30"):  # after the 2024 campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+
     def test_diagnostic_type_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_TYPE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_TYPE.pop("diagnostic_type")
