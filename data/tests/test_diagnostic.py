@@ -88,8 +88,23 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_can_edit_validation(self):
+        # DRAFT diagnostic cannot be edited after campaign end date
         with freeze_time("2025-01-20"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
+            diagnostic.full_clean()  # should not raise
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+        with freeze_time("2025-08-30"):  # after the 2024 campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+
+        # CORRECTION diagnostic can be edited after correction end date
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+            diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
             diagnostic.full_clean()  # should not raise
         with freeze_time("2025-08-30"):  # after the 2024 campaign
             self.assertRaises(ValidationError, diagnostic.full_clean)
