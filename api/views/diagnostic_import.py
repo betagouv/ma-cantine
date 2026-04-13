@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
@@ -69,10 +69,6 @@ class DiagnosticsImportView(BaseImportView):
             if diagnostic_exists
             else Diagnostic(canteen_id=canteen.id, year=diagnostic_year, creation_source=CreationSource.IMPORT)
         )
-        if diagnostic.is_teledeclared:
-            raise ValidationError(
-                "Ce n'est pas possible de modifier un bilan télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration."
-            )
         diagnostic.diagnostic_type = diagnostic_type
         for key, value in values_dict.items():
             setattr(diagnostic, key, value)

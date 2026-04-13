@@ -8,6 +8,7 @@ from django.db.models.fields.json import KT
 from django.db.models.functions import Cast
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
+from dirtyfields import DirtyFieldsMixin
 
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
@@ -320,7 +321,7 @@ class DiagnosticManager(models.Manager):
         return self.queryset_model(self.model)
 
 
-class Diagnostic(models.Model):
+class Diagnostic(DirtyFieldsMixin, models.Model):
     class Meta:
         verbose_name = "diagnostic"
         verbose_name_plural = "diagnostics"

@@ -4,6 +4,23 @@ from common.utils import utils as utils_utils
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 
 
+def validate_status(instance):
+    """
+    - extra validation:
+        - cannot edit a diagnostic with status "SUBMITTED" (except if it is getting cancelled)
+    """
+    errors = {}
+    if instance.pk:  # only for existing diagnostics (not on creation)
+        if instance.status == instance.DiagnosticStatus.SUBMITTED:
+            if "status" not in instance.get_dirty_fields():
+                utils_utils.add_validation_error(
+                    errors,
+                    "status",
+                    "Ce n'est pas possible de modifier un bilan télédéclaré.",
+                )
+    return errors
+
+
 def validate_year(instance):
     """
     - extra validation:

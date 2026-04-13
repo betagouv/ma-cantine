@@ -200,9 +200,7 @@ class DiagnosticsImportView(ABC, APIView):
             else Diagnostic(canteen_id=canteen.id, year=diagnostic_year, creation_source=CreationSource.IMPORT)
         )
         if diagnostic.is_teledeclared:
-            raise ValidationError(
-                "Ce n'est pas possible de modifier un bilan télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration."
-            )
+            raise ValidationError("Ce n'est pas possible de modifier un bilan télédéclaré.")
         diagnostic.diagnostic_type = diagnostic_type
         for key, value in values_dict.items():
             setattr(diagnostic, key, value)

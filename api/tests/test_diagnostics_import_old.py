@@ -1157,7 +1157,7 @@
 #             self.assertEqual(len(body["errors"]), 1)
 #             self.assertEqual(
 #                 body["errors"][0]["message"],
-#                 "Ce n'est pas possible de modifier un bilan télédéclaré. Veuillez retirer cette ligne, ou annuler la télédéclaration.",
+#                 "Ce n'est pas possible de modifier un bilan télédéclaré.",
 #             )
 #             canteen.refresh_from_db()
 #             self.assertEqual(canteen.name, "Old name")
