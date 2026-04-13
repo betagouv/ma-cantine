@@ -220,7 +220,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
       <div class="fr-col-12">
         <div class="fr-card fr-p-2w fr-p-md-6w">
           <h2 class="fr-h6">Identifiant (ID)</h2>
-          <p>Numéro identifiant attribué automatiquement lors de la création d'un établissement sur la plateforme <em>ma-cantine</em>.
+          <p>Numéro identifiant attribué automatiquement lors de la création d'un établissement sur la plateforme <em>ma cantine</em>.
             <br/>
             Il est unique et non modifiable.
           </p>
@@ -243,7 +243,7 @@ const getMinistrieName = (canteenMinistrySlug) => {
         Archiver cet établissement
       </h2>
       <p class="fr-mb-0">
-        Vous ne souhaitez plus faire apparaître cet établissement sur la plateforme <em>ma-cantine</em>, vous pouvez l’archiver
+        Vous ne souhaitez plus faire apparaître cet établissement sur la plateforme <em>ma cantine</em>, vous pouvez l’archiver
         <AppLinkRouter :to="{ name: 'GestionnaireCantineArchiver' }" title="en cliquant ici" />
       </p>
     </div>
