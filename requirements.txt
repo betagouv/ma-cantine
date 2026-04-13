@@ -499,7 +499,7 @@ pypng==0.20220715.0
     # via
     #   ma-cantine
     #   qrcode
-pytest==8.0.0
+pytest==9.0.3
     # via
     #   ma-cantine
     #   pytest-django
