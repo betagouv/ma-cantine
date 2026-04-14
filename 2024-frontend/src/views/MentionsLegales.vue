@@ -22,7 +22,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
     </section>
     <section>
       <h2>Hébergement de la Plateforme</h2>
-      <p>Cette plateforme est hébergé par:</p>
+      <p>Cette plateforme est hébergée par:</p>
       <address class="fr-mb-3w">
         Clever Cloud
         <br />
