@@ -13,6 +13,7 @@ import CanteenModalExport from "@/components/CanteenModalExport.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppLoader from "@/components/AppLoader.vue"
 import AppJeDonneMonAvis from "@/components/AppJeDonneMonAvis.vue"
+import FilterByBase from "@/components/FilterByBase.vue"
 
 /* INTRO */
 const store = useRootStore()
@@ -71,6 +72,12 @@ const searchCanteens = () => {
   if (filteredCanteens.value.length === 0) searchIsEmpty.value = true
 }
 
+/* FILTERS */
+const filterDiagnostic = ref('')
+const updateFilterDiagnostic = () => {
+  console.log(filterDiagnostic.value)
+}
+
 /* CANTEENS */
 const lastYear = new Date().getFullYear() - 1
 const filteredCanteens = ref([])
@@ -125,14 +132,24 @@ const campaign = computedAsync(async () => {
       <div class="fr-col-12 fr-col-md-6">
         <p class="fr-mb-0 fr-text--lead">{{ canteenSentence }}</p>
       </div>
-      <div class="fr-col-12 fr-col-md-6">
+      <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle fr-grid-row--right">
+        <FilterByBase label="Filtrer par" class="fr-mr-1w">
+          <p>Statut du bilan</p>
+          <DsfrRadioButtonSet
+          v-model="filterDiagnostic"
+          :options="[{ label: 'Bilan télédéclaré', value: 'SUBMITTED'}, { label: 'Bilan non télédéclaré', value: 'DRAFT'}]"
+          @change="updateFilterDiagnostic"
+          small
+          />
+        </FilterByBase>
         <DsfrSearchBar
           v-model="search"
           label="Rechercher"
           button-text="Rechercher"
-          placeholder="Rechercher par le nom, siret ou siren de l'établissement"
+          placeholder="Chercher un établissement par nom, siret ou siren"
           @update:modelValue="updateSearch"
           @search="clicSearch"
+          class="gestionnaire-tableau-de-bord__search"
         />
       </div>
     </div>
@@ -153,3 +170,11 @@ const campaign = computedAsync(async () => {
   />
   <CanteenModalExport :opened="modalExportOpened" @close="modalExportOpened = false" />
 </template>
+
+<style lang="scss">
+.gestionnaire-tableau-de-bord {
+  &__search {
+    flex-grow: 1;
+  }
+}
+</style>
