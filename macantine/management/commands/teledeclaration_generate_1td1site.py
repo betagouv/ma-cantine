@@ -70,7 +70,6 @@ class Command(BaseCommand):
         diagnostic_id_list = options["diagnostic_id_list"]
         if diagnostic_id_list:
             diagnostic_id_list = diagnostic_id_list.split(",")
-            print("Diagnostics in input list:", len(diagnostic_id_list))
         apply = options["apply"]
         start_time = time.time()
 
