@@ -215,8 +215,8 @@ def get_year_campaign_end_date_or_today_date(year):
     year = int(year)
     now = timezone.now()
     if year in CAMPAIGN_DATES.keys():
-        end_date_campaign = CAMPAIGN_DATES[year]["teledeclaration_end_date"]
-        return now if end_date_campaign > now else CAMPAIGN_DATES[year]["teledeclaration_end_date"]
+        campaign_end_date = CAMPAIGN_DATES[year]["teledeclaration_end_date"]
+        return now if campaign_end_date > now else CAMPAIGN_DATES[year]["teledeclaration_end_date"]
     elif year >= now.year:
         return now
     else:

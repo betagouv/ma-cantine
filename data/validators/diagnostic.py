@@ -1,15 +1,20 @@
 from decimal import Decimal
 
+from django.utils import timezone
+
+from macantine.utils import get_year_campaign_end_date_or_today_date
 from common.utils import utils as utils_utils
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 
 
-def validate_year(instance):
+def validate_year_and_can_edit(instance):
     """
     - extra validation:
         - year must be filled
         - year must be an integer
         - year must be between lower and upper limit years
+        - if year is valid:
+            - after teledeclaration end date, DRAFT diagnostic cannot be edited anymore
     """
     errors = {}
     field_name = "year"
@@ -25,6 +30,16 @@ def validate_year(instance):
             utils_utils.add_validation_error(
                 errors, "year", f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."
             )
+        else:  # valid year, check can_edit validation
+            if instance.pk:
+                if instance.status == instance.DiagnosticStatus.DRAFT:
+                    now = timezone.now()
+                    if now > get_year_campaign_end_date_or_today_date(value):
+                        utils_utils.add_validation_error(
+                            errors,
+                            "year",
+                            f"Le diagnostic de l'année {value} ne peut plus être modifié car la campagne de télédéclaration est terminée.",
+                        )
     return errors
 
 
