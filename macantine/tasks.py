@@ -20,7 +20,7 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models import Canteen, User
+from data.models import Canteen, User, Diagnostic
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
@@ -296,6 +296,22 @@ def canteen_fill_declaration_donnees_year_field():
     logger.info("Starting canteen_fill_declaration_donnees_year_field task")
 
     result = call_command("canteen_fill_declaration_donnees_year_field", year=2025)
+
+    return result
+
+
+@app.task()
+def teledeclaration_generate_1td1site_hourly():
+    logger.info("Starting teledeclaration_generate_1td1site_hourly task")
+
+    diagnostic_id_list_changed_recently_qs = Diagnostic.objects.filter(
+        generated_from_groupe_diagnostic=True, modification_date__gte=timezone.now() - timezone.timedelta(hours=1)
+    ).values_list("id", flat=True)
+    diagnostic_id_list_str = ",".join(list(diagnostic_id_list_changed_recently_qs))
+
+    result = call_command(
+        "teledeclaration_generate_1td1site", year=2025, diagnostic_id_list=diagnostic_id_list_str, apply=True
+    )
 
     return result
 
