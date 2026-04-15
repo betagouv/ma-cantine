@@ -5,10 +5,12 @@
         <div class="fr-notice__body">
           <p class="mb-0">
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
-            <span class="fr-notice__title">
-              {{ bannerTitle }} :
+            <span class="fr-notice__title">{{ bannerTitle }}</span>
+            <span class="fr-notice__desc">
+              Valable uniquement pour les établissements qui ont validé leur télédéclaration dans les temps. Depuis
+              votre bilan, vous pouvez corriger vos informations si besoin
               <a :href="bannerLink" target="_blank">
-                voir le communiqué de presse
+                voir l’article d’aide pour en savoir plus
                 <v-icon small class="fr-notice__icon ml-1">mdi-open-in-new</v-icon>
               </a>
               .
@@ -26,10 +28,9 @@ export default {
   data() {
     return {
       show: window.SHOW_BANNER,
-      publicBannerTitle: "La campagne de télédéclaration 2026 est prolongée jusqu'au 15 avril 2026",
+      publicBannerTitle: "DROIT À L’ERREUR : du 16 au 29 avril 2026.",
       loggedBannerTitle: "",
-      bannerLink:
-        "https://agriculture.gouv.fr/exemplarite-de-letat-dans-la-restauration-collective-annie-genevard-et-david-amiel-mobilisent-les",
+      bannerLink: "https://ma-cantine.crisp.help/fr/article/ou-trouver-lid-de-ma-cantine-ou-de-mon-groupe-th6t5u/",
     }
   },
   computed: {
