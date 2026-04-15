@@ -39,12 +39,14 @@ class TeledeclarationResubmitScriptTest(TestCase):
             self.assertEqual(diagnostic.canteen_snapshot["name"], "First name")
             self.assertEqual(diagnostic.canteen_snapshot["city_insee_code"], "38185")
             original_diagnostic_id = diagnostic.id
+            original_teledeclaration_date = diagnostic.teledeclaration_date
 
             # we make some changes on the canteen
             canteen.name = "New name"
             canteen.city_insee_code = "34172"
             canteen.save()
 
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Run the script
             call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=str(diagnostic.id))
 
@@ -52,6 +54,7 @@ class TeledeclarationResubmitScriptTest(TestCase):
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.id, original_diagnostic_id)
             self.assertTrue(diagnostic.is_teledeclared)
+            self.assertNotEqual(diagnostic.teledeclaration_date, original_teledeclaration_date)
             self.assertEqual(diagnostic.canteen_snapshot["name"], "New name")
             self.assertEqual(diagnostic.canteen_snapshot["city_insee_code"], "34172")
 
@@ -76,6 +79,7 @@ class TeledeclarationResubmitScriptTest(TestCase):
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 3)
 
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Run the script with multiple diagnostic IDs
             diagnostic_ids = f"{diagnostic_1.id},{diagnostic_2.id},{diagnostic_3.id}"
             call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=diagnostic_ids)
@@ -107,6 +111,7 @@ class TeledeclarationResubmitScriptTest(TestCase):
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
             self.assertEqual(Diagnostic.all_objects.in_year(2025).teledeclared().count(), 1)
 
+        with freeze_time("2026-04-17"):  # during the 2025 correction campaign
             # Run the script with 2024 year, but pass 2025 diagnostic ID
             call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=str(diagnostic_2025.id))
 
@@ -137,6 +142,7 @@ class TeledeclarationResubmitScriptTest(TestCase):
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
             self.assertFalse(diagnostic_not_teledeclared.is_teledeclared)
 
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Run the script with both diagnostic IDs
             diagnostic_ids = f"{diagnostic_teledeclared.id},{diagnostic_not_teledeclared.id}"
             call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=diagnostic_ids)
@@ -149,7 +155,7 @@ class TeledeclarationResubmitScriptTest(TestCase):
             self.assertFalse(diagnostic_not_teledeclared.is_teledeclared)
 
     @authenticate
-    def test_handle_non_existent_diagnostic(self):
+    def test_skip_diagnostic_not_found(self):
         """
         The script should gracefully handle non-existent diagnostic IDs by simply skipping them.
         """
@@ -161,11 +167,62 @@ class TeledeclarationResubmitScriptTest(TestCase):
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Run the script with a mix of valid and non-existent diagnostic IDs
             fake_id = 99999
             diagnostic_ids = f"{diagnostic.id},{fake_id}"
             call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=diagnostic_ids)
 
             # After running the script, the valid diagnostic should still be teledeclared
+            diagnostic.refresh_from_db()
+            self.assertTrue(diagnostic.is_teledeclared)
+
+    @authenticate
+    def test_skip_diagnostic_if_diagnostic_validation_error(self):
+        """
+        The script should skip diagnostics that raise a ValidationError during teledeclaration.
+        """
+        canteen = CanteenFactory()
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+            # Before running the script
+            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
+
+            # Change the diagnostic to make it invalid
+            Diagnostic.objects.filter(id=diagnostic.id).update(
+                valeur_totale=500, valeur_bio=1000
+            )  # valeur_bio > valeur_totale
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            # Run the script with the diagnostic ID
+            call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=str(diagnostic.id))
+
+            # After running the script, the diagnostic should still be teledeclared (resubmission failed)
+            diagnostic.refresh_from_db()
+            self.assertTrue(diagnostic.is_teledeclared)
+
+    @authenticate
+    def test_skip_diagnostic_if_canteen_validation_error(self):
+        """
+        The script should skip diagnostics that raise a ValidationError during teledeclaration.
+        """
+        canteen = CanteenFactory()
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+            # Before running the script
+            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
+
+            # Change the canteen to make it invalid
+            Canteen.objects.filter(id=canteen.id).update(city_insee_code=None)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            # Run the script with the diagnostic ID
+            call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=str(diagnostic.id))
+
+            # After running the script, the diagnostic should still be teledeclared (resubmission failed)
             diagnostic.refresh_from_db()
             self.assertTrue(diagnostic.is_teledeclared)

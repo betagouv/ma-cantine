@@ -12,6 +12,7 @@ Ran on 2026-04-15 (last day of 2025 campaign)
 
 import logging
 
+from django.db import transaction
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 
@@ -64,12 +65,14 @@ class Command(BaseCommand):
             if not diagnostic.is_teledeclared:
                 logger.warning(f"Diagnostic {diagnostic.id} is not teledeclared, skipping")
                 continue
-            # cancel TD
-            diagnostic.cancel()
-            # recreate TD
+
             try:
-                diagnostic.teledeclare(applicant=diagnostic_applicant)
-                teledeclaration_resubmitted_count += 1
+                with transaction.atomic():
+                    # cancel & recreate TD
+                    # in a transaction, because the canteen or diagnostic may be in an invalid state and fail to teledeclare again...
+                    diagnostic.cancel()
+                    diagnostic.teledeclare(applicant=diagnostic_applicant)
+                    teledeclaration_resubmitted_count += 1
             except ValidationError as e:
                 logger.error(f"Error teledeclaring diagnostic {diagnostic.id}: {e}")
                 continue  # skip to next diagnostic
