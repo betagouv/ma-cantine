@@ -6,6 +6,28 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.29.0](https://github.com/betagouv/ma-cantine/compare/v2026.28.0...v2026.29.0) (2026-04-14)
+
+
+### Nouveautés
+
+* **Campagne de correction:** ajout du nouveau status "CORRECTION" ([#6616](https://github.com/betagouv/ma-cantine/issues/6616)) ([1c51df5](https://github.com/betagouv/ma-cantine/commit/1c51df5220f54b376e9325d5ff2c8344183e1411))
+* **Gérer mes satellites:** remplace le nombre de couverts jours par le nombre de couverts annuels ([#6624](https://github.com/betagouv/ma-cantine/issues/6624)) ([bbf81c2](https://github.com/betagouv/ma-cantine/commit/bbf81c29bcdd20a1b50d1f63ad983a6332771033))
+* **Télédéclaration:** déplace le bloc de correction ([#6626](https://github.com/betagouv/ma-cantine/issues/6626)) ([fffb995](https://github.com/betagouv/ma-cantine/commit/fffb995f522c7ab7271ae0a1162abef10dc4607f))
+
+
+### Améliorations
+
+* **Cantine:** ré-organise les actions ([#6613](https://github.com/betagouv/ma-cantine/issues/6613)) ([9e23c2e](https://github.com/betagouv/ma-cantine/commit/9e23c2e9590167faff44edb00b0cfa3f97432d19))
+* **Télédéclarations:** après la fin de la campagne, il n'est plus possible de modifier un bilan en DRAFT ([#6636](https://github.com/betagouv/ma-cantine/issues/6636)) ([1c027f9](https://github.com/betagouv/ma-cantine/commit/1c027f92851e008d5f9a01cb97374512319de9e6))
+
+
+### Corrections (bugs, typos...)
+
+* **Campagne de correction:** ne pas afficher le bouton "Modifier mes données" si le bilan n'est pas télédéclaré  ([#6629](https://github.com/betagouv/ma-cantine/issues/6629)) ([138c4ca](https://github.com/betagouv/ma-cantine/commit/138c4ca6335cd09290c6f7e747a5ce08f47af13b))
+* **Mentions Légales:** corrige la faute d'orthographe ([#6640](https://github.com/betagouv/ma-cantine/issues/6640)) ([2f5cad1](https://github.com/betagouv/ma-cantine/commit/2f5cad1ded7c7f647aee43c7a5ea6224b9efebc2))
+* **UI:** supprime le tiret dans du texte avec "ma-cantine" ([#6633](https://github.com/betagouv/ma-cantine/issues/6633)) ([fe52b89](https://github.com/betagouv/ma-cantine/commit/fe52b899fa52c4bba8c4c941b1370f20c309762b))
+
 ## [2026.28.0](https://github.com/betagouv/ma-cantine/compare/v2026.27.0...v2026.28.0) (2026-04-10)
 
 
