@@ -6,6 +6,23 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.30.0](https://github.com/betagouv/ma-cantine/compare/v2026.29.0...v2026.30.0) (2026-04-15)
+
+
+### Nouveautés
+
+* **Campagne de correction:** mise à jour du bandeau d'information ([#6628](https://github.com/betagouv/ma-cantine/issues/6628)) ([9cdc7f1](https://github.com/betagouv/ma-cantine/commit/9cdc7f13317e7461dcc4d04a984e9bf41a3ac37f))
+
+
+### Améliorations
+
+* **Télédéclarations:** améliorer la commande de resubmit pour prendre en entrée une liste de Diagnostic ID à re-télédéclarer ([#6644](https://github.com/betagouv/ma-cantine/issues/6644)) ([a0ae2c3](https://github.com/betagouv/ma-cantine/commit/a0ae2c3ad6fccecd17d6aed60ba2053b0d598a4d))
+
+
+### Technique
+
+* **ETL:** rajouter 1TD1Site dans les exports brutes ([#6632](https://github.com/betagouv/ma-cantine/issues/6632)) ([80d69aa](https://github.com/betagouv/ma-cantine/commit/80d69aa97f2fb179ea0cb6cd196946f2137baa66))
+
 ## [2026.29.0](https://github.com/betagouv/ma-cantine/compare/v2026.28.0...v2026.29.0) (2026-04-14)
 
 
