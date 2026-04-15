@@ -181,7 +181,7 @@ class ETL_ANALYSIS_DIAGNOSTIC_RAW(ANALYSIS):
         Load raw table into a dataframe.
         """
         start = time.time()
-        queryset = Diagnostic.objects.all().values()
+        queryset = Diagnostic.all_objects.all().values()
         self.df = pd.DataFrame(list(queryset))
         if self.df.empty:
             logger.warning("Dataset is empty. Creating an empty dataframe")
