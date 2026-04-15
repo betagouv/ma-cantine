@@ -74,4 +74,8 @@ class Command(BaseCommand):
                 logger.error(f"Error teledeclaring diagnostic {diagnostic.id}: {e}")
                 continue  # skip to next diagnostic
 
-        logger.info(f"Done! Teledeclarations resubmitted: {teledeclaration_resubmitted_count}")
+        result = (
+            f"Teledeclarations resubmitted: {teledeclaration_resubmitted_count} out of {len(teledeclaration_id_list)}"
+        )
+        logger.info(f"Task completed: {result}")
+        return result
