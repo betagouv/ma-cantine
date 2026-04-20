@@ -8,7 +8,7 @@ import campaignService from "@/services/campaigns.js"
 import canteensTableService from "@/services/canteensTable.js"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireEmptyCanteen from "@/components/GestionnaireEmptyCanteen.vue"
-import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
+import CanteensTable from "@/components/CanteensTable.vue"
 import CanteenModalExport from "@/components/CanteenModalExport.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppLoader from "@/components/AppLoader.vue"
@@ -158,7 +158,7 @@ const campaign = computedAsync(async () => {
       <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty && search">
         Aucun résultat trouvé pour la recherche « {{ search }} »
       </p>
-      <GestionnaireCanteensTable v-else :canteens="canteensTable" :campaign="campaign" />
+      <CanteensTable v-else :canteens="canteensTable" :campaign="campaign" />
     </template>
   </section>
   <section class="ma-cantine--bg-blue fr-py-4w">
