@@ -81,6 +81,11 @@ const searchCanteensBySiretOrSirenOrName = (search, allCanteens) => {
   return filteredCanteens
 }
 
+const filterCanteensByTeledeclaration = (hasTeledeclaration, allCanteens) => {
+  if (hasTeledeclaration === null) return allCanteens
+  return allCanteens.filter((canteen) => hasTeledeclaration ? canteen.action === '95_nothing' : canteen.action !== '95_nothing')
+}
+
 export default {
   getNameInfos,
   getSatelliteNameInfos,
@@ -91,4 +96,5 @@ export default {
   getDailyMealCountInfos,
   getYearlyMealCountInfos,
   searchCanteensBySiretOrSirenOrName,
+  filterCanteensByTeledeclaration,
 }
