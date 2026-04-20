@@ -107,10 +107,9 @@ const campaign = computedAsync(async () => {
         <FilterByBase label="Filtrer par" class="fr-mr-1w">
           <p>Statut du bilan</p>
           <DsfrRadioButtonSet
-          v-model="filterDiagnostic"
-          :options="[{ label: 'Bilan télédéclaré', value: '1'}, { label: 'Bilan non télédéclaré', value: '0'}]"
-          @change="updateFilterDiagnostic"
-          small
+            v-model="filterDiagnostic"
+            :options="[{ label: 'Bilan télédéclaré', value: '1'}, { label: 'Bilan non télédéclaré', value: '0'}]"
+            small
           />
         </FilterByBase>
         <DsfrSearchBar
