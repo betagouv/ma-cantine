@@ -34,10 +34,9 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     <DsfrButton
       class="filter-by-base__opener"
       :class="{ hover: isOpened }"
-      tertiary
-      :label="label"
       :icon="icon"
       icon-right
+      secondary
       @click="isOpened = !isOpened"
       ref="opener"
     />
