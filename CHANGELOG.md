@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.30.1](https://github.com/betagouv/ma-cantine/compare/v2026.30.0...v2026.30.1) (2026-04-20)
+
+
+### Améliorations
+
+* **Télédéclarations:** après la fin de la campagne de correction, il n'est plus possible de modifier un bilan en SUBMITTED ([#6641](https://github.com/betagouv/ma-cantine/issues/6641)) ([8ec02f2](https://github.com/betagouv/ma-cantine/commit/8ec02f25d0e30fc6e875cf9c1010518519d25887))
+* **Télédéclarations:** Règles métiers: après la fin de la campagne de correction, il n'est plus possible de modifier un bilan en CORRECTION ([#6637](https://github.com/betagouv/ma-cantine/issues/6637)) ([991406a](https://github.com/betagouv/ma-cantine/commit/991406a625062f79a8bc6ed351fa34066bc179ab))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclarations:** évite que le script de resubmit plante sur un cas particulier d'applicant id manquant ([#6650](https://github.com/betagouv/ma-cantine/issues/6650)) ([5d84cc8](https://github.com/betagouv/ma-cantine/commit/5d84cc83e33fa9e05d5ab3b8a00ba148083836c8))
+* **Télédéclarations:** répare les tests suite aux ajouts récents de règles métiers encadrant la TD ([#6652](https://github.com/betagouv/ma-cantine/issues/6652)) ([1d7fe46](https://github.com/betagouv/ma-cantine/commit/1d7fe46faa52ad4e3b1f435cd09d50c106aff60b))
+
 ## [2026.30.0](https://github.com/betagouv/ma-cantine/compare/v2026.29.0...v2026.30.0) (2026-04-15)
 
 
