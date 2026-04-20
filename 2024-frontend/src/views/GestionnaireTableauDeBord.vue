@@ -46,7 +46,7 @@ const clickDropdownMenu = (emitEvent) => {
 
 /* SEARCH AND FILTERS */
 const search = ref()
-const filterDiagnostic = ref('')
+const filterTeledeclaration = ref('')
 
 /* CANTEENS */
 const allCanteens = computedAsync(async () => await canteenService.fetchCanteensActions(lastYear), [])
@@ -69,9 +69,19 @@ const canteenSentence = computed(() => {
 })
 
 const canteensTable = computed(() => {
+  let canteensToDisplay = []
+  canteensToDisplay = allCanteens.value
+  canteensToDisplay = hideSatellites(canteensToDisplay)
+  if (search.value) canteensToDisplay = canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, canteensToDisplay)
+  if (filterTeledeclaration.value) {
+    const teledeclarationFilterValue = filterTeledeclaration.value === '1'
+    canteensToDisplay = canteensTableService.filterCanteensByTeledeclaration(teledeclarationFilterValue, canteensToDisplay)
+  }
+  return canteensToDisplay
+})
 
 const tableIsEmpty = computed(() => {
-  const hasFilterOrSearchActive = search.value || filterDiagnostic.value
+  const hasFilterOrSearchActive = search.value || filterTeledeclaration.value
   const noCanteenToDisplay = canteensTable.value.length === 0
   return hasFilterOrSearchActive && noCanteenToDisplay
 })
@@ -111,7 +121,7 @@ const campaign = computedAsync(async () => {
         <FilterByBase label="Filtrer par" class="fr-mr-1w">
           <p>Statut du bilan</p>
           <DsfrRadioButtonSet
-            v-model="filterDiagnostic"
+            v-model="filterTeledeclaration"
             :options="[{ label: 'Bilan télédéclaré', value: '1'}, { label: 'Bilan non télédéclaré', value: '0'}]"
             small
           />
