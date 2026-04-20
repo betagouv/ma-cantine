@@ -98,3 +98,5 @@ select
     action_gaspi_reutilisation
 
 from teledeclarations
+where valeur_totale is not null
+  and valeur_bio is not null

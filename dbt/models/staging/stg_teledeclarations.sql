@@ -76,9 +76,9 @@ renamed as (
         null::boolean                                                   as declaration_donnees_2024,
         null::boolean                                                   as declaration_donnees_2025,
 
-        -- appro — valeurs (bien typées dans diagnostics_raw)
-        valeur_totale,
-        valeur_bio,
+        -- appro — valeurs (cast text → float systématique)
+        valeur_totale::float,
+        valeur_bio::float,
         coalesce(valeur_egalim_agg::float,
             coalesce(valeur_bio::float, 0::float)
             + coalesce(valeur_siqo::float, 0::float)
@@ -90,32 +90,32 @@ renamed as (
             + coalesce(valeur_externalites_performance::float, 0::float)
             + coalesce(valeur_egalim_autres::float, 0::float)
         )                                                               as valeur_egalim_hors_bio_agg,
-        valeur_siqo,
-        valeur_externalites_performance,
-        valeur_egalim_autres,
-        valeur_viandes_volailles,
-        valeur_produits_de_la_mer,
-        valeur_viandes_volailles_egalim,
-        valeur_produits_de_la_mer_egalim,
+        valeur_siqo::float,
+        valeur_externalites_performance::float,
+        valeur_egalim_autres::float,
+        valeur_viandes_volailles::float,
+        valeur_produits_de_la_mer::float,
+        valeur_viandes_volailles_egalim::float,
+        valeur_produits_de_la_mer_egalim::float,
         coalesce(valeur_viandes_volailles::float, 0::float)
             + coalesce(valeur_produits_de_la_mer::float, 0::float)                   as valeur_viandes_et_poissons,
         coalesce(valeur_viandes_volailles_egalim::float, 0::float)
             + coalesce(valeur_produits_de_la_mer_egalim::float, 0::float)            as valeur_viandes_et_poissons_egalim,
 
-        -- origine France (toutes disponibles dans diagnostics_raw)
-        valeur_viandes_volailles_france,
-        valeur_charcuterie_france,
-        valeur_produits_de_la_mer_france,
-        valeur_fruits_et_legumes_france,
-        valeur_produits_laitiers_france,
-        valeur_boulangerie_france,
-        valeur_boissons_france,
-        valeur_autres_france,
+        -- origine France
+        valeur_viandes_volailles_france::float,
+        valeur_charcuterie_france::float,
+        valeur_produits_de_la_mer_france::float,
+        valeur_fruits_et_legumes_france::float,
+        valeur_produits_laitiers_france::float,
+        valeur_boulangerie_france::float,
+        valeur_boissons_france::float,
+        valeur_autres_france::float,
 
         -- ratios (déjà calculés dans diagnostics_raw)
-        pourcentage_bio,
-        pourcentage_egalim,
-        pourcentage_egalim_hors_bio,
+        pourcentage_bio::float,
+        pourcentage_egalim::float,
+        pourcentage_egalim_hors_bio::float,
         case
             when valeur_viandes_volailles::float > 0
             then valeur_viandes_volailles_egalim::float / valeur_viandes_volailles::float
