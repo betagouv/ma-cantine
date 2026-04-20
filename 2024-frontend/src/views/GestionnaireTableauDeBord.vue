@@ -50,34 +50,9 @@ const clickDropdownMenu = (emitEvent) => {
   if (emitEvent === 'clickExport') modalExportOpened.value = true
 }
 
-/* SEARCH */
+/* SEARCH AND FILTERS */
 const search = ref()
-const isSearching = ref(false)
-const searchIsEmpty = ref(false)
-
-const clicSearch = () => {
-  isSearching.value = true
-  searchCanteens()
-  isSearching.value = false
-}
-
-const updateSearch = () => {
-  const searchValue = search.value.trim()
-  searchIsEmpty.value = searchValue === ""
-  if (searchIsEmpty.value) filteredCanteens.value = []
-}
-
-const searchCanteens = () => {
-  if (!search.value) return
-  filteredCanteens.value = canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, allCanteens.value)
-  if (filteredCanteens.value.length === 0) searchIsEmpty.value = true
-}
-
-/* FILTERS */
 const filterDiagnostic = ref('')
-const updateFilterDiagnostic = () => {
-  console.log(filterDiagnostic.value)
-}
 
 /* CANTEENS */
 const lastYear = new Date().getFullYear() - 1
@@ -148,15 +123,12 @@ const campaign = computedAsync(async () => {
           label="Rechercher"
           button-text="Rechercher"
           placeholder="Chercher un établissement par nom, siret ou siren"
-          @update:modelValue="updateSearch"
-          @search="clicSearch"
           class="gestionnaire-tableau-de-bord__search"
         />
       </div>
     </div>
     <template v-if="campaign">
-      <AppLoader v-if="isSearching" class="fr-mt-2w fr-mb-4w" />
-      <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty && search">
+      <p class="fr-mt-2w fr-mb-4w" v-if="tableIsEmpty">
         Aucun résultat trouvé pour la recherche « {{ search }} »
       </p>
       <CanteensTable v-else :canteens="canteensTable" :campaign="campaign" />
