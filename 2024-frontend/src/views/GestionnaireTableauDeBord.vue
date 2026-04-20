@@ -128,14 +128,16 @@ const campaign = computedAsync(async () => {
               class="ma-cantine--white-space-nowrap"
               small
             />
-            <DsfrButton
-              v-show="filterTeledeclaration" @click="filterTeledeclaration = null"
-              icon="fr-icon-close-circle-line"
-              size="small"
-              tertiary
-            >
-              Désélectionner
-            </DsfrButton>
+            <div v-if="filterTeledeclaration" class="fr-grid-row fr-grid-row--center fr-mt-2w">
+              <DsfrButton
+                icon="fr-icon-close-circle-line"
+                @click="filterTeledeclaration = null"
+                size="small"
+                tertiary
+              >
+                Désélectionner
+              </DsfrButton>
+            </div>
           </FilterByBase>
           <DsfrSearchBar
             v-model="search"
