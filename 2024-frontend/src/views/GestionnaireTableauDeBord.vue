@@ -121,12 +121,22 @@ const campaign = computedAsync(async () => {
       </div>
       <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle fr-grid-row--right">
         <FilterByBase label="Filtrer par" class="fr-mr-1w">
-          <p>Statut du bilan</p>
+          <p class="fr-mb-2w">Statut du bilan</p>
           <DsfrRadioButtonSet
             v-model="filterTeledeclaration"
             :options="[{ label: 'Bilan télédéclaré', value: '1'}, { label: 'Bilan non télédéclaré', value: '0'}]"
+            class="fr-mb-0"
             small
+            inline
           />
+          <DsfrButton 
+            v-show="filterTeledeclaration" @click="filterTeledeclaration = null" 
+            icon="fr-icon-close-circle-line" 
+            size="small"
+            tertiary 
+          >
+            Désélectionner
+          </DsfrButton>
         </FilterByBase>
         <DsfrSearchBar
           v-model="search"
