@@ -51,6 +51,7 @@ VALID_DIAGNOSTIC_SIMPLE_2025 = {
 
 
 class DiagnosticModelSaveTest(TransactionTestCase):
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_year_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
@@ -69,7 +70,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         last_year = datetime.now().date().year - 1
         next_year = datetime.now().date().year + 1
         last_two_years = datetime.now().date().year - 2
-        next_two_years = datetime.now().date().year - 2
+        next_two_years = datetime.now().date().year + 2
         for TUPLE_OK_ON_FULL_CLEAN in [
             (this_year, this_year),
             (f"{this_year}", this_year),
@@ -122,6 +123,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         with freeze_time("2025-08-30"):  # after the 2024 correction campaign
             self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_type_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_TYPE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_TYPE.pop("diagnostic_type")
@@ -161,6 +163,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
         diagnostic.full_clean()
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_simple_appro_fields_required_after_2025_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
@@ -170,6 +173,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
         diagnostic.full_clean()
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_complete_appro_fields_required_after_2025_validation(self):
         VALID_DIAGNOSTIC_COMPLETE_2025 = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_COMPLETE_2025["diagnostic_type"] = Diagnostic.DiagnosticType.COMPLETE
@@ -181,6 +185,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
         diagnostic.full_clean()
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_totale_validation(self):
         # TODO: add tests against each simple field / sum of each label / sum of egalim fields
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
@@ -213,6 +218,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_totale_extra_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT.pop("valeur_totale")
@@ -234,6 +240,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(valeur_totale=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_viandes_volailles_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
@@ -254,6 +261,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_produits_de_la_mer_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER.pop("valeur_produits_de_la_mer")
@@ -293,6 +301,7 @@ class Diagnostic2024ModelSaveTest(TransactionTestCase):
         diagnostic.full_clean()
 
 
+@freeze_time("2026-01-30")  # during the 2025 campaign
 class Diagnostic2025ModelSaveTest(TransactionTestCase):
     def test_diagnostic_simple_2025(self):
         # valid
