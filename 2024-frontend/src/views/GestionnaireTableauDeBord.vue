@@ -144,7 +144,7 @@ const campaign = computedAsync(async () => {
             label="Rechercher"
             button-text="Rechercher"
             placeholder="Chercher un établissement par nom, siret ou siren"
-            class="gestionnaire-tableau-de-bord__search"
+            class="ma-cantine--flex-grow"
           />
         </div>
       </div>
@@ -166,11 +166,3 @@ const campaign = computedAsync(async () => {
   />
   <CanteenModalExport :opened="modalExportOpened" @close="modalExportOpened = false" />
 </template>
-
-<style lang="scss">
-.gestionnaire-tableau-de-bord {
-  &__search {
-    flex-grow: 1;
-  }
-}
-</style>
