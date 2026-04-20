@@ -223,6 +223,21 @@ def get_year_campaign_end_date_or_today_date(year):
         return None
 
 
+def get_year_correction_end_date_or_campaign_end_date_or_today_date(year):
+    year = int(year)
+    now = timezone.now()
+    if year in CAMPAIGN_DATES.keys():
+        if CAMPAIGN_DATES[year]["correction_end_date"]:
+            correction_end_date = CAMPAIGN_DATES[year]["correction_end_date"]
+            return now if correction_end_date > now else CAMPAIGN_DATES[year]["correction_end_date"]
+        else:
+            return get_year_campaign_end_date_or_today_date(year)
+    elif year >= now.year:
+        return now
+    else:
+        return None
+
+
 def set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dict) -> dict:
     """
     Generate a dict with common fields values for a satellite from a groupe diagnostic

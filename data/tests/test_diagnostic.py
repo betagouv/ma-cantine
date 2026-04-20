@@ -87,11 +87,27 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    def test_can_edit_validation(self):
+    def test_can_edit_status_draft_validation(self):
+        # DRAFT diagnostic cannot be edited during the campaign but not after
         with freeze_time("2025-01-20"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
             diagnostic.full_clean()  # should not raise
-        with freeze_time("2025-08-30"):  # after the 2024 campaign
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+        with freeze_time("2025-08-30"):  # after the 2024 correction campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_can_edit_status_correction_validation(self):
+        # CORRECTION diagnostic can be edited during the campaign & correction but not after correction
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+            diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
+            diagnostic.full_clean()  # should not raise
+        with freeze_time("2025-08-30"):  # after the 2024 correction campaign
             self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_type_validation(self):
