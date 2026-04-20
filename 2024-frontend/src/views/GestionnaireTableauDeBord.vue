@@ -15,15 +15,9 @@ import AppLoader from "@/components/AppLoader.vue"
 import AppJeDonneMonAvis from "@/components/AppJeDonneMonAvis.vue"
 import FilterByBase from "@/components/FilterByBase.vue"
 
-/* INTRO */
+/* DATA */
 const store = useRootStore()
-const canteenSentence = computed(() => {
-  const count = canteensTable.value.length
-  if (count === 0 && !tableIsEmpty.value) return "vous n'avez pas encore de cantine"
-  else if (count === 0 && tableIsEmpty.value) return "0 cantine"
-  else if (count === 1) return "1 cantine"
-  return `${count} cantines`
-})
+const lastYear = new Date().getFullYear() - 1
 
 /* BUTTON */
 const links = [
@@ -55,8 +49,7 @@ const search = ref()
 const filterDiagnostic = ref('')
 
 /* CANTEENS */
-const lastYear = new Date().getFullYear() - 1
-const filteredCanteens = ref([])
+const allCanteens = computedAsync(async () => await canteenService.fetchCanteensActions(lastYear), [])
 const canteensGroup = computed(() => {
   const count = allCanteens.value.filter((canteen) => canteen.productionType === "groupe").length
   const title = count > 1 ? `Vos ${count} cuisines centrales ont été transformées en groupes` : "Votre cuisine centrale a été transformée en groupe"
@@ -67,11 +60,13 @@ const canteensGroup = computed(() => {
   }
 })
 
-const allCanteens = computedAsync(async () => {
-  const canteens = await canteenService.fetchCanteensActions(lastYear)
-  const canteensFiltered = hideSatellites(canteens)
-  return canteensFiltered
-}, [])
+const canteenSentence = computed(() => {
+  const count = canteensTable.value.length
+  if (count === 0 && !tableIsEmpty.value) return "vous n'avez pas encore de cantine"
+  else if (count === 0 && tableIsEmpty.value) return "0 cantine"
+  else if (count === 1) return "1 cantine"
+  return `${count} cantines`
+})
 
 const canteensTable = computed(() => {
   return filteredCanteens.value.length > 0 ? filteredCanteens.value : allCanteens.value
