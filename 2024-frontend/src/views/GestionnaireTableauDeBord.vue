@@ -120,14 +120,13 @@ const campaign = computedAsync(async () => {
           <p class="fr-mb-0 fr-text--lead">{{ canteenSentence }}</p>
         </div>
         <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle fr-grid-row--right">
-          <FilterByBase label="Filtrer par" class="fr-mr-1w" :number="filterTeledeclaration ? 1 : null">
+          <FilterByBase label="Filtrer par" class="fr-mr-1w" :number="filterTeledeclaration ? 1 : null" :widthAuto="true">
             <p class="fr-mb-2w">Statut du bilan</p>
             <DsfrRadioButtonSet
               v-model="filterTeledeclaration"
               :options="[{ label: 'Bilan télédéclaré', value: '1'}, { label: 'Bilan non télédéclaré', value: '0'}]"
-              class="fr-mb-0"
+              class="ma-cantine--white-space-nowrap"
               small
-              inline
             />
             <DsfrButton
               v-show="filterTeledeclaration" @click="filterTeledeclaration = null"

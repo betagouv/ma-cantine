@@ -169,8 +169,12 @@ address {
     margin-bottom: -3rem !important;
 }
 
-
 /* TITLE */
 .ma-cantine--tile-no-overflow .fr-tile__pictogram{
    overflow: visible;
+}
+
+/* WHITE SPACE */
+.ma-cantine--white-space-nowrap {
+    white-space: nowrap;
 }
