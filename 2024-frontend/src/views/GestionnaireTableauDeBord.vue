@@ -137,7 +137,7 @@ const campaign = computedAsync(async () => {
           <p>Statut du bilan</p>
           <DsfrRadioButtonSet
           v-model="filterDiagnostic"
-          :options="[{ label: 'Bilan télédéclaré', value: 'SUBMITTED'}, { label: 'Bilan non télédéclaré', value: 'DRAFT'}]"
+          :options="[{ label: 'Bilan télédéclaré', value: '1'}, { label: 'Bilan non télédéclaré', value: '0'}]"
           @change="updateFilterDiagnostic"
           small
           />
