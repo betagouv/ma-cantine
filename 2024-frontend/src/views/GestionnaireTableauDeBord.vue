@@ -69,7 +69,11 @@ const canteenSentence = computed(() => {
 })
 
 const canteensTable = computed(() => {
-  return filteredCanteens.value.length > 0 ? filteredCanteens.value : allCanteens.value
+
+const tableIsEmpty = computed(() => {
+  const hasFilterOrSearchActive = search.value || filterDiagnostic.value
+  const noCanteenToDisplay = canteensTable.value.length === 0
+  return hasFilterOrSearchActive && noCanteenToDisplay
 })
 
 const hideSatellites = (canteens) => {
