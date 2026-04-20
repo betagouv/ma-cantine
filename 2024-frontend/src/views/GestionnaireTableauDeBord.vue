@@ -49,7 +49,11 @@ const search = ref()
 const filterTeledeclaration = ref('')
 
 /* CANTEENS */
-const allCanteens = computedAsync(async () => await canteenService.fetchCanteensActions(lastYear), [])
+const allCanteens = computedAsync(async () => {
+  const allCanteens = await canteenService.fetchCanteensActions(lastYear)
+  return hideSatellites(allCanteens)  // Always hide satellites on this page
+}, [])
+
 const canteensGroup = computed(() => {
   const count = allCanteens.value.filter((canteen) => canteen.productionType === "groupe").length
   const title = count > 1 ? `Vos ${count} cuisines centrales ont été transformées en groupes` : "Votre cuisine centrale a été transformée en groupe"
@@ -69,9 +73,7 @@ const canteenSentence = computed(() => {
 })
 
 const canteensTable = computed(() => {
-  let canteensToDisplay = []
-  canteensToDisplay = allCanteens.value
-  canteensToDisplay = hideSatellites(canteensToDisplay)
+  let canteensToDisplay = [...allCanteens.value]
   if (search.value) canteensToDisplay = canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, canteensToDisplay)
   if (filterTeledeclaration.value) {
     const teledeclarationFilterValue = filterTeledeclaration.value === '1'
