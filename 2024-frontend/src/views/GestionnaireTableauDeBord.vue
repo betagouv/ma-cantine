@@ -51,7 +51,12 @@ const filterTeledeclaration = ref('')
 /* CANTEENS */
 const allCanteens = computedAsync(async () => {
   const allCanteens = await canteenService.fetchCanteensActions(lastYear)
-  return hideSatellites(allCanteens)  // Always hide satellites on this page
+  const canteensGroup = allCanteens.filter((canteen) => canteen.productionType === "groupe").map((canteen) => canteen.id)
+  const canteensSatFiltered = allCanteens.filter((canteen) => {
+    const inMyGroup = canteen.productionType === "site_cooked_elsewhere" && canteensGroup.includes(canteen.groupe)
+    return inMyGroup ? false : true
+  })
+  return canteensSatFiltered  // Always hide satellites on this page
 }, [])
 
 const canteensGroup = computed(() => {
@@ -87,15 +92,6 @@ const tableIsEmpty = computed(() => {
   const noCanteenToDisplay = canteensTable.value.length === 0
   return hasFilterOrSearchActive && noCanteenToDisplay
 })
-
-const hideSatellites = (canteens) => {
-  const canteensGroup = canteens.filter((canteen) => canteen.productionType === "groupe").map((canteen) => canteen.id)
-  const canteensSatFiltered = canteens.filter((canteen) => {
-    const inMyGroup = canteen.productionType === "site_cooked_elsewhere" && canteensGroup.includes(canteen.groupe)
-    return inMyGroup ? false : true
-  })
-  return canteensSatFiltered
-}
 
 /* CAMPAIGN */
 const campaign = computedAsync(async () => {
