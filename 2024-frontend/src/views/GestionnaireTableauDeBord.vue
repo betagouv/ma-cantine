@@ -18,6 +18,7 @@ import FilterByBase from "@/components/FilterByBase.vue"
 /* DATA */
 const store = useRootStore()
 const lastYear = new Date().getFullYear() - 1
+const isLoading = ref(true)
 
 /* BUTTON */
 const links = [
@@ -56,6 +57,7 @@ const allCanteens = computedAsync(async () => {
     const inMyGroup = canteen.productionType === "site_cooked_elsewhere" && canteensGroup.includes(canteen.groupe)
     return inMyGroup ? false : true
   })
+  isLoading.value = false
   return canteensSatFiltered  // Always hide satellites on this page
 }, [])
 
@@ -109,41 +111,42 @@ const campaign = computedAsync(async () => {
   <DsfrAlert v-if="canteensGroup.displayBanner > 0" :title="canteensGroup.title" class="fr-mb-4w">
     <p>Vous pouvez requalifier vos groupes directement depuis ce tableau de bord, <a :href="documentation.groupesRestaurantsSatellites" target="_blank">découvrez comment faire</a></p>
   </DsfrAlert>
-  <GestionnaireEmptyCanteen v-if="store.canteenPreviews.length === 0" />
-  <section v-else-if="store.canteenPreviews.length > 0 && campaign">
-    <div class="fr-grid-row">
-      <div class="fr-col-12 fr-col-md-6">
-        <p class="fr-mb-0 fr-text--lead">{{ canteenSentence }}</p>
-      </div>
-      <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle fr-grid-row--right">
-        <FilterByBase label="Filtrer par" class="fr-mr-1w">
-          <p class="fr-mb-2w">Statut du bilan</p>
-          <DsfrRadioButtonSet
-            v-model="filterTeledeclaration"
-            :options="[{ label: 'Bilan télédéclaré', value: '1'}, { label: 'Bilan non télédéclaré', value: '0'}]"
-            class="fr-mb-0"
-            small
-            inline
+  <AppLoader v-if="isLoading || !campaign" class="fr-mb-4w" />
+  <section v-else>
+    <GestionnaireEmptyCanteen v-if="store.canteenPreviews.length === 0" />
+    <div v-else>
+      <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-md-6">
+          <p class="fr-mb-0 fr-text--lead">{{ canteenSentence }}</p>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle fr-grid-row--right">
+          <FilterByBase label="Filtrer par" class="fr-mr-1w">
+            <p class="fr-mb-2w">Statut du bilan</p>
+            <DsfrRadioButtonSet
+              v-model="filterTeledeclaration"
+              :options="[{ label: 'Bilan télédéclaré', value: '1'}, { label: 'Bilan non télédéclaré', value: '0'}]"
+              class="fr-mb-0"
+              small
+              inline
+            />
+            <DsfrButton
+              v-show="filterTeledeclaration" @click="filterTeledeclaration = null"
+              icon="fr-icon-close-circle-line"
+              size="small"
+              tertiary
+            >
+              Désélectionner
+            </DsfrButton>
+          </FilterByBase>
+          <DsfrSearchBar
+            v-model="search"
+            label="Rechercher"
+            button-text="Rechercher"
+            placeholder="Chercher un établissement par nom, siret ou siren"
+            class="gestionnaire-tableau-de-bord__search"
           />
-          <DsfrButton
-            v-show="filterTeledeclaration" @click="filterTeledeclaration = null"
-            icon="fr-icon-close-circle-line"
-            size="small"
-            tertiary
-          >
-            Désélectionner
-          </DsfrButton>
-        </FilterByBase>
-        <DsfrSearchBar
-          v-model="search"
-          label="Rechercher"
-          button-text="Rechercher"
-          placeholder="Chercher un établissement par nom, siret ou siren"
-          class="gestionnaire-tableau-de-bord__search"
-        />
+        </div>
       </div>
-    </div>
-    <template v-if="campaign">
       <p class="fr-mt-2w fr-mb-4w" v-if="tableIsEmpty">
         Aucun résultat trouvé pour
         <span v-if="search">la recherche « {{ search }} »</span>
@@ -151,7 +154,7 @@ const campaign = computedAsync(async () => {
         <span v-if="filterTeledeclaration">un « bilan {{ filterTeledeclaration === '1' ? 'télédéclaré' : 'non télédéclaré' }} »</span>
       </p>
       <CanteensTable v-else :canteens="canteensTable" :campaign="campaign" />
-    </template>
+    </div>
   </section>
   <section class="ma-cantine--bg-blue fr-py-4w">
     <GestionnaireGuides />
