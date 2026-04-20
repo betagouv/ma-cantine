@@ -140,7 +140,9 @@ renamed as (
         waste_actions::text ilike '%formation%'                         as action_gaspi_formation,
         waste_actions::text ilike '%distribution%'                      as action_gaspi_distribution,
         waste_actions::text ilike '%portions%'                          as action_gaspi_portions,
-        waste_actions::text ilike '%reutilisation%'                     as action_gaspi_reutilisation
+        waste_actions::text ilike '%reutilisation%'                     as action_gaspi_reutilisation,
+
+        invalid_reason_list
 
     from diagnostics
 )

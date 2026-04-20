@@ -100,3 +100,5 @@ select
 from teledeclarations
 where valeur_totale is not null
   and valeur_bio is not null
+  and production_type != 'groupe'
+  and (invalid_reason_list is null or invalid_reason_list::text = '[]')
