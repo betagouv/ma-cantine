@@ -41,7 +41,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
       ref="opener"
     >
       {{ label }}
-      <span class="filter-by-base__number fr-ml-1w fr-text--sm">10</span>
+      <span v-if="number" class="filter-by-base__number fr-ml-3v fr-mr-1v fr-text--sm">{{ number }}</span>
     </DsfrButton>
     <div v-if="isOpened" :class="`filter-by-base__content filter-by-base__content--${dropdownAlign}`" ref="content">
       <div class="filter-by-base__scrollable fr-p-2w fr-mt-1v fr-card">
@@ -100,6 +100,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     position: relative;
     z-index: 1;
     top: -1px;
+    font-weight: 400;
 
     &:before {
       content: "";
