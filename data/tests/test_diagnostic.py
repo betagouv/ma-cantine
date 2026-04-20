@@ -110,6 +110,18 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         with freeze_time("2025-08-30"):  # after the 2024 correction campaign
             self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    def test_can_edit_status_submitted_validation(self):
+        # SUBMITTED diagnostic can be edited during the campaign & correction but not after campaign
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+            diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
+            diagnostic.full_clean()  # should not raise
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            diagnostic.full_clean()  # should not raise
+        with freeze_time("2025-08-30"):  # after the 2024 correction campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+
     def test_diagnostic_type_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_TYPE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_TYPE.pop("diagnostic_type")
