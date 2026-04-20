@@ -129,11 +129,11 @@ const campaign = computedAsync(async () => {
             small
             inline
           />
-          <DsfrButton 
-            v-show="filterTeledeclaration" @click="filterTeledeclaration = null" 
-            icon="fr-icon-close-circle-line" 
+          <DsfrButton
+            v-show="filterTeledeclaration" @click="filterTeledeclaration = null"
+            icon="fr-icon-close-circle-line"
             size="small"
-            tertiary 
+            tertiary
           >
             Désélectionner
           </DsfrButton>
