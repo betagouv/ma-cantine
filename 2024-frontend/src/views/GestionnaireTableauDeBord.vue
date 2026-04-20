@@ -19,7 +19,8 @@ import FilterByBase from "@/components/FilterByBase.vue"
 const store = useRootStore()
 const canteenSentence = computed(() => {
   const count = canteensTable.value.length
-  if (count === 0) return "vous n'avez pas encore de cantine"
+  if (count === 0 && !tableIsEmpty.value) return "vous n'avez pas encore de cantine"
+  else if (count === 0 && tableIsEmpty.value) return "0 cantine"
   else if (count === 1) return "1 cantine"
   return `${count} cantines`
 })
