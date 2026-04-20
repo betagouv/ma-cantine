@@ -73,7 +73,7 @@ class Command(BaseCommand):
                     diagnostic.cancel()
                     diagnostic.teledeclare(applicant=diagnostic_applicant)
                     teledeclaration_resubmitted_count += 1
-            except ValidationError as e:
+            except (AttributeError, ValidationError) as e:
                 logger.error(f"Error teledeclaring diagnostic {diagnostic.id}: {e}")
                 continue  # skip to next diagnostic
 
