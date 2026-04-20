@@ -145,7 +145,10 @@ const campaign = computedAsync(async () => {
     </div>
     <template v-if="campaign">
       <p class="fr-mt-2w fr-mb-4w" v-if="tableIsEmpty">
-        Aucun résultat trouvé pour la recherche « {{ search }} »
+        Aucun résultat trouvé pour 
+        <span v-if="search">la recherche « {{ search }} »</span>
+        <span v-if="search && filterTeledeclaration"> et </span>
+        <span v-if="filterTeledeclaration">avec un bilan « {{ filterTeledeclaration === '1' ? 'télédéclaré' : 'non télédéclaré' }} »</span>
       </p>
       <CanteensTable v-else :canteens="canteensTable" :campaign="campaign" />
     </template>
