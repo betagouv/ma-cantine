@@ -2,7 +2,7 @@
 import { computed, ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
 import { useWindowSize } from "@vueuse/core"
-defineProps(["label", "number"])
+defineProps(["label", "number", "widthAuto"])
 
 /* Icon */
 const isOpened = ref(false)
@@ -30,7 +30,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 </script>
 
 <template>
-  <div class="filter-by-base" ref="filter-ref">
+  <div class="filter-by-base" :class="{ 'filter-by-base__width-auto': widthAuto }" ref="filter-ref">
     <DsfrButton
       class="filter-by-base__opener"
       :class="{ hover: isOpened }"
@@ -91,6 +91,7 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 
     @media (min-width: 768px) {
       width: 25rem;
+      max-width: 25rem;
     }
   }
 
@@ -113,6 +114,12 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
       background-color: var(--background-action-high-blue-france);
       border-radius: 100%;
       z-index: -1;
+    }
+  }
+
+  &__width-auto {
+    .filter-by-base__scrollable {
+      width: fit-content !important;
     }
   }
 }
