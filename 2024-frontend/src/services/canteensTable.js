@@ -33,7 +33,7 @@ const getCityInfos = (canteen) => {
   let city = ""
   if (canteen.city) city += canteen.city
   if (canteen.postalCode) city += ` (${canteen.postalCode})`
-  if (!canteen.city && !canteen.postalCode) city = "Non renseigné"
+  if (!canteen.city && !canteen.postalCode) city = "Non renseignée"
   return city
 }
 
