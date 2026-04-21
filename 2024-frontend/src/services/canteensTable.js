@@ -83,7 +83,8 @@ const searchCanteensBySiretOrSirenOrName = (search, allCanteens) => {
 
 const filterCanteensByTeledeclaration = (hasTeledeclaration, allCanteens) => {
   if (hasTeledeclaration === null) return allCanteens
-  return allCanteens.filter((canteen) => hasTeledeclaration ? canteen.action === '95_nothing' : canteen.action !== '95_nothing')
+  const teledeclareActions = ['95_nothing', '91_nothing_satellite_teledeclared']
+  return allCanteens.filter((canteen) => hasTeledeclaration ? teledeclareActions.includes(canteen.action) : !teledeclareActions.includes(canteen.action))
 }
 
 export default {
