@@ -81,6 +81,11 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.delete_old_historical_records",
         "schedule": nightly_3,
     },
+    # Teledeclaration
+    "teledeclaration_generate_1td1site_hourly": {
+        "task": "macantine.tasks.teledeclaration_generate_1td1site_hourly",
+        "schedule": hourly,
+    },
     # Dataset exports
     "export_dataset_td_analysis": {
         "task": "macantine.tasks.export_dataset_td_analysis",

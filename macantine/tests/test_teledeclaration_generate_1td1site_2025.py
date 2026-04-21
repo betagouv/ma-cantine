@@ -384,6 +384,47 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             2,
         )
 
+    @authenticate
+    def test_run_script_on_diagnostic_id_list(self):
+        groupe_1 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe_1)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe_2)
+        with freeze_time("2026-03-30"):  # during the 2025 campaign
+            groupe_1_diagnostic = DiagnosticFactory(
+                canteen=groupe_1,
+                year=2025,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            groupe_2_diagnostic = DiagnosticFactory(
+                canteen=groupe_2,
+                year=2025,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            groupe_1_diagnostic.teledeclare(applicant=authenticate.user)
+            groupe_2_diagnostic.teledeclare(applicant=authenticate.user)
+
+        # Before the script is run
+        self.assertEqual(Diagnostic.all_objects.in_year(2025).teledeclared().count(), 2)
+
+        # Run the script with only one diagnostic id
+        call_command(
+            "teledeclaration_generate_1td1site", year=2025, diagnostic_id_list=str(groupe_1_diagnostic.id), apply=True
+        )
+
+        # After the script is run, only the satellite of groupe_1 has a generated diagnostic
+        self.assertEqual(Diagnostic.all_objects.in_year(2025).teledeclared().count(), 2 + 1)
+        self.assertEqual(
+            Diagnostic.all_objects.in_year(2025).teledeclared().filter(generated_from_groupe_diagnostic=True).count(),
+            1,
+        )
+
 
 class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
     @authenticate
