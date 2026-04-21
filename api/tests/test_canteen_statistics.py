@@ -499,7 +499,7 @@ class CanteenStatsApiTest(APITestCase):
             response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()
-            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 1 avril 2024")
+            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 11 juin 2024")  # end of campaign
 
     def test_notes_canteen_count_description_after_campaign(self):
         with freeze_time("2024-11-01"):
