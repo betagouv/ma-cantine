@@ -2,7 +2,7 @@
 import { computed, ref, useTemplateRef } from "vue"
 import { onClickOutside } from "@vueuse/core"
 import { useWindowSize } from "@vueuse/core"
-defineProps(["label"])
+defineProps(["label", "number"])
 
 /* Icon */
 const isOpened = ref(false)
@@ -34,13 +34,15 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
     <DsfrButton
       class="filter-by-base__opener"
       :class="{ hover: isOpened }"
-      tertiary
-      :label="label"
       :icon="icon"
       icon-right
+      secondary
       @click="isOpened = !isOpened"
       ref="opener"
-    />
+    >
+      {{ label }}
+      <span v-if="number" class="filter-by-base__number fr-ml-3v fr-mr-1v fr-text--sm">{{ number }}</span>
+    </DsfrButton>
     <div v-if="isOpened" :class="`filter-by-base__content filter-by-base__content--${dropdownAlign}`" ref="content">
       <div class="filter-by-base__scrollable fr-p-2w fr-mt-1v fr-card">
         <slot></slot>
@@ -89,6 +91,28 @@ onClickOutside(content, closeDropdown, { ignore: [opener] })
 
     @media (min-width: 768px) {
       width: 25rem;
+    }
+  }
+
+  &__number {
+    display: inline-block;
+    color: var(--text-inverted-blue-france);
+    position: relative;
+    z-index: 1;
+    top: -1px;
+    font-weight: 400;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 1.75rem;
+      height: 1.75rem;
+      background-color: var(--background-action-high-blue-france);
+      border-radius: 100%;
+      z-index: -1;
     }
   }
 }
