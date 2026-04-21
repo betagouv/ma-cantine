@@ -85,12 +85,15 @@ renamed as (
         -- appro — valeurs (cast text → float systématique)
         valeur_totale::float,
         valeur_bio::float,
-        coalesce(valeur_egalim_agg::float,
-            coalesce(valeur_bio::float, 0::float)
-            + coalesce(valeur_siqo::float, 0::float)
-            + coalesce(valeur_externalites_performance::float, 0::float)
-            + coalesce(valeur_egalim_autres::float, 0::float)
-        )                                                               as valeur_egalim_agg,
+        valeur_bio_agg::float,
+        valeur_siqo_agg::float,
+        valeur_externalites_performance_agg::float,
+        valeur_egalim_autres_agg::float,
+        valeur_egalim_agg::float,
+        coalesce(valeur_bio::float, 0::float)
+        + coalesce(valeur_siqo::float, 0::float)
+        + coalesce(valeur_externalites_performance::float, 0::float)
+        + coalesce(valeur_egalim_autres::float, 0::float)               as valeur_egalim_agg_v2,
         coalesce(valeur_egalim_hors_bio_agg::float,
             coalesce(valeur_siqo::float, 0::float)
             + coalesce(valeur_externalites_performance::float, 0::float)
@@ -117,6 +120,136 @@ renamed as (
         valeur_boulangerie_france::float,
         valeur_boissons_france::float,
         valeur_autres_france::float,
+
+        -- par famille — bio
+        valeur_viandes_volailles_bio::float,
+        valeur_produits_de_la_mer_bio::float,
+        valeur_fruits_et_legumes_bio::float,
+        valeur_charcuterie_bio::float,
+        valeur_produits_laitiers_bio::float,
+        valeur_boulangerie_bio::float,
+        valeur_boissons_bio::float,
+        valeur_autres_bio::float,
+
+        -- par famille — label rouge
+        valeur_viandes_volailles_label_rouge::float,
+        valeur_produits_de_la_mer_label_rouge::float,
+        valeur_fruits_et_legumes_label_rouge::float,
+        valeur_charcuterie_label_rouge::float,
+        valeur_produits_laitiers_label_rouge::float,
+        valeur_boulangerie_label_rouge::float,
+        valeur_boissons_label_rouge::float,
+        valeur_autres_label_rouge::float,
+
+        -- par famille — AOC/AOP/IGP/STG
+        valeur_viandes_volailles_aocaop_igp_stg::float,
+        valeur_produits_de_la_mer_aocaop_igp_stg::float,
+        valeur_fruits_et_legumes_aocaop_igp_stg::float,
+        valeur_charcuterie_aocaop_igp_stg::float,
+        valeur_produits_laitiers_aocaop_igp_stg::float,
+        valeur_boulangerie_aocaop_igp_stg::float,
+        valeur_boissons_aocaop_igp_stg::float,
+        valeur_autres_aocaop_igp_stg::float,
+
+        -- par famille — HVE
+        valeur_viandes_volailles_hve::float,
+        valeur_produits_de_la_mer_hve::float,
+        valeur_fruits_et_legumes_hve::float,
+        valeur_charcuterie_hve::float,
+        valeur_produits_laitiers_hve::float,
+        valeur_boulangerie_hve::float,
+        valeur_boissons_hve::float,
+        valeur_autres_hve::float,
+
+        -- par famille — pêche durable
+        valeur_viandes_volailles_peche_durable::float,
+        valeur_produits_de_la_mer_peche_durable::float,
+        valeur_fruits_et_legumes_peche_durable::float,
+        valeur_charcuterie_peche_durable::float,
+        valeur_produits_laitiers_peche_durable::float,
+        valeur_boulangerie_peche_durable::float,
+        valeur_boissons_peche_durable::float,
+        valeur_autres_peche_durable::float,
+
+        -- par famille — RUP
+        valeur_viandes_volailles_rup::float,
+        valeur_produits_de_la_mer_rup::float,
+        valeur_fruits_et_legumes_rup::float,
+        valeur_charcuterie_rup::float,
+        valeur_produits_laitiers_rup::float,
+        valeur_boulangerie_rup::float,
+        valeur_boissons_rup::float,
+        valeur_autres_rup::float,
+
+        -- par famille — commerce équitable
+        valeur_viandes_volailles_commerce_equitable::float,
+        valeur_produits_de_la_mer_commerce_equitable::float,
+        valeur_fruits_et_legumes_commerce_equitable::float,
+        valeur_charcuterie_commerce_equitable::float,
+        valeur_produits_laitiers_commerce_equitable::float,
+        valeur_boulangerie_commerce_equitable::float,
+        valeur_boissons_commerce_equitable::float,
+        valeur_autres_commerce_equitable::float,
+
+        -- par famille — fermier
+        valeur_viandes_volailles_fermier::float,
+        valeur_produits_de_la_mer_fermier::float,
+        valeur_fruits_et_legumes_fermier::float,
+        valeur_charcuterie_fermier::float,
+        valeur_produits_laitiers_fermier::float,
+        valeur_boulangerie_fermier::float,
+        valeur_boissons_fermier::float,
+        valeur_autres_fermier::float,
+
+        -- par famille — externalités
+        valeur_viandes_volailles_externalites::float,
+        valeur_produits_de_la_mer_externalites::float,
+        valeur_fruits_et_legumes_externalites::float,
+        valeur_charcuterie_externalites::float,
+        valeur_produits_laitiers_externalites::float,
+        valeur_boulangerie_externalites::float,
+        valeur_boissons_externalites::float,
+        valeur_autres_externalites::float,
+
+        -- par famille — performance
+        valeur_viandes_volailles_performance::float,
+        valeur_produits_de_la_mer_performance::float,
+        valeur_fruits_et_legumes_performance::float,
+        valeur_charcuterie_performance::float,
+        valeur_produits_laitiers_performance::float,
+        valeur_boulangerie_performance::float,
+        valeur_boissons_performance::float,
+        valeur_autres_performance::float,
+
+        -- par famille — non EGalim
+        valeur_viandes_volailles_non_egalim::float,
+        valeur_produits_de_la_mer_non_egalim::float,
+        valeur_fruits_et_legumes_non_egalim::float,
+        valeur_charcuterie_non_egalim::float,
+        valeur_produits_laitiers_non_egalim::float,
+        valeur_boulangerie_non_egalim::float,
+        valeur_boissons_non_egalim::float,
+        valeur_autres_non_egalim::float,
+
+        -- par famille — circuit court
+        valeur_viandes_volailles_circuit_court::float,
+        valeur_produits_de_la_mer_circuit_court::float,
+        valeur_fruits_et_legumes_circuit_court::float,
+        valeur_charcuterie_circuit_court::float,
+        valeur_produits_laitiers_circuit_court::float,
+        valeur_boulangerie_circuit_court::float,
+        valeur_boissons_circuit_court::float,
+        valeur_autres_circuit_court::float,
+
+        -- par famille — local
+        valeur_viandes_volailles_local::float,
+        valeur_produits_de_la_mer_local::float,
+        valeur_fruits_et_legumes_local::float,
+        valeur_charcuterie_local::float,
+        valeur_produits_laitiers_local::float,
+        valeur_boulangerie_local::float,
+        valeur_boissons_local::float,
+        valeur_autres_local::float,
 
         -- ratios (déjà calculés dans diagnostics_raw)
         pourcentage_bio::float,
