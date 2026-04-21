@@ -2,6 +2,26 @@
 
 with teledeclarations as (
     select * from {{ ref('stg_teledeclarations') }}
+),
+
+ref_departements as (
+    select * from {{ ref('ref_departements') }}
+),
+
+ref_regions as (
+    select * from {{ ref('ref_regions') }}
+),
+
+ref_epci as (
+    select * from {{ ref('ref_epci') }}
+),
+
+ref_communes as (
+    select * from {{ ref('ref_communes') }}
+),
+
+ref_pats as (
+    select * from {{ ref('ref_pats') }}
 )
 
 select
@@ -31,11 +51,21 @@ select
     genere_par_cuisine_centrale                         as cantine_genere_par_cuisine_centrale,
 
     -- geo
-    department                                          as cantine_departement,
-    department_lib                                      as cantine_lib_departement,
-    region                                              as cantine_region,
-    region_lib                                          as cantine_lib_region,
-    city_insee_code                                     as cantine_code_insee_commune,
+    teledeclarations.department                         as cantine_departement,
+    ref_departements.lib_departement                    as cantine_lib_departement,
+    teledeclarations.region                             as cantine_region,
+    ref_regions.lib_region                              as cantine_lib_region,
+    teledeclarations.city_insee_code                    as cantine_code_insee_commune,
+    ref_communes.lib_commune                            as cantine_lib_commune,
+    teledeclarations.epci                               as cantine_epci,
+    coalesce(ref_epci.lib_epci, teledeclarations.epci_lib) as cantine_lib_epci,
+    teledeclarations.pat_list                           as cantine_pat_liste,
+    -- libellés PAT reconstruits depuis ref_pats (pat_lib_list absent du snapshot)
+    (
+        select string_agg(rp.lib_pat, ', ' order by rp.lib_pat)
+        from regexp_split_to_table(teledeclarations.pat_list, ', ') as p(code_pat)
+        join ref_pats rp on rp.code_pat = p.code_pat
+    )                                                   as cantine_pat_lib_liste,
     nbre_cantines_region                                as cantine_nbre_cantines_region,
     objectif_zone_geo                                   as cantine_objectif_zone_geo,
 
@@ -98,6 +128,10 @@ select
     action_gaspi_reutilisation
 
 from teledeclarations
+left join ref_departements on ref_departements.code_departement = teledeclarations.department
+left join ref_regions on ref_regions.code_region = teledeclarations.region
+left join ref_epci on ref_epci.code_epci = teledeclarations.epci
+left join ref_communes on ref_communes.code_insee_commune = teledeclarations.city_insee_code
 where valeur_totale is not null
   and valeur_bio is not null
   and production_type != 'groupe'

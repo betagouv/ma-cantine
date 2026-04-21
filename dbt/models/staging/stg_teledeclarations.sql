@@ -62,6 +62,12 @@ renamed as (
         canteen_snapshot::jsonb ->> 'region'                            as region,
         null::text                                                      as region_lib,
         canteen_snapshot::jsonb ->> 'city_insee_code'                   as city_insee_code,
+        canteen_snapshot::jsonb ->> 'epci'                              as epci,
+        canteen_snapshot::jsonb ->> 'epci_lib'                          as epci_lib,
+        array_to_string(
+            array(select jsonb_array_elements_text(canteen_snapshot::jsonb -> 'pat_list')),
+            ', '
+        )                                                               as pat_list,
         null::integer                                                   as nbre_cantines_region,
         null::text                                                      as objectif_zone_geo,
 
