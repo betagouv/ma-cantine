@@ -1,0 +1,1 @@
+"""Statistics Django app."""

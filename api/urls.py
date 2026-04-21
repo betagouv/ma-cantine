@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from api.views import (
@@ -16,7 +16,6 @@ from api.views import (
     CanteensCreateImportView,
     CanteensUpdateImportView,
     CanteensManagersImportView,
-    CanteenStatisticsView,
     CanteenStatusBySirenView,
     CanteenStatusBySiretView,
     CanteenWasteMeasurementsView,
@@ -153,7 +152,7 @@ urlpatterns = {
         CanteenGroupeSatelliteUnlinkView.as_view(),
         name="canteen_groupe_satellite_unlink",
     ),
-    path("canteenStatistics/", CanteenStatisticsView.as_view(), name="canteen_statistics"),
+    path("", include("statistics.urls")),
     path("sectors/", SectorListView.as_view(), name="sectors_list"),
     path("ministries/", CanteenMinistriesView.as_view(), name="ministries_list"),
     path("partnerTypes/", PartnerTypeListView.as_view(), name="partner_types_list"),
