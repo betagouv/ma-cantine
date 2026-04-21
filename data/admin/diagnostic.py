@@ -3,6 +3,7 @@ import json
 from django import forms
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+
 from simple_history.admin import SimpleHistoryAdmin
 
 from data.admin.utils import ReadOnlyAdminMixin
@@ -47,6 +48,25 @@ class UserDiagnosticInline(ReadOnlyAdminMixin, admin.TabularInline):
         return qs.select_related("canteen", "applicant")
 
 
+class AllObjectsFilter(admin.SimpleListFilter):
+    title = "Inclure 1TD1Site ?"
+    parameter_name = "all_objects"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("true", "Oui"),
+            ("false", "Non (par défaut)"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "true":
+            pass
+        else:  # default
+            # restrict get_queryset to .objects() instead of .all_objects()
+            queryset = queryset.exclude(generated_from_groupe_diagnostic=True)
+        return queryset
+
+
 @admin.register(Diagnostic)
 class DiagnosticAdmin(SimpleHistoryAdmin):
     list_display = (
@@ -57,7 +77,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "creation_date",
         "modification_date",
     )
-    list_filter = ("year", "diagnostic_type", "status", "creation_source")
+    list_filter = ("year", "diagnostic_type", "status", "creation_source", AllObjectsFilter)
     search_fields = (
         "id",
         "canteen__name",
@@ -179,7 +199,11 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
     )
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
+        # override super().get_queryset(request)
+        qs = self.model.all_objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
         qs = qs.prefetch_related("canteen")
         return qs
 
