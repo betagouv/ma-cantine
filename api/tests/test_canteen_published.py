@@ -870,15 +870,12 @@ class PublishedCanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body.get("id"), canteen_satellite.id)
         self.assertEqual(len(body.get("approDiagnostics")), 2)
-        self.assertEqual(len(body.get("serviceDiagnostics")), 1)
         appro_diagnostics = body.get("approDiagnostics")
         appro_diag_2020 = next(filter(lambda x: x["year"] == 2020, appro_diagnostics))
         appro_diag_2021 = next(filter(lambda x: x["year"] == 2021, appro_diagnostics))
-        service_diag_2021 = body.get("serviceDiagnostics")[0]
         self.assertIn("percentageValeurTotale", appro_diag_2020)
         self.assertNotIn("hasWasteDiagnostic", appro_diag_2020)
         self.assertIn("percentageValeurTotale", appro_diag_2021)
-        self.assertIn("hasWasteDiagnostic", service_diag_2021)
         self.assertNotIn("valeurViandesVolaillesEgalim", appro_diag_2021)
         # self.assertIn("percentageValeurViandesVolaillesEgalim", appro_diag_2021)
         self.assertNotIn("valeurProduitsDeLaMerEgalim", appro_diag_2021)
@@ -972,14 +969,8 @@ class PublishedCanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(len(body.get("serviceDiagnostics")), 3)
         self.assertEqual(len(body.get("approDiagnostics")), 1)
-        serialized_diags = body.get("serviceDiagnostics")
         serialized_appro_diags = body.get("approDiagnostics")
-
-        for diag in serialized_diags:
-            self.assertNotIn("percentageValeurTotale", diag)
-            self.assertNotIn("valeurTotale", diag)
 
         self.assertEqual(serialized_appro_diags[0]["id"], published_appro_diag.id)
         self.assertIn("percentageValeurTotale", serialized_appro_diags[0])
@@ -1141,7 +1132,6 @@ class PublishedCanteenDetailApiTest(APITestCase):
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 1)
-        self.assertEqual(len(body.get("serviceDiagnostics")), 2)
 
 
 class TestPublishedCanteenClaimApiTest(APITestCase):
