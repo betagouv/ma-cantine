@@ -806,7 +806,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         serialized_diagnostic = body.get("approDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
         self.assertEqual(serialized_diagnostic["percentageValeurTotale"], 1)
-        self.assertNotIn("percentageValeurBio", serialized_diagnostic)
+        self.assertEqual(serialized_diagnostic["percentageValeurBio"], None)
 
     def test_satellite_published_no_type(self):
         """
@@ -877,7 +877,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         self.assertNotIn("hasWasteDiagnostic", appro_diag_2020)
         self.assertIn("percentageValeurTotale", appro_diag_2021)
         self.assertNotIn("valeurViandesVolaillesEgalim", appro_diag_2021)
-        # self.assertIn("percentageValeurViandesVolaillesEgalim", appro_diag_2021)
+        self.assertIn("percentageValeurViandesVolaillesEgalim", appro_diag_2021)
         self.assertNotIn("valeurProduitsDeLaMerEgalim", appro_diag_2021)
         self.assertIn("percentageValeurProduitsDeLaMerEgalim", appro_diag_2021)
 
@@ -945,9 +945,9 @@ class PublishedCanteenDetailApiTest(APITestCase):
 
         serialized_diag = body.get("approDiagnostics")[0]
 
-        # self.assertIn("percentageValeurViandesVolaillesEgalim", serialized_diag)
-        # self.assertIn("percentageValeurViandesVolaillesFrance", serialized_diag)
-        # self.assertIn("percentageValeurProduitsDeLaMerEgalim", serialized_diag)
+        self.assertIn("percentageValeurViandesVolaillesEgalim", serialized_diag)
+        self.assertIn("percentageValeurViandesVolaillesFrance", serialized_diag)
+        self.assertIn("percentageValeurProduitsDeLaMerEgalim", serialized_diag)
         self.assertNotIn("valeurViandesVolaillesEgalim", serialized_diag)
         self.assertNotIn("valeurViandesVolaillesFrance", serialized_diag)
         self.assertNotIn("valeurProduitsDeLaMerEgalim", serialized_diag)
