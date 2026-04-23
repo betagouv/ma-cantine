@@ -112,7 +112,8 @@ export default {
     },
     sustainablePercent() {
       if (!this.approDiagnostic) return
-      return toPercentage(getSustainableTotal(this.approDiagnostic))
+      // Only return the percentage value of appro with the public canteen endpoint
+      return Math.round(getSustainableTotal(this.approDiagnostic) * 100)
     },
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent
