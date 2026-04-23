@@ -843,13 +843,6 @@ class Diagnostic(models.Model):
         "applicant_snapshot",
     ]
 
-    APPRO_PERCENT_FIELDS = [
-        "valeur_totale",
-        "valeur_bio",
-        "valeur_siqo",
-        "valeur_externalites_performance",
-        "valeur_egalim_autres",
-    ]
     APPRO_PERCENTAGE_PROPERTY_NAMES = [
         "percentage_valeur_totale",
         "percentage_valeur_bio",
