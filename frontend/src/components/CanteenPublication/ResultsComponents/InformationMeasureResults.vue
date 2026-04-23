@@ -1,10 +1,10 @@
 <template>
   <div>
     <GenericMeasureResults :badge="badge" :canteen="canteen" :diagnostics="diagnostics" />
-    <p v-if="diagnostic && diagnostic.communicationSupportUrl" class="fr-text">
+    <!--<p v-if="diagnostic && diagnostic.communicationSupportUrl" class="fr-text">
       Cette cantine communique aux usagers sur
       <a :href="diagnostic.communicationSupportUrl">{{ diagnostic.communicationSupportUrl }}</a>
-    </p>
+    </p>-->
   </div>
 </template>
 
