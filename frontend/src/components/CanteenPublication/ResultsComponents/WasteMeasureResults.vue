@@ -1,6 +1,6 @@
 <template>
   <div>
-    <GenericMeasureResults :badge="badge" :canteen="canteen" :diagnostics="diagnostics" />
+    <GenericMeasureResults :badge="badge" :canteen="canteen" />
     <p v-if="canteenResourceActionsDone.length">
       Cet établissement a mis en place les actions suivantes pour lutter contre le gaspillage alimentaire :
     </p>
@@ -27,8 +27,6 @@ export default {
   props: {
     badge: Object,
     canteen: Object,
-    diagnostics: Array,
-    editable: Boolean,
   },
   components: { GenericMeasureResults, WasteActionCard },
   computed: {
