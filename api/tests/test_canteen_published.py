@@ -806,7 +806,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         serialized_diagnostic = body.get("approDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
         self.assertEqual(serialized_diagnostic["percentageValeurTotale"], 1)
-        self.assertNotIn("percentageValeurBio", serialized_diagnostic)
+        self.assertEqual(serialized_diagnostic["percentageValeurBio"], None)
 
     def test_satellite_published_no_type(self):
         """
