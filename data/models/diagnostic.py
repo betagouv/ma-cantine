@@ -843,6 +843,25 @@ class Diagnostic(models.Model):
         "applicant_snapshot",
     ]
 
+    APPRO_PERCENT_FIELDS = [
+        "valeur_totale",
+        "valeur_bio",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
+    ]
+    APPRO_PERCENTAGE_PROPERTY_NAMES = [
+        "percentage_valeur_totale",
+        "percentage_valeur_bio",
+        "percentage_valeur_siqo",
+        "percentage_valeur_externalites_performance",
+        "percentage_valeur_egalim_autres",
+        "percentage_valeur_viandes_volailles_egalim",
+        "percentage_valeur_viandes_volailles_france",
+        "percentage_valeur_produits_de_la_mer_egalim",
+        "percentage_valeur_produits_de_la_mer_france",
+    ]
+
     objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)(exclude_generated=True)
     all_objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)()
 
@@ -1773,6 +1792,50 @@ class Diagnostic(models.Model):
         if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
             canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
             return objectifs_egalim_atteints(self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
+
+    @property
+    def percentage_valeur_totale(self):
+        return 1
+
+    @property
+    def percentage_valeur_bio(self):
+        if self.valeur_totale and self.valeur_bio is not None:
+            return self.valeur_bio / self.valeur_totale
+
+    @property
+    def percentage_valeur_siqo(self):
+        if self.valeur_totale and self.valeur_siqo is not None:
+            return self.valeur_siqo / self.valeur_totale
+
+    @property
+    def percentage_valeur_externalites_performance(self):
+        if self.valeur_totale and self.valeur_externalites_performance is not None:
+            return self.valeur_externalites_performance / self.valeur_totale
+
+    @property
+    def percentage_valeur_egalim_autres(self):
+        if self.valeur_totale and self.valeur_egalim_autres is not None:
+            return self.valeur_egalim_autres / self.valeur_totale
+
+    @property
+    def percentage_valeur_viandes_volailles_egalim(self):
+        if self.valeur_viandes_volailles and self.valeur_viandes_volailles_egalim is not None:
+            return self.valeur_viandes_volailles_egalim / self.valeur_viandes_volailles
+
+    @property
+    def percentage_valeur_viandes_volailles_france(self):
+        if self.valeur_viandes_volailles and self.valeur_viandes_volailles_france is not None:
+            return self.valeur_viandes_volailles_france / self.valeur_viandes_volailles
+
+    @property
+    def percentage_valeur_produits_de_la_mer_egalim(self):
+        if self.valeur_produits_de_la_mer and self.valeur_produits_de_la_mer_egalim is not None:
+            return self.valeur_produits_de_la_mer_egalim / self.valeur_produits_de_la_mer
+
+    @property
+    def percentage_valeur_produits_de_la_mer_france(self):
+        if self.valeur_produits_de_la_mer and self.valeur_produits_de_la_mer_france is not None:
+            return self.valeur_produits_de_la_mer_france / self.valeur_produits_de_la_mer
 
     @property
     def valeur_totale_is_filled(self):

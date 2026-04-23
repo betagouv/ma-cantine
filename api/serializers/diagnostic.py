@@ -6,7 +6,6 @@ from rest_framework import serializers
 from data.models import Diagnostic
 
 from .teledeclaration import ShortTeledeclarationSerializer
-from .utils import appro_to_percentages
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +21,10 @@ REQUIRED_FIELDS = ("year",)
 class DiagnosticSerializer(serializers.ModelSerializer):
     is_teledeclared = serializers.BooleanField(read_only=True)  # property
     is_filled = serializers.BooleanField(read_only=True)  # property
+
+    def add_appro_percentage_fields(self):
+        for field_name in Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES:
+            self.fields[field_name] = serializers.ReadOnlyField()
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -69,6 +72,10 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
         read_only_fields = fields
         model = Diagnostic
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_appro_percentage_fields()
+
     def to_representation(self, instance):
         """
         To facilitate the handling and merging of diagnostic in the front-end, we will include only appro
@@ -76,7 +83,6 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
         This method pops non-appro fields if that is the case from the JSON representation
         """
         representation = super().to_representation(instance)
-        representation = appro_to_percentages(representation, instance)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
             [representation.pop(field, "") for field in Diagnostic.NON_APPRO_FIELDS]
         if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
@@ -90,20 +96,20 @@ class PublicDiagnosticSerializer(DiagnosticSerializer):
         fields = FIELDS
         read_ony_fields = FIELDS
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_appro_percentage_fields()
 
 
 class PublicApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS
-        read_only_fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS
+        read_only_fields = Diagnostic.META_FIELDS
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_appro_percentage_fields()
 
 
 class PublicServiceDiagnosticSerializer(DiagnosticSerializer):
@@ -187,12 +193,12 @@ class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
 class ApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
-        read_only_fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS
+        read_only_fields = Diagnostic.META_FIELDS
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_appro_percentage_fields()
 
 
 class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
