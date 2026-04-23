@@ -22,10 +22,6 @@ class DiagnosticSerializer(serializers.ModelSerializer):
     is_teledeclared = serializers.BooleanField(read_only=True)  # property
     is_filled = serializers.BooleanField(read_only=True)  # property
 
-    def add_appro_percentage_fields(self):
-        for field_name in Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES:
-            self.fields[field_name] = serializers.ReadOnlyField()
-
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if (
@@ -68,13 +64,9 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
     """
 
     class Meta:
-        fields = FIELDS
-        read_only_fields = fields
         model = Diagnostic
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.add_appro_percentage_fields()
+        fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES
+        read_only_fields = fields
 
     def to_representation(self, instance):
         """
@@ -93,30 +85,22 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
 class PublicDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = FIELDS
-        read_ony_fields = FIELDS
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.add_appro_percentage_fields()
+        fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES
+        read_only_fields = fields
 
 
 class PublicApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS
-        read_only_fields = Diagnostic.META_FIELDS
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.add_appro_percentage_fields()
+        fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES
+        read_only_fields = fields
 
 
 class PublicServiceDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
-        read_only_fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
+        read_only_fields = fields
 
 
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
@@ -193,12 +177,8 @@ class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
 class ApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS
-        read_only_fields = Diagnostic.META_FIELDS
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.add_appro_percentage_fields()
+        fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES
+        read_only_fields = fields
 
 
 class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
