@@ -6,6 +6,31 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.31.0](https://github.com/betagouv/ma-cantine/compare/v2026.30.1...v2026.31.0) (2026-04-23)
+
+
+### Nouveautés
+
+* **Tableau de bord:** ajoute le filtre bilan télédéclaré ([#6655](https://github.com/betagouv/ma-cantine/issues/6655)) ([128b3a1](https://github.com/betagouv/ma-cantine/commit/128b3a1536c1d676f48f1ee6a686b5763d782861))
+
+
+### Améliorations
+
+* **Admin:** Diagnostics: nouveau filtre à droite pour afficher les TD générées [1TD1Site] ([#6582](https://github.com/betagouv/ma-cantine/issues/6582)) ([6ed3c60](https://github.com/betagouv/ma-cantine/commit/6ed3c60a26fcf63026ad60801531a5338765d7d6))
+* **Filtre:** ajoute la possibilité d'afficher un indicateur du nombre de filtre sélectionnés dans la liste déroulant ([#6654](https://github.com/betagouv/ma-cantine/issues/6654)) ([e7f2bc0](https://github.com/betagouv/ma-cantine/commit/e7f2bc034a57c3404c5c6cbe842acc2878ab3240))
+* **Tableau de bord:** Colonne 'commune': cacher le message "Non renseignée" pour les groupes ([#6653](https://github.com/betagouv/ma-cantine/issues/6653)) ([80f1d14](https://github.com/betagouv/ma-cantine/commit/80f1d147be8a369721659aa914b732ce9d68f35e))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines publiques:** ne pas renvoyer les valeur brutes du bilan et se baser uniquement sur les pourcentages et badge ([#6663](https://github.com/betagouv/ma-cantine/issues/6663)) ([d054274](https://github.com/betagouv/ma-cantine/commit/d0542740edc280713769779b0f66a66af7d51d0c))
+* **Diagnostics:** API: renvoyer que des pourcentage d'appro. les calculer dans le modèle au lieu d'un utils. ([#6664](https://github.com/betagouv/ma-cantine/issues/6664)) ([e1588d1](https://github.com/betagouv/ma-cantine/commit/e1588d11b3cd7b5840259a18ddebc8b6c2b0887b))
+
+
+### Technique
+
+* **Dette Technique:** enlever le code lié aux anciens imports bilans ([#6642](https://github.com/betagouv/ma-cantine/issues/6642)) ([89ebe55](https://github.com/betagouv/ma-cantine/commit/89ebe5585cbac264a5fcbdde534ed78cb62b7ebb))
+
 ## [2026.30.1](https://github.com/betagouv/ma-cantine/compare/v2026.30.0...v2026.30.1) (2026-04-20)
 
 
