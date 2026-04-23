@@ -227,6 +227,9 @@ export const hasApproGraphData = (diagnostic) => {
 
 export const getSustainableTotal = (diagnostic) => {
   const sustainableSum =
+    (diagnostic.valeurSiqo || 0) +
+    (diagnostic.valeurExternalitesPerformance || 0) +
+    (diagnostic.valeurEgalimAutres || 0) +
     (diagnostic.percentageValeurSiqo || 0) +
     (diagnostic.percentageValeurExternalitesPerformance || 0) +
     (diagnostic.percentageValeurEgalimAutres || 0)
