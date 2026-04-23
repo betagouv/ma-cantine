@@ -12,7 +12,6 @@ from .diagnostic import (
     FullDiagnosticSerializer,
     PublicApproDiagnosticSerializer,
     PublicDiagnosticSerializer,
-    PublicServiceDiagnosticSerializer,
 )
 from .managerinvitation import ManagerInvitationSerializer
 from .resourceaction import ResourceActionFullSerializer
@@ -136,9 +135,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
     appro_diagnostics = PublicApproDiagnosticSerializer(
         source="published_appro_diagnostics", many=True, read_only=True
     )
-    service_diagnostics = PublicServiceDiagnosticSerializer(
-        source="published_service_diagnostics", many=True, read_only=True
-    )
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), read_only=True)
@@ -152,7 +148,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "appro_diagnostics",
-            "service_diagnostics",
             "city",
             "city_insee_code",
             "postal_code",

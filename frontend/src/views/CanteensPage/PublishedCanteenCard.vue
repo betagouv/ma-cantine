@@ -63,7 +63,7 @@
 <script>
 import CanteenIndicators from "@/components/CanteenIndicators"
 import ProductionTypeTag from "@/components/ProductionTypeTag"
-import { getSustainableTotal, toPercentage } from "@/utils"
+import { getSustainableTotal, getPercentage, toPercentage } from "@/utils"
 import badges from "@/badges"
 
 export default {
@@ -105,7 +105,8 @@ export default {
     },
     sustainablePercent() {
       if (!this.approDiagnostic) return
-      return toPercentage(getSustainableTotal(this.approDiagnostic))
+      // Only return the percentage value of appro with the public canteen endpoint
+      return getPercentage(getSustainableTotal(this.approDiagnostic), this.approDiagnostic.percentageValeurTotale)
     },
     hasPercentages() {
       return this.bioPercent || this.sustainablePercent

@@ -14,7 +14,6 @@ export default {
   props: {
     badge: Object,
     canteen: Object,
-    diagnostics: Array,
   },
 }
 </script>
