@@ -192,7 +192,7 @@ class ApproDiagnosticSerializer(DiagnosticSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance, remove_values=False)
+        return appro_to_percentages(representation, instance)
 
 
 class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
