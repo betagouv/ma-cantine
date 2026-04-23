@@ -65,7 +65,7 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
 
     class Meta:
         model = Diagnostic
-        fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES
+        fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
         read_only_fields = fields
 
     def to_representation(self, instance):
@@ -85,14 +85,14 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
 class PublicDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES
+        fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
         read_only_fields = fields
 
 
 class PublicApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES
+        fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
         read_only_fields = fields
 
 
@@ -177,7 +177,7 @@ class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
 class ApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_NAMES
+        fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
         read_only_fields = fields
 
 
