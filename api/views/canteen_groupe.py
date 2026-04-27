@@ -62,7 +62,7 @@ class CanteenGroupeSatelliteLinkView(APIView):
             if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
                 return JsonResponse(
                     {
-                        "error": "Vous ne pouvez pas ajouter de restaurant satellite à votre groupe, car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir ajouter le restaurant satellite.",
+                        "error": "Vous ne pouvez pas ajouter de restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour ajouter le restaurant satellite ; télédéclarer à nouveau le bilan du groupe.",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -96,7 +96,7 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
             if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
                 return JsonResponse(
                     {
-                        "error": "Vous ne pouvez pas retirer de restaurant satellite à votre groupe, car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir retirer le restaurant satellite.",
+                        "error": "Vous ne pouvez pas retirer le restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour retirer le restaurant satellite ; télédéclarer à nouveau le bilan du groupe.",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
