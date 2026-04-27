@@ -90,7 +90,7 @@ class Command(BaseCommand):
         apply = options["apply"]
 
         if not apply:
-            print("Dry run mode, no changes will be applied.")
+            logger.info("Dry run mode, no changes will be applied.")
 
         # stats before
         canteen_central_all_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL)
