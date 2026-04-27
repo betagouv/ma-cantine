@@ -46,6 +46,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
 
             # Cancel the teledeclaration
             diagnostic.cancel()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
             # Run the script
             call_command("teledeclaration_submit_correction", year=2024)
@@ -127,7 +128,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             diagnostic_draft = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
 
             # Before running the script
-            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
+            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 0)
             self.assertFalse(diagnostic_draft.is_teledeclared)
 
         with freeze_time("2025-04-17"):  # during the 2024 correction campaign
@@ -141,10 +142,8 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
 
     @authenticate
     def test_skip_diagnostic_if_diagnostic_validation_error(self):
-        """
-        The script should skip diagnostics that raise a ValidationError during teledeclaration.
-        """
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -152,15 +151,16 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Cancel the teledeclaration
             diagnostic.cancel()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
             # Change the diagnostic to make it invalid
-            Diagnostic.objects.filter(id=diagnostic.id).update(
-                valeur_totale=500, valeur_bio=1000
-            )  # valeur_bio > valeur_totale
+            Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0)
+            diagnostic.refresh_from_db()
+            self.assertFalse(diagnostic.is_filled)  # property
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Run the script
             call_command("teledeclaration_submit_correction", year=2024)
 
@@ -170,10 +170,8 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
 
     @authenticate
     def test_skip_diagnostic_if_canteen_validation_error(self):
-        """
-        The script should skip diagnostics that raise a ValidationError during teledeclaration.
-        """
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -181,13 +179,16 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Cancel the teledeclaration
             diagnostic.cancel()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
             # Change the canteen to make it invalid
-            Canteen.objects.filter(id=canteen.id).update(city_insee_code=None)
+            canteen.city_insee_code = None
+            canteen.save()
+            self.assertFalse(canteen.is_filled)  # model field
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Run the script
             call_command("teledeclaration_submit_correction", year=2024)
 

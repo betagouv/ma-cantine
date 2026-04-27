@@ -45,7 +45,9 @@ class Command(BaseCommand):
         # loop on each diagnostic
         for diagnostic in diagnostics_qs:
             # get the (previous) applicant
-            diagnostic_applicant = diagnostic.history.first().applicant
+            diagnostic_applicant = (
+                diagnostic.history.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED).first().applicant
+            )
             # teledeclare
             try:
                 diagnostic.teledeclare(applicant=diagnostic_applicant)
