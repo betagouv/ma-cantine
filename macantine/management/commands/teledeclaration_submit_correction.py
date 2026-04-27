@@ -13,7 +13,7 @@ from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 from simple_history.utils import update_change_reason
 
-from data.models import Diagnostic
+from data.models import Diagnostic, User
 
 
 logger = logging.getLogger(__name__)
@@ -45,9 +45,12 @@ class Command(BaseCommand):
         # loop on each diagnostic
         for diagnostic in diagnostics_qs:
             # get the (previous) applicant
-            diagnostic_applicant = (
-                diagnostic.history.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED).first().applicant
-            )
+            try:
+                diagnostic_applicant = (
+                    diagnostic.history.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED).first().applicant
+                )
+            except User.DoesNotExist:
+                diagnostic_applicant = None
             # teledeclare
             try:
                 diagnostic.teledeclare(applicant=diagnostic_applicant)

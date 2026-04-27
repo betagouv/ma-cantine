@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from data.models.canteen import Canteen, fill_geo_fields_from_siret
 from data.models import Diagnostic
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 
 
 class TeledeclarationSubmitCorrectionScriptTest(TestCase):
@@ -188,6 +188,33 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             canteen.city_insee_code = None
             canteen.save()
             self.assertFalse(canteen.is_filled)  # model field
+
+            # Run the script
+            call_command("teledeclaration_submit_correction", year=2024)
+
+            # After running the script, the diagnostic should still be in CORRECTION (teledeclaration failed)
+            diagnostic.refresh_from_db()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
+
+    @authenticate
+    def test_skip_diagnostic_if_canteen_applicant_deleted(self):
+        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        user = UserFactory()
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
+            diagnostic.teledeclare(applicant=user)
+
+            # Before running the script
+            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            # Cancel the teledeclaration
+            diagnostic.cancel()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
+
+            # Change the canteen to make it invalid
+            user.delete()
 
             # Run the script
             call_command("teledeclaration_submit_correction", year=2024)
