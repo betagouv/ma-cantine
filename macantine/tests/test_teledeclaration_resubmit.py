@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from data.models.canteen import Canteen, fill_geo_fields_from_siret
 from data.models import Diagnostic
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 
 
 class TeledeclarationResubmitScriptTest(TestCase):
@@ -182,7 +182,7 @@ class TeledeclarationResubmitScriptTest(TestCase):
             self.assertFalse(diagnostic.is_filled)  # property
 
         with freeze_time("2025-04-17"):  # during the 2024 correction campaign
-            # Run the script with the diagnostic ID
+            # Run the script
             call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=str(diagnostic.id))
 
             # After running the script, the diagnostic should still be teledeclared (resubmission failed)
@@ -206,7 +206,30 @@ class TeledeclarationResubmitScriptTest(TestCase):
             self.assertFalse(canteen.is_filled)  # model field
 
         with freeze_time("2025-04-17"):  # during the 2024 correction campaign
-            # Run the script with the diagnostic ID
+            # Run the script
+            call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=str(diagnostic.id))
+
+            # After running the script, the diagnostic should still be teledeclared (resubmission failed)
+            diagnostic.refresh_from_db()
+            self.assertTrue(diagnostic.is_teledeclared)
+
+    @authenticate
+    def test_skip_diagnostic_if_canteen_applicant_deleted(self):
+        canteen = CanteenFactory()
+        user = UserFactory()
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
+            diagnostic.teledeclare(applicant=user)
+
+            # Before running the script
+            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            # Delete the user
+            user.delete()
+
+            # Run the script
             call_command("teledeclaration_resubmit", year=2024, teledeclaration_id_list=str(diagnostic.id))
 
             # After running the script, the diagnostic should still be teledeclared (resubmission failed)

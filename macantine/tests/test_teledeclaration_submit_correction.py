@@ -169,7 +169,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
 
     @authenticate
     def test_skip_diagnostic_if_canteen_validation_error(self):
-        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        canteen = CanteenFactory()
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
@@ -197,7 +197,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
 
     @authenticate
     def test_skip_diagnostic_if_canteen_applicant_deleted(self):
-        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        canteen = CanteenFactory()
         user = UserFactory()
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
@@ -212,7 +212,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             diagnostic.cancel()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
-            # Change the canteen to make it invalid
+            # Delete the user
             user.delete()
 
             # Run the script
