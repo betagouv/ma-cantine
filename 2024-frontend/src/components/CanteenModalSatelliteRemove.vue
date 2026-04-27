@@ -55,7 +55,7 @@ const unlinkSatellite = () => {
   >
     <template #default>
       <p class="fr-mb-2w">
-        En confirmant cette demande « {{ satellite.name }} » ne fera plus parti des restaurants fournis par votre
+        En confirmant cette demande « {{ satellite.name }} » ne fera plus partie des restaurants fournis par votre
         groupe « {{ groupe.name }} » et donc :
       </p>
       <ul>
@@ -66,7 +66,7 @@ const unlinkSatellite = () => {
         </li>
         <li>
           <p>
-            si vous avez déjà effecté une télédéclaration ses donnnées seront conservées
+            si vous avez déjà effecté une télédéclaration ses données seront conservées
           </p>
         </li>
       </ul>
