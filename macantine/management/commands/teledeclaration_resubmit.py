@@ -28,7 +28,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--year",
-            dest="year",
             type=int,
             required=True,
             help="Year of the teledeclaration campaign to process",
@@ -38,7 +37,7 @@ class Command(BaseCommand):
             dest="teledeclaration_id_list",
             type=str,
             required=True,
-            help="Comma-seperated list of diagnostic IDs to process",
+            help="Comma-separated list of diagnostic IDs to process",
         )
 
     def handle(self, *args, **options):

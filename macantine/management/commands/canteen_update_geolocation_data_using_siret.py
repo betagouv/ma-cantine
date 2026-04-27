@@ -39,14 +39,13 @@ class Command(BaseCommand):
         parser.add_argument(
             "--logging",
             action="store_true",
-            dest="logging",
             help="Enable logging of canteens with SIRET issues (unknown, closed, city_insee_code mismatch, postal_code mismatch).",
         )
         parser.add_argument(
             "--apply",
             action="store_true",
-            dest="apply",
-            help="Apply changes to database. If omitted, command runs in dry-run mode.",
+            help="To apply changes, otherwise just show what would be done (dry run).",
+            default=False,
         )
 
     def handle(self, *args, **options):
