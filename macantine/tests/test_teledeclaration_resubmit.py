@@ -20,10 +20,8 @@ class TeledeclarationResubmitScriptTest(TestCase):
 
     @authenticate
     def test_resubmit_single_diagnostic(self):
-        """
-        The script should resubmit a single teledeclared diagnostic.
-        """
         canteen = CanteenFactory(name="First name", city_insee_code="38185")
+
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(
                 canteen=canteen,
@@ -60,9 +58,6 @@ class TeledeclarationResubmitScriptTest(TestCase):
 
     @authenticate
     def test_resubmit_multiple_diagnostics(self):
-        """
-        The script should resubmit multiple teledeclared diagnostics.
-        """
         canteen_1 = CanteenFactory()
         canteen_2 = CanteenFactory()
         canteen_3 = CanteenFactory()
@@ -95,10 +90,8 @@ class TeledeclarationResubmitScriptTest(TestCase):
 
     @authenticate
     def test_skip_diagnostic_from_different_year(self):
-        """
-        The script should skip diagnostics that are from a different year than specified.
-        """
         canteen = CanteenFactory()
+
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic_2024 = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic_2024.teledeclare(applicant=authenticate.user)
@@ -121,9 +114,6 @@ class TeledeclarationResubmitScriptTest(TestCase):
 
     @authenticate
     def test_skip_diagnostic_not_teledeclared(self):
-        """
-        The script should skip diagnostics that are not teledeclared.
-        """
         canteen_1 = CanteenFactory()
         canteen_2 = CanteenFactory()
 
@@ -156,10 +146,8 @@ class TeledeclarationResubmitScriptTest(TestCase):
 
     @authenticate
     def test_skip_diagnostic_not_found(self):
-        """
-        The script should gracefully handle non-existent diagnostic IDs by simply skipping them.
-        """
         canteen = CanteenFactory()
+
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -179,10 +167,8 @@ class TeledeclarationResubmitScriptTest(TestCase):
 
     @authenticate
     def test_skip_diagnostic_if_diagnostic_validation_error(self):
-        """
-        The script should skip diagnostics that raise a ValidationError during teledeclaration.
-        """
         canteen = CanteenFactory()
+
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -191,9 +177,9 @@ class TeledeclarationResubmitScriptTest(TestCase):
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
             # Change the diagnostic to make it invalid
-            Diagnostic.objects.filter(id=diagnostic.id).update(
-                valeur_totale=500, valeur_bio=1000
-            )  # valeur_bio > valeur_totale
+            Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0)
+            diagnostic.refresh_from_db()
+            self.assertFalse(diagnostic.is_filled)  # property
 
         with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Run the script with the diagnostic ID
@@ -205,10 +191,8 @@ class TeledeclarationResubmitScriptTest(TestCase):
 
     @authenticate
     def test_skip_diagnostic_if_canteen_validation_error(self):
-        """
-        The script should skip diagnostics that raise a ValidationError during teledeclaration.
-        """
         canteen = CanteenFactory()
+
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -217,7 +201,9 @@ class TeledeclarationResubmitScriptTest(TestCase):
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
             # Change the canteen to make it invalid
-            Canteen.objects.filter(id=canteen.id).update(city_insee_code=None)
+            canteen.city_insee_code = None
+            canteen.save()
+            self.assertFalse(canteen.is_filled)  # model field
 
         with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Run the script with the diagnostic ID

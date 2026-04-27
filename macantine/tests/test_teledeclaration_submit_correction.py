@@ -21,6 +21,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
     @authenticate
     def test_submit_single_diagnostic_in_correction(self):
         canteen = CanteenFactory(name="First name", city_insee_code="38185")
+
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(
                 canteen=canteen,
@@ -116,7 +117,6 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
 
             # After running the script, the diagnostic should still be teledeclared (not cancelled and re-teledeclared)
             diagnostic_teledeclared.refresh_from_db()
-
             self.assertTrue(diagnostic_teledeclared.is_teledeclared)
             self.assertEqual(diagnostic_teledeclared.teledeclaration_date, original_teledeclaration_date)
 
@@ -137,7 +137,6 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
 
             # After running the script, the diagnostic should still be in draft (not teledeclared)
             diagnostic_draft.refresh_from_db()
-
             self.assertFalse(diagnostic_draft.is_teledeclared)
 
     @authenticate
