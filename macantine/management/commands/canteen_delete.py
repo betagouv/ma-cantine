@@ -22,7 +22,7 @@ class Command(BaseCommand):
             dest="canteen_siret_list",
             type=str,
             required=True,
-            help="Comma-seperated list of canteen SIRETs to process",
+            help="Comma-separated list of canteen SIRETs to process",
         )
 
     def handle(self, *args, **options):

@@ -20,7 +20,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--year",
-            dest="year",
             type=int,
             required=True,
             help="Year of the teledeclaration campaign to process",

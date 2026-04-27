@@ -27,7 +27,7 @@ class Command(BaseCommand):
         apply = options["apply"]
 
         if not apply:
-            print("Dry run mode, no changes will be applied.")
+            logger.info("Dry run mode, no changes will be applied.")
 
         canteens_all_qs = Canteen.all_objects.all()
         logger.info(f"Found {canteens_all_qs.count()} canteens to process")
