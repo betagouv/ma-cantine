@@ -15,6 +15,7 @@ import logging
 from django.db import transaction
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
+from simple_history.utils import update_change_reason
 
 from data.models import Diagnostic
 
@@ -72,6 +73,7 @@ class Command(BaseCommand):
                     # in a transaction, because the canteen or diagnostic may be in an invalid state and fail to teledeclare again...
                     diagnostic.cancel()
                     diagnostic.teledeclare(applicant=diagnostic_applicant)
+                    update_change_reason(diagnostic, "Script: teledeclaration_resubmit")
                     teledeclaration_resubmitted_count += 1
             except (AttributeError, ValidationError) as e:
                 logger.error(f"Error teledeclaring diagnostic {diagnostic.id}: {e}")
