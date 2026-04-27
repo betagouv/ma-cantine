@@ -225,7 +225,7 @@ export const hasApproGraphData = (diagnostic) => {
   return graphDataKeys.some((k) => Object.hasOwn(diagnostic, k))
 }
 
-export const getSustainableTotal = (diagnostic, options) => {
+export const getSustainableTotal = (diagnostic, type) => {
   const valeurSiqo = diagnostic.valeurSiqo || 0
   const valeurExternalitesPerformance = diagnostic.valeurExternalitesPerformance || 0
   const valeurEgalimAutres = diagnostic.valeurEgalimAutres || 0
@@ -236,7 +236,7 @@ export const getSustainableTotal = (diagnostic, options) => {
   const sumAllValues = valeurSiqo + valeurExternalitesPerformance + valeurEgalimAutres
   const sumAllPourcentages = pourcentageSiqo + pourcentageExternalitesPerformance + pourcentageEgalimAutres
 
-  return options?.percentageOnly ? sumAllPourcentages : sumAllValues
+  return type === "pourcentages" ? sumAllPourcentages : sumAllValues
 }
 
 // returns a dict of integers (null/0-100) for the appro %
