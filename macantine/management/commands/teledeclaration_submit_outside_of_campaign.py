@@ -92,13 +92,14 @@ class Command(BaseCommand):
                 logger.warning(f"Diagnostic {diagnostic.id} is already teledeclared, skipping")
                 continue
             # teledeclare
-            try:
-                diagnostic.teledeclare(applicant=applicant, skip_validations=True)
-                update_change_reason(diagnostic, "Script: teledeclaration_submit_outside_of_campaign")
-                teledeclaration_submitted_count += 1
-            except (AttributeError, ValidationError) as e:
-                logger.error(f"Error teledeclaring diagnostic {diagnostic.id}: {e}")
-                continue  # skip to next diagnostic
+            if apply:
+                try:
+                    diagnostic.teledeclare(applicant=applicant, skip_validations=True)
+                    update_change_reason(diagnostic, "Script: teledeclaration_submit_outside_of_campaign")
+                    teledeclaration_submitted_count += 1
+                except (AttributeError, ValidationError) as e:
+                    logger.error(f"Error teledeclaring diagnostic {diagnostic.id}: {e}")
+                    continue  # skip to next diagnostic
 
         result = f"Teledeclarations submitted (outside of campaign): {teledeclaration_submitted_count} out of {diagnostics_qs.count()} for year {year}"
         logger.info(f"Task completed: {result}")
