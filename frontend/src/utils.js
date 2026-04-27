@@ -225,15 +225,18 @@ export const hasApproGraphData = (diagnostic) => {
   return graphDataKeys.some((k) => Object.hasOwn(diagnostic, k))
 }
 
-export const getSustainableTotal = (diagnostic) => {
-  const sustainableSum =
-    (diagnostic.valeurSiqo || 0) +
-    (diagnostic.valeurExternalitesPerformance || 0) +
-    (diagnostic.valeurEgalimAutres || 0) +
-    (diagnostic.percentageValeurSiqo || 0) +
-    (diagnostic.percentageValeurExternalitesPerformance || 0) +
-    (diagnostic.percentageValeurEgalimAutres || 0)
-  return sustainableSum
+export const getSustainableTotal = (diagnostic, options) => {
+  const valeurSiqo = diagnostic.valeurSiqo || 0
+  const valeurExternalitesPerformance = diagnostic.valeurExternalitesPerformance || 0
+  const valeurEgalimAutres = diagnostic.valeurEgalimAutres || 0
+  const pourcentageSiqo = diagnostic.percentageValeurSiqo || 0
+  const pourcentageExternalitesPerformance = diagnostic.percentageValeurExternalitesPerformance || 0
+  const pourcentageEgalimAutres = diagnostic.percentageValeurEgalimAutres || 0
+
+  const sumAllValues = valeurSiqo + valeurExternalitesPerformance + valeurEgalimAutres
+  const sumAllPourcentages = pourcentageSiqo + pourcentageExternalitesPerformance + pourcentageEgalimAutres
+
+  return options?.percentageOnly ? sumAllPourcentages : sumAllValues
 }
 
 // returns a dict of integers (null/0-100) for the appro %
