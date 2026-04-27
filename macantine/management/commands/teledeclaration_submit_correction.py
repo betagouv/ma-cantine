@@ -11,6 +11,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
+from simple_history.utils import update_change_reason
 
 from data.models import Diagnostic
 
@@ -48,6 +49,7 @@ class Command(BaseCommand):
             # teledeclare
             try:
                 diagnostic.teledeclare(applicant=diagnostic_applicant)
+                update_change_reason(diagnostic, "Script: teledeclaration_submit_correction")
                 teledeclaration_correction_submitted_count += 1
             except (AttributeError, ValidationError) as e:
                 logger.error(f"Error teledeclaring diagnostic {diagnostic.id}: {e}")

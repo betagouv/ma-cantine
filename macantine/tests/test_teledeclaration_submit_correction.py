@@ -164,7 +164,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             # Run the script
             call_command("teledeclaration_submit_correction", year=2024)
 
-            # After running the script, the diagnostic should still be in CORRECTION (resubmission failed)
+            # After running the script, the diagnostic should still be in CORRECTION (teledeclaration failed)
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
@@ -191,6 +191,6 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             # Run the script
             call_command("teledeclaration_submit_correction", year=2024)
 
-            # After running the script, the diagnostic should still be in CORRECTION (resubmission failed)
+            # After running the script, the diagnostic should still be in CORRECTION (teledeclaration failed)
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
