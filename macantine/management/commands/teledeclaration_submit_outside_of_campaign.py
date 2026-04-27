@@ -15,7 +15,11 @@ from simple_history.utils import update_change_reason
 from django.utils import timezone
 
 from data.models import Diagnostic, User
-from macantine.utils import get_year_campaign_start_date
+from macantine.utils import (
+    get_year_campaign_start_date,
+    get_year_campaign_end_date_or_today_date,
+    get_year_correction_end_date_or_campaign_end_date_or_today_date,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +31,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--year",
-            dest="year",
             type=int,
             required=True,
             help="Year of the teledeclaration campaign to process",
@@ -64,6 +67,7 @@ class Command(BaseCommand):
         applicant_id = options["applicant_id"]
         logger.info(f"Applicant ID in input: {applicant_id}")
         apply = options["apply"]
+        now = timezone.now()
 
         if not apply:
             logger.info("Dry run mode, no changes will be applied.")
@@ -75,7 +79,7 @@ class Command(BaseCommand):
         applicant = User.objects.get(id=applicant_id)
         logger.info(f"Applicant found: {applicant}")
 
-        if timezone.now() < get_year_campaign_start_date(year):
+        if now < get_year_campaign_start_date(year):
             logger.error(
                 f"The campaign for year {year} has not started yet. Start date: {get_year_campaign_start_date(year)}. Aborting."
             )
@@ -91,6 +95,20 @@ class Command(BaseCommand):
             if diagnostic.is_teledeclared:
                 logger.warning(f"Diagnostic {diagnostic.id} is already teledeclared, skipping")
                 continue
+            # diagnostic DRAFT: must be after campaign end date
+            if diagnostic.status == Diagnostic.DiagnosticStatus.DRAFT:
+                if now < get_year_campaign_end_date_or_today_date(year):
+                    logger.warning(
+                        f"Diagnostic {diagnostic.id} is in DRAFT status but the campaign for year {year} has not ended yet, skipping"
+                    )
+                    continue
+            # diagnostic CORRECTION: must be after campaign end date
+            if diagnostic.status == Diagnostic.DiagnosticStatus.CORRECTION:
+                if now < get_year_correction_end_date_or_campaign_end_date_or_today_date(year):
+                    logger.warning(
+                        f"Diagnostic {diagnostic.id} is in CORRECTION status but the correction campaign for year {year} has not ended yet, skipping"
+                    )
+                    continue
             # teledeclare
             if apply:
                 try:

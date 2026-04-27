@@ -106,7 +106,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             self.assertFalse(diagnostic.is_teledeclared)
 
     @authenticate
-    def test_submit_diagnostic_during_campaign(self):
+    def test_cannot_submit_diagnostic_draft_during_campaign(self):
         canteen = CanteenFactory()
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
@@ -124,21 +124,25 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 apply=True,
             )
 
-            # After running the script, the diagnostic should be teledeclared
+            # After running the script, the diagnostic should not be teledeclared
             diagnostic.refresh_from_db()
-            self.assertTrue(diagnostic.is_teledeclared)
+            self.assertFalse(diagnostic.is_teledeclared)
 
     @authenticate
-    def test_submit_diagnostic_during_correction_campaign(self):
+    def test_cannot_submit_diagnostic_correction_during_correction_campaign(self):
         canteen = CanteenFactory()
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
+            diagnostic.teledeclare(applicant=authenticate.user)
 
             # Before running the script
-            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 0)
+            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
         with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            # Cancel the teledeclaration
+            diagnostic.cancel()
+
             # Run the script
             call_command(
                 "teledeclaration_submit_outside_of_campaign",
@@ -148,9 +152,9 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 apply=True,
             )
 
-            # After running the script, the diagnostic should be teledeclared
+            # After running the script, the diagnostic should not be teledeclared
             diagnostic.refresh_from_db()
-            self.assertTrue(diagnostic.is_teledeclared)
+            self.assertFalse(diagnostic.is_teledeclared)
 
     @authenticate
     def test_skip_diagnostic_from_different_year(self):
