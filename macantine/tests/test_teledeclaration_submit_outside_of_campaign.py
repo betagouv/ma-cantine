@@ -299,3 +299,33 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             # After running the script, the diagnostic should be teledeclared
             diagnostic.refresh_from_db()
             self.assertTrue(diagnostic.is_teledeclared)
+
+    @authenticate
+    def test_submit_diagnostic_even_if_satellite_validation_error(self):
+        groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(canteen=groupe, year=2024, valeur_totale=10000, valeur_bio=2000)
+
+            # Before running the script
+            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 0)
+
+            # Change the satellite canteen to make it invalid
+            satellite.city_insee_code = None
+            satellite.save()
+            self.assertFalse(satellite.is_filled)  # model field
+
+        with freeze_time("2025-08-30"):  # after the 2024 campaign
+            # Run the script
+            call_command(
+                "teledeclaration_submit_outside_of_campaign",
+                year=2024,
+                diagnostic_id_list=str(diagnostic.id),
+                applicant_id=authenticate.user.id,
+                apply=True,
+            )
+
+            # After running the script, the diagnostic should be teledeclared
+            diagnostic.refresh_from_db()
+            self.assertTrue(diagnostic.is_teledeclared)
