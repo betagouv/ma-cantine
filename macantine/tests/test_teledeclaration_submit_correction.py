@@ -196,6 +196,37 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
     @authenticate
+    def test_skip_diagnostic_if_canteen_satellite_validation_error(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe
+        )
+
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(canteen=canteen_groupe, year=2024, valeur_totale=10000, valeur_bio=2000)
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+            # Before running the script
+            self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            # Cancel the teledeclaration
+            diagnostic.cancel()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
+
+            # Change the satellite canteen to make it invalid
+            canteen_satellite.city_insee_code = None
+            canteen_satellite.save()
+            self.assertFalse(canteen_satellite.is_filled)  # model field
+
+            # Run the script
+            call_command("teledeclaration_submit_correction", year=2024)
+
+            # After running the script, the diagnostic should still be in CORRECTION (teledeclaration failed)
+            diagnostic.refresh_from_db()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
+
+    @authenticate
     def test_skip_diagnostic_if_canteen_applicant_deleted(self):
         canteen = CanteenFactory()
         user = UserFactory()
