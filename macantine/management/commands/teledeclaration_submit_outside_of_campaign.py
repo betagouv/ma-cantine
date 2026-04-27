@@ -12,8 +12,10 @@ import logging
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 from simple_history.utils import update_change_reason
+from django.utils import timezone
 
 from data.models import Diagnostic, User
+from macantine.utils import get_year_campaign_start_date
 
 
 logger = logging.getLogger(__name__)
@@ -46,6 +48,7 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "--apply",
+            action="store_true",
             help="To apply changes, otherwise just show what would be done (dry run).",
             default=False,
         )
@@ -72,6 +75,12 @@ class Command(BaseCommand):
         applicant = User.objects.get(id=applicant_id)
         logger.info(f"Applicant found: {applicant}")
 
+        if timezone.now() < get_year_campaign_start_date(year):
+            logger.error(
+                f"The campaign for year {year} has not started yet. Start date: {get_year_campaign_start_date(year)}. Aborting."
+            )
+            return
+
         # loop on each diagnostic
         for diagnostic in diagnostics_qs:
             # diagnostic must be in the right year
@@ -84,7 +93,7 @@ class Command(BaseCommand):
                 continue
             # teledeclare
             try:
-                diagnostic.teledeclare(applicant=applicant)
+                diagnostic.teledeclare(applicant=applicant, skip_validations=True)
                 update_change_reason(diagnostic, "Script: teledeclaration_submit_outside_of_campaign")
                 teledeclaration_submitted_count += 1
             except (AttributeError, ValidationError) as e:

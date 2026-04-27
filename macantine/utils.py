@@ -211,6 +211,14 @@ def is_in_teledeclaration_or_correction(year=None):
     return is_in_teledeclaration(year) or is_in_correction(year)
 
 
+def get_year_campaign_start_date(year):
+    year = int(year)
+    if year in CAMPAIGN_DATES:
+        return CAMPAIGN_DATES[year]["teledeclaration_start_date"]
+    else:
+        return None
+
+
 def get_year_campaign_end_date_or_today_date(year):
     """
     Return the year's campaign end date
