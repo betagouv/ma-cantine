@@ -2028,6 +2028,8 @@ class Diagnostic(models.Model):
                     raise ValidationError(
                         f"{self.canteen.satellites_missing_data_count} satellites du groupe associée à ce diagnostic ne sont pas remplis"
                     )
+            # TODO: check if the applicant is in the canteen.managers ?
+            # TODO: run diagnostic.full_clean() (validators) ?
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 

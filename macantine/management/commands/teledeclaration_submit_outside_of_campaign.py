@@ -1,6 +1,9 @@
 """
 Why this script?
-After the teledeclaration campaign, we might want to EXCEPTIONNALY submit some diagnostics.
+During or after the teledeclaration campaign, we might want to EXCEPTIONNALY submit some diagnostics.
+- DRAFT diagnostics: only if the campaign has ended (otherwise users can submit them by themselves)
+- CORRECTION diagnostics: only if the correction campaign has ended (otherwise users can submit them by themselves)
+- diagnostics must be from the right year
 
 How to run?
 python manage.py teledeclaration_submit_outside_of_campaign --year 2025 --diagnostic-id-list 123,456,789 --applicant-id 42
