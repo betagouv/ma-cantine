@@ -212,11 +212,13 @@ def is_in_teledeclaration_or_correction(year=None):
 
 
 def get_year_campaign_end_date_or_today_date(year):
+    """
+    Return the year's campaign end date
+    """
     year = int(year)
     now = timezone.now()
     if year in CAMPAIGN_DATES.keys():
-        campaign_end_date = CAMPAIGN_DATES[year]["teledeclaration_end_date"]
-        return now if campaign_end_date > now else CAMPAIGN_DATES[year]["teledeclaration_end_date"]
+        return CAMPAIGN_DATES[year]["teledeclaration_end_date"]
     elif year >= now.year:
         return now
     else:
@@ -224,12 +226,15 @@ def get_year_campaign_end_date_or_today_date(year):
 
 
 def get_year_correction_end_date_or_campaign_end_date_or_today_date(year):
+    """
+    Return the year's correction end date
+    Fallback to the year's campaign end date if it doens't exist
+    """
     year = int(year)
     now = timezone.now()
     if year in CAMPAIGN_DATES.keys():
         if CAMPAIGN_DATES[year]["correction_end_date"]:
-            correction_end_date = CAMPAIGN_DATES[year]["correction_end_date"]
-            return now if correction_end_date > now else CAMPAIGN_DATES[year]["correction_end_date"]
+            return CAMPAIGN_DATES[year]["correction_end_date"]
         else:
             return get_year_campaign_end_date_or_today_date(year)
     elif year >= now.year:
