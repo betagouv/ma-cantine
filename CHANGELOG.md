@@ -6,6 +6,21 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.33.0](https://github.com/betagouv/ma-cantine/compare/v2026.32.0...v2026.33.0) (2026-04-28)
+
+
+### Nouveautés
+
+* **Télédéclarations:** script pour permettre de télédéclarer une liste de bilans hors campagne ([#6671](https://github.com/betagouv/ma-cantine/issues/6671)) ([cf4a693](https://github.com/betagouv/ma-cantine/commit/cf4a69313c0a3fd6e8c369517fcde5f4fa12ef9c))
+
+
+### Technique
+
+* **Scripts:** petit ménage de printemps ([#6672](https://github.com/betagouv/ma-cantine/issues/6672)) ([26bb819](https://github.com/betagouv/ma-cantine/commit/26bb819e31610094cea8c965d2a110dd5a287d85))
+* **Télédéclarations:** clarifier les méthodes pour récupérer les dates de fin de campagne ([#6657](https://github.com/betagouv/ma-cantine/issues/6657)) ([43d3477](https://github.com/betagouv/ma-cantine/commit/43d3477d8a051919baef69adef09332315883db9))
+* **Télédéclarations:** homogénéiser les tests des scripts créé récemment ([#6673](https://github.com/betagouv/ma-cantine/issues/6673)) ([e95f052](https://github.com/betagouv/ma-cantine/commit/e95f05244ced65d040b8394ba43adb8db40ebdc2))
+* **Télédéclarations:** simplifier le code des règles métiers encadrant la TD ([#6656](https://github.com/betagouv/ma-cantine/issues/6656)) ([46a216e](https://github.com/betagouv/ma-cantine/commit/46a216e2e0d36b230b71b8d638ae8bacdd45d07c))
+
 ## [2026.32.0](https://github.com/betagouv/ma-cantine/compare/v2026.31.0...v2026.32.0) (2026-04-27)
 
 
