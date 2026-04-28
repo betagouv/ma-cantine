@@ -30,6 +30,8 @@ select
     canteen_id,
     year                                                as annee,
     teledeclaration_version                             as version,
+    creation_date                                       as date_creation,
+    modification_date                                   as date_modification,
     teledeclaration_date                                as date_teledeclaration,
     diagnostic_type,
     teledeclaration_mode,
@@ -83,10 +85,12 @@ select
     -- appro — valeurs
     valeur_totale,
     valeur_bio,
+    valeur_bio_dont_commerce_equitable,
     valeur_bio_agg,
     valeur_siqo_agg,
     valeur_externalites_performance_agg,
     valeur_egalim_autres_agg,
+    valeur_egalim_autres_dont_commerce_equitable,
     valeur_egalim_agg,
     valeur_egalim_agg_v2,
     valeur_egalim_hors_bio_agg,
@@ -101,6 +105,7 @@ select
     valeur_viandes_et_poissons_egalim,
 
     -- origine France
+    valeur_france,
     valeur_viandes_volailles_france,
     valeur_charcuterie_france,
     valeur_produits_de_la_mer_france,
@@ -261,7 +266,10 @@ select
     action_gaspi_formation,
     action_gaspi_distribution,
     action_gaspi_portions,
-    action_gaspi_reutilisation
+    action_gaspi_reutilisation,
+
+    -- stats annuelles
+    count(*) filter (where year = 2025) over ()         as nb_teledeclarations_2025
 
 from teledeclarations
 left join ref_departements on ref_departements.code_departement = teledeclarations.department

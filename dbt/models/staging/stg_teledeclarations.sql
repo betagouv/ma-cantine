@@ -72,6 +72,8 @@ renamed as (
         null::text                                                      as objectif_zone_geo,
 
         -- teledeclaration metadata
+        creation_date,
+        modification_date,
         teledeclaration_date,
         applicant_snapshot::jsonb ->> 'email'                           as applicant_email,
 
@@ -85,20 +87,18 @@ renamed as (
         -- appro — valeurs (cast text → float systématique)
         valeur_totale::float,
         valeur_bio::float,
+        valeur_bio_dont_commerce_equitable::float,
         valeur_bio_agg::float,
         valeur_siqo_agg::float,
         valeur_externalites_performance_agg::float,
         valeur_egalim_autres_agg::float,
+        valeur_egalim_autres_dont_commerce_equitable::float,
         valeur_egalim_agg::float,
         coalesce(valeur_bio::float, 0::float)
         + coalesce(valeur_siqo::float, 0::float)
         + coalesce(valeur_externalites_performance::float, 0::float)
         + coalesce(valeur_egalim_autres::float, 0::float)               as valeur_egalim_agg_v2,
-        coalesce(valeur_egalim_hors_bio_agg::float,
-            coalesce(valeur_siqo::float, 0::float)
-            + coalesce(valeur_externalites_performance::float, 0::float)
-            + coalesce(valeur_egalim_autres::float, 0::float)
-        )                                                               as valeur_egalim_hors_bio_agg,
+        valeur_egalim_hors_bio_agg::float,
         valeur_siqo::float,
         valeur_externalites_performance::float,
         valeur_egalim_autres::float,
@@ -112,6 +112,14 @@ renamed as (
             + coalesce(valeur_produits_de_la_mer_egalim::float, 0::float)            as valeur_viandes_et_poissons_egalim,
 
         -- origine France
+        coalesce(valeur_viandes_volailles_france::float, 0)
+        + coalesce(valeur_charcuterie_france::float, 0)
+        + coalesce(valeur_produits_de_la_mer_france::float, 0)
+        + coalesce(valeur_fruits_et_legumes_france::float, 0)
+        + coalesce(valeur_produits_laitiers_france::float, 0)
+        + coalesce(valeur_boulangerie_france::float, 0)
+        + coalesce(valeur_boissons_france::float, 0)
+        + coalesce(valeur_autres_france::float, 0)                          as valeur_france,
         valeur_viandes_volailles_france::float,
         valeur_charcuterie_france::float,
         valeur_produits_de_la_mer_france::float,
