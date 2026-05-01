@@ -78,7 +78,7 @@ dependencies = [
     "fsspec==2024.9.0",
     "html-tag-names==0.1.2",
     "html-void-elements==0.1.0",
-    "html2text==2024.2.26",
+    "html2text==2025.4.15",
     "html5lib==1.1",
     "identify==2.6.2",
     "idna==3.10",

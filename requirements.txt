@@ -290,7 +290,7 @@ html-tag-names==0.1.2
     # via ma-cantine
 html-void-elements==0.1.0
     # via ma-cantine
-html2text==2024.2.26
+html2text==2025.4.15
     # via ma-cantine
 html5lib==1.1
     # via
