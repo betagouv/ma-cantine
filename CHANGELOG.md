@@ -6,6 +6,25 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.33.1](https://github.com/betagouv/ma-cantine/compare/v2026.33.0...v2026.33.1) (2026-05-04)
+
+
+### Améliorations
+
+* **Données Géo:** mettre à jour le fichier de référence PAT (20250224 -&gt; 20250710) ([#6693](https://github.com/betagouv/ma-cantine/issues/6693)) ([be564b3](https://github.com/betagouv/ma-cantine/commit/be564b371fdba0df99dac7a45d0feb3716a81ba0))
+
+
+### Corrections (bugs, typos...)
+
+* **Campagne de correction:** répare le lien dans le bandeau d'information ([#6675](https://github.com/betagouv/ma-cantine/issues/6675)) ([f8df74f](https://github.com/betagouv/ma-cantine/commit/f8df74f2c920d158b0191f48a5ce4d3aa76f43d5))
+* **Télédéclarations:** Répare les tests suite aux ajouts de règles métiers récents et de la fin officielle de la campagne ([#6692](https://github.com/betagouv/ma-cantine/issues/6692)) ([5e187e3](https://github.com/betagouv/ma-cantine/commit/5e187e32b74aaa67951e1280788117a1ab3d2dc4))
+* **Utilisateurs:** exclure les cantines supprimées des calculs de stats ([#6677](https://github.com/betagouv/ma-cantine/issues/6677)) ([1d3a32d](https://github.com/betagouv/ma-cantine/commit/1d3a32d28e68895839e313b59a5ebb8ffe2b5cf1))
+
+
+### Technique
+
+* **Cantines:** enlever les tâches asynchrones allant chercher les données géo. Enlever le code associé ([#6691](https://github.com/betagouv/ma-cantine/issues/6691)) ([3db4a18](https://github.com/betagouv/ma-cantine/commit/3db4a18b4a52799c6ae7c8391ebd362d5a334a04))
+
 ## [2026.33.0](https://github.com/betagouv/ma-cantine/compare/v2026.32.0...v2026.33.0) (2026-04-28)
 
 
