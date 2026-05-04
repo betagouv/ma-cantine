@@ -19,7 +19,7 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models import Canteen, User
+from data.models import User
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
@@ -143,39 +143,6 @@ def update_canteen_geo_fields_from_siret(canteen):
         canteen.save(skip_validations=True)
 
     return True
-
-
-@app.task()
-def fill_missing_insee_code_using_siret():
-    """
-    Input: Canteens with siret but no city_insee_code
-    Processing: API Recherche Entreprises
-    Output: Fill canteen's city_insee_code field
-    """
-    logger.info("Starting fill_missing_insee_code_using_siret task")
-    start = time.time()
-
-    candidate_canteens = Canteen.all_objects.candidates_for_siret_to_city_insee_code_bot()
-    logger.info(f"Siret to insee_code Bot: found {candidate_canteens.count()} canteens")
-    counter = 0
-
-    for i, canteen in enumerate(candidate_canteens):
-        logger.info(f"Traitement de la cantine {canteen.name} {canteen.siret}, appel #{i}")
-        updated = update_canteen_geo_fields_from_siret(canteen)
-        if updated:
-            counter += 1
-        # time.sleeps to avoid API rate limit
-        if i > 1 and i % 7 == 0:
-            logger.info("7 appels réalisés maximum par seconde...")
-            time.sleep(1)
-        if i > 1 and i % 200 == 0:
-            logger.info("200 appels réalisés maximum par minute...")
-            time.sleep(60)
-
-    end = time.time()
-    result = f"Updated {counter}/{candidate_canteens.count()} canteens in {end - start:.2f} seconds"
-    logger.info(f"Siret to insee_code Bot: {result}")
-    return result
 
 
 @app.task()

@@ -143,9 +143,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             | has_charfield_missing_query("region_lib")
         )
 
-    def candidates_for_siret_to_city_insee_code_bot(self):
-        return self.is_serving().has_siret().has_city_insee_code_missing().order_by("-creation_date")
-
     def annotate_with_satellites_in_db_count(self):
         # # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
         # TODO: improve with a related_name on the groupe FK
