@@ -119,7 +119,7 @@ renamed as (
         + coalesce(valeur_produits_laitiers_france::float, 0)
         + coalesce(valeur_boulangerie_france::float, 0)
         + coalesce(valeur_boissons_france::float, 0)
-        + coalesce(valeur_autres_france::float, 0)                          as valeur_france,
+        + coalesce(valeur_autres_france::float, 0)                          as total_origine_france,
         valeur_viandes_volailles_france::float,
         valeur_charcuterie_france::float,
         valeur_produits_de_la_mer_france::float,

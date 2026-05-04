@@ -105,7 +105,7 @@ select
     valeur_viandes_et_poissons_egalim,
 
     -- origine France
-    valeur_france,
+    total_origine_france,
     valeur_viandes_volailles_france,
     valeur_charcuterie_france,
     valeur_produits_de_la_mer_france,
