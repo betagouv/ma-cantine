@@ -146,15 +146,6 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def candidates_for_siret_to_city_insee_code_bot(self):
         return self.is_serving().has_siret().has_city_insee_code_missing().order_by("-creation_date")
 
-    def candidates_for_city_insee_code_to_geo_data_bot(self):
-        return (
-            self.is_serving()
-            .has_city_insee_code_and_length_5()
-            .has_geo_data_missing()
-            .filter(geolocation_bot_attempts__lt=20)
-            .order_by("creation_date")
-        )
-
     def annotate_with_satellites_in_db_count(self):
         # # https://docs.djangoproject.com/en/4.1/ref/models/expressions/#using-aggregates-within-a-subquery-expression
         # TODO: improve with a related_name on the groupe FK
@@ -666,7 +657,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         blank=True,
         verbose_name="état administratif du siret (obtenu via API Recherche Entreprises)",
     )
-    geolocation_bot_attempts = models.IntegerField(default=0)
 
     # Campaign tracking
     creation_mtm_source = models.TextField(
@@ -968,7 +958,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.region_lib = None
         self.siret_inconnu = False
         self.siret_etat_administratif = None
-        self.geolocation_bot_attempts = 0
         if with_save:
             self.save(skip_validations=True)
             update_change_reason(self, "Reset geo fields")

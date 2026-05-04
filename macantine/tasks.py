@@ -4,7 +4,6 @@ import time
 import redis as r
 from django.conf import settings
 from django.core.management import call_command
-from django.db.models import F
 from django.utils import timezone
 
 import macantine.brevo as brevo
@@ -251,32 +250,6 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
         canteen.save(skip_validations=True)
         update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
         return True
-
-
-@app.task()
-def fill_missing_geolocation_data_using_insee_code():
-    """
-    Input: Canteens with city_insee_code, but no postal_code or city or epci or department or region
-    Processing: API Découpage Administratif
-    Output: Fill canteen's postal_code, city, epci, department & region fields
-    """
-    logger.info("Starting fill_missing_geolocation_data_using_insee_code task")
-    start = time.time()
-
-    candidate_canteens = Canteen.all_objects.candidates_for_city_insee_code_to_geo_data_bot()
-    candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
-    logger.info(f"INSEE Geolocation Bot: found {candidate_canteens.count()} canteens")
-    counter = 0
-
-    for i, canteen in enumerate(candidate_canteens):
-        updated = _update_canteen_geo_data_from_insee_code(canteen)
-        if updated:
-            counter += 1
-
-    end = time.time()
-    result = f"Updated {counter}/{candidate_canteens.count()} canteens in {end - start:.2f} seconds"
-    logger.info(f"INSEE Geolocation Bot: {result}")
-    return result
 
 
 @app.task()
