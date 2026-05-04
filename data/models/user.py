@@ -1,16 +1,20 @@
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.base_user import BaseUserManager
-from django.db import models
-from django.db.models import Count, Q, F
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
 from dirtyfields import DirtyFieldsMixin
+from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.db.models import Count, F, Q
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
-from macantine import brevo
 from common.utils import utils as utils_utils
-from data.models.geo import Department
 from data.fields import ChoiceArrayField
+from data.models.geo import Department
 from data.utils import optimize_image
+from macantine import brevo
+
+
+def canteen_not_deleted_query():
+    return Q(canteens__deletion_date=None)
 
 
 class UserQuerySet(models.QuerySet):
@@ -25,10 +29,11 @@ class UserQuerySet(models.QuerySet):
         from data.models import Canteen
 
         return self.prefetch_related("canteens").annotate(
-            nb_cantines=Count("canteens", distinct=True),
+            nb_cantines=Count("canteens", filter=canteen_not_deleted_query(), distinct=True),
             nb_cantines_groupe=Count(
                 "canteens",
-                filter=Q(
+                filter=canteen_not_deleted_query()
+                & Q(
                     canteens__production_type__in=[
                         Canteen.ProductionType.GROUPE,
                         Canteen.ProductionType.CENTRAL,
@@ -38,13 +43,20 @@ class UserQuerySet(models.QuerySet):
                 distinct=True,
             ),
             nb_cantines_site=Count(
-                "canteens", filter=Q(canteens__production_type=Canteen.ProductionType.ON_SITE), distinct=True
+                "canteens",
+                filter=canteen_not_deleted_query() & Q(canteens__production_type=Canteen.ProductionType.ON_SITE),
+                distinct=True,
             ),
             nb_cantines_satellite=Count(
-                "canteens", filter=Q(canteens__production_type=Canteen.ProductionType.ON_SITE_CENTRAL), distinct=True
+                "canteens",
+                filter=canteen_not_deleted_query()
+                & Q(canteens__production_type=Canteen.ProductionType.ON_SITE_CENTRAL),
+                distinct=True,
             ),
             nb_cantines_gestion_concedee=Count(
-                "canteens", filter=Q(canteens__management_type=Canteen.ManagementType.CONCEDED), distinct=True
+                "canteens",
+                filter=canteen_not_deleted_query() & Q(canteens__management_type=Canteen.ManagementType.CONCEDED),
+                distinct=True,
             ),
         )
 
@@ -52,12 +64,20 @@ class UserQuerySet(models.QuerySet):
         return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
             # bilans
             nb_cantines_bilan_2025=Count(
-                "canteens__diagnostics", filter=Q(canteens__diagnostics__year=2025), distinct=True
+                "canteens__diagnostics",
+                filter=canteen_not_deleted_query() & Q(canteens__diagnostics__year=2025),
+                distinct=True,
             ),
-            nb_cantines_bilan_todo_2025=Count("canteens", distinct=True) - F("nb_cantines_bilan_2025"),
+            nb_cantines_bilan_todo_2025=Count("canteens", filter=canteen_not_deleted_query(), distinct=True)
+            - F("nb_cantines_bilan_2025"),
             # TDs
-            nb_cantines_td_2025=Count("canteens", filter=Q(canteens__declaration_donnees_2025=True), distinct=True),
-            nb_cantines_td_todo_2025=Count("canteens", distinct=True) - F("nb_cantines_td_2025"),
+            nb_cantines_td_2025=Count(
+                "canteens",
+                filter=canteen_not_deleted_query() & Q(canteens__declaration_donnees_2025=True),
+                distinct=True,
+            ),
+            nb_cantines_td_todo_2025=Count("canteens", filter=canteen_not_deleted_query(), distinct=True)
+            - F("nb_cantines_td_2025"),
         )
 
 

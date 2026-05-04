@@ -49,10 +49,17 @@ class UserModelTest(TestCase):
             economic_model=Canteen.EconomicModel.PRIVATE,
             managers=[cls.user_with_canteens],
         )
+        cls.canteen_site_deleted = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE,
+            managers=[cls.user_with_canteens],
+        )
 
         cls.canteen_centrale_diagnostic_teledeclared = DiagnosticFactory(year=2025, canteen=cls.canteen_centrale)
         cls.canteen_satellite_diagnostic = DiagnosticFactory(year=2025, canteen=cls.canteen_satellite)
         cls.canteen_site_armee_diagnostic = DiagnosticFactory(year=2025, canteen=cls.canteen_site_armee)
+        cls.canteen_site_deleted_diagnostic = DiagnosticFactory(year=2025, canteen=cls.canteen_site_deleted)
+
+        cls.canteen_site_deleted.delete()
 
         with freeze_time("2026-01-30"):  # during the 2025 campaign
             cls.canteen_centrale_diagnostic_teledeclared.teledeclare(applicant=cls.user_with_canteens)
