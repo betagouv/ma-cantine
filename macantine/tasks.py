@@ -4,7 +4,6 @@ import time
 import redis as r
 from django.conf import settings
 from django.core.management import call_command
-from django.db.models import F
 from django.utils import timezone
 
 import macantine.brevo as brevo
@@ -20,7 +19,7 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models import Canteen, User
+from data.models import User
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
@@ -147,39 +146,6 @@ def update_canteen_geo_fields_from_siret(canteen):
 
 
 @app.task()
-def fill_missing_insee_code_using_siret():
-    """
-    Input: Canteens with siret but no city_insee_code
-    Processing: API Recherche Entreprises
-    Output: Fill canteen's city_insee_code field
-    """
-    logger.info("Starting fill_missing_insee_code_using_siret task")
-    start = time.time()
-
-    candidate_canteens = Canteen.all_objects.candidates_for_siret_to_city_insee_code_bot()
-    logger.info(f"Siret to insee_code Bot: found {candidate_canteens.count()} canteens")
-    counter = 0
-
-    for i, canteen in enumerate(candidate_canteens):
-        logger.info(f"Traitement de la cantine {canteen.name} {canteen.siret}, appel #{i}")
-        updated = update_canteen_geo_fields_from_siret(canteen)
-        if updated:
-            counter += 1
-        # time.sleeps to avoid API rate limit
-        if i > 1 and i % 7 == 0:
-            logger.info("7 appels réalisés maximum par seconde...")
-            time.sleep(1)
-        if i > 1 and i % 200 == 0:
-            logger.info("200 appels réalisés maximum par minute...")
-            time.sleep(60)
-
-    end = time.time()
-    result = f"Updated {counter}/{candidate_canteens.count()} canteens in {end - start:.2f} seconds"
-    logger.info(f"Siret to insee_code Bot: {result}")
-    return result
-
-
-@app.task()
 def update_canteen_geo_data_from_insee_code(canteen):
     """
     Similar to update_canteen_geo_fields_from_siret, but this time we already have the city_insee_code.
@@ -251,32 +217,6 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
         canteen.save(skip_validations=True)
         update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
         return True
-
-
-@app.task()
-def fill_missing_geolocation_data_using_insee_code():
-    """
-    Input: Canteens with city_insee_code, but no postal_code or city or epci or department or region
-    Processing: API Découpage Administratif
-    Output: Fill canteen's postal_code, city, epci, department & region fields
-    """
-    logger.info("Starting fill_missing_geolocation_data_using_insee_code task")
-    start = time.time()
-
-    candidate_canteens = Canteen.all_objects.candidates_for_city_insee_code_to_geo_data_bot()
-    candidate_canteens.update(geolocation_bot_attempts=F("geolocation_bot_attempts") + 1)
-    logger.info(f"INSEE Geolocation Bot: found {candidate_canteens.count()} canteens")
-    counter = 0
-
-    for i, canteen in enumerate(candidate_canteens):
-        updated = _update_canteen_geo_data_from_insee_code(canteen)
-        if updated:
-            counter += 1
-
-    end = time.time()
-    result = f"Updated {counter}/{candidate_canteens.count()} canteens in {end - start:.2f} seconds"
-    logger.info(f"INSEE Geolocation Bot: {result}")
-    return result
 
 
 @app.task()

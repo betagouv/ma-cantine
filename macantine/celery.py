@@ -67,15 +67,6 @@ app.conf.beat_schedule = {
         "task": "macantine.tasks.update_brevo_contacts",
         "schedule": nightly_0_30,
     },
-    # Geobots
-    "fill_missing_insee_code_using_siret": {
-        "task": "macantine.tasks.fill_missing_insee_code_using_siret",
-        "schedule": hourly,
-    },
-    "fill_missing_geolocation_data_using_insee_code": {
-        "task": "macantine.tasks.fill_missing_geolocation_data_using_insee_code",
-        "schedule": nightly_4,
-    },
     # History cleanup
     "delete_old_historical_records": {
         "task": "macantine.tasks.delete_old_historical_records",
