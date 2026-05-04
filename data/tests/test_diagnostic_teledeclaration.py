@@ -6,18 +6,24 @@ from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector
 
 year_data = 2024
-date_in_teledeclaration_campaign = "2025-03-30"
-date_in_correction_campaign = "2025-04-20"
-date_in_last_teledeclaration_campaign = "2024-02-01"
+date_in_teledeclaration_campaign = "2025-03-30"  # during the 2024 campaign
+date_in_correction_campaign = "2025-04-20"  # during the 2024 correction campaign
+date_in_last_teledeclaration_campaign = "2024-02-01"  # during the 2023 campaign
 
 
+@freeze_time(date_in_last_teledeclaration_campaign)
 class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.diagnostic_not_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=None)
-        cls.diagnostic_filled_draft = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=1000)
-        cls.diagnostic_filled_submitted = DiagnosticFactory(canteen=CanteenFactory(), valeur_totale=1000)
-        cls.diagnostic_filled_submitted.teledeclare(applicant=UserFactory())
+        cls.diagnostic_not_filled_draft = DiagnosticFactory(
+            year=year_data, canteen=CanteenFactory(), valeur_totale=None
+        )
+        cls.diagnostic_filled_draft = DiagnosticFactory(year=year_data, canteen=CanteenFactory(), valeur_totale=1000)
+        cls.diagnostic_filled_submitted = DiagnosticFactory(
+            year=year_data, canteen=CanteenFactory(), valeur_totale=1000
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.diagnostic_filled_submitted.teledeclare(applicant=UserFactory())
 
     def test_teledeclared_queryset(self):
         self.assertEqual(Diagnostic.objects.all().count(), 3)
