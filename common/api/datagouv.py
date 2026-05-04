@@ -53,9 +53,9 @@ MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL = f"{settings.GITHUB_RAW_BASE_URL
 
 PAT_DATAGOUV_DATASET_ID = "pat-projets-alimentaires-territoriaux-description"
 PAT_DATAGOUV_URL = f"https://www.data.gouv.fr/datasets/{PAT_DATAGOUV_DATASET_ID}"
-# PAT_DATAGOUV_RESOURCE_ID = "4f2a6bed-e9e3-48eb-aecc-85b08cb984f3"  # 20250224
-PAT_DATAGOUV_RESOURCE_ID = "96606cae-0b3b-4910-9d8b-65e3dd7f1bda"  # 20250224 (ISO-8859-1)
-PAT_DATAGOUV_CSV_URL = "https://static.data.gouv.fr/resources/pat-projets-alimentaires-territoriaux-description/20250224-103639/pats-20250224-win1252.csv"
+# PAT_DATAGOUV_RESOURCE_ID = "c85d08a7-ff12-4d31-bb11-27d37523bc7c"  # 20250710
+PAT_DATAGOUV_RESOURCE_ID = "0dc55455-022f-4885-8022-34f612aba59c"  # 20250710 (ISO-8859-1)
+PAT_DATAGOUV_CSV_URL = "https://static.data.gouv.fr/resources/pat-projets-alimentaires-territoriaux-description/20250710-204354/pats-20250710-win1252.csv"
 
 
 # ------------------------------------------------------------------------------
@@ -203,9 +203,9 @@ def mock_get_pat_dataset_resource(mock, success=True):
         f"{DATAGOUV_API_URL}/datasets/{PAT_DATAGOUV_DATASET_ID}/resources/{PAT_DATAGOUV_RESOURCE_ID}",
         text=json.dumps(
             {
-                "id": "96606cae-0b3b-4910-9d8b-65e3dd7f1bda",
-                "title": "pats-20250224-win1252.csv",
-                "url": f"{PAT_DATAGOUV_CSV_URL}",
+                "id": PAT_DATAGOUV_RESOURCE_ID,
+                "title": "pats-20250710-win1252.csv",
+                "url": PAT_DATAGOUV_CSV_URL,
             }
         ),
         status_code=200,
