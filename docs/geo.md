@@ -30,7 +30,7 @@ On stock actuellement en dure la liste des départements ([data/department_choic
 
 * Un signal `post_save` est envoyé à chaque fois qu'une cantine est créée ou mise à jour
 * Si la cantine a un `siret` mais pas de `city_insee_code`, on appelle `update_canteen_geo_fields_from_siret`
-* Si la cantine a un `siren_unite_legale` mais pas de `city_insee_code`, on appelle `update_canteen_geo_data_from_insee_code`
+* Si la cantine a un `siren_unite_legale` et un `city_insee_code` mais pas de données géographiques, on appelle `update_canteen_geo_data_from_insee_code`
 
 ## FAQ
 
