@@ -1,13 +1,19 @@
 import logging
-import time
 from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
 
 from data.models import Canteen
 from data.utils import read_csv
+from common.api.datagouv import (
+    fetch_commune_pat_list,
+    map_pat_list_to_communes_insee_code,
+)
 
 logger = logging.getLogger(__name__)
+
+
+PAT_MAPPING = map_pat_list_to_communes_insee_code()
 
 
 class Command(BaseCommand):
@@ -33,7 +39,7 @@ class Command(BaseCommand):
             dest="cache_csv",
             type=str,
             default=None,
-            help="Optional cache CSV exported by canteen_export_recherche_entreprises_cache_csv.",
+            help="Optional cache CSV exported by canteen_siret_recherche_entreprises_cache_csv.",
         )
         parser.add_argument(
             "--logging",
@@ -63,6 +69,8 @@ class Command(BaseCommand):
             # "canteen_department_ok": 0,
             "canteen_region_mismatch": [],
             "canteen_region_ok": 0,
+            "canteen_pat_mismatch": [],
+            "canteen_pat_ok": 0,
             "canteen_to_update": 0,
             "canteen_updated": 0,
         }
@@ -127,6 +135,18 @@ class Command(BaseCommand):
                 if canteen.siret_etat_administratif != etat_administratif:
                     pending_changes["siret_etat_administratif"] = etat_administratif
 
+            # pat stats
+            if canteen.city_insee_code:
+                pat_list = self._get_pat_data(canteen.city_insee_code)
+                if (canteen.pat_list or []) != (pat_list or []):
+                    if enable_logging:
+                        logger.warning(
+                            f"Canteen {canteen.id} - {canteen.siret} - PAT mismatch ({source}: {pat_list} / Canteen: {canteen.pat_list})"
+                        )
+                    results["canteen_pat_mismatch"].append(canteen.id)
+                else:
+                    results["canteen_pat_ok"] += 1
+
             should_update = (
                 (len(pending_changes) > 0)
                 or (canteen.id in results["canteen_city_insee_code_mismatch"])
@@ -152,8 +172,11 @@ class Command(BaseCommand):
                     canteen.save(skip_validations=True)
                     results["canteen_updated"] += 1
 
-            if source == "api" and index > 0 and index % 10 == 0:
-                time.sleep(1)  # avoid hitting API rate limits
+            # if source == "api" and index > 0 and index % 10 == 0:
+            #     time.sleep(1)  # avoid hitting API rate limits
+
+            if index % 5000 == 0:
+                logger.info(f"Processed {index} canteens...")
 
         logger.info(f"canteen_siret_unknown: {len(results['canteen_siret_unknown'])}")
         logger.info(f"canteen_siret_closed: {len(results['canteen_siret_closed'])}")
@@ -169,6 +192,10 @@ class Command(BaseCommand):
         logger.info(f"canteen_region_mismatch: {len(results['canteen_region_mismatch'])}")
         if results["canteen_region_mismatch"]:
             logger.info(f"Example (canteen_id): {results['canteen_region_mismatch'][0]}")
+        logger.info(f"canteen_pat_ok: {results['canteen_pat_ok']}")
+        logger.info(f"canteen_pat_mismatch: {len(results['canteen_pat_mismatch'])}")
+        if results["canteen_pat_mismatch"]:
+            logger.info(f"Example (canteen_id): {results['canteen_pat_mismatch'][0]}")
         logger.info(f"canteen_to_update: {results['canteen_to_update']}")
         logger.info(f"canteen_updated: {results['canteen_updated']}")
         logger.info("End of task: canteen_update_geolocation_data_using_siret")
@@ -216,3 +243,6 @@ class Command(BaseCommand):
 
         # return fetch_geo_data_from_siret(siret), "api"
         return None, "api"
+
+    def _get_pat_data(self, city_insee_code):
+        return fetch_commune_pat_list(city_insee_code, PAT_MAPPING, "id")
