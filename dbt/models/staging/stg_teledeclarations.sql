@@ -36,10 +36,10 @@ renamed as (
         (canteen_snapshot::jsonb ->> 'production_type') = 'central'     as genere_par_cuisine_centrale,
 
         -- secteur / catégorie (depuis sector_list dans le snapshot)
-        array_to_string(
-            array(select jsonb_array_elements_text(canteen_snapshot::jsonb -> 'sector_list')),
-            ', '
-        )                                                               as secteur,
+        case
+            when jsonb_array_length(canteen_snapshot::jsonb -> 'sector_list') > 1 then 'Secteurs multiples'
+            else (array(select jsonb_array_elements_text(canteen_snapshot::jsonb -> 'sector_list')))[1]
+        end                                                             as secteur,
         case
             when (array(select jsonb_array_elements_text(canteen_snapshot::jsonb -> 'sector_list')))[1] like 'administration%' then 'Administration'
             when (array(select jsonb_array_elements_text(canteen_snapshot::jsonb -> 'sector_list')))[1] like 'entreprise%'     then 'Entreprise'
