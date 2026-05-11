@@ -1686,7 +1686,7 @@ requires-dist = [
     { name = "urllib3", specifier = "==2.2.3" },
     { name = "vine", specifier = "==5.1.0" },
     { name = "virtualenv", specifier = "==20.26.6" },
-    { name = "wagtail", specifier = "==7.0.5" },
+    { name = "wagtail", specifier = "==7.0.7" },
     { name = "wcwidth", specifier = "==0.2.13" },
     { name = "webencodings", specifier = "==0.5.1" },
     { name = "wrapt", specifier = "==1.17.2" },
@@ -3035,7 +3035,7 @@ wheels = [
 
 [[package]]
 name = "wagtail"
-version = "7.0.5"
+version = "7.0.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyascii" },
@@ -3056,9 +3056,9 @@ dependencies = [
     { name = "telepath" },
     { name = "willow", extra = ["heif"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/de/c8/26f1c814593becd1e9b18755dbe6d3474e30d95e108a9abf2007596fa7db/wagtail-7.0.5.tar.gz", hash = "sha256:e82b4f9ca12d0c64027fd4002581aec42c85d60203091e003036f7b7f1782494", size = 6675940, upload-time = "2026-02-12T16:41:44.614Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/28/2f/ccc30da7f8d229f33dd819394bcdb85d4f59cbf37e0b8c213dd941d3d24a/wagtail-7.0.7.tar.gz", hash = "sha256:11bda16fc6bc532daa341a9c9f55f5e06990483c6f592b73a0b1bf202d255065", size = 6680030, upload-time = "2026-05-05T14:16:51.466Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/0b/08b9e16572304b2eeb98a61013e5dffa30e631020dce49f953e6bab626bb/wagtail-7.0.5-py3-none-any.whl", hash = "sha256:83851ff26ca451d56b26c4d162eddfe6fa8f876e26acb610d5480c1d042c4c2f", size = 9150941, upload-time = "2026-02-12T16:41:32.287Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/5a/404d8164619b2654e2eb19840c61770702ca85504c20bb66fee53c9314a1/wagtail-7.0.7-py3-none-any.whl", hash = "sha256:3131c7e991a12a5266d26853b26b3e3958d7ea634dd1b3da71632cbe14b7e912", size = 9153804, upload-time = "2026-05-05T14:16:45.127Z" },
 ]
 
 [[package]]
