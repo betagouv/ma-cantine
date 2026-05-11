@@ -14,7 +14,7 @@ from .softdeletionmodel import SoftDeletionModel
 
 
 class Purchase(SoftDeletionModel):
-    class PurchaseCategory(models.TextChoices):
+    class PurchaseCategory(models.TextChoices):  # not used anymore
         VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes, volailles"
         PRODUITS_DE_LA_MER = "PRODUITS_DE_LA_MER", "Produits de la mer"
         FRUITS_ET_LEGUMES = "FRUITS_ET_LEGUMES", "Fruits, légumes, légumineuses et oléagineux"

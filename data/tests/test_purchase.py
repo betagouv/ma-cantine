@@ -14,19 +14,7 @@ class PurchaseModelSaveTest(TransactionTestCase):
 
     # def test_purchase_canteen_validation(self):
     # def test_purchase_date_validation(self):
-
-    def test_purchase_category_validation(self):
-        """
-        - field is optional
-        - must be one of the choices if provided
-        """
-        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Purchase.PurchaseCategory.values)]:
-            with self.subTest(category=TUPLE_OK[0]):
-                purchase = PurchaseFactory(category=TUPLE_OK[0])
-                self.assertEqual(purchase.category, TUPLE_OK[1])
-        for VALUE_NOT_OK in ["  ", 123, "invalid", "123"]:
-            with self.subTest(category=VALUE_NOT_OK):
-                self.assertRaises(ValidationError, PurchaseFactory, category=VALUE_NOT_OK)
+    # def test_purchase_category_validation(self):  # not used anymore
 
     def test_purchase_family_validation(self):
         """
