@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 
 class RegisterUserForm(UserCreationForm):
     cgu_approved = forms.BooleanField(
-        label=mark_safe('J\'atteste avoir lu et accepté les <a href="/cgu" target="_blank">CGU</a>')
+        label=mark_safe('J\'atteste avoir lu et accepté les <a href="/v2/cgu" target="_blank">CGU</a>')
     )
     is_dev = forms.BooleanField(required=False)
     email = forms.EmailField()

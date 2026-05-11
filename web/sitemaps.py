@@ -64,7 +64,7 @@ class WebSitemap(Sitemap):
             {"location": "/comprendre-mes-obligations", "changefreq": "yearly", "priority": 0.3},
             {"location": "/nos-cantines", "changefreq": "weekly", "priority": 0.5},
             {"location": "/mentions-legales", "changefreq": "yearly", "priority": 0.2},
-            {"location": "/cgu", "changefreq": "yearly", "priority": 0.2},
+            {"location": "/v2/cgu", "changefreq": "yearly", "priority": 0.2},
             {"location": "/blog", "changefreq": "monthly", "priority": 0.5},
             {"location": "/webinaires", "changefreq": "monthly", "priority": 0.5},
             {"location": "/acteurs-de-l-eco-systeme", "changefreq": "monthly", "priority": 0.4},
