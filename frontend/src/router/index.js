@@ -533,6 +533,11 @@ routes.push({
 })
 
 routes.push({
+  path: "/cgu",
+  redirect: { name: "ConditionsGeneralesUtilisation" },
+})
+
+routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
   name: "NotFound",
