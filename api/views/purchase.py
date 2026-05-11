@@ -251,33 +251,17 @@ def canteen_summary(canteen):
 
 
 def simple_diag_data(purchases, data):
-    # TODO: is CONVERSION_BIO used?
-    bio_filter = Q(characteristics__overlap=[Purchase.Characteristic.BIO, Purchase.Characteristic.CONVERSION_BIO])
+    bio_filter = Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_BIO)
     bio_commerce_equitable_filter = bio_filter & Q(
         characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]
     )
-    siqo_filter = Q(
-        characteristics__overlap=[
-            Purchase.Characteristic.LABEL_ROUGE,
-            Purchase.Characteristic.AOCAOP,
-            Purchase.Characteristic.IGP,
-            Purchase.Characteristic.STG,
-        ]
-    )
-    egalim_autres_filter = Q(
-        characteristics__overlap=[
-            Purchase.Characteristic.HVE,
-            Purchase.Characteristic.PECHE_DURABLE,
-            Purchase.Characteristic.RUP,
-            Purchase.Characteristic.FERMIER,
-            Purchase.Characteristic.COMMERCE_EQUITABLE,
-        ]
-    )
+    siqo_filter = Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_SIQO)
+    egalim_autres_filter = Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM_AUTRES)
     egalim_autres_commerce_equitable_filter = egalim_autres_filter & Q(
         characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]
     )
     externalities_performance_filter = Q(
-        characteristics__overlap=[Purchase.Characteristic.EXTERNALITES, Purchase.Characteristic.PERFORMANCE]
+        characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EXTERNALITES_PERFORMANCE
     )
 
     data["valeur_totale"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
@@ -323,14 +307,13 @@ def complete_diag_data(purchases, data):
         purchase_family = purchases.filter(family=family.upper())
         for label in Diagnostic.APPRO_LABELS_EGALIM:
             if label.upper() == "AOCAOP_IGP_STG":
-                aocaop_igp_stg = [
-                    Purchase.Characteristic.AOCAOP,
-                    Purchase.Characteristic.IGP,
-                    Purchase.Characteristic.STG,
-                ]
-                purchase_family_label = purchase_family.filter(characteristics__overlap=aocaop_igp_stg).distinct()
+                purchase_family_label = purchase_family.filter(
+                    characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
+                ).distinct()
                 # the remaining stats should ignore already counted labels
-                purchase_family = purchase_family.exclude(characteristics__overlap=aocaop_igp_stg).distinct()
+                purchase_family = purchase_family.exclude(
+                    characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
+                ).distinct()
             else:
                 purchase_family_label = purchase_family.filter(
                     Q(characteristics__contains=[Purchase.Characteristic[label.upper()]])
@@ -360,11 +343,7 @@ def complete_diag_data(purchases, data):
             other_labels_characteristics.append(characteristic)
         # France total
         purchase_family_label = purchase_family.filter(
-            characteristics__overlap=[
-                Purchase.Characteristic.FRANCE,
-                Purchase.Characteristic.CIRCUIT_COURT,
-                Purchase.Characteristic.LOCAL,
-            ]
+            characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL
         ).distinct()
         key = "valeur_" + family + "_france"
         data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
@@ -381,22 +360,14 @@ def misc_totals(purchases, data):
     # meat_poultry
     meat_poultry_purchases = purchases.filter(family=Purchase.Family.VIANDES_VOLAILLES)
     data["valeur_viandes_volailles"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-    meat_poultry_egalim = meat_poultry_purchases.filter(
-        characteristics__overlap=[
-            label.upper() for label in Diagnostic.APPRO_LABELS_EGALIM
-        ]  # TODO: manage AOCAOP/IGP/STG
-    )
+    meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM)
     data["valeur_viandes_volailles_egalim"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
     meat_poultry_france = meat_poultry_purchases.filter(characteristics__contains=[Purchase.Characteristic.FRANCE])
     data["valeur_viandes_volailles_france"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"] or 0
     # fish
     fish_purchases = purchases.filter(family=Purchase.Family.PRODUITS_DE_LA_MER)
     data["valeur_produits_de_la_mer"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-    fish_egalim = fish_purchases.filter(
-        characteristics__overlap=[
-            label.upper() for label in Diagnostic.APPRO_LABELS_EGALIM
-        ]  # TODO: manage AOCAOP/IGP/STG
-    )
+    fish_egalim = fish_purchases.filter(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM)
     data["valeur_produits_de_la_mer_egalim"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
 
 
