@@ -22,7 +22,7 @@ class ResourceAction(models.Model):
         verbose_name = "ressource : action (cantine)"
         verbose_name_plural = "ressources : actions (cantines)"
 
-    objects = models.Manager.from_queryset(ResourceActionQuerySet)()
+    objects = ResourceActionQuerySet.as_manager()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)

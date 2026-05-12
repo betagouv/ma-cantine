@@ -176,7 +176,7 @@ class Teledeclaration(models.Model):
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
 
-    objects = models.Manager.from_queryset(TeledeclarationQuerySet)()
+    objects = TeledeclarationQuerySet.as_manager()
 
     # Fields that pertain to the teledeclaration. These fields
     # will not change and should contain all information to be
