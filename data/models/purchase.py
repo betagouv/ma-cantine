@@ -3,6 +3,8 @@ from decimal import Decimal
 
 from django.core.validators import MinValueValidator, ValidationError
 from django.db import models
+from django.db.models import Q, Sum
+from django.db.models.functions import ExtractYear
 
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
@@ -10,7 +12,79 @@ from data.models import Canteen
 from data.models.creation_source import CreationSource
 from data.validators import purchase as purchase_validators
 
-from .softdeletionmodel import SoftDeletionModel
+from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
+
+
+def bio_query():
+    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_BIO)
+
+
+def siqo_query():
+    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_SIQO)
+
+
+def egalim_autres_query():
+    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM_AUTRES)
+
+
+def valeur_externalites_performance_query():
+    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EXTERNALITES_PERFORMANCE)
+
+
+class PurchaseQuerySet(SoftDeletionQuerySet):
+    def filter_for_stats(self, canteen, year):
+        return self.only("id", "family", "characteristics", "price_ht").filter(canteen=canteen, date__year=year)
+
+    def aggregated_stats(self):
+        return self.aggregate(
+            valeur_totale=Sum("price_ht"),
+            valeur_bio=Sum("price_ht", filter=bio_query()),
+            valeur_bio_dont_commerce_equitable=Sum(
+                "price_ht",
+                filter=bio_query() & Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
+            ),
+            # valeur_siqo should ignore any bio products
+            valeur_siqo=Sum("price_ht", filter=~bio_query() & siqo_query()),
+            # valeur_egalim_autres & valeur_egalim_autres_dont_commerce_equitable should ignore any bio & siqo products
+            valeur_egalim_autres=Sum(
+                "price_ht",
+                filter=~bio_query() & ~siqo_query() & egalim_autres_query(),
+            ),
+            valeur_egalim_autres_dont_commerce_equitable=Sum(
+                "price_ht",
+                filter=~bio_query()
+                & ~siqo_query()
+                & egalim_autres_query()
+                & Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
+            ),
+            # valeur_externalites_performance should ignore any bio, siqo, and egalim_autres products
+            valeur_externalites_performance=Sum(
+                "price_ht",
+                filter=~bio_query() & ~siqo_query() & ~egalim_autres_query() & valeur_externalites_performance_query(),
+            ),
+            # misc totals
+            valeur_viandes_volailles=Sum("price_ht", filter=Q(family=Purchase.Family.VIANDES_VOLAILLES)),
+            valeur_viandes_volailles_egalim=Sum(
+                "price_ht",
+                filter=Q(family=Purchase.Family.VIANDES_VOLAILLES)
+                & Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
+            ),
+            valeur_viandes_volailles_france=Sum(
+                "price_ht",
+                filter=Q(family=Purchase.Family.VIANDES_VOLAILLES)
+                & Q(characteristics__contains=[Purchase.Characteristic.FRANCE]),
+            ),
+            valeur_produits_de_la_mer=Sum("price_ht", filter=Q(family=Purchase.Family.PRODUITS_DE_LA_MER)),
+            valeur_produits_de_la_mer_egalim=Sum(
+                "price_ht",
+                filter=Q(family=Purchase.Family.PRODUITS_DE_LA_MER)
+                & Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
+            ),
+        )
+
+
+class PurchaseManager(SoftDeletionManager):
+    queryset_model = PurchaseQuerySet
 
 
 class Purchase(SoftDeletionModel):
@@ -149,6 +223,9 @@ class Purchase(SoftDeletionModel):
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
+    objects = PurchaseManager.from_queryset(PurchaseQuerySet)()
+    all_objects = PurchaseManager.from_queryset(PurchaseQuerySet)(alive_only=False)
+
     class Meta:
         verbose_name = "achat"
         verbose_name_plural = "achats"
@@ -189,3 +266,111 @@ class Purchase(SoftDeletionModel):
             except Exception:
                 pass
         return ", ".join(valid_characteristics) if valid_characteristics else None
+
+    @classmethod
+    def canteen_summary_for_year(cls, canteen, year):
+        purchases = cls.objects.filter_for_stats(canteen, year)
+        data = {"year": year}
+        cls._simple_diag_data(purchases, data)
+        cls._complete_diag_data(purchases, data)
+        cls._misc_totals(purchases, data)
+
+        return data
+
+    @classmethod
+    def canteen_summary(cls, canteen):
+        data = {"results": []}
+        years = (
+            cls.objects.filter(canteen=canteen).annotate(year=ExtractYear("date")).order_by("year").distinct("year")
+        )
+        years = [y["year"] for y in years.values()]
+        for year in years:
+            year_data = {"year": year}
+            purchases = cls.objects.filter_for_stats(canteen, year)
+            cls._simple_diag_data(purchases, year_data)
+            data["results"].append(year_data)
+
+        return data
+
+    @classmethod
+    def _simple_diag_data(cls, purchases, data):
+        stats = purchases.aggregated_stats()
+        data["valeur_totale"] = stats["valeur_totale"] or 0
+        data["valeur_bio"] = stats["valeur_bio"] or 0
+        data["valeur_bio_dont_commerce_equitable"] = stats["valeur_bio_dont_commerce_equitable"] or 0
+        data["valeur_siqo"] = stats["valeur_siqo"] or 0
+        data["valeur_egalim_autres"] = stats["valeur_egalim_autres"] or 0
+        data["valeur_egalim_autres_dont_commerce_equitable"] = (
+            stats["valeur_egalim_autres_dont_commerce_equitable"] or 0
+        )
+        data["valeur_externalites_performance"] = stats["valeur_externalites_performance"] or 0
+
+    @classmethod
+    def _complete_diag_data(cls, purchases, data):
+        """
+        Summary for detailed teledeclaration totals, by family and label.
+        Note: the order of APPRO_LABELS_EGALIM is significant - determines which
+        labels trump others when aggregating purchases.
+        """
+        from data.models import Diagnostic
+
+        for family in Diagnostic.APPRO_FAMILIES:
+            purchase_family = purchases.filter(family=family.upper())
+            for label in Diagnostic.APPRO_LABELS_EGALIM:
+                if label.upper() == "AOCAOP_IGP_STG":
+                    purchase_family_label = purchase_family.filter(
+                        characteristics__overlap=cls.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
+                    ).distinct()
+                    # the remaining stats should ignore already counted labels
+                    purchase_family = purchase_family.exclude(
+                        characteristics__overlap=cls.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
+                    ).distinct()
+                else:
+                    purchase_family_label = purchase_family.filter(
+                        Q(characteristics__contains=[cls.Characteristic[label.upper()]])
+                    ).distinct()
+                    # the remaining stats should ignore already counted labels
+                    purchase_family = purchase_family.exclude(
+                        Q(characteristics__contains=[cls.Characteristic[label.upper()]])
+                    ).distinct()
+                key = "valeur_" + family + "_" + label
+                data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+            # special case of bio_dont_commerce_equitable (products can be counted twice across characteristics)
+            purchase_family = purchases.filter(family=family.upper())
+            purchase_family_label = purchase_family.filter(
+                Q(characteristics__contains=[cls.Characteristic.BIO])
+                & Q(characteristics__contains=[cls.Characteristic.COMMERCE_EQUITABLE])
+            )
+            key = "valeur_" + family + "_" + "bio_dont_commerce_equitable"
+            data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+            # outside of EGalim (products can be counted twice across characteristics)
+            purchase_family = purchases.filter(family=family.upper())
+            other_labels_characteristics = []
+            for label in Diagnostic.APPRO_LABELS_FRANCE_SUBCATEGORIES:
+                characteristic = cls.Characteristic[label.upper()]
+                purchase_family_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
+                key = "valeur_" + family + "_" + label
+                data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+                other_labels_characteristics.append(characteristic)
+            # France total
+            purchase_family_label = purchase_family.filter(
+                characteristics__overlap=cls.CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL
+            ).distinct()
+            key = "valeur_" + family + "_france"
+            data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+            other_labels_characteristics.append(cls.Characteristic.FRANCE)
+            # Non-EGalim totals (contains no labels or only one or more of other_labels)
+            non_egalim_purchases = purchase_family.filter(
+                Q(characteristics__contained_by=(other_labels_characteristics + [""])) | Q(characteristics__len=0)
+            ).distinct()
+            key = "valeur_" + family + "_non_egalim"
+            data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+
+    @classmethod
+    def _misc_totals(cls, purchases, data):
+        stats = purchases.aggregated_stats()
+        data["valeur_viandes_volailles"] = stats["valeur_viandes_volailles"] or 0
+        data["valeur_viandes_volailles_egalim"] = stats["valeur_viandes_volailles_egalim"] or 0
+        data["valeur_viandes_volailles_france"] = stats["valeur_viandes_volailles_france"] or 0
+        data["valeur_produits_de_la_mer"] = stats["valeur_produits_de_la_mer"] or 0
+        data["valeur_produits_de_la_mer_egalim"] = stats["valeur_produits_de_la_mer_egalim"] or 0
