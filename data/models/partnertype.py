@@ -11,9 +11,9 @@ class PartnerType(models.Model):
         verbose_name = "Partenaire (type)"
         verbose_name_plural = "Partenaire (types)"
 
-    @classmethod
-    def choices(self):
-        return [(x.id, x.__str__()) for x in self.objects.all()]
-
     def __str__(self):
         return self.name
+
+    @classmethod
+    def choices(cls):
+        return [(x.id, x.__str__()) for x in cls.objects.all()]

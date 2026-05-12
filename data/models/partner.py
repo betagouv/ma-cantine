@@ -96,13 +96,8 @@ class Partner(models.Model):
         verbose_name = "partenaire"
         verbose_name_plural = "partenaires"
 
-    @property
-    def url_slug(self):
-        return f"{self.id}--{quote(self.name)}"
-
-    @property
-    def url_path(self):
-        return f"/acteurs-de-l-eco-systeme/{self.url_slug}"
+    def __str__(self):
+        return f'Partenaire "{self.name}"'
 
     def save(self, **kwargs):
         max_image_size = 1600
@@ -110,5 +105,10 @@ class Partner(models.Model):
             self.image = optimize_image(self.image, self.image.name, max_image_size)
         super().save(**kwargs)
 
-    def __str__(self):
-        return f'Partenaire "{self.name}"'
+    @property
+    def url_slug(self):
+        return f"{self.id}--{quote(self.name)}"
+
+    @property
+    def url_path(self):
+        return f"/acteurs-de-l-eco-systeme/{self.url_slug}"

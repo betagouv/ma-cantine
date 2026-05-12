@@ -242,6 +242,9 @@ class User(DirtyFieldsMixin, AbstractUser):
 
     objects = UserManager.from_queryset(UserQuerySet)()
 
+    def __str__(self):
+        return f"{self.get_full_name()} ({self.username})"
+
     def normalize_fields(self):
         for field_name in ["email", "username"]:
             if field_name in self.get_dirty_fields():
@@ -278,9 +281,6 @@ class User(DirtyFieldsMixin, AbstractUser):
     @property
     def has_mtm_data(self):
         return self.creation_mtm_source or self.creation_mtm_campaign or self.creation_mtm_medium
-
-    def __str__(self):
-        return f"{self.get_full_name()} ({self.username})"
 
     def canteens_count(self):
         return self.canteens.count()

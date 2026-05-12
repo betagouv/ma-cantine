@@ -33,6 +33,17 @@ class Message(models.Model):
     class Meta:
         ordering = ["-creation_date"]
 
+    def __str__(self):
+        return f"Message envoyé de {self.sender_email} à {self.canteen_name}"
+
+    @property
+    def canteen_name(self):
+        return self.destination_canteen.name if self.destination_canteen else "⚠️ Cantine inconnue"
+
+    @property
+    def recipients(self):
+        return [user.email for user in self.destination_canteen.managers.all()] if self.destination_canteen else []
+
     def send(self):
         if self.status == Message.Status.SENT:
             logger.exception(f"Attempt to send an already sent message: {self.id}")
@@ -68,14 +79,3 @@ class Message(models.Model):
             raise Exception(f"Cannot block message already sent on {self.sent_date}")
         self.status = Message.Status.BLOCKED
         self.save()
-
-    def __str__(self):
-        return f"Message envoyé de {self.sender_email} à {self.canteen_name}"
-
-    @property
-    def canteen_name(self):
-        return self.destination_canteen.name if self.destination_canteen else "⚠️ Cantine inconnue"
-
-    @property
-    def recipients(self):
-        return [user.email for user in self.destination_canteen.managers.all()] if self.destination_canteen else []

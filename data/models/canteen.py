@@ -674,6 +674,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             models.Index(fields=["central_producer_siret"]),
         ]
 
+    def __str__(self):
+        return self.name
+
     def normalize_fields(self):
         for field_name in ["siret", "siren_unite_legale", "epci", "central_producer_siret"]:
             setattr(self, field_name, utils_utils.normalize_string(getattr(self, field_name)))
@@ -929,9 +932,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         if self.is_groupe or self.line_ministry == Canteen.Ministries.ARMEE:
             return Canteen.PublicationStatus.DRAFT
         return Canteen.PublicationStatus.PUBLISHED
-
-    def __str__(self):
-        return self.name
 
     def _get_region(self):
         return get_region_from_department(self.department)

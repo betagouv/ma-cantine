@@ -11,9 +11,9 @@ class BlogTag(models.Model):
         verbose_name = "étiquette de blog"
         verbose_name_plural = "étiquettes de blog"
 
-    @classmethod
-    def choices(self):
-        return [(x.id, x.__str__()) for x in self.objects.all()]
-
     def __str__(self):
         return self.name
+
+    @classmethod
+    def choices(cls):
+        return [(x.id, x.__str__()) for x in cls.objects.all()]

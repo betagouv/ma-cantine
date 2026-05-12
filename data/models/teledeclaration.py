@@ -265,6 +265,10 @@ class Teledeclaration(models.Model):
         ]
         indexes = [models.Index(fields=["canteen", "year"])]
 
+    def __str__(self):
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
+
     @property
     def is_declared_by_cc(self):
         return self.teledeclaration_mode and self.teledeclaration_mode in [
@@ -443,7 +447,3 @@ class Teledeclaration(models.Model):
             using=using,
             update_fields=update_fields,
         )
-
-    def __str__(self):
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"

@@ -30,9 +30,9 @@ class BlogPost(models.Model):
         verbose_name_plural = "articles de blog"
         ordering = ["-display_date"]
 
+    def __str__(self):
+        return f'Blog post "{self.title}"'
+
     @property
     def url_path(self):
         return f"/blog/{self.id}"
-
-    def __str__(self):
-        return f'Blog post "{self.title}"'
