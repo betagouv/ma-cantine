@@ -14,7 +14,7 @@ from .softdeletionmodel import SoftDeletionModel
 
 
 class Purchase(SoftDeletionModel):
-    class PurchaseCategory(models.TextChoices):
+    class PurchaseCategory(models.TextChoices):  # not used anymore
         VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes, volailles"
         PRODUITS_DE_LA_MER = "PRODUITS_DE_LA_MER", "Produits de la mer"
         FRUITS_ET_LEGUMES = "FRUITS_ET_LEGUMES", "Fruits, légumes, légumineuses et oléagineux"
@@ -67,13 +67,53 @@ class Purchase(SoftDeletionModel):
         AUTOUR_SERVICE = "AUTOUR_SERVICE", "200 km autour du lieu de service"
         AUTRE = "AUTRE", "Autre"
 
+    CHARACTERISTIC_LABELS_BIO = [
+        Characteristic.BIO,
+        Characteristic.CONVERSION_BIO,  # not used anymore
+    ]
+
+    CHARACTERISTIC_LABELS_AOCAOP_IGP_STG = [
+        Characteristic.AOCAOP,
+        Characteristic.IGP,
+        Characteristic.STG,
+    ]
+
+    CHARACTERISTIC_LABELS_SIQO = [Characteristic.LABEL_ROUGE] + CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
+
+    CHARACTERISTIC_LABELS_EXTERNALITES_PERFORMANCE = [
+        Characteristic.EXTERNALITES,
+        Characteristic.PERFORMANCE,
+        Characteristic.EQUIVALENTS,  # not used anymore
+    ]
+
+    CHARACTERISTIC_LABELS_EGALIM_AUTRES = [
+        Characteristic.HVE,
+        Characteristic.PECHE_DURABLE,
+        Characteristic.RUP,
+        Characteristic.FERMIER,
+        Characteristic.COMMERCE_EQUITABLE,
+    ]
+
+    CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL = [
+        Characteristic.FRANCE,
+        Characteristic.CIRCUIT_COURT,
+        Characteristic.LOCAL,
+    ]
+
+    CHARACTERISTIC_LABELS_EGALIM = (
+        CHARACTERISTIC_LABELS_BIO
+        + CHARACTERISTIC_LABELS_SIQO
+        + CHARACTERISTIC_LABELS_EXTERNALITES_PERFORMANCE
+        + CHARACTERISTIC_LABELS_EGALIM_AUTRES
+    )
+
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
     date = models.DateField(default=date.today)
     description = models.TextField(null=True, blank=True, verbose_name="description du produit")
     provider = models.TextField(null=True, blank=True, verbose_name="fournisseur")
     category = models.CharField(
         max_length=255, choices=PurchaseCategory.choices, null=True, blank=True, verbose_name="catégorie"
-    )  # not used anymore ?
+    )  # not used anymore
     family = models.CharField(
         max_length=255, choices=Family.choices, null=True, blank=True, verbose_name="famille de produits"
     )
