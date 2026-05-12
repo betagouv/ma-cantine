@@ -2,14 +2,14 @@ from django.db import models
 
 
 class BlogTag(models.Model):
-    class Meta:
-        verbose_name = "étiquette de blog"
-        verbose_name_plural = "étiquettes de blog"
+    name = models.TextField()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
-    name = models.TextField()
+    class Meta:
+        verbose_name = "étiquette de blog"
+        verbose_name_plural = "étiquettes de blog"
 
     @classmethod
     def choices(self):

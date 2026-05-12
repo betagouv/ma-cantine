@@ -160,8 +160,6 @@ class User(DirtyFieldsMixin, AbstractUser):
         "nb_cantines_td_todo_2025",
     ]
 
-    objects = UserManager.from_queryset(UserQuerySet)()
-
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
     email = models.EmailField(_("email address"), unique=True)
     email_confirmed = models.BooleanField(default="False", verbose_name="adresse email confirmée")
@@ -241,6 +239,8 @@ class User(DirtyFieldsMixin, AbstractUser):
 
     # Django fields
     # last_login, date_joined, is_active, is_staff, is_superuser
+
+    objects = UserManager.from_queryset(UserQuerySet)()
 
     def normalize_fields(self):
         for field_name in ["email", "username"]:

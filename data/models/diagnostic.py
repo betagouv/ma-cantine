@@ -322,15 +322,6 @@ class DiagnosticManager(models.Manager):
 
 
 class Diagnostic(models.Model):
-    class Meta:
-        verbose_name = "diagnostic"
-        verbose_name_plural = "diagnostics"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["canteen", "year", "generated_from_groupe_diagnostic"], name="annual_diagnostic"
-            ),
-        ]
-
     class DiagnosticStatus(models.TextChoices):
         DRAFT = "DRAFT", "Brouillon"
         CORRECTION = "CORRECTION", "En correction"
@@ -854,13 +845,6 @@ class Diagnostic(models.Model):
         "percentage_valeur_produits_de_la_mer_egalim",
         "percentage_valeur_produits_de_la_mer_france",
     ]
-
-    objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)(exclude_generated=True)
-    all_objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)()
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords(excluded_fields=["canteen_snapshot", "satellites_snapshot", "applicant_snapshot"])
 
     canteen = models.ForeignKey(
         Canteen, on_delete=models.SET_NULL, null=True, related_name="diagnostics", verbose_name="cantine"
@@ -1658,6 +1642,22 @@ class Diagnostic(models.Model):
         size=None,
         verbose_name="bilan ignoré dans les stats (raisons)",
     )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords(excluded_fields=["canteen_snapshot", "satellites_snapshot", "applicant_snapshot"])
+
+    objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)(exclude_generated=True)
+    all_objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)()
+
+    class Meta:
+        verbose_name = "diagnostic"
+        verbose_name_plural = "diagnostics"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["canteen", "year", "generated_from_groupe_diagnostic"], name="annual_diagnostic"
+            ),
+        ]
 
     def __str__(self):
         return f"Diagnostic pour {self.canteen.name} ({self.year})"

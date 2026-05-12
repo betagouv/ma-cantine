@@ -7,11 +7,6 @@ from data.fields import ChoiceArrayField
 
 
 class WasteAction(RevisionMixin, models.Model):
-    class Meta:
-        verbose_name = "Action anti-gaspi"
-        verbose_name_plural = "Actions anti-gaspi"
-        ordering = ["-modification_date"]
-
     class Effort(models.TextChoices):
         SMALL = "SMALL", "Petit pas"
         MEDIUM = "MEDIUM", "Moyen"
@@ -21,9 +16,6 @@ class WasteAction(RevisionMixin, models.Model):
         PREP = "PREP", "Préparation"
         UNSERVED = "UNSERVED", "Non servi"
         PLATE = "PLATE", "Retour assiette"
-
-    creation_date = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
-    modification_date = models.DateTimeField(auto_now=True, verbose_name="Date de dernière modification")
 
     title = models.TextField(verbose_name="Titre")
     subtitle = models.TextField(null=True, blank=True, verbose_name="Sous-titre")
@@ -44,9 +36,13 @@ class WasteAction(RevisionMixin, models.Model):
     # not using revisions directly in case we want to add custom logic in the property in the future
     _revisions = GenericRelation("wagtailcore.Revision", related_query_name="wasteaction")
 
-    @property
-    def revisions(self):
-        return self._revisions
+    creation_date = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
+    modification_date = models.DateTimeField(auto_now=True, verbose_name="Date de dernière modification")
+
+    class Meta:
+        verbose_name = "Action anti-gaspi"
+        verbose_name_plural = "Actions anti-gaspi"
+        ordering = ["-modification_date"]
 
     def __str__(self):
         return f'Action anti-gaspi "{self.title}"'
@@ -54,6 +50,10 @@ class WasteAction(RevisionMixin, models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+    @property
+    def revisions(self):
+        return self._revisions
 
     def effort_display(self):
         return dict(WasteAction.Effort.choices)[self.effort]

@@ -32,13 +32,6 @@ class Partner(models.Model):
         NETWORK = "network", "Mise en réseau d’acteurs de terrain"
         FINANCIAL = "financial", "Aide financière / matérielle"
 
-    class Meta:
-        verbose_name = "partenaire"
-        verbose_name_plural = "partenaires"
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-
     name = models.TextField(verbose_name="nom")
     short_description = models.TextField(verbose_name="description courte")
     long_description = RichTextUploadingField(null=True, blank=True, verbose_name="description longue")
@@ -95,6 +88,13 @@ class Partner(models.Model):
     contact_name = models.TextField(verbose_name="Nom de contact", blank=True, null=True)
     contact_message = models.TextField(verbose_name="Commentaires sur la demande", blank=True, null=True)
     contact_phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "partenaire"
+        verbose_name_plural = "partenaires"
 
     @property
     def url_slug(self):

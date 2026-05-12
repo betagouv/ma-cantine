@@ -17,17 +17,6 @@ class ResourceActionQuerySet(models.QuerySet):
 
 
 class ResourceAction(models.Model):
-    class Meta:
-        unique_together = ("resource", "canteen")
-        verbose_name = "ressource : action (cantine)"
-        verbose_name_plural = "ressources : actions (cantines)"
-
-    objects = ResourceActionQuerySet.as_manager()
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
-
     # resource = only waste_actions for now
     # but we use the term resource to have a consistent API once we regroup resources
     resource = models.ForeignKey(
@@ -39,6 +28,17 @@ class ResourceAction(models.Model):
 
     is_done = models.BooleanField(null=True, blank=True, verbose_name="mis en place")
     is_favorite = models.BooleanField(null=True, blank=True, verbose_name="favori")
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
+
+    objects = ResourceActionQuerySet.as_manager()
+
+    class Meta:
+        unique_together = ("resource", "canteen")
+        verbose_name = "ressource : action (cantine)"
+        verbose_name_plural = "ressources : actions (cantines)"
 
     def save(self, *args, **kwargs):
         self.full_clean()

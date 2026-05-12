@@ -7,14 +7,6 @@ from .blogtag import BlogTag
 
 
 class BlogPost(models.Model):
-    class Meta:
-        verbose_name = "article de blog"
-        verbose_name_plural = "articles de blog"
-        ordering = ["-display_date"]
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-
     title = models.TextField(verbose_name="titre")
     tagline = models.TextField(null=True, blank=True, verbose_name="description courte")
     display_date = models.DateField(default=timezone.now, verbose_name="date affichée")
@@ -29,6 +21,14 @@ class BlogPost(models.Model):
         related_name="blog_posts",
     )
     tags = models.ManyToManyField(BlogTag, blank=True, verbose_name="étiquettes")
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "article de blog"
+        verbose_name_plural = "articles de blog"
+        ordering = ["-display_date"]
 
     @property
     def url_path(self):

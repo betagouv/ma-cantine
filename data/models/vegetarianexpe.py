@@ -10,10 +10,6 @@ from .canteen import Canteen
 
 
 class VegetarianExpe(models.Model):
-    class Meta:
-        verbose_name = "expérimentation repas végétariens quotidiens"
-        verbose_name_plural = "expérimentations repas végétariens quotidiens"
-
     class MenuOptions(models.TextChoices):
         UNIQUE = "unique", "Un menu unique pour tous les convives"
         MULTIPLE = "multiple", "Une offre à choix multiples"
@@ -77,9 +73,6 @@ class VegetarianExpe(models.Model):
         CLIENTS = "clients", "Réaction des convives"
         OVERWORK = "overwork", "Surcharge de travail pour le personnel"
         OTHER = "other", "Autre"
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE, verbose_name="cantine")
 
@@ -568,3 +561,10 @@ class VegetarianExpe(models.Model):
         blank=True,
         verbose_name="Precision sur les freins rencontrés à la mise en place de l’option végétarienne quotidienne",
     )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "expérimentation repas végétariens quotidiens"
+        verbose_name_plural = "expérimentations repas végétariens quotidiens"

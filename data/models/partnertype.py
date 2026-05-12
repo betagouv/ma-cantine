@@ -2,14 +2,14 @@ from django.db import models
 
 
 class PartnerType(models.Model):
-    class Meta:
-        verbose_name = "Partenaire (type)"
-        verbose_name_plural = "Partenaire (types)"
+    name = models.TextField()
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
-    name = models.TextField()
+    class Meta:
+        verbose_name = "Partenaire (type)"
+        verbose_name_plural = "Partenaire (types)"
 
     @classmethod
     def choices(self):

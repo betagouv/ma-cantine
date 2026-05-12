@@ -14,12 +14,6 @@ from .softdeletionmodel import SoftDeletionModel
 
 
 class Purchase(SoftDeletionModel):
-    class Meta:
-        verbose_name = "achat"
-        verbose_name_plural = "achats"
-        ordering = ["-date", "-creation_date"]
-        indexes = [models.Index(fields=["import_source"])]
-
     class PurchaseCategory(models.TextChoices):
         VIANDES_VOLAILLES = "VIANDES_VOLAILLES", "Viandes, volailles"
         PRODUITS_DE_LA_MER = "PRODUITS_DE_LA_MER", "Produits de la mer"
@@ -73,9 +67,6 @@ class Purchase(SoftDeletionModel):
         AUTOUR_SERVICE = "AUTOUR_SERVICE", "200 km autour du lieu de service"
         AUTRE = "AUTRE", "Autre"
 
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
     date = models.DateField(default=date.today)
     description = models.TextField(null=True, blank=True, verbose_name="description du produit")
@@ -114,6 +105,15 @@ class Purchase(SoftDeletionModel):
         null=True,
         verbose_name="Source de création de l'achat",
     )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "achat"
+        verbose_name_plural = "achats"
+        ordering = ["-date", "-creation_date"]
+        indexes = [models.Index(fields=["import_source"])]
 
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(

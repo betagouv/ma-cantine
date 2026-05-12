@@ -11,16 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 class Message(models.Model):
-    class Meta:
-        ordering = ["-creation_date"]
-
     class Status(models.TextChoices):
         PENDING = "PENDING", "En attente de validation"
         SENT = "SENT", "Envoyé"
         BLOCKED = "BLOCKED", "Bloqué"
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
 
     destination_canteen = models.ForeignKey(
         Canteen, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="destinataire"
@@ -32,6 +26,12 @@ class Message(models.Model):
     status = models.CharField(max_length=255, choices=Status.choices, default=Status.PENDING, verbose_name="État")
 
     sent_date = models.DateField(null=True, blank=True)
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-creation_date"]
 
     def send(self):
         if self.status == Message.Status.SENT:
