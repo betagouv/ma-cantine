@@ -223,8 +223,8 @@ class Purchase(SoftDeletionModel):
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
-    objects = PurchaseManager()
-    all_objects = PurchaseManager(alive_only=False)
+    objects = PurchaseManager.from_queryset(PurchaseQuerySet)()
+    all_objects = PurchaseManager.from_queryset(PurchaseQuerySet)(alive_only=False)
 
     class Meta:
         verbose_name = "achat"
@@ -368,9 +368,9 @@ class Purchase(SoftDeletionModel):
 
     @classmethod
     def _misc_totals(cls, purchases, data):
-        result = purchases.aggregated_stats()
-        data["valeur_viandes_volailles"] = result["valeur_viandes_volailles"] or 0
-        data["valeur_viandes_volailles_egalim"] = result["valeur_viandes_volailles_egalim"] or 0
-        data["valeur_viandes_volailles_france"] = result["valeur_viandes_volailles_france"] or 0
-        data["valeur_produits_de_la_mer"] = result["valeur_produits_de_la_mer"] or 0
-        data["valeur_produits_de_la_mer_egalim"] = result["valeur_produits_de_la_mer_egalim"] or 0
+        stats = purchases.aggregated_stats()
+        data["valeur_viandes_volailles"] = stats["valeur_viandes_volailles"] or 0
+        data["valeur_viandes_volailles_egalim"] = stats["valeur_viandes_volailles_egalim"] or 0
+        data["valeur_viandes_volailles_france"] = stats["valeur_viandes_volailles_france"] or 0
+        data["valeur_produits_de_la_mer"] = stats["valeur_produits_de_la_mer"] or 0
+        data["valeur_produits_de_la_mer_egalim"] = stats["valeur_produits_de_la_mer_egalim"] or 0
