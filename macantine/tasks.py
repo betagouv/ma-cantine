@@ -30,6 +30,7 @@ from .etl.analysis import (
     ETL_ANALYSIS_TELEDECLARATIONS,
     ETL_ANALYSIS_DIAGNOSTIC_RAW,
     ETL_ANALYSIS_USER_RAW,
+    ETL_ANALYSIS_WASTE_MEASUREMENT_RAW,
 )
 from .etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
@@ -268,6 +269,7 @@ def export_dataset_raw_analysis():
         # "purchases_raw_analysis": ETL_ANALYSIS_PURCHASE_RAW(),
         "users_raw_analysis": ETL_ANALYSIS_USER_RAW(),
         "canteen_managers_raw_analysis": ETL_ANALYSIS_CANTEEN_MANAGER_RAW(),
+        "waste_measurements_raw_analysis": ETL_ANALYSIS_WASTE_MEASUREMENT_RAW(),
     }
     result = export_datasets(datasets)
 

@@ -7,7 +7,7 @@ import pandas as pd
 
 from api.views.canteen import CanteenAnalysisListView
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredAnalysisListView
-from data.models import Canteen, Diagnostic, Purchase, User
+from data.models import Canteen, Diagnostic, Purchase, User, WasteMeasurement
 from data.models.sector import get_category_lib_list_from_canteen_snapshot, get_sector_lib_list_from_canteen_snapshot
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
@@ -344,6 +344,39 @@ class ETL_ANALYSIS_CANTEEN_MANAGER_RAW(ANALYSIS):
             logger.warning("Dataset is empty. Creating an empty dataframe")
         end = time.time()
         logger.info(f"Time spent on raw canteen manager extraction: {end - start:.2f} seconds")
+
+    def transform_dataset(self):
+        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
+        logger.info("Converting array fields to JSON strings for safe export")
+        if not self.df.empty:
+            self.df = utils.arrays_to_json(self.df)
+
+    def load_dataset(self):
+        super().load_dataset()
+
+
+class ETL_ANALYSIS_WASTE_MEASUREMENT_RAW(ANALYSIS):
+    """
+    Export raw wastemeasurement table to analysis warehouse without transformations.
+    Uses pandas to_sql for loading.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.warehouse = DataWareHouse()
+        self.dataset_name = "waste_measurements_raw"
+
+    def extract_dataset(self):
+        """
+        Load raw table into a dataframe.
+        """
+        start = time.time()
+        queryset = WasteMeasurement.objects.all().values()
+        self.df = pd.DataFrame(list(queryset))
+        if self.df.empty:
+            logger.warning("Dataset is empty. Creating an empty dataframe")
+        end = time.time()
+        logger.info(f"Time spent on raw wastemeasurement extraction: {end - start:.2f} seconds")
 
     def transform_dataset(self):
         """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
