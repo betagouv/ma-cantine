@@ -15,14 +15,6 @@ def validate_before_today(value):
 
 
 class WasteMeasurement(models.Model):
-    class Meta:
-        verbose_name = "évaluation du gaspillage alimentaire"
-        verbose_name_plural = "évaluations du gaspillage alimentaire"
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
-
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
     period_start_date = models.DateField(verbose_name="date de début")
@@ -73,6 +65,23 @@ class WasteMeasurement(models.Model):
         verbose_name="restes assiette - masse non-comestible (kg)",
     )
 
+    history = HistoricalRecords()
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "évaluation du gaspillage alimentaire"
+        verbose_name_plural = "évaluations du gaspillage alimentaire"
+
+    def clean(self):
+        self.validate_dates()
+        return super().clean()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     @property
     def days_in_period(self):
         # + 1 because python is exclusive but period dates are inclusive
@@ -85,14 +94,6 @@ class WasteMeasurement(models.Model):
         if not canteen_yearly_meal_count or not self.meal_count or not has_total_mass:
             return None
         return self.total_mass / self.meal_count * canteen_yearly_meal_count
-
-    def clean(self):
-        self.validate_dates()
-        return super().clean()
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
 
     def validate_dates(self):
         start_date = self.period_start_date

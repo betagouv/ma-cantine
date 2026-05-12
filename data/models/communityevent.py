@@ -9,20 +9,20 @@ class CommunityEventQuerySet(models.QuerySet):
 
 
 class CommunityEvent(models.Model):
-    class Meta:
-        verbose_name = "événement"
-        ordering = ["start_date"]
-
-    objects = CommunityEventQuerySet.as_manager()
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-
     title = models.TextField(verbose_name="titre")
     start_date = models.DateTimeField(verbose_name="date de début")
     end_date = models.DateTimeField(verbose_name="date de fin")
     tagline = models.TextField(null=True, blank=True, verbose_name="description courte")
     link = models.TextField(verbose_name="lien pour s'inscrire")
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    objects = CommunityEventQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = "événement"
+        ordering = ["start_date"]
 
     def clean(self):
         self.validate_dates()

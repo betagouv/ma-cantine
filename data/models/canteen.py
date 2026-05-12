@@ -379,18 +379,6 @@ class CanteenManager(SoftDeletionManager):
 
 
 class Canteen(DirtyFieldsMixin, SoftDeletionModel):
-    objects = CanteenManager.from_queryset(CanteenQuerySet)()
-    all_objects = CanteenManager.from_queryset(CanteenQuerySet)(alive_only=False)
-
-    class Meta:
-        verbose_name = "cantine"
-        verbose_name_plural = "cantines"
-        ordering = ["-creation_date"]
-        indexes = [
-            models.Index(fields=["siret"]),
-            models.Index(fields=["central_producer_siret"]),
-        ]
-
     class ManagementType(models.TextChoices):
         DIRECT = "direct", "Directe"
         CONCEDED = "conceded", "Concédée"
@@ -494,11 +482,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         "creation_source",
         "import_source",
     ]
-
-    import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
 
     name = models.TextField(verbose_name="nom")
 
@@ -673,6 +656,26 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         null=True,
         verbose_name="Source de création de la cantine",
     )
+
+    import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
+
+    objects = CanteenManager.from_queryset(CanteenQuerySet)()
+    all_objects = CanteenManager.from_queryset(CanteenQuerySet)(alive_only=False)
+
+    class Meta:
+        verbose_name = "cantine"
+        verbose_name_plural = "cantines"
+        ordering = ["-creation_date"]
+        indexes = [
+            models.Index(fields=["siret"]),
+            models.Index(fields=["central_producer_siret"]),
+        ]
+
+    def __str__(self):
+        return self.name
 
     def normalize_fields(self):
         for field_name in ["siret", "siren_unite_legale", "epci", "central_producer_siret"]:
@@ -929,9 +932,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         if self.is_groupe or self.line_ministry == Canteen.Ministries.ARMEE:
             return Canteen.PublicationStatus.DRAFT
         return Canteen.PublicationStatus.PUBLISHED
-
-    def __str__(self):
-        return self.name
 
     def _get_region(self):
         return get_region_from_department(self.department)
