@@ -12,7 +12,79 @@ from data.models import Canteen
 from data.models.creation_source import CreationSource
 from data.validators import purchase as purchase_validators
 
-from .softdeletionmodel import SoftDeletionModel
+from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
+
+
+def bio_query():
+    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_BIO)
+
+
+def siqo_query():
+    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_SIQO)
+
+
+def egalim_autres_query():
+    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM_AUTRES)
+
+
+def valeur_externalites_performance_query():
+    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EXTERNALITES_PERFORMANCE)
+
+
+class PurchaseQuerySet(SoftDeletionQuerySet):
+    def filter_for_stats(self, canteen, year):
+        return self.only("id", "family", "characteristics", "price_ht").filter(canteen=canteen, date__year=year)
+
+    def aggregated_stats(self):
+        return self.aggregate(
+            valeur_totale=Sum("price_ht"),
+            valeur_bio=Sum("price_ht", filter=bio_query()),
+            valeur_bio_dont_commerce_equitable=Sum(
+                "price_ht",
+                filter=bio_query() & Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
+            ),
+            # valeur_siqo should ignore any bio products
+            valeur_siqo=Sum("price_ht", filter=~bio_query() & siqo_query()),
+            # valeur_egalim_autres & valeur_egalim_autres_dont_commerce_equitable should ignore any bio & siqo products
+            valeur_egalim_autres=Sum(
+                "price_ht",
+                filter=~bio_query() & ~siqo_query() & egalim_autres_query(),
+            ),
+            valeur_egalim_autres_dont_commerce_equitable=Sum(
+                "price_ht",
+                filter=~bio_query()
+                & ~siqo_query()
+                & egalim_autres_query()
+                & Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
+            ),
+            # valeur_externalites_performance should ignore any bio, siqo, and egalim_autres products
+            valeur_externalites_performance=Sum(
+                "price_ht",
+                filter=~bio_query() & ~siqo_query() & ~egalim_autres_query() & valeur_externalites_performance_query(),
+            ),
+            # misc totals
+            valeur_viandes_volailles=Sum("price_ht", filter=Q(family=Purchase.Family.VIANDES_VOLAILLES)),
+            valeur_viandes_volailles_egalim=Sum(
+                "price_ht",
+                filter=Q(family=Purchase.Family.VIANDES_VOLAILLES)
+                & Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
+            ),
+            valeur_viandes_volailles_france=Sum(
+                "price_ht",
+                filter=Q(family=Purchase.Family.VIANDES_VOLAILLES)
+                & Q(characteristics__contains=[Purchase.Characteristic.FRANCE]),
+            ),
+            valeur_produits_de_la_mer=Sum("price_ht", filter=Q(family=Purchase.Family.PRODUITS_DE_LA_MER)),
+            valeur_produits_de_la_mer_egalim=Sum(
+                "price_ht",
+                filter=Q(family=Purchase.Family.PRODUITS_DE_LA_MER)
+                & Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
+            ),
+        )
+
+
+class PurchaseManager(SoftDeletionManager):
+    queryset_model = PurchaseQuerySet
 
 
 class Purchase(SoftDeletionModel):
@@ -151,6 +223,9 @@ class Purchase(SoftDeletionModel):
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
+    objects = PurchaseManager()
+    all_objects = PurchaseManager(alive_only=False)
+
     class Meta:
         verbose_name = "achat"
         verbose_name_plural = "achats"
@@ -194,9 +269,7 @@ class Purchase(SoftDeletionModel):
 
     @classmethod
     def canteen_summary_for_year(cls, canteen, year):
-        purchases = cls.objects.only("id", "family", "characteristics", "price_ht").filter(
-            canteen=canteen, date__year=year
-        )
+        purchases = cls.objects.filter_for_stats(canteen, year)
         data = {"year": year}
         cls._simple_diag_data(purchases, data)
         cls._complete_diag_data(purchases, data)
@@ -213,9 +286,7 @@ class Purchase(SoftDeletionModel):
         years = [y["year"] for y in years.values()]
         for year in years:
             year_data = {"year": year}
-            purchases = cls.objects.only("id", "family", "characteristics", "price_ht").filter(
-                canteen=canteen, date__year=year
-            )
+            purchases = cls.objects.filter_for_stats(canteen, year)
             cls._simple_diag_data(purchases, year_data)
             data["results"].append(year_data)
 
@@ -223,51 +294,16 @@ class Purchase(SoftDeletionModel):
 
     @classmethod
     def _simple_diag_data(cls, purchases, data):
-        bio_filter = Q(characteristics__overlap=cls.CHARACTERISTIC_LABELS_BIO)
-        bio_commerce_equitable_filter = bio_filter & Q(
-            characteristics__contains=[cls.Characteristic.COMMERCE_EQUITABLE]
-        )
-        siqo_filter = Q(characteristics__overlap=cls.CHARACTERISTIC_LABELS_SIQO)
-        egalim_autres_filter = Q(characteristics__overlap=cls.CHARACTERISTIC_LABELS_EGALIM_AUTRES)
-        egalim_autres_commerce_equitable_filter = egalim_autres_filter & Q(
-            characteristics__contains=[cls.Characteristic.COMMERCE_EQUITABLE]
-        )
-        externalities_performance_filter = Q(
-            characteristics__overlap=cls.CHARACTERISTIC_LABELS_EXTERNALITES_PERFORMANCE
-        )
-
-        data["valeur_totale"] = purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-
-        bio_purchases = purchases.filter(bio_filter).distinct()
-        data["valeur_bio"] = bio_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-        data["valeur_bio_dont_commerce_equitable"] = (
-            bio_purchases.filter(bio_commerce_equitable_filter).aggregate(total=Sum("price_ht"))["total"] or 0
-        )
-
-        # the remaining stats should ignore any bio products
-        purchases_no_bio = purchases.exclude(bio_filter)
-        siqo_purchases = purchases_no_bio.filter(siqo_filter).distinct()
-        data["valeur_siqo"] = siqo_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-
-        # the remaining stats should also ignore any sustainable (SIQO) products
-        purchases_no_bio_no_siqo = purchases_no_bio.exclude(siqo_filter)
-        egalim_autres_purchases = purchases_no_bio_no_siqo.filter(egalim_autres_filter).distinct()
-        data["valeur_egalim_autres"] = egalim_autres_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+        stats = purchases.aggregated_stats()
+        data["valeur_totale"] = stats["valeur_totale"] or 0
+        data["valeur_bio"] = stats["valeur_bio"] or 0
+        data["valeur_bio_dont_commerce_equitable"] = stats["valeur_bio_dont_commerce_equitable"] or 0
+        data["valeur_siqo"] = stats["valeur_siqo"] or 0
+        data["valeur_egalim_autres"] = stats["valeur_egalim_autres"] or 0
         data["valeur_egalim_autres_dont_commerce_equitable"] = (
-            egalim_autres_purchases.filter(egalim_autres_commerce_equitable_filter).aggregate(total=Sum("price_ht"))[
-                "total"
-            ]
-            or 0
+            stats["valeur_egalim_autres_dont_commerce_equitable"] or 0
         )
-
-        # the remaining stats should also ignore any "other EGalim" products
-        purchases_no_bio_siqo_no_egalim_autres = purchases_no_bio_no_siqo.exclude(egalim_autres_filter)
-        externalities_performance_purchases = purchases_no_bio_siqo_no_egalim_autres.filter(
-            externalities_performance_filter
-        ).distinct()
-        data["valeur_externalites_performance"] = (
-            externalities_performance_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-        )
+        data["valeur_externalites_performance"] = stats["valeur_externalites_performance"] or 0
 
     @classmethod
     def _complete_diag_data(cls, purchases, data):
@@ -332,15 +368,9 @@ class Purchase(SoftDeletionModel):
 
     @classmethod
     def _misc_totals(cls, purchases, data):
-        # meat_poultry
-        meat_poultry_purchases = purchases.filter(family=cls.Family.VIANDES_VOLAILLES)
-        data["valeur_viandes_volailles"] = meat_poultry_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-        meat_poultry_egalim = meat_poultry_purchases.filter(characteristics__overlap=cls.CHARACTERISTIC_LABELS_EGALIM)
-        data["valeur_viandes_volailles_egalim"] = meat_poultry_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
-        meat_poultry_france = meat_poultry_purchases.filter(characteristics__contains=[cls.Characteristic.FRANCE])
-        data["valeur_viandes_volailles_france"] = meat_poultry_france.aggregate(total=Sum("price_ht"))["total"] or 0
-        # fish
-        fish_purchases = purchases.filter(family=cls.Family.PRODUITS_DE_LA_MER)
-        data["valeur_produits_de_la_mer"] = fish_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
-        fish_egalim = fish_purchases.filter(characteristics__overlap=cls.CHARACTERISTIC_LABELS_EGALIM)
-        data["valeur_produits_de_la_mer_egalim"] = fish_egalim.aggregate(total=Sum("price_ht"))["total"] or 0
+        result = purchases.aggregated_stats()
+        data["valeur_viandes_volailles"] = result["valeur_viandes_volailles"] or 0
+        data["valeur_viandes_volailles_egalim"] = result["valeur_viandes_volailles_egalim"] or 0
+        data["valeur_viandes_volailles_france"] = result["valeur_viandes_volailles_france"] or 0
+        data["valeur_produits_de_la_mer"] = result["valeur_produits_de_la_mer"] or 0
+        data["valeur_produits_de_la_mer_egalim"] = result["valeur_produits_de_la_mer_egalim"] or 0
