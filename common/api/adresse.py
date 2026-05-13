@@ -15,7 +15,7 @@ ADRESSE_CSV_API_URL = "https://api-adresse.data.gouv.fr/search/csv"
 def fetch_geo_data_from_code(response):
     try:
         location_response = requests.get(
-            f"{ADRESSE_API_URL}/?q={response['cityInseeCode']}&citycode={response['cityInseeCode']}&type=municipality&autocomplete=1"
+            f"{ADRESSE_API_URL}/?q={response['city_insee_code']}&citycode={response['city_insee_code']}&type=municipality&autocomplete=1"
         )
         if location_response.ok:
             location_response = location_response.json()
@@ -72,12 +72,11 @@ def mock_fetch_geo_data_from_code(mock, city_insee_code):
         api_url,
         text=json.dumps(
             {
-                # city_insee_code: 59512
                 "features": [
                     {
                         "properties": {
                             "label": "ROUBAIX",
-                            "citycode": "59512",
+                            "citycode": "59512",  # city_insee_code
                             "postcode": "59100",
                             "context": "38, Isère, Auvergne-Rhône-Alpes",
                         }

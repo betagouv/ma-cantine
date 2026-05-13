@@ -125,8 +125,8 @@ def update_canteen_geo_fields_from_siret(canteen):
         response = fetch_geo_data_from_siret(canteen.siret)
         if response:
             try:
-                if "cityInseeCode" in response.keys():
-                    canteen.city_insee_code = response["cityInseeCode"]
+                if "city_insee_code" in response.keys():
+                    canteen.city_insee_code = response["city_insee_code"]
                     canteen.siret_etat_administratif = response["etat_administratif"]
                     update = True
             except Exception as e:
