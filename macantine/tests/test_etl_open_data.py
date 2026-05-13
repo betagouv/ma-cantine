@@ -99,6 +99,7 @@ class CanteenETLOpenDataTest(TestCase):
         ]
 
         etl = ETL_OPEN_DATA_CANTEEN()
+        etl.dataset_name += "_test"  # Avoid interferring with other files
 
         for tc in test_cases:
             etl.df = tc["data"]
@@ -106,7 +107,6 @@ class CanteenETLOpenDataTest(TestCase):
             with default_storage.open(f"open_data/{etl.dataset_name}.csv", "r") as csv_file:
                 output_dataframe = pd.read_csv(csv_file, sep=";")
             self.assertEqual(tc["expected_length"], len(output_dataframe))
-
             self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
 
             # Cleaning files
