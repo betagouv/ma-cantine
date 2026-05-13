@@ -22,13 +22,38 @@ ref_communes as (
 
 ref_pats as (
     select * from {{ ref('ref_pats') }}
+),
+
+canteens_spe as (
+    select
+        line_ministry                   as line_ministry_spe,
+        creation_date
+    from {{ ref('stg_canteens') }}
+    where line_ministry is not null
+      and line_ministry != ''
+),
+
+years as (
+    select distinct year from teledeclarations
+    where line_ministry is not null and line_ministry != ''
+),
+
+nb_cantines_inscrites as (
+    select
+        c.line_ministry_spe,
+        y.year,
+        count(*) as nb_cantines_inscrites
+    from canteens_spe c
+    cross join years y
+    where c.creation_date <= make_date(y.year::int + 1, 4, 29)
+    group by c.line_ministry_spe, y.year
 )
 
 select
     -- identifiers
     teledeclaration_id,
     canteen_id,
-    year                                                as annee,
+    teledeclarations.year                               as annee,
     teledeclaration_version                             as version,
     creation_date                                       as date_creation,
     modification_date                                   as date_modification,
@@ -48,10 +73,18 @@ select
     secteur                                             as cantine_secteur,
     categorie                                           as cantine_categorie,
     satellite_canteens_count                            as cantine_nbre_cantines_satellites,
-    line_ministry                                       as cantine_ministere_tutelle,
-    spe                                                 as cantine_spe,
+    line_ministry                                       as cantine_line_ministry,
+    case
+        when line_ministry in ('ecologie', 'mer')                             then 'MTE'
+        when line_ministry in ('jeunesse', 'enseignement_superieur', 'sport') then 'MEJSESR'
+        when line_ministry in ('justice_hors_pjj', 'justice_pjj')             then 'Justice'
+        when line_ministry in ('travail', 'sante')                            then 'Ministères sociaux'
+        when line_ministry = 'autorites_independantes'                        then 'AAI'
+        when line_ministry = 'administration_territoriale'                    then 'ATE'
+        else line_ministry
+    end                                                 as cantine_groupe_spe,
     is_filled                                           as cantine_is_filled,
-    genere_par_cuisine_centrale                         as cantine_genere_par_cuisine_centrale,
+    generated_from_groupe_diagnostic                    as cantine_generated_from_groupe_diagnostic,
 
     -- geo
     teledeclarations.department                         as cantine_departement,
@@ -269,13 +302,33 @@ select
     action_gaspi_reutilisation,
 
     -- stats annuelles
-    count(*) filter (where year = 2025) over ()         as nb_teledeclarations_2025
+    count(*) filter (where teledeclarations.year = 2025) over ()    as nb_teledeclarations_2025,
+
+    -- SPE — dénominateur figé au 29 avril (utiliser MAX lors des agrégations Metabase)
+    coalesce(nb_cantines_inscrites.nb_cantines_inscrites, 0)                as nb_cantines_inscrites_spe,
+
+    -- SPE — objectifs EGalim (booléens : SUM = nb cantines atteignant l'objectif)
+    (valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20)                    as atteint_bio,
+    (valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50)                 as atteint_egalim,
+    (valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20
+        and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50)          as atteint_bio_et_egalim,
+    (valeur_viandes_et_poissons > 0
+        and valeur_viandes_et_poissons_egalim
+            / nullif(valeur_viandes_et_poissons, 0) >= 1.0)                as atteint_viandes_et_poissons_egalim,
+    (valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20
+        and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
+        and valeur_viandes_et_poissons > 0
+        and valeur_viandes_et_poissons_egalim
+            / nullif(valeur_viandes_et_poissons, 0) >= 1.0)                as atteint_3_objectifs
 
 from teledeclarations
 left join ref_departements on ref_departements.code_departement = teledeclarations.department
 left join ref_regions on ref_regions.code_region = teledeclarations.region
 left join ref_epci on ref_epci.code_epci = teledeclarations.epci
 left join ref_communes on ref_communes.code_insee_commune = teledeclarations.city_insee_code
+left join nb_cantines_inscrites
+    on nb_cantines_inscrites.line_ministry_spe = teledeclarations.line_ministry
+    and nb_cantines_inscrites.year = teledeclarations.year
 where 1=1
   and production_type != 'groupe'
   and teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'

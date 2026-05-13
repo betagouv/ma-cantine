@@ -30,10 +30,20 @@ renamed as (
         canteen_snapshot::jsonb ->> 'management_type'                   as management_type,
         canteen_snapshot::jsonb ->> 'production_type'                   as production_type,
         canteen_snapshot::jsonb ->> 'economic_model'                    as economic_model,
-        canteen_snapshot::jsonb ->> 'line_ministry'                     as line_ministry,
+        case
+            when canteen_snapshot::jsonb ->> 'line_ministry' = 'justice'
+                 and exists(
+                     select 1 from jsonb_array_elements_text(canteen_snapshot::jsonb -> 'sector_list') s
+                     where s = 'social_pjj'
+                 )
+            then 'justice_pjj'
+            when canteen_snapshot::jsonb ->> 'line_ministry' = 'justice'
+            then 'justice_hors_pjj'
+            else canteen_snapshot::jsonb ->> 'line_ministry'
+        end                                                             as line_ministry,
         (canteen_snapshot::jsonb ->> 'line_ministry') is not null       as spe,
         (canteen_snapshot::jsonb ->> 'is_filled')::boolean              as is_filled,
-        (canteen_snapshot::jsonb ->> 'production_type') = 'central'     as genere_par_cuisine_centrale,
+        generated_from_groupe_diagnostic,
 
         -- secteur / catégorie (depuis sector_list dans le snapshot)
         case

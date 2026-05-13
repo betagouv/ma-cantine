@@ -21,7 +21,14 @@ renamed as (
         production_type,
         management_type,
         economic_model,
-        line_ministry,
+        case
+            when line_ministry = 'justice'
+                 and sector_list::jsonb @> '["social_pjj"]'
+            then 'justice_pjj'
+            when line_ministry = 'justice'
+            then 'justice_hors_pjj'
+            else line_ministry
+        end                 as line_ministry,
         sector_list,
         -- geo
         city_insee_code,

@@ -259,8 +259,10 @@ renamed as (
         tunnel_waste,
         tunnel_diversification,
         tunnel_plastic,
-        tunnel_info
-        
+        tunnel_info,
+
+        generated_from_groupe_diagnostic
+
     from source
 )
 
