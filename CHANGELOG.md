@@ -6,6 +6,28 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.33.2](https://github.com/betagouv/ma-cantine/compare/v2026.33.1...v2026.33.2) (2026-05-12)
+
+
+### Améliorations
+
+* **ETL:** ajouter WasteMeasurements dans les exports brutes (dbt) ([#6705](https://github.com/betagouv/ma-cantine/issues/6705)) ([66d3923](https://github.com/betagouv/ma-cantine/commit/66d3923269d5cf5ad0c2c9d33eb11d55303cbb46))
+
+
+### Corrections (bugs, typos...)
+
+* **CGU:** corrige l'url vers celle du frontend ([#6701](https://github.com/betagouv/ma-cantine/issues/6701)) ([5498180](https://github.com/betagouv/ma-cantine/commit/5498180788e1f03997d5c92ec4fc4e4604d8172c))
+
+
+### Technique
+
+* **Achats:** lister les groupes de caractéristiques pour faciliter leur réutilisation ([#6702](https://github.com/betagouv/ma-cantine/issues/6702)) ([84e8630](https://github.com/betagouv/ma-cantine/commit/84e863034faec2e26d2726283c223198858d3013))
+* **Achats:** regrouper les stats d'aggrégation dans une queryset dédiée ([#6706](https://github.com/betagouv/ma-cantine/issues/6706)) ([3b0d3c1](https://github.com/betagouv/ma-cantine/commit/3b0d3c14a3a65f71450fa417a27acef33dd1967b))
+* **deps:** bump django from 5.2.13 to 5.2.14 ([#6697](https://github.com/betagouv/ma-cantine/issues/6697)) ([d6547b8](https://github.com/betagouv/ma-cantine/commit/d6547b83e372bbc550a30284e011dead1e3053e5))
+* **deps:** bump wagtail from 7.0.5 to 7.0.7 ([#6696](https://github.com/betagouv/ma-cantine/issues/6696)) ([42b3509](https://github.com/betagouv/ma-cantine/commit/42b35098f1bbd4e40a59f7a9dd427da582bad32a))
+* **Diagnostics:** améliorer la commande diagnostic_fill_invalid_reason_list (apply, stats recap) ([#6700](https://github.com/betagouv/ma-cantine/issues/6700)) ([b8bdfa6](https://github.com/betagouv/ma-cantine/commit/b8bdfa66b2901df312086398cc6729533ff53634))
+* réorganise les champs dans les modèles (Meta & timestamps en bas) ([#6703](https://github.com/betagouv/ma-cantine/issues/6703)) ([7a57abb](https://github.com/betagouv/ma-cantine/commit/7a57abb6f5854190297c1d786c54384c66cd59cb))
+
 ## [2026.33.1](https://github.com/betagouv/ma-cantine/compare/v2026.33.0...v2026.33.1) (2026-05-04)
 
 
