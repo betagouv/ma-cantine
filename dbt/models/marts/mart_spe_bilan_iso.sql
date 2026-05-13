@@ -23,7 +23,10 @@ with base as (
         atteint_egalim,
         atteint_bio_et_egalim,
         atteint_viandes_et_poissons_egalim,
-        atteint_3_objectifs
+        atteint_3_objectifs,
+        choix_multiple,
+        atteint_vege_quotidien,
+        td_volet_diversification_complet
     from {{ ref('mart_teledeclarations') }}
     where cantine_line_ministry is not null
 ),
@@ -89,7 +92,10 @@ iso_td as (
         b.atteint_egalim,
         b.atteint_bio_et_egalim,
         b.atteint_viandes_et_poissons_egalim,
-        b.atteint_3_objectifs
+        b.atteint_3_objectifs,
+        b.choix_multiple,
+        b.atteint_vege_quotidien,
+        b.td_volet_diversification_complet
     from iso_sample s
     join base b on b.canteen_id = s.canteen_id
     where (s.iso_type = '2ans' and b.annee in (s.annee_ref, s.annee_ref - 1))
@@ -118,7 +124,10 @@ stats_lm as (
         sum(atteint_bio_et_egalim::int)                                     as nb_bio_et_egalim,
         sum(atteint_viandes_et_poissons_egalim::int)                        as nb_vp_egalim,
         sum(atteint_3_objectifs::int)                                       as nb_3_obj,
-        sum(case when vv_egalim > 0 and pdm_egalim > 0 then 1 else 0 end)  as nb_td_vp_renseignes
+        sum(case when vv_egalim > 0 and pdm_egalim > 0 then 1 else 0 end)  as nb_td_vp_renseignes,
+        sum(choix_multiple::int)                                            as nb_choix_multiple,
+        sum(atteint_vege_quotidien::int)                                    as nb_vege_quotidien,
+        sum(td_volet_diversification_complet::int)                          as nb_td_diversification_complet
     from iso_td
     group by annee_ref, iso_type, annee_td, perimetre_key
 ),
@@ -150,7 +159,10 @@ stats_groupe as (
         sum(nb_bio_et_egalim)       as nb_bio_et_egalim,
         sum(nb_vp_egalim)           as nb_vp_egalim,
         sum(nb_3_obj)               as nb_3_obj,
-        sum(nb_td_vp_renseignes)    as nb_td_vp_renseignes
+        sum(nb_td_vp_renseignes)    as nb_td_vp_renseignes,
+        sum(nb_choix_multiple)                  as nb_choix_multiple,
+        sum(nb_vege_quotidien)                  as nb_vege_quotidien,
+        sum(nb_td_diversification_complet)      as nb_td_diversification_complet
     from stats_lm
     where perimetre_key in (
         'ecologie', 'mer',
@@ -235,7 +247,17 @@ pivoted as (
         max(case when annee_td = annee_ref - 1 then nb_3_obj        end) as nb_3_obj_n1,
         max(case when annee_td = annee_ref - 2 then nb_3_obj        end) as nb_3_obj_n2,
         max(case when annee_td = annee_ref     then nb_td_vp_renseignes end) as nb_td_vp_n,
-        max(case when annee_td = annee_ref - 1 then nb_td_vp_renseignes end) as nb_td_vp_n1
+        max(case when annee_td = annee_ref - 1 then nb_td_vp_renseignes end) as nb_td_vp_n1,
+
+        max(case when annee_td = annee_ref     then nb_choix_multiple   end) as nb_choix_multiple_n,
+        max(case when annee_td = annee_ref - 1 then nb_choix_multiple   end) as nb_choix_multiple_n1,
+        max(case when annee_td = annee_ref - 2 then nb_choix_multiple   end) as nb_choix_multiple_n2,
+        max(case when annee_td = annee_ref     then nb_vege_quotidien   end) as nb_vege_n,
+        max(case when annee_td = annee_ref - 1 then nb_vege_quotidien   end) as nb_vege_n1,
+        max(case when annee_td = annee_ref - 2 then nb_vege_quotidien   end) as nb_vege_n2,
+        max(case when annee_td = annee_ref     then nb_td_diversification_complet end) as nb_diversification_n,
+        max(case when annee_td = annee_ref - 1 then nb_td_diversification_complet end) as nb_diversification_n1,
+        max(case when annee_td = annee_ref - 2 then nb_td_diversification_complet end) as nb_diversification_n2
 
     from all_stats
     group by annee_ref, iso_type, perimetre_key
@@ -398,7 +420,34 @@ select
     p.nb_td_vp_n                                                                    as nb_td_vp_renseignes_n,
     p.nb_td_vp_n1                                                                   as nb_td_vp_renseignes_n1,
     round((100.0 * p.nb_td_vp_n  / nullif(p.nb_td_n,  0))::numeric, 1)             as taux_td_vp_renseignes_n,
-    round((100.0 * p.nb_td_vp_n1 / nullif(p.nb_td_n1, 0))::numeric, 1)             as taux_td_vp_renseignes_n1
+    round((100.0 * p.nb_td_vp_n1 / nullif(p.nb_td_n1, 0))::numeric, 1)             as taux_td_vp_renseignes_n1,
+
+    -- Végétarien : offre quotidienne parmi cantines à choix multiple
+    p.nb_choix_multiple_n,
+    p.nb_choix_multiple_n1,
+    p.nb_choix_multiple_n2,
+    p.nb_vege_n                                                                     as nb_cantines_vege_quotidien_n,
+    p.nb_vege_n1                                                                    as nb_cantines_vege_quotidien_n1,
+    p.nb_vege_n2                                                                    as nb_cantines_vege_quotidien_n2,
+    round((100.0 * p.nb_vege_n  / nullif(p.nb_choix_multiple_n,  0))::numeric, 1)  as taux_vege_quotidien_n,
+    round((100.0 * p.nb_vege_n1 / nullif(p.nb_choix_multiple_n1, 0))::numeric, 1)  as taux_vege_quotidien_n1,
+    round((100.0 * p.nb_vege_n2 / nullif(p.nb_choix_multiple_n2, 0))::numeric, 1)  as taux_vege_quotidien_n2,
+    round((100.0 * p.nb_vege_n  / nullif(p.nb_choix_multiple_n,  0)
+         - 100.0 * p.nb_vege_n1 / nullif(p.nb_choix_multiple_n1, 0))::numeric, 1)  as delta_vege_quotidien_n1,
+    round((100.0 * p.nb_vege_n  / nullif(p.nb_choix_multiple_n,  0)
+         - 100.0 * p.nb_vege_n2 / nullif(p.nb_choix_multiple_n2, 0))::numeric, 1)  as delta_vege_quotidien_n2,
+
+    -- Diversification : volet complet / taille échantillon ISO
+    p.nb_diversification_n,
+    p.nb_diversification_n1,
+    p.nb_diversification_n2,
+    round((100.0 * p.nb_diversification_n  / nullif(p.nb_td_n,  0))::numeric, 1)   as taux_diversification_n,
+    round((100.0 * p.nb_diversification_n1 / nullif(p.nb_td_n1, 0))::numeric, 1)   as taux_diversification_n1,
+    round((100.0 * p.nb_diversification_n2 / nullif(p.nb_td_n2, 0))::numeric, 1)   as taux_diversification_n2,
+    round((100.0 * p.nb_diversification_n  / nullif(p.nb_td_n,  0)
+         - 100.0 * p.nb_diversification_n1 / nullif(p.nb_td_n1, 0))::numeric, 1)   as delta_diversification_n1,
+    round((100.0 * p.nb_diversification_n  / nullif(p.nb_td_n,  0)
+         - 100.0 * p.nb_diversification_n2 / nullif(p.nb_td_n2, 0))::numeric, 1)   as delta_diversification_n2
 
 from pivoted p
 join ref_perimetre_with_groupe r on r.perimetre_key = p.perimetre_key

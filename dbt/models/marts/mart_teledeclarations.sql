@@ -72,7 +72,7 @@ select
     economic_model                                      as cantine_modele_economique,
     secteur                                             as cantine_secteur,
     categorie                                           as cantine_categorie,
-    satellite_canteens_count                            as cantine_nbre_cantines_satellites,
+    --satellite_canteens_count                            as cantine_nbre_cantines_satellites,
     line_ministry                                       as cantine_line_ministry,
     case
         when line_ministry in ('ecologie', 'mer')                             then 'MTE'
@@ -117,7 +117,7 @@ select
 
     -- appro — valeurs
     valeur_totale,
-    valeur_bio,
+    --valeur_bio,
     valeur_bio_dont_commerce_equitable,
     valeur_bio_agg,
     valeur_siqo_agg,
@@ -301,6 +301,13 @@ select
     action_gaspi_portions,
     action_gaspi_reutilisation,
 
+    -- tunnels de complétion
+    tunnel_appro,
+    tunnel_waste,
+    tunnel_diversification,
+    tunnel_plastic,
+    tunnel_info,
+
     -- stats annuelles
     count(*) filter (where teledeclarations.year = 2025) over ()    as nb_teledeclarations_2025,
 
@@ -319,7 +326,15 @@ select
         and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
         and valeur_viandes_et_poissons > 0
         and valeur_viandes_et_poissons_egalim
-            / nullif(valeur_viandes_et_poissons, 0) >= 1.0)                as atteint_3_objectifs
+            / nullif(valeur_viandes_et_poissons, 0) >= 1.0)                as atteint_3_objectifs,
+
+    -- SPE — objectif végétarien
+    (service_type != 'UNIQUE')                                             as choix_multiple,
+    (service_type != 'UNIQUE'
+        and vegetarian_weekly_recurrence = 'DAILY')                        as atteint_vege_quotidien,
+
+    -- SPE — volet diversification protéines / menu végé rempli
+    (tunnel_diversification = 'complet')                                   as td_volet_diversification_complet
 
 from teledeclarations
 left join ref_departements on ref_departements.code_departement = teledeclarations.department

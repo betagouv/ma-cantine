@@ -55,7 +55,10 @@ stats as (
         sum(case when valeur_viandes_volailles_egalim > 0
                   and valeur_produits_de_la_mer_egalim > 0
                  then 1 else 0 end)                                                 as nb_td_vp_renseignes,
-        sum(case when valeur_egalim_agg is not null then 1 else 0 end)                     as nb_td_egalim_renseignes
+        sum(case when valeur_egalim_agg is not null then 1 else 0 end)                     as nb_td_egalim_renseignes,
+        sum(choix_multiple::int)                                                            as nb_choix_multiple,
+        sum(atteint_vege_quotidien::int)                                                    as nb_vege_quotidien,
+        sum(td_volet_diversification_complet::int)                                          as nb_td_diversification_complet
     from {{ ref('mart_teledeclarations') }}
     where cantine_line_ministry = 'administration_territoriale'
       and cantine_region is not null
@@ -92,7 +95,14 @@ select
     s.nb_td_vp_renseignes                                                           as nb_td_vp_renseignes,
     round((100.0 * s.nb_td_vp_renseignes    / nullif(s.nb_td, 0))::numeric, 1)     as taux_td_vp_renseignes_pct,
     s.nb_td_egalim_renseignes                                                       as nb_td_egalim_renseignes,
-    round((100.0 * s.nb_td_egalim_renseignes / nullif(s.nb_td, 0))::numeric, 1)    as taux_td_egalim_renseignes_pct
+    round((100.0 * s.nb_td_egalim_renseignes / nullif(s.nb_td, 0))::numeric, 1)    as taux_td_egalim_renseignes_pct,
+
+    s.nb_choix_multiple                                                             as nb_cantines_choix_multiple,
+    s.nb_vege_quotidien                                                             as nb_cantines_vege_quotidien,
+    round((100.0 * s.nb_vege_quotidien / nullif(s.nb_choix_multiple, 0))::numeric, 1) as taux_vege_quotidien_pct,
+
+    s.nb_td_diversification_complet                                                 as nb_td_diversification_complet,
+    round((100.0 * s.nb_td_diversification_complet / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_td_diversification_complet_pct
 
 from stats s
 left join nb_inscrites_region i

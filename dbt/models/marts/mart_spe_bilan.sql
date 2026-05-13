@@ -76,7 +76,12 @@ stats as (
                   and valeur_produits_de_la_mer_egalim > 0
                  then 1 else 0 end)                                                 as nb_td_vp_renseignes,
         -- #16 représentativité EGalim : TD avec volet EGalim renseigné
-        sum(case when valeur_egalim_agg is not null then 1 else 0 end)                     as nb_td_egalim_renseignes
+        sum(case when valeur_egalim_agg is not null then 1 else 0 end)                     as nb_td_egalim_renseignes,
+        -- végétarien : dénominateur = cantines avec choix multiple
+        sum(choix_multiple::int)                                                            as nb_choix_multiple,
+        sum(atteint_vege_quotidien::int)                                                    as nb_vege_quotidien,
+        -- diversification : dénominateur = nb_inscrites
+        sum(td_volet_diversification_complet::int)                                          as nb_td_diversification_complet
     from {{ ref('mart_teledeclarations') }}
     where cantine_line_ministry is not null
     group by annee, cantine_line_ministry
@@ -103,7 +108,10 @@ stats_groupe as (
         sum(s.nb_vp_egalim)                                                         as nb_vp_egalim,
         sum(s.nb_3_obj)                                                             as nb_3_obj,
         sum(s.nb_td_vp_renseignes)                                                  as nb_td_vp_renseignes,
-        sum(s.nb_td_egalim_renseignes)                                              as nb_td_egalim_renseignes
+        sum(s.nb_td_egalim_renseignes)                                              as nb_td_egalim_renseignes,
+        sum(s.nb_choix_multiple)                                                    as nb_choix_multiple,
+        sum(s.nb_vege_quotidien)                                                    as nb_vege_quotidien,
+        sum(s.nb_td_diversification_complet)                                        as nb_td_diversification_complet
     from stats s
     join ref_perimetre_with_groupe r on r.perimetre_key = s.perimetre_key
     where r.groupe_spe is not null
@@ -169,7 +177,16 @@ select
 
     -- #16 représentativité EGalim renseigné
     s.nb_td_egalim_renseignes                                                       as nb_td_egalim_renseignes,
-    round((100.0 * s.nb_td_egalim_renseignes / nullif(s.nb_td, 0))::numeric, 1)    as taux_td_egalim_renseignes_pct
+    round((100.0 * s.nb_td_egalim_renseignes / nullif(s.nb_td, 0))::numeric, 1)    as taux_td_egalim_renseignes_pct,
+
+    -- végétarien : offre quotidienne parmi les cantines à choix multiple
+    s.nb_choix_multiple                                                             as nb_cantines_choix_multiple,
+    s.nb_vege_quotidien                                                             as nb_cantines_vege_quotidien,
+    round((100.0 * s.nb_vege_quotidien / nullif(s.nb_choix_multiple, 0))::numeric, 1) as taux_vege_quotidien_pct,
+
+    -- diversification : volet complet / nb inscrits
+    s.nb_td_diversification_complet                                                 as nb_td_diversification_complet,
+    round((100.0 * s.nb_td_diversification_complet / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_td_diversification_complet_pct
 
 from all_stats s
 join ref_perimetre_with_groupe r on r.perimetre_key = s.perimetre_key

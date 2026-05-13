@@ -299,6 +299,13 @@ renamed as (
         waste_actions::text ilike '%portions%'                          as action_gaspi_portions,
         waste_actions::text ilike '%reutilisation%'                     as action_gaspi_reutilisation,
 
+        -- tunnels de complétion
+        tunnel_appro,
+        tunnel_waste,
+        tunnel_diversification,
+        tunnel_plastic,
+        tunnel_info,
+
         invalid_reason_list
 
     from diagnostics
