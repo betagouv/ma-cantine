@@ -5,7 +5,7 @@ from decimal import Decimal
 import pandas as pd
 import requests_mock
 from django.core.files.storage import default_storage
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from freezegun import freeze_time
 
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
@@ -81,9 +81,13 @@ class CanteenETLOpenDataTest(TestCase):
         canteen_satellite = etl.df[etl.df.id == self.canteen_satellite.id].iloc[0]
         self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
 
-    @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
     def test_canteen_load_dataset(self, mock):
-        # Making sure the code will not enter online dataset validation by forcing local filesystem management
+        mock.post(
+            "https://api.validata.etalab.studio/validate",
+            json={"report": {"errors": [], "stats": {"errors": 0}, "tasks": []}},
+            status_code=200,
+        )
+
         test_cases = [
             {
                 "name": " Load valid dataset",
@@ -96,8 +100,8 @@ class CanteenETLOpenDataTest(TestCase):
                 "expected_length": 1,
             },
         ]
+
         etl = ETL_OPEN_DATA_CANTEEN()
-        etl.dataset_name += "_test"  # Avoid interferring with other files
 
         for tc in test_cases:
             etl.df = tc["data"]

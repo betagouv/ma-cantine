@@ -23,6 +23,7 @@ Possible error keys:
 """
 
 import requests
+import mimetypes
 
 FRICTIONLESS_SCHEMA_URL = "https://frictionlessdata.io/schemas/table-schema.json"
 VALIDATA_PREPROD_API_URL = "https://preprod-api-validata.dataeng.etalab.studio/validate"
@@ -33,16 +34,18 @@ def validate_file_against_schema(file, schema_url):
     try:
         # Reset the file pointer to the beginning
         file.seek(0)
+        filename = getattr(file, "name", "upload.csv")
+        content_type = getattr(file, "content_type", None) or mimetypes.guess_type(filename)[0] or "text/csv"
         response = requests.post(
             VALIDATA_PROD_API_URL,
             files={
-                "file": (file.name, file.read(), file.content_type),
+                "file": (filename, file.read(), content_type),
             },
             data={"schema": schema_url, "ignore_header_case": True, "include_resource_data": True},
         )
         return response.json()
-    except Exception:
-        raise Exception("Erreur lors de la validation du fichier (Validata). Merci de réessayer plus tard.")
+    except Exception as e:
+        raise Exception("Erreur lors de la validation du fichier (Validata). Merci de réessayer plus tard.") from e
 
 
 def process_errors(report):
