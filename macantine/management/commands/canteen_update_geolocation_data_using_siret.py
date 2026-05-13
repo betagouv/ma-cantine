@@ -79,8 +79,8 @@ class Command(BaseCommand):
                     pending_changes["siret_etat_administratif"] = None
                 results["canteen_siret_unknown"].append(canteen.id)
             else:
-                city_insee_code = response.get("cityInseeCode")
-                postal_code = response.get("postalCode")
+                city_insee_code = response.get("city_insee_code")
+                postal_code = response.get("postal_code")
                 etat_administratif = response.get("etat_administratif")
 
                 # check if city_insee_code from API matches canteen city_insee_code
@@ -175,8 +175,8 @@ class Command(BaseCommand):
         status = cache_row.get("status")
         if status == "ok" and cache_row.get("city_insee_code"):
             return {
-                "cityInseeCode": cache_row.get("city_insee_code"),
-                "postalCode": cache_row.get("postal_code"),
+                "city_insee_code": cache_row.get("city_insee_code"),
+                "postal_code": cache_row.get("postal_code"),
                 "etat_administratif": cache_row.get("etat_administratif"),
             }
         if status == "not_found":

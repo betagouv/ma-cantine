@@ -192,7 +192,7 @@ class Command(BaseCommand):
     def _get_response_status(api_response):
         if not api_response:
             return "not_found"
-        if api_response.get("cityInseeCode"):
+        if api_response.get("city_insee_code"):
             return "ok"
         return "error"
 
@@ -210,8 +210,8 @@ class Command(BaseCommand):
             "canteen_count": canteen_count,
             "status": status,
             "name": api_response.get("name") if api_response else None,
-            "city_insee_code": api_response.get("cityInseeCode") if api_response else None,
-            "postal_code": api_response.get("postalCode") if api_response else None,
+            "city_insee_code": api_response.get("city_insee_code") if api_response else None,
+            "postal_code": api_response.get("postal_code") if api_response else None,
             "city": api_response.get("city") if api_response else None,
             "epci": api_response.get("epci") if api_response else None,
             "department": api_response.get("department") if api_response else None,

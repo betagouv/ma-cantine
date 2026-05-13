@@ -69,8 +69,8 @@ def fetch_geo_data_from_siren(siren):
             try:
                 etablissement = result["siege"]
                 response["name"] = get_enseigne_name(etablissement) or result["nom_complet"]
-                response["cityInseeCode"] = etablissement["commune"]
-                response["postalCode"] = etablissement["code_postal"]
+                response["city_insee_code"] = etablissement["commune"]
+                response["postal_code"] = etablissement["code_postal"]
                 response["city"] = etablissement["libelle_commune"]
                 response["epci"] = etablissement["epci"]
                 response["department"] = etablissement["departement"]
@@ -124,8 +124,8 @@ def fetch_geo_data_from_siret(siret):
             try:
                 etablissement = result["matching_etablissements"][0]
                 response["name"] = get_enseigne_name(etablissement) or result["nom_complet"]
-                response["cityInseeCode"] = etablissement["commune"]
-                response["postalCode"] = etablissement["code_postal"]
+                response["city_insee_code"] = etablissement["commune"]
+                response["postal_code"] = etablissement["code_postal"]
                 response["city"] = etablissement["libelle_commune"]  # en majuscules
                 response["epci"] = etablissement["epci"]
                 # response["department"] = etablissement["departement"]  # not in response
