@@ -1,14 +1,11 @@
-import csv
-import json
 import logging
-import os
 import time
 from abc import ABC, abstractmethod
 
 import pandas as pd
-import requests
 from django.core.files.storage import default_storage
 
+from common.api import validata
 from data.models.geo import Department, Region
 from macantine.etl.utils import format_geo_name
 
@@ -55,24 +52,26 @@ class ETL(ABC):
             return 0
 
     def is_valid(self, filepath) -> bool:
-        # In order to validate the dataset with the validata api, must first convert to CSV then save online
-        with default_storage.open(filepath + "_to_validate.csv", "w") as file:
-            self.df.to_csv(
+        """
+        Validates the dataset against the schema using Validata API.
+        It creates a temporary csv file with only 1000 rows (to avoid sending too big files to Validata) and checks the response.
+        """
+        to_validate_path = f"{filepath}_to_validate.csv"
+        df_to_validate = self.df.head(1000).copy()
+        with default_storage.open(to_validate_path, "w") as file:
+            df_to_validate.to_csv(
                 file,
                 sep=";",
                 index=False,
                 na_rep="",
                 encoding="utf_8_sig",
-                quoting=csv.QUOTE_NONE,
             )
-        dataset_to_validate_url = (
-            f"{os.environ['CELLAR_HOST']}/{os.environ['CELLAR_BUCKET_NAME']}/media/{filepath}_to_validate.csv"
-        )
-
-        res = requests.get(
-            f"https://api.validata.etalab.studio/validate?schema={self.schema_url}&url={dataset_to_validate_url}&header_case=true"
-        )
-        report = json.loads(res.text)["report"]
+        with default_storage.open(to_validate_path, "rb") as file:
+            validata_response = validata.validate_file_against_schema(file, self.schema_url)
+        if "error" in validata_response:
+            logger.error(validata_response["error"])
+            return False
+        report = validata_response["report"]
         if len(report["errors"]) > 0 or report["stats"]["errors"] > 0:
             logger.error(f"The dataset {self.dataset_name} extraction has errors : ")
             logger.error(report["errors"])

@@ -1,5 +1,4 @@
 import json
-import os
 from io import BytesIO
 
 import pandas as pd
@@ -122,23 +121,18 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         with default_storage.open(filename + ".xlsx", "wb") as f:
             f.write(output.getvalue())
 
-    def load_dataset(self, datagouv=True):
+    def load_dataset(self, datagouv=False):
         filepath = f"open_data/{self.dataset_name}"
-        if (
-            os.environ.get("STATICFILES_STORAGE") == "storages.backends.s3.S3Storage"
-            and os.environ.get("DEFAULT_FILE_STORAGE") == "storages.backends.s3.S3Storage"
-        ):
-            if not self.is_valid():
-                logger.error(f"The dataset {self.name} is invalid and therefore will not be exported to s3")
-                return
+        if not self.is_valid(filepath):
+            logger.error(f"The dataset {self.dataset_name} is invalid and therefore will not be exported to s3")
+            raise Exception(f"Le dataset {self.dataset_name} est invalide et ne peut pas être exporté.")
         try:
             self._load_data_csv(filepath)
             self._load_data_xlsx(filepath)
-
             if datagouv:
                 update_dataset_resources(self.datagouv_dataset_id)
         except Exception as e:
-            logger.error(f"Error saving validated data: {e}")
+            raise Exception(f"Erreur lors de l'export du dataset {self.dataset_name}") from e
 
 
 class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):

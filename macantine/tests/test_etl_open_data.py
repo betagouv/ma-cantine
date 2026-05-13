@@ -5,12 +5,13 @@ from decimal import Decimal
 import pandas as pd
 import requests_mock
 from django.core.files.storage import default_storage
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from freezegun import freeze_time
 
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.datagouv import update_dataset_resources
+from common.api.validata import mock_post_validate_file_against_schema
 from data.models import Canteen, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
@@ -81,9 +82,9 @@ class CanteenETLOpenDataTest(TestCase):
         canteen_satellite = etl.df[etl.df.id == self.canteen_satellite.id].iloc[0]
         self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
 
-    @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
     def test_canteen_load_dataset(self, mock):
-        # Making sure the code will not enter online dataset validation by forcing local filesystem management
+        mock_post_validate_file_against_schema(mock)
+
         test_cases = [
             {
                 "name": " Load valid dataset",
@@ -96,6 +97,7 @@ class CanteenETLOpenDataTest(TestCase):
                 "expected_length": 1,
             },
         ]
+
         etl = ETL_OPEN_DATA_CANTEEN()
         etl.dataset_name += "_test"  # Avoid interferring with other files
 
@@ -105,7 +107,6 @@ class CanteenETLOpenDataTest(TestCase):
             with default_storage.open(f"open_data/{etl.dataset_name}.csv", "r") as csv_file:
                 output_dataframe = pd.read_csv(csv_file, sep=";")
             self.assertEqual(tc["expected_length"], len(output_dataframe))
-
             self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
 
             # Cleaning files
