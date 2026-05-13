@@ -71,12 +71,19 @@ def fetch_geo_data_from_siren(siren):
                 response["name"] = get_enseigne_name(etablissement) or result["nom_complet"]
                 response["city_insee_code"] = etablissement["commune"]
                 response["postal_code"] = etablissement["code_postal"]
-                response["city"] = etablissement["libelle_commune"]
+                response["city"] = etablissement["libelle_commune"]  # en majuscules
+                response["address"] = etablissement["adresse"]  # en majuscules
+                response["latitude"] = etablissement["latitude"]
+                response["longitude"] = etablissement["longitude"]
                 response["epci"] = etablissement["epci"]
                 response["department"] = etablissement["departement"]
                 response["region"] = etablissement["region"]
                 response["etat_administratif"] = etablissement["etat_administratif"]  # "A", "F"
+                response["date_creation"] = etablissement["date_creation"]
+                response["date_debut_activite"] = etablissement["date_debut_activite"]
                 response["date_fermeture"] = etablissement["date_fermeture"]
+                response["activite_principale"] = etablissement["activite_principale"]
+                response["activite_principale_naf25"] = etablissement["activite_principale_naf25"]
                 return response
             except KeyError as e:
                 logger.error(
@@ -103,7 +110,7 @@ def fetch_geo_data_from_siret(siret):
     API rate limit : 400/min
     Pour l'utilisation de cette méthode dans un script, penser à ne pas dépasser plus que 400 appels/min.
     Les paramètres de l'appel API à Recherche Entreprises:
-    * q={siret} : Terme de la recherche pour lequel nous utilions uniquemement le SIRET
+    * q={siret} : Terme de la recherche pour lequel nous utilisons uniquemement le SIRET
     * etat_administratif=A : Nous renvoyons uniquements les organismes actifs
     * page=1&per_page=1 : Un seul élément est demandé en réponse car la recherche par SIRET doit renvoyer un seul établissement.
     """
@@ -127,11 +134,18 @@ def fetch_geo_data_from_siret(siret):
                 response["city_insee_code"] = etablissement["commune"]
                 response["postal_code"] = etablissement["code_postal"]
                 response["city"] = etablissement["libelle_commune"]  # en majuscules
+                response["address"] = etablissement["adresse"]  # en majuscules
+                response["latitude"] = etablissement["latitude"]
+                response["longitude"] = etablissement["longitude"]
                 response["epci"] = etablissement["epci"]
                 # response["department"] = etablissement["departement"]  # not in response
                 response["region"] = etablissement["region"]
                 response["etat_administratif"] = etablissement["etat_administratif"]  # "A", "F"
+                response["date_creation"] = etablissement["date_creation"]
+                response["date_debut_activite"] = etablissement["date_debut_activite"]
                 response["date_fermeture"] = etablissement["date_fermeture"]
+                response["activite_principale"] = etablissement["activite_principale"]
+                response["activite_principale_naf25"] = etablissement["activite_principale_naf25"]
                 return response
             except KeyError as e:
                 logger.error(
@@ -158,15 +172,25 @@ MOCK_SIREN_923412845_RESULTS = [
     {
         "siren": "923412845",
         "nom_complet": "LA TURBINE",
+        "nom_raison_sociale": "LA TURBINE",
         "siege": {
+            "activite_principale": "94.99Z",
+            "activite_principale_naf25": "94.99Y",
+            "adresse": "3 RUE DU CHEMIN DE FER 59100 ROUBAIX",
             "code_postal": "59100",
             "commune": "59512",
+            "coordonnees": "50.694071,3.166816",
+            "date_creation": "2023-01-15",
+            "date_debut_activite": "2023-01-15",
             "date_fermeture": None,
             "departement": "59",
             "epci": "200075174",
             "etat_administratif": "A",
+            "geo_adresse": "3 Rue du Chemin de Fer 59100 Roubaix",
+            "latitude": "50.694071",
             "libelle_commune": "ROUBAIX",
             "liste_enseignes": None,
+            "longitude": "3.166816",
             "region": "32",
             "siret": "92341284500011",
         },
@@ -214,27 +238,44 @@ MOCK_SIRET_92341284500011_RESULTS = [
     {
         "siren": "923412845",
         "nom_complet": "LA TURBINE",
+        "nom_raison_sociale": "LA TURBINE",
         "siege": {
+            "activite_principale": "94.99Z",
+            "activite_principale_naf25": "94.99Y",
+            "adresse": "3 RUE DU CHEMIN DE FER 59100 ROUBAIX",
             "code_postal": "59100",
             "commune": "59512",
+            "coordonnees": "50.694071,3.166816",
+            "date_creation": "2023-01-15",
+            "date_debut_activite": "2023-01-15",
             "date_fermeture": None,
             "departement": "59",
             "epci": "200075174",
             "etat_administratif": "A",
+            "geo_adresse": "3 Rue du Chemin de Fer 59100 Roubaix",
+            "latitude": "50.694071",
             "libelle_commune": "ROUBAIX",
             "liste_enseignes": None,
+            "longitude": "3.166816",
             "region": "32",
             "siret": "92341284500011",
         },
         "matching_etablissements": [
             {
+                "activite_principale": "94.99Z",
+                "activite_principale_naf25": "94.99Y",
+                "adresse": "3 RUE DU CHEMIN DE FER 59100 ROUBAIX",
                 "code_postal": "59100",
                 "commune": "59512",
+                "date_creation": "2023-01-15",
+                "date_debut_activite": "2023-01-15",
                 "date_fermeture": None,
                 "epci": "200075174",
                 "etat_administratif": "A",
+                "latitude": "50.694071",
                 "libelle_commune": "ROUBAIX",
                 "liste_enseignes": None,
+                "longitude": "3.166816",
                 "region": "32",
                 "siret": "92341284500011",
             }
@@ -245,27 +286,44 @@ MOCK_SIRET_21340172201787_RESULTS = [
     {
         "siren": "213401722",
         "nom_complet": "COMMUNE DE MONTPELLIER",
+        "nom_raison_sociale": "COMMUNE DE MONTPELLIER",
         "siege": {
+            "activite_principale": "84.11Z",
+            "activite_principale_naf25": "84.11Y",
+            "adresse": "1 PLACE GEORGES FRECHE 34070 MONTPELLIER",
             "code_postal": "34070",
             "commune": "34172",
+            "coordonnees": "43.598842,3.896549",
+            "date_creation": "2011-11-14",
+            "date_debut_activite": "2011-11-14",
             "date_fermeture": None,
             "departement": "34",
             "epci": "243400017",
             "etat_administratif": "A",
+            "geo_adresse": "1 Place Georges Frêche 34070 Montpellier",
+            "latitude": "43.598842",
             "libelle_commune": "MONTPELLIER",
             "liste_enseignes": ["MAIRIE"],
+            "longitude": "3.896549",
             "region": "76",
             "siret": "21340172201787",
         },
         "matching_etablissements": [
             {
+                "activite_principale": "84.11Z",
+                "activite_principale_naf25": "84.11Y",
+                "adresse": "1 PLACE GEORGES FRECHE 34070 MONTPELLIER",
                 "code_postal": "34070",
                 "commune": "34172",
+                "date_creation": "2011-11-14",
+                "date_debut_activite": "2011-11-14",
                 "date_fermeture": None,
                 "epci": "243400017",
                 "etat_administratif": "A",  # active
+                "latitude": "43.598842",
                 "libelle_commune": "MONTPELLIER",
                 "liste_enseignes": ["MAIRIE"],
+                "longitude": "3.896549",
                 "region": "76",
                 "siret": "21340172201787",
             }
@@ -275,28 +333,45 @@ MOCK_SIRET_21340172201787_RESULTS = [
 MOCK_SIRET_21380185500072_RESULTS = [
     {
         "siren": "213801855",
-        "nom_complet": "SCE DES EAUX",
+        "nom_complet": "COMMUNE DE GRENOBLE",
+        "nom_raison_sociale": "COMMUNE DE GRENOBLE",
         "siege": {
+            "activite_principale": "84.11Z",
+            "activite_principale_naf25": "84.11Y",
+            "adresse": "11 BOULEVARD JEAN PAIN 38000 GRENOBLE",
             "code_postal": "38000",
             "commune": "38185",
+            "coordonnees": "45.186436,5.736047",
+            "date_creation": "1983-03-01",
+            "date_debut_activite": "2008-01-01",
             "date_fermeture": None,
             "departement": "38",
             "epci": "200040715",
             "etat_administratif": "A",
+            "geo_adresse": "11 Boulevard Jean Pain 38000 Grenoble",
+            "latitude": "45.186436",
             "libelle_commune": "GRENOBLE",
             "liste_enseignes": ["MAIRIE"],
+            "longitude": "5.736047",
             "region": "84",
             "siret": "21380185500015",
         },
         "matching_etablissements": [
             {
+                "activite_principale": "41.0Z",
+                "activite_principale_naf25": None,
+                "adresse": "MAIRIE 11 BOULEVARD JEAN PAIN 38000 GRENOBLE",
                 "code_postal": "38000",
                 "commune": "38185",
+                "date_creation": "1983-03-16",
+                "date_debut_activite": "2000-05-01",
                 "date_fermeture": "2000-05-01",
                 "epci": "200040715",
                 "etat_administratif": "F",  # closed
+                "latitude": "45.186436",
                 "libelle_commune": "GRENOBLE",
-                "liste_enseignes": ["SCE DES EAUX"],
+                "liste_enseignes": ["MAIRIE"],
+                "longitude": "5.736047",
                 "region": "84",
                 "siret": "21380185500072",
             }
