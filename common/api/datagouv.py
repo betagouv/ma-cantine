@@ -67,9 +67,10 @@ CACHE_TIMEOUT = 60 * 60 * 24 * 7  # 7 days
 
 def get_dataset(dataset_id):
     try:
-        response = requests.get(f"{DATAGOUV_API_URL}/datasets/{dataset_id}")
-        response.raise_for_status()
-        return response.json()
+        api_url = f"{DATAGOUV_API_URL}/datasets/{dataset_id}"
+        api_response = requests.get(api_url)
+        api_response.raise_for_status()
+        return api_response.json()
     except requests.HTTPError as e:
         logger.error(f"Datagouv dataset get: Error while getting dataset: {dataset_id}")
         logger.exception(e)
@@ -79,9 +80,10 @@ def get_dataset(dataset_id):
 
 def get_dataset_resource(dataset_id, resource_id):
     try:
-        response = requests.get(f"{DATAGOUV_API_URL}/datasets/{dataset_id}/resources/{resource_id}")
-        response.raise_for_status()
-        return response.json()
+        api_url = f"{DATAGOUV_API_URL}/datasets/{dataset_id}/resources/{resource_id}"
+        api_response = requests.get(api_url)
+        api_response.raise_for_status()
+        return api_response.json()
     except requests.HTTPError as e:
         logger.error(
             f"Datagouv dataset resource get: Error while getting dataset resource: {dataset_id} / {resource_id}"
@@ -111,12 +113,9 @@ def update_dataset_resources(dataset_id):
             if resource["format"] in ["xlsx", "csv"]:
                 now = datetime.now()
                 updated_url = resource["url"].split("?v=")[0] + "?v=" + now.strftime("%Y%m%d%H%M")
-                response = requests.put(
-                    f"{DATAGOUV_API_URL}/datasets/{dataset_id}/resources/{resource['id']}",
-                    headers=DATAGOUV_API_HEADER,
-                    json={"url": updated_url},
-                )
-                response.raise_for_status()
+                api_url = f"{DATAGOUV_API_URL}/datasets/{dataset_id}/resources/{resource['id']}"
+                api_response = requests.put(api_url, headers=DATAGOUV_API_HEADER, json={"url": updated_url})
+                api_response.raise_for_status()
                 count_updated_resources += 1
         logger.info(f"{count_updated_resources} datagouv's ressources have been updated")
         return count_updated_resources
@@ -140,10 +139,10 @@ def fetch_pats():
         return cached_response
 
     try:
-        pat_dataset_resource = get_dataset_resource(PAT_DATAGOUV_DATASET_ID, PAT_DATAGOUV_RESOURCE_ID)
-        response = requests.get(pat_dataset_resource["url"])
-        response.raise_for_status()
-        reader = csv.DictReader(response.iter_lines(decode_unicode=True), delimiter=";")
+        api_url = get_dataset_resource(PAT_DATAGOUV_DATASET_ID, PAT_DATAGOUV_RESOURCE_ID)
+        api_response = requests.get(api_url["url"])
+        api_response.raise_for_status()
+        reader = csv.DictReader(api_response.iter_lines(decode_unicode=True), delimiter=";")
         # the csv is BIG (4+ MB). So we only keep the fields we need.
         pat_list_filtered = [{field: row[field] for field in FIELDS_TO_KEEP} for row in reader]
         # cache mechanism: store the result

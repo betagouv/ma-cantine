@@ -12,20 +12,21 @@ ADRESSE_API_URL = "https://api-adresse.data.gouv.fr/search"
 ADRESSE_CSV_API_URL = "https://api-adresse.data.gouv.fr/search/csv"
 
 
-def fetch_geo_data_from_code(response):
+def fetch_geo_data_from_code(city_insee_code):
+    response = {}
+    response["city_insee_code"] = city_insee_code
     try:
-        location_response = requests.get(
-            f"{ADRESSE_API_URL}/?q={response['city_insee_code']}&citycode={response['city_insee_code']}&type=municipality&autocomplete=1"
-        )
-        if location_response.ok:
-            location_response = location_response.json()
+        api_url = f"{ADRESSE_API_URL}/?q={city_insee_code}&citycode={city_insee_code}&type=municipality&autocomplete=1"
+        api_response = requests.get(api_url)
+        if api_response.ok:
+            location_response = api_response.json()
             results = location_response["features"]
             if results and results[0]:
                 try:
                     result = results[0]["properties"]
                     if result:
                         response["city"] = result["label"]
-                        response["city_insee_code"] = result["citycode"]
+                        # response["city_insee_code"] = result["citycode"]
                         response["postal_code"] = result["postcode"]
                         response["department"] = result["context"].split(",")[0]
                         response["department_lib"] = result["context"].split(", ")[1]
@@ -39,9 +40,7 @@ def fetch_geo_data_from_code(response):
                     f"features array for city '{response['city']}' in location response format is non-existant or empty : {location_response}"
                 )
         else:
-            logger.warning(
-                f"location fetching failed, code {location_response.status_code} : {location_response.json()}"
-            )
+            logger.warning(f"location fetching failed, code {api_response.status_code} : {api_response.json()}")
     except Exception as e:
         logger.exception(f"Error completing location data with SIRET for city: {response['city']}")
         logger.exception(e)
@@ -49,8 +48,11 @@ def fetch_geo_data_from_code(response):
 
 
 def fetch_geo_data_from_code_csv(csv_str, timeout=4):
-    # NB: max size of a csv file is 50 MB
-    response = requests.post(
+    """
+    Header of the csv_str must be: "siret,citycode,postcode"
+    The csv must not be larger than 50 MB (max size accepted by the adresse API)
+    """
+    api_response = requests.post(
         ADRESSE_CSV_API_URL,
         files={
             "data": ("locations.csv", csv_str),
@@ -62,8 +64,8 @@ def fetch_geo_data_from_code_csv(csv_str, timeout=4):
         },
         timeout=timeout,
     )
-    response.raise_for_status()
-    return response.text
+    api_response.raise_for_status()
+    return api_response.text
 
 
 def mock_fetch_geo_data_from_code(mock, city_insee_code):
