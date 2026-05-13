@@ -13,6 +13,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import FormView, TemplateView, View
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from common.utils import send_mail
 from web.forms import LoginUserForm, RegisterUserForm
@@ -88,8 +89,9 @@ class RegisterUserView(FormView):
             self.success_url = reverse_lazy("registration_email_sent_error", kwargs={"username": username})
             return super().form_valid(form)
         else:
-            if self.request.GET.get("next"):
-                self.success_url = self.request.GET.get("next")
+            next_url = self.request.GET.get("next")
+            if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts=None):
+                self.success_url = next_url
             elif self.request.user.is_dev:
                 self.success_url = "/v2/developpement-et-apis"
             else:
@@ -125,8 +127,7 @@ class RegisterDoneView(TemplateView):
 
 class RegisterSendMailFailedView(TemplateView):
     """
-    This view is used when an error occured when
-    sending mail
+    This view is used when an error occurred when sending mail
     """
 
     template_name = "auth/register_send_mail_failed.html"
@@ -165,7 +166,7 @@ class AccountActivationView(View):
         if user and user.email_confirmed:
             messages.info(
                 request,
-                "Votre adresse email a bien été validé, vous pouvez vous identifier.",
+                "Votre adresse email a bien été validée, vous pouvez vous identifier.",
             )
             return redirect(reverse_lazy("login"))
         if user is not None and tokens.default_token_generator.check_token(user, token):
