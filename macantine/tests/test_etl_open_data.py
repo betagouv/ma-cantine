@@ -11,6 +11,7 @@ from freezegun import freeze_time
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.datagouv import update_dataset_resources
+from common.api.validata import mock_post_validate_file_against_schema
 from data.models import Canteen, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
@@ -82,11 +83,7 @@ class CanteenETLOpenDataTest(TestCase):
         self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
 
     def test_canteen_load_dataset(self, mock):
-        mock.post(
-            "https://api.validata.etalab.studio/validate",
-            json={"report": {"errors": [], "stats": {"errors": 0}, "tasks": []}},
-            status_code=200,
-        )
+        mock_post_validate_file_against_schema(mock)
 
         test_cases = [
             {

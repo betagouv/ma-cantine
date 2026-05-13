@@ -141,3 +141,13 @@ def get_specific_error_informations(error):
         "cell": error["cell"],
         "has_doc": True,
     }
+
+
+def mock_post_validate_file_against_schema(mock, success=True):
+    if not success:
+        pass
+    mock.post(
+        "https://api.validata.etalab.studio/validate",
+        json={"report": {"errors": [], "stats": {"errors": 0}, "tasks": []}},
+        status_code=200,
+    )
