@@ -28,10 +28,9 @@ with base as (
         atteint_vege_quotidien,
         td_volet_diversification_complet
     from {{ ref('mart_teledeclarations') }}
-    where cantine_line_ministry is not null
 ),
 
--- Années consécutives par cantine
+-- Années consécutives par cantine (toutes les TD valides, sans filtre line_ministry)
 td_years as (
     select
         canteen_id,
@@ -41,20 +40,20 @@ td_years as (
     from (select distinct canteen_id, annee from base) t
 ),
 
--- Echantillon ISO avec classification figée sur l'année de référence (la plus ancienne)
--- ISO 2 ans : classification = line_ministry de n-1
--- ISO 3 ans : classification = line_ministry de n-2
+-- Echantillon ISO : classification = line_ministry de l'année n (annee_ref)
+-- Repêchage : cantines sans line_ministry les années précédentes mais classées en n
 iso_sample as (
     select
         t.canteen_id,
         t.annee                             as annee_ref,
         '2ans'::text                        as iso_type,
-        b_ref.cantine_line_ministry         as perimetre_key
+        b_n.cantine_line_ministry           as perimetre_key
     from td_years t
-    join base b_ref
-        on b_ref.canteen_id = t.canteen_id
-        and b_ref.annee = t.annee - 1
+    join base b_n
+        on b_n.canteen_id = t.canteen_id
+        and b_n.annee = t.annee
     where t.prev_1 = t.annee - 1
+      and b_n.cantine_line_ministry is not null
 
     union all
 
@@ -62,17 +61,18 @@ iso_sample as (
         t.canteen_id,
         t.annee                             as annee_ref,
         '3ans'::text                        as iso_type,
-        b_ref.cantine_line_ministry         as perimetre_key
+        b_n.cantine_line_ministry           as perimetre_key
     from td_years t
-    join base b_ref
-        on b_ref.canteen_id = t.canteen_id
-        and b_ref.annee = t.annee - 2
+    join base b_n
+        on b_n.canteen_id = t.canteen_id
+        and b_n.annee = t.annee
     where t.prev_1 = t.annee - 1
       and t.prev_2 = t.annee - 2
+      and b_n.cantine_line_ministry is not null
 ),
 
 -- TDs des cantines ISO pour toutes les années concernées
--- perimetre_key vient de iso_sample (figé), pas du TD courant
+-- perimetre_key vient de iso_sample (classification de l'année n)
 iso_td as (
     select
         s.annee_ref,
