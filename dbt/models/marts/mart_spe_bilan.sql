@@ -9,6 +9,10 @@ with inscriptions as (
     select * from {{ ref('int_spe_inscriptions') }}
 ),
 
+waste as (
+    select * from {{ ref('int_spe_waste') }}
+),
+
 -- Référentiel périmètres : sort_order, clé DB, libellé affiché, groupe, est_total_groupe
 -- La clé DB doit correspondre exactement aux valeurs de cantine_line_ministry / cantine_groupe_spe
 ref_perimetre as (
@@ -186,11 +190,20 @@ select
 
     -- diversification : volet complet / nb inscrits
     s.nb_td_diversification_complet                                                 as nb_td_diversification_complet,
-    round((100.0 * s.nb_td_diversification_complet / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_td_diversification_complet_pct
+    round((100.0 * s.nb_td_diversification_complet / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_td_diversification_complet_pct,
+
+    -- gaspillage alimentaire
+    w.nb_canteens_avec_mesure                                                       as nb_canteens_mesure_gaspi,
+    round((100.0 * w.nb_canteens_avec_mesure / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_representativite_gaspi_pct,
+    w.gaspi_g_par_couvert,
+    w.niveau_ademe
 
 from all_stats s
 join ref_perimetre_with_groupe r on r.perimetre_key = s.perimetre_key
 left join inscriptions i
-    on i.perimetre    = r.perimetre_key
-    and i.annee       = s.annee
+    on i.perimetre = r.perimetre_key
+    and i.annee    = s.annee
+left join waste w
+    on w.perimetre_key = r.perimetre_key
+    and w.annee        = s.annee
 order by s.annee, r.sort_order

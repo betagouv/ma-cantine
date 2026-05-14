@@ -17,3 +17,5 @@ sources:
         description: Raw diagnostics dumped from the production database.
       - name: users_raw
         description: Raw user data dumped from the production database.
+      - name: waste_measurements_raw
+        description: Raw waste measurements dumped from the production database.

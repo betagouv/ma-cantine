@@ -3,7 +3,22 @@
 -- Vue 2 : ATE éclaté par région
 -- Dénominateur : cantines ATE par région inscrites avant le 29 avril de l'année n+1
 
-with canteens_ate as (
+with waste_by_region as (
+    select
+        w.annee,
+        c.region,
+        count(distinct w.canteen_id)        as nb_canteens_avec_mesure,
+        sum(w.total_mass)                   as total_mass_kg,
+        sum(w.meal_count)                   as total_meal_count
+    from {{ ref('stg_waste_measurements') }} w
+    join {{ ref('stg_canteens') }} c
+        on c.canteen_id = w.canteen_id
+        and c.line_ministry = 'administration_territoriale'
+        and c.region is not null
+    group by w.annee, c.region
+),
+
+canteens_ate as (
     select
         region,
         region_lib,
@@ -102,10 +117,25 @@ select
     round((100.0 * s.nb_vege_quotidien / nullif(s.nb_choix_multiple, 0))::numeric, 1) as taux_vege_quotidien_pct,
 
     s.nb_td_diversification_complet                                                 as nb_td_diversification_complet,
-    round((100.0 * s.nb_td_diversification_complet / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_td_diversification_complet_pct
+    round((100.0 * s.nb_td_diversification_complet / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_td_diversification_complet_pct,
+
+    -- gaspillage alimentaire
+    wr.nb_canteens_avec_mesure                                                      as nb_canteens_mesure_gaspi,
+    round((100.0 * wr.nb_canteens_avec_mesure / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_representativite_gaspi_pct,
+    round((wr.total_mass_kg * 1000 / nullif(wr.total_meal_count, 0))::numeric, 1)  as gaspi_g_par_couvert,
+    case
+        when wr.total_meal_count is null or wr.total_meal_count = 0               then null
+        when wr.total_mass_kg * 1000 / wr.total_meal_count <= 47                  then 'Niveau 3'
+        when wr.total_mass_kg * 1000 / wr.total_meal_count <= 74                  then 'Niveau 2'
+        when wr.total_mass_kg * 1000 / wr.total_meal_count <= 95                  then 'Niveau 1'
+        else                                                                           'Non atteint'
+    end                                                                             as niveau_ademe
 
 from stats s
 left join nb_inscrites_region i
     on i.region = s.region
     and i.annee = s.annee
+left join waste_by_region wr
+    on wr.region = s.region
+    and wr.annee = s.annee
 order by s.annee, lib_region
