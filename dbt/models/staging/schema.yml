@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: stg_teledeclarations
+    description: >
+      Télédéclarations from the data warehouse (loaded by the Python ETL).
+      One row per canteen per campaign year.
+
+  - name: stg_canteens
+    description: >
+      One row per active canteen (soft-deleted records excluded).
+      Thin layer on top of canteens_raw: column renames and selection only, no joins.
+    columns:
+      - name: canteen_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_canteen_managers
+    description: >
+      Many-to-many relationship between canteens and their managers (users).
+      One row per (canteen, user) pair.
+
+  - name: stg_users
+    description: >
+      One row per registered user. Includes all users (active and inactive).
+    columns:
+      - name: user_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_diagnostics
+    description: >
+      One row per diagnostic. A diagnostic belongs to one canteen for one year.
+      Contains EGalim appro values (total, bio, durable) and service measures.
+    columns:
+      - name: diagnostic_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
