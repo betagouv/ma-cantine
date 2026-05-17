@@ -55,6 +55,7 @@ PAT_DATAGOUV_DATASET_ID = "pat-projets-alimentaires-territoriaux-description"
 PAT_DATAGOUV_URL = f"https://www.data.gouv.fr/datasets/{PAT_DATAGOUV_DATASET_ID}"
 # PAT_DATAGOUV_RESOURCE_ID = "c85d08a7-ff12-4d31-bb11-27d37523bc7c"  # 20250710
 PAT_DATAGOUV_RESOURCE_ID = "0dc55455-022f-4885-8022-34f612aba59c"  # 20250710 (ISO-8859-1)
+# PAT_DATAGOUV_CSV_URL = "https://static.data.gouv.fr/resources/pat-projets-alimentaires-territoriaux-description/20250710-204351/pats-20250710.csv"
 PAT_DATAGOUV_CSV_URL = "https://static.data.gouv.fr/resources/pat-projets-alimentaires-territoriaux-description/20250710-204354/pats-20250710-win1252.csv"
 
 
