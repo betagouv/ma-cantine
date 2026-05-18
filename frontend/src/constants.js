@@ -175,6 +175,9 @@ export default Object.freeze({
     EUROPE: { text: "Origine Europe" },
     FRANCE: { text: "Origine France" },
   },
+  PurchasesLocal: {
+    LOCAL: { text: "Cochez la case si le produit correspond au critère 'Produit local'" },
+  },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio et Bio + Commerce équitable", color: "green" },

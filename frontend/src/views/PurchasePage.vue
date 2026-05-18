@@ -196,21 +196,43 @@
               </v-col>
             </v-row>
           </fieldset>
+          <fieldset class="mx-4 mb-6" style="width: 100%">
+            <legend class="body-2 my-1">Local</legend>
+            <span class="body-2 my-3 grey--text text--darken-1">
+              Phrase explicative de la définition de local.... curabitur blandit tempus porttitor.
+            </span>
+            <v-row class="mb-4">
+              <v-col cols="12" sm="6" class="py-0" v-for="characteristic in local" :key="characteristic">
+                <v-checkbox
+                  hide-details="auto"
+                  v-model="purchase.characteristics"
+                  :multiple="true"
+                  :key="characteristic"
+                  :value="characteristic"
+                  class="mb-2"
+                >
+                  <template v-slot:label>
+                    <span class="body-2 grey--text text--darken-4">
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesLocal") }}
+                    </span>
+                  </template>
+                </v-checkbox>
+                <div v-show="showLocalDefinition">
+                  <label class="body-2" for="local-definition">Quelle est votre définition de "Produit local" ?</label>
+                  <DsfrSelect
+                    hide-details="auto"
+                    :items="localDefinitions"
+                    v-model="purchase.localDefinition"
+                    :rules="showLocalDefinition ? [validators.required] : []"
+                    id="local-definition"
+                    class="mt-2"
+                    no-data-text="Pas de résultats"
+                  />
+                </div>
+              </v-col>
+            </v-row>
+          </fieldset>
         </v-row>
-        <v-expand-transition>
-          <v-col cols="12" sm="6" v-show="showLocalDefinition" class="my-4">
-            <label class="body-2" for="local-definition">C'est quoi votre définition de local ?</label>
-            <DsfrSelect
-              hide-details="auto"
-              :items="localDefinitions"
-              v-model="purchase.localDefinition"
-              :rules="showLocalDefinition ? [validators.required] : []"
-              id="local-definition"
-              class="mt-2"
-              no-data-text="Pas de résultats"
-            />
-          </v-col>
-        </v-expand-transition>
         <v-sheet
           rounded
           color="grey lighten-4 pa-3 mt-8"
@@ -315,6 +337,7 @@ export default {
       characteristics: Object.keys(Constants.Characteristics),
       egalimCategories: Object.keys(Constants.PurchasesEGalimCategories),
       origines: Object.keys(Constants.PurchasesOrigines),
+      local: Object.keys(Constants.PurchasesLocal),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],
@@ -361,9 +384,10 @@ export default {
         return Constants.ProductFamilies[family].text
       return ""
     },
-    getCharacteristicDisplayText(characteristic) {
-      if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
-        return Constants.Characteristics[characteristic].longText || Constants.Characteristics[characteristic].text
+    getCharacteristicDisplayText(characteristic, list = false) {
+      const caracteristicsList = list ? Constants[list] : Constants.Characteristics
+      if (Object.prototype.hasOwnProperty.call(caracteristicsList, characteristic))
+        return caracteristicsList[characteristic].longText || caracteristicsList[characteristic].text
       return ""
     },
     async savePurchase(stayOnPage) {
