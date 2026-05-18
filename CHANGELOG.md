@@ -6,6 +6,30 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.33.3](https://github.com/betagouv/ma-cantine/compare/v2026.33.2...v2026.33.3) (2026-05-18)
+
+
+### Améliorations
+
+* **Achats:** mise à jour du formulaire de création et de modification d'achat en divisant les caractéristiques en 4 sections ([#6720](https://github.com/betagouv/ma-cantine/issues/6720)) ([4520cc0](https://github.com/betagouv/ma-cantine/commit/4520cc0d51bf27fc65f5bb8ee2109fdfbf757aa2))
+* **Achats:** nouveau choix de caractéristique EUROPE ([#6708](https://github.com/betagouv/ma-cantine/issues/6708)) ([315023f](https://github.com/betagouv/ma-cantine/commit/315023f30849a181c85079ef0aa9e3201bc890f1))
+* **Bandeau démo:** mise à jour du texte explicatif ([#6717](https://github.com/betagouv/ma-cantine/issues/6717)) ([3a9fed5](https://github.com/betagouv/ma-cantine/commit/3a9fed50a722ae6ed8cf1662a17226004d8de9c4))
+* **Données Géo:** met à jour `pats.json` (Frontend) ([#6714](https://github.com/betagouv/ma-cantine/issues/6714)) ([63dc38f](https://github.com/betagouv/ma-cantine/commit/63dc38f102a2134e25f268f6e59ac3dde98e6c58))
+
+
+### Corrections (bugs, typos...)
+
+* **Données Géo:** PAT: enlever les caractères bizarres à la volée ([#6715](https://github.com/betagouv/ma-cantine/issues/6715)) ([2421628](https://github.com/betagouv/ma-cantine/commit/242162817e51313992b4f6a4e4375de457a6cd8f))
+* **Securité:** sanitize le paramètre 'next' ([#6709](https://github.com/betagouv/ma-cantine/issues/6709)) ([5b16171](https://github.com/betagouv/ma-cantine/commit/5b16171a3273eedd30218c1b0d17707e21a5198d))
+
+
+### Technique
+
+* **Achats:** ajouter des tests sur all_objects & is_deleted ([#6718](https://github.com/betagouv/ma-cantine/issues/6718)) ([5d927a1](https://github.com/betagouv/ma-cantine/commit/5d927a1fbc8e93a62d08594770c8decb0adc405a))
+* **API Adresse:** rendre l'appel à la fonction indépendant de l'objet 'response' ([#6712](https://github.com/betagouv/ma-cantine/issues/6712)) ([f59faa9](https://github.com/betagouv/ma-cantine/commit/f59faa931388fad99fb1639c78939519e8d810a5))
+* **API Recherche Entreprises:** ne pas utiliser de camelCase dans la transformation des résultats (city_insee_code & postal_code) ([#6710](https://github.com/betagouv/ma-cantine/issues/6710)) ([e5d5bde](https://github.com/betagouv/ma-cantine/commit/e5d5bde600319cbe4fd24f00b3e1a1af0496be48))
+* **API Validata:** Open Data: checker si les fichiers sont valides avant d'exporter ([#6713](https://github.com/betagouv/ma-cantine/issues/6713)) ([a52b813](https://github.com/betagouv/ma-cantine/commit/a52b81364ec7090e7d852b0009264ac369a7f72c))
+
 ## [2026.33.2](https://github.com/betagouv/ma-cantine/compare/v2026.33.1...v2026.33.2) (2026-05-12)
 
 
