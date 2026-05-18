@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.test import TransactionTestCase, TestCase
 from django.core.exceptions import ValidationError
 
-from data.factories import PurchaseFactory
+from data.factories import PurchaseFactory, CanteenFactory, UserFactory
 from data.models import Purchase
 
 
@@ -126,6 +126,28 @@ class PurchaseModelDeleteTest(TestCase):
 
         self.assertEqual(Purchase.objects.count(), 0)
         self.assertEqual(Purchase.all_objects.count(), 0)
+
+
+class PurchaseQuerySetTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory()
+        cls.purchase_2023_canteen = PurchaseFactory(canteen=cls.canteen, date="2023-01-01")
+        cls.purchase_2024 = PurchaseFactory(date="2024-01-01")
+
+    def test_for_user_queryset(self):
+        self.assertEqual(Purchase.objects.for_user(self.user).count(), 0)
+
+        self.canteen.managers.add(self.user)
+        self.canteen.save()
+
+        self.assertEqual(Purchase.objects.for_user(self.user).count(), 1)
+
+    def test_for_year_queryset(self):
+        self.assertEqual(Purchase.objects.for_year(2022).count(), 0)
+        self.assertEqual(Purchase.objects.for_year(2023).count(), 1)
+        self.assertEqual(Purchase.objects.for_year(2024).count(), 1)
 
 
 class PurchaseDeleteQuerySetAndPropertyTest(TestCase):

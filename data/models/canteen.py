@@ -171,7 +171,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_purchases_for_year(self, year):
         from data.models import Purchase
 
-        purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
+        purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk")).for_year(year)
         return self.annotate(has_purchases_for_year=Exists(purchases_for_year))
 
     def annotate_with_diagnostic_for_year(self, year):
