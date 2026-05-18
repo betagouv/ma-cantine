@@ -144,6 +144,7 @@ export default Object.freeze({
       longText:
         "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
     },
+    EUROPE: { text: "Origine Europe" },
     FRANCE: { text: "Origine France" },
     CIRCUIT_COURT: { text: "Origine France (dont circuit-court)" },
     LOCAL: { text: "Origine France (dont local)" },
@@ -183,6 +184,7 @@ export default Object.freeze({
       color: "pink",
     },
     NON_EGALIM: { text: "Non-EGalim", color: "blue-grey lighten-2" },
+    // EUROPE: { text: "Origine Europe", additional: true },
     FRANCE: { text: "Origine France", additional: true },
     CIRCUIT_COURT: { text: "Origine France : dont circuit-court", additional: true },
     LOCAL: { text: "Origine France : dont local", additional: true },
@@ -482,6 +484,10 @@ export default Object.freeze({
       icon: "mdi-dots-horizontal",
       color: "grey",
     },
+    // EUROPE: {
+    //   icon: "$europe-line",
+    //   color: "blue",
+    // },
     FRANCE: {
       icon: "$france-line",
       color: "indigo",
