@@ -1,5 +1,5 @@
 <template>
-  <div class="app-banner-env">
+  <div class="app-banner-env text-left">
     <div v-if="show" class="fr-notice fr-notice--info">
       <div class="fr-container">
         <div class="fr-notice__body">
@@ -7,6 +7,10 @@
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
             <span class="fr-notice__title">
               Environnement de démonstration : toutes les actions sont sans conséquence.
+            </span>
+            <span class="fr-notice__desc">
+              Le comportement est figé sur la période de télédéclaration (possibilité de créer un bilan de l'année n-1
+              et de le télédéclarer/corriger jusqu'à la fin de l'année n)
             </span>
           </p>
         </div>
