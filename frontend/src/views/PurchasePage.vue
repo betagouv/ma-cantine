@@ -145,9 +145,9 @@
               class="mt-2"
             />
           </v-col>
-          <fieldset class="mx-4">
+          <fieldset class="mx-4 mb-6">
             <legend class="body-2 my-3">Catégories EGalim</legend>
-            <v-row class="mb-4">
+            <v-row>
               <v-col cols="12" sm="4" class="py-0" v-for="characteristic in egalimCategories" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
@@ -173,7 +173,7 @@
               </v-col>
             </v-row>
           </fieldset>
-          <fieldset class="mx-4" style="width: 100%">
+          <fieldset class="mx-4 mb-6" style="width: 100%">
             <legend class="body-2 my-1">Origine</legend>
             <span class="body-2 my-3 grey--text text--darken-1">
               Sélectionner une des options ou laisser le champ vide.
