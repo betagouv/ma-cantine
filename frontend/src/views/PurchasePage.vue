@@ -216,7 +216,7 @@
                     </span>
                   </template>
                 </v-checkbox>
-                <div v-show="showLocalDefinition">
+                <div v-show="showLocalDefinition" class="mt-2">
                   <label class="body-2" for="local-definition">Quelle est votre définition de "Produit local" ?</label>
                   <DsfrSelect
                     hide-details="auto"
