@@ -202,7 +202,7 @@
               Phrase explicative de la définition de local.... curabitur blandit tempus porttitor.
             </span>
             <v-row class="mb-4">
-              <v-col cols="12" sm="6" class="py-0" v-for="characteristic in local" :key="characteristic">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in local" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
                   v-model="purchase.characteristics"
@@ -216,6 +216,8 @@
                     </span>
                   </template>
                 </v-checkbox>
+              </v-col>
+              <v-col cols="12" sm="4" class="pb-0">
                 <div v-show="showLocalDefinition" class="mt-2">
                   <label class="body-2" for="local-definition">Quelle est votre définition de "Produit local" ?</label>
                   <DsfrSelect
@@ -234,7 +236,7 @@
           <fieldset class="mx-4 mb-0" style="width: 100%">
             <legend class="body-2 my-1">Hors EGalim : Commercialisation en circuit court</legend>
             <v-row class="mb-4">
-              <v-col cols="12" sm="6" class="py-0" v-for="characteristic in circuitCourt" :key="characteristic">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in circuitCourt" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
                   v-model="purchase.characteristics"
