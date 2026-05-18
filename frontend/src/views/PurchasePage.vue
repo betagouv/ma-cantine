@@ -175,9 +175,6 @@
           </fieldset>
           <fieldset class="mx-4 mb-4" style="width: 100%">
             <legend class="body-2 my-1">Origine</legend>
-            <span class="body-2 my-3 grey--text text--darken-1">
-              Sélectionner une des options ou laisser le champ vide.
-            </span>
             <v-row class="mb-4">
               <v-col cols="12" sm="4" class="py-0" v-for="characteristic in origines" :key="characteristic">
                 <v-checkbox
@@ -198,9 +195,9 @@
           </fieldset>
           <fieldset class="mx-4 mb-4" style="width: 100%">
             <legend class="body-2 my-1">Hors EGalim : Produit local</legend>
-            <span class="body-2 my-3 grey--text text--darken-1">
+            <!--<span class="body-2 my-3 grey--text text--darken-1">
               Phrase explicative de la définition de local.... curabitur blandit tempus porttitor.
-            </span>
+            </span>-->
             <v-row class="mb-4">
               <v-col cols="12" sm="4" class="py-0" v-for="characteristic in local" :key="characteristic">
                 <v-checkbox
