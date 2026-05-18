@@ -197,7 +197,7 @@
             </v-row>
           </fieldset>
           <fieldset class="mx-4 mb-6" style="width: 100%">
-            <legend class="body-2 my-1">Local</legend>
+            <legend class="body-2 my-1">Hors EGalim : Produit local</legend>
             <span class="body-2 my-3 grey--text text--darken-1">
               Phrase explicative de la définition de local.... curabitur blandit tempus porttitor.
             </span>
