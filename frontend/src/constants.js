@@ -178,6 +178,9 @@ export default Object.freeze({
   PurchasesLocal: {
     LOCAL: { text: "Cochez la case si le produit correspond au critère 'Produit local'" },
   },
+  PurchasesCircuitCourt: {
+    CIRCUIT_COURT: { text: "Cocher la case si la commercialisation du produit a été faite en 'Circuit court'" },
+  },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio et Bio + Commerce équitable", color: "green" },

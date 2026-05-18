@@ -231,6 +231,26 @@
               </v-col>
             </v-row>
           </fieldset>
+          <fieldset class="mx-4 mb-0" style="width: 100%">
+            <legend class="body-2 my-1">Hors EGalim : Commercialisation en circuit court</legend>
+            <v-row class="mb-4">
+              <v-col cols="12" sm="6" class="py-0" v-for="characteristic in circuitCourt" :key="characteristic">
+                <v-checkbox
+                  hide-details="auto"
+                  v-model="purchase.characteristics"
+                  :multiple="true"
+                  :key="characteristic"
+                  :value="characteristic"
+                >
+                  <template v-slot:label>
+                    <span class="body-2 grey--text text--darken-4">
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesCircuitCourt") }}
+                    </span>
+                  </template>
+                </v-checkbox>
+              </v-col>
+            </v-row>
+          </fieldset>
         </v-row>
         <v-sheet
           rounded
@@ -337,6 +357,7 @@ export default {
       egalimCategories: Object.keys(Constants.PurchasesEGalimCategories),
       origines: Object.keys(Constants.PurchasesOrigines),
       local: Object.keys(Constants.PurchasesLocal),
+      circuitCourt: Object.keys(Constants.PurchasesCircuitCourt),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],
