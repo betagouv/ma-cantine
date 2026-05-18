@@ -149,6 +149,28 @@ export default Object.freeze({
     CIRCUIT_COURT: { text: "Origine France (dont circuit-court)" },
     LOCAL: { text: "Origine France (dont local)" },
   },
+  PurchasesEGalimCategories: {
+    BIO: { text: "Bio" },
+    LABEL_ROUGE: { text: "Label rouge" },
+    AOCAOP: { text: "AOC / AOP", longText: "Appellation d'origine (AOC / AOP)" },
+    IGP: { text: "IGP", longText: "Indication géographique protégée (IGP)" },
+    STG: { text: "STG", longText: "Spécialité traditionnelle garantie (STG)" },
+    HVE: { text: "HVE", longText: "Certification environnementale de niveau 2 ou HVE" },
+    PECHE_DURABLE: { text: "Écolabel pêche durable" },
+    RUP: { text: "RUP", longText: "Région ultrapériphérique (RUP)" },
+    COMMERCE_EQUITABLE: { text: "Commerce équitable" },
+    FERMIER: { text: "Fermier", longText: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »" },
+    EXTERNALITES: {
+      text: "Critère externalités environnementales",
+      longText:
+        "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+    },
+    PERFORMANCE: {
+      text: "Critères protection de l'environnement et approvisionnement direct",
+      longText:
+        "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
+    },
+  },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio et Bio + Commerce équitable", color: "green" },

@@ -146,9 +146,9 @@
             />
           </v-col>
           <fieldset class="mx-4">
-            <legend class="body-2 my-3">Caractéristiques</legend>
+            <legend class="body-2 my-3">Catégories EGalim</legend>
             <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in characteristics" :key="characteristic">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in egalimCategories" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
                   v-model="purchase.characteristics"
@@ -290,6 +290,7 @@ export default {
         label: this.getProductFamilyDisplayText(f),
       })),
       characteristics: Object.keys(Constants.Characteristics),
+      egalimCategories: Object.keys(Constants.PurchasesEGalimCategories),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],
