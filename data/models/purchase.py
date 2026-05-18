@@ -32,6 +32,9 @@ def valeur_externalites_performance_query():
 
 
 class PurchaseQuerySet(SoftDeletionQuerySet):
+    def for_user(self, user):
+        return self.select_related("canteen").filter(canteen__managers=user)
+
     def filter_for_stats(self, canteen, year):
         return self.only("id", "family", "characteristics", "price_ht").filter(canteen=canteen, date__year=year)
 

@@ -111,7 +111,7 @@ class PurchaseListCreateView(ListCreateAPIView):
     filterset_class = PurchaseFilterSet
 
     def get_queryset(self):
-        return Purchase.objects.select_related("canteen").filter(canteen__in=self.request.user.canteens.all())
+        return Purchase.objects.for_user(self.request.user)
 
     def perform_create(self, serializer):
         canteen_id = self.request.data.get("canteen")
@@ -142,7 +142,7 @@ class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = PurchaseSerializer
 
     def get_queryset(self):
-        return Purchase.objects.filter(canteen__in=self.request.user.canteens.all())
+        return Purchase.objects.for_user(self.request.user)
 
     def perform_update(self, serializer):
         canteen_id = self.request.data.get("canteen")
@@ -261,7 +261,7 @@ class PurchaseOptionsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        purchases = Purchase.objects.filter(canteen__in=self.request.user.canteens.all())
+        purchases = Purchase.objects.for_user(request.user)
         products = list(
             purchases.filter(description__isnull=False)
             .order_by("description")
@@ -282,7 +282,7 @@ class PurchasesDeleteView(APIView):
 
     def post(self, request):
         purchase_ids = request.data.get("ids")
-        purchases = Purchase.objects.filter(canteen__in=self.request.user.canteens.all(), id__in=purchase_ids)
+        purchases = Purchase.objects.for_user(request.user).filter(id__in=purchase_ids)
         deleted_count = purchases.delete()
         return JsonResponse({"count": deleted_count}, status=status.HTTP_200_OK)
 
@@ -292,8 +292,6 @@ class PurchasesRestoreView(APIView):
 
     def post(self, request):
         purchase_ids = request.data.get("ids")
-        purchases_to_restore = Purchase.all_objects.filter(
-            canteen__in=self.request.user.canteens.all(), id__in=purchase_ids
-        )
+        purchases_to_restore = Purchase.all_objects.for_user(request.user).filter(id__in=purchase_ids)
         restored_count = purchases_to_restore.update(deletion_date=None)
         return JsonResponse({"count": restored_count}, status=status.HTTP_200_OK)
