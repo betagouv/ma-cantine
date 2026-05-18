@@ -2,6 +2,7 @@ import json
 
 from django.core.management.base import BaseCommand
 
+from common.utils.utils import clean_unicode_string
 from common.api.datagouv import fetch_pats
 from common.api.decoupage_administratif import (
     fetch_communes,
@@ -62,7 +63,7 @@ class Command(BaseCommand):
             pat_list_filtered = [
                 {
                     "code": pat["id"],
-                    "nom": pat["nom_administratif"],
+                    "nom": clean_unicode_string(pat["nom_administratif"]),
                 }
                 for pat in pat_list
             ]

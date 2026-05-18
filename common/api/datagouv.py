@@ -8,6 +8,8 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 
+from common.utils.utils import clean_unicode_string
+
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------------
@@ -50,11 +52,13 @@ MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL = f"{settings.GITHUB_RAW_BASE_URL
 # URL: https://france-pat.fr/presentation-de-l-observatoire/
 # Note: data updated twice a year
 # Note: communes can belong to multiple PATs
+# Note: why do we use the ISO-8859-1 csv? because the other one contains even weirder characters like "AgglomÃ©ration"
 
 PAT_DATAGOUV_DATASET_ID = "pat-projets-alimentaires-territoriaux-description"
 PAT_DATAGOUV_URL = f"https://www.data.gouv.fr/datasets/{PAT_DATAGOUV_DATASET_ID}"
 # PAT_DATAGOUV_RESOURCE_ID = "c85d08a7-ff12-4d31-bb11-27d37523bc7c"  # 20250710
 PAT_DATAGOUV_RESOURCE_ID = "0dc55455-022f-4885-8022-34f612aba59c"  # 20250710 (ISO-8859-1)
+# PAT_DATAGOUV_CSV_URL = "https://static.data.gouv.fr/resources/pat-projets-alimentaires-territoriaux-description/20250710-204351/pats-20250710.csv"
 PAT_DATAGOUV_CSV_URL = "https://static.data.gouv.fr/resources/pat-projets-alimentaires-territoriaux-description/20250710-204354/pats-20250710-win1252.csv"
 
 
@@ -172,7 +176,7 @@ def map_pat_list_to_communes_insee_code():
                 pat_mapping[city_insee_code].append(
                     {
                         "pat": pat["id"],
-                        "pat_lib": pat["nom_administratif"],
+                        "pat_lib": clean_unicode_string(pat["nom_administratif"]),
                     }
                 )
     except requests.HTTPError as e:

@@ -16,3 +16,12 @@ class UtilsTest(TestCase):
         ]:
             with self.subTest(text=TUPLE):
                 self.assertEqual(utils_utils.normalize_string(TUPLE[0]), TUPLE[1])
+
+    def test_clean_unicode_string(self):
+        for TUPLE in [
+            ("Caf<U+00E9>", "Café"),
+            ("PAT dAzur", "PAT d'Azur"),
+            ("foo\x92bar\x07baz", "foo'barbaz"),
+        ]:
+            with self.subTest(text=TUPLE):
+                self.assertEqual(utils_utils.clean_unicode_string(TUPLE[0]), TUPLE[1])
