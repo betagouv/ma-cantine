@@ -194,7 +194,7 @@
             </v-row>
           </fieldset>
           <fieldset class="mx-4 mb-4" style="width: 100%">
-            <legend class="body-2 my-1">Hors EGalim : Produit local</legend>
+            <legend class="body-2 my-1">Hors EGalim : critère local</legend>
             <!--<span class="body-2 my-3 grey--text text--darken-1">
               Phrase explicative de la définition de local.... curabitur blandit tempus porttitor.
             </span>-->
@@ -216,7 +216,7 @@
               </v-col>
               <v-col cols="12" sm="4" class="pb-0">
                 <div v-show="showLocalDefinition" class="mt-2">
-                  <label class="body-2" for="local-definition">Quelle est votre définition de "Produit local" ?</label>
+                  <label class="body-2" for="local-definition">Quelle est votre définition de "Local" ?</label>
                   <DsfrSelect
                     hide-details="auto"
                     :items="localDefinitions"

@@ -176,10 +176,10 @@ export default Object.freeze({
     FRANCE: { text: "Origine France" },
   },
   PurchasesLocal: {
-    LOCAL: { text: "Cocher la case si le produit est 'Local'" },
+    LOCAL: { text: "Cocher la case si l'achat est 'Local'" },
   },
   PurchasesCircuitCourt: {
-    CIRCUIT_COURT: { text: "Cocher la case si le produit est en 'Circuit court'" },
+    CIRCUIT_COURT: { text: "Cocher la case si l'achat est en 'Circuit court'" },
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
