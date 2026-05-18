@@ -176,7 +176,7 @@ export default Object.freeze({
     FRANCE: { text: "Origine France" },
   },
   PurchasesLocal: {
-    LOCAL: { text: "Cochez la case si le produit correspond au critère 'Produit local'" },
+    LOCAL: { text: "Cocher la case si le produit correspond au critère 'Produit local'" },
   },
   PurchasesCircuitCourt: {
     CIRCUIT_COURT: { text: "Cocher la case si la commercialisation du produit a été faite en 'Circuit court'" },
