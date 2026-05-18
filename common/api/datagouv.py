@@ -8,6 +8,8 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 
+from common.utils.utils import clean_unicode_string
+
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------------
@@ -173,7 +175,7 @@ def map_pat_list_to_communes_insee_code():
                 pat_mapping[city_insee_code].append(
                     {
                         "pat": pat["id"],
-                        "pat_lib": pat["nom_administratif"],
+                        "pat_lib": clean_unicode_string(pat["nom_administratif"]),
                     }
                 )
     except requests.HTTPError as e:
