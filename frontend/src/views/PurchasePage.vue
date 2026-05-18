@@ -146,9 +146,9 @@
             />
           </v-col>
           <fieldset class="mx-4">
-            <legend class="body-2 my-3">Caractéristiques</legend>
+            <legend class="body-2 my-3">Catégories EGalim</legend>
             <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in characteristics" :key="characteristic">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in egalimCategories" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
                   v-model="purchase.characteristics"
@@ -173,21 +173,84 @@
               </v-col>
             </v-row>
           </fieldset>
+          <fieldset class="mx-4 mb-4" style="width: 100%">
+            <legend class="body-2 my-1">Origine</legend>
+            <v-row class="mb-4">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in origines" :key="characteristic">
+                <v-checkbox
+                  hide-details="auto"
+                  v-model="purchase.characteristics"
+                  :multiple="true"
+                  :key="characteristic"
+                  :value="characteristic"
+                >
+                  <template v-slot:label>
+                    <span class="body-2 grey--text text--darken-4">
+                      {{ getCharacteristicDisplayText(characteristic) }}
+                    </span>
+                  </template>
+                </v-checkbox>
+              </v-col>
+            </v-row>
+          </fieldset>
+          <fieldset class="mx-4 mb-4" style="width: 100%">
+            <legend class="body-2 my-1">Hors EGalim : critère local</legend>
+            <!--<span class="body-2 my-3 grey--text text--darken-1">
+              Phrase explicative de la définition de local.... curabitur blandit tempus porttitor.
+            </span>-->
+            <v-row class="mb-4">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in local" :key="characteristic">
+                <v-checkbox
+                  hide-details="auto"
+                  v-model="purchase.characteristics"
+                  :multiple="true"
+                  :key="characteristic"
+                  :value="characteristic"
+                >
+                  <template v-slot:label>
+                    <span class="body-2 grey--text text--darken-4">
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesLocal") }}
+                    </span>
+                  </template>
+                </v-checkbox>
+              </v-col>
+              <v-col cols="12" sm="4" class="pb-0">
+                <div v-show="showLocalDefinition" class="mt-2">
+                  <label class="body-2" for="local-definition">Quelle est votre définition de "Local" ?</label>
+                  <DsfrSelect
+                    hide-details="auto"
+                    :items="localDefinitions"
+                    v-model="purchase.localDefinition"
+                    :rules="showLocalDefinition ? [validators.required] : []"
+                    id="local-definition"
+                    class="mt-2"
+                    no-data-text="Pas de résultats"
+                  />
+                </div>
+              </v-col>
+            </v-row>
+          </fieldset>
+          <fieldset class="mx-4 mb-0" style="width: 100%">
+            <legend class="body-2 my-1">Hors EGalim : commercialisation en circuit court</legend>
+            <v-row class="mb-4">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in circuitCourt" :key="characteristic">
+                <v-checkbox
+                  hide-details="auto"
+                  v-model="purchase.characteristics"
+                  :multiple="true"
+                  :key="characteristic"
+                  :value="characteristic"
+                >
+                  <template v-slot:label>
+                    <span class="body-2 grey--text text--darken-4">
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesCircuitCourt") }}
+                    </span>
+                  </template>
+                </v-checkbox>
+              </v-col>
+            </v-row>
+          </fieldset>
         </v-row>
-        <v-expand-transition>
-          <v-col cols="12" sm="6" v-show="showLocalDefinition" class="my-4">
-            <label class="body-2" for="local-definition">C'est quoi votre définition de local ?</label>
-            <DsfrSelect
-              hide-details="auto"
-              :items="localDefinitions"
-              v-model="purchase.localDefinition"
-              :rules="showLocalDefinition ? [validators.required] : []"
-              id="local-definition"
-              class="mt-2"
-              no-data-text="Pas de résultats"
-            />
-          </v-col>
-        </v-expand-transition>
         <v-sheet
           rounded
           color="grey lighten-4 pa-3 mt-8"
@@ -290,6 +353,10 @@ export default {
         label: this.getProductFamilyDisplayText(f),
       })),
       characteristics: Object.keys(Constants.Characteristics),
+      egalimCategories: Object.keys(Constants.PurchasesEGalimCategories),
+      origines: Object.keys(Constants.PurchasesOrigines),
+      local: Object.keys(Constants.PurchasesLocal),
+      circuitCourt: Object.keys(Constants.PurchasesCircuitCourt),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],
@@ -336,9 +403,10 @@ export default {
         return Constants.ProductFamilies[family].text
       return ""
     },
-    getCharacteristicDisplayText(characteristic) {
-      if (Object.prototype.hasOwnProperty.call(Constants.Characteristics, characteristic))
-        return Constants.Characteristics[characteristic].longText || Constants.Characteristics[characteristic].text
+    getCharacteristicDisplayText(characteristic, list = false) {
+      const caracteristicsList = list ? Constants[list] : Constants.Characteristics
+      if (Object.prototype.hasOwnProperty.call(caracteristicsList, characteristic))
+        return caracteristicsList[characteristic].longText || caracteristicsList[characteristic].text
       return ""
     },
     async savePurchase(stayOnPage) {
