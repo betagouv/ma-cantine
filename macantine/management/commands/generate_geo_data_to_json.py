@@ -41,7 +41,7 @@ class Command(BaseCommand):
             # TODO: order by name
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
-                json.dump(region_list, f, ensure_ascii=False, indent=4)
+                json.dump(region_list, f, ensure_ascii=False, indent=2)
 
         elif scope == "department":
             department_list = fetch_departements()
@@ -55,7 +55,7 @@ class Command(BaseCommand):
             ]
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
-                json.dump(department_list_filtered, f, ensure_ascii=False, indent=4)
+                json.dump(department_list_filtered, f, ensure_ascii=False, indent=2)
 
         elif scope == "pat":
             pat_list = fetch_pats()
@@ -68,14 +68,14 @@ class Command(BaseCommand):
             ]
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
-                json.dump(pat_list_filtered, f, ensure_ascii=False, indent=4)
+                json.dump(pat_list_filtered, f, ensure_ascii=False, indent=2)
 
         elif scope == "epci":
             epci_list = fetch_epcis()
             # no need to filter, already contains only the code and name
             # export to JSON file
             with open("epci.json", "w", encoding="utf-8") as f:
-                json.dump(epci_list, f, ensure_ascii=False, indent=4)
+                json.dump(epci_list, f, ensure_ascii=False, indent=2)
 
         elif scope == "city":
             city_list = fetch_communes()
@@ -90,7 +90,7 @@ class Command(BaseCommand):
             ]
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
-                json.dump(city_list_filtered, f, ensure_ascii=False, indent=4)
+                json.dump(city_list_filtered, f, ensure_ascii=False, indent=2)
 
         elif scope == "city_with_epci":
             city_list = fetch_communes_with_more_fields()
@@ -108,6 +108,6 @@ class Command(BaseCommand):
             ]
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
-                json.dump(city_list_filtered, f, ensure_ascii=False, indent=4)
+                json.dump(city_list_filtered, f, ensure_ascii=False, indent=2)
 
         self.stdout.write(self.style.SUCCESS(f"Geo data for {scope} has been generated successfully."))

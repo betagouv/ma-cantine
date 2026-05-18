@@ -101,7 +101,7 @@
   },
   {
     "code": "1288",
-    "nom": "PAT des Baronnies provençales"
+    "nom": "PAT du Parc naturel régional des Baronnies provençales"
   },
   {
     "code": "1289",
@@ -133,7 +133,7 @@
   },
   {
     "code": "1296",
-    "nom": "Ensemble pour un projet alimentaire résilient en Vals du Dauphiné"
+    "nom": "PAT des Vals du Dauphiné"
   },
   {
     "code": "1297",
@@ -309,7 +309,7 @@
   },
   {
     "code": "1342",
-    "nom": "PAT de la Nièvre"
+    "nom": "PAT du Département de la Nièvre"
   },
   {
     "code": "1343",
@@ -476,10 +476,6 @@
     "nom": "PAT du PNR des Ardennes et d'Ardenne Métropole"
   },
   {
-    "code": "1384",
-    "nom": "PAT de la Communauté de Communes du Pays rethélois"
-  },
-  {
     "code": "1386",
     "nom": "PAT de la Communauté de communes des Crêtes Préardennaises"
   },
@@ -585,7 +581,7 @@
   },
   {
     "code": "1416",
-    "nom": "PAT de la Porte du Hainaut : Tous à TABLE ! (Transition Alimentaire Bénéfique Localement et Equitable)"
+    "nom": "PAT de la Communauté d'Agglomération de la Porte du Hainaut"
   },
   {
     "code": "1417",
@@ -757,7 +753,7 @@
   },
   {
     "code": "1462",
-    "nom": "PAT Seine Normandie Agglo"
+    "nom": "PAT Seine Normandie Agglomération"
   },
   {
     "code": "1463",
@@ -885,7 +881,7 @@
   },
   {
     "code": "1496",
-    "nom": "PAT du Parc naturel régional Périgord Limousin (reconnaissance en cours d'instruction)"
+    "nom": "PAT du Parc naturel régional Périgord Limousin"
   },
   {
     "code": "1497",
@@ -921,7 +917,7 @@
   },
   {
     "code": "1506",
-    "nom": "PAT des Communautés de communes Lattitude Nord Gironde et Grand Cubzaguais"
+    "nom": "PAT des Communautés de communes Latitude Nord Gironde et Grand Cubzaguais"
   },
   {
     "code": "1507",
@@ -977,7 +973,7 @@
   },
   {
     "code": "1521",
-    "nom": "PAT de la Communauté de communes du Haut Limousin en Marche"
+    "nom": "PAT de la CC du Haut Limousin en Marche et de la CC de Gartempe Saint-Pardoux"
   },
   {
     "code": "1522",
@@ -1197,7 +1193,7 @@
   },
   {
     "code": "1576",
-    "nom": "PAT de la Communauté d'agglomération de Castres-Mazamet (CACM)"
+    "nom": "PAT de la Communauté d'agglomération de Castres-Mazamet"
   },
   {
     "code": "1577",
@@ -1221,7 +1217,7 @@
   },
   {
     "code": "1582",
-    "nom": "PAT Communauté de Communes Erdre et Gesvres"
+    "nom": "Communauté de Communes Erdre et Gesvres"
   },
   {
     "code": "1583",
@@ -1288,12 +1284,8 @@
     "nom": "PAT de la Communauté de communes des Coëvrons"
   },
   {
-    "code": "1599",
-    "nom": "Le Mans Métropole"
-  },
-  {
     "code": "1600",
-    "nom": "PAT du Pays du Mans"
+    "nom": "PAAT du Syndicat Mixte du Pays du Mans"
   },
   {
     "code": "1601",
@@ -1412,10 +1404,6 @@
     "nom": "PAT de la communauté d'agglomération Dracénie Provence Agglomération"
   },
   {
-    "code": "1634",
-    "nom": "Communauté d'Agglomération Provence verte"
-  },
-  {
     "code": "1635",
     "nom": "PAT de la communauté de communes Méditerranée Porte des Maures"
   },
@@ -1425,15 +1413,11 @@
   },
   {
     "code": "1637",
-    "nom": "Communauté de Communes Cur de Var"
+    "nom": "PAT de la Communauté de Communes Cur de Var"
   },
   {
     "code": "1639",
     "nom": "PAT Communauté de communes Provence Verdon"
-  },
-  {
-    "code": "1640",
-    "nom": "PAT du Département du Vaucluse"
   },
   {
     "code": "1641",
@@ -1489,7 +1473,7 @@
   },
   {
     "code": "1658",
-    "nom": "PAT de Concarneau"
+    "nom": "PAT de Concarneau Cornouaille Agglomération"
   },
   {
     "code": "1659",
@@ -1525,7 +1509,7 @@
   },
   {
     "code": "1744",
-    "nom": "Communauté d'Agglomération du Pays Ajaccien"
+    "nom": "PAT de la Communauté d'Agglomération du Pays Ajaccien"
   },
   {
     "code": "1745",
@@ -1649,7 +1633,7 @@
   },
   {
     "code": "2584",
-    "nom": "PAT de la communauté de communes du Cap Sizun - pointe du Raz"
+    "nom": "Communauté de communes du Cap Sizun - pointe du Raz"
   },
   {
     "code": "2585",
@@ -1681,7 +1665,7 @@
   },
   {
     "code": "2724",
-    "nom": "PAT de la Communauté d'Agglomération du Saint-Quentinois"
+    "nom": "Communauté d'Agglomération du Saint-Quentinois"
   },
   {
     "code": "2729",
@@ -1689,7 +1673,7 @@
   },
   {
     "code": "2736",
-    "nom": "PAT du Département de Charente"
+    "nom": "Projet Alimentaire Territorial de la Charente"
   },
   {
     "code": "3652",
@@ -1706,6 +1690,10 @@
   {
     "code": "3864",
     "nom": "PAT du PNR du Médoc"
+  },
+  {
+    "code": "3873",
+    "nom": "Terres de Montaigu Communauté d'agglomération"
   },
   {
     "code": "3874",
@@ -1764,16 +1752,12 @@
     "nom": "PAT Rochefort Océan - Bassin de Marennes"
   },
   {
-    "code": "5171",
-    "nom": "PAT de la collectivité territoriale de Martinique"
-  },
-  {
     "code": "5187",
     "nom": "PAT de la Communauté Urbaine dAlençon"
   },
   {
     "code": "5481",
-    "nom": "PAT du Département de l'Allier - Reconnaissance en cours d'instruction"
+    "nom": "PAT du Département de l'Allier"
   },
   {
     "code": "5553",
@@ -1785,7 +1769,7 @@
   },
   {
     "code": "5587",
-    "nom": "PAT du Parc naturel régional Oise - Pays de France - Reconnaissance en cours d'instruction"
+    "nom": "PAT du Parc naturel régional Oise - Pays de France"
   },
   {
     "code": "5631",
@@ -1801,6 +1785,58 @@
   },
   {
     "code": "40936",
-    "nom": "PAT de la Collectivité territoriale Saint-Pierre et Miquelon"
+    "nom": "PAT de Saint-Pierre et Miquelon"
+  },
+  {
+    "code": "46444",
+    "nom": "Projet Alimentaire Territorial de la Vallée de Kaysersberg"
+  },
+  {
+    "code": "49989",
+    "nom": "PAT de la Communauté Urbaine Creusot Montceau"
+  },
+  {
+    "code": "54080",
+    "nom": "Communauté de communes Causses Aigoual Cévennes Terres solidaires"
+  },
+  {
+    "code": "54098",
+    "nom": "PAT de la communauté d'agglomération de Vitré communauté"
+  },
+  {
+    "code": "54106",
+    "nom": "PAT Entre Beauce et Perche"
+  },
+  {
+    "code": "54114",
+    "nom": "Etablissement Public Territorial Grand-Orly Seine Bièvre"
+  },
+  {
+    "code": "54137",
+    "nom": "Projet Alimentaire Territorial de la Communauté de Communes Drôme Sud Provence"
+  },
+  {
+    "code": "58974",
+    "nom": "PAT Valenciennes Métropole"
+  },
+  {
+    "code": "58982",
+    "nom": "Projet Alimentaire Territorial de la Communauté d'agglomération du Boulonnais"
+  },
+  {
+    "code": "60475",
+    "nom": "PAT de la Communauté de communes de la Dombes"
+  },
+  {
+    "code": "68573",
+    "nom": "PAT de la Commune de Ducos"
+  },
+  {
+    "code": "87642",
+    "nom": "Communauté de Communes du Haut Pays Montreuillois"
+  },
+  {
+    "code": "88325",
+    "nom": "PAT de Haute-Corrèze Communauté"
   }
 ]
