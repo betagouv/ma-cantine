@@ -52,6 +52,7 @@ MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL = f"{settings.GITHUB_RAW_BASE_URL
 # URL: https://france-pat.fr/presentation-de-l-observatoire/
 # Note: data updated twice a year
 # Note: communes can belong to multiple PATs
+# Note: why do we use the ISO-8859-1 csv? because the other one contains even weirder characters like "AgglomÃ©ration"
 
 PAT_DATAGOUV_DATASET_ID = "pat-projets-alimentaires-territoriaux-description"
 PAT_DATAGOUV_URL = f"https://www.data.gouv.fr/datasets/{PAT_DATAGOUV_DATASET_ID}"
