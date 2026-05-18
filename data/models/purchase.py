@@ -35,8 +35,11 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
     def for_user(self, user):
         return self.select_related("canteen").filter(canteen__managers=user)
 
+    def for_year(self, year):
+        return self.filter(date__year=year)
+
     def filter_for_stats(self, canteen, year):
-        return self.only("id", "family", "characteristics", "price_ht").filter(canteen=canteen, date__year=year)
+        return self.only("id", "family", "characteristics", "price_ht").filter(canteen=canteen).for_year(year)
 
     def aggregated_stats(self):
         return self.aggregate(

@@ -206,7 +206,7 @@ class CanteenPurchasesPercentageSummaryView(APIView):
 
         if is_canteen_manager:
             data["last_purchase_date"] = (
-                Purchase.objects.only("date").filter(canteen=canteen, date__year=year).latest("date").date
+                Purchase.objects.only("date").filter(canteen=canteen).for_year(year).latest("date").date
             )
 
         return Response(PurchasePercentageSummarySerializer(data).data)
