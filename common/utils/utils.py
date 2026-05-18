@@ -1,7 +1,39 @@
+import unicodedata
+import re
+
+
 def normalize_string(text) -> str:
     if text:
         return str(text).replace(" ", "").replace("\xa0", "")
     return text
+
+
+def clean_unicode_string(value):
+    """
+    Clean up problematic Unicode/control characters, including Windows-1252 smart quotes and invisible bytes.
+    """
+    if not isinstance(value, str):
+        return value
+
+    # Replace <U+XXXX> patterns
+    def replace_unicode_escape(match):
+        hex_code = match.group(1)
+        try:
+            return chr(int(hex_code, 16))
+        except Exception:
+            return ""
+
+    value = re.sub(r"<U\+([0-9A-Fa-f]{4})>", replace_unicode_escape, value)
+
+    # Replace Windows-1252 smart quotes and similar
+    value = value.replace("", "'").replace("", "'").replace("", '"').replace("", '"')
+
+    # Remove other control characters except \n, \t
+    value = re.sub(r"[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f-\x9f]", "", value)
+
+    # Normalize accents, etc.
+    value = unicodedata.normalize("NFC", value)
+    return value
 
 
 def add_validation_error(dict, key, value):

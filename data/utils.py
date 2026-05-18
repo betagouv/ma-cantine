@@ -1,8 +1,6 @@
 import csv
 import datetime
 import json
-import re
-import unicodedata
 from decimal import Decimal
 from io import BytesIO
 
@@ -148,29 +146,6 @@ def sum_int_with_potential_null(values_to_sum):
         return 0
     else:
         return sum(value for value in values_to_sum if value is not None)
-
-
-def clean_unicode_string(value):
-    """
-    Convert malformed Unicode escape sequences like <U+009C> to actual characters
-    Examples:
-    - "Caf<U+009C>" -> "Café" (if U+009C → é)
-    - "d<U+0092>Azur" -> "d'Azur" (if U+0092 → ')
-    """
-    if not isinstance(value, str):
-        return value
-
-    # Replace <U+XXXX> with the actual Unicode character
-    def replace_unicode_escape(match):
-        hex_code = match.group(1)
-        try:
-            return chr(int(hex_code, 16))
-        except (ValueError, OverflowError):
-            return ""  # Remove if invalid
-
-    value = re.sub(r"<U\+([0-9A-Fa-f]{4})>", replace_unicode_escape, value)
-    value = unicodedata.normalize("NFC", value)
-    return value
 
 
 def read_csv(filepath, delimiter=","):
