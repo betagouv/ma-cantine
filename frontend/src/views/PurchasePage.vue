@@ -173,6 +173,29 @@
               </v-col>
             </v-row>
           </fieldset>
+          <fieldset class="mx-4" style="width: 100%">
+            <legend class="body-2 my-1">Origine</legend>
+            <span class="body-2 my-3 grey--text text--darken-1">
+              Sélectionner une des options ou laisser le champ vide.
+            </span>
+            <v-row class="mb-4">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in origines" :key="characteristic">
+                <v-checkbox
+                  hide-details="auto"
+                  v-model="purchase.characteristics"
+                  :multiple="true"
+                  :key="characteristic"
+                  :value="characteristic"
+                >
+                  <template v-slot:label>
+                    <span class="body-2 grey--text text--darken-4">
+                      {{ getCharacteristicDisplayText(characteristic) }}
+                    </span>
+                  </template>
+                </v-checkbox>
+              </v-col>
+            </v-row>
+          </fieldset>
         </v-row>
         <v-expand-transition>
           <v-col cols="12" sm="6" v-show="showLocalDefinition" class="my-4">
@@ -291,6 +314,7 @@ export default {
       })),
       characteristics: Object.keys(Constants.Characteristics),
       egalimCategories: Object.keys(Constants.PurchasesEGalimCategories),
+      origines: Object.keys(Constants.PurchasesOrigines),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],

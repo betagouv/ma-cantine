@@ -171,6 +171,10 @@ export default Object.freeze({
         "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
     },
   },
+  PurchasesOrigines: {
+    EUROPE: { text: "Origine Europe" },
+    FRANCE: { text: "Origine France" },
+  },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio et Bio + Commerce équitable", color: "green" },
