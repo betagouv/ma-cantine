@@ -126,3 +126,28 @@ class PurchaseModelDeleteTest(TestCase):
 
         self.assertEqual(Purchase.objects.count(), 0)
         self.assertEqual(Purchase.all_objects.count(), 0)
+
+
+class PurchaseDeleteQuerySetAndPropertyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.purchase = PurchaseFactory()
+
+    def test_all_objects_queryset(self):
+        """
+        The delete method should "soft delete" a purchase and have it hidden by default
+        from querysets, unless specifically asked for
+        """
+        self.assertEqual(Purchase.objects.count(), 1)
+
+        self.purchase.delete()
+
+        self.assertEqual(Purchase.objects.all().count(), 0)
+        self.assertEqual(Purchase.all_objects.all().count(), 1)
+
+    def test_is_deleted_property(self):
+        self.assertFalse(self.purchase.is_deleted)
+
+        self.purchase.delete()
+
+        self.assertTrue(self.purchase.is_deleted)
