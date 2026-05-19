@@ -173,3 +173,58 @@ class PurchaseDeleteQuerySetAndPropertyTest(TestCase):
         self.purchase.delete()
 
         self.assertTrue(self.purchase.is_deleted)
+
+
+class PurchaseSummaryFranceTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        PurchaseFactory(
+            canteen=cls.canteen,
+            date="2026-11-01",
+            characteristics=[Purchase.Characteristic.FRANCE],
+            family=Purchase.Family.BOULANGERIE,
+            price_ht=10,
+        )
+        PurchaseFactory(
+            canteen=cls.canteen,
+            date="2026-11-01",
+            characteristics=[Purchase.Characteristic.CIRCUIT_COURT],
+            family=Purchase.Family.BOULANGERIE,
+            price_ht=50,
+        )
+        PurchaseFactory(
+            canteen=cls.canteen,
+            date="2026-11-01",
+            characteristics=[Purchase.Characteristic.EUROPE, Purchase.Characteristic.LOCAL],  # e.g. border
+            family=Purchase.Family.BOULANGERIE,
+            price_ht=15,
+        )
+        PurchaseFactory(
+            canteen=cls.canteen,
+            date="2026-11-01",
+            characteristics=[
+                Purchase.Characteristic.FRANCE,
+                Purchase.Characteristic.CIRCUIT_COURT,
+                Purchase.Characteristic.LOCAL,
+            ],
+            family=Purchase.Family.BOULANGERIE,
+            price_ht=15,
+        )
+
+    def test_canteen_summary_for_year_france_seperated(self):
+        result = Purchase.canteen_summary_for_year(self.canteen, 2026)
+
+        self.assertEqual(result["valeur_boulangerie_france"], 10 + 15)
+        self.assertEqual(result["valeur_boulangerie_circuit_court"], 50 + 15)
+        self.assertEqual(result["valeur_boulangerie_local"], 15 + 15)
+
+    def test_canteen_summary_for_year_france_before_2026(self):
+        # before 2026, circuit court and local were counted as France
+        Purchase.objects.filter(canteen=self.canteen).update(date="2025-11-01")
+
+        result = Purchase.canteen_summary_for_year(self.canteen, 2025)
+
+        self.assertEqual(result["valeur_boulangerie_france"], 10 + 50 + 15 + 15)
+        self.assertEqual(result["valeur_boulangerie_circuit_court"], 50 + 15)
+        self.assertEqual(result["valeur_boulangerie_local"], 15 + 15)
