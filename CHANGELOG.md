@@ -6,6 +6,19 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.33.4](https://github.com/betagouv/ma-cantine/compare/v2026.33.3...v2026.33.4) (2026-05-19)
+
+
+### Améliorations
+
+* **ETL:** désactiver les exports TD vers Metabase ([#6723](https://github.com/betagouv/ma-cantine/issues/6723)) ([f28a2ae](https://github.com/betagouv/ma-cantine/commit/f28a2ae57b5a4249030a1a5c7fde1629a9c68f48))
+* **ETL:** remettre les exports cantines (Open Data & Metabase) à une fréquence journalière ([#6724](https://github.com/betagouv/ma-cantine/issues/6724)) ([c7293ff](https://github.com/betagouv/ma-cantine/commit/c7293ff356a67cadf4a22dd9e0a8d12f487f41f1))
+
+
+### Corrections (bugs, typos...)
+
+* **ETL:** répare l'export open data (fix sur le paramètre datagouv) ([#6722](https://github.com/betagouv/ma-cantine/issues/6722)) ([ea3c7ec](https://github.com/betagouv/ma-cantine/commit/ea3c7ecc386628ecd4e48779b4ac515d05d94324))
+
 ## [2026.33.3](https://github.com/betagouv/ma-cantine/compare/v2026.33.2...v2026.33.3) (2026-05-18)
 
 
