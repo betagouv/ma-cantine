@@ -85,7 +85,7 @@ app.conf.beat_schedule = {
     },
     "export_dataset_canteen_analysis": {
         "task": "macantine.tasks.export_dataset_canteen_analysis",
-        "schedule": every_6_hours_20,  # Campaign-related
+        "schedule": nightly_2,  # every_6_hours_20 during campaigns
     },
     # "export_dataset_td_analysis": {
     #     "task": "macantine.tasks.export_dataset_td_analysis",
@@ -93,7 +93,7 @@ app.conf.beat_schedule = {
     # },
     "export_dataset_canteen_opendata": {
         "task": "macantine.tasks.export_dataset_canteen_opendata",
-        "schedule": every_6_hours_20,  # Campaign-related
+        "schedule": nightly_2,  # every_6_hours_20 during campaigns
     },
 }
 
