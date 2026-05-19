@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
-##########################################################################
+#########################################################
 # User data
 
 
@@ -63,7 +63,7 @@ def update_user_data():
     return result
 
 
-##########################################################################
+#########################################################
 # Taken from itertools recipes. Will be able to remove once we pass to
 # Python 3.12 since they added it as itertools.batched. Server is currently
 # on Python 3.11
@@ -80,7 +80,7 @@ def batched(iterable, n):
         yield batch
 
 
-##########################################################################
+#########################################################
 
 
 @app.task()
