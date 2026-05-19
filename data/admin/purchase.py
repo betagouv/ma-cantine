@@ -51,27 +51,17 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "modification_date",
         "deletion_date",
     )
-    readonly_fields = (
-        "canteen",
-        "date",
-        "description",
-        "provider",
-        "family",
-        "category",
-        "characteristics",
-        "price_ht",
-        "invoice_file",
-        "local_definition",
-        "import_source",
-        "creation_source",
-        "creation_date",
-        "modification_date",
-    )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.prefetch_related("canteen")
         return qs
+
+    def get_readonly_fields(self, request, obj=None):
+        return [field for field in self.fields if field not in ("deletion_date",)]
+
+    def has_add_permission(self, request, obj=None):
+        return False
 
     def save_model(self, request, obj, form, change):
         """
