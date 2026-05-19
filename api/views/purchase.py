@@ -249,11 +249,11 @@ class DiagnosticsFromPurchasesView(APIView):
             diagnostic = Diagnostic(canteen=canteen, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict)
             try:
                 diagnostic.full_clean()
+                diagnostic.save()
+                created_diags.append(diagnostic.id)
             except ValidationError:
                 errors.append(f"Il existe déjà un diagnostic pour l'année {year} pour la cantine : {canteen_id}")
                 continue
-            diagnostic.save()
-            created_diags.append(diagnostic.id)
         return JsonResponse({"results": created_diags, "errors": errors}, status=status.HTTP_201_CREATED)
 
 
