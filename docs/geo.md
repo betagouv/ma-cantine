@@ -79,4 +79,6 @@ voir [common/api/decoupage_administratif.py](../common/api/decoupage_administrat
 
 voir [common/api/datagouv.py](../common/api/datagouv.py)
 
-à compléter
+* mettre à jour le fichier source
+* reset le cache (`cache.clear()`)
+* lancer la commande de mise à jour des cantines : `python manage.py canteen_update_pat_data_using_city_insee_code` ("apply")
