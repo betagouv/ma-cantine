@@ -45,6 +45,7 @@ nightly_0_10 = crontab(hour=0, minute=10, day_of_week="*")  # Every day at 12:10
 nightly_0_20 = crontab(hour=0, minute=20, day_of_week="*")  # Every day at 12:20AM
 nightly_0_30 = crontab(hour=0, minute=30, day_of_week="*")  # Every day at 12:30AM
 nightly_1 = crontab(hour=1, minute=0, day_of_week="*")  # Every day at 1AM
+nightly_2 = crontab(hour=1, minute=0, day_of_week="*")  # Every day at 2AM
 nightly_3 = crontab(hour=3, minute=0, day_of_week="*")  # Every day at 3AM
 nightly_4 = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
 nightly_4_30 = crontab(hour=4, minute=30, day_of_week="*")  # Every day at 4:30AM
@@ -52,42 +53,47 @@ nightly_5 = crontab(hour=5, minute=0, day_of_week="*")  # Every day at 5AM
 weekly = crontab(hour=4, minute=0, day_of_week=6)  # Saturday 4AM
 
 app.conf.beat_schedule = {
+    #########################################################
     # Canteen data (needed for User data task, analysis & opendata)
     "canteen_fill_declaration_donnees_year_field": {
         "task": "macantine.tasks.canteen_fill_declaration_donnees_year_field",
         "schedule": every_6_hours_10,  # Campaign-related
     },
+    #########################################################
     # User data (needed for Brevo)
     "update_user_data": {
         "task": "macantine.tasks.update_user_data",
         "schedule": nightly_0_20,
     },
+    #########################################################
     # Brevo
     "update_brevo_contacts": {
         "task": "macantine.tasks.update_brevo_contacts",
         "schedule": nightly_0_30,
     },
+    #########################################################
     # History cleanup
     "delete_old_historical_records": {
         "task": "macantine.tasks.delete_old_historical_records",
         "schedule": nightly_3,
     },
+    #########################################################
     # Dataset exports
-    "export_dataset_td_analysis": {
-        "task": "macantine.tasks.export_dataset_td_analysis",
-        "schedule": every_6_hours_0,  # Campaign-related
+    "export_dataset_raw_analysis": {
+        "task": "macantine.tasks.export_dataset_raw_analysis",
+        "schedule": nightly_1,
     },
     "export_dataset_canteen_analysis": {
         "task": "macantine.tasks.export_dataset_canteen_analysis",
         "schedule": every_6_hours_20,  # Campaign-related
     },
+    # "export_dataset_td_analysis": {
+    #     "task": "macantine.tasks.export_dataset_td_analysis",
+    #     "schedule": every_6_hours_0,  # Campaign-related (commented out outside of campaigns)
+    # },
     "export_dataset_canteen_opendata": {
         "task": "macantine.tasks.export_dataset_canteen_opendata",
         "schedule": every_6_hours_20,  # Campaign-related
-    },
-    "export_dataset_raw_analysis": {
-        "task": "macantine.tasks.export_dataset_raw_analysis",
-        "schedule": nightly_1,
     },
 }
 
