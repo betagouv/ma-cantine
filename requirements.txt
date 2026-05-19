@@ -300,7 +300,7 @@ identify==2.6.2
     # via
     #   ma-cantine
     #   pre-commit
-idna==3.10
+idna==3.15
     # via
     #   ma-cantine
     #   requests
