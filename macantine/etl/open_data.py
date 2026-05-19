@@ -121,7 +121,7 @@ class OPEN_DATA(etl.TRANSFORMER_LOADER):
         with default_storage.open(filename + ".xlsx", "wb") as f:
             f.write(output.getvalue())
 
-    def load_dataset(self, datagouv=False):
+    def load_dataset(self, datagouv=True):
         filepath = f"open_data/{self.dataset_name}"
         if not self.is_valid(filepath):
             logger.error(f"The dataset {self.dataset_name} is invalid and therefore will not be exported to s3")
