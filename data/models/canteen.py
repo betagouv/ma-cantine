@@ -444,23 +444,21 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         SPORT = "sport", "Sport"
         TRAVAIL = "travail", "Travail"
 
+    GEO_PAT_FIELDS = ["pat_list", "pat_lib_list"]
     GEO_FIELDS = [
         "city_insee_code",
         "city",
         "postal_code",
         "epci",
         "epci_lib",
-        "pat_list",
-        "pat_lib_list",
+        *GEO_PAT_FIELDS,
         "department",
         "department_lib",
         "region",
         "region_lib",
     ]
     # not all city_insee_code are linked to a PAT
-    GEO_FIELDS_WITHOUT_PAT = [
-        field_name for field_name in GEO_FIELDS if field_name not in ("pat_list", "pat_lib_list")
-    ]
+    GEO_FIELDS_WITHOUT_PAT = list(set(GEO_FIELDS) - set(GEO_PAT_FIELDS))
 
     TD_FIELDS = [
         "declaration_donnees_2021",
