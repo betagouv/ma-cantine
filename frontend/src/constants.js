@@ -171,7 +171,7 @@ export default Object.freeze({
         "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
     },
   },
-  PurchasesOrigines: {
+  PurchasesOriginesCategories: {
     EUROPE: { text: "Origine Europe" },
     FRANCE: { text: "Origine France" },
   },

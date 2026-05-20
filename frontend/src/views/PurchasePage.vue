@@ -175,9 +175,9 @@
             </v-row>
           </fieldset>
           <fieldset class="mx-4 mb-4" style="width: 100%">
-            <legend class="body-2 my-1">Origine</legend>
+            <legend class="body-2 my-1">Catégories d'Origine</legend>
             <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in origines" :key="characteristic">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in originesCategories" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
                   v-model="purchase.characteristics"
@@ -355,9 +355,8 @@ export default {
       })),
       characteristics: Object.keys(Constants.Characteristics),
       egalimCategories: Object.keys(Constants.PurchasesEGalimCategories),
-      origines: Object.keys(Constants.PurchasesOrigines),
-      local: Object.keys(Constants.PurchasesLocal),
-      circuitCourt: Object.keys(Constants.PurchasesCircuitCourt),
+      originesCategories: Object.keys(Constants.PurchasesOriginesCategories),
+      notEgalimCategories: Object.keys(Constants.PurchasesNotEgalimCategories),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],
