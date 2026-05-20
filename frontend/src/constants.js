@@ -171,15 +171,13 @@ export default Object.freeze({
         "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
     },
   },
-  PurchasesOrigines: {
+  PurchasesOriginesCategories: {
     EUROPE: { text: "Origine Europe" },
     FRANCE: { text: "Origine France" },
   },
-  PurchasesLocal: {
-    LOCAL: { text: "Cocher la case si l'achat est 'Local'" },
-  },
-  PurchasesCircuitCourt: {
-    CIRCUIT_COURT: { text: "Cocher la case si l'achat est en 'Circuit court'" },
+  PurchasesNotEgalimCategories: {
+    CIRCUIT_COURT: { text: "Commercialisation en circuit-court" },
+    LOCAL: { text: "Produit local" },
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts

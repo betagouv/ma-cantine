@@ -24,7 +24,7 @@
             <v-row class="mb-4">
               <v-col cols="12">
                 <label class="body-2" for="description">
-                  Description du produit
+                  Description du produit *
                 </label>
                 <DsfrCombobox
                   validate-on-blur
@@ -34,11 +34,12 @@
                   id="description"
                   :items="productDescriptions"
                   :rules="[validators.required]"
+                  placeholder="Ex : Yaourts bio, légumes bio de juin..."
                 ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">
-                  Fournisseur
+                  Fournisseur *
                 </label>
                 <DsfrCombobox
                   validate-on-blur
@@ -51,7 +52,7 @@
                 ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="4">
-                <label class="body-2" for="price">Prix HT</label>
+                <label class="body-2" for="price">Prix HT *</label>
                 <DsfrTextField
                   validate-on-blur
                   hide-details="auto"
@@ -64,7 +65,7 @@
               </v-col>
 
               <v-col cols="12" sm="8">
-                <label class="body-2" for="canteen">Cantine</label>
+                <label class="body-2" for="canteen">Cantine *</label>
                 <DsfrAutocomplete
                   hide-details="auto"
                   :items="userCanteens"
@@ -81,7 +82,7 @@
               </v-col>
 
               <v-col cols="12" sm="4">
-                <label class="body-2" for="date">Date d'achat</label>
+                <label class="body-2" for="date">Date d'achat *</label>
 
                 <v-menu
                   v-model="menu"
@@ -114,7 +115,7 @@
               </v-col>
             </v-row>
             <DsfrRadio
-              label="Famille de produit"
+              label="Famille de produit *"
               v-model="purchase.family"
               :items="productFamilies"
               @change="familyChange"
@@ -174,9 +175,9 @@
             </v-row>
           </fieldset>
           <fieldset class="mx-4 mb-4" style="width: 100%">
-            <legend class="body-2 my-1">Origine</legend>
+            <legend class="body-2 my-1">Catégories d'origine</legend>
             <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in origines" :key="characteristic">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in originesCategories" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
                   v-model="purchase.characteristics"
@@ -194,12 +195,17 @@
             </v-row>
           </fieldset>
           <fieldset class="mx-4 mb-4" style="width: 100%">
-            <legend class="body-2 my-1">Hors EGalim : critère local</legend>
-            <!--<span class="body-2 my-3 grey--text text--darken-1">
-              Phrase explicative de la définition de local.... curabitur blandit tempus porttitor.
-            </span>-->
+            <v-row>
+              <v-col cols="12" sm="8" class="pb-0">
+                <legend class="body-2">Hors EGalim</legend>
+                <span class="body-2 grey--text text--darken-1">
+                  Ces informations ne sont pas demandées pour la télédéclaration EGalim mais permettent d’enrichir votre
+                  synthèse d’achats et vos supports de communication.
+                </span>
+              </v-col>
+            </v-row>
             <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in local" :key="characteristic">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in notEgalimCategories" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
                   v-model="purchase.characteristics"
@@ -209,14 +215,14 @@
                 >
                   <template v-slot:label>
                     <span class="body-2 grey--text text--darken-4">
-                      {{ getCharacteristicDisplayText(characteristic, "PurchasesLocal") }}
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesNotEgalimCategories") }}
                     </span>
                   </template>
                 </v-checkbox>
               </v-col>
               <v-col cols="12" sm="4" class="pb-0">
-                <div v-show="showLocalDefinition" class="mt-2">
-                  <label class="body-2" for="local-definition">Quelle est votre définition de "Local" ?</label>
+                <div v-show="showLocalDefinition">
+                  <label class="body-2" for="local-definition">Quelle est votre définition de "Local" ? *</label>
                   <DsfrSelect
                     hide-details="auto"
                     :items="localDefinitions"
@@ -227,26 +233,6 @@
                     no-data-text="Pas de résultats"
                   />
                 </div>
-              </v-col>
-            </v-row>
-          </fieldset>
-          <fieldset class="mx-4 mb-0" style="width: 100%">
-            <legend class="body-2 my-1">Hors EGalim : commercialisation en circuit court</legend>
-            <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in circuitCourt" :key="characteristic">
-                <v-checkbox
-                  hide-details="auto"
-                  v-model="purchase.characteristics"
-                  :multiple="true"
-                  :key="characteristic"
-                  :value="characteristic"
-                >
-                  <template v-slot:label>
-                    <span class="body-2 grey--text text--darken-4">
-                      {{ getCharacteristicDisplayText(characteristic, "PurchasesCircuitCourt") }}
-                    </span>
-                  </template>
-                </v-checkbox>
               </v-col>
             </v-row>
           </fieldset>
@@ -354,9 +340,8 @@ export default {
       })),
       characteristics: Object.keys(Constants.Characteristics),
       egalimCategories: Object.keys(Constants.PurchasesEGalimCategories),
-      origines: Object.keys(Constants.PurchasesOrigines),
-      local: Object.keys(Constants.PurchasesLocal),
-      circuitCourt: Object.keys(Constants.PurchasesCircuitCourt),
+      originesCategories: Object.keys(Constants.PurchasesOriginesCategories),
+      notEgalimCategories: Object.keys(Constants.PurchasesNotEgalimCategories),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],
