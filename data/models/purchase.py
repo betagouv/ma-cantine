@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models import Q, Sum
 from django.db.models.functions import ExtractYear
 
+from macantine.etl import utils
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models import Canteen
@@ -282,6 +283,36 @@ class Purchase(SoftDeletionModel):
         cls._complete_diag_data(purchases, data)
         cls._misc_totals(purchases, data)
 
+        return data
+
+    @classmethod
+    def canteen_percentage_summary_for_year(cls, canteen, year):
+        data = cls.canteen_summary_for_year(canteen, year)
+        data["percentage_valeur_totale"] = 1
+        data["percentage_valeur_bio"] = utils.compute_percentage(
+            data.get("valeur_bio"), data.get("valeur_totale"), ratio=True
+        )
+        data["percentage_valeur_siqo"] = utils.compute_percentage(
+            data.get("valeur_siqo"), data.get("valeur_totale"), ratio=True
+        )
+        data["percentage_valeur_externalites_performance"] = utils.compute_percentage(
+            data.get("valeur_externalites_performance"), data.get("valeur_totale"), ratio=True
+        )
+        data["percentage_valeur_egalim_autres"] = utils.compute_percentage(
+            data.get("valeur_egalim_autres"), data.get("valeur_totale"), ratio=True
+        )
+        data["percentage_valeur_viandes_volailles_egalim"] = utils.compute_percentage(
+            data.get("valeur_viandes_volailles_egalim"), data.get("valeur_viandes_volailles"), ratio=True
+        )
+        data["percentage_valeur_viandes_volailles_france"] = utils.compute_percentage(
+            data.get("valeur_viandes_volailles_france"), data.get("valeur_viandes_volailles"), ratio=True
+        )
+        data["percentage_valeur_produits_de_la_mer_egalim"] = utils.compute_percentage(
+            data.get("valeur_produits_de_la_mer_egalim"), data.get("valeur_produits_de_la_mer"), ratio=True
+        )
+        data["percentage_valeur_produits_de_la_mer_france"] = utils.compute_percentage(
+            data.get("valeur_produits_de_la_mer_france"), data.get("valeur_produits_de_la_mer"), ratio=True
+        )
         return data
 
     @classmethod

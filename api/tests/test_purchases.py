@@ -911,7 +911,10 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         PurchaseFactory(
             canteen=canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
+            characteristics=[
+                Purchase.Characteristic.BIO,
+                Purchase.Characteristic.LABEL_ROUGE,
+            ],
             family=Purchase.Family.PRODUITS_DE_LA_MER,
             price_ht=55,
         )
@@ -1194,17 +1197,20 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         self.assertEqual(diag_site.valeur_boulangerie_local, 15)
 
 
-class PublicPurchasePublicSummaryApiTest(APITestCase):
+class PublicPurchasePercentageSummaryApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.year = 2024
+        cls.url = reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": cls.canteen.id})
+
     def test_get_public_purchases_summary(self):
         """
         Return percentages from purchase data for the given year and canteen
         """
-        canteen = CanteenFactory()
-        year = 2024
-
         # bio percent, ignore lesser labels
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-01-01",
             characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
             family=Purchase.Family.VIANDES_VOLAILLES,
@@ -1212,7 +1218,7 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         )
         # sustainable percent, meat egalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-01-01",
             characteristics=[Purchase.Characteristic.LABEL_ROUGE],
             family=Purchase.Family.VIANDES_VOLAILLES,
@@ -1220,7 +1226,7 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         )
         # externalities percent, meat egalim, meat france
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-01-01",
             characteristics=[Purchase.Characteristic.EXTERNALITES, Purchase.Characteristic.FRANCE],
             family=Purchase.Family.VIANDES_VOLAILLES,
@@ -1228,7 +1234,7 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         )
         # egalim others, fish egalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-01-01",
             characteristics=[Purchase.Characteristic.PECHE_DURABLE],
             family=Purchase.Family.PRODUITS_DE_LA_MER,
@@ -1236,7 +1242,7 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         )
         # meat france (local and circuit_court not included?)
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-12-31",
             characteristics=[Purchase.Characteristic.FRANCE],
             family=Purchase.Family.VIANDES_VOLAILLES,
@@ -1244,7 +1250,7 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         )
         # fish non egalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-12-31",
             characteristics=[Purchase.Characteristic.FRANCE],
             family=Purchase.Family.PRODUITS_DE_LA_MER,
@@ -1252,7 +1258,7 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         )
         # add misc purchase to have nice round total of 100 HT
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-12-31",
             characteristics=[],
             family=Purchase.Family.AUTRES,
@@ -1261,22 +1267,22 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
 
         # create purchase outside of requested year to check filtering
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2023-12-31",
             characteristics=[Purchase.Characteristic.BIO],
             family=Purchase.Family.VIANDES_VOLAILLES,
             price_ht=999999,
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": year}
-        )
+        response = self.client.get(self.url, {"year": self.year})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
-        # total 2024: 100
-        # total 2024 bio: 10
-        self.assertEqual(body["percentageValeurBio"], 0.1)
+        self.assertNotIn("valeurTotale", body)
+        self.assertNotIn("lastPurchaseDate", body)
+        self.assertEqual(body["percentageValeurTotale"], 1)
+        self.assertEqual(body["percentageValeurBio"], 0.1)  # 10/100
         self.assertEqual(body["percentageValeurSiqo"], 0.1)
         self.assertEqual(body["percentageValeurExternalitesPerformance"], 0.1)
         self.assertEqual(body["percentageValeurEgalimAutres"], 0.1)
@@ -1296,22 +1302,22 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         If the canteen has redacted the year return a 404
         TODO: do we really want to use redacted_appro_years to control this?
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        response = self.client.get(self.url, {"year": 2024})
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_no_purchases_for_public_summary(self):
         """
         If the canteen doesn't have purchases for the year requested return a 404
         """
-        canteen = CanteenFactory()
-        PurchaseFactory(canteen=canteen, date="2023-12-31")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
-        )
+        PurchaseFactory(canteen=self.canteen, date="2023-12-31")
+
+        response = self.client.get(self.url, {"year": 2024})
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
@@ -1320,15 +1326,14 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         The purchases summary should return the last purchase date if the user
         is the manager of the canteen
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
+        self.canteen.managers.add(authenticate.user)
 
-        PurchaseFactory(canteen=canteen, date="2024-12-01")
-        PurchaseFactory(canteen=canteen, date="2024-05-31")
-        PurchaseFactory(canteen=canteen, date="2025-01-01")
+        PurchaseFactory(canteen=self.canteen, date="2024-12-01")
+        PurchaseFactory(canteen=self.canteen, date="2024-05-31")
+        PurchaseFactory(canteen=self.canteen, date="2025-01-01")
 
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
-        )
+        response = self.client.get(self.url, {"year": 2024})
+
         body = response.json()
         self.assertEqual(body["lastPurchaseDate"], "2024-12-01")
 
@@ -1338,12 +1343,10 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         The purchases summary should not return the last purchase date if the user
         is not the manager of the canteen, even if authenticated
         """
-        canteen = CanteenFactory()
-        PurchaseFactory(canteen=canteen, date="2024-05-31")
+        PurchaseFactory(canteen=self.canteen, date="2024-05-31")
 
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
-        )
+        response = self.client.get(self.url, {"year": 2024})
+
         body = response.json()
         self.assertNotIn("lastPurchaseDate", body)
 
@@ -1352,12 +1355,13 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         """
         The manager of the canteen has an option to get redacted data
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024], managers=[authenticate.user])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": "true"},
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        response = self.client.get(self.url, {"year": 2024, "ignoreRedaction": "true"})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
@@ -1365,12 +1369,13 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         """
         The manager of the canteen has an option to not get redacted data
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024], managers=[authenticate.user])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": "false"},
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        response = self.client.get(self.url, {"year": 2024, "ignoreRedaction": "false"})
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
@@ -1378,22 +1383,22 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         """
         Non-managers cannot get redacted canteen data
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": "true"},
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        response = self.client.get(self.url, {"year": 2024, "ignoreRedaction": "true"})
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_public_cannot_optionally_get_redacted_purchases_summary(self):
         """
         Public cannot get redacted canteen data
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": "true"},
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        response = self.client.get(self.url, {"year": 2024, "ignoreRedaction": "true"})
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -3,8 +3,6 @@ from rest_framework import serializers
 
 from data.models import Purchase
 
-from .utils import appro_to_percentages
-
 
 class PurchaseSerializer(serializers.ModelSerializer):
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -185,12 +183,19 @@ class PurchaseSummarySerializer(serializers.Serializer):
     valeur_autres_local = PurchaseField()
 
 
-class PurchasePercentageSummarySerializer(PurchaseSummarySerializer):
+# NB: these names reflect the names in the diagnostic model
+class PurchasePercentageSummarySerializer(serializers.Serializer):
+    year = serializers.IntegerField()
+    percentage_valeur_totale = serializers.FloatField(required=False)
+    percentage_valeur_bio = serializers.FloatField(required=False)
+    percentage_valeur_siqo = serializers.FloatField(required=False)
+    percentage_valeur_externalites_performance = serializers.FloatField(required=False)
+    percentage_valeur_egalim_autres = serializers.FloatField(required=False)
+    percentage_valeur_viandes_volailles_egalim = serializers.FloatField(required=False)
+    percentage_valeur_viandes_volailles_france = serializers.FloatField(required=False)
+    percentage_valeur_produits_de_la_mer_egalim = serializers.FloatField(required=False)
+    percentage_valeur_produits_de_la_mer_france = serializers.FloatField(required=False)
     last_purchase_date = serializers.DateField(required=False)
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance)
 
 
 class PurchaseExportSerializer(serializers.ModelSerializer):

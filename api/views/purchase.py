@@ -197,10 +197,12 @@ class CanteenPurchasesPercentageSummaryView(APIView):
 
         is_canteen_manager = IsCanteenManager().has_object_permission(request, self, canteen)
         ignore_redaction = is_canteen_manager and request.query_params.get("ignoreRedaction") == "true"
+
         if not ignore_redaction and year in canteen.redacted_appro_years:
             raise NotFound()
 
-        data = Purchase.canteen_summary_for_year(canteen, year)
+        data = Purchase.canteen_percentage_summary_for_year(canteen, year)
+
         if data["valeur_totale"] == 0:
             raise NotFound()
 

@@ -60,9 +60,14 @@ def sum_int_and_none(values_to_sum: list):
     return int(np.sum(values_to_sum))
 
 
-def compute_percentage(valueKey, totalKey):
+def compute_percentage(valueKey, totalKey, ratio=False):
+    """
+    Compute a percentage (between 0 and 100) or a ratio (between 0 and 1).
+    """
     if totalKey and valueKey:
         if totalKey > 0 and valueKey >= 0:
+            if ratio:
+                return float(valueKey / totalKey)
             return float(100 * valueKey / totalKey)
 
 
