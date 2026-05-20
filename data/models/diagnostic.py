@@ -447,6 +447,11 @@ class Diagnostic(models.Model):
         VALEURS_INCOHERENTES = "VALEURS_INCOHERENTES", "Valeurs incohérentes"
         DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
 
+    class WarningReason(models.TextChoices):
+        CIRCUIT_COURT_GT_FRANCE = "CIRCUIT_COURT_GT_FRANCE", "Origine France (dont circuit-court) > Origine France"
+        LOCAL_GT_FRANCE = "LOCAL_GT_FRANCE", "Origine France (dont local) > Origine France"
+        COMMERCE_EQUITABLE_GT_BIO = "COMMERCE_EQUITABLE_GT_BIO", "Bio dont commerce équitable > Bio"
+
     APPRO_FAMILIES = [
         "viandes_volailles",
         "produits_de_la_mer",
@@ -1641,6 +1646,13 @@ class Diagnostic(models.Model):
         null=True,
         size=None,
         verbose_name="bilan ignoré dans les stats (raisons)",
+    )
+    warning_reason_list = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=WarningReason.choices),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="bilan avec d'autres soucis data (raisons)",
     )
 
     creation_date = models.DateTimeField(auto_now_add=True)
