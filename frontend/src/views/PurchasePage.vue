@@ -34,6 +34,7 @@
                   id="description"
                   :items="productDescriptions"
                   :rules="[validators.required]"
+                  placeholder="Ex : Yaourts bio, légumes bio de juin..."
                 ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="8">
