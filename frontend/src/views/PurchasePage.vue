@@ -195,12 +195,17 @@
             </v-row>
           </fieldset>
           <fieldset class="mx-4 mb-4" style="width: 100%">
-            <legend class="body-2 my-1">Hors EGalim : critère local</legend>
-            <!--<span class="body-2 my-3 grey--text text--darken-1">
-              Phrase explicative de la définition de local.... curabitur blandit tempus porttitor.
-            </span>-->
+            <v-row>
+              <v-col cols="12" sm="8" class="pb-0">
+                <legend class="body-2">Hors EGalim</legend>
+                <span class="body-2 grey--text text--darken-1">
+                  Ces informations ne sont pas demandées pour la télédéclaration EGalim mais permettent d’enrichir votre
+                  synthèse d’achats et vos supports de communication.
+                </span>
+              </v-col>
+            </v-row>
             <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in local" :key="characteristic">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in notEgalimCategories" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
                   v-model="purchase.characteristics"
@@ -210,13 +215,13 @@
                 >
                   <template v-slot:label>
                     <span class="body-2 grey--text text--darken-4">
-                      {{ getCharacteristicDisplayText(characteristic, "PurchasesLocal") }}
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesNotEgalimCategories") }}
                     </span>
                   </template>
                 </v-checkbox>
               </v-col>
               <v-col cols="12" sm="4" class="pb-0">
-                <div v-show="showLocalDefinition" class="mt-2">
+                <div v-show="showLocalDefinition">
                   <label class="body-2" for="local-definition">Quelle est votre définition de "Local" ? *</label>
                   <DsfrSelect
                     hide-details="auto"
@@ -228,26 +233,6 @@
                     no-data-text="Pas de résultats"
                   />
                 </div>
-              </v-col>
-            </v-row>
-          </fieldset>
-          <fieldset class="mx-4 mb-0" style="width: 100%">
-            <legend class="body-2 my-1">Hors EGalim : commercialisation en circuit court</legend>
-            <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in circuitCourt" :key="characteristic">
-                <v-checkbox
-                  hide-details="auto"
-                  v-model="purchase.characteristics"
-                  :multiple="true"
-                  :key="characteristic"
-                  :value="characteristic"
-                >
-                  <template v-slot:label>
-                    <span class="body-2 grey--text text--darken-4">
-                      {{ getCharacteristicDisplayText(characteristic, "PurchasesCircuitCourt") }}
-                    </span>
-                  </template>
-                </v-checkbox>
               </v-col>
             </v-row>
           </fieldset>
