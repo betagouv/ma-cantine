@@ -24,7 +24,7 @@
             <v-row class="mb-4">
               <v-col cols="12">
                 <label class="body-2" for="description">
-                  Description du produit
+                  Description du produit *
                 </label>
                 <DsfrCombobox
                   validate-on-blur
@@ -39,7 +39,7 @@
               </v-col>
               <v-col cols="12" sm="8">
                 <label class="body-2" for="provider">
-                  Fournisseur
+                  Fournisseur *
                 </label>
                 <DsfrCombobox
                   validate-on-blur
@@ -52,7 +52,7 @@
                 ></DsfrCombobox>
               </v-col>
               <v-col cols="12" sm="4">
-                <label class="body-2" for="price">Prix HT</label>
+                <label class="body-2" for="price">Prix HT *</label>
                 <DsfrTextField
                   validate-on-blur
                   hide-details="auto"
@@ -65,7 +65,7 @@
               </v-col>
 
               <v-col cols="12" sm="8">
-                <label class="body-2" for="canteen">Cantine</label>
+                <label class="body-2" for="canteen">Cantine *</label>
                 <DsfrAutocomplete
                   hide-details="auto"
                   :items="userCanteens"
@@ -82,7 +82,7 @@
               </v-col>
 
               <v-col cols="12" sm="4">
-                <label class="body-2" for="date">Date d'achat</label>
+                <label class="body-2" for="date">Date d'achat *</label>
 
                 <v-menu
                   v-model="menu"
@@ -115,7 +115,7 @@
               </v-col>
             </v-row>
             <DsfrRadio
-              label="Famille de produit"
+              label="Famille de produit *"
               v-model="purchase.family"
               :items="productFamilies"
               @change="familyChange"
@@ -217,7 +217,7 @@
               </v-col>
               <v-col cols="12" sm="4" class="pb-0">
                 <div v-show="showLocalDefinition" class="mt-2">
-                  <label class="body-2" for="local-definition">Quelle est votre définition de "Local" ?</label>
+                  <label class="body-2" for="local-definition">Quelle est votre définition de "Local" ? *</label>
                   <DsfrSelect
                     hide-details="auto"
                     :items="localDefinitions"
