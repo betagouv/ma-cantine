@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import { applicableDiagnosticRules, getPercentage, toPercentage, latestCreatedDiagnostic } from "@/utils"
+import { applicableDiagnosticRules, toPercentage, latestCreatedDiagnostic } from "@/utils"
 import CentralKitchenInfo from "./CentralKitchenInfo"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import ApproGraph from "@/components/ApproGraph"
@@ -215,32 +215,14 @@ export default {
       const yearMaybe = +this.tab
       return applicableDiagnosticRules(this.canteen, yearMaybe)
     },
-    hasPercentages() {
-      return !!this.diagnosticForYear && "percentageValeurTotale" in this.diagnosticForYear
-    },
     viandesVolaillesEgalimPercentage() {
-      return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesEgalim)
-        : getPercentage(
-            this.diagnosticForYear.valeurViandesVolaillesEgalim,
-            this.diagnosticForYear.valeurViandesVolailles
-          )
+      return toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesEgalim)
     },
     viandesVolaillesFrancePercentage() {
-      return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesFrance)
-        : getPercentage(
-            this.diagnosticForYear.valeurViandesVolaillesFrance,
-            this.diagnosticForYear.valeurViandesVolailles
-          )
+      return toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesFrance)
     },
     produitsDeLaMerEgalimPercentage() {
-      return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValeurProduitsDeLaMerEgalim)
-        : getPercentage(
-            this.diagnosticForYear.valeurProduitsDeLaMerEgalim,
-            this.diagnosticForYear.valeurProduitsDeLaMer
-          )
+      return toPercentage(this.diagnosticForYear.percentageValeurProduitsDeLaMerEgalim)
     },
     graphDiagnostics() {
       if (!this.approData || this.approData.length === 0) return null
