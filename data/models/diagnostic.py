@@ -1,11 +1,14 @@
+import operator
+from functools import reduce
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models, transaction
-from django.db.models import Case, F, Func, IntegerField, Q, Sum, When
+from django.db.models import Case, DecimalField, F, Func, IntegerField, Q, Sum, Value, When
 from django.db.models.expressions import RawSQL
 from django.db.models.fields.json import KT
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
@@ -183,6 +186,36 @@ class DiagnosticQuerySet(models.QuerySet):
                 ]
             )
         )
+
+    def with_label_sum(self, label: str):
+        """
+        Sum all appro fields of a given label
+
+        Note: see also label_sum method
+        """
+        sum_expression = reduce(
+            operator.add,
+            (
+                Coalesce(F(f"valeur_{family}_{label}"), Value(0), output_field=DecimalField())
+                for family in Diagnostic.APPRO_FAMILIES
+            ),
+        )
+        return self.annotate(**{f"{label}_sum": sum_expression})
+
+    def with_family_sum(self, family: str):
+        """
+        Sum all appro fields of a given family
+
+        Note: see also family_sum method
+        """
+        sum_expression = reduce(
+            operator.add,
+            (
+                Coalesce(F(f"valeur_{family}_{label}"), Value(0), output_field=DecimalField())
+                for label in Diagnostic.APPRO_LABELS
+            ),
+        )
+        return self.annotate(**{f"{family}_sum": sum_expression})
 
     def with_meal_price(self):
         """

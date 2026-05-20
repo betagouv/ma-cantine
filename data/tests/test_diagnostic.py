@@ -656,6 +656,78 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
                 self.assertFalse(diagnostic.is_filled)
 
 
+class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.diagnostic_1 = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_viandes_volailles_bio=10,
+            valeur_viandes_volailles_bio_dont_commerce_equitable=5,
+            valeur_viandes_volailles_label_rouge=7,
+            valeur_viandes_volailles_france=20,
+            valeur_produits_de_la_mer_bio=15,
+            valeur_produits_de_la_mer_bio_dont_commerce_equitable=None,
+            valeur_produits_de_la_mer_label_rouge=8,
+            valeur_produits_de_la_mer_france=25,
+        )
+        cls.diagnostic_2 = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_viandes_volailles_bio=10,
+            valeur_viandes_volailles_bio_dont_commerce_equitable=None,
+            valeur_viandes_volailles_label_rouge=7,
+            valeur_viandes_volailles_france=20,
+            valeur_produits_de_la_mer_bio=15,
+            valeur_produits_de_la_mer_bio_dont_commerce_equitable=10,
+            valeur_produits_de_la_mer_label_rouge=8,
+            valeur_produits_de_la_mer_france=25,
+        )
+
+    def test_with_label_sum_queryset(self):
+        diagnostic_qs = (
+            Diagnostic.objects.with_label_sum("bio")
+            .with_label_sum("bio_dont_commerce_equitable")
+            .with_label_sum("label_rouge")
+            .with_label_sum("france")
+        )
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_1.id).bio_sum, 10 + 15)
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_1.id).bio_dont_commerce_equitable_sum, 5 + 0)
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_1.id).label_rouge_sum, 7 + 8)
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_1.id).france_sum, 20 + 25)
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_2.id).bio_sum, 10 + 15)
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_2.id).bio_dont_commerce_equitable_sum, 0 + 10)
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_2.id).label_rouge_sum, 7 + 8)
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_2.id).france_sum, 20 + 25)
+
+    def test_label_sum_property(self):
+        self.assertEqual(self.diagnostic_1.label_sum("bio"), 10 + 15)
+        self.assertEqual(self.diagnostic_1.label_sum("bio_dont_commerce_equitable"), 5 + 0)
+        self.assertEqual(self.diagnostic_1.label_sum("label_rouge"), 7 + 8)
+        self.assertEqual(self.diagnostic_1.label_sum("france"), 20 + 25)
+        self.assertEqual(self.diagnostic_2.label_sum("bio"), 10 + 15)
+        self.assertEqual(self.diagnostic_2.label_sum("bio_dont_commerce_equitable"), 0 + 10)
+        self.assertEqual(self.diagnostic_2.label_sum("label_rouge"), 7 + 8)
+        self.assertEqual(self.diagnostic_2.label_sum("france"), 20 + 25)
+
+    def test_with_family_sum_queryset(self):
+        diagnostic_qs = Diagnostic.objects.with_family_sum("viandes_volailles").with_family_sum("produits_de_la_mer")
+        self.assertEqual(
+            diagnostic_qs.get(id=self.diagnostic_1.id).viandes_volailles_sum, 10 + 7
+        )  # bio_dont_commerce_equitable & france are not included
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_1.id).produits_de_la_mer_sum, 15 + 8)
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_2.id).viandes_volailles_sum, 10 + 7)
+        self.assertEqual(diagnostic_qs.get(id=self.diagnostic_2.id).produits_de_la_mer_sum, 15 + 8)
+
+    def test_family_sum_property(self):
+        self.assertEqual(self.diagnostic_1.family_sum("viandes_volailles"), 10 + 7)
+        self.assertEqual(self.diagnostic_1.family_sum("produits_de_la_mer"), 15 + 8)
+        self.assertEqual(self.diagnostic_2.family_sum("viandes_volailles"), 10 + 7)
+        self.assertEqual(self.diagnostic_2.family_sum("produits_de_la_mer"), 15 + 8)
+
+
 class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
     def test_compute_pourcentage_bio_method(self):
         for valeur_totale, valeur_bio_agg, pourcentage_bio in [
