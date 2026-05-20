@@ -175,7 +175,7 @@
             </v-row>
           </fieldset>
           <fieldset class="mx-4 mb-4" style="width: 100%">
-            <legend class="body-2 my-1">Catégories d'Origine</legend>
+            <legend class="body-2 my-1">Catégories d'origine</legend>
             <v-row class="mb-4">
               <v-col cols="12" sm="4" class="py-0" v-for="characteristic in originesCategories" :key="characteristic">
                 <v-checkbox
