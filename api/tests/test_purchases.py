@@ -1047,37 +1047,45 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
     @authenticate
     def test_errors_for_create_diagnostics_from_purchases(self):
         """
-        Handle errors in diagnostic creation gracefully, creating what can be created
+        Handle canteen errors in diagnostic creation gracefully, creating what can be created
         """
-        canteen_with_diag = CanteenFactory(managers=[authenticate.user])
+        year = 2023
+        canteen_with_diagnostic = CanteenFactory(managers=[authenticate.user])
         canteen_without_purchases = CanteenFactory(managers=[authenticate.user])
-        good_canteen = CanteenFactory(managers=[authenticate.user])
-        canteens = [canteen_with_diag, canteen_without_purchases, good_canteen]
+        canteen_ok = CanteenFactory(managers=[authenticate.user])
         not_my_canteen = CanteenFactory()
 
-        year = 2023
-        DiagnosticFactory(canteen=canteen_with_diag, year=year)
-        PurchaseFactory(canteen=good_canteen, date=f"{year}-01-01", price_ht=100)
-        PurchaseFactory(canteen=canteen_with_diag, date=f"{year}-01-01", price_ht=666)
+        DiagnosticFactory(canteen=canteen_with_diagnostic, year=year)
+        PurchaseFactory(canteen=canteen_ok, date=f"{year}-01-01", price_ht=100)
+        PurchaseFactory(canteen=canteen_with_diagnostic, date=f"{year}-01-01", price_ht=666)
         PurchaseFactory(canteen=not_my_canteen, date=f"{year}-01-01", price_ht=666)
 
         response = self.client.post(
             reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {"canteenIds": ["666", not_my_canteen.id] + [canteen.id for canteen in canteens]},
+            {
+                "canteenIds": [
+                    "666",
+                    not_my_canteen.id,
+                    canteen_with_diagnostic.id,
+                    canteen_without_purchases.id,
+                    canteen_ok.id,
+                ]
+            },
             format="json",
         )
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         results = body["results"]
-        self.assertEqual(len(results), 1)
+        self.assertEqual(len(results), 1)  # canteen_ok
         errors = body["errors"]
+        self.assertEqual(len(errors), 4)
         self.assertEqual(errors[0], "Cantine inconnue : 666")
         self.assertEqual(errors[1], f"Vous ne gérez pas la cantine : {not_my_canteen.id}")
         self.assertEqual(
-            errors[2], f"Il existe déjà un diagnostic pour l'année 2023 pour la cantine : {canteen_with_diag.id}"
+            errors[2], f"Il existe déjà un diagnostic pour l'année 2023 pour la cantine : {canteen_with_diagnostic.id}"
         )
         self.assertEqual(errors[3], f"Aucun achat trouvé pour la cantine : {canteen_without_purchases.id}")
-        self.assertEqual(len(errors), 4)
 
     @freeze_time("2022-02-10")  # during the 2021 campaign
     @authenticate
@@ -1086,9 +1094,9 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         Given a list of canteen ids and a year, create diagnostics
         pre-filled with purchase totals for that year
         """
+        year = 2021
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
         central_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
-        canteens = [canteen_site, central_groupe]
         # purchases to be included in totals
         PurchaseFactory(
             canteen=canteen_site,
@@ -1105,22 +1113,20 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
             family=Purchase.Family.BOULANGERIE,
             characteristics=[],
         )
-
         PurchaseFactory(canteen=central_groupe, date="2021-01-01", price_ht=5)
         PurchaseFactory(canteen=central_groupe, date="2021-12-31", price_ht=15)
-
         # purchases to be filtered out from totals
         PurchaseFactory(canteen=canteen_site, date="2022-01-01", price_ht=666)
         PurchaseFactory(canteen=central_groupe, date="2020-12-31", price_ht=666)
 
-        year = 2021
-        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=canteens).count(), 0)
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site, central_groupe]).count(), 0)
 
         response = self.client.post(
             reverse("diagnostics_from_purchases", kwargs={"year": year}),
             {"canteenIds": [canteen_site.id, central_groupe.id]},
             format="json",
         )
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         results = body["results"]
