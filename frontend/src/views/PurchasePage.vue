@@ -164,7 +164,7 @@
                         `body-2 grey--text ${disabledForFamily(characteristic) ? 'text--darken-1' : 'text--darken-4'}`
                       "
                     >
-                      {{ getCharacteristicDisplayText(characteristic) }}
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesEGalimCategories") }}
                       <span v-if="disabledForFamily(characteristic)">
                         &nbsp;(non applicable)
                       </span>
