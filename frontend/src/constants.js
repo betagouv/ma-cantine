@@ -175,9 +175,11 @@ export default Object.freeze({
     EUROPE: { text: "Origine Europe" },
     FRANCE: { text: "Origine France" },
   },
-  PurchasesNotEgalimCategories: {
-    CIRCUIT_COURT: { text: "Achat en circuit-court ou approvisionnement direct" },
+  PurchasesLocalCategory: {
     LOCAL: { text: "Produit « local » ou « de proximité »" },
+  },
+  PurchasesCircuitCourtCategory: {
+    CIRCUIT_COURT: { text: "Achat en circuit court ou approvisionnement direct" },
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
