@@ -59,7 +59,16 @@ class PurchasesSchemaTest(TestCase):
     def test_definition_local_regex(self):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "definition_local"), None)
         pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in ["DEPARTEMENT", "DEPARTEMENT ", " DEPARTEMENT "]:
+        for VALUE_OK in [
+            "AUTOUR_SERVICE",
+            "DEPARTEMENT",
+            "DEPARTEMENT ",
+            " DEPARTEMENT ",
+            "REGION",
+            "PAT",
+            " PAT ",
+            "AUTRE",
+        ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION"]:
