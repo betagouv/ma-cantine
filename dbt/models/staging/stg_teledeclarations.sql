@@ -79,7 +79,11 @@ renamed as (
             ', '
         )                                                               as pat_list,
         null::integer                                                   as nbre_cantines_region,
-        null::text                                                      as objectif_zone_geo,
+        case
+            when length(canteen_snapshot::jsonb ->> 'department') = 3          then 'droms'
+            when canteen_snapshot::jsonb ->> 'department' is not null
+                 and canteen_snapshot::jsonb ->> 'department' != ''             then 'france_metropolitaine'
+        end                                                             as objectif_zone_geo,
 
         -- teledeclaration metadata
         creation_date,

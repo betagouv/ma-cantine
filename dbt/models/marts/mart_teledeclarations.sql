@@ -315,18 +315,48 @@ select
     coalesce(nb_cantines_inscrites.nb_cantines_inscrites, 0)                as nb_cantines_inscrites_spe,
 
     -- SPE — objectifs EGalim (booléens : SUM = nb cantines atteignant l'objectif)
-    (valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20)                    as atteint_bio,
-    (valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50)                 as atteint_egalim,
-    (valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20
-        and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50)          as atteint_bio_et_egalim,
+    -- Seuils adaptés par zone : métropole 20%/50%, DROMs 5%/20%, Mayotte 2%/5%
+    case
+        when department = '976' then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.02
+        when objectif_zone_geo = 'droms' then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.05
+        else valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20
+    end                                                                     as atteint_bio,
+    case
+        when department = '976' then valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.05
+        when objectif_zone_geo = 'droms' then valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.20
+        else valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
+    end                                                                     as atteint_egalim,
+    case
+        when department = '976'
+            then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.02
+                 and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.05
+        when objectif_zone_geo = 'droms'
+            then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.05
+                 and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.20
+        else
+            valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20
+            and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
+    end                                                                     as atteint_bio_et_egalim,
     (valeur_viandes_et_poissons > 0
         and valeur_viandes_et_poissons_egalim
             / nullif(valeur_viandes_et_poissons, 0) >= 1.0)                as atteint_viandes_et_poissons_egalim,
-    (valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20
-        and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
-        and valeur_viandes_et_poissons > 0
-        and valeur_viandes_et_poissons_egalim
-            / nullif(valeur_viandes_et_poissons, 0) >= 1.0)                as atteint_3_objectifs,
+    case
+        when department = '976'
+            then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.02
+                 and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.05
+                 and valeur_viandes_et_poissons > 0
+                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >= 1.0
+        when objectif_zone_geo = 'droms'
+            then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.05
+                 and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.20
+                 and valeur_viandes_et_poissons > 0
+                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >= 1.0
+        else
+            valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20
+            and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
+            and valeur_viandes_et_poissons > 0
+            and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >= 1.0
+    end                                                                     as atteint_3_objectifs,
 
     -- SPE — objectif végétarien
     (service_type != 'UNIQUE')                                             as choix_multiple,
