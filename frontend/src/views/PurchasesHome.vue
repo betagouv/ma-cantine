@@ -1,7 +1,7 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav />
-    <div class="d-flex">
+    <div class="d-flex mb-8">
       <div>
         <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
           Mes achats
@@ -68,7 +68,6 @@
       ></v-img>
     </div>
 
-    <PurchasesToolExplanation class="my-1" />
     <v-card outlined v-if="hasCanteens && visiblePurchases">
       <v-row class="px-4 mt-2" align="center">
         <v-col cols="12" sm="8" class="py-0">
@@ -337,7 +336,6 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import PurchasesToolExplanation from "@/components/PurchasesToolExplanation"
 
 export default {
   name: "PurchasesHome",
@@ -347,7 +345,6 @@ export default {
     DsfrSelect,
     DsfrSearchField,
     DsfrAutocomplete,
-    PurchasesToolExplanation,
   },
   data() {
     return {
