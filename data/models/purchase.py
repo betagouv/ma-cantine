@@ -147,6 +147,7 @@ class Purchase(SoftDeletionModel):
         REGION = "REGION", "Région"
         DEPARTEMENT = "DEPARTEMENT", "Département"
         AUTOUR_SERVICE = "AUTOUR_SERVICE", "200 km autour du lieu de service"
+        PAT = "PAT", "Issu du Projet Alimentaire Territorial (PAT)"
         AUTRE = "AUTRE", "Autre"
 
     CHARACTERISTIC_LABELS_BIO = [
