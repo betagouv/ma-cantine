@@ -148,35 +148,40 @@ def incoherent_values_query():
 
 def circuit_court_sup_france_query():
     """
-    TDs 2025 avec une incohérence sur "origine France dont circuit_court"
+    TDs COMPLETE 2025 avec une incohérence sur "origine France dont circuit_court"
     - En 2025, circuit-court faisait partie d'origine France, mais à parfois été mal télédéclaré
     - A partir de 2026, circuit-court a été sorti d'origine France
 
     Note: requires with_label_sum("circuit_court") and with_label_sum("france") annotations
     """
-    return Q(year=2025, circuit_court_sum__gt=F("france_sum"))
+    return Q(year=2025, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, circuit_court_sum__gt=F("france_sum"))
 
 
 def local_sup_france_query():
     """
-    TDs 2025 avec une incohérence sur "origine France dont local"
+    TDs COMPLETE 2025 avec une incohérence sur "origine France dont local"
     - En 2025, local faisait partie d'origine France, mais à parfois été mal télédéclaré
     - A partir de 2026, local a été sorti d'origine France
 
     Note: requires with_label_sum("local") and with_label_sum("france") annotations
     """
-    return Q(year=2025, local_sum__gt=F("france_sum"))
+    return Q(year=2025, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, local_sum__gt=F("france_sum"))
 
 
 def commerce_equitable_sup_bio_query():
     """
-    TDs 2025 avec une incohérence sur "bio dont commerce équitable"
+    TDs SIMPLE & COMPLETE 2025 avec une incohérence sur "bio dont commerce équitable"
 
     Note: see validators/diagnostics.py#validate_valeur_bio
     Note: requires with_label_sum("bio_dont_commerce_equitable") and with_label_sum("bio") annotations
     """
-    # return Q(year=2025, valeur_bio_dont_commerce_equitable__gt=F("valeur_bio"))
-    return Q(year=2025, bio_dont_commerce_equitable_sum__gt=F("bio_sum"))
+    return Q(
+        year=2025,
+        diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+        valeur_bio_dont_commerce_equitable__gt=F("valeur_bio"),
+    ) | Q(
+        year=2025, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, bio_dont_commerce_equitable_sum__gt=F("bio_sum")
+    )
 
 
 class DiagnosticQuerySet(models.QuerySet):
