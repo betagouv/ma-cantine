@@ -932,12 +932,12 @@ class PublishedCanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=canteen,
             year=2021,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_viandes_volailles=None,
             valeur_viandes_volailles_egalim=100,
             valeur_viandes_volailles_france=100,
             valeur_produits_de_la_mer=None,
             valeur_produits_de_la_mer_egalim=100,
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
