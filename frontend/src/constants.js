@@ -146,8 +146,8 @@ export default Object.freeze({
     },
     EUROPE: { text: "Origine Europe" },
     FRANCE: { text: "Origine France" },
-    CIRCUIT_COURT: { text: "Origine France (dont circuit-court)" },
-    LOCAL: { text: "Origine France (dont local)" },
+    CIRCUIT_COURT: { text: "Circuit court" },
+    LOCAL: { text: "Local" },
   },
   PurchasesEGalimCategories: {
     BIO: { text: "Bio ou « en conversion bio »" },
