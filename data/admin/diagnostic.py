@@ -217,6 +217,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         """
         obj.full_clean()
         if not change:
+            obj.creation_user = request.user
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
 

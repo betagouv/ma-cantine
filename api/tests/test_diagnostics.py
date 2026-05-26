@@ -14,10 +14,7 @@ from data.models.creation_source import CreationSource
 
 
 class DiagnosticCreateApiTest(APITestCase):
-    def test_unauthenticated_create_diagnostic_call(self):
-        """
-        When calling this API unathenticated we expect a 403
-        """
+    def test_cannot_create_diagnostic_if_unauthenticated(self):
         canteen = CanteenFactory()
 
         payload = {"year": 2020}
@@ -26,21 +23,14 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_diagnostic_missing_canteen(self):
-        """
-        When calling this API on an unexistent canteen we expect a 404
-        """
+    def test_cannot_create_diagnostic_if_canteen_does_not_exist(self):
         payload = {"year": 2020}
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": 999}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_diagnostic_forbidden_canteen(self):
-        """
-        When calling this API on a canteen that the user doesn't manage,
-        we expect a 403
-        """
+    def test_cannot_create_diagnostic_if_not_canteen_manager(self):
         canteen = CanteenFactory()
 
         payload = {"year": 2020}
@@ -74,6 +64,10 @@ class DiagnosticCreateApiTest(APITestCase):
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        diagnostic = Diagnostic.objects.first()
+        self.assertEqual(diagnostic.canteen, canteen)
+        self.assertEqual(diagnostic.year, 2020)
+        self.assertEqual(diagnostic.creation_user, authenticate.user)
 
     def test_create_minimal_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
@@ -84,6 +78,10 @@ class DiagnosticCreateApiTest(APITestCase):
         response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        diagnostic = Diagnostic.objects.first()
+        self.assertEqual(diagnostic.canteen, canteen)
+        self.assertEqual(diagnostic.year, 2020)
+        self.assertEqual(diagnostic.creation_user, user)
 
     @authenticate
     def test_create_diagnostic_creation_source(self):

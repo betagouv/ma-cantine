@@ -328,6 +328,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.valeur_totale, 2000)
         # TODO: add more assertions with Decimal
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(diagnostic_1.creation_user, authenticate.user)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
         diagnostic_2 = Diagnostic.objects.get(canteen_id=canteen_2.id)
@@ -335,6 +336,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_2.valeur_totale, 200)
         # TODO: add more assertions with Decimal & None
         self.assertEqual(diagnostic_2.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(diagnostic_2.creation_user, authenticate.user)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
     @freeze_time("2025-02-10")  # during the 2024 campaign

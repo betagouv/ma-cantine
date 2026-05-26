@@ -56,8 +56,9 @@ class DiagnosticCreateView(CreateAPIView):
             if not IsCanteenManager().has_object_permission(self.request, self, canteen):
                 raise PermissionDenied()
             serializer.is_valid(raise_exception=True)
+            creation_user = self.request.user
             creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-            diagnostic = serializer.save(canteen=canteen, creation_source=creation_source)
+            diagnostic = serializer.save(canteen=canteen, creation_user=creation_user, creation_source=creation_source)
             update_change_reason_with_auth(self, diagnostic)
         except ObjectDoesNotExist as e:
             logger.warning(f"Attempt to create a diagnostic from an unexistent canteen ID : {canteen_id}: \n{e}")
