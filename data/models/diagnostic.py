@@ -448,9 +448,9 @@ class Diagnostic(models.Model):
         DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
 
     class WarningReason(models.TextChoices):
-        CIRCUIT_COURT_GT_FRANCE = "CIRCUIT_COURT_GT_FRANCE", "Origine France (dont circuit-court) > Origine France"
-        LOCAL_GT_FRANCE = "LOCAL_GT_FRANCE", "Origine France (dont local) > Origine France"
-        COMMERCE_EQUITABLE_GT_BIO = "COMMERCE_EQUITABLE_GT_BIO", "Bio dont commerce équitable > Bio"
+        CIRCUIT_COURT_SUP_FRANCE = "CIRCUIT_COURT_SUP_FRANCE", "Origine France (dont circuit-court) > Origine France"
+        LOCAL_SUP_FRANCE = "LOCAL_SUP_FRANCE", "Origine France (dont local) > Origine France"
+        COMMERCE_EQUITABLE_SUP_BIO = "COMMERCE_EQUITABLE_SUP_BIO", "Bio dont commerce équitable > Bio"
 
     APPRO_FAMILIES = [
         "viandes_volailles",
