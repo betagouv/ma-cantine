@@ -54,8 +54,8 @@ class Command(BaseCommand):
     Goal: fill the invalid_reason_list & warning_reason_list fields
 
     Usage:
-    - python manage.py diagnostic_fill_invalid_reason_list --year 2024
-    - python manage.py diagnostic_fill_invalid_reason_list --year 2024 --apply
+    - python manage.py diagnostic_fill_invalid_warning_reason_list --year 2024
+    - python manage.py diagnostic_fill_invalid_warning_reason_list --year 2024 --apply
     """
 
     def add_arguments(self, parser):
@@ -76,7 +76,7 @@ class Command(BaseCommand):
         year = options["year"]
         apply = options["apply"]
 
-        logger.info(f"Starting task: diagnostic_fill_invalid_reason_list, campaign {year}")
+        logger.info(f"Starting task: diagnostic_fill_invalid_warning_reason_list, campaign {year}")
         if not apply:
             logger.info("Dry run mode, no changes will be applied.")
 
@@ -102,7 +102,7 @@ class Command(BaseCommand):
         fill_warning_reason_LOCAL_GT_FRANCE(diagnostic_qs, apply)
         fill_warning_reason_COMMERCE_EQUITABLE_GT_BIO(diagnostic_qs, apply)
 
-        logger.info("Task completed: diagnostic_fill_invalid_reason_list")
+        logger.info("Task completed: diagnostic_fill_invalid_warning_reason_list")
         diagnostic_invalid_qs = diagnostic_qs.exclude(has_arrayfield_missing_query("invalid_reason_list"))
         logger.info(f"Found {diagnostic_invalid_qs.count()} diagnostics with an invalid reason")
         diagnostic_warning_qs = diagnostic_qs.exclude(has_arrayfield_missing_query("warning_reason_list"))
