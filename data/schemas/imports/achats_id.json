@@ -112,7 +112,7 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(AUTOUR_SERVICE|DEPARTEMENT|REGION|AUTRE) *$",
+        "pattern": "^ *(AUTOUR_SERVICE|DEPARTEMENT|REGION|PAT|AUTRE) *$",
         "required": false
       },
       "description": "Obligatoire si l'achat a la caractéristique de LOCAL.",
@@ -120,6 +120,7 @@
         "AUTOUR_SERVICE",
         "DEPARTEMENT",
         "REGION",
+        "PAT",
         "AUTRE"
       ],
       "example": "AUTOUR_SERVICE",

@@ -223,6 +223,7 @@ export default Object.freeze({
     AUTOUR_SERVICE: { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
     DEPARTEMENT: { text: "Provenant du même département", value: "DEPARTEMENT" },
     REGION: { text: "Provenant de la même région", value: "REGION" },
+    PAT: { text: "Issu du Projet Alimentaire Territorial (PAT)", value: "PAT" },
     AUTRE: { text: "Autre", value: "AUTRE" },
   },
   TeledeclarationCharacteristicGroups: {
