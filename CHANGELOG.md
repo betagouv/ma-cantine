@@ -6,6 +6,40 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.35.0](https://github.com/betagouv/ma-cantine/compare/v2026.34.0...v2026.35.0) (2026-05-26)
+
+
+### Nouveautés
+
+* **Achats:** nouveau champ `creation_user` pour tracker qui a créé l'achat ([#6745](https://github.com/betagouv/ma-cantine/issues/6745)) ([aa5df19](https://github.com/betagouv/ma-cantine/commit/aa5df190513b094e0194f0638ea335a18b98cd69))
+* **Diagnostics:** nouveau champ `creation_user` pour tracker qui a créé le bilan ([#6746](https://github.com/betagouv/ma-cantine/issues/6746)) ([da95fac](https://github.com/betagouv/ma-cantine/commit/da95fac09c58260f7e671c13a63b3bc66fcf711f))
+* **Diagnostics:** nouveau champ `warning_reason_list` pour stocker des infos non-blocantes ([#6732](https://github.com/betagouv/ma-cantine/issues/6732)) ([d14bc36](https://github.com/betagouv/ma-cantine/commit/d14bc36c49de4503084177a3964bfac4f4a91f91))
+* **Diagnostics:** script pour remplir le nouveau champ `warning_reason_list` ([#6737](https://github.com/betagouv/ma-cantine/issues/6737)) ([9915b4d](https://github.com/betagouv/ma-cantine/commit/9915b4d0f6d67d160317f3f2b3cd7d8df6b3049e))
+
+
+### Améliorations
+
+* **Achats:** ajout de "PAT" comme définition de produit local ([#6741](https://github.com/betagouv/ma-cantine/issues/6741)) ([8e410c7](https://github.com/betagouv/ma-cantine/commit/8e410c761be88b0dc6f94a2737f634ca4c2fa402))
+* **Achats:** diverses corrections suite à un recettage interne ([#6740](https://github.com/betagouv/ma-cantine/issues/6740)) ([4b820e8](https://github.com/betagouv/ma-cantine/commit/4b820e8af73e29a7117477f45adca4f6c057c5d2))
+
+
+### Corrections (bugs, typos...)
+
+* **Achats:** remplace la vidéo explicative par un lien vers notre documentation ([#6742](https://github.com/betagouv/ma-cantine/issues/6742)) ([a710b82](https://github.com/betagouv/ma-cantine/commit/a710b820be3552758cb57612ff6aee4ba8904ea1))
+* renomme la dernière migration pour éviter un conflit. Suite à [#6741](https://github.com/betagouv/ma-cantine/issues/6741) & [#6732](https://github.com/betagouv/ma-cantine/issues/6732) ([5447391](https://github.com/betagouv/ma-cantine/commit/544739101717606994fff08d26f7a4ea43a7e1cc))
+
+
+### Technique
+
+* **Diagnostics:** améliorer le script pour remplir le nouveau champ `warning_reason_list` (renommer gt en sup, ajout annotate) ([#6747](https://github.com/betagouv/ma-cantine/issues/6747)) ([fc37f04](https://github.com/betagouv/ma-cantine/commit/fc37f04da1d0c26d0413c8e2b01de3e71aa28603))
+* **Diagnostics:** nouveaux querysets pour aider à filter les warning_reason_list ([#6736](https://github.com/betagouv/ma-cantine/issues/6736)) ([06385ff](https://github.com/betagouv/ma-cantine/commit/06385ffac9fd7db96add44c9f86f3c56c66dbd42))
+* **Diagnostics:** nouveaux querysets with_label_sum & with_family_sum (on va en avoir besoin pour warning_reason_list) ([#6735](https://github.com/betagouv/ma-cantine/issues/6735)) ([582fb24](https://github.com/betagouv/ma-cantine/commit/582fb2422ad0a9e9e2605ad4cfb76015ab2d9da9))
+
+
+### Documentation
+
+* ajouter une page pour expliquer les commandes en lien avec une campagne de télédéclaration ([#6738](https://github.com/betagouv/ma-cantine/issues/6738)) ([5c78858](https://github.com/betagouv/ma-cantine/commit/5c7885836c1e4205fdd4123a4020afb43da05c55))
+
 ## [2026.34.0](https://github.com/betagouv/ma-cantine/compare/v2026.33.4...v2026.34.0) (2026-05-20)
 
 
