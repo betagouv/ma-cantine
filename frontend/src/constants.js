@@ -146,11 +146,11 @@ export default Object.freeze({
     },
     EUROPE: { text: "Origine Europe" },
     FRANCE: { text: "Origine France" },
-    CIRCUIT_COURT: { text: "Origine France (dont circuit-court)" },
-    LOCAL: { text: "Origine France (dont local)" },
+    CIRCUIT_COURT: { text: "Circuit court" },
+    LOCAL: { text: "Local" },
   },
   PurchasesEGalimCategories: {
-    BIO: { text: "Bio" },
+    BIO: { text: "Bio ou « en conversion bio »" },
     LABEL_ROUGE: { text: "Label rouge" },
     AOCAOP: { text: "AOC / AOP", longText: "Appellation d'origine (AOC / AOP)" },
     IGP: { text: "IGP", longText: "Indication géographique protégée (IGP)" },
@@ -175,9 +175,11 @@ export default Object.freeze({
     EUROPE: { text: "Origine Europe" },
     FRANCE: { text: "Origine France" },
   },
-  PurchasesNotEgalimCategories: {
-    CIRCUIT_COURT: { text: "Commercialisation en circuit-court" },
-    LOCAL: { text: "Produit local" },
+  PurchasesLocalCategory: {
+    LOCAL: { text: "Produit « local » ou « de proximité »" },
+  },
+  PurchasesCircuitCourtCategory: {
+    CIRCUIT_COURT: { text: "Achat en circuit court ou approvisionnement direct" },
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts

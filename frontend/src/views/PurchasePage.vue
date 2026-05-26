@@ -164,7 +164,7 @@
                         `body-2 grey--text ${disabledForFamily(characteristic) ? 'text--darken-1' : 'text--darken-4'}`
                       "
                     >
-                      {{ getCharacteristicDisplayText(characteristic) }}
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesEGalimCategories") }}
                       <span v-if="disabledForFamily(characteristic)">
                         &nbsp;(non applicable)
                       </span>
@@ -175,7 +175,7 @@
             </v-row>
           </fieldset>
           <fieldset class="mx-4 mb-4" style="width: 100%">
-            <legend class="body-2 my-1">Catégories d'origine</legend>
+            <legend class="body-2 my-1">Origine</legend>
             <v-row class="mb-4">
               <v-col cols="12" sm="4" class="py-0" v-for="characteristic in originesCategories" :key="characteristic">
                 <v-checkbox
@@ -197,15 +197,11 @@
           <fieldset class="mx-4 mb-4" style="width: 100%">
             <v-row>
               <v-col cols="12" sm="8" class="pb-0">
-                <legend class="body-2">Hors EGalim</legend>
-                <span class="body-2 grey--text text--darken-1">
-                  Ces informations ne sont pas demandées pour la télédéclaration EGalim mais permettent d’enrichir votre
-                  synthèse d’achats et vos supports de communication.
-                </span>
+                <legend class="body-2">« Local »</legend>
               </v-col>
             </v-row>
             <v-row class="mb-4">
-              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in notEgalimCategories" :key="characteristic">
+              <v-col cols="12" sm="4" class="py-0" v-for="characteristic in localCategory" :key="characteristic">
                 <v-checkbox
                   hide-details="auto"
                   v-model="purchase.characteristics"
@@ -215,14 +211,14 @@
                 >
                   <template v-slot:label>
                     <span class="body-2 grey--text text--darken-4">
-                      {{ getCharacteristicDisplayText(characteristic, "PurchasesNotEgalimCategories") }}
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesLocalCategory") }}
                     </span>
                   </template>
                 </v-checkbox>
               </v-col>
               <v-col cols="12" sm="4" class="pb-0">
                 <div v-show="showLocalDefinition">
-                  <label class="body-2" for="local-definition">Quelle est votre définition de "Local" ? *</label>
+                  <label class="body-2" for="local-definition">Précisions *</label>
                   <DsfrSelect
                     hide-details="auto"
                     :items="localDefinitions"
@@ -233,6 +229,30 @@
                     no-data-text="Pas de résultats"
                   />
                 </div>
+              </v-col>
+            </v-row>
+          </fieldset>
+          <fieldset class="mx-4 mb-4" style="width: 100%">
+            <v-row>
+              <v-col cols="12" sm="8" class="pb-0">
+                <legend class="body-2">Circuit court</legend>
+              </v-col>
+            </v-row>
+            <v-row class="mb-4">
+              <v-col cols="12" sm="5" class="py-0" v-for="characteristic in circuitCourCategory" :key="characteristic">
+                <v-checkbox
+                  hide-details="auto"
+                  v-model="purchase.characteristics"
+                  :multiple="true"
+                  :key="characteristic"
+                  :value="characteristic"
+                >
+                  <template v-slot:label>
+                    <span class="body-2 grey--text text--darken-4">
+                      {{ getCharacteristicDisplayText(characteristic, "PurchasesCircuitCourtCategory") }}
+                    </span>
+                  </template>
+                </v-checkbox>
               </v-col>
             </v-row>
           </fieldset>
@@ -341,7 +361,8 @@ export default {
       characteristics: Object.keys(Constants.Characteristics),
       egalimCategories: Object.keys(Constants.PurchasesEGalimCategories),
       originesCategories: Object.keys(Constants.PurchasesOriginesCategories),
-      notEgalimCategories: Object.keys(Constants.PurchasesNotEgalimCategories),
+      localCategory: Object.keys(Constants.PurchasesLocalCategory),
+      circuitCourCategory: Object.keys(Constants.PurchasesCircuitCourtCategory),
       backLink: { name: "PurchasesHome" },
       localDefinitions: Object.values(Constants.LocalDefinitions),
       productDescriptions: [],
