@@ -191,6 +191,14 @@ class Purchase(SoftDeletionModel):
         + CHARACTERISTIC_LABELS_EGALIM_AUTRES
     )
 
+    CREATION_META_FIELDS = [
+        "creation_date",
+        "modification_date",
+        "creation_user",
+        "creation_source",
+        "import_source",
+    ]
+
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
     date = models.DateField(default=date.today)
     description = models.TextField(null=True, blank=True, verbose_name="description du produit")

@@ -45,11 +45,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "price_ht",
         "invoice_file",
         "local_definition",
-        "import_source",
-        "creation_user",
-        "creation_source",
-        "creation_date",
-        "modification_date",
+        *Purchase.CREATION_META_FIELDS,
         "deletion_date",
     )
 
