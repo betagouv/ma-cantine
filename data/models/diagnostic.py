@@ -934,14 +934,6 @@ class Diagnostic(models.Model):
         verbose_name="status",
     )
 
-    creation_source = models.CharField(
-        max_length=255,
-        choices=CreationSource.choices,
-        blank=True,
-        null=True,
-        verbose_name="Source de création du diagnostic",
-    )
-
     diagnostic_type = models.CharField(
         max_length=255,
         choices=DiagnosticType.choices,
@@ -1657,6 +1649,7 @@ class Diagnostic(models.Model):
     )
     applicant = models.ForeignKey(
         get_user_model(),
+        related_name="diagnostics_teledeclared",
         verbose_name="déclarant",
         on_delete=models.SET_NULL,
         null=True,
@@ -1719,6 +1712,23 @@ class Diagnostic(models.Model):
         null=True,
         size=None,
         verbose_name="bilan avec des problèmes de données (raisons)",
+    )
+
+    creation_user = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="diagnostics_created",
+        verbose_name="utilisateur",
+    )
+
+    creation_source = models.CharField(
+        max_length=255,
+        choices=CreationSource.choices,
+        blank=True,
+        null=True,
+        verbose_name="Source de création du diagnostic",
     )
 
     creation_date = models.DateTimeField(auto_now_add=True)

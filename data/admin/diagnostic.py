@@ -38,6 +38,7 @@ class CanteenDiagnosticInline(ReadOnlyAdminMixin, admin.TabularInline):
 
 class UserDiagnosticInline(ReadOnlyAdminMixin, admin.TabularInline):
     model = Diagnostic
+    fk_name = "applicant"
     show_change_link = True
     fields = ("canteen", "year", "diagnostic_type", "status", "creation_date", "modification_date")
     readonly_fields = fields
