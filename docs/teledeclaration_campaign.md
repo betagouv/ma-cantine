@@ -6,13 +6,13 @@
 
 voir [macantine/utils.py](../macantine/utils.py) et la constante `CAMPAIGN_DATES`
 
-### Pendant la campagne
+## Pendant la campagne
 
-## Exports
+### Exports
 
 Modifier la fréquence des exports Metabase & Open Data, voir [macantine/celery.py](../macantine/celery.py)
 
-## 1TD1Site
+### 1TD1Site
 
 1. remplir les champs `invalid_warning_reason_list` &  `warning_reason_list`
     ```
@@ -25,6 +25,6 @@ Modifier la fréquence des exports Metabase & Open Data, voir [macantine/celery.
 
 TODO: temps réel au moment du save/cancel des TD
 
-### Après la campagne
+## Après la campagne
 
 TODO (dbt)
