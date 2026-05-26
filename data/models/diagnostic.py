@@ -146,7 +146,7 @@ def incoherent_values_query():
     return Q(year=2022, teledeclaration_id__in=[9656, 8037])
 
 
-def circuit_court_gt_france_query():
+def circuit_court_sup_france_query():
     """
     TDs 2025 avec une incohérence sur "origine France dont circuit_court"
     - En 2025, circuit-court faisait partie d'origine France, mais à parfois été mal télédéclaré
@@ -157,7 +157,7 @@ def circuit_court_gt_france_query():
     return Q(year=2025, circuit_court_sum__gt=F("france_sum"))
 
 
-def local_gt_france_query():
+def local_sup_france_query():
     """
     TDs 2025 avec une incohérence sur "origine France dont local"
     - En 2025, local faisait partie d'origine France, mais à parfois été mal télédéclaré
@@ -168,7 +168,7 @@ def local_gt_france_query():
     return Q(year=2025, local_sum__gt=F("france_sum"))
 
 
-def commerce_equitable_gt_bio_query():
+def commerce_equitable_sup_bio_query():
     """
     TDs 2025 avec une incohérence sur "bio dont commerce équitable"
 
