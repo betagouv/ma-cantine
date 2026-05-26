@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0252_alter_purchase_characteristics'),
+        ('data', '0253_alter_purchase_local_definition_add_pat'),
     ]
 
     operations = [
