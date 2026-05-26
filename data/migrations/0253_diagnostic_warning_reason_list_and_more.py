@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='diagnostic',
             name='warning_reason_list',
-            field=data.fields.ChoiceArrayField(base_field=models.CharField(choices=[('CIRCUIT_COURT_SUP_FRANCE', 'Origine France (dont circuit-court) > Origine France'), ('LOCAL_SUP_FRANCE', 'Origine France (dont local) > Origine France'), ('COMMERCE_EQUITABLE_SUP_BIO', 'Bio dont commerce équitable > Bio')], max_length=255), blank=True, null=True, size=None, verbose_name="bilan avec d'autres soucis data (raisons)"),
+            field=data.fields.ChoiceArrayField(base_field=models.CharField(choices=[('CIRCUIT_COURT_SUP_FRANCE', 'Origine France (dont circuit-court) > Origine France'), ('LOCAL_SUP_FRANCE', 'Origine France (dont local) > Origine France'), ('COMMERCE_EQUITABLE_SUP_BIO', 'Bio dont commerce équitable > Bio')], max_length=255), blank=True, null=True, size=None, verbose_name="bilan avec des problèmes de données (raisons)"),
         ),
         migrations.AddField(
             model_name='historicaldiagnostic',
             name='warning_reason_list',
-            field=data.fields.ChoiceArrayField(base_field=models.CharField(choices=[('CIRCUIT_COURT_SUP_FRANCE', 'Origine France (dont circuit-court) > Origine France'), ('LOCAL_SUP_FRANCE', 'Origine France (dont local) > Origine France'), ('COMMERCE_EQUITABLE_SUP_BIO', 'Bio dont commerce équitable > Bio')], max_length=255), blank=True, null=True, size=None, verbose_name="bilan avec d'autres soucis data (raisons)"),
+            field=data.fields.ChoiceArrayField(base_field=models.CharField(choices=[('CIRCUIT_COURT_SUP_FRANCE', 'Origine France (dont circuit-court) > Origine France'), ('LOCAL_SUP_FRANCE', 'Origine France (dont local) > Origine France'), ('COMMERCE_EQUITABLE_SUP_BIO', 'Bio dont commerce équitable > Bio')], max_length=255), blank=True, null=True, size=None, verbose_name="bilan avec des problèmes de données (raisons)"),
         ),
     ]

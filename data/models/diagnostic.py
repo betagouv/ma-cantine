@@ -1652,7 +1652,7 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         size=None,
-        verbose_name="bilan avec d'autres soucis data (raisons)",
+        verbose_name="bilan avec des problèmes de données (raisons)",
     )
 
     creation_date = models.DateTimeField(auto_now_add=True)
