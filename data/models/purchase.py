@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator, ValidationError
 from django.db import models
 from django.db.models import Q, Sum
 from django.db.models.functions import ExtractYear
+from django.contrib.auth import get_user_model
 
 from macantine.etl import utils
 from common.utils import utils as utils_utils
@@ -220,6 +221,10 @@ class Purchase(SoftDeletionModel):
         max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
     )
     import_source = models.TextField(null=True, blank=True, verbose_name="source de l'import du produit")
+
+    creation_user = models.ForeignKey(
+        get_user_model(), null=True, blank=True, on_delete=models.SET_NULL, verbose_name="utilisateur"
+    )
 
     creation_source = models.CharField(
         max_length=255,
