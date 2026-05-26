@@ -451,6 +451,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.valeur_boissons_france, Decimal("1.5"))
         self.assertEqual(diagnostic_1.valeur_autres_france, Decimal("1.6"))
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(diagnostic_1.creation_user, authenticate.user)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
         diagnostic_2 = Diagnostic.objects.get(canteen_id=canteen_2.id)
