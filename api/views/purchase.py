@@ -126,8 +126,9 @@ class PurchaseListCreateView(ListCreateAPIView):
                 )
                 raise PermissionDenied()
             serializer.is_valid(raise_exception=True)
+            creation_user = self.request.user
             creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-            serializer.save(canteen=canteen, creation_source=creation_source)
+            serializer.save(canteen=canteen, creation_user=creation_user, creation_source=creation_source)
         except ObjectDoesNotExist as e:
             logger.error(
                 f"User {self.request.user.id} attempted to create a purchase in nonexistent canteen {canteen_id}"

@@ -268,10 +268,7 @@ class PurchaseDetailApiTest(APITestCase):
 
 
 class PurchaseCreateApiTest(APITestCase):
-    def test_create_purchase_unauthenticated(self):
-        """
-        The purchase creation is only available when logged in
-        """
+    def test_cannot_create_purchase_if_unauthenticated(self):
         payload = {
             "date": "2022-01-13",
             "canteen_id": 1,
@@ -285,10 +282,7 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_create_purchase_someone_elses_canteen(self):
-        """
-        A user can only create a purchase of a canteen they manage
-        """
+    def test_cannot_create_purchase_if_not_canteen_manager(self):
         other_user = UserFactory()
         other_user_canteen = CanteenFactory(managers=[other_user])
 
@@ -306,9 +300,6 @@ class PurchaseCreateApiTest(APITestCase):
 
     @authenticate
     def test_create_purchase(self):
-        """
-        A user can create a purchase
-        """
         canteen = CanteenFactory(managers=[authenticate.user])
 
         payload = {
@@ -326,6 +317,7 @@ class PurchaseCreateApiTest(APITestCase):
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.local_definition, Purchase.Local.AUTOUR_SERVICE)
         self.assertEqual(len(purchase.characteristics), 2)
+        self.assertEqual(purchase.creation_user, authenticate.user)
 
     @authenticate
     def test_create_purchase_creation_source(self):

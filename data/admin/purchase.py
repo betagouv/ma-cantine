@@ -45,10 +45,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "price_ht",
         "invoice_file",
         "local_definition",
-        "import_source",
-        "creation_source",
-        "creation_date",
-        "modification_date",
+        *Purchase.CREATION_META_FIELDS,
         "deletion_date",
     )
 
@@ -69,6 +66,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         - set creation_source (on create)
         """
         if not change:
+            obj.creation_user = request.user
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
 

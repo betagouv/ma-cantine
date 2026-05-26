@@ -12,8 +12,6 @@ class PurchaseSerializer(serializers.ModelSerializer):
         model = Purchase
         fields = (
             "id",
-            "creation_date",
-            "modification_date",
             "canteen",
             "date",
             "description",
@@ -25,6 +23,8 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "local_definition",
             "import_source",
             "creation_source",
+            "creation_date",
+            "modification_date",
         )
         read_only_fields = (
             "id",
