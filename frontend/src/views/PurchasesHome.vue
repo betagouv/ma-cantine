@@ -1,16 +1,26 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav />
-    <div class="d-flex">
+    <div class="d-flex mb-8">
       <div>
         <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
           Mes achats
         </h1>
         <p>
-          Une alimentation saine et durable commence par un suivi comptable de vos achats. Des nouvelles fonctionnalités
-          arrivent bientôt dans cet espace !
+          Une alimentation saine et durable commence par un suivi comptable de vos achats.
+          <br />
+          Pour en savoir plus sur le fonctionnement de l'outil,
+          <a
+            target="_blank"
+            href="https://ma-cantine.crisp.help/fr/category/suivis-des-achats-l57vl7/"
+            class="grey--text text--darken-3"
+          >
+            consultez notre documentation
+            <v-icon small class="grey--text text--darken-3 ml-1">mdi-open-in-new</v-icon>
+          </a>
+          .
         </p>
-        <v-row v-if="hasCanteens" align="center" class="px-3">
+        <v-row v-if="hasCanteens" align="center" class="mt-2 px-3">
           <v-btn color="primary" :to="{ name: 'NewPurchase' }" large class="mr-2 my-3">
             <v-icon>mdi-plus</v-icon>
             Ajouter un produit
@@ -68,7 +78,6 @@
       ></v-img>
     </div>
 
-    <PurchasesToolExplanation class="my-1" />
     <v-card outlined v-if="hasCanteens && visiblePurchases">
       <v-row class="px-4 mt-2" align="center">
         <v-col cols="12" sm="8" class="py-0">
@@ -337,7 +346,6 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import PurchasesToolExplanation from "@/components/PurchasesToolExplanation"
 
 export default {
   name: "PurchasesHome",
@@ -347,7 +355,6 @@ export default {
     DsfrSelect,
     DsfrSearchField,
     DsfrAutocomplete,
-    PurchasesToolExplanation,
   },
   data() {
     return {
