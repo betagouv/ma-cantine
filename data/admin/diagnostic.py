@@ -179,6 +179,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             {
                 "fields": (
                     "invalid_reason_list",
+                    "warning_reason_list",
                     *Diagnostic.CREATION_META_FIELDS,
                 )
             },
@@ -195,6 +196,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "satellites_snapshot_pretty",
         "applicant_snapshot_pretty",
         "invalid_reason_list",
+        "warning_reason_list",
         *Diagnostic.CREATION_META_FIELDS,
     )
 
