@@ -172,6 +172,7 @@ class PurchasesImportView(BaseImportView):
             characteristics=characteristics,
             local_definition=local_definition,
             import_source=self.tmp_id,
+            creation_user=self.request.user,
             creation_source=CreationSource.IMPORT,
         )
         purchase.full_clean()

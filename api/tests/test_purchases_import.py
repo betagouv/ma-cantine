@@ -465,6 +465,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
         self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTEMENT)
         self.assertIsNotNone(purchase.import_source)
+        self.assertEqual(purchase.creation_user, authenticate.user)
         self.assertEqual(purchase.creation_source, CreationSource.IMPORT)
         # purchase with definition_local empty
         purchase = Purchase.objects.filter(description="Pommes, vertes 1").first()
