@@ -9,10 +9,10 @@ from data.models.diagnostic import (
     canteen_deleted_query,
     canteen_has_siret_or_siren_unite_legale_query,
     canteen_soft_deleted_during_campaign_query,
-    circuit_court_gt_france_query,
-    commerce_equitable_gt_bio_query,
+    circuit_court_sup_france_query,
+    commerce_equitable_sup_bio_query,
     incoherent_values_query,
-    local_gt_france_query,
+    local_sup_france_query,
     teledeclaration_mode_satellite_without_appro_query,
     valeur_bio_agg_is_filled_query,
     valeur_totale_is_filled_query,
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 def _remove_reason_item(field_prefix, reason_item):
     """
-    field: "invalid" or "warning"
+    field_prefix: "invalid" or "warning"
     """
     Diagnostic.objects.filter(**{f"{field_prefix}_reason_list__contains": [reason_item]}).update(
         **{
@@ -38,6 +38,9 @@ def _remove_reason_item(field_prefix, reason_item):
 
 
 def _append_reason_item(qs, field_prefix, reason_item):
+    """
+    field_prefix: "invalid" or "warning"
+    """
     qs.update(
         **{
             f"{field_prefix}_reason_list": Func(
@@ -98,9 +101,9 @@ class Command(BaseCommand):
 
         #########################################################
         # warning_reason_list
-        fill_warning_reason_CIRCUIT_COURT_GT_FRANCE(diagnostic_qs, apply)
-        fill_warning_reason_LOCAL_GT_FRANCE(diagnostic_qs, apply)
-        fill_warning_reason_COMMERCE_EQUITABLE_GT_BIO(diagnostic_qs, apply)
+        fill_warning_reason_CIRCUIT_COURT_SUP_FRANCE(diagnostic_qs, apply)
+        fill_warning_reason_LOCAL_SUP_FRANCE(diagnostic_qs, apply)
+        fill_warning_reason_COMMERCE_EQUITABLE_SUP_BIO(diagnostic_qs, apply)
 
         logger.info("Task completed: diagnostic_fill_invalid_warning_reason_list")
         diagnostic_invalid_qs = diagnostic_qs.exclude(has_arrayfield_missing_query("invalid_reason_list"))
@@ -245,8 +248,8 @@ def fill_invalid_reason_VALEURS_INCOHERENTES(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "invalid", reason_item)
 
 
-def fill_warning_reason_CIRCUIT_COURT_GT_FRANCE(diagnostic_qs, apply):
-    reason_item = Diagnostic.WarningReason.CIRCUIT_COURT_GT_FRANCE
+def fill_warning_reason_CIRCUIT_COURT_SUP_FRANCE(diagnostic_qs, apply):
+    reason_item = Diagnostic.WarningReason.CIRCUIT_COURT_SUP_FRANCE
     logger.info(f"fill_warning_reason: {reason_item}")
 
     # Step 1: cleanup
@@ -254,7 +257,9 @@ def fill_warning_reason_CIRCUIT_COURT_GT_FRANCE(diagnostic_qs, apply):
         _remove_reason_item("warning", reason_item)
 
     # Step 2: queryset
-    diagnostic_qs = diagnostic_qs.filter(circuit_court_gt_france_query())
+    diagnostic_qs = (
+        diagnostic_qs.with_label_sum("circuit_court").with_label_sum("france").filter(circuit_court_sup_france_query())
+    )
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with circuit court > origine France")
 
     # Step 3: update
@@ -262,8 +267,8 @@ def fill_warning_reason_CIRCUIT_COURT_GT_FRANCE(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "warning", reason_item)
 
 
-def fill_warning_reason_LOCAL_GT_FRANCE(diagnostic_qs, apply):
-    reason_item = Diagnostic.WarningReason.LOCAL_GT_FRANCE
+def fill_warning_reason_LOCAL_SUP_FRANCE(diagnostic_qs, apply):
+    reason_item = Diagnostic.WarningReason.LOCAL_SUP_FRANCE
     logger.info(f"fill_warning_reason: {reason_item}")
 
     # Step 1: cleanup
@@ -271,7 +276,7 @@ def fill_warning_reason_LOCAL_GT_FRANCE(diagnostic_qs, apply):
         _remove_reason_item("warning", reason_item)
 
     # Step 2: queryset
-    diagnostic_qs = diagnostic_qs.filter(local_gt_france_query())
+    diagnostic_qs = diagnostic_qs.with_label_sum("local").with_label_sum("france").filter(local_sup_france_query())
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with local > origine France")
 
     # Step 3: update
@@ -279,8 +284,8 @@ def fill_warning_reason_LOCAL_GT_FRANCE(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "warning", reason_item)
 
 
-def fill_warning_reason_COMMERCE_EQUITABLE_GT_BIO(diagnostic_qs, apply):
-    reason_item = Diagnostic.WarningReason.COMMERCE_EQUITABLE_GT_BIO
+def fill_warning_reason_COMMERCE_EQUITABLE_SUP_BIO(diagnostic_qs, apply):
+    reason_item = Diagnostic.WarningReason.COMMERCE_EQUITABLE_SUP_BIO
     logger.info(f"fill_warning_reason: {reason_item}")
 
     # Step 1: cleanup
@@ -288,7 +293,11 @@ def fill_warning_reason_COMMERCE_EQUITABLE_GT_BIO(diagnostic_qs, apply):
         _remove_reason_item("warning", reason_item)
 
     # Step 2: queryset
-    diagnostic_qs = diagnostic_qs.filter(commerce_equitable_gt_bio_query())
+    diagnostic_qs = (
+        diagnostic_qs.with_label_sum("bio_dont_commerce_equitable")
+        .with_label_sum("bio")
+        .filter(commerce_equitable_sup_bio_query())
+    )
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with commerce equitable > bio")
 
     # Step 3: update
