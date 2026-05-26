@@ -806,7 +806,7 @@ class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
 
 class DiagnosticInvalidWarningQueriesTest(TestCase):
     def test_circuit_court_sup_france_query(self):
-        diagnostic = DiagnosticFactory(
+        diagnostic_complete = DiagnosticFactory(
             year=2025,
             canteen=CanteenFactory(),
             diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
@@ -821,10 +821,10 @@ class DiagnosticInvalidWarningQueriesTest(TestCase):
         )
 
         self.assertEqual(diagnostic_qs.count(), 1)
-        self.assertIn(diagnostic, diagnostic_qs)
+        self.assertIn(diagnostic_complete, diagnostic_qs)
 
     def test_local_sup_france_query(self):
-        diagnostic = DiagnosticFactory(
+        diagnostic_complete = DiagnosticFactory(
             year=2025,
             canteen=CanteenFactory(),
             diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
@@ -837,10 +837,17 @@ class DiagnosticInvalidWarningQueriesTest(TestCase):
         )
 
         self.assertEqual(diagnostic_qs.count(), 1)
-        self.assertIn(diagnostic, diagnostic_qs)
+        self.assertIn(diagnostic_complete, diagnostic_qs)
 
     def test_commerce_equitable_sup_bio_query(self):
-        diagnostic = DiagnosticFactory(
+        diagnostic_simple = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_bio=10,
+            valeur_bio_dont_commerce_equitable=15,
+        )
+        diagnostic_complete = DiagnosticFactory(
             year=2025,
             canteen=CanteenFactory(),
             diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
@@ -854,8 +861,9 @@ class DiagnosticInvalidWarningQueriesTest(TestCase):
             .filter(commerce_equitable_sup_bio_query())
         )
 
-        self.assertEqual(diagnostic_qs.count(), 1)
-        self.assertIn(diagnostic, diagnostic_qs)
+        self.assertEqual(diagnostic_qs.count(), 2)
+        self.assertIn(diagnostic_simple, diagnostic_qs)
+        self.assertIn(diagnostic_complete, diagnostic_qs)
 
 
 class DiagnosticModelDeleteTest(TestCase):
