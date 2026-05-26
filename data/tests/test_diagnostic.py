@@ -12,6 +12,9 @@ from data.models.diagnostic import (
     Diagnostic,
     canteen_has_siret_or_siren_unite_legale_query,
     canteen_soft_deleted_during_campaign_query,
+    circuit_court_gt_france_query,
+    local_gt_france_query,
+    commerce_equitable_gt_bio_query,
 )
 
 year_data = 2024
@@ -799,6 +802,60 @@ class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
                     valeur_totale=valeur_totale, valeur_egalim_hors_bio_agg=valeur_egalim_hors_bio_agg
                 )
                 self.assertEqual(diagnostic.compute_pourcentage_egalim_hors_bio(), pourcentage_egalim_hors_bio)
+
+
+class DiagnosticInvalidWarningQueriesTest(TestCase):
+    def test_circuit_court_gt_france_query(self):
+        diagnostic = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_viandes_volailles_france=20,
+            valeur_viandes_volailles_circuit_court=25,
+        )
+
+        diagnostic_qs = (
+            Diagnostic.objects.with_label_sum("france")
+            .with_label_sum("circuit_court")
+            .filter(circuit_court_gt_france_query())
+        )
+
+        self.assertEqual(diagnostic_qs.count(), 1)
+        self.assertIn(diagnostic, diagnostic_qs)
+
+    def test_local_gt_france_query(self):
+        diagnostic = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_produits_de_la_mer_france=25,
+            valeur_produits_de_la_mer_local=30,
+        )
+
+        diagnostic_qs = (
+            Diagnostic.objects.with_label_sum("france").with_label_sum("local").filter(local_gt_france_query())
+        )
+
+        self.assertEqual(diagnostic_qs.count(), 1)
+        self.assertIn(diagnostic, diagnostic_qs)
+
+    def test_commerce_equitable_gt_bio_query(self):
+        diagnostic = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_viandes_volailles_bio=10,
+            valeur_viandes_volailles_bio_dont_commerce_equitable=15,
+        )
+
+        diagnostic_qs = (
+            Diagnostic.objects.with_label_sum("bio")
+            .with_label_sum("bio_dont_commerce_equitable")
+            .filter(commerce_equitable_gt_bio_query())
+        )
+
+        self.assertEqual(diagnostic_qs.count(), 1)
+        self.assertIn(diagnostic, diagnostic_qs)
 
 
 class DiagnosticModelDeleteTest(TestCase):

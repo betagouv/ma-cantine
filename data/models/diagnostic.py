@@ -128,7 +128,7 @@ def canteen_has_siret_or_siren_unite_legale_query():
 
 def aberrant_values_query():
     """
-    Ici nous filtrons les TD dont les déclarations paraissent aberrantes et sont impactantes :
+    Ici nous filtrons les TDs dont les déclarations paraissent aberrantes et sont impactantes :
     - Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
     Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
     nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
@@ -140,10 +140,43 @@ def aberrant_values_query():
 
 def incoherent_values_query():
     """
-    Ici nous filtrons les TD dont les déclarations paraissent incohérentes et sont impactantes :
-    - Durant la campagne 2023, nous avons identifié deux TD dont les valeurs étaient incohérentes.
+    Ici nous filtrons les TDs dont les déclarations paraissent incohérentes et sont impactantes :
+    - Durant la campagne 2023, nous avons identifié deux TDs dont les valeurs étaient incohérentes.
     """
     return Q(year=2022, teledeclaration_id__in=[9656, 8037])
+
+
+def circuit_court_gt_france_query():
+    """
+    TDs 2025 avec une incohérence sur "origine France dont circuit_court"
+    - En 2025, circuit-court faisait partie d'origine France, mais à parfois été mal télédéclaré
+    - A partir de 2026, circuit-court a été sorti d'origine France
+
+    Note: requires with_label_sum("circuit_court") and with_label_sum("france") annotations
+    """
+    return Q(year=2025, circuit_court_sum__gt=F("france_sum"))
+
+
+def local_gt_france_query():
+    """
+    TDs 2025 avec une incohérence sur "origine France dont local"
+    - En 2025, local faisait partie d'origine France, mais à parfois été mal télédéclaré
+    - A partir de 2026, local a été sorti d'origine France
+
+    Note: requires with_label_sum("local") and with_label_sum("france") annotations
+    """
+    return Q(year=2025, local_sum__gt=F("france_sum"))
+
+
+def commerce_equitable_gt_bio_query():
+    """
+    TDs 2025 avec une incohérence sur "bio dont commerce équitable"
+
+    Note: see validators/diagnostics.py#validate_valeur_bio
+    Note: requires with_label_sum("bio_dont_commerce_equitable") and with_label_sum("bio") annotations
+    """
+    # return Q(year=2025, valeur_bio_dont_commerce_equitable__gt=F("valeur_bio"))
+    return Q(year=2025, bio_dont_commerce_equitable_sum__gt=F("bio_sum"))
 
 
 class DiagnosticQuerySet(models.QuerySet):
