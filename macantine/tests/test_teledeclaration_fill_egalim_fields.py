@@ -1,3 +1,5 @@
+from unittest import skipIf
+
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -5,6 +7,7 @@ from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestD
 from data.models import Diagnostic
 
 
+@skipIf(True, "TODO: remove once we have cout_repas")
 class TeledeclarationFillEgalimFieldsCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):

@@ -1,13 +1,13 @@
 from django.core.management import call_command
+from django.db.models.signals import post_save
 from django.test import TestCase
 from freezegun import freeze_time
-from django.db.models.signals import post_save
 
-from data.models.canteen import Canteen, fill_geo_fields_from_siret
-from data.models import Diagnostic
-from data.models.sector import Sector
-from api.tests.utils import authenticate
+from api.tests.utils import assert_almost_equal, authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
+from data.models import Diagnostic
+from data.models.canteen import Canteen, fill_geo_fields_from_siret
+from data.models.sector import Sector
 
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
@@ -924,9 +924,6 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         for field in Diagnostic.COMPLETE_APPRO_FIELDS:
             cls.appro_fields[field] = 500.75
 
-    def verify_field_are_equals(self, value, expected_value):
-        self.assertAlmostEqual(float(value), float(expected_value), places=2)
-
     def verify_appro_fields_divided(self, fields, satellite_diagnostic, central_diagnostic, divisor):
         for field in fields:
             with self.subTest(field=field):
@@ -935,7 +932,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
                 expected_value = central_value / divisor
                 self.assertIsNotNone(central_value)
                 self.assertIsNotNone(diagnostic_value)
-                self.verify_field_are_equals(diagnostic_value, expected_value)
+                assert_almost_equal(self, diagnostic_value, expected_value)
 
     @authenticate
     def test_total_value_divided_by_number_of_satellites(self):
@@ -957,8 +954,8 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         # After the script is run
         satellite_1_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_1)
         satellite_2_diagnostic = Diagnostic.all_objects.in_year(2024).teledeclared().get(canteen=self.satellite_2)
-        self.verify_field_are_equals(satellite_1_diagnostic.valeur_totale, total_value / 2)
-        self.verify_field_are_equals(satellite_2_diagnostic.valeur_totale, total_value / 2)
+        assert_almost_equal(self, satellite_1_diagnostic.valeur_totale, total_value / 2)
+        assert_almost_equal(self, satellite_2_diagnostic.valeur_totale, total_value / 2)
 
     @authenticate
     def test_central_type_simple(self):
