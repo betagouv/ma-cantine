@@ -20,6 +20,7 @@ from data.utils import (
     CustomJSONEncoder,
     has_arrayfield_missing_query,
     make_optional_positive_decimal_field,
+    make_optional_positive_percentage_decimal_field,
     sum_int_with_potential_null,
 )
 from data.validators import diagnostic as diagnostic_validators
@@ -1682,25 +1683,13 @@ class Diagnostic(models.Model):
     )
 
     # EGalim
-    pourcentage_bio = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    pourcentage_bio = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage bio (champ calculé)",
     )
-    pourcentage_egalim = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    pourcentage_egalim = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage EGalim (champ calculé)",
     )
-    pourcentage_egalim_hors_bio = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    pourcentage_egalim_hors_bio = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage EGalim hors bio (champ calculé)",
     )
     objectifs_egalim_atteints = models.BooleanField(

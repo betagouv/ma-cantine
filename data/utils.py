@@ -6,7 +6,7 @@ from io import BytesIO
 
 from django.core.files.base import ContentFile
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Q
 from PIL import ExifTags
@@ -136,8 +136,33 @@ def get_diagnostic_upper_limit_year():
 
 
 def make_optional_positive_decimal_field(**kwargs):
+    """
+    DecimalField with
+    - 20 digits, including 2 decimals
+    - min: 0
+    - max: 999999999999999999.99
+    - examples: None, 0, 10.5, 999.99
+    """
     return models.DecimalField(
         max_digits=20, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(Decimal("0"))], **kwargs
+    )
+
+
+def make_optional_positive_percentage_decimal_field(**kwargs):
+    """
+    DecimalField with
+    - 5 digits, including 2 decimals
+    - min: 0
+    - max: 100.00 ()
+    - examples: None, 0, 10.5, 99.99, 100
+    """
+    return models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("100"))],
+        **kwargs,
     )
 
 
