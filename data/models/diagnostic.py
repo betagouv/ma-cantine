@@ -1782,6 +1782,7 @@ class Diagnostic(models.Model):
         # TODO: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
         self.populate_aggregated_values()
         self.populate_egalim_stats()
+        self.populate_cout_repas()
         return super().save(**kwargs)
 
     def populate_simplified_diagnostic_values(self):
@@ -2167,7 +2168,7 @@ class Diagnostic(models.Model):
             "email": applicant.email,
         }
 
-        # computed data (agg & EGalim)
+        # computed data (agg & EGalim & cout_repas)
         # see save()
 
         # metadata
