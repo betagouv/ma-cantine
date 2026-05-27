@@ -3,8 +3,8 @@ from unittest import skipIf
 from django.core.management import call_command
 from django.test import TestCase
 
-from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 from data.models import Diagnostic
+from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 
 
 @skipIf(True, "TODO: remove once we have cout_repas")
@@ -21,7 +21,7 @@ class TeledeclarationFillEgalimFieldsCommandTest(TestCase):
         self.assertEqual(diagnostic.canteen_snapshot["region"], "84")
         # the diagnostic is teledeclared, so egalim fields have been filled
         # clean them before running the command
-        for field_name in Diagnostic.TELEDECLARATION_EGALIM_FIELDS:
+        for field_name in Diagnostic.COMPUTED_EGALIM_FIELDS:
             setattr(diagnostic, field_name, None)
 
         call_command("teledeclaration_fill_egalim_fields", "--year", 2022)

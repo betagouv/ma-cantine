@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     """
-    Goal: after adding the Diagnostic.TELEDECLARATION_EGALIM_FIELDS, command to fill those fields
+    Goal: after adding the Diagnostic.COMPUTED_EGALIM_FIELDS, command to fill those fields
 
     Usage:
     - python manage.py teledeclaration_fill_egalim_fields --year 2025
@@ -28,7 +28,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         year = options["year"]
         logger.info(f"Start task: teledeclaration_fill_egalim_fields for year {year}")
-        fields = Diagnostic.TELEDECLARATION_EGALIM_FIELDS
+        fields = Diagnostic.COMPUTED_EGALIM_FIELDS
 
         logger.info("Step 1: reset the field for all the diagnostics")
         Diagnostic.objects.teledeclared_for_year(year).update(**{field_name: None for field_name in fields})

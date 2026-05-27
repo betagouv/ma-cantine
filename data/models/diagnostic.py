@@ -813,6 +813,13 @@ class Diagnostic(models.Model):
         "valeur_produits_laitiers_fermier",
     ]
 
+    COMPUTED_EGALIM_FIELDS = [
+        "pourcentage_bio",
+        "pourcentage_egalim",
+        "pourcentage_egalim_hors_bio",
+        "objectifs_egalim_atteints",
+    ]
+
     WASTE_FIELDS = [
         "has_waste_diagnostic",
         "has_waste_plan",
@@ -898,12 +905,6 @@ class Diagnostic(models.Model):
         "teledeclaration_mode",
         "teledeclaration_version",
         "teledeclaration_id",
-    ]
-    TELEDECLARATION_EGALIM_FIELDS = [
-        "pourcentage_bio",
-        "pourcentage_egalim",
-        "pourcentage_egalim_hors_bio",
-        "objectifs_egalim_atteints",
     ]
     TELEDECLARATION_SNAPSHOT_FIELDS = [
         "canteen_snapshot",
@@ -2201,8 +2202,6 @@ class Diagnostic(models.Model):
         for field in self.TELEDECLARATION_SNAPSHOT_FIELDS:
             setattr(self, field, None)
         for field in self.TELEDECLARATION_FIELDS:
-            setattr(self, field, None)
-        for field in self.TELEDECLARATION_EGALIM_FIELDS:
             setattr(self, field, None)
 
         # update declaration_donnees_year to True & save (for non-SATELLITE_WITHOUT_APPRO TDs)
