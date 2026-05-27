@@ -1698,6 +1698,15 @@ class Diagnostic(models.Model):
         verbose_name="objectifs EGalim atteints (champ calculé)",
     )
 
+    cout_repas = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name="coût repas (champ calculé)",
+        help_text="le coût repas est calculé en divisant la valeur totale annuelle par le nombre de repas annuels de la cantine",
+    )
+
     # Data quality
     invalid_reason_list = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=InvalidReason.choices),
@@ -1816,6 +1825,9 @@ class Diagnostic(models.Model):
         self.pourcentage_egalim_hors_bio = self.compute_pourcentage_egalim_hors_bio()
         self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
 
+    def populate_cout_repas(self):
+        self.cout_repas = self.compute_cout_repas()
+
     def label_sum(self, label: str):
         sum = 0
         is_null = True
@@ -1878,6 +1890,10 @@ class Diagnostic(models.Model):
         if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
             canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
             return objectifs_egalim_atteints(self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
+
+    def compute_cout_repas(self):
+        if self.valeur_totale and self.canteen_yearly_meal_count:
+            return round(self.valeur_totale / self.canteen_yearly_meal_count, 2)
 
     @property
     def percentage_valeur_totale(self):
@@ -1968,6 +1984,14 @@ class Diagnostic(models.Model):
             Diagnostic.TeledeclarationMode.CENTRAL_APPRO,
             Diagnostic.TeledeclarationMode.CENTRAL_ALL,
         ]
+
+    @property
+    def canteen_yearly_meal_count(self):
+        if self.canteen_snapshot:
+            return self.canteen_snapshot.get("yearly_meal_count")
+        elif self.canteen:
+            return self.canteen.yearly_meal_count
+        return None
 
     @property
     def canteen_snapshot_sector_lib_list(self):
