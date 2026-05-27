@@ -874,6 +874,10 @@ class Diagnostic(models.Model):
 
     NON_APPRO_FIELDS = WASTE_FIELDS + DIVERSIFICATION_FIELDS + PLASTIC_FIELDS + INFO_FIELDS
 
+    OTHER_COMPUTED_FIELDS = [
+        "cout_repas",
+    ]
+
     META_FIELDS = [
         "id",
         "canteen_id",

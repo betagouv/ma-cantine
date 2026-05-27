@@ -166,6 +166,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "fields": (
                     *Diagnostic.AGGREGATED_APPRO_FIELDS,
                     *Diagnostic.EGALIM_STATS_FIELDS,
+                    *Diagnostic.OTHER_COMPUTED_FIELDS,
                 )
             },
         ),
