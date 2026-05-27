@@ -477,6 +477,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     CREATION_META_FIELDS = [
         "creation_date",
         "modification_date",
+        "creation_user",
         "creation_source",
         "import_source",
     ]
@@ -647,6 +648,14 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
 
+    creation_user = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="canteens_created",
+        verbose_name="utilisateur",
+    )
     creation_source = models.CharField(
         max_length=255,
         choices=CreationSource.choices,
