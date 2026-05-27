@@ -780,6 +780,7 @@ class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.TEST_CASES = [
+            # (valeur_totale, valeur_*, pourcentage_*)
             (1000, 1000, 100),
             (1000, 200, 20),
             (1000, 0, 0),
@@ -801,6 +802,7 @@ class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
                 )
                 self.assertEqual(diagnostic.valeur_bio_agg, valeur_bio)
                 self.assertEqual(diagnostic.compute_pourcentage_bio(), pourcentage_bio)
+                self.assertEqual(diagnostic.pourcentage_bio, pourcentage_bio)
 
     def test_compute_pourcentage_egalim_method(self):
         for valeur_totale, valeur_siqo, pourcentage_egalim in self.TEST_CASES:
@@ -815,6 +817,7 @@ class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
                 )
                 self.assertEqual(diagnostic.valeur_egalim_agg, valeur_siqo)
                 self.assertEqual(diagnostic.compute_pourcentage_egalim(), pourcentage_egalim)
+                self.assertEqual(diagnostic.pourcentage_egalim, pourcentage_egalim)
 
     def test_compute_pourcentage_egalim_hors_bio_method(self):
         for valeur_totale, valeur_externalites_performance, pourcentage_egalim_hors_bio in self.TEST_CASES:
@@ -831,6 +834,23 @@ class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
                 )
                 self.assertEqual(diagnostic.valeur_egalim_hors_bio_agg, valeur_externalites_performance)
                 self.assertEqual(diagnostic.compute_pourcentage_egalim_hors_bio(), pourcentage_egalim_hors_bio)
+                self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, pourcentage_egalim_hors_bio)
+
+    def test_compute_objectifs_egalim_atteints_method(self):
+        # see more tests in tests/test_utils.py::TestEgalimObjectives
+        diagnostic = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_externalites_performance=100,
+            valeur_egalim_autres=100,
+        )
+        self.assertEqual(diagnostic.pourcentage_bio, 20)
+        self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, 30)
+        self.assertEqual(diagnostic.pourcentage_egalim, 20 + 30)
+        self.assertTrue(diagnostic.compute_objectifs_egalim_atteints())
+        self.assertTrue(diagnostic.objectifs_egalim_atteints)
 
 
 class DiagnosticInvalidWarningQueriesTest(TestCase):
