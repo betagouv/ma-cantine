@@ -280,7 +280,8 @@ class UserCanteensFilterSet(django_filters.FilterSet):
 )
 class UserCanteensView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    queryset = Canteen.objects.none()
+    required_scopes = ["canteen"]
+    queryset = Canteen.objects.none()  # see get_queryset
     serializer_class = FullCanteenSerializer
     pagination_class = UserCanteensPagination
     filter_backends = [
@@ -289,7 +290,6 @@ class UserCanteensView(ListCreateAPIView):
         MaCantineOrderingFilter,
     ]
     filterset_class = UserCanteensFilterSet
-    required_scopes = ["canteen"]
     search_fields = ["name", "siret"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
@@ -343,20 +343,20 @@ class UserCanteensView(ListCreateAPIView):
     ),
 )
 class UserCanteenPreviews(ListAPIView):
-    queryset = Canteen.objects.none()
-    serializer_class = CanteenPreviewSerializer
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
+    queryset = Canteen.objects.none()  # see get_queryset
+    serializer_class = CanteenPreviewSerializer
 
     def get_queryset(self):
         return self.request.user.canteens.all()
 
 
 class UserCanteenSummaries(ListAPIView):
-    queryset = Canteen.objects.none()
-    serializer_class = CanteenSummarySerializer
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
+    queryset = Canteen.objects.none()  # see get_queryset
+    serializer_class = CanteenSummarySerializer
     pagination_class = UserCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -401,9 +401,9 @@ class UserCanteenActions(ListAPIView):
 )
 class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManager]
+    required_scopes = ["canteen"]
     queryset = Canteen.objects.all()
     serializer_class = FullCanteenSerializer
-    required_scopes = ["canteen"]
 
     def put(self, request, *args, **kwargs):
         return JsonResponse(
@@ -770,9 +770,9 @@ class ActionableCanteensListView(ListAPIView):
 
 class ActionableCanteenRetrieveView(RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsCanteenManager]
+    required_scopes = ["canteen"]
     model = Canteen
     serializer_class = CanteenActionsSerializer
-    required_scopes = ["canteen"]
 
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")

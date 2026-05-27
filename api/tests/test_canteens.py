@@ -489,6 +489,27 @@ class CanteenCreateApiTest(APITestCase):
         self.assertIn(authenticate.user, created_canteen.managers.all())
 
     @requests_mock.Mocker()
+    def test_create_canteen_via_oauth2(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        user, token = get_oauth2_token("canteen:write")
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        created_canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(created_canteen.siret, "92341284500011")
+        self.assertEqual(created_canteen.city, "Roubaix")  # ROUBAIX
+        self.assertEqual(created_canteen.management_type, Canteen.ManagementType.DIRECT)
+        self.assertIn(user, created_canteen.managers.all())
+
+    @requests_mock.Mocker()
     @authenticate
     def test_create_canteen_creation_source(self, mock):
         mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
