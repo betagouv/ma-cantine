@@ -1703,11 +1703,7 @@ class Diagnostic(models.Model):
         verbose_name="objectifs EGalim atteints (champ calculé)",
     )
 
-    cout_repas = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    cout_repas = make_optional_positive_decimal_field(
         verbose_name="coût repas (champ calculé)",
         help_text="le coût repas est calculé en divisant la valeur totale annuelle par le nombre de repas annuels de la cantine",
     )
