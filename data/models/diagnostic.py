@@ -1686,22 +1686,26 @@ class Diagnostic(models.Model):
         decimal_places=2,
         blank=True,
         null=True,
+        verbose_name="pourcentage bio (champ calculé)",
     )
     pourcentage_egalim = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         blank=True,
         null=True,
+        verbose_name="pourcentage EGalim (champ calculé)",
     )
     pourcentage_egalim_hors_bio = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         blank=True,
         null=True,
+        verbose_name="pourcentage EGalim hors bio (champ calculé)",
     )
     objectifs_egalim_atteints = models.BooleanField(
         blank=True,
         null=True,
+        verbose_name="objectifs EGalim atteints (champ calculé)",
     )
 
     # Data quality
@@ -1774,6 +1778,12 @@ class Diagnostic(models.Model):
             raise ValidationError(validation_errors)
 
         return super().clean()
+
+    def save(self, **kwargs):
+        # TODO: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
+        self.populate_aggregated_values()
+        self.populate_egalim_stats()
+        return super().save(**kwargs)
 
     def populate_simplified_diagnostic_values(self):
         self.valeur_bio = self.label_group_sum("bio")
@@ -2143,10 +2153,8 @@ class Diagnostic(models.Model):
             "email": applicant.email,
         }
 
-        # aggregated data & EGalim stats
-        # TODO: compute on save() instead
-        self.populate_aggregated_values()
-        self.populate_egalim_stats()
+        # computed data (agg & EGalim)
+        # see save()
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
