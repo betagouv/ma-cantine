@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 from freezegun import freeze_time
+from api.tests.utils import assert_almost_equal
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Sector
@@ -561,10 +562,12 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.with_meal_price()
         self.assertEqual(diagnostics.count(), 17)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).canteen_yearly_meal_count, 1000)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).meal_price, 1.0)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).canteen_yearly_meal_count, 0)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).meal_price, None)
+        self.assertEqual(
+            diagnostics.get(id=self.diagnostic_canteen_valid_1.id).canteen_yearly_meal_count_annotated, 1000
+        )
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).meal_price_annotated, 1.0)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).canteen_yearly_meal_count_annotated, 0)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).meal_price_annotated, None)
 
     def test_exclude_aberrant_values(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
@@ -851,6 +854,83 @@ class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
         self.assertEqual(diagnostic.pourcentage_egalim, 20 + 30)
         self.assertTrue(diagnostic.compute_objectifs_egalim_atteints())
         self.assertTrue(diagnostic.objectifs_egalim_atteints)
+
+
+class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_empty = CanteenFactory()
+        Canteen.objects.filter(id=cls.canteen_empty.id).update(yearly_meal_count=None)
+        cls.canteen_empty.refresh_from_db()
+        cls.diagnostic_draft_canteen_empty = DiagnosticFactory(
+            canteen=cls.canteen_empty,
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+        )
+        cls.diagnostic_draft_empty = DiagnosticFactory(
+            canteen=CanteenFactory(yearly_meal_count=1000),
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=None,
+            valeur_bio=None,
+        )
+        Diagnostic.objects.filter(id=cls.diagnostic_draft_empty.id).update(valeur_totale=None, valeur_bio=None)
+        cls.diagnostic_draft_empty.refresh_from_db()
+        cls.diagnostic_draft_filled = DiagnosticFactory(
+            canteen=CanteenFactory(yearly_meal_count=1000),
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.diagnostic_teledeclared = DiagnosticFactory(
+                canteen=CanteenFactory(yearly_meal_count=2000),
+                year=year_data,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                valeur_totale=Decimal("100000.50"),
+                valeur_bio=2000,
+            )
+            cls.diagnostic_teledeclared.teledeclare(applicant=UserFactory())
+
+    def test_with_meal_price_queryset(self):
+        diagnostics = Diagnostic.objects.with_meal_price()
+        diagnostic_draft_canteen_empty = diagnostics.get(id=self.diagnostic_draft_canteen_empty.id)
+        self.assertEqual(diagnostic_draft_canteen_empty.canteen_yearly_meal_count_annotated, None)
+        self.assertEqual(diagnostic_draft_canteen_empty.meal_price_annotated, None)
+        diagnostic_draft_empty = diagnostics.get(id=self.diagnostic_draft_empty.id)
+        self.assertEqual(diagnostic_draft_empty.canteen_yearly_meal_count_annotated, None)
+        self.assertEqual(diagnostic_draft_empty.meal_price_annotated, None)
+        diagnostic_draft_filled = diagnostics.get(id=self.diagnostic_draft_filled.id)
+        self.assertEqual(
+            diagnostic_draft_filled.canteen_yearly_meal_count_annotated, None
+        )  # only if teledeclared (canteen_snapshot)
+        self.assertEqual(diagnostic_draft_filled.meal_price_annotated, None)  # only if teledeclared (canteen_snapshot)
+        diagnostic_teledeclared = diagnostics.get(id=self.diagnostic_teledeclared.id)
+        self.assertEqual(diagnostic_teledeclared.canteen_yearly_meal_count_annotated, 2000)
+        assert_almost_equal(
+            self, diagnostic_teledeclared.meal_price_annotated, Decimal("50.00025")
+        )  # annotate not rounded
+
+    def test_canteen_yearly_meal_count_property(self):
+        self.assertEqual(self.diagnostic_draft_canteen_empty.canteen_yearly_meal_count, None)
+        self.assertEqual(self.diagnostic_draft_empty.canteen_yearly_meal_count, 1000)
+        self.assertEqual(self.diagnostic_draft_filled.canteen_yearly_meal_count, 1000)
+        self.assertEqual(self.diagnostic_teledeclared.canteen_yearly_meal_count, 2000)
+
+    def test_compute_cout_repas_method(self):
+        self.assertEqual(self.diagnostic_draft_canteen_empty.compute_cout_repas(), None)
+        self.assertEqual(self.diagnostic_draft_canteen_empty.cout_repas, None)
+        self.assertEqual(self.diagnostic_draft_empty.compute_cout_repas(), None)
+        self.assertEqual(self.diagnostic_draft_empty.cout_repas, None)
+        self.assertEqual(self.diagnostic_draft_filled.compute_cout_repas(), 1.0)
+        self.assertEqual(self.diagnostic_draft_filled.cout_repas, 1.0)
+        self.assertEqual(
+            self.diagnostic_teledeclared.compute_cout_repas(), Decimal("50.00")
+        )  # rounded (instead of 50.00025)
+        self.assertEqual(self.diagnostic_teledeclared.cout_repas, Decimal("50.00"))
 
 
 class DiagnosticInvalidWarningQueriesTest(TestCase):

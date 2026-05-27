@@ -136,7 +136,7 @@ def aberrant_values_query():
 
     Note: requires meal_price annotation
     """
-    return Q(meal_price__isnull=False, meal_price__gt=20, valeur_totale__gt=1000000)
+    return Q(meal_price_annotated__isnull=False, meal_price_annotated__gt=20, valeur_totale__gt=1000000)
 
 
 def incoherent_values_query():
@@ -262,10 +262,15 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         # Cast to FloatField first to handle legacy float values in JSON, then to IntegerField
         return self.annotate(
-            canteen_yearly_meal_count=Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField())
+            canteen_yearly_meal_count_annotated=Cast(
+                KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField()
+            )
         ).annotate(
-            meal_price=Case(
-                When(canteen_yearly_meal_count__gt=0, then=F("valeur_totale") / F("canteen_yearly_meal_count")),
+            meal_price_annotated=Case(
+                When(
+                    canteen_yearly_meal_count_annotated__gt=0,
+                    then=F("valeur_totale") / F("canteen_yearly_meal_count_annotated"),
+                ),
                 default=None,
             )
         )
