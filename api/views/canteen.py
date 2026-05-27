@@ -305,8 +305,9 @@ class UserCanteensView(ListCreateAPIView):
     @transaction.atomic
     def perform_create(self, serializer):
         serializer.is_valid(raise_exception=True)
+        creation_user = self.request.user
         creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-        canteen = serializer.save(creation_source=creation_source)
+        canteen = serializer.save(creation_user=creation_user, creation_source=creation_source)
         canteen.managers.add(self.request.user)
         update_change_reason_with_auth(self, canteen)
 

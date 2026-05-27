@@ -173,6 +173,7 @@ class CanteensCreateImportView(BaseImportView):
             central_producer_siret=central_producer_siret,
             groupe=groupe,
             line_ministry=line_ministry,
+            creation_user=self.request.user,
             creation_source=CreationSource.IMPORT,
         )
 
