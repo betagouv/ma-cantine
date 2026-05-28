@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory
+from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 from data.models.creation_source import CreationSource
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
@@ -35,12 +35,15 @@ CANTEEN_SITE_DEFAULT_PAYLOAD = {
 class CanteenListApiTest(APITestCase):
     def test_cannot_get_user_canteens_unauthenticated(self):
         response = self.client.get(reverse("user_canteens"))
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_canteens_wrong_token(self):
         _, token = get_oauth2_token("user:read")
         self.client.credentials(Authorization=f"Bearer {token}")
+
         response = self.client.get(reverse("user_canteens"))
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_canteens_correct_token(self):
@@ -49,6 +52,7 @@ class CanteenListApiTest(APITestCase):
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("user_canteens"))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 1)
@@ -73,6 +77,7 @@ class CanteenListApiTest(APITestCase):
             canteen.managers.set([authenticate.user])
 
         response = self.client.get(reverse("user_canteens"))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json().get("results")
 
@@ -97,10 +102,11 @@ class CanteenListApiTest(APITestCase):
             creation_mtm_medium="mtm_medium_value",
             managers=[authenticate.user],
         )
+
         response = self.client.get(reverse("user_canteens"))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json().get("results")[0]
-
         self.assertNotIn("mtm_source_value", body)
         self.assertNotIn("mtm_campaign_value", body)
         self.assertNotIn("mtm_medium_value", body)
@@ -114,9 +120,9 @@ class CanteenListFilterApiTest(APITestCase):
         user_central_serving_cuisine = CanteenFactory(production_type="central_serving", managers=[authenticate.user])
 
         response = self.client.get(f"{reverse('user_canteens')}?production_type=central,central_serving")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
         self.assertEqual(body["count"], 2)
         ids = list(map(lambda x: x["id"], body["results"]))
         self.assertIn(user_central_cuisine.id, ids)
@@ -140,9 +146,9 @@ class CanteenListPreviewApiTest(APITestCase):
         ]
 
         response = self.client.get(reverse("user_canteen_previews"))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
         self.assertEqual(len(body), 2)
         self.assertEqual(body[0].get("id"), user_canteens[1].id)
         self.assertEqual(body[1].get("id"), user_canteens[0].id)
@@ -153,6 +159,7 @@ class CanteenListPreviewApiTest(APITestCase):
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("user_canteen_previews"))
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_canteen_preview_correct_token(self):
@@ -161,6 +168,7 @@ class CanteenListPreviewApiTest(APITestCase):
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(reverse("user_canteen_previews"))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(len(body), 1)
@@ -237,6 +245,7 @@ class CanteenDetailApiTest(APITestCase):
 
         # make user the manager of the groupe canteen as well
         canteen_groupe.managers.add(authenticate.user)
+
         response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_groupe.id}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -305,6 +314,7 @@ class CanteenDetailApiTest(APITestCase):
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)
 
         response = self.client.get(reverse("user_canteens"))
+
         body = response.json().get("results")
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
         json_diagnostic = next(filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"]))
@@ -314,6 +324,7 @@ class CanteenDetailApiTest(APITestCase):
         teledeclaration.cancel()
 
         response = self.client.get(reverse("user_canteens"))
+
         body = response.json().get("results")
         json_canteen = next(filter(lambda x: x["id"] == canteen.id, body))
         json_diagnostic = next(filter(lambda x: x["id"] == diagnostic.id, json_canteen["diagnostics"]))
@@ -361,6 +372,7 @@ class CanteenDetailApiTest(APITestCase):
         )
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
 
@@ -397,18 +409,21 @@ class CanteenDetailApiTest(APITestCase):
         )
 
         response_canteen_199 = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_199_daily_meals.id}))
+
         self.assertEqual(response_canteen_199.status_code, status.HTTP_200_OK)
         body = response_canteen_199.json()
         self.assertIs(body["dailyMealCount"], 199)
         self.assertIs(body["badges"]["diversification"], None)
 
         response_canteen_200 = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_200_daily_meals.id}))
+
         self.assertEqual(response_canteen_200.status_code, status.HTTP_200_OK)
         body = response_canteen_200.json()
         self.assertIs(body["dailyMealCount"], 200)
         self.assertIs(body["badges"]["diversification"], True)
 
         response_canteen_201 = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_201_daily_meals.id}))
+
         self.assertEqual(response_canteen_201.status_code, status.HTTP_200_OK)
         body = response_canteen_201.json()
         self.assertIs(body["dailyMealCount"], 201)
@@ -524,6 +539,7 @@ class CanteenCreateApiTest(APITestCase):
         response = self.client.post(
             reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "APP"}
         )
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -532,6 +548,7 @@ class CanteenCreateApiTest(APITestCase):
 
         # defaults to API
         response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -542,6 +559,7 @@ class CanteenCreateApiTest(APITestCase):
         response = self.client.post(
             reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "UNKNOWN"}
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -550,6 +568,7 @@ class CanteenCreateApiTest(APITestCase):
         del payload["siret"]
 
         response = self.client.post(reverse("user_canteens"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["Champ requis."])
@@ -557,6 +576,7 @@ class CanteenCreateApiTest(APITestCase):
     @authenticate
     def test_cannot_create_canteen_with_bad_siret(self):
         response = self.client.post(reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "0123"})
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["14 caractères numériques sont attendus"])
@@ -564,6 +584,7 @@ class CanteenCreateApiTest(APITestCase):
         response = self.client.post(
             reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "01234567891011"}
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(
@@ -580,6 +601,7 @@ class CanteenCreateApiTest(APITestCase):
                 "centralProducerSiret": "01234567891011",
             },
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(
@@ -597,6 +619,7 @@ class CanteenCreateApiTest(APITestCase):
         canteen = CanteenFactory(siret=siret)
 
         response = self.client.post(reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -608,6 +631,7 @@ class CanteenCreateApiTest(APITestCase):
         canteen.managers.add(authenticate.user)
 
         response = self.client.post(reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["name"], canteen.name)
@@ -640,6 +664,7 @@ class CanteenCreateApiTest(APITestCase):
         ]
 
         response = self.client.post(reverse("user_canteens"), payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -663,6 +688,7 @@ class CanteenCreateApiTest(APITestCase):
         payload["creation_mtm_medium"] = "mtm_medium_value"
 
         response = self.client.post(reverse("user_canteens"), payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         created_canteen = Canteen.objects.get(pk=body["id"])
@@ -674,7 +700,20 @@ class CanteenCreateApiTest(APITestCase):
 class CanteenUpdateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen = CanteenFactory(**CANTEEN_SITE_DEFAULT_PAYLOAD)
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(
+            **CANTEEN_SITE_DEFAULT_PAYLOAD,
+            managers=[cls.user],
+            creation_user=cls.user,
+            creation_source=CreationSource.APP,
+        )
+
+    def test_cannot_update_canteen_if_unauthenticated(self):
+        payload = {"management_type": Canteen.ManagementType.CONCEDED}
+
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_update_canteen_with_put(self):
@@ -683,13 +722,6 @@ class CanteenUpdateApiTest(APITestCase):
         response = self.client.put(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def test_cannot_update_canteen_if_unauthenticated(self):
-        payload = {"management_type": Canteen.ManagementType.CONCEDED}
-
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_update_canteen_if_not_manager(self):
@@ -712,13 +744,13 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.siret, "92341284500011")
         self.assertEqual(self.canteen.city, "Roubaix")
         self.canteen.managers.add(authenticate.user)
-
         payload = {
             "siret": "21340172201787",
             "city": "Montpellier",  # siret changed, geo fields are reset and re-fetched
             "managementType": Canteen.ManagementType.CONCEDED,
             "reservationExpeParticipant": True,
         }
+
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -732,10 +764,10 @@ class CanteenUpdateApiTest(APITestCase):
     def test_update_canteen_production_type(self):
         self.assertEqual(self.canteen.production_type, Canteen.ProductionType.ON_SITE)
         self.canteen.managers.add(authenticate.user)
-
         payload = {
             "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
         }
+
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -749,6 +781,7 @@ class CanteenUpdateApiTest(APITestCase):
 
         for empty in ["", None]:
             payload = {"siret": empty, "siren_unite_legale": empty}
+
             response = self.client.patch(
                 reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json"
             )
@@ -772,8 +805,8 @@ class CanteenUpdateApiTest(APITestCase):
         canteen_2 = CanteenFactory(siret=siret_2)
         self.assertEqual(self.canteen.siret, "92341284500011")
         self.canteen.managers.add(authenticate.user)
-
         payload = {"siret": siret_2}
+
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -798,8 +831,8 @@ class CanteenUpdateApiTest(APITestCase):
     def test_update_canteen_with_own_siret(self):
         self.assertEqual(self.canteen.siret, "92341284500011")
         self.canteen.managers.add(authenticate.user)
-
         payload = {"siret": self.canteen.siret}
+
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -817,7 +850,6 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.city, "Roubaix")
         # self.assertEqual(self.canteen.city_insee_code, "59512")  # ROUBAIX
         self.canteen.managers.add(authenticate.user)
-
         payload = {"siret": "21340172201787"}
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
@@ -834,7 +866,6 @@ class CanteenUpdateApiTest(APITestCase):
         image_base_64 = None
         with open(image_path, "rb") as image:
             image_base_64 = base64.b64encode(image.read()).decode("utf-8")
-
         payload = {
             "images": [
                 {
@@ -842,7 +873,9 @@ class CanteenUpdateApiTest(APITestCase):
                 }
             ]
         }
+
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.canteen.refresh_from_db()
         self.assertEqual(self.canteen.images.count(), 0)
@@ -865,41 +898,48 @@ class CanteenUpdateApiTest(APITestCase):
                 }
             ]
         }
-        self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.canteen.refresh_from_db()
         self.assertEqual(self.canteen.images.count(), 1)
 
         # Delete image
         payload = {"images": []}
-        self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.canteen.refresh_from_db()
         self.assertEqual(self.canteen.images.count(), 0)
 
     @authenticate
     def test_update_canteen_does_not_update_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
-        self.assertEqual(self.canteen.creation_user, None)
-        self.assertEqual(self.canteen.creation_source, None)
+        self.assertEqual(self.canteen.creation_user, self.user)
+        self.assertEqual(self.canteen.creation_source, CreationSource.APP)
 
-        payload = {"managementType": Canteen.ManagementType.CONCEDED}
-        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+        payload = {
+            "managementType": Canteen.ManagementType.CONCEDED,
+            "reservationExpeParticipant": True,
+        }
+
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.canteen.refresh_from_db()
-        self.assertEqual(self.canteen.creation_user, None)  # unchanged
-        self.assertEqual(self.canteen.creation_source, None)  # unchanged
+        self.assertEqual(self.canteen.management_type, Canteen.ManagementType.CONCEDED)
+        self.assertEqual(self.canteen.reservation_expe_participant, True)
+        self.assertEqual(self.canteen.creation_user, self.user)  # unchanged
+        self.assertEqual(self.canteen.creation_source, CreationSource.APP)  # unchanged
 
     @authenticate
-    def test_update_canteen_tracking_info(self):
-        """
-        The app should not allow the tracking info to be updated
-        """
+    def test_cannot_update_canteen_tracking_info(self):
+        self.canteen.managers.add(authenticate.user)
         self.assertEqual(self.canteen.creation_mtm_source, None)
         self.assertEqual(self.canteen.creation_mtm_campaign, None)
         self.assertEqual(self.canteen.creation_mtm_medium, None)
-        self.canteen.managers.add(authenticate.user)
 
         payload = {
             "managementType": Canteen.ManagementType.CONCEDED,
@@ -907,6 +947,7 @@ class CanteenUpdateApiTest(APITestCase):
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
         }
+
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

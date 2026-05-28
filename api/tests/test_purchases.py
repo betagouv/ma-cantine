@@ -239,6 +239,7 @@ class PurchaseDetailApiTest(APITestCase):
         """
         purchase = PurchaseFactory()
         response = self.client.get(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -251,6 +252,7 @@ class PurchaseDetailApiTest(APITestCase):
         purchase = PurchaseFactory(canteen=other_user_canteen)
 
         response = self.client.get(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
@@ -262,57 +264,60 @@ class PurchaseDetailApiTest(APITestCase):
         purchase = PurchaseFactory(canteen=canteen)
 
         response = self.client.get(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], purchase.id)
 
 
 class PurchaseCreateApiTest(APITestCase):
-    def test_cannot_create_purchase_if_unauthenticated(self):
-        payload = {
+    @classmethod
+    def setUpTestData(cls):
+        cls.PURCHASE_PAYLOAD = {
             "date": "2022-01-13",
-            "canteen_id": 1,
+            # "canteen_id": 1,
             "description": "Saumon",
             "provider": "Test provider",
             "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO"],
+            "characteristics": ["BIO", "LOCAL"],
+            "local_definition": "AUTOUR_SERVICE",
             "price_ht": 15.23,
         }
-        response = self.client.post(reverse("purchase_list_create"), payload, format="json")
+
+    def test_cannot_create_purchase_if_unauthenticated(self):
+        canteen = CanteenFactory()
+        payload = {**self.PURCHASE_PAYLOAD, "canteen": canteen.id}
+
+        response = self.client.post(reverse("purchase_list_create"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_create_purchase_if_canteen_does_not_exist(self):
+        CanteenFactory(managers=[authenticate.user])
+        payload = {**self.PURCHASE_PAYLOAD, "canteen": 9999}
+
+        response = self.client.post(reverse("purchase_list_create"), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_create_purchase_if_not_canteen_manager(self):
         other_user = UserFactory()
         other_user_canteen = CanteenFactory(managers=[other_user])
+        payload = {**self.PURCHASE_PAYLOAD, "canteen": other_user_canteen.id}
 
-        payload = {
-            "date": "2022-01-13",
-            "canteen": other_user_canteen.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO"],
-            "price_ht": 15.23,
-        }
-        response = self.client.post(reverse("purchase_list_create"), payload, format="json")
+        response = self.client.post(reverse("purchase_list_create"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_create_purchase(self):
         canteen = CanteenFactory(managers=[authenticate.user])
+        payload = {**self.PURCHASE_PAYLOAD, "canteen": canteen.id}
 
-        payload = {
-            "date": "2022-01-13",
-            "canteen": canteen.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO", "LOCAL"],
-            "price_ht": 15.23,
-            "local_definition": "AUTOUR_SERVICE",
-        }
-        response = self.client.post(reverse("purchase_list_create"), payload, format="json")
+        response = self.client.post(reverse("purchase_list_create"), payload)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.local_definition, Purchase.Local.AUTOUR_SERVICE)
@@ -322,17 +327,7 @@ class PurchaseCreateApiTest(APITestCase):
     @authenticate
     def test_create_purchase_creation_source(self):
         canteen = CanteenFactory(managers=[authenticate.user])
-
-        payload = {
-            "date": "2022-01-13",
-            "canteen": canteen.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO", "LOCAL"],
-            "price_ht": 15.23,
-            "local_definition": "AUTOUR_SERVICE",
-        }
+        payload = {**self.PURCHASE_PAYLOAD, "canteen": canteen.id}
 
         # from the APP
         response = self.client.post(reverse("purchase_list_create"), {**payload, "creation_source": "APP"})
@@ -352,148 +347,116 @@ class PurchaseCreateApiTest(APITestCase):
         response = self.client.post(reverse("purchase_list_create"), {**payload, "creation_source": "UNKNOWN"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @authenticate
-    def test_create_purchase_nonexistent_canteen(self):
-        """
-        A user cannot create a purchase for an nonexistent canteen
-        """
-        CanteenFactory(managers=[authenticate.user])
-
-        payload = {
-            "date": "2022-01-13",
-            "canteen": "9999",
-            "description": "Saumon",
-            "provider": "Test provider",
-            "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO"],
-            "price_ht": 15.23,
-        }
-        response = self.client.post(reverse("purchase_list_create"), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
 
 class PurchaseUpdateApiTest(APITestCase):
-    def test_update_purchases_unauthenticated(self):
-        """
-        The purchase update is only available when logged in
-        """
-        purchase = PurchaseFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.purchase = PurchaseFactory(canteen=cls.canteen, creation_user=cls.user, creation_source=CreationSource.APP)
+        cls.url = reverse("purchase_retrieve_update_destroy", kwargs={"pk": cls.purchase.id})
+
+    def test_cannot_update_purchase_if_unauthenticated(self):
         payload = {
-            "id": purchase.id,
             "price_ht": 15.23,
         }
-        response = self.client.patch(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
-        )
+
+        response = self.client.patch(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_update_purchase_with_put(self):
-        """
-        A user cannot update the data from a purchase object with PUT
-        """
-        purchase = PurchaseFactory()
-        purchase.canteen.managers.add(authenticate.user)
-
+        self.purchase.canteen.managers.add(authenticate.user)
         payload = {
-            "id": purchase.id,
             "description": "Saumon",
             "provider": "Test provider",
             "price_ht": 15.23,
         }
 
-        response = self.client.put(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
-        )
+        response = self.client.put(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @authenticate
-    def test_update_purchase(self):
-        """
-        A user can update the data from a purchase object
-        """
-        purchase = PurchaseFactory()
-        purchase.canteen.managers.add(authenticate.user)
-        new_canteen = CanteenFactory(managers=[authenticate.user])
-
+    def test_cannot_update_someone_elses_purchase(self):
         payload = {
-            "id": purchase.id,
-            "canteen": new_canteen.id,
             "description": "Saumon",
             "provider": "Test provider",
             "price_ht": 15.23,
         }
 
-        response = self.client.patch(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.patch(self.url, payload)
 
-        purchase.refresh_from_db()
-        self.assertEqual(purchase.canteen, new_canteen)
-        self.assertEqual(purchase.description, "Saumon")
-        self.assertEqual(purchase.provider, "Test provider")
-        self.assertEqual(float(purchase.price_ht), 15.23)
-
-    @authenticate
-    def test_update_someone_elses_purchase(self):
-        """
-        A user should not be able to update someone else's purchase object
-        """
-        purchase = PurchaseFactory()
-
-        payload = {
-            "id": purchase.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "price_ht": 15.23,
-        }
-
-        response = self.client.patch(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
-        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_update_someone_elses_canteen(self):
-        """
-        A user should not be able to set someone else's canteen in a purchase update
-        """
-        purchase = PurchaseFactory()
-        purchase.canteen.managers.add(authenticate.user)
-        new_canteen = CanteenFactory()
+    def test_cannot_update_to_someone_elses_canteen(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+        canteen_not_manager = CanteenFactory()
 
         payload = {
-            "id": purchase.id,
-            "canteen": new_canteen.id,
+            "canteen": canteen_not_manager.id,
         }
+        response = self.client.patch(self.url, payload)
 
-        response = self.client.patch(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
-        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_update_purchase_does_not_update_creation_user_and_source(self):
-        purchase = PurchaseFactory()
-        purchase.canteen.managers.add(authenticate.user)
-        self.assertEqual(purchase.creation_user, None)
-        self.assertEqual(purchase.creation_source, None)
-
+    def test_update_purchase(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+        new_canteen = CanteenFactory(managers=[authenticate.user])
         payload = {
-            "id": purchase.id,
+            "canteen": new_canteen.id,
             "description": "Saumon",
             "provider": "Test provider",
             "price_ht": 15.23,
         }
 
-        response = self.client.patch(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
-        )
+        response = self.client.patch(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        purchase.refresh_from_db()
-        self.assertEqual(purchase.creation_user, None)  # unchanged
-        self.assertEqual(purchase.creation_source, None)  # unchanged
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.canteen, new_canteen)
+        self.assertEqual(self.purchase.description, "Saumon")
+        self.assertEqual(self.purchase.provider, "Test provider")
+        self.assertEqual(float(self.purchase.price_ht), 15.23)
+
+    @authenticate
+    def test_update_purchase_does_not_update_creation_user(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+        payload = {
+            "description": "Saumon",
+            "provider": "Test provider",
+            "price_ht": 15.23,
+            "creation_source": CreationSource.API,
+        }
+
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.creation_user, self.user)  # unchanged
+        # self.assertEqual(self.purchase.creation_source, CreationSource.APP)  # TODO: should not be possible
+
+    @authenticate
+    def test_update_purchase_does_not_update_creation_user_and_source(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+        self.assertEqual(self.purchase.creation_user, self.user)
+        self.assertEqual(self.purchase.creation_source, CreationSource.APP)
+
+        payload = {
+            "description": "Saumon",
+            "provider": "Test provider",
+            "price_ht": 15.23,
+        }
+
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.creation_user, self.user)  # unchanged
+        self.assertEqual(self.purchase.creation_source, CreationSource.APP)  # unchanged
 
 
 class PurchaseDeleteApiTest(APITestCase):
@@ -506,8 +469,8 @@ class PurchaseDeleteApiTest(APITestCase):
         purchase.canteen.managers.add(authenticate.user)
 
         response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 0)
 
     @authenticate
@@ -518,8 +481,8 @@ class PurchaseDeleteApiTest(APITestCase):
         purchase = PurchaseFactory()
 
         response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)
 
     def test_delete_unauthenticated(self):
@@ -529,8 +492,8 @@ class PurchaseDeleteApiTest(APITestCase):
         purchase = PurchaseFactory()
 
         response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)  #
 
     @authenticate
@@ -543,9 +506,8 @@ class PurchaseDeleteApiTest(APITestCase):
         purchase_2 = PurchaseFactory(deletion_date=None)
         purchase_2.canteen.managers.add(authenticate.user)
 
-        response = self.client.post(
-            reverse("delete_purchases"), {"ids": [purchase_1.id, purchase_2.id]}, format="json"
-        )
+        response = self.client.post(reverse("delete_purchases"), {"ids": [purchase_1.id, purchase_2.id]})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         purchase_1.refresh_from_db()
         purchase_2.refresh_from_db()
@@ -567,7 +529,8 @@ class PurchaseDeleteApiTest(APITestCase):
         not_mine = PurchaseFactory(deletion_date=None)
         ids = [purchase_should_delete.id, purchase_already_deleted.id, invalid_id, not_mine.id]
 
-        response = self.client.post(reverse("delete_purchases"), {"ids": ids}, format="json")
+        response = self.client.post(reverse("delete_purchases"), {"ids": ids})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["count"], 1)
         purchase_should_delete.refresh_from_db()
@@ -593,8 +556,9 @@ class PurchaseRestoreApiTest(APITestCase):
         not_my_purchase = PurchaseFactory(deletion_date=date)
 
         response = self.client.post(
-            reverse("restore_purchases"), {"ids": [purchase_1.id, purchase_2.id, not_my_purchase.id]}, format="json"
+            reverse("restore_purchases"), {"ids": [purchase_1.id, purchase_2.id, not_my_purchase.id]}
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 2)
@@ -616,11 +580,13 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         response = self.client.get(
             reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
         )
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_purchase_nonexistent_canteen(self):
         response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": 999999}), {"year": 2020})
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
@@ -708,8 +674,8 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         response = self.client.get(
             reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["valeurTotale"], 1075.0)
         self.assertEqual(body["valeurBio"], 220.0)
@@ -816,6 +782,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         response = self.client.get(
             reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["valeurTotale"], 590.0)
@@ -834,9 +801,11 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
 
     def test_purchase_summary_unauthenticated(self):
         canteen = CanteenFactory()
+
         response = self.client.get(
             reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
         )
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -907,8 +876,8 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         response = self.client.get(
             reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["valeurViandesVolailles"], 155.0)
         self.assertEqual(body["valeurViandesVolaillesEgalim"], 120.0)
@@ -981,8 +950,8 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         response = self.client.get(
             reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["valeurProduitsDeLaMer"], 160.0)
         self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 125.0)
@@ -1003,6 +972,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         PurchaseFactory(canteen=other_canteen, price_ht=999, date="2021-01-01")
 
         response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertIn("results", body)
@@ -1017,6 +987,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
 class PurchaseCanteenOptionsApiTest(APITestCase):
     def test_get_purchase_options_unauthenticated(self):
         response = self.client.get(reverse("purchase_options"))
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -1034,6 +1005,7 @@ class PurchaseCanteenOptionsApiTest(APITestCase):
         PurchaseFactory(description="secret product", provider="secret provider")
 
         response = self.client.get(f"{reverse('purchase_options')}")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(len(body["products"]), 2)
@@ -1050,6 +1022,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         If not logged in, throw a 403
         """
         response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2020}), {})
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
@@ -1057,7 +1030,8 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         """
         If canteen ids are missing, throw a 400
         """
-        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2021}), {}, format="json")
+        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2021}), {})
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @freeze_time("2024-02-10")  # during the 2023 campaign
@@ -1087,8 +1061,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
                     canteen_without_purchases.id,
                     canteen_ok.id,
                 ]
-            },
-            format="json",
+            }
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1140,8 +1113,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
 
         response = self.client.post(
             reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {"canteenIds": [canteen_site.id, central_groupe.id]},
-            format="json",
+            {"canteenIds": [canteen_site.id, central_groupe.id]}
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1197,7 +1169,6 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         response = self.client.post(
             reverse("diagnostics_from_purchases", kwargs={"year": year}),
             {"canteenIds": [canteen_site.id]},
-            format="json",
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1292,7 +1263,6 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
         self.assertNotIn("valeurTotale", body)
         self.assertNotIn("lastPurchaseDate", body)
         self.assertEqual(body["percentageValeurTotale"], 1)
