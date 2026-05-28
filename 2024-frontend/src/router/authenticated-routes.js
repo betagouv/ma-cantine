@@ -1,7 +1,7 @@
 import { sectionId } from "@/constants/site-map.js"
 
 /* Components */
-import GestionnaireAchatAjouter from "@/views/GestionnaireAchatAjouter.vue"
+import GestionnaireAchatsAjouter from "@/views/GestionnaireAchatsAjouter.vue"
 import GestionnaireCantineGerer from "@/views/GestionnaireCantineGerer.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
@@ -257,9 +257,9 @@ const routes = [
         },
       },
       {
-        path: "achat/ajouter",
-        name: "GestionnaireAchatAjouter",
-        component: GestionnaireAchatAjouter,
+        path: "achats/ajouter",
+        name: "GestionnaireAchatsAjouter",
+        component: GestionnaireAchatsAjouter,
         meta: {
           title: "Nouvel achat",
           breadcrumbs: [
