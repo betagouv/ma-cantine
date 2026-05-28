@@ -6,6 +6,28 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.36.0](https://github.com/betagouv/ma-cantine/compare/v2026.35.0...v2026.36.0) (2026-05-28)
+
+
+### Nouveautés
+
+* **Cantines:** nouveau champ `creation_user` pour tracker qui a créé la cantine ([#6750](https://github.com/betagouv/ma-cantine/issues/6750)) ([70d43ff](https://github.com/betagouv/ma-cantine/commit/70d43ff97d867135b1b4adb559bd207f9e179c19))
+* **Diagnostics:** nouveau champ `cout_repas` pour stocker l'info au lieu de la recalculer ([#6753](https://github.com/betagouv/ma-cantine/issues/6753)) ([4854835](https://github.com/betagouv/ma-cantine/commit/4854835b7ae4c549a334a12cd1ae41b128d3f416))
+
+
+### Améliorations
+
+* **Diagnostics:** améliore la commande pour remplir les champs "calculés" (dont le nouveau `cout_repas`) ([#6754](https://github.com/betagouv/ma-cantine/issues/6754)) ([24a0e0d](https://github.com/betagouv/ma-cantine/commit/24a0e0d89a852cf175e62fe42f3fa129c749dc51))
+* **Diagnostics:** calculer les champs agg & pourcentage & objectifs_egalim_atteints à chaque save (au lieu de TD) ([#6752](https://github.com/betagouv/ma-cantine/issues/6752)) ([e646568](https://github.com/betagouv/ma-cantine/commit/e646568be6dc742a239f47ebf002c4cf8e063f92))
+
+
+### Technique
+
+* **Cantines:** API: ajout d'un test sur la création avec oauth2 ([#6751](https://github.com/betagouv/ma-cantine/issues/6751)) ([c3fc501](https://github.com/betagouv/ma-cantine/commit/c3fc5014af6e1d9628df679aec4ab733285d3f7d))
+* **Diagnostics:** améliorer le script pour remplir le nouveau champ warning_reason_list (seulement les bilans détaillés pour circuit court & local) ([#6748](https://github.com/betagouv/ma-cantine/issues/6748)) ([5d2635c](https://github.com/betagouv/ma-cantine/commit/5d2635c7e345d2cb48c2c5e3e0c3a0390dcbfc36))
+* **Diagnostics:** nouveau queryset `not_teledeclared` ([#6758](https://github.com/betagouv/ma-cantine/issues/6758)) ([ee507af](https://github.com/betagouv/ma-cantine/commit/ee507af506044f93ff26c8678e8aa29b2217021d))
+* quelques améliorations suite à l'ajout du champ `creation_source` ([#6756](https://github.com/betagouv/ma-cantine/issues/6756)) ([96653a5](https://github.com/betagouv/ma-cantine/commit/96653a5ccd1f3b0909dc5741db6be36bbb5c0494))
+
 ## [2026.35.0](https://github.com/betagouv/ma-cantine/compare/v2026.34.0...v2026.35.0) (2026-05-26)
 
 
