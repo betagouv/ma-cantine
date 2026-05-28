@@ -886,18 +886,39 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
             valeur_bio=200,
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.canteen_teledeclared = CanteenFactory(yearly_meal_count=2000)
-            cls.diagnostic_teledeclared = DiagnosticFactory(
-                canteen=cls.canteen_teledeclared,
+            cls.canteen_groupe_teledeclared = CanteenFactory(
+                production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=2000
+            )
+            cls.canteen_satellite_teledeclared = CanteenFactory(
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                groupe=cls.canteen_groupe_teledeclared,
+                yearly_meal_count=1300,
+            )
+            cls.canteen_satellite_draft = CanteenFactory(
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                groupe=cls.canteen_groupe_teledeclared,
+                yearly_meal_count=700,
+            )
+            cls.diagnostic_groupe_teledeclared = DiagnosticFactory(
+                canteen=cls.canteen_groupe_teledeclared,
                 year=year_data,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 valeur_totale=Decimal("100000.50"),
                 valeur_bio=2000,
             )
-            cls.diagnostic_teledeclared.teledeclare(applicant=UserFactory())
+            cls.diagnostic_groupe_teledeclared.teledeclare(applicant=UserFactory())
+            cls.diagnostic_satellite_teledeclared = DiagnosticFactory(
+                canteen=cls.canteen_satellite_teledeclared, year=year_data, valeur_totale=None
+            )
+            cls.diagnostic_satellite_teledeclared.teledeclare(applicant=UserFactory())
+            cls.diagnostic_satellite_draft = DiagnosticFactory(
+                canteen=cls.canteen_satellite_draft, year=year_data, valeur_totale=None
+            )
 
     def test_with_meal_price_queryset(self):
         diagnostics = Diagnostic.objects.with_meal_price()
+
         diagnostic_draft_canteen_empty = diagnostics.get(id=self.diagnostic_draft_canteen_empty.id)
         self.assertEqual(diagnostic_draft_canteen_empty.canteen_yearly_meal_count_annotated, None)
         self.assertEqual(diagnostic_draft_canteen_empty.meal_price_annotated, None)
@@ -909,17 +930,21 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
             diagnostic_draft_filled.canteen_yearly_meal_count_annotated, None
         )  # only if teledeclared (canteen_snapshot)
         self.assertEqual(diagnostic_draft_filled.meal_price_annotated, None)  # only if teledeclared (canteen_snapshot)
-        diagnostic_teledeclared = diagnostics.get(id=self.diagnostic_teledeclared.id)
-        self.assertEqual(diagnostic_teledeclared.canteen_yearly_meal_count_annotated, 2000)
+        diagnostic_groupe_teledeclared = diagnostics.get(id=self.diagnostic_groupe_teledeclared.id)
+        self.assertEqual(diagnostic_groupe_teledeclared.canteen_yearly_meal_count_annotated, 2000)
         assert_almost_equal(
-            self, diagnostic_teledeclared.meal_price_annotated, Decimal("50.00025")
+            self, diagnostic_groupe_teledeclared.meal_price_annotated, Decimal("50.00025")
         )  # annotate not rounded
+        diagnostic_satellite_teledeclared = diagnostics.get(id=self.diagnostic_satellite_teledeclared.id)
+        self.assertEqual(diagnostic_satellite_teledeclared.canteen_yearly_meal_count_annotated, 1300)
+        self.assertEqual(diagnostic_satellite_teledeclared.meal_price_annotated, None)  # valeur_totale is None
 
     def test_canteen_yearly_meal_count_property(self):
         self.assertEqual(self.diagnostic_draft_canteen_empty.canteen_yearly_meal_count, None)
         self.assertEqual(self.diagnostic_draft_empty.canteen_yearly_meal_count, 1000)
         self.assertEqual(self.diagnostic_draft_filled.canteen_yearly_meal_count, 1000)
-        self.assertEqual(self.diagnostic_teledeclared.canteen_yearly_meal_count, 2000)
+        self.assertEqual(self.diagnostic_groupe_teledeclared.canteen_yearly_meal_count, 2000)
+        self.assertEqual(self.diagnostic_satellite_teledeclared.canteen_yearly_meal_count, 1300)
 
         # if canteen changes yearly_meal_count, but diagnostic is not teledeclared, take the new canteen value
         self.canteen_empty.yearly_meal_count = 500
@@ -928,10 +953,10 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_draft_canteen_empty.canteen_yearly_meal_count, 500)  # updated
 
         # if canteen changes yearly_meal_count, but diagnostic is teledeclared, stick with the canteen_snapshot
-        self.canteen_teledeclared.yearly_meal_count = 500
-        self.canteen_teledeclared.save()
-        self.diagnostic_teledeclared.refresh_from_db()
-        self.assertEqual(self.diagnostic_teledeclared.canteen_yearly_meal_count, 2000)  # unchanged
+        self.canteen_groupe_teledeclared.yearly_meal_count = 500
+        self.canteen_groupe_teledeclared.save()
+        self.diagnostic_groupe_teledeclared.refresh_from_db()
+        self.assertEqual(self.diagnostic_groupe_teledeclared.canteen_yearly_meal_count, 2000)  # unchanged
 
     def test_compute_cout_repas_method(self):
         self.assertEqual(self.diagnostic_draft_canteen_empty.compute_cout_repas(), None)
@@ -941,9 +966,11 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_draft_filled.compute_cout_repas(), 1.0)
         self.assertEqual(self.diagnostic_draft_filled.cout_repas, 1.0)
         self.assertEqual(
-            self.diagnostic_teledeclared.compute_cout_repas(), Decimal("50.00")
+            self.diagnostic_groupe_teledeclared.compute_cout_repas(), Decimal("50.00")
         )  # rounded (instead of 50.00025)
-        self.assertEqual(self.diagnostic_teledeclared.cout_repas, Decimal("50.00"))
+        self.assertEqual(self.diagnostic_groupe_teledeclared.cout_repas, Decimal("50.00"))
+        self.assertEqual(self.diagnostic_satellite_teledeclared.compute_cout_repas(), None)  # valeur_totale is None
+        self.assertEqual(self.diagnostic_satellite_teledeclared.cout_repas, None)  # valeur_totale is None
 
         # if canteen changes yearly_meal_count, but diagnostic is not teledeclared, take the new canteen value
         self.canteen_empty.yearly_meal_count = 500
@@ -953,11 +980,11 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_draft_canteen_empty.cout_repas, None)  # unchanged (diagnostic not re-saved)
 
         # if canteen changes yearly_meal_count, but diagnostic is teledeclared, stick with the canteen_snapshot
-        self.canteen_teledeclared.yearly_meal_count = 500
-        self.canteen_teledeclared.save()
-        self.diagnostic_teledeclared.refresh_from_db()
-        self.assertEqual(self.diagnostic_teledeclared.compute_cout_repas(), Decimal("50.00"))  # unchanged
-        self.assertEqual(self.diagnostic_teledeclared.cout_repas, Decimal("50.00"))  # unchanged
+        self.canteen_groupe_teledeclared.yearly_meal_count = 500
+        self.canteen_groupe_teledeclared.save()
+        self.diagnostic_groupe_teledeclared.refresh_from_db()
+        self.assertEqual(self.diagnostic_groupe_teledeclared.compute_cout_repas(), Decimal("50.00"))  # unchanged
+        self.assertEqual(self.diagnostic_groupe_teledeclared.cout_repas, Decimal("50.00"))  # unchanged
 
 
 class DiagnosticInvalidWarningQueriesTest(TestCase):
