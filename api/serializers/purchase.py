@@ -1,6 +1,7 @@
 from drf_base64.fields import Base64FileField
 from rest_framework import serializers
 
+from api.serializers.utils import PurchaseField, choice_list_to_choices
 from data.models import Purchase
 
 
@@ -68,9 +69,95 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class PurchaseField(serializers.DecimalField):
-    def __init__(self):
-        super().__init__(max_digits=20, decimal_places=2, required=False)
+class PurchaseSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    canteen = serializers.PrimaryKeyRelatedField(read_only=True)
+    # caracteristiques is split into 4 fields
+    categories_egalim = serializers.MultipleChoiceField(
+        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_EGALIM)
+    )
+    origine = serializers.ChoiceField(
+        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_ORIGINE),
+        required=False,
+    )
+    est_local = serializers.BooleanField(required=False)
+    est_circuit_court = serializers.BooleanField(required=False)
+    creation_source = serializers.CharField(read_only=True)
+    import_source = serializers.CharField(read_only=True)
+    creation_date = serializers.DateTimeField(read_only=True)
+    modification_date = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = Purchase
+        fields = (
+            "id",
+            "canteen",
+            "description",
+            "fournisseur",
+            "date",
+            "prix_ht",
+            "famille_produits",
+            "categories_egalim",
+            "origine",
+            "est_local",
+            "est_circuit_court",
+            "definition_local",
+            # "facture",
+            "creation_source",
+            "import_source",
+            "creation_date",
+            "modification_date",
+        )
+
+    def to_representation(self, instance):
+        """
+        Useful for read operations (returning data)
+        """
+        representation = super().to_representation(instance)
+        representation["categories_egalim"] = [
+            characteristic
+            for characteristic in (instance.caracteristiques or [])
+            if characteristic in Purchase.CHARACTERISTIC_LABELS_EGALIM
+        ]
+        representation["origine"] = next(
+            (
+                characteristic
+                for characteristic in (instance.caracteristiques or [])
+                if characteristic in Purchase.CHARACTERISTIC_LABELS_ORIGINE
+            ),
+            "",
+        )
+        representation["est_local"] = any(
+            characteristic == Purchase.Characteristic.LOCAL for characteristic in (instance.caracteristiques or [])
+        )
+        representation["est_circuit_court"] = any(
+            characteristic == Purchase.Characteristic.CIRCUIT_COURT
+            for characteristic in (instance.caracteristiques or [])
+        )
+        return representation
+
+    def to_internal_value(self, data):
+        """
+        Useful for write operations (creating/updating data)
+        """
+        internal_value = super().to_internal_value(data)
+
+        caracteristiques = []
+
+        caracteristiques.extend(internal_value.pop("categories_egalim", []))
+
+        origine = internal_value.pop("origine", "")
+        if origine:
+            caracteristiques.append(origine)
+
+        if internal_value.pop("est_local", False):
+            caracteristiques.append(Purchase.Characteristic.LOCAL)
+
+        if internal_value.pop("est_circuit_court", False):
+            caracteristiques.append(Purchase.Characteristic.CIRCUIT_COURT)
+
+        internal_value["caracteristiques"] = caracteristiques
+        return internal_value
 
 
 # NB: these names reflect the names in the diagnostic model
