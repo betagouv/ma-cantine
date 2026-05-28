@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "vue-router"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { useRootStore } from "@/stores/root"
-import { formatError } from "@/utils.js"
+import { formatError, toBase64 } from "@/utils.js"
 import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
 
@@ -37,6 +37,27 @@ const rules = {
 
 const v$ = useVuelidate(rules, form)
 
+/* Invoice file (Base64FileField on the backend; size enforced client-side) */
+const invoiceMaxSize = 10 * 1024 * 1024 // 10 Mo
+const invoiceFile = ref(null)
+const invoiceFileInputValue = ref("")
+const invoiceFileError = ref("")
+
+const onInvoiceFileChange = (files) => {
+  invoiceFileError.value = ""
+  const file = files?.[0]
+  if (!file) {
+    invoiceFile.value = null
+    return
+  }
+  if (file.size > invoiceMaxSize) {
+    invoiceFileError.value = "Le fichier dépasse la taille maximale de 10 Mo."
+    invoiceFile.value = null
+    return
+  }
+  invoiceFile.value = file
+}
+
 /* Submit */
 const isSaving = ref(false)
 
@@ -45,16 +66,20 @@ const resetForm = () => {
   form.provider = null
   form.priceHt = null
   form.date = null
+  invoiceFile.value = null
+  invoiceFileInputValue.value = ""
+  invoiceFileError.value = ""
   v$.value.$reset()
   window.scrollTo(0, 0)
 }
 
 const savePurchase = async (stayOnPage = false) => {
   const isValid = await v$.value.$validate()
-  if (!isValid) return
+  if (!isValid || invoiceFileError.value) return
 
   isSaving.value = true
   const payload = { ...form, canteen: canteenId }
+  if (invoiceFile.value) payload.invoiceFile = await toBase64(invoiceFile.value)
   const response = await purchasesService.createPurchase(payload)
   isSaving.value = false
 
@@ -111,6 +136,17 @@ const savePurchase = async (stayOnPage = false) => {
           :error-message="formatError(v$.date)"
         />
       </div>
+    </div>
+
+    <div class="fr-mt-4w">
+      <DsfrFileUpload
+        v-model="invoiceFileInputValue"
+        label="Facture"
+        hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
+        accept="image/jpeg,image/png,application/pdf"
+        :error="invoiceFileError"
+        @change="onInvoiceFileChange"
+      />
     </div>
 
     <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
