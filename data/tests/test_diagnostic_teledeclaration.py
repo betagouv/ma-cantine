@@ -22,17 +22,29 @@ class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
         cls.diagnostic_filled_submitted = DiagnosticFactory(
             year=year_data, canteen=CanteenFactory(), valeur_totale=1000
         )
+        cls.diagnostic_filled_cancelled = DiagnosticFactory(
+            year=year_data, canteen=CanteenFactory(), valeur_totale=1000
+        )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_filled_submitted.teledeclare(applicant=UserFactory())
+            cls.diagnostic_filled_cancelled.teledeclare(applicant=UserFactory())
+
+        with freeze_time(date_in_correction_campaign):
+            cls.diagnostic_filled_cancelled.cancel()
+
+    def test_not_teledeclared_queryset(self):
+        self.assertEqual(Diagnostic.objects.all().count(), 4)
+        self.assertEqual(Diagnostic.objects.not_teledeclared().count(), 3)
 
     def test_teledeclared_queryset(self):
-        self.assertEqual(Diagnostic.objects.all().count(), 3)
+        self.assertEqual(Diagnostic.objects.all().count(), 4)
         self.assertEqual(Diagnostic.objects.teledeclared().count(), 1)
 
     def test_is_teledeclared_property(self):
         self.assertFalse(self.diagnostic_not_filled_draft.is_teledeclared)
         self.assertFalse(self.diagnostic_filled_draft.is_teledeclared)
         self.assertTrue(self.diagnostic_filled_submitted.is_teledeclared)
+        self.assertFalse(self.diagnostic_filled_cancelled.is_teledeclared)
 
 
 class DiagnosticModelTeledeclareMethodTest(TestCase):
