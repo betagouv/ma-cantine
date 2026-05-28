@@ -73,9 +73,13 @@ const resetForm = () => {
       </li>
     </AppRessources>
   </section>
-  <PurchaseForm
-    :showCreateButton="true"
-    :key="forceRerender"
-    @sendForm="(payload) => savePurchase(payload)"
-  />
+  <section
+    class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
+  >
+    <PurchaseForm
+      :showCreateButton="true"
+      :key="forceRerender"
+      @sendForm="(payload) => savePurchase(payload)"
+    />
+  </section>
 </template>

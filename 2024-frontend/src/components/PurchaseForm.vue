@@ -63,7 +63,7 @@ const validateForm = async (action) => {
 </script>
 
 <template>
-  <form class="purchase-form fr-mt-4w" @submit.prevent="">
+  <form class="purchase-form  fr-col-12 fr-col-lg-7 fr-background-default--grey fr-mt-4w" @submit.prevent="">
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-8">
         <div class="fr-grid-row fr-grid-row--gutters">
