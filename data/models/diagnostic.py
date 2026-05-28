@@ -136,7 +136,7 @@ def aberrant_values_query():
 
     Note: requires meal_price annotation
     """
-    return Q(meal_price__isnull=False, meal_price__gt=20, valeur_totale__gt=1000000)
+    return Q(meal_price_annotated__isnull=False, meal_price_annotated__gt=20, valeur_totale__gt=1000000)
 
 
 def incoherent_values_query():
@@ -262,10 +262,15 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         # Cast to FloatField first to handle legacy float values in JSON, then to IntegerField
         return self.annotate(
-            canteen_yearly_meal_count=Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField())
+            canteen_yearly_meal_count_annotated=Cast(
+                KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField()
+            )
         ).annotate(
-            meal_price=Case(
-                When(canteen_yearly_meal_count__gt=0, then=F("valeur_totale") / F("canteen_yearly_meal_count")),
+            meal_price_annotated=Case(
+                When(
+                    canteen_yearly_meal_count_annotated__gt=0,
+                    then=F("valeur_totale") / F("canteen_yearly_meal_count_annotated"),
+                ),
                 default=None,
             )
         )
@@ -868,6 +873,10 @@ class Diagnostic(models.Model):
     APPRO_1TD1SITE_FIELDS = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + AGGREGATED_APPRO_FIELDS
 
     NON_APPRO_FIELDS = WASTE_FIELDS + DIVERSIFICATION_FIELDS + PLASTIC_FIELDS + INFO_FIELDS
+
+    OTHER_COMPUTED_FIELDS = [
+        "cout_repas",
+    ]
 
     META_FIELDS = [
         "id",
@@ -1698,6 +1707,11 @@ class Diagnostic(models.Model):
         verbose_name="objectifs EGalim atteints (champ calculé)",
     )
 
+    cout_repas = make_optional_positive_decimal_field(
+        verbose_name="coût repas (champ calculé)",
+        help_text="le coût repas est calculé en divisant la valeur totale annuelle par le nombre de repas annuels de la cantine",
+    )
+
     # Data quality
     invalid_reason_list = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=InvalidReason.choices),
@@ -1773,6 +1787,7 @@ class Diagnostic(models.Model):
         # TODO: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
         self.populate_aggregated_values()
         self.populate_egalim_stats()
+        self.populate_cout_repas()
         return super().save(**kwargs)
 
     def populate_simplified_diagnostic_values(self):
@@ -1815,6 +1830,9 @@ class Diagnostic(models.Model):
         self.pourcentage_egalim = self.compute_pourcentage_egalim()
         self.pourcentage_egalim_hors_bio = self.compute_pourcentage_egalim_hors_bio()
         self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
+
+    def populate_cout_repas(self):
+        self.cout_repas = self.compute_cout_repas()
 
     def label_sum(self, label: str):
         sum = 0
@@ -1878,6 +1896,14 @@ class Diagnostic(models.Model):
         if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
             canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
             return objectifs_egalim_atteints(self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
+
+    def compute_cout_repas(self):
+        """
+        If the diagnostic is not teledeclared, the cout_repas depends on canteen.yearly_meal_count.
+        So if the canteen.yearly_meal_count has changed, but the diagnostic has not been saved, the cout_repas will be different...
+        """
+        if self.valeur_totale and self.canteen_yearly_meal_count:
+            return round(self.valeur_totale / self.canteen_yearly_meal_count, 2)
 
     @property
     def percentage_valeur_totale(self):
@@ -1968,6 +1994,14 @@ class Diagnostic(models.Model):
             Diagnostic.TeledeclarationMode.CENTRAL_APPRO,
             Diagnostic.TeledeclarationMode.CENTRAL_ALL,
         ]
+
+    @property
+    def canteen_yearly_meal_count(self):
+        if self.canteen_snapshot:
+            return self.canteen_snapshot.get("yearly_meal_count")
+        elif self.canteen:
+            return self.canteen.yearly_meal_count
+        return None
 
     @property
     def canteen_snapshot_sector_lib_list(self):
@@ -2143,7 +2177,7 @@ class Diagnostic(models.Model):
             "email": applicant.email,
         }
 
-        # computed data (agg & EGalim)
+        # computed data (agg & EGalim & cout_repas)
         # see save()
 
         # metadata

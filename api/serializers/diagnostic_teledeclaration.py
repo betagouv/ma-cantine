@@ -161,7 +161,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_cout_denrees(self, obj):
-        return obj.meal_price if obj.meal_price else -1
+        return obj.meal_price_annotated if obj.meal_price_annotated else -1
 
     def get_cuisine_centrale(self, obj):
         production_type = obj.canteen_snapshot.get("production_type", None)
