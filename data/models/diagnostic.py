@@ -185,12 +185,19 @@ def commerce_equitable_sup_bio_query():
     )
 
 
+def is_teledeclared_query():
+    return Q(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+
+
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
         return self.filter(diagnostic_type_simple_is_filled_query() | diagnostic_type_complete_is_filled_query())
 
+    def not_teledeclared(self):
+        return self.exclude(is_teledeclared_query())
+
     def teledeclared(self):
-        return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        return self.filter(is_teledeclared_query())
 
     def in_year(self, year):
         return self.filter(year=int(year))
