@@ -23,6 +23,10 @@ class DiagnosticFillComputedFieldsCommandTest(TestCase):
         self.assertEqual(diagnostic.valeur_egalim_autres, 300)
         self.assertEqual(diagnostic.canteen_snapshot["yearly_meal_count"], 500)
 
+        # simulate the fact that these fields were empty for non-teledeclared diagnostics
+        for field_name in self.FIELD_LIST:
+            setattr(diagnostic, field_name, None)
+
         call_command("diagnostic_fill_computed_fields", "--year", 2022)
 
         diagnostic.refresh_from_db()
