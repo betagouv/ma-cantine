@@ -1,6 +1,7 @@
 import { sectionId } from "@/constants/site-map.js"
 
 /* Components */
+import GestionnaireAchatAjouter from "@/views/GestionnaireAchatAjouter.vue"
 import GestionnaireCantineGerer from "@/views/GestionnaireCantineGerer.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
@@ -252,6 +253,18 @@ const routes = [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },
             { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
+          ],
+        },
+      },
+      {
+        path: "achat/ajouter",
+        name: "GestionnaireAchatAjouter",
+        component: GestionnaireAchatAjouter,
+        meta: {
+          title: "Nouvel achat",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "DashboardManager" }, useCanteenName: true },
           ],
         },
       },
