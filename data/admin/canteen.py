@@ -183,6 +183,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         - set creation_source (on create)
         """
         if not change:
+            obj.creation_user = request.user
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
 

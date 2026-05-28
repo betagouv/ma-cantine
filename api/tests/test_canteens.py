@@ -450,7 +450,7 @@ class CanteenCreateApiTest(APITestCase):
     def setUpTestData(cls):
         pass
 
-    def test_cannot_create_canteen_unauthenticated(self):
+    def test_cannot_create_canteen_if_unauthenticated(self):
         response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -487,6 +487,7 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(created_canteen.city, "Roubaix")  # ROUBAIX
         self.assertEqual(created_canteen.management_type, Canteen.ManagementType.DIRECT)
         self.assertIn(authenticate.user, created_canteen.managers.all())
+        self.assertEqual(created_canteen.creation_user, authenticate.user)
 
     @requests_mock.Mocker()
     def test_create_canteen_via_oauth2(self, mock):
@@ -508,6 +509,7 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(created_canteen.city, "Roubaix")  # ROUBAIX
         self.assertEqual(created_canteen.management_type, Canteen.ManagementType.DIRECT)
         self.assertIn(user, created_canteen.managers.all())
+        self.assertEqual(created_canteen.creation_user, user)
 
     @requests_mock.Mocker()
     @authenticate

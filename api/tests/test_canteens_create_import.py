@@ -486,6 +486,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
 
         canteen = Canteen.objects.first()
+        self.assertEqual(canteen.creation_user, authenticate.user)
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
 
     @authenticate
