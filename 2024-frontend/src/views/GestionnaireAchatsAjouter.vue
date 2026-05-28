@@ -104,7 +104,7 @@ const savePurchase = async (stayOnPage = false) => {
 
   <form class="fr-mt-4w" @submit.prevent="">
     <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-12 fr-col-md-8 fr-mb-4w">
+      <div class="fr-col-12 fr-col-md-8">
         <div class="fr-grid-row fr-grid-row--gutters">
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
@@ -149,14 +149,16 @@ const savePurchase = async (stayOnPage = false) => {
       </div>
 
       <div class="fr-col-12 fr-col-md-4">
-        <DsfrFileUpload
-          v-model="invoiceFileInputValue"
-          label="Facture"
-          hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
-          accept="image/jpeg,image/png,application/pdf"
-          :error="invoiceFileError"
-          @change="onInvoiceFileChange"
-        />
+        <div class="gestionnaire-achats-ajouter__facture fr-card ma-cantine--flex-center">
+          <DsfrFileUpload
+            v-model="invoiceFileInputValue"
+            label="Facture"
+            hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
+            accept="image/jpeg,image/png,application/pdf"
+            :error="invoiceFileError"
+            @change="onInvoiceFileChange"
+          />
+        </div>
       </div>
     </div>
 
@@ -175,3 +177,13 @@ const savePurchase = async (stayOnPage = false) => {
     </div>
   </form>
 </template>
+
+<style lang="scss">
+.gestionnaire-achats-ajouter {
+  &__facture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+</style>
