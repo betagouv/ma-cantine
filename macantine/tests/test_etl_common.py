@@ -38,6 +38,7 @@ def setUpTestData(cls, with_diagnostics=False):
         declaration_donnees_2024=True,
         declaration_donnees_2025=False,
         managers=[cls.canteen_site_manager_1, cls.canteen_site_manager_2],
+        yearly_meal_count=500,
     )
     cls.canteen_site_without_manager = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[])
     cls.canteen_site_earlier = CanteenFactory(
@@ -100,6 +101,7 @@ def setUpTestData(cls, with_diagnostics=False):
                 valeur_totale=1000,
                 valeur_bio=200,
                 valeur_siqo=0,
+                valeur_externalites_performance=0,
                 valeur_egalim_autres=300,
             )
         with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
@@ -128,6 +130,7 @@ def setUpTestData(cls, with_diagnostics=False):
                 valeur_totale=1000,
                 valeur_bio=200,
                 valeur_siqo=0,
+                valeur_externalites_performance=0,
                 valeur_egalim_autres=300,
             )
             cls.canteen_site_diagnostic_2023.teledeclare(cls.canteen_site_manager_1)
@@ -155,6 +158,7 @@ def setUpTestData(cls, with_diagnostics=False):
                 valeur_totale=1000,
                 valeur_bio=400,
                 valeur_siqo=100,
+                valeur_externalites_performance=0,
                 valeur_egalim_autres=200,
             )
             cls.canteen_site_diagnostic_2024.teledeclare(cls.canteen_site_manager_1)
