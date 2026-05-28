@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0257_alter_diagnostic_objectifs_egalim_atteints_and_more'),
+        ('data', '0259_alter_diagnostic_objectifs_egalim_atteints_and_more'),
     ]
 
     operations = [
