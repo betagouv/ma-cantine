@@ -1,16 +1,21 @@
 <script setup>
-import { reactive, computed } from "vue"
-import { useRoute } from "vue-router"
+import { reactive, ref, computed } from "vue"
+import { useRoute, useRouter } from "vue-router"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
+import { useRootStore } from "@/stores/root"
 import { formatError } from "@/utils.js"
 import urlService from "@/services/urls.js"
+import purchasesService from "@/services/purchases.js"
 
-/* Router */
+/* Router and store */
 const route = useRoute()
+const router = useRouter()
+const store = useRootStore()
 
 /* Canteen */
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
+const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 
 /* Form */
 const today = computed(() => new Date().toISOString().split("T")[0])
@@ -33,10 +38,39 @@ const rules = {
 const v$ = useVuelidate(rules, form)
 
 /* Submit */
+const isSaving = ref(false)
+
+const resetForm = () => {
+  form.description = null
+  form.provider = null
+  form.priceHt = null
+  form.date = null
+  v$.value.$reset()
+  window.scrollTo(0, 0)
+}
+
 const savePurchase = async (stayOnPage = false) => {
   const isValid = await v$.value.$validate()
   if (!isValid) return
-  console.log("savePurchase", { canteenId, ...form, stayOnPage })
+
+  isSaving.value = true
+  const payload = { ...form, canteen: canteenId }
+  const response = await purchasesService.createPurchase(payload)
+  isSaving.value = false
+
+  if (!response?.id) {
+    store.notifyServerError(response)
+    return
+  }
+
+  store.notify({
+    title: "Achat enregistré",
+    message: `L'achat « ${form.description} » a bien été enregistré pour la cantine « ${canteenName} ».`,
+    status: "success",
+  })
+
+  if (stayOnPage) resetForm()
+  else router.push({ name: "PurchasesHome" })
 }
 </script>
 
