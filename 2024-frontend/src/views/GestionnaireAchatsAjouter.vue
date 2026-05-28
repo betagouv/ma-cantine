@@ -22,12 +22,12 @@ const form = reactive({
   date: null,
 })
 
-const { required, decimal, minValue, maxValue } = useValidators()
+const { required, decimal, minValue } = useValidators()
 const rules = {
   description: { required },
   provider: { required },
   priceHt: { required, decimal, minValue: minValue(0.01) },
-  date: { required, maxValue: maxValue(today) },
+  date: { required },
 }
 
 const v$ = useVuelidate(rules, form)
