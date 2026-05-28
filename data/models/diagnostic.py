@@ -814,7 +814,7 @@ class Diagnostic(models.Model):
         "valeur_produits_laitiers_fermier",
     ]
 
-    COMPUTED_EGALIM_FIELDS = [
+    EGALIM_STATS_FIELDS = [
         "pourcentage_bio",
         "pourcentage_egalim",
         "pourcentage_egalim_hors_bio",

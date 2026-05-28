@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0256_diagnostic_creation_user_and_more'),
+        ('data', '0258_alter_creation_user_verbose_name'),
     ]
 
     operations = [

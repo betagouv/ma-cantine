@@ -305,11 +305,11 @@ class Diagnostic2024ModelSaveTest(TransactionTestCase):
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_diagnostic_complete_2024_valid(self):
-        VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE = {
+        VALID_DIAGNOSTIC_COMPLETE_2024 = {
             **VALID_DIAGNOSTIC_SIMPLE_2024,
             "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
         }
-        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2024)
         diagnostic.full_clean()
 
 
@@ -331,21 +331,21 @@ class Diagnostic2025ModelSaveTest(TransactionTestCase):
 
     def test_diagnostic_complete_2025_valid(self):
         # valid because DiagnosticFactory sets default values
-        VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE = {
+        VALID_DIAGNOSTIC_COMPLETE_2025 = {
             **VALID_DIAGNOSTIC_SIMPLE_2025,
             "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
         }
-        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
         diagnostic.full_clean()
 
     def test_diagnostic_complete_2025_not_valid_without_appro_fields(self):
         # valeur_produits_de_la_mer is required
-        VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE = {
+        VALID_DIAGNOSTIC_COMPLETE_2025_WITHOUT_VALEUR_PRODUITS_DE_LA_MER = {
             **VALID_DIAGNOSTIC_SIMPLE_2025,
             "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
             "valeur_produits_de_la_mer": None,  # will be overridden by DiagnosticFactory
         }
-        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025_WITHOUT_VALEUR_PRODUITS_DE_LA_MER)
         diagnostic.valeur_produits_de_la_mer = None
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)

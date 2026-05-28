@@ -165,7 +165,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             {
                 "fields": (
                     *Diagnostic.AGGREGATED_APPRO_FIELDS,
-                    *Diagnostic.COMPUTED_EGALIM_FIELDS,
+                    *Diagnostic.EGALIM_STATS_FIELDS,
                 )
             },
         ),
@@ -198,7 +198,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         *Diagnostic.MATOMO_FIELDS,
         *Diagnostic.TUNNEL_PROGRESS_FIELDS,
         *Diagnostic.AGGREGATED_APPRO_FIELDS,
-        *Diagnostic.COMPUTED_EGALIM_FIELDS,
+        *Diagnostic.EGALIM_STATS_FIELDS,
         *Diagnostic.TELEDECLARATION_FIELDS,
         "applicant",
         "canteen_snapshot_pretty",
