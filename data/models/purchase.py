@@ -233,6 +233,7 @@ class Purchase(SoftDeletionModel):
     creation_user = models.ForeignKey(
         get_user_model(), null=True, blank=True, on_delete=models.SET_NULL, verbose_name="utilisateur"
     )
+
     creation_source = models.CharField(
         max_length=255,
         choices=CreationSource.choices,
