@@ -5,8 +5,8 @@ import { useValidators } from "@/validators.js"
 import { formatError, toBase64 } from "@/utils.js"
 
 /* Props and emits */
-defineProps(["showCreateButton", "showCancelButton"])
-const emit = defineEmits(["sendForm", "cancel"])
+defineProps(["showCreateButton"])
+const emit = defineEmits(["sendForm"])
 
 /* Form fields */
 const today = computed(() => new Date().toISOString().split("T")[0])
@@ -109,14 +109,6 @@ const validateForm = async (action) => {
         secondary
         class="fr-mr-1w"
         @click="validateForm('stay-on-creation-page')"
-      />
-      <DsfrButton
-        v-if="showCancelButton"
-        :disabled="isSaving"
-        label="Annuler"
-        secondary
-        class="fr-mr-1w"
-        @click="emit('cancel')"
       />
       <DsfrButton
         :disabled="isSaving"
