@@ -265,6 +265,7 @@ const routes = [
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "PurchasesHome" }, title: "Mes achats"},
           ],
         },
       },
