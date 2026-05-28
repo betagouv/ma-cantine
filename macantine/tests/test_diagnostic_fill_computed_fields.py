@@ -5,12 +5,12 @@ from data.models import Diagnostic
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 
 
-class TeledeclarationFillEgalimFieldsCommandTest(TestCase):
+class DiagnosticFillComputedFieldsCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         ETLCommonSetUpTestData(cls, with_diagnostics=True)
         cls.FIELD_LIST = (
-            Diagnostic.AGGREGATED_APPRO_FIELDS + Diagnostic.COMPUTED_EGALIM_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
+            Diagnostic.AGGREGATED_APPRO_FIELDS + Diagnostic.EGALIM_STATS_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
         )
 
     def test_run_on_diagnostic_teledeclared(self):

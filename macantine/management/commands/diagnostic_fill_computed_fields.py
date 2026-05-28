@@ -7,7 +7,7 @@ from data.models import Diagnostic
 logger = logging.getLogger(__name__)
 
 
-FIELD_LIST = Diagnostic.AGGREGATED_APPRO_FIELDS + Diagnostic.COMPUTED_EGALIM_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
+FIELD_LIST = Diagnostic.AGGREGATED_APPRO_FIELDS + Diagnostic.EGALIM_STATS_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
 
 
 class Command(BaseCommand):
