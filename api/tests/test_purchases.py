@@ -473,6 +473,28 @@ class PurchaseUpdateApiTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @authenticate
+    def test_update_purchase_does_not_update_creation_user_and_source(self):
+        purchase = PurchaseFactory()
+        purchase.canteen.managers.add(authenticate.user)
+        self.assertEqual(purchase.creation_user, None)
+        self.assertEqual(purchase.creation_source, None)
+
+        payload = {
+            "id": purchase.id,
+            "description": "Saumon",
+            "provider": "Test provider",
+            "price_ht": 15.23,
+        }
+
+        response = self.client.patch(
+            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        purchase.refresh_from_db()
+        self.assertEqual(purchase.creation_user, None)  # unchanged
+        self.assertEqual(purchase.creation_source, None)  # unchanged
+
 
 class PurchaseDeleteApiTest(APITestCase):
     @authenticate

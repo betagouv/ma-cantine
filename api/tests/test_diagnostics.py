@@ -463,6 +463,27 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
+    def test_update_diagnostic_does_not_update_creation_user_and_source(self):
+        diagnostic = DiagnosticFactory(year=2019)
+        diagnostic.canteen.managers.add(authenticate.user)
+        self.assertEqual(diagnostic.creation_user, None)
+        self.assertEqual(diagnostic.creation_source, None)
+
+        payload = {"year": 2020}
+        response = self.client.patch(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+            ),
+            payload,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.creation_user, None)  # unchanged
+        self.assertEqual(diagnostic.creation_source, None)  # unchanged
+
+    @authenticate
     def test_edit_diagnostic_tracking_info(self):
         """
         Diagnostic creation campaign info cannot be updated
