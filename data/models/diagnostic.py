@@ -874,6 +874,7 @@ class Diagnostic(models.Model):
     CREATION_META_FIELDS = [
         "creation_date",
         "modification_date",
+        "creation_user",
         "creation_source",
         "generated_from_groupe_diagnostic",
     ]
@@ -1725,9 +1726,8 @@ class Diagnostic(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="diagnostics_created",
-        verbose_name="utilisateur",
+        verbose_name="utilisateur qui a créé le diagnostic",
     )
-
     creation_source = models.CharField(
         max_length=255,
         choices=CreationSource.choices,

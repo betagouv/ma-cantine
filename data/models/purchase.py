@@ -228,12 +228,17 @@ class Purchase(SoftDeletionModel):
     local_definition = models.CharField(
         max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
     )
-    import_source = models.TextField(null=True, blank=True, verbose_name="source de l'import du produit")
+
+    import_source = models.TextField(null=True, blank=True, verbose_name="source de l'import de l'achat")
 
     creation_user = models.ForeignKey(
-        get_user_model(), null=True, blank=True, on_delete=models.SET_NULL, verbose_name="utilisateur"
+        get_user_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="purchases_created",
+        verbose_name="utilisateur qui a créé l'achat",
     )
-
     creation_source = models.CharField(
         max_length=255,
         choices=CreationSource.choices,

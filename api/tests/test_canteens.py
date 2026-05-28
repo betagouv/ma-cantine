@@ -878,6 +878,20 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.images.count(), 0)
 
     @authenticate
+    def test_update_canteen_does_not_update_creation_user_and_source(self):
+        self.canteen.managers.add(authenticate.user)
+        self.assertEqual(self.canteen.creation_user, None)
+        self.assertEqual(self.canteen.creation_source, None)
+
+        payload = {"managementType": Canteen.ManagementType.CONCEDED}
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.creation_user, None)  # unchanged
+        self.assertEqual(self.canteen.creation_source, None)  # unchanged
+
+    @authenticate
     def test_update_canteen_tracking_info(self):
         """
         The app should not allow the tracking info to be updated

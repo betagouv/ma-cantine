@@ -648,13 +648,15 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
 
+    import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
+
     creation_user = models.ForeignKey(
         get_user_model(),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name="canteens_created",
-        verbose_name="utilisateur",
+        verbose_name="utilisateur qui a créé la cantine",
     )
     creation_source = models.CharField(
         max_length=255,
@@ -664,7 +666,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         verbose_name="Source de création de la cantine",
     )
 
-    import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
     history = HistoricalRecords()
