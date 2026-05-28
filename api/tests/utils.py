@@ -31,3 +31,9 @@ def assert_import_failure_created(self, user, type, file_path):
     self.assertEqual(ImportFailure.objects.first().user, user)
     self.assertEqual(ImportFailure.objects.first().import_type, type)
     self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
+
+
+def assert_almost_equal(self, value, expected_value):
+    # self.assertAlmostEqual(float(value), float(expected_value), places=2)
+    # self.assertEqual(int(value), int(expected_value))  # avoid rounding errors
+    self.assertAlmostEqual(float(value), float(expected_value), places=0)  # check that the difference is less than 1

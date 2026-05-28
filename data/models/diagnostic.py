@@ -20,6 +20,7 @@ from data.utils import (
     CustomJSONEncoder,
     has_arrayfield_missing_query,
     make_optional_positive_decimal_field,
+    make_optional_positive_percentage_decimal_field,
     sum_int_with_potential_null,
 )
 from data.validators import diagnostic as diagnostic_validators
@@ -813,6 +814,13 @@ class Diagnostic(models.Model):
         "valeur_produits_laitiers_fermier",
     ]
 
+    EGALIM_STATS_FIELDS = [
+        "pourcentage_bio",
+        "pourcentage_egalim",
+        "pourcentage_egalim_hors_bio",
+        "objectifs_egalim_atteints",
+    ]
+
     WASTE_FIELDS = [
         "has_waste_diagnostic",
         "has_waste_plan",
@@ -898,12 +906,6 @@ class Diagnostic(models.Model):
         "teledeclaration_mode",
         "teledeclaration_version",
         "teledeclaration_id",
-    ]
-    TELEDECLARATION_EGALIM_FIELDS = [
-        "pourcentage_bio",
-        "pourcentage_egalim",
-        "pourcentage_egalim_hors_bio",
-        "objectifs_egalim_atteints",
     ]
     TELEDECLARATION_SNAPSHOT_FIELDS = [
         "canteen_snapshot",
@@ -1681,27 +1683,19 @@ class Diagnostic(models.Model):
     )
 
     # EGalim
-    pourcentage_bio = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    pourcentage_bio = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage bio (champ calculé)",
     )
-    pourcentage_egalim = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    pourcentage_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage EGalim (champ calculé)",
     )
-    pourcentage_egalim_hors_bio = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        blank=True,
-        null=True,
+    pourcentage_egalim_hors_bio = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage EGalim hors bio (champ calculé)",
     )
     objectifs_egalim_atteints = models.BooleanField(
         blank=True,
         null=True,
+        verbose_name="objectifs EGalim atteints (champ calculé)",
     )
 
     # Data quality
@@ -1774,6 +1768,12 @@ class Diagnostic(models.Model):
             raise ValidationError(validation_errors)
 
         return super().clean()
+
+    def save(self, **kwargs):
+        # TODO: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
+        self.populate_aggregated_values()
+        self.populate_egalim_stats()
+        return super().save(**kwargs)
 
     def populate_simplified_diagnostic_values(self):
         self.valeur_bio = self.label_group_sum("bio")
@@ -2143,10 +2143,8 @@ class Diagnostic(models.Model):
             "email": applicant.email,
         }
 
-        # aggregated data & EGalim stats
-        # TODO: compute on save() instead
-        self.populate_aggregated_values()
-        self.populate_egalim_stats()
+        # computed data (agg & EGalim)
+        # see save()
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
@@ -2193,8 +2191,6 @@ class Diagnostic(models.Model):
         for field in self.TELEDECLARATION_SNAPSHOT_FIELDS:
             setattr(self, field, None)
         for field in self.TELEDECLARATION_FIELDS:
-            setattr(self, field, None)
-        for field in self.TELEDECLARATION_EGALIM_FIELDS:
             setattr(self, field, None)
 
         # update declaration_donnees_year to True & save (for non-SATELLITE_WITHOUT_APPRO TDs)

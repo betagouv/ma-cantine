@@ -3,7 +3,6 @@ import json
 from django import forms
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-
 from simple_history.admin import SimpleHistoryAdmin
 
 from data.admin.utils import ReadOnlyAdminMixin
@@ -162,11 +161,19 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             },
         ),
         (
+            "Champs calculés",
+            {
+                "fields": (
+                    *Diagnostic.AGGREGATED_APPRO_FIELDS,
+                    *Diagnostic.EGALIM_STATS_FIELDS,
+                )
+            },
+        ),
+        (
             "Télédéclaration",
             {
                 "fields": (
                     *Diagnostic.TELEDECLARATION_FIELDS,
-                    *Diagnostic.TELEDECLARATION_EGALIM_FIELDS,
                     "applicant",
                     # *Diagnostic.TELEDECLARATION_SNAPSHOT_FIELDS
                     "canteen_snapshot_pretty",
@@ -190,8 +197,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "status",
         *Diagnostic.MATOMO_FIELDS,
         *Diagnostic.TUNNEL_PROGRESS_FIELDS,
+        *Diagnostic.AGGREGATED_APPRO_FIELDS,
+        *Diagnostic.EGALIM_STATS_FIELDS,
         *Diagnostic.TELEDECLARATION_FIELDS,
-        *Diagnostic.TELEDECLARATION_EGALIM_FIELDS,
         "applicant",
         "canteen_snapshot_pretty",
         "satellites_snapshot_pretty",
