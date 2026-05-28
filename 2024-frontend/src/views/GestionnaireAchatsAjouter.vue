@@ -103,50 +103,61 @@ const savePurchase = async (stayOnPage = false) => {
   <h1>{{ route.meta.title }}</h1>
 
   <form class="fr-mt-4w" @submit.prevent="">
-    <DsfrInputGroup
-      v-model="form.description"
-      label="Description du produit *"
-      label-visible
-      hint="Ex : Yaourts bio, légumes bio de juin..."
-      :error-message="formatError(v$.description)"
-    />
-    <DsfrInputGroup
-      v-model="form.provider"
-      label="Fournisseur *"
-      label-visible
-      :error-message="formatError(v$.provider)"
-    />
     <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-12 fr-col-md-6">
-        <DsfrInputGroup
-          v-model.number="form.priceHt"
-          type="number"
-          label="Prix HT (€) *"
-          label-visible
-          :error-message="formatError(v$.priceHt)"
-        />
-      </div>
-      <div class="fr-col-12 fr-col-md-6">
-        <DsfrInputGroup
-          v-model="form.date"
-          type="date"
-          label="Date d'achat *"
-          label-visible
-          :max="today"
-          :error-message="formatError(v$.date)"
-        />
-      </div>
-    </div>
+      <div class="fr-col-12 fr-col-md-8 fr-mb-4w">
+        <div class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-12 fr-col-md-6">
+            <DsfrInputGroup
+              v-model="form.description"
+              label="Description du produit *"
+              label-visible
+              placeholder="Yaourts bio, légumes bio de juin..."
+              :error-message="formatError(v$.description)"
+            />
+          </div>
+          <div class="fr-col-12 fr-col-md-6">
+            <DsfrInputGroup
+              v-model="form.provider"
+              label="Fournisseur *"
+              label-visible
+              :error-message="formatError(v$.provider)"
+            />
+          </div>
+        </div>
 
-    <div class="fr-mt-4w">
-      <DsfrFileUpload
-        v-model="invoiceFileInputValue"
-        label="Facture"
-        hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
-        accept="image/jpeg,image/png,application/pdf"
-        :error="invoiceFileError"
-        @change="onInvoiceFileChange"
-      />
+        <div class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-12 fr-col-md-6">
+            <DsfrInputGroup
+              v-model.number="form.priceHt"
+              type="number"
+              label="Prix HT (€) *"
+              label-visible
+              :error-message="formatError(v$.priceHt)"
+            />
+          </div>
+          <div class="fr-col-12 fr-col-md-6">
+            <DsfrInputGroup
+              v-model="form.date"
+              type="date"
+              label="Date d'achat *"
+              label-visible
+              :max="today"
+              :error-message="formatError(v$.date)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="fr-col-12 fr-col-md-4">
+        <DsfrFileUpload
+          v-model="invoiceFileInputValue"
+          label="Facture"
+          hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
+          accept="image/jpeg,image/png,application/pdf"
+          :error="invoiceFileError"
+          @change="onInvoiceFileChange"
+        />
+      </div>
     </div>
 
     <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
