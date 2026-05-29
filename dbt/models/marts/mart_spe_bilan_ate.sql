@@ -92,6 +92,24 @@ nb_inscrites_region_sector as (
     group by c.region, c.region_lib, c.secteur, y.annee
 ),
 
+ref_cibles_region as (
+    select * from (values
+        ('11', 'Île-de-France',                    7,  'Cible ferme'),
+        ('24', 'Centre-Val de Loire',              6,  'Cible ferme'),
+        ('27', 'Bourgogne-Franche-Comté',          4,  'Cible ferme'),
+        ('28', 'Normandie',                        8,  'Cible ferme'),
+        ('32', 'Hauts-de-France',                  5,  'Cible ferme'),
+        ('44', 'Grand Est',                       12,  'Cible ferme'),
+        ('52', 'Pays de la Loire',                10,  'Cible ferme'),
+        ('53', 'Bretagne',                         5,  'Cible ferme'),
+        ('75', 'Nouvelle-Aquitaine',              12,  'Précision en cours'),
+        ('76', 'Occitanie',                       10,  'Cible ferme'),
+        ('84', 'Auvergne-Rhône-Alpes',            12,  'Précision en cours'),
+        ('93', 'Provence-Alpes-Côte d''Azur',      4,  'Cible ferme'),
+        ('94', 'Corse',                            1,  'Cible ferme')
+    ) as t(region, region_lib, cible_etablissements, fiabilite_cible)
+),
+
 -- Totaux par région
 stats_region as (
     select
@@ -191,20 +209,20 @@ select
     round((100.0 * s.vv_france         / nullif(s.vv, 0))::numeric, 1)             as part_vv_france_pct,
 
     s.nb_bio                                                                        as nb_cantines_atteint_bio,
-    round((100.0 * s.nb_bio            / nullif(s.nb_td, 0))::numeric, 1)          as taux_atteint_bio_pct,
+    round((100.0 * s.nb_bio            / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_bio_pct,
     s.nb_egalim                                                                     as nb_cantines_atteint_egalim,
-    round((100.0 * s.nb_egalim         / nullif(s.nb_td, 0))::numeric, 1)          as taux_atteint_egalim_pct,
+    round((100.0 * s.nb_egalim         / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_egalim_pct,
     s.nb_bio_et_egalim                                                              as nb_cantines_atteint_bio_et_egalim,
-    round((100.0 * s.nb_bio_et_egalim  / nullif(s.nb_td, 0))::numeric, 1)          as taux_atteint_bio_et_egalim_pct,
+    round((100.0 * s.nb_bio_et_egalim  / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_bio_et_egalim_pct,
     s.nb_vp_egalim                                                                  as nb_cantines_atteint_vp_egalim,
-    round((100.0 * s.nb_vp_egalim      / nullif(s.nb_td, 0))::numeric, 1)          as taux_atteint_vp_egalim_pct,
+    round((100.0 * s.nb_vp_egalim      / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_vp_egalim_pct,
     s.nb_3_obj                                                                      as nb_cantines_atteint_3_objectifs,
-    round((100.0 * s.nb_3_obj          / nullif(s.nb_td, 0))::numeric, 1)          as taux_atteint_3_objectifs_pct,
+    round((100.0 * s.nb_3_obj          / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_3_objectifs_pct,
 
     s.nb_td_vp_renseignes                                                           as nb_td_vp_renseignes,
-    round((100.0 * s.nb_td_vp_renseignes    / nullif(s.nb_td, 0))::numeric, 1)     as taux_td_vp_renseignes_pct,
+    round((100.0 * s.nb_td_vp_renseignes    / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_td_vp_renseignes_pct,
     s.nb_td_egalim_renseignes                                                       as nb_td_egalim_renseignes,
-    round((100.0 * s.nb_td_egalim_renseignes / nullif(s.nb_td, 0))::numeric, 1)    as taux_td_egalim_renseignes_pct,
+    round((100.0 * s.nb_td_egalim_renseignes / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_td_egalim_renseignes_pct,
 
     s.nb_choix_multiple                                                             as nb_cantines_choix_multiple,
     s.nb_vege_quotidien                                                             as nb_cantines_vege_quotidien,
@@ -232,7 +250,23 @@ select
         when coalesce(wrs.total_mass_kg, wr.total_mass_kg) * 1000
              / coalesce(wrs.total_meal_count, wr.total_meal_count) <= 95            then 'Niveau 1'
         else                                                                             'Non atteint'
-    end                                                                             as niveau_ademe
+    end                                                                             as niveau_ademe,
+
+    -- cible établissements (région uniquement, fallback nb_inscrites)
+    case when s.est_total_region
+         then coalesce(cr.cible_etablissements, i.nb_inscrites)
+         else null
+    end                                                                             as cible_etablissements,
+    case when s.est_total_region
+         then coalesce(cr.fiabilite_cible, 'Non renseignée')
+         else null
+    end                                                                             as fiabilite_cible,
+
+    -- taux d'inscription : null si pas de cible officielle
+    case when s.est_total_region
+         then round((100.0 * i.nb_inscrites / nullif(cr.cible_etablissements, 0))::numeric, 1)
+         else null
+    end                                                                             as taux_inscription_pct
 
 from all_stats s
 left join nb_inscrites_region i
@@ -244,6 +278,9 @@ left join nb_inscrites_region_sector is_
     and is_.annee = s.annee
     and is_.secteur is not distinct from s.secteur
     and s.est_total_region = false
+left join ref_cibles_region cr
+    on cr.region = s.region
+    and s.est_total_region = true
 left join waste_by_region wr
     on wr.region = s.region
     and wr.annee = s.annee

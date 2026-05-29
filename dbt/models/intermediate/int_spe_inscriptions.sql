@@ -39,6 +39,7 @@ by_groupe as (
             when perimetre in ('jeunesse', 'enseignement_superieur', 'sport') then 'MEJSESR'
             when perimetre in ('justice_hors_pjj', 'justice_pjj')             then 'Justice'
             when perimetre in ('travail', 'sante')                            then 'Ministères sociaux'
+            when perimetre in ('interieur', 'administration_territoriale')    then 'Intérieur + ATE'
         end                         as perimetre,
         'groupe'                    as type_perimetre,
         annee,
@@ -48,7 +49,8 @@ by_groupe as (
         'ecologie', 'mer',
         'jeunesse', 'enseignement_superieur', 'sport',
         'justice_hors_pjj', 'justice_pjj',
-        'travail', 'sante'
+        'travail', 'sante',
+        'interieur', 'administration_territoriale'
     )
     group by 1, annee
 )

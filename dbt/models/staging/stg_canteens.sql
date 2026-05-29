@@ -66,8 +66,7 @@ renamed as (
 
         -- automated tasks
         siret_inconnu,
-        siret_etat_administratif,
-        geolocation_bot_attempts
+        siret_etat_administratif
         --creation_mtm_source,
         --creation_mtm_campaign,
         --creation_mtm_medium,

@@ -143,6 +143,7 @@ stats_groupe as (
             when perimetre_key in ('jeunesse', 'enseignement_superieur', 'sport') then 'MEJSESR'
             when perimetre_key in ('justice_hors_pjj', 'justice_pjj')             then 'Justice'
             when perimetre_key in ('travail', 'sante')                            then 'Ministères sociaux'
+            when perimetre_key in ('interieur', 'administration_territoriale')    then 'Intérieur + ATE'
         end                                                                         as perimetre_key,
         sum(nb_td)                  as nb_td,
         sum(valeur_totale)          as valeur_totale,
@@ -168,7 +169,8 @@ stats_groupe as (
         'ecologie', 'mer',
         'jeunesse', 'enseignement_superieur', 'sport',
         'justice_hors_pjj', 'justice_pjj',
-        'travail', 'sante'
+        'travail', 'sante',
+        'interieur', 'administration_territoriale'
     )
     group by
         annee_ref,
@@ -179,6 +181,7 @@ stats_groupe as (
             when perimetre_key in ('jeunesse', 'enseignement_superieur', 'sport') then 'MEJSESR'
             when perimetre_key in ('justice_hors_pjj', 'justice_pjj')             then 'Justice'
             when perimetre_key in ('travail', 'sante')                            then 'Ministères sociaux'
+            when perimetre_key in ('interieur', 'administration_territoriale')    then 'Intérieur + ATE'
         end
 ),
 
@@ -186,6 +189,10 @@ all_stats as (
     select * from stats_lm
     union all
     select * from stats_groupe
+),
+
+waste as (
+    select * from {{ ref('int_spe_waste') }}
 ),
 
 -- Pivot : une colonne par année (n, n-1, n-2)
@@ -280,14 +287,15 @@ ref_perimetre as (
         (13, 'justice_hors_pjj',            'Justice hors PJJ',                            'Justice',            false),
         (14, 'justice_pjj',                 'Justice PJJ',                                 'Justice',            false),
         (15, 'Justice',                     'TOTAL Justice',                               'Justice',            true),
-        (16, 'interieur',                   'Intérieur',                                   null,                 false),
-        (17, 'premier_ministre',            'Premier ministre',                            null,                 false),
-        (18, 'agriculture',                 'Agriculture',                                 null,                 false),
-        (19, 'travail',                     'Travail',                                     'Ministères sociaux', false),
-        (20, 'sante',                       'Santé',                                       'Ministères sociaux', false),
-        (21, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
-        (22, 'transformation',              'Fonction Publique',                            null,                false),
-        (23, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', null,                false)
+        (16, 'interieur',                   'Intérieur',                                   'Intérieur + ATE',    false),
+        (17, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Intérieur + ATE',   false),
+        (18, 'Intérieur + ATE',             'TOTAL Intérieur + ATE',                       'Intérieur + ATE',    true),
+        (19, 'premier_ministre',            'Premier ministre',                            null,                 false),
+        (20, 'agriculture',                 'Agriculture',                                 null,                 false),
+        (21, 'travail',                     'Travail',                                     'Ministères sociaux', false),
+        (22, 'sante',                       'Santé',                                       'Ministères sociaux', false),
+        (23, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
+        (24, 'transformation',              'Fonction Publique',                            null,                false)
     ) as t(sort_order, perimetre_key, perimetre_lib, groupe_spe, est_total_groupe)
 ),
 
@@ -447,8 +455,18 @@ select
     round((100.0 * p.nb_diversification_n  / nullif(p.nb_td_n,  0)
          - 100.0 * p.nb_diversification_n1 / nullif(p.nb_td_n1, 0))::numeric, 1)   as delta_diversification_n1,
     round((100.0 * p.nb_diversification_n  / nullif(p.nb_td_n,  0)
-         - 100.0 * p.nb_diversification_n2 / nullif(p.nb_td_n2, 0))::numeric, 1)   as delta_diversification_n2
+         - 100.0 * p.nb_diversification_n2 / nullif(p.nb_td_n2, 0))::numeric, 1)   as delta_diversification_n2,
+
+    -- Gaspillage : nb mesures sur n et n-1
+    w_n.nb_canteens_avec_mesure                                                     as nb_canteens_mesure_gaspi_n,
+    w_n1.nb_canteens_avec_mesure                                                    as nb_canteens_mesure_gaspi_n1
 
 from pivoted p
 join ref_perimetre_with_groupe r on r.perimetre_key = p.perimetre_key
+left join waste w_n
+    on w_n.perimetre_key = r.perimetre_key
+    and w_n.annee = p.annee_ref
+left join waste w_n1
+    on w_n1.perimetre_key = r.perimetre_key
+    and w_n1.annee = p.annee_ref - 1
 order by p.annee_ref, p.iso_type, r.sort_order

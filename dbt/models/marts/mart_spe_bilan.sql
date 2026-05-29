@@ -33,14 +33,15 @@ ref_perimetre as (
         (13, 'justice_hors_pjj',            'Justice hors PJJ',                            'Justice',            false),
         (14, 'justice_pjj',                 'Justice PJJ',                                 'Justice',            false),
         (15, 'Justice',                     'TOTAL Justice',                               'Justice',            true),
-        (16, 'interieur',                   'Intérieur',                                   null,                 false),
-        (17, 'premier_ministre',            'Premier ministre',                            null,                 false),
-        (18, 'agriculture',                 'Agriculture',                                 null,                 false),
-        (19, 'travail',                     'Travail',                                     'Ministères sociaux', false),
-        (20, 'sante',                       'Santé',                                       'Ministères sociaux', false),
-        (21, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
-        (22, 'transformation',              'Fonction Publique',                            null,                false),
-        (23, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', null,                false)
+        (16, 'interieur',                   'Intérieur',                                   'Intérieur + ATE',    false),
+        (17, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Intérieur + ATE',   false),
+        (18, 'Intérieur + ATE',             'TOTAL Intérieur + ATE',                       'Intérieur + ATE',    true),
+        (19, 'premier_ministre',            'Premier ministre',                            null,                 false),
+        (20, 'agriculture',                 'Agriculture',                                 null,                 false),
+        (21, 'travail',                     'Travail',                                     'Ministères sociaux', false),
+        (22, 'sante',                       'Santé',                                       'Ministères sociaux', false),
+        (23, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
+        (24, 'transformation',              'Fonction Publique',                            null,                false)
     ) as t(sort_order, perimetre_key, perimetre_lib, groupe_spe, est_total_groupe)
 ),
 
@@ -53,6 +54,35 @@ ref_perimetre_with_groupe as (
         est_total_groupe,
         coalesce(groupe_spe, perimetre_lib) as groupe_lib
     from ref_perimetre
+),
+
+ref_cibles as (
+    select * from (values
+        ('ecologie',                    null,   'Non renseignée'),
+        ('mer',                         null,   'Non renseignée'),
+        ('MTE',                           63,   'Cible ferme'),
+        ('affaires_etrangeres',            3,   'Cible ferme'),
+        ('armee',                        244,   'Cible ferme'),
+        ('autorites_independantes',      null,  'Non renseignée'),
+        ('culture',                       18,   'Cible ferme'),
+        ('economie',                     169,   'Cible ferme'),
+        ('jeunesse',                      20,   'Cible ferme'),
+        ('enseignement_superieur',       439,   'Précision en cours'),
+        ('sport',                         22,   'Cible ferme'),
+        ('MEJSESR',                      481,   'Précision en cours'),
+        ('justice_hors_pjj',             336,   'Précision en cours'),
+        ('justice_pjj',                   92,   'Cible ferme'),
+        ('Justice',                      428,   'Précision en cours'),
+        ('interieur',                    207,   'Précision en cours'),
+        ('administration_territoriale',   96,   'Précision en cours'),
+        ('Intérieur + ATE',              303,   'Précision en cours'),
+        ('premier_ministre',               5,   'Cible ferme'),
+        ('agriculture',                   10,   'Cible ferme'),
+        ('travail',                      null,  'Non renseignée'),
+        ('sante',                        null,  'Non renseignée'),
+        ('Ministères sociaux',            87,   'Précision en cours'),
+        ('transformation',               null,  'Non renseignée')
+    ) as t(perimetre_key, cible_etablissements, fiabilite_cible)
 ),
 
 -- Agrégations par line_ministry
@@ -141,9 +171,9 @@ select
     -- dénominateur
     coalesce(i.nb_inscrites, 0)                                                     as nb_inscrites,
 
-    -- #1 / #2 : taux TD (nb TD / nb inscrits au 29 avril n+1)
+    -- #1 / #2 : taux TD (nb TD / cible ou nb inscrits au 29 avril n+1)
     s.nb_td                                                                         as nb_teledeclarations,
-    round((100.0 * s.nb_td / nullif(i.nb_inscrites, 0))::numeric, 1)               as taux_td_pct,
+    round((100.0 * s.nb_td / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_td_pct,
 
     -- #4 part EGalim (bio inclus)
     round((100.0 * s.valeur_egalim_agg / nullif(s.valeur_totale, 0))::numeric, 1)  as part_egalim_pct,
@@ -163,40 +193,50 @@ select
     -- #9 part viandes/volailles origine France
     round((100.0 * s.vv_france / nullif(s.vv, 0))::numeric, 1)                     as part_vv_france_pct,
 
-    -- #3 objectifs par cantine (% cantines — lire Justice hors PJJ pour la ligne Justice)
+    -- #3 objectifs par cantine (% sur cible ou nb inscrits)
     s.nb_bio                                                                        as nb_cantines_atteint_bio,
-    round((100.0 * s.nb_bio         / nullif(s.nb_td, 0))::numeric, 1)             as taux_atteint_bio_pct,
+    round((100.0 * s.nb_bio         / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_bio_pct,
     s.nb_egalim                                                                     as nb_cantines_atteint_egalim,
-    round((100.0 * s.nb_egalim      / nullif(s.nb_td, 0))::numeric, 1)             as taux_atteint_egalim_pct,
+    round((100.0 * s.nb_egalim      / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_egalim_pct,
     s.nb_bio_et_egalim                                                              as nb_cantines_atteint_bio_et_egalim,
-    round((100.0 * s.nb_bio_et_egalim / nullif(s.nb_td, 0))::numeric, 1)           as taux_atteint_bio_et_egalim_pct,
+    round((100.0 * s.nb_bio_et_egalim / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_bio_et_egalim_pct,
     s.nb_vp_egalim                                                                  as nb_cantines_atteint_vp_egalim,
-    round((100.0 * s.nb_vp_egalim   / nullif(s.nb_td, 0))::numeric, 1)             as taux_atteint_vp_egalim_pct,
+    round((100.0 * s.nb_vp_egalim   / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_vp_egalim_pct,
     s.nb_3_obj                                                                      as nb_cantines_atteint_3_objectifs,
-    round((100.0 * s.nb_3_obj       / nullif(s.nb_td, 0))::numeric, 1)             as taux_atteint_3_objectifs_pct,
+    round((100.0 * s.nb_3_obj       / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_3_objectifs_pct,
 
     -- #15 représentativité V&P renseignés
     s.nb_td_vp_renseignes                                                           as nb_td_vp_renseignes,
-    round((100.0 * s.nb_td_vp_renseignes / nullif(s.nb_td, 0))::numeric, 1)        as taux_td_vp_renseignes_pct,
+    round((100.0 * s.nb_td_vp_renseignes / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_td_vp_renseignes_pct,
 
     -- #16 représentativité EGalim renseigné
     s.nb_td_egalim_renseignes                                                       as nb_td_egalim_renseignes,
-    round((100.0 * s.nb_td_egalim_renseignes / nullif(s.nb_td, 0))::numeric, 1)    as taux_td_egalim_renseignes_pct,
+    round((100.0 * s.nb_td_egalim_renseignes / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_td_egalim_renseignes_pct,
 
     -- végétarien : offre quotidienne parmi les cantines à choix multiple
     s.nb_choix_multiple                                                             as nb_cantines_choix_multiple,
     s.nb_vege_quotidien                                                             as nb_cantines_vege_quotidien,
     round((100.0 * s.nb_vege_quotidien / nullif(s.nb_choix_multiple, 0))::numeric, 1) as taux_vege_quotidien_pct,
 
-    -- diversification : volet complet / nb inscrits
+    -- diversification : volet complet / cible ou nb inscrits
     s.nb_td_diversification_complet                                                 as nb_td_diversification_complet,
-    round((100.0 * s.nb_td_diversification_complet / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_td_diversification_complet_pct,
+    round((100.0 * s.nb_td_diversification_complet / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_td_diversification_complet_pct,
 
     -- gaspillage alimentaire
     w.nb_canteens_avec_mesure                                                       as nb_canteens_mesure_gaspi,
-    round((100.0 * w.nb_canteens_avec_mesure / nullif(i.nb_inscrites, 0))::numeric, 1) as taux_representativite_gaspi_pct,
+    round((100.0 * w.nb_canteens_avec_mesure / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_representativite_gaspi_pct,
     w.gaspi_g_par_couvert,
-    w.niveau_ademe
+    w.niveau_ademe,
+
+    -- cible établissements (fallback sur nb_inscrites si pas de cible officielle)
+    coalesce(c.cible_etablissements, i.nb_inscrites)                                 as cible_etablissements,
+    case
+        when c.cible_etablissements is null then 'Non renseignée'
+        else c.fiabilite_cible
+    end                                                                              as fiabilite_cible,
+
+    -- taux d'inscription : null si pas de cible officielle
+    round((100.0 * i.nb_inscrites / nullif(c.cible_etablissements, 0))::numeric, 1) as taux_inscription_pct
 
 from all_stats s
 join ref_perimetre_with_groupe r on r.perimetre_key = s.perimetre_key
@@ -206,4 +246,6 @@ left join inscriptions i
 left join waste w
     on w.perimetre_key = r.perimetre_key
     and w.annee        = s.annee
+left join ref_cibles c
+    on c.perimetre_key = r.perimetre_key
 order by s.annee, r.sort_order
