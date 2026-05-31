@@ -28,13 +28,13 @@ class CanteenActionDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_retrieve_actionable_canteen_if_not_manager(self):
+    def test_cannot_retrieve_actionable_canteen_if_not_canteen_manager(self):
         canteen = CanteenFactory()
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": canteen.id, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_retrieve_actionable_canteen_if_manager(self):
+    def test_retrieve_actionable_canteen_if_canteen_manager(self):
         canteen = CanteenFactory(managers=[authenticate.user])
         response = self.client.get(reverse("retrieve_actionable_canteen", kwargs={"pk": canteen.id, "year": 2021}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
