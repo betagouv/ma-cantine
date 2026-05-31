@@ -198,7 +198,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_get_single_user_canteen_if_not_manager(self):
+    def test_cannot_get_single_user_canteen_if_not_canteen_manager(self):
         """
         Users cannot access the full representation of a single
         canteen if they do not manage it.
@@ -724,7 +724,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @authenticate
-    def test_cannot_update_canteen_if_not_manager(self):
+    def test_cannot_update_canteen_if_not_canteen_manager(self):
         payload = {"management_type": Canteen.ManagementType.CONCEDED}
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)
@@ -861,7 +861,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.city_insee_code, "34172")
 
     @authenticate
-    def test_cannot_update_canteen_image_if_not_manager(self):
+    def test_cannot_update_canteen_image_if_not_canteen_manager(self):
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
         image_base_64 = None
         with open(image_path, "rb") as image:
@@ -881,7 +881,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.images.count(), 0)
 
     @authenticate
-    def test_update_canteen_image_if_manager(self):
+    def test_update_canteen_image_if_canteen_manager(self):
         self.canteen.managers.add(authenticate.user)
         self.assertEqual(self.canteen.images.count(), 0)
 
@@ -958,12 +958,33 @@ class CanteenUpdateApiTest(APITestCase):
 
 
 class CanteenDeleteApiTest(APITestCase):
-    @authenticate
-    def test_soft_delete(self):
-        canteen = CanteenFactory(managers=[authenticate.user])
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.url = reverse("single_canteen", kwargs={"pk": cls.canteen.id})
 
-        response = self.client.delete(reverse("single_canteen", kwargs={"pk": canteen.id}))
+    def test_cannot_delete_canteen_if_unauthenticated(self):
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_delete_canteen_if_not_canteen_manager(self):
+        authenticate(self.client)
+
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_delete_canteen(self):
+        self.canteen.managers.add(authenticate.user)
+        self.assertEqual(Canteen.objects.count(), 1)
+
+        response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Canteen.objects.count(), 0)
+        self.assertEqual(Canteen.all_objects.count(), 1)
         # Model was only soft-deleted but remains in the DB
-        self.assertIsNotNone(Canteen.all_objects.get(pk=canteen.id).deletion_date)
+        self.assertIsNotNone(Canteen.all_objects.get(pk=self.canteen.id).deletion_date)

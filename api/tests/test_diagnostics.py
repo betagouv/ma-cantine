@@ -14,31 +14,29 @@ from data.models.creation_source import CreationSource
 
 
 class DiagnosticCreateApiTest(APITestCase):
-    def test_cannot_create_diagnostic_if_unauthenticated(self):
-        canteen = CanteenFactory()
-        payload = {"year": 2020}
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.url = reverse("diagnostic_creation", kwargs={"canteen_pk": cls.canteen.id})
+        cls.DIAGNOSTIC_PAYLOAD = {"year": 2020}
 
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+    def test_cannot_create_diagnostic_if_unauthenticated(self):
+        response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_create_diagnostic_if_canteen_does_not_exist(self):
-        payload = {"year": 2020}
-
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": 999}), payload)
+        response = self.client.post(
+            reverse("diagnostic_creation", kwargs={"canteen_pk": 999}), self.DIAGNOSTIC_PAYLOAD
+        )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_create_diagnostic_if_not_canteen_manager(self):
-        other_user = UserFactory()
-        other_user_canteen = CanteenFactory(managers=[other_user])
-        payload = {"year": 2020}
-
-        response = self.client.post(
-            reverse("diagnostic_creation", kwargs={"canteen_pk": other_user_canteen.id}), payload
-        )
+        response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -48,10 +46,9 @@ class DiagnosticCreateApiTest(APITestCase):
         When calling this API on a canteen that the user manages
         we need to provide the required field(s)
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        payload = {}
+        self.canteen.managers.add(authenticate.user)
 
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(self.url, {})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -62,56 +59,50 @@ class DiagnosticCreateApiTest(APITestCase):
         we expect a diagnostic to be created
         (minimal required fields)
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        payload = {"year": 2020}
+        self.canteen.managers.add(authenticate.user)
 
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         diagnostic = Diagnostic.objects.first()
-        self.assertEqual(diagnostic.canteen, canteen)
+        self.assertEqual(diagnostic.canteen, self.canteen)
         self.assertEqual(diagnostic.year, 2020)
         self.assertEqual(diagnostic.creation_user, authenticate.user)
 
     def test_create_minimal_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
-        canteen = CanteenFactory(managers=[user])
-        payload = {"year": 2020}
+        self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token}")
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         diagnostic = Diagnostic.objects.first()
-        self.assertEqual(diagnostic.canteen, canteen)
+        self.assertEqual(diagnostic.canteen, self.canteen)
         self.assertEqual(diagnostic.year, 2020)
         self.assertEqual(diagnostic.creation_user, user)
 
     @authenticate
     def test_create_diagnostic_creation_source(self):
-        canteen = CanteenFactory()
-        canteen.managers.add(authenticate.user)
+        self.canteen.managers.add(authenticate.user)
 
         # from the APP
-        payload = {"year": 2020, "creation_source": "APP"}
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
-
+        payload = {**self.DIAGNOSTIC_PAYLOAD, "creation_source": "APP"}
+        response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
+        diagnostic = Diagnostic.objects.get(canteen__id=self.canteen.id)
         self.assertEqual(diagnostic.creation_source, CreationSource.APP)
 
         # defaults to API
         payload = {"year": 2021}
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
-
+        response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id, year=2021)
+        diagnostic = Diagnostic.objects.get(canteen__id=self.canteen.id, year=2021)
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
 
         # returns a 404 if the creation_source is not valid
         payload = {"year": 2022, "creation_source": "UNKNOWN"}
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
-
+        response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -120,7 +111,7 @@ class DiagnosticCreateApiTest(APITestCase):
         When calling this API on a canteen that the user manages
         we expect a diagnostic to be created
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
+        self.canteen.managers.add(authenticate.user)
 
         payload = {
             "year": 2020,
@@ -278,10 +269,10 @@ class DiagnosticCreateApiTest(APITestCase):
             # end of detailed value fields
         }
 
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
+        diagnostic = Diagnostic.objects.get(canteen__id=self.canteen.id)
         self.assertEqual(diagnostic.year, 2020)
         self.assertTrue(diagnostic.cooking_plastic_substituted)
         self.assertFalse(diagnostic.has_donation_agreement)
@@ -329,16 +320,16 @@ class DiagnosticCreateApiTest(APITestCase):
         """
         On CREATE, total_leftovers should be converted from kg to ton
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
+        self.canteen.managers.add(authenticate.user)
         payload = {
-            "year": 2020,
+            **self.DIAGNOSTIC_PAYLOAD,
             "total_leftovers": 1234.56,
         }
 
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
+        diagnostic = Diagnostic.objects.get(canteen__id=self.canteen.id)
         self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
     @authenticate
@@ -347,23 +338,20 @@ class DiagnosticCreateApiTest(APITestCase):
         Shouldn't be able to add a diagnostic with the same canteen, year and value for generated_from_groupe_diagnostic"
         as an existing diagnostic
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        payload = {"year": 2020, "generated_from_groupe_diagnostic": False, "valeur_bio": 10}
+        self.canteen.managers.add(authenticate.user)
+        payload = {**self.DIAGNOSTIC_PAYLOAD, "generated_from_groupe_diagnostic": False, "valeur_bio": 10}
 
-        self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        self.client.post(self.url, payload)
 
         try:
             with transaction.atomic():
-                payload = {"year": 2020, "generated_from_groupe_diagnostic": False, "valeur_bio": 1000}
-                response = self.client.post(
-                    reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}),
-                    payload,
-                )
+                payload = {**self.DIAGNOSTIC_PAYLOAD, "generated_from_groupe_diagnostic": False, "valeur_bio": 1000}
+                response = self.client.post(self.url, payload)
         except BadRequest:
             pass
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        diagnostic = Diagnostic.objects.get(canteen__id=canteen.id)
+        diagnostic = Diagnostic.objects.get(canteen__id=self.canteen.id)
         self.assertEqual(diagnostic.valeur_bio, 10)
 
     @authenticate
@@ -371,16 +359,16 @@ class DiagnosticCreateApiTest(APITestCase):
         """
         Do not create a diagnostic where the sum of the values is > total
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
+        self.canteen.managers.add(authenticate.user)
         payload = {
-            "year": 2020,
+            **self.DIAGNOSTIC_PAYLOAD,
             "valeur_bio": 1000,
             "valeur_siqo": 1000,
             "valeur_egalim_autres": 1000,
             "valeur_totale": 2000,
         }
 
-        response = self.client.post(reverse("diagnostic_creation", kwargs={"canteen_pk": canteen.id}), payload)
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -523,6 +511,7 @@ class DiagnosticUpdateApiTest(APITestCase):
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
+            format="json",
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -570,6 +559,7 @@ class DiagnosticUpdateApiTest(APITestCase):
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
+            format="json",
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
