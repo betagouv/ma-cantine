@@ -6,7 +6,7 @@ from data.models import Purchase
 
 class PurchaseSerializer(serializers.ModelSerializer):
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
-    invoice_file = Base64FileField(required=False, allow_null=True)
+    facture = Base64FileField(required=False, allow_null=True)
 
     class Meta:
         model = Purchase
@@ -15,12 +15,12 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "canteen",
             "date",
             "description",
-            "provider",
-            "family",
-            "characteristics",
-            "price_ht",
-            "invoice_file",
-            "local_definition",
+            "fournisseur",
+            "famille_produits",
+            "caracteristiques",
+            "prix_ht",
+            "facture",
+            "definition_local",
             "import_source",
             "creation_source",
             "creation_date",
@@ -207,9 +207,9 @@ class PurchaseExportSerializer(serializers.ModelSerializer):
             "date",
             "canteen",
             "description",
-            "provider",
-            "readable_family",
-            "readable_characteristics",
-            "price_ht",
+            "fournisseur",
+            "famille_produits_display",
+            "caracteristiques_display",
+            "prix_ht",
         )
         read_only_fields = fields

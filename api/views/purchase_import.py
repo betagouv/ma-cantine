@@ -147,30 +147,30 @@ class PurchasesImportView(BaseImportView):
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
         description = row[1]
-        provider = row[2]
+        fournisseur = row[2]
         date = row[3]
-        price = row[4]
+        prix_ht = row[4]
 
         # We try to round the price. If we can't, we will let Django's field validation
         # manage the error - hence the `pass` in the exception handler
         try:
-            price = Decimal(price).quantize(Decimal(".01"), rounding=ROUND_HALF_DOWN)
+            prix_ht = Decimal(prix_ht).quantize(Decimal(".01"), rounding=ROUND_HALF_DOWN)
         except InvalidOperation:
             pass
 
-        family = row[5]
-        characteristics = [c.strip() for c in row[6].split(",")] if row[6] else []
-        local_definition = row[7].strip() if row[7] else None
+        famille_produits = row[5]
+        caracteristiques = [c.strip() for c in row[6].split(",")] if row[6] else []
+        definition_local = row[7].strip() if row[7] else None
 
         purchase = Purchase(
             canteen=canteen,
             description=description.strip(),
-            provider=provider.strip(),
+            fournisseur=fournisseur.strip(),
             date=date.strip(),
-            price_ht=price,
-            family=family.strip(),
-            characteristics=characteristics,
-            local_definition=local_definition,
+            prix_ht=prix_ht,
+            famille_produits=famille_produits.strip(),
+            caracteristiques=caracteristiques,
+            definition_local=definition_local,
             import_source=self.tmp_id,
             creation_user=self.request.user,
             creation_source=CreationSource.IMPORT,
