@@ -31,7 +31,7 @@ const linkedCanteensLabel = computed(() => {
           <p class="fr-mb-0 fr-text--xs">{{ siret ? "SIRET" : "SIREN" }} : {{ siret || siren }}</p>
         </li>
         <li>
-          <p class="fr-mb-0 fr-text--xs">Ville : {{ city }} ({{ department }})</p>
+          <p class="fr-mb-0 fr-text--xs">Ville : {{ city }}<span v-if="department"> ({{ department }})</span></p>
         </li>
       </ul>
     </div>
