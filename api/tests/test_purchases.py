@@ -280,11 +280,11 @@ class PurchaseCreateApiTest(APITestCase):
             "date": "2022-01-13",
             "canteen": cls.canteen.id,
             "description": "Saumon",
-            "fournisseur": "Test fournisseur",
-            "famille_produits": "PRODUITS_DE_LA_MER",
-            "caracteristiques": ["BIO", "LOCAL"],
+            "provider": "Test fournisseur",
+            "family": "PRODUITS_DE_LA_MER",
+            "characteristics": ["BIO", "LOCAL"],
             "definition_local": "AUTOUR_SERVICE",
-            "prix_ht": 15.23,
+            "price_ht": 15.23,
         }
 
     def test_cannot_create_purchase_if_unauthenticated(self):
@@ -353,7 +353,7 @@ class PurchaseUpdateApiTest(APITestCase):
 
     def test_cannot_update_purchase_if_unauthenticated(self):
         payload = {
-            "prix_ht": 15.23,
+            "price_ht": 15.23,
         }
 
         response = self.client.patch(self.url, payload)
@@ -365,8 +365,8 @@ class PurchaseUpdateApiTest(APITestCase):
         self.purchase.canteen.managers.add(authenticate.user)
         payload = {
             "description": "Saumon",
-            "fournisseur": "Test fournisseur",
-            "prix_ht": 15.23,
+            "provider": "Test fournisseur",
+            "price_ht": 15.23,
         }
 
         response = self.client.put(self.url, payload)
@@ -377,8 +377,8 @@ class PurchaseUpdateApiTest(APITestCase):
     def test_cannot_update_if_not_canteen_manager(self):
         payload = {
             "description": "Saumon",
-            "fournisseur": "Test fournisseur",
-            "prix_ht": 15.23,
+            "provider": "Test fournisseur",
+            "price_ht": 15.23,
         }
 
         response = self.client.patch(self.url, payload)
@@ -404,8 +404,8 @@ class PurchaseUpdateApiTest(APITestCase):
         payload = {
             "canteen": new_canteen.id,
             "description": "Saumon",
-            "fournisseur": "Test fournisseur",
-            "prix_ht": 15.23,
+            "provider": "Test fournisseur",
+            "price_ht": 15.23,
         }
 
         response = self.client.patch(self.url, payload)
@@ -422,8 +422,8 @@ class PurchaseUpdateApiTest(APITestCase):
         self.purchase.canteen.managers.add(authenticate.user)
         payload = {
             "description": "Saumon",
-            "fournisseur": "Test fournisseur",
-            "prix_ht": 15.23,
+            "provider": "Test fournisseur",
+            "price_ht": 15.23,
             "creation_source": CreationSource.API,
         }
 
@@ -442,8 +442,8 @@ class PurchaseUpdateApiTest(APITestCase):
 
         payload = {
             "description": "Saumon",
-            "fournisseur": "Test fournisseur",
-            "prix_ht": 15.23,
+            "provider": "Test fournisseur",
+            "price_ht": 15.23,
         }
 
         response = self.client.patch(self.url, payload)

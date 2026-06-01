@@ -6,7 +6,15 @@ from data.models import Purchase
 
 class PurchaseSerializer(serializers.ModelSerializer):
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
-    facture = Base64FileField(required=False, allow_null=True)
+    provider = serializers.CharField(source="fournisseur", required=False, allow_blank=True)
+    family = serializers.ChoiceField(
+        source="famille_produits", choices=Purchase.Family.choices, required=False, allow_blank=True
+    )
+    characteristics = serializers.MultipleChoiceField(
+        source="caracteristiques", choices=Purchase.Characteristic.choices, required=False, allow_blank=True
+    )
+    price_ht = serializers.DecimalField(source="prix_ht", max_digits=20, decimal_places=2, required=False)
+    invoice_file = Base64FileField(source="facture", required=False, allow_null=True)
 
     class Meta:
         model = Purchase
@@ -15,11 +23,11 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "canteen",
             "date",
             "description",
-            "fournisseur",
-            "famille_produits",
-            "caracteristiques",
-            "prix_ht",
-            "facture",
+            "provider",  # "fournisseur",
+            "family",  # "famille_produits",
+            "characteristics",  # "caracteristiques",
+            "price_ht",  # "prix_ht",
+            "invoice_file",  # "facture",
             "definition_local",
             "import_source",
             "creation_source",
@@ -32,12 +40,27 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "modification_date",
         )
 
+    @staticmethod
+    def _normalize_characteristics(validated_data):
+        characteristics = validated_data.get("caracteristiques")
+        if isinstance(characteristics, set):
+            ordered_characteristics = [choice for choice, _label in Purchase.Characteristic.choices]
+            validated_data["caracteristiques"] = [
+                choice for choice in ordered_characteristics if choice in characteristics
+            ]
+
     def create(self, validated_data):
+        self._normalize_characteristics(validated_data)
+
         if "canteen" not in validated_data:
             return super().create(validated_data)
 
         validated_data["canteen_id"] = validated_data.pop("canteen").id
         return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        self._normalize_characteristics(validated_data)
+        return super().update(instance, validated_data)
 
 
 class PurchaseField(serializers.DecimalField):
