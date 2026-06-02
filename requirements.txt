@@ -76,7 +76,7 @@ chardet==5.2.0
     # via
     #   ma-cantine
     #   reportlab
-charset-normalizer==3.3.2
+charset-normalizer==3.4.7
     # via
     #   ma-cantine
     #   requests
