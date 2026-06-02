@@ -45,11 +45,11 @@ class PurchaseListExportApiTest(APITestCase):
     @authenticate
     def test_excel_export_filter(self):
         canteen = CanteenFactory(managers=[authenticate.user])
-        PurchaseFactory(family=Purchase.Family.PRODUITS_DE_LA_MER, description="avoine", canteen=canteen)
-        PurchaseFactory(family=Purchase.Family.PRODUITS_DE_LA_MER, description="tomates", canteen=canteen)
-        PurchaseFactory(family=Purchase.Family.AUTRES, description="pommes", canteen=canteen)
+        PurchaseFactory(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER, description="avoine", canteen=canteen)
+        PurchaseFactory(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER, description="tomates", canteen=canteen)
+        PurchaseFactory(famille_produits=Purchase.Family.AUTRES, description="pommes", canteen=canteen)
 
-        response = self.client.get(f"{self.url}?family=PRODUITS_DE_LA_MER")
+        response = self.client.get(f"{self.url}?family={Purchase.Family.PRODUITS_DE_LA_MER}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)

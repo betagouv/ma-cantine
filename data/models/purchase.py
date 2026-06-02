@@ -18,19 +18,19 @@ from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDelet
 
 
 def bio_query():
-    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_BIO)
+    return Q(caracteristiques__overlap=Purchase.CHARACTERISTIC_LABELS_BIO)
 
 
 def siqo_query():
-    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_SIQO)
+    return Q(caracteristiques__overlap=Purchase.CHARACTERISTIC_LABELS_SIQO)
 
 
 def egalim_autres_query():
-    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM_AUTRES)
+    return Q(caracteristiques__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM_AUTRES)
 
 
 def valeur_externalites_performance_query():
-    return Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EXTERNALITES_PERFORMANCE)
+    return Q(caracteristiques__overlap=Purchase.CHARACTERISTIC_LABELS_EXTERNALITES_PERFORMANCE)
 
 
 class PurchaseQuerySet(SoftDeletionQuerySet):
@@ -41,52 +41,54 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
         return self.filter(date__year=year)
 
     def filter_for_stats(self, canteen, year):
-        return self.only("id", "family", "characteristics", "price_ht").filter(canteen=canteen).for_year(year)
+        return (
+            self.only("id", "famille_produits", "caracteristiques", "prix_ht").filter(canteen=canteen).for_year(year)
+        )
 
     def aggregated_stats(self):
         return self.aggregate(
-            valeur_totale=Sum("price_ht"),
-            valeur_bio=Sum("price_ht", filter=bio_query()),
+            valeur_totale=Sum("prix_ht"),
+            valeur_bio=Sum("prix_ht", filter=bio_query()),
             valeur_bio_dont_commerce_equitable=Sum(
-                "price_ht",
-                filter=bio_query() & Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
+                "prix_ht",
+                filter=bio_query() & Q(caracteristiques__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
             ),
             # valeur_siqo should ignore any bio products
-            valeur_siqo=Sum("price_ht", filter=~bio_query() & siqo_query()),
+            valeur_siqo=Sum("prix_ht", filter=~bio_query() & siqo_query()),
             # valeur_egalim_autres & valeur_egalim_autres_dont_commerce_equitable should ignore any bio & siqo products
             valeur_egalim_autres=Sum(
-                "price_ht",
+                "prix_ht",
                 filter=~bio_query() & ~siqo_query() & egalim_autres_query(),
             ),
             valeur_egalim_autres_dont_commerce_equitable=Sum(
-                "price_ht",
+                "prix_ht",
                 filter=~bio_query()
                 & ~siqo_query()
                 & egalim_autres_query()
-                & Q(characteristics__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
+                & Q(caracteristiques__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
             ),
             # valeur_externalites_performance should ignore any bio, siqo, and egalim_autres products
             valeur_externalites_performance=Sum(
-                "price_ht",
+                "prix_ht",
                 filter=~bio_query() & ~siqo_query() & ~egalim_autres_query() & valeur_externalites_performance_query(),
             ),
             # misc totals
-            valeur_viandes_volailles=Sum("price_ht", filter=Q(family=Purchase.Family.VIANDES_VOLAILLES)),
+            valeur_viandes_volailles=Sum("prix_ht", filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)),
             valeur_viandes_volailles_egalim=Sum(
-                "price_ht",
-                filter=Q(family=Purchase.Family.VIANDES_VOLAILLES)
-                & Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
+                "prix_ht",
+                filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)
+                & Q(caracteristiques__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
             ),
             valeur_viandes_volailles_france=Sum(
-                "price_ht",
-                filter=Q(family=Purchase.Family.VIANDES_VOLAILLES)
-                & Q(characteristics__contains=[Purchase.Characteristic.FRANCE]),
+                "prix_ht",
+                filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)
+                & Q(caracteristiques__contains=[Purchase.Characteristic.FRANCE]),
             ),
-            valeur_produits_de_la_mer=Sum("price_ht", filter=Q(family=Purchase.Family.PRODUITS_DE_LA_MER)),
+            valeur_produits_de_la_mer=Sum("prix_ht", filter=Q(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER)),
             valeur_produits_de_la_mer_egalim=Sum(
-                "price_ht",
-                filter=Q(family=Purchase.Family.PRODUITS_DE_LA_MER)
-                & Q(characteristics__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
+                "prix_ht",
+                filter=Q(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER)
+                & Q(caracteristiques__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
             ),
         )
 
@@ -199,33 +201,33 @@ class Purchase(SoftDeletionModel):
         "import_source",
     ]
 
-    canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
+    canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE, related_name="purchases", verbose_name="cantine")
     date = models.DateField(default=date.today)
     description = models.TextField(null=True, blank=True, verbose_name="description du produit")
-    provider = models.TextField(null=True, blank=True, verbose_name="fournisseur")
+    fournisseur = models.TextField(null=True, blank=True, verbose_name="fournisseur")
     category = models.CharField(
         max_length=255, choices=PurchaseCategory.choices, null=True, blank=True, verbose_name="catégorie"
     )  # not used anymore
-    family = models.CharField(
+    famille_produits = models.CharField(
         max_length=255, choices=Family.choices, null=True, blank=True, verbose_name="famille de produits"
     )
-    characteristics = ChoiceArrayField(
+    caracteristiques = ChoiceArrayField(
         base_field=models.CharField(
-            max_length=255, choices=Characteristic.choices, null=True, blank=True, verbose_name="caractéristique"
+            max_length=255, choices=Characteristic.choices, null=True, blank=True, verbose_name="caractéristiques"
         ),
         blank=True,
         null=True,
         size=None,
         verbose_name="caractéristiques",
     )
-    price_ht = models.DecimalField(
+    prix_ht = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         verbose_name="prix HT",
         validators=[MinValueValidator(Decimal("0"))],
     )
-    invoice_file = models.FileField(null=True, blank=True, upload_to="invoices/%Y/")
-    local_definition = models.CharField(
+    facture = models.FileField(null=True, blank=True, upload_to="invoices/%Y/")
+    definition_local = models.CharField(
         max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
     )
 
@@ -261,7 +263,7 @@ class Purchase(SoftDeletionModel):
 
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
-            purchase_validators.validate_purchase_local_definition(self),
+            purchase_validators.validate_purchase_definition_local(self),
         )
         if validation_errors:
             raise ValidationError(validation_errors)
@@ -274,25 +276,25 @@ class Purchase(SoftDeletionModel):
         super().save(**kwargs)
 
     @property
-    def readable_family(self):
-        if not self.family:
+    def famille_produits_display(self):
+        if not self.famille_produits:
             return None
         try:
-            return Purchase.Family(self.family).label
+            return Purchase.Family(self.famille_produits).label
         except Exception:
             return None
 
     @property
-    def readable_characteristics(self):
-        if not self.characteristics:
+    def caracteristiques_display(self):
+        if not self.caracteristiques:
             return None
-        valid_characteristics = []
-        for characteristic in self.characteristics:
+        caracteristiques_display = []
+        for c in self.caracteristiques:
             try:
-                valid_characteristics.append(Purchase.Characteristic(characteristic).label)
+                caracteristiques_display.append(Purchase.Characteristic(c).label)
             except Exception:
                 pass
-        return ", ".join(valid_characteristics) if valid_characteristics else None
+        return ", ".join(caracteristiques_display) if caracteristiques_display else None
 
     @classmethod
     def canteen_summary_for_year(cls, canteen, year):
@@ -386,23 +388,23 @@ class Purchase(SoftDeletionModel):
         from data.models import Diagnostic
 
         for family in Diagnostic.APPRO_FAMILIES:
-            purchase_family = purchases.filter(family=family.upper())
+            purchase_family = purchases.filter(famille_produits=family.upper())
             for label in Diagnostic.APPRO_LABELS_EGALIM:
                 if label.upper() == "AOCAOP_IGP_STG":
                     purchase_family_label = purchase_family.filter(
-                        characteristics__overlap=cls.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
+                        caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
                     ).distinct()
                     # the remaining stats should ignore already counted labels
                     purchase_family = purchase_family.exclude(
-                        characteristics__overlap=cls.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
+                        caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
                     ).distinct()
                 else:
                     purchase_family_label = purchase_family.filter(
-                        Q(characteristics__contains=[cls.Characteristic[label.upper()]])
+                        Q(caracteristiques__contains=[cls.Characteristic[label.upper()]])
                     ).distinct()
                     # the remaining stats should ignore already counted labels
                     purchase_family = purchase_family.exclude(
-                        Q(characteristics__contains=[cls.Characteristic[label.upper()]])
+                        Q(caracteristiques__contains=[cls.Characteristic[label.upper()]])
                     ).distinct()
                 key = "valeur_" + family + "_" + label
                 data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
@@ -417,10 +419,10 @@ class Purchase(SoftDeletionModel):
         from data.models import Diagnostic
 
         for family in Diagnostic.APPRO_FAMILIES:
-            purchase_family = purchases.filter(family=family.upper())
+            purchase_family = purchases.filter(famille_produits=family.upper())
             purchase_family_label = purchase_family.filter(
-                Q(characteristics__contains=[cls.Characteristic.BIO])
-                & Q(characteristics__contains=[cls.Characteristic.COMMERCE_EQUITABLE])
+                Q(caracteristiques__contains=[cls.Characteristic.BIO])
+                & Q(caracteristiques__contains=[cls.Characteristic.COMMERCE_EQUITABLE])
             )
             key = "valeur_" + family + "_" + "bio_dont_commerce_equitable"
             data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
@@ -437,20 +439,20 @@ class Purchase(SoftDeletionModel):
         from data.models import Diagnostic
 
         for family in Diagnostic.APPRO_FAMILIES:
-            purchase_family = purchases.filter(family=family.upper())
+            purchase_family = purchases.filter(famille_produits=family.upper())
             other_labels_characteristics = []
             for label in Diagnostic.APPRO_LABELS_FRANCE_SUBCATEGORIES:
                 characteristic = cls.Characteristic[label.upper()]
-                purchase_family_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
+                purchase_family_label = purchase_family.filter(Q(caracteristiques__contains=[characteristic]))
                 key = "valeur_" + family + "_" + label
-                data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+                data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
                 other_labels_characteristics.append(characteristic)
             # France total
             purchase_family_label = purchase_family.filter(
-                characteristics__overlap=cls.CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL
+                caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL
             ).distinct()
             key = "valeur_" + family + "_france"
-            data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+            data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
     def _complete_diag_appro_labels_france_circuit_court_local(cls, purchases, data):
@@ -464,12 +466,12 @@ class Purchase(SoftDeletionModel):
         from data.models import Diagnostic
 
         for family in Diagnostic.APPRO_FAMILIES:
-            purchase_family = purchases.filter(family=family.upper())
+            purchase_family = purchases.filter(famille_produits=family.upper())
             for label in cls.CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL:
                 characteristic = cls.Characteristic[label]
-                purchase_family_label = purchase_family.filter(Q(characteristics__contains=[characteristic]))
+                purchase_family_label = purchase_family.filter(Q(characteristiques__contains=[characteristic]))
                 key = "valeur_" + family + "_" + label.lower()
-                data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+                data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
     def _complete_diag_appro_labels_non_egalim(cls, purchases, data):
@@ -479,11 +481,11 @@ class Purchase(SoftDeletionModel):
         from data.models import Diagnostic
 
         for family in Diagnostic.APPRO_FAMILIES:
-            non_egalim_purchases = purchases.filter(family=family.upper()).exclude(
-                characteristics__overlap=cls.CHARACTERISTIC_LABELS_EGALIM
+            non_egalim_purchases = purchases.filter(famille_produits=family.upper()).exclude(
+                caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_EGALIM
             )
             key = "valeur_" + family + "_non_egalim"
-            data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
+            data[key] = non_egalim_purchases.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
     def _misc_totals(cls, purchases, data):

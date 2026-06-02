@@ -34,14 +34,14 @@ class PurchasesPagination(LimitOffsetPagination):
     def paginate_queryset(self, queryset, request, view=None):
         """
         return extra fields for the filter options in the frontend
-        - queryset's list of values for families, characteristics and canteens
+        - queryset's list of values for famille_produits, caracteristiques and canteens
         - and not only for the current page
         """
-        self.families = list(set(queryset.values_list("family", flat=True)))
+        self.families = list(set(queryset.values_list("famille_produits", flat=True)))
         self.characteristics = list(
             {
                 characteristic
-                for characteristics in queryset.values_list("characteristics", flat=True)
+                for characteristics in queryset.values_list("caracteristiques", flat=True)
                 for characteristic in characteristics
             }
         )
@@ -66,23 +66,25 @@ class PurchasesPagination(LimitOffsetPagination):
 
 
 class PurchaseFilterSet(django_filters.FilterSet):
-    characteristics = django_filters.CharFilter(method="filter_characteristics")
+    # TODO: move to Meta.fields once we finish the translation to French
+    family = django_filters.CharFilter(field_name="famille_produits")
+    characteristics = django_filters.CharFilter(method="filter_caracteristiques")
     date = django_filters.DateFromToRangeFilter()
 
     class Meta:
         model = Purchase
         fields = (
             "canteen__id",
-            "family",
+            # "family",
             # "characteristics",
             # "date"
         )
 
-    # characteristics is a ChoiceArrayField, we need a custom overlap filter
-    def filter_characteristics(self, queryset, name, value):
-        characteristics = self.request.query_params.getlist("characteristics")
-        if characteristics:
-            return queryset.filter(characteristics__overlap=characteristics)
+    # caracteristiques is a ChoiceArrayField, we need a custom overlap filter
+    def filter_caracteristiques(self, queryset, name, value):
+        caracteristiques = self.request.query_params.getlist("characteristics")
+        if caracteristiques:
+            return queryset.filter(caracteristiques__overlap=caracteristiques)
         return queryset
 
 
@@ -98,15 +100,15 @@ class PurchaseListCreateView(ListCreateAPIView):
     ordering_fields = [
         "creation_date",
         "date",
-        "provider",
-        "price_ht",
+        "fournisseur",
+        "prix_ht",
         "canteen__name",
         "description",
-        "family",
+        "famille_produits",
     ]
     search_fields = [
         "description",
-        "provider",
+        "fournisseur",
     ]
     filterset_class = PurchaseFilterSet
 
@@ -272,10 +274,10 @@ class PurchaseOptionsView(APIView):
             .values_list("description", flat=True)
         )
         providers = list(
-            purchases.filter(provider__isnull=False)
-            .order_by("provider")
-            .distinct("provider")
-            .values_list("provider", flat=True)
+            purchases.filter(fournisseur__isnull=False)
+            .order_by("fournisseur")
+            .distinct("fournisseur")
+            .values_list("fournisseur", flat=True)
         )
         return JsonResponse({"products": products, "providers": providers}, status=200)
 

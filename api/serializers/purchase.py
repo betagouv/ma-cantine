@@ -6,7 +6,18 @@ from data.models import Purchase
 
 class PurchaseSerializer(serializers.ModelSerializer):
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
-    invoice_file = Base64FileField(required=False, allow_null=True)
+    provider = serializers.CharField(source="fournisseur", required=False, allow_blank=True)
+    family = serializers.ChoiceField(
+        source="famille_produits", choices=Purchase.Family.choices, required=False, allow_blank=True
+    )
+    characteristics = serializers.MultipleChoiceField(
+        source="caracteristiques", choices=Purchase.Characteristic.choices, required=False, allow_blank=True
+    )
+    price_ht = serializers.DecimalField(source="prix_ht", max_digits=20, decimal_places=2, required=False)
+    invoice_file = Base64FileField(source="facture", required=False, allow_null=True)
+    local_definition = serializers.ChoiceField(
+        source="definition_local", choices=Purchase.Local.choices, required=False, allow_blank=True
+    )
 
     class Meta:
         model = Purchase
@@ -15,12 +26,13 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "canteen",
             "date",
             "description",
-            "provider",
-            "family",
-            "characteristics",
-            "price_ht",
-            "invoice_file",
-            "local_definition",
+            # TODO: update once we finish the translation to French
+            "provider",  # "fournisseur",
+            "family",  # "famille_produits",
+            "characteristics",  # "caracteristiques",
+            "price_ht",  # "prix_ht",
+            "invoice_file",  # "facture",
+            "local_definition",  # "definition_local",
             "import_source",
             "creation_source",
             "creation_date",
@@ -32,12 +44,28 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "modification_date",
         )
 
+    # TODO: remove once we finish the translation to French
+    @staticmethod
+    def _normalize_characteristics(validated_data):
+        characteristics = validated_data.get("caracteristiques")
+        if isinstance(characteristics, set):
+            ordered_characteristics = [choice for choice, _label in Purchase.Characteristic.choices]
+            validated_data["caracteristiques"] = [
+                choice for choice in ordered_characteristics if choice in characteristics
+            ]
+
     def create(self, validated_data):
+        self._normalize_characteristics(validated_data)
+
         if "canteen" not in validated_data:
             return super().create(validated_data)
 
         validated_data["canteen_id"] = validated_data.pop("canteen").id
         return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        self._normalize_characteristics(validated_data)
+        return super().update(instance, validated_data)
 
 
 class PurchaseField(serializers.DecimalField):
@@ -207,9 +235,9 @@ class PurchaseExportSerializer(serializers.ModelSerializer):
             "date",
             "canteen",
             "description",
-            "provider",
-            "readable_family",
-            "readable_characteristics",
-            "price_ht",
+            "fournisseur",
+            "famille_produits_display",
+            "caracteristiques_display",
+            "prix_ht",
         )
         read_only_fields = fields
