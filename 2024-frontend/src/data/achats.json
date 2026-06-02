@@ -100,5 +100,39 @@
       "label": "Produit « local » ou « de proximité »",
       "value": "LOCAL"
     }
+  },
+  "familleProduit": {
+    "produitsLaitiers": {
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "value": "PRODUITS_LAITIERS"
+    },
+    "boissons": {
+      "label": "Boissons",
+      "value": "BOISSONS"
+    },
+    "boulangerie": {
+      "label": "Boulangerie / Pâtisserie fraîches et surgelées",
+      "value": "BOULANGERIE"
+    },
+    "charcuterie": {
+      "label": "Charcuterie",
+      "value": "CHARCUTERIE"
+    },
+    "fruitsEtLegumes": {
+      "label": "Fruits et légumes frais et surgelés",
+      "value": "FRUITS_ET_LEGUMES"
+    },
+    "produitsDeLaMer": {
+      "label": "Produits de la mer et aquaculture frais et surgelés",
+      "value": "PRODUITS_DE_LA_MER"
+    },
+    "viandesVolailles": {
+      "label": "Viandes et volailles fraîches et surgelées",
+      "value": "VIANDES_VOLAILLES"
+    },
+    "autres": {
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "value": "AUTRES"
+    }
   }
 }
