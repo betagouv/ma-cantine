@@ -18,7 +18,6 @@ const form = reactive({
   priceHt: null,
   date: null,
   family: null,
-  characteristics: [],
   characteristicsEgalim: [],
   characteristicsOrigines: [],
   characteristicsCircuitCourt: [],
@@ -75,9 +74,19 @@ const validateForm = async (action) => {
   const isValid = await v$.value.$validate()
   if (!isValid || invoiceFileError.value) return
 
-  const payload = { ...form }
+  const payload = formatPayload(form)
   if (invoiceFile.value) payload.invoiceFile = await toBase64(invoiceFile.value)
   emit("sendForm", { form: payload, action })
+}
+
+const formatPayload = (form) => {
+  const payload = { ...form }
+  payload.characteristics = [...payload.characteristicsEgalim, ...payload.characteristicsOrigines, ...payload.characteristicsCircuitCourt, ...payload.characteristicsLocal]
+  delete payload.characteristicsEgalim
+  delete payload.characteristicsOrigines
+  delete payload.characteristicsCircuitCourt
+  delete payload.characteristicsLocal
+  return payload
 }
 </script>
 
