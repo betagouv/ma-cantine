@@ -20,12 +20,7 @@ const form = reactive({
   characteristics: [],
 })
 
-const categoriesEgalimOptions = Object.values(achats.categoriesEgalim).map((c) => ({
-  label: c.text,
-  hint: c.longText,
-  value: c.value,
-}))
-
+const categoriesEgalimOptions = Object.values(achats.categoriesEgalim)
 const { required, decimal, minValue } = useValidators()
 const rules = {
   description: { required },

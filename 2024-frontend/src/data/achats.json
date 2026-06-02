@@ -1,103 +1,103 @@
 {
   "categoriesEgalim": {
     "aocaop": {
-      "longText": "Appellation d'origine (AOC / AOP)",
-      "text": "AOC / AOP",
+      "hint": "Appellation d'origine (AOC / AOP)",
+      "label": "AOC / AOP",
       "value": "AOCAOP"
     },
     "bio": {
-      "text": "Bio ou « en conversion bio »",
+      "label": "Bio ou « en conversion bio »",
       "value": "BIO"
     },
     "commerceEquitable": {
-      "text": "Commerce équitable",
+      "label": "Commerce équitable",
       "value": "COMMERCE_EQUITABLE"
     },
     "externalites": {
-      "longText": "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
-      "text": "Critère externalités environnementales",
+      "hint": "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "label": "Critère externalités environnementales",
       "value": "EXTERNALITES"
     },
     "fermier": {
-      "longText": "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »",
-      "text": "Fermier",
+      "hint": "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »",
+      "label": "Fermier",
       "value": "FERMIER"
     },
     "hve": {
-      "longText": "Certification environnementale de niveau 2 ou HVE",
-      "text": "HVE",
+      "hint": "Certification environnementale de niveau 2 ou HVE",
+      "label": "HVE",
       "value": "HVE"
     },
     "igp": {
-      "longText": "Indication géographique protégée (IGP)",
-      "text": "IGP",
+      "hint": "Indication géographique protégée (IGP)",
+      "label": "IGP",
       "value": "IGP"
     },
     "labelRouge": {
-      "text": "Label rouge",
+      "label": "Label rouge",
       "value": "LABEL_ROUGE"
     },
     "pecheDurable": {
-      "text": "Écolabel pêche durable",
+      "label": "Écolabel pêche durable",
       "value": "PECHE_DURABLE"
     },
     "performance": {
-      "longText": "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
-      "text": "Critères protection de l'environnement et approvisionnement direct",
+      "hint": "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
+      "label": "Critères protection de l'environnement et approvisionnement direct",
       "value": "PERFORMANCE"
     },
     "rup": {
-      "longText": "Région ultrapériphérique (RUP)",
-      "text": "RUP",
+      "hint": "Région ultrapériphérique (RUP)",
+      "label": "RUP",
       "value": "RUP"
     },
     "stg": {
-      "longText": "Spécialité traditionnelle garantie (STG)",
-      "text": "STG",
+      "hint": "Spécialité traditionnelle garantie (STG)",
+      "label": "STG",
       "value": "STG"
     }
   },
   "categoriesOrigines": {
     "europe": {
-      "text": "Origine Europe",
+      "label": "Origine Europe",
       "value": "EUROPE"
     },
     "france": {
-      "text": "Origine France",
+      "label": "Origine France",
       "value": "FRANCE"
     }
   },
   "definitionLocal": {
     "autourService": {
-      "text": "200 km autour du lieu de service",
+      "label": "200 km autour du lieu de service",
       "value": "AUTOUR_SERVICE"
     },
     "autre": {
-      "text": "Autre",
+      "label": "Autre",
       "value": "AUTRE"
     },
     "departement": {
-      "text": "Provenant du même département",
+      "label": "Provenant du même département",
       "value": "DEPARTEMENT"
     },
     "pat": {
-      "text": "Issu du Projet Alimentaire Territorial (PAT)",
+      "label": "Issu du Projet Alimentaire Territorial (PAT)",
       "value": "PAT"
     },
     "region": {
-      "text": "Provenant de la même région",
+      "label": "Provenant de la même région",
       "value": "REGION"
     }
   },
   "estCircuitCourt": {
     "circuitCourt": {
-      "text": "Achat en circuit court ou approvisionnement direct",
+      "label": "Achat en circuit court ou approvisionnement direct",
       "value": "CIRCUIT_COURT"
     }
   },
   "estLocal": {
     "local": {
-      "text": "Produit « local » ou « de proximité »",
+      "label": "Produit « local » ou « de proximité »",
       "value": "LOCAL"
     }
   }
