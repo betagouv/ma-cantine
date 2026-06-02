@@ -691,7 +691,7 @@ webencodings==0.5.1
     #   html5lib
     #   ma-cantine
     #   tinycss2
-willow==1.11.0
+willow==1.12.0
     # via wagtail
 wrapt==1.17.2
     # via
