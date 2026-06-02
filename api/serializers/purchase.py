@@ -15,6 +15,9 @@ class PurchaseSerializer(serializers.ModelSerializer):
     )
     price_ht = serializers.DecimalField(source="prix_ht", max_digits=20, decimal_places=2, required=False)
     invoice_file = Base64FileField(source="facture", required=False, allow_null=True)
+    local_definition = serializers.ChoiceField(
+        source="definition_local", choices=Purchase.Local.choices, required=False, allow_blank=True
+    )
 
     class Meta:
         model = Purchase
@@ -23,12 +26,13 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "canteen",
             "date",
             "description",
+            # TODO: update once we finish the translation to French
             "provider",  # "fournisseur",
             "family",  # "famille_produits",
             "characteristics",  # "caracteristiques",
             "price_ht",  # "prix_ht",
             "invoice_file",  # "facture",
-            "definition_local",
+            "local_definition",  # "definition_local",
             "import_source",
             "creation_source",
             "creation_date",
@@ -40,6 +44,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "modification_date",
         )
 
+    # TODO: remove once we finish the translation to French
     @staticmethod
     def _normalize_characteristics(validated_data):
         characteristics = validated_data.get("caracteristiques")

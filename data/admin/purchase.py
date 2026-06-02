@@ -43,7 +43,7 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "category",
         "caracteristiques",
         "prix_ht",
-        "invoice_file",
+        "facture",
         "definition_local",
         *Purchase.CREATION_META_FIELDS,
         "deletion_date",

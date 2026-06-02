@@ -66,6 +66,7 @@ class PurchasesPagination(LimitOffsetPagination):
 
 
 class PurchaseFilterSet(django_filters.FilterSet):
+    # TODO: move to Meta.fields once we finish the translation to French
     family = django_filters.CharFilter(field_name="famille_produits")
     characteristics = django_filters.CharFilter(method="filter_caracteristiques")
     date = django_filters.DateFromToRangeFilter()
