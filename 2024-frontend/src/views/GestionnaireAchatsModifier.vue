@@ -43,6 +43,7 @@ const savePurchase = async (props) => {
     status: "success",
   })
 
+  // Pas de redirection car on arrive sur une page vue2 et on va perdre la notification
   window.scrollTo(0, 0)
 }
 </script>
