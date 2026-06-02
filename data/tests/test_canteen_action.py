@@ -147,7 +147,7 @@ class CanteenActionTestCase(TestCase):
             self.assertEqual(canteen_qs.get(id=canteen.id).action, Canteen.Actions.PREFILL_DIAGNOSTIC)
 
             # canteen without purchases but with diagnostic (not filled)
-            canteen.purchase_set.all().delete()
+            canteen.purchases.all().delete()
             canteen_diagnostic_2024 = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=None)
 
             canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)

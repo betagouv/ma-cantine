@@ -276,8 +276,10 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 12)
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # siret
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # description
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # provider
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # family
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # fournisseur
+        self.assertEqual(
+            errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée"
+        )  # famille_produits
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # date
         self.assertEqual(
             errors.pop(0)["message"],
@@ -312,7 +314,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_bad_no_local_definition.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_no_definition_local.csv"
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
@@ -458,26 +460,26 @@ class PurchasesImportApiSuccessTest(APITestCase):
         purchase = Purchase.objects.filter(description="Pommes, rouges, local").first()
         self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.description, "Pommes, rouges, local")
-        self.assertEqual(purchase.provider, "Le bon traiteur")
-        self.assertEqual(purchase.price_ht, Decimal("90.11"))
+        self.assertEqual(purchase.fournisseur, "Le bon traiteur")
+        self.assertEqual(purchase.prix_ht, Decimal("90.11"))
         self.assertEqual(purchase.date, date(2022, 5, 2))
-        self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
-        self.assertEqual(purchase.characteristics, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
-        self.assertEqual(purchase.local_definition, Purchase.Local.DEPARTEMENT)
+        self.assertEqual(purchase.famille_produits, Purchase.Family.PRODUITS_LAITIERS)
+        self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
+        self.assertEqual(purchase.definition_local, Purchase.Local.DEPARTEMENT)
         self.assertIsNotNone(purchase.import_source)
         self.assertEqual(purchase.creation_user, authenticate.user)
         self.assertEqual(purchase.creation_source, CreationSource.IMPORT)
         # purchase with definition_local empty
         purchase = Purchase.objects.filter(description="Pommes, vertes 1").first()
         self.assertEqual(purchase.canteen.siret, "21010034300016")
-        self.assertEqual(purchase.family, Purchase.Family.PRODUITS_LAITIERS)
-        self.assertEqual(purchase.characteristics, [Purchase.Characteristic.RUP])
-        self.assertEqual(purchase.local_definition, None)
+        self.assertEqual(purchase.famille_produits, Purchase.Family.PRODUITS_LAITIERS)
+        self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.RUP])
+        self.assertEqual(purchase.definition_local, None)
         # purchase with characteristics empty
         purchase = Purchase.objects.filter(description="Pommes, vertes 4").first()
         self.assertEqual(purchase.canteen.siret, "21010034300016")
-        self.assertEqual(purchase.family, Purchase.Family.AUTRES)
-        self.assertEqual(purchase.characteristics, [])
+        self.assertEqual(purchase.famille_produits, Purchase.Family.AUTRES)
+        self.assertEqual(purchase.caracteristiques, [])
         # Test that the purchase import source contains the complete file digest
         filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
@@ -520,7 +522,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(len(errors), 0, errors)
 
         purchase = Purchase.objects.filter(description="Pommes, rouges").first()
-        self.assertEqual(purchase.price_ht, Decimal("90.11"))
+        self.assertEqual(purchase.prix_ht, Decimal("90.11"))
 
     @authenticate
     def test_import_excel_file(self):
@@ -543,7 +545,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(len(errors), 0, errors)
 
         purchase = Purchase.objects.filter(description="Pommes, rouges, local").first()
-        self.assertEqual(purchase.price_ht, Decimal("90.11"))
+        self.assertEqual(purchase.prix_ht, Decimal("90.11"))
 
     @authenticate
     def test_import_different_separators(self):
@@ -633,7 +635,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
         self.assertFalse(ImportFailure.objects.exists())
-        self.assertEqual(Purchase.objects.first().price_ht, Decimal("90.11"))
+        self.assertEqual(Purchase.objects.first().prix_ht, Decimal("90.11"))
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
@@ -698,5 +700,5 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
         self.assertEqual(len(errors), 0, errors)
 
         purchase = Purchase.objects.filter(description="Pommes, rouges").first()
-        self.assertEqual(purchase.price_ht, Decimal("90.11"))
+        self.assertEqual(purchase.prix_ht, Decimal("90.11"))
         self.assertEqual(purchase.canteen.id, 949)

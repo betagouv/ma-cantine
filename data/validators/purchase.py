@@ -1,18 +1,18 @@
 from common.utils import utils as utils_utils
 
 
-def validate_purchase_local_definition(instance):
+def validate_purchase_definition_local(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the value is empty or in the choices
     - extra validation:
-        - if characteristics includes "LOCAL", local_definition must be filled
-        - if characteristics does not include "LOCAL", local_definition must be empty
+        - if caracteristiques includes "LOCAL", definition_local must be filled
+        - if caracteristiques does not include "LOCAL", definition_local must be empty
     """
     errors = {}
-    field_name = "local_definition"
+    field_name = "definition_local"
     value = getattr(instance, field_name)
-    characteristics = getattr(instance, "characteristics") or []
-    if instance.Characteristic.LOCAL in characteristics:
+    caracteristiques = getattr(instance, "caracteristiques") or []
+    if instance.Characteristic.LOCAL in caracteristiques:
         if value in [None, ""]:
             utils_utils.add_validation_error(
                 errors,
