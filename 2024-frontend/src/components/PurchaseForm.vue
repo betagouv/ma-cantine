@@ -157,11 +157,13 @@ const validateForm = async (action) => {
       :options="estLocalOptions"
       small
       inline
+      class="fr-mb-n2w"
     />
     <DsfrSelect
       v-if="showLocalDefinition"
       v-model="form.localDefinition"
       label="Précisions *"
+      hint="Précisez la provenance du produit"
       labelVisible
       :options="definitionLocalOptions"
       :error-message="formatError(v$.localDefinition)"
