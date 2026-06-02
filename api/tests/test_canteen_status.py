@@ -137,7 +137,7 @@ class CanteenStatusBySirenApiTest(APITestCase):
         self.assertEqual(body["postalCode"], "59100")
         self.assertEqual(body["city"], "ROUBAIX")
         self.assertEqual(body["cityInseeCode"], "59512")
-        # self.assertEqual(body["department"], "59")
+        self.assertEqual(body["department"], "59")
 
     @requests_mock.Mocker()
     @authenticate
@@ -168,4 +168,4 @@ class CanteenStatusBySirenApiTest(APITestCase):
         self.assertNotIn("postalCode", body)
         self.assertNotIn("city", body)
         self.assertNotIn("cityInseeCode", body)
-        # self.assertNotIn("department", body)
+        self.assertNotIn("department", body)

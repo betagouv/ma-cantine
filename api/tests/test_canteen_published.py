@@ -330,13 +330,13 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             name="Central",
             region=Region.auvergne_rhone_alpes,
             production_type=Canteen.ProductionType.CENTRAL,
-            siret="22730656663081",
+            siret="21380185500015",
         )
         CanteenFactory(
             name="Satellite",
             region=Region.auvergne_rhone_alpes,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret="22730656663081",
+            central_producer_siret="21380185500015",
         )
         medium_canteen = CanteenFactory(name="Wasabi", region=Region.auvergne_rhone_alpes)
         siqo_canteen = CanteenFactory(name="Umami", region=Region.auvergne_rhone_alpes)
@@ -370,7 +370,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         )
         CanteenFactory(
             name="Cantine sans bilan avec siret cuisine centrale null",
-            siret="21380185500015",
+            siret="21670482500019",
             central_producer_siret=None,
         )
 
@@ -926,7 +926,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         The published endpoint should not contain the real economic data, only percentages.
         Even when the meat and fish totals are absent, but EGalim and France totals are present.
         """
-        central_siret = "22730656663081"
+        central_siret = "21380185500015"
         canteen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.ON_SITE)
 
         DiagnosticFactory(
