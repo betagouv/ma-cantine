@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue"
 import { computedAsync } from "@vueuse/core"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import documentation from "@/data/documentation.json"
 import urlService from "@/services/urls.js"
@@ -12,6 +12,7 @@ import PurchaseForm from "@/components/PurchaseForm.vue"
 
 /* Router and store */
 const route = useRoute()
+const router = useRouter()
 const store = useRootStore()
 
 /* Canteen */
@@ -45,6 +46,10 @@ const savePurchase = async (props) => {
 
   // Pas de redirection car on arrive sur une page vue2 et on va perdre la notification
   window.scrollTo(0, 0)
+}
+
+const goToPurchasesList = () => {
+  router.push({ name: "PurchasesHome" })
 }
 </script>
 
