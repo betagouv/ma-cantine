@@ -21,32 +21,43 @@
           .
         </p>
         <v-row v-if="hasCanteens" align="center" class="mt-2 px-3">
-          <v-menu v-model="addPurchaseMenu" offset-y :close-on-content-click="false">
+          <v-dialog v-model="addPurchaseDialog" width="500">
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="primary" large class="mr-2 my-3" v-bind="attrs" v-on="on">
                 <v-icon class="mr-1">mdi-plus</v-icon>
                 Ajouter un produit
-                <v-icon v-if="attrs['aria-expanded'] === 'true'" class="ml-1">
-                  $arrow-up-s-line
-                </v-icon>
-                <v-icon v-else class="ml-1">$arrow-down-s-line</v-icon>
               </v-btn>
             </template>
-            <v-card class="pa-4" style="min-width: 340px;">
-              <p class="text-uppercase text-caption font-weight-bold mb-3">
-                Pour quel établissement souhaitez-vous ajouter un produit ?
-              </p>
-              <DsfrCombobox
-                :items="userCanteens"
-                item-text="name"
-                item-value="id"
-                :filter="canteenFilter"
-                placeholder="Sélectionnez une cantine"
-                hide-details
-                @input="onCanteenSelected"
-              />
+
+            <v-card class="text-left">
+              <v-card-title>
+                <h1 class="fr-h6 mb-0">
+                  Pour quel établissement souhaitez-vous ajouter un produit ?
+                </h1>
+              </v-card-title>
+
+              <v-card-text>
+                <DsfrCombobox
+                  :items="userCanteens"
+                  item-text="name"
+                  item-value="id"
+                  :filter="canteenFilter"
+                  placeholder="Sélectionnez une cantine"
+                  hide-details
+                  @input="onCanteenSelected"
+                />
+              </v-card-text>
+
+              <v-divider aria-hidden="true" role="presentation"></v-divider>
+
+              <v-card-actions class="pa-4">
+                <v-spacer></v-spacer>
+                <v-btn outlined text @click="addPurchaseDialog = false">
+                  Annuler
+                </v-btn>
+              </v-card-actions>
             </v-card>
-          </v-menu>
+          </v-dialog>
           <v-btn text color="primary" :to="{ name: 'GestionnaireImport' }" class="px-0 px-md-2 my-3">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
             Créer plusieurs achats depuis un fichier
@@ -421,7 +432,7 @@ export default {
         endDate: null,
       },
       selectedPurchases: [],
-      addPurchaseMenu: false,
+      addPurchaseDialog: false,
     }
   },
   computed: {
@@ -507,7 +518,7 @@ export default {
     onCanteenSelected(value) {
       const canteen = this.userCanteens.find((c) => c.id === value)
       if (!canteen) return
-      this.addPurchaseMenu = false
+      this.addPurchaseDialog = false
       this.$router.push({
         name: "GestionnaireAchatsAjouter",
         params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
