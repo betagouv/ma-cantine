@@ -27,8 +27,8 @@ const purchaseData = computedAsync(async () => {
   const response = await purchasesService.fetchPurchase(purchaseId)
   isLoading.value = false
   if (!response?.id) return {}
-  else if (response.canteen.id !== canteenId) return {}
-  else response
+  else if (response.canteen !== Number(canteenId)) return {}
+  else return response
 }, {})
 
 /* Save */
