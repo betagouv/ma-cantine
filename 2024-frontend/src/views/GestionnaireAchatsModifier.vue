@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
+import { useRootStore } from "@/stores/root"
 import documentation from "@/data/documentation.json"
 import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
@@ -11,6 +12,7 @@ import PurchaseForm from "@/components/PurchaseForm.vue"
 
 /* Router and store */
 const route = useRoute()
+const store = useRootStore()
 
 /* Canteen */
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
@@ -27,7 +29,21 @@ const purchaseData = computedAsync(async () => {
 
 /* Save */
 const savePurchase = async (props) => {
-  console.log(props)
+  const { form } = props
+  const response = await purchasesService.updatePurchase(form, purchaseId)
+
+  if (!response?.id) {
+    store.notifyServerError(response)
+    return
+  }
+
+  store.notify({
+    title: "Achat mis à jour",
+    message: `L'achat « ${form.description} » a bien été mis à jour pour la cantine « ${canteenName} ».`,
+    status: "success",
+  })
+
+  window.scrollTo(0, 0)
 }
 </script>
 
