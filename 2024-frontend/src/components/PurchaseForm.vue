@@ -20,10 +20,12 @@ const form = reactive({
   characteristics: [],
   characteristicsEgalim: [],
   characteristicsOrigines: [],
+  characteristicsCircuitCourt: [],
 })
 
 const categoriesEgalimOptions = Object.values(achats.categoriesEgalim)
 const categoriesOriginesOptions = Object.values(achats.categoriesOrigines)
+const estCircuitCourtOptions = Object.values(achats.estCircuitCourt)
 const { required, decimal, minValue } = useValidators()
 const rules = {
   description: { required },
@@ -129,6 +131,14 @@ const validateForm = async (action) => {
       v-model="form.characteristicsOrigines"
       legend="Origine"
       :options="categoriesOriginesOptions"
+      small
+      inline
+    />
+
+    <DsfrCheckboxSet
+      v-model="form.characteristicsCircuitCourt"
+      legend="Circuit court"
+      :options="estCircuitCourtOptions"
       small
       inline
     />
