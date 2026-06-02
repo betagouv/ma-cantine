@@ -21,7 +21,7 @@
           .
         </p>
         <v-row v-if="hasCanteens" align="center" class="mt-2 px-3">
-          <v-menu offset-y>
+          <v-menu v-model="addPurchaseMenu" offset-y :close-on-content-click="false">
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="primary" large class="mr-2 my-3" v-bind="attrs" v-on="on">
                 <v-icon class="mr-1">mdi-plus</v-icon>
@@ -32,21 +32,20 @@
                 <v-icon v-else class="ml-1">$arrow-down-s-line</v-icon>
               </v-btn>
             </template>
-            <v-list dense>
-              <v-subheader class="text-uppercase text-caption font-weight-bold">
+            <v-card class="pa-4" style="min-width: 340px;">
+              <p class="text-uppercase text-caption font-weight-bold mb-3">
                 Pour quel établissement souhaitez-vous ajouter un produit ?
-              </v-subheader>
-              <v-list-item
-                v-for="canteen in userCanteens"
-                :key="canteen.id"
-                :to="{
-                  name: 'GestionnaireAchatsAjouter',
-                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
-                }"
-              >
-                <v-list-item-title>{{ canteen.name }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
+              </p>
+              <DsfrCombobox
+                :items="userCanteens"
+                item-text="name"
+                item-value="id"
+                :filter="canteenFilter"
+                placeholder="Sélectionnez une cantine"
+                hide-details
+                @input="onCanteenSelected"
+              />
+            </v-card>
           </v-menu>
           <v-btn text color="primary" :to="{ name: 'GestionnaireImport' }" class="px-0 px-md-2 my-3">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
@@ -369,6 +368,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrCombobox from "@/components/DsfrCombobox"
 
 export default {
   name: "PurchasesHome",
@@ -378,6 +378,7 @@ export default {
     DsfrSelect,
     DsfrSearchField,
     DsfrAutocomplete,
+    DsfrCombobox,
   },
   data() {
     return {
@@ -420,6 +421,7 @@ export default {
         endDate: null,
       },
       selectedPurchases: [],
+      addPurchaseMenu: false,
     }
   },
   computed: {
@@ -495,6 +497,21 @@ export default {
       const purchaseIndex = this.selectedPurchases.findIndex((p) => p.id === purchase.id)
       if (purchaseIndex === -1) this.selectedPurchases.push(purchase)
       else this.selectedPurchases.splice(purchaseIndex, 1)
+    },
+    canteenFilter(item, queryText) {
+      if (!queryText) return true
+      const normalizedQuery = normaliseText(queryText).toLocaleLowerCase()
+      const normalizedItemText = normaliseText(item.name).toLocaleLowerCase()
+      return normalizedItemText.includes(normalizedQuery)
+    },
+    onCanteenSelected(value) {
+      const canteen = this.userCanteens.find((c) => c.id === value)
+      if (!canteen) return
+      this.addPurchaseMenu = false
+      this.$router.push({
+        name: "GestionnaireAchatsAjouter",
+        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+      })
     },
     // the following requires that purchases are SoftDeletionObjects
     // in 2nd PR: if too many purchase objects in soft deleted state, make weekly bot to clear out purchases that have been deleted for > 1 week (or whatever time period)
