@@ -438,6 +438,10 @@ const vue3Routes = [
     name: "GestionnaireCantineRestaurantAjouter",
   },
   {
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/achats/ajouter",
+    name: "GestionnaireAchatsAjouter",
+  },
+  {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/gerer",
     name: "CanteenForm",
   },
