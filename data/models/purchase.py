@@ -366,8 +366,19 @@ class Purchase(SoftDeletionModel):
     def _complete_diag_data(cls, purchases, data):
         """
         Summary for detailed teledeclaration totals, by family and label.
-        Note: the order of APPRO_LABELS_EGALIM is significant - determines which
-        labels trump others when aggregating purchases.
+        """
+        cls._complete_diag_data_appro_labels(purchases, data)
+        cls._complete_diag_data_appro_label_bio_dont_commerce_equitable(purchases, data)
+        cls._complete_diag_appro_labels_france_europe_circuit_court_local(purchases, data)
+        cls._complete_diag_appro_labels_non_egalim(purchases, data)
+
+    @classmethod
+    def _complete_diag_data_appro_labels(cls, purchases, data):
+        """
+        How we manage APPRO_LABELS_EGALIM:
+        - order of APPRO_LABELS_EGALIM is significant
+        - determines which labels trump others when aggregating purchases
+        - (purchases are not double-counted across labels)
         """
         from data.models import Diagnostic
 
@@ -392,7 +403,17 @@ class Purchase(SoftDeletionModel):
                     ).distinct()
                 key = "valeur_" + family + "_" + label
                 data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
-            # special case of bio_dont_commerce_equitable (products can be counted twice across characteristics)
+
+    @classmethod
+    def _complete_diag_data_appro_label_bio_dont_commerce_equitable(cls, purchases, data):
+        """
+        How we manage bio_dont_commerce_equitable:
+        - outside of APPRO_LABELS_EGALIM
+        - products can be counted twice across characteristics
+        """
+        from data.models import Diagnostic
+
+        for family in Diagnostic.APPRO_FAMILIES:
             purchase_family = purchases.filter(family=family.upper())
             purchase_family_label = purchase_family.filter(
                 Q(characteristics__contains=[cls.Characteristic.BIO])
@@ -400,7 +421,18 @@ class Purchase(SoftDeletionModel):
             )
             key = "valeur_" + family + "_" + "bio_dont_commerce_equitable"
             data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
-            # outside of EGalim (products can be counted twice across characteristics)
+
+    @classmethod
+    def _complete_diag_appro_labels_france_europe_circuit_court_local(cls, purchases, data):
+        """
+        How we manage France/Europe/Circuit court/local:
+        - outside of APPRO_LABELS_EGALIM
+        - products can be counted in multiple of these characteristics
+        - before 2025, circuit_court & local were part of France
+        """
+        from data.models import Diagnostic
+
+        for family in Diagnostic.APPRO_FAMILIES:
             purchase_family = purchases.filter(family=family.upper())
             other_labels_characteristics = []
             for label in Diagnostic.APPRO_LABELS_FRANCE_SUBCATEGORIES:
@@ -416,10 +448,18 @@ class Purchase(SoftDeletionModel):
             key = "valeur_" + family + "_france"
             data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
             other_labels_characteristics.append(cls.Characteristic.FRANCE)
-            # Non-EGalim totals (contains no labels or only one or more of other_labels)
-            non_egalim_purchases = purchase_family.filter(
-                Q(characteristics__contained_by=(other_labels_characteristics + [""])) | Q(characteristics__len=0)
-            ).distinct()
+
+    @classmethod
+    def _complete_diag_appro_labels_non_egalim(cls, purchases, data):
+        """
+        How we manage Non-EGalim:
+        """
+        from data.models import Diagnostic
+
+        for family in Diagnostic.APPRO_FAMILIES:
+            non_egalim_purchases = purchases.filter(family=family.upper()).exclude(
+                characteristics__overlap=cls.CHARACTERISTIC_LABELS_EGALIM
+            )
             key = "valeur_" + family + "_non_egalim"
             data[key] = non_egalim_purchases.aggregate(total=Sum("price_ht"))["total"] or 0
 
