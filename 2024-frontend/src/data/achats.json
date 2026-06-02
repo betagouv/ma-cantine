@@ -1,27 +1,5 @@
 {
-  "definitionLocal": {
-    "autourService": {
-      "text": "200 km autour du lieu de service",
-      "value": "AUTOUR_SERVICE"
-    },
-    "autre": {
-      "text": "Autre",
-      "value": "AUTRE"
-    },
-    "departement": {
-      "text": "Provenant du même département",
-      "value": "DEPARTEMENT"
-    },
-    "pat": {
-      "text": "Issu du Projet Alimentaire Territorial (PAT)",
-      "value": "PAT"
-    },
-    "region": {
-      "text": "Provenant de la même région",
-      "value": "REGION"
-    }
-  },
-  "egalimCategories": {
+  "categoriesEgalim": {
     "aocaop": {
       "longText": "Appellation d'origine (AOC / AOP)",
       "text": "AOC / AOP",
@@ -79,6 +57,38 @@
       "value": "STG"
     }
   },
+  "categoriesOrigines": {
+    "europe": {
+      "text": "Origine Europe",
+      "value": "EUROPE"
+    },
+    "france": {
+      "text": "Origine France",
+      "value": "FRANCE"
+    }
+  },
+  "definitionLocal": {
+    "autourService": {
+      "text": "200 km autour du lieu de service",
+      "value": "AUTOUR_SERVICE"
+    },
+    "autre": {
+      "text": "Autre",
+      "value": "AUTRE"
+    },
+    "departement": {
+      "text": "Provenant du même département",
+      "value": "DEPARTEMENT"
+    },
+    "pat": {
+      "text": "Issu du Projet Alimentaire Territorial (PAT)",
+      "value": "PAT"
+    },
+    "region": {
+      "text": "Provenant de la même région",
+      "value": "REGION"
+    }
+  },
   "estCircuitCourt": {
     "circuitCourt": {
       "text": "Achat en circuit court ou approvisionnement direct",
@@ -89,16 +99,6 @@
     "local": {
       "text": "Produit « local » ou « de proximité »",
       "value": "LOCAL"
-    }
-  },
-  "originesCategories": {
-    "europe": {
-      "text": "Origine Europe",
-      "value": "EUROPE"
-    },
-    "france": {
-      "text": "Origine France",
-      "value": "FRANCE"
     }
   }
 }
