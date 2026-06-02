@@ -66,21 +66,22 @@ class PurchasesPagination(LimitOffsetPagination):
 
 
 class PurchaseFilterSet(django_filters.FilterSet):
-    caracteristiques = django_filters.CharFilter(method="filter_caracteristiques")
+    family = django_filters.CharFilter(field_name="famille_produits")
+    characteristics = django_filters.CharFilter(method="filter_caracteristiques")
     date = django_filters.DateFromToRangeFilter()
 
     class Meta:
         model = Purchase
         fields = (
             "canteen__id",
-            "famille_produits",
-            # "caracteristiques",
+            # "family",
+            # "characteristics",
             # "date"
         )
 
     # caracteristiques is a ChoiceArrayField, we need a custom overlap filter
     def filter_caracteristiques(self, queryset, name, value):
-        caracteristiques = self.request.query_params.getlist("caracteristiques")
+        caracteristiques = self.request.query_params.getlist("characteristics")
         if caracteristiques:
             return queryset.filter(caracteristiques__overlap=caracteristiques)
         return queryset

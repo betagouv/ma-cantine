@@ -66,7 +66,13 @@ class PurchaseListFilterApiTest(APITestCase):
             date="2020-02-01",
         )
         cls.other_canteen = CanteenFactory()
-        PurchaseFactory(canteen=cls.other_canteen, description="secret", date="2020-01-01")
+        PurchaseFactory(
+            canteen=cls.other_canteen,
+            description="secret",
+            famille_produits=None,
+            caracteristiques=[],
+            date="2020-01-01",
+        )
         cls.url = reverse("purchase_list_create")
 
     @authenticate
@@ -116,17 +122,17 @@ class PurchaseListFilterApiTest(APITestCase):
         self.assertEqual(len(results), 0)
 
     @authenticate
-    def test_filter_by_characteristic(self):
+    def test_filter_by_characteristics(self):
         self.canteen.managers.add(authenticate.user)
 
-        response = self.client.get(f"{self.url}?caracteristiques={Purchase.Characteristic.BIO}")
+        response = self.client.get(f"{self.url}?characteristics={Purchase.Characteristic.BIO}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results", [])
         self.assertEqual(len(results), 2)
 
         response = self.client.get(
-            f"{self.url}?caracteristiques={Purchase.Characteristic.BIO}&caracteristiques={Purchase.Characteristic.PECHE_DURABLE}"
+            f"{self.url}?characteristics={Purchase.Characteristic.BIO}&characteristics={Purchase.Characteristic.PECHE_DURABLE}"
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -134,10 +140,10 @@ class PurchaseListFilterApiTest(APITestCase):
         self.assertEqual(len(results), 3)
 
     @authenticate
-    def test_filter_by_famille_produits(self):
+    def test_filter_by_family(self):
         self.canteen.managers.add(authenticate.user)
 
-        response = self.client.get(f"{self.url}?famille_produits={Purchase.Family.PRODUITS_DE_LA_MER}")
+        response = self.client.get(f"{self.url}?family={Purchase.Family.PRODUITS_DE_LA_MER}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results", [])
@@ -213,7 +219,7 @@ class PurchaseListFilterApiTest(APITestCase):
         self.assertEqual(len(body["characteristics"]), 2)
         self.assertEqual(len(body["canteens"]), 1 + 1)
 
-        response = self.client.get(f"{self.url}?caracteristiques={Purchase.Characteristic.BIO}")
+        response = self.client.get(f"{self.url}?characteristics={Purchase.Characteristic.BIO}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -222,7 +228,7 @@ class PurchaseListFilterApiTest(APITestCase):
         self.assertEqual(len(body["families"]), 1 + 1)
         self.assertEqual(len(body["canteens"]), 1 + 1)
 
-        response = self.client.get(f"{self.url}?famille_produits={Purchase.Family.PRODUITS_LAITIERS}")
+        response = self.client.get(f"{self.url}?family={Purchase.Family.PRODUITS_LAITIERS}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
