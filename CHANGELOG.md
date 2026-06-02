@@ -6,6 +6,25 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.36.1](https://github.com/betagouv/ma-cantine/compare/v2026.36.0...v2026.36.1) (2026-06-02)
+
+
+### Améliorations
+
+* **Cantines:** script pour remplir le nouveau champ creation_user ([#6761](https://github.com/betagouv/ma-cantine/issues/6761)) ([bdd7ed4](https://github.com/betagouv/ma-cantine/commit/bdd7ed494622a77f9e506d28280a4b458f3a7522))
+* **Diagnostics:** script pour remplir le nouveau champ creation_user ([#6763](https://github.com/betagouv/ma-cantine/issues/6763)) ([21f50b1](https://github.com/betagouv/ma-cantine/commit/21f50b146e1262ed66a9630b5516c9849cbb7a56))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** dans l'API canteenStatus, ne plus appeler l'API Adresse (répare le formulaire de création de cantines) ([#6766](https://github.com/betagouv/ma-cantine/issues/6766)) ([4e4877b](https://github.com/betagouv/ma-cantine/commit/4e4877bc0c01b6bf0e33a1bdeb112734ee6f5743))
+* **Tests:** répare 2 tests cassés ([#6781](https://github.com/betagouv/ma-cantine/issues/6781)) ([5e554ad](https://github.com/betagouv/ma-cantine/commit/5e554adf232e6ac16d9127161f66921a79a7c4b4))
+
+
+### Technique
+
+* **Tests:** API: homogénéisation suite aux changements récents ([#6757](https://github.com/betagouv/ma-cantine/issues/6757)) ([7728fe4](https://github.com/betagouv/ma-cantine/commit/7728fe426c208a055b55c49895843818b8a91bd8))
+
 ## [2026.36.0](https://github.com/betagouv/ma-cantine/compare/v2026.35.0...v2026.36.0) (2026-05-28)
 
 
