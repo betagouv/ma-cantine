@@ -21,17 +21,25 @@ const form = reactive({
   characteristicsEgalim: [],
   characteristicsOrigines: [],
   characteristicsCircuitCourt: [],
+  characteristicsLocal: [],
+  localDefinition: null,
 })
 
 const categoriesEgalimOptions = Object.values(achats.categoriesEgalim)
 const categoriesOriginesOptions = Object.values(achats.categoriesOrigines)
 const estCircuitCourtOptions = Object.values(achats.estCircuitCourt)
-const { required, decimal, minValue } = useValidators()
+const estLocalOptions = Object.values(achats.estLocal)
+const definitionLocalOptions = Object.values(achats.definitionLocal).map(option => ({ value: option.value, text: option.label }))
+
+const showLocalDefinition = computed(() => form.characteristicsLocal.length > 0)
+
+const { required, decimal, minValue, requiredIf } = useValidators()
 const rules = {
   description: { required },
   provider: { required },
   priceHt: { required, decimal, minValue: minValue(0.01) },
   date: { required },
+  localDefinition: { required: requiredIf(showLocalDefinition) },
 }
 
 const v$ = useVuelidate(rules, form)
@@ -141,6 +149,22 @@ const validateForm = async (action) => {
       :options="estCircuitCourtOptions"
       small
       inline
+    />
+
+    <DsfrCheckboxSet
+      v-model="form.characteristicsLocal"
+      legend="« Local »"
+      :options="estLocalOptions"
+      small
+      inline
+    />
+    <DsfrSelect
+      v-if="showLocalDefinition"
+      v-model="form.localDefinition"
+      label="Précisions *"
+      labelVisible
+      :options="definitionLocalOptions"
+      :error-message="formatError(v$.localDefinition)"
     />
 
     <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
