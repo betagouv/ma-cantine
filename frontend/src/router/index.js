@@ -442,6 +442,10 @@ const vue3Routes = [
     name: "GestionnaireAchatsAjouter",
   },
   {
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/achats/:id/modifier",
+    name: "GestionnaireAchatsModifier",
+  },
+  {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/gerer",
     name: "CanteenForm",
   },

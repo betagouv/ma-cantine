@@ -295,7 +295,12 @@
         }"
       >
         <template v-slot:[`item.description`]="{ item }">
-          <router-link :to="{ name: 'PurchasePage', params: { id: item.id } }">
+          <router-link
+            :to="{
+              name: 'GestionnaireAchatsModifier',
+              params: { id: item.id, canteenUrlComponent: item.canteenUrlComponent },
+            }"
+          >
             {{ item.description || "[sans description]" }}
             <span class="d-sr-only">, {{ item.date }}</span>
           </router-link>
@@ -450,7 +455,8 @@ export default {
         const canteen = canteens.find((y) => y.id === x.canteen)
         const date = x.date ? formatDate(x.date) : null
         const hasAttachment = !!x.invoiceFile
-        return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment })
+        const canteenUrlComponent = canteen ? this.$store.getters.getCanteenUrlComponent(canteen) : null
+        return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment, canteenUrlComponent })
       })
     },
     exportUrl() {
