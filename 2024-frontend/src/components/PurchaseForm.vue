@@ -6,8 +6,8 @@ import { formatError, toBase64 } from "@/utils.js"
 import achats from "@/data/achats.json"
 
 /* Props and emits */
-defineProps(["showCreateButton"])
-const emit = defineEmits(["sendForm"])
+defineProps(["purchaseData", "showCreateButton", "showCancelButton"])
+const emit = defineEmits(["sendForm", "cancel"])
 
 /* Form fields */
 const today = computed(() => new Date().toISOString().split("T")[0])
@@ -189,6 +189,14 @@ const formatPayload = (form) => {
     />
 
     <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
+      <DsfrButton
+        v-if="showCancelButton"
+        :disabled="isSaving"
+        label="Annuler"
+        tertiary
+        class="fr-mr-1w"
+        @click="emit('cancel')"
+      />
       <DsfrButton
         v-if="showCreateButton"
         :disabled="isSaving"
