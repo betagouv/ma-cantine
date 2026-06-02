@@ -17,6 +17,7 @@ const form = reactive({
   provider: null,
   priceHt: null,
   date: null,
+  family: null,
   characteristics: [],
   characteristicsEgalim: [],
   characteristicsOrigines: [],
@@ -25,6 +26,7 @@ const form = reactive({
   localDefinition: null,
 })
 
+const familleProduitOptions = Object.values(achats.familleProduit)
 const categoriesEgalimOptions = Object.values(achats.categoriesEgalim)
 const categoriesOriginesOptions = Object.values(achats.categoriesOrigines)
 const estCircuitCourtOptions = Object.values(achats.estCircuitCourt)
@@ -39,6 +41,7 @@ const rules = {
   provider: { required },
   priceHt: { required, decimal, minValue: minValue(0.01) },
   date: { required },
+  family: { required },
   localDefinition: { required: requiredIf(showLocalDefinition) },
 }
 
@@ -117,6 +120,13 @@ const validateForm = async (action) => {
       class="fr-mb-3w"
       @change="onInvoiceFileChange"
     />
+    <DsfrRadioButtonSet
+      v-model="form.family"
+      legend="Famille de produit *"
+      :options="familleProduitOptions"
+      :error-message="formatError(v$.family)"
+    />
+
     <DsfrMultiselect
       v-model="form.characteristicsEgalim"
       label="Catégories EGalim"
