@@ -155,7 +155,7 @@ dependencies = [
     "toml==0.10.2",
     "tomli==2.2.1",
     "tomlkit==0.13.2",
-    "tqdm==4.67.0",
+    "tqdm==4.67.3",
     "typing-extensions==4.12.2",
     "tzdata==2024.2",
     "tzlocal==5.2",
