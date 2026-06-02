@@ -1278,7 +1278,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
     @authenticate
     def test_satellite_with_central_siret_unknown(self):
         satellite = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="19622299600015"
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="22730656663081"
         )
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             satellite_diagnostic = DiagnosticFactory(
@@ -1292,7 +1292,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
 
         # Before the script is run
         self.assertEqual(
-            Canteen.objects.filter(siret="19622299600015").count(), 0
+            Canteen.objects.filter(siret="22730656663081").count(), 0
         )  # no central canteen exist with the siret used in sat
         self.assertEqual(Canteen.objects.count(), 1)
         self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
