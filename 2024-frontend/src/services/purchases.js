@@ -15,6 +15,34 @@ const createPurchase = (payload) => {
     .catch((e) => e)
 }
 
+const fetchPurchase = (id) => {
+  return fetch(`/api/v1/purchases/${id}`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const updatePurchase = (payload, id) => {
+  return fetch(`/api/v1/purchases/${id}`, {
+    method: "PATCH",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 export default {
-  createPurchase
+  createPurchase,
+  fetchPurchase,
+  updatePurchase,
 }
