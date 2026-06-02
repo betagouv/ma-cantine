@@ -3,6 +3,7 @@ import { reactive, ref, computed } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError, toBase64 } from "@/utils.js"
+import achats from "@/data/achats.json"
 
 /* Props and emits */
 defineProps(["showCreateButton"])
@@ -16,7 +17,14 @@ const form = reactive({
   provider: null,
   priceHt: null,
   date: null,
+  characteristics: [],
 })
+
+const categoriesEgalimOptions = Object.values(achats.categoriesEgalim).map((c) => ({
+  label: c.text,
+  hint: c.longText,
+  value: c.value,
+}))
 
 const { required, decimal, minValue } = useValidators()
 const rules = {
@@ -98,8 +106,26 @@ const validateForm = async (action) => {
       hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
       accept="image/jpeg,image/png,application/pdf"
       :error="invoiceFileError"
+      class="fr-mb-3w"
       @change="onInvoiceFileChange"
     />
+    <DsfrMultiselect
+      v-model="form.characteristics"
+      label="Catégories EGalim"
+      labelVisible
+      :options="categoriesEgalimOptions"
+      id-key="value"
+      :filtering-keys="['label', 'hint']"
+      search
+      maxOverflowHeight="300px"
+    >
+      <template #checkbox-label="{ option }">
+        <div>
+          <p class="fr-mb-0">{{ option.label }}</p>
+          <p v-if="option.hint" class="fr-mb-0 fr-hint-text">{{ option.hint }}</p>
+        </div>
+      </template>
+    </DsfrMultiselect>
 
     <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
       <DsfrButton
