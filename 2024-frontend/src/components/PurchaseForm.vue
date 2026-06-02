@@ -18,9 +18,12 @@ const form = reactive({
   priceHt: null,
   date: null,
   characteristics: [],
+  characteristicsEgalim: [],
+  characteristicsOrigines: [],
 })
 
 const categoriesEgalimOptions = Object.values(achats.categoriesEgalim)
+const categoriesOriginesOptions = Object.values(achats.categoriesOrigines)
 const { required, decimal, minValue } = useValidators()
 const rules = {
   description: { required },
@@ -105,7 +108,7 @@ const validateForm = async (action) => {
       @change="onInvoiceFileChange"
     />
     <DsfrMultiselect
-      v-model="form.characteristics"
+      v-model="form.characteristicsEgalim"
       label="Catégories EGalim"
       labelVisible
       :options="categoriesEgalimOptions"
@@ -121,6 +124,14 @@ const validateForm = async (action) => {
         </div>
       </template>
     </DsfrMultiselect>
+
+    <DsfrCheckboxSet
+      v-model="form.characteristicsOrigines"
+      legend="Origine"
+      :options="categoriesOriginesOptions"
+      small
+      inline
+    />
 
     <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
       <DsfrButton
