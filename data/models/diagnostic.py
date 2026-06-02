@@ -538,13 +538,11 @@ class Diagnostic(models.Model):
     APPRO_LABELS_NON_EGALIM = [
         "non_egalim",
     ]
-    APPRO_LABELS_FRANCE_SUBCATEGORIES = [
-        "circuit_court",
-        "local",
-    ]
-    APPRO_LABELS_FRANCE = ["france"] + APPRO_LABELS_FRANCE_SUBCATEGORIES
+    APPRO_LABELS_ORIGINE = ["europe", "france"]
     APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
-    APPRO_LABELS_ALL = APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_FRANCE
+    APPRO_LABELS_ALL = (
+        APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_ORIGINE + ["circuit_court", "local"]
+    )
     APPRO_LABELS_GROUPS_MAPPING = {
         "bio": ["bio"],
         "siqo": ["label_rouge", "aocaop_igp_stg"],
@@ -1789,8 +1787,8 @@ class Diagnostic(models.Model):
             family = "produits_de_la_mer"
             total_fish_egalim = total_fish_egalim + (getattr(self, f"valeur_{family}_{label}") or 0)
 
-        # NOTE: stop populating france from APPRO_LABELS_FRANCE
-        # for label in Diagnostic.APPRO_LABELS_FRANCE:
+        # NOTE: stop populating france from ["france", "circuit_court", "local"]
+        # for label in ["france", "circuit_court", "local"]:
         #     family = "viandes_volailles"
         #     total_meat_france = total_meat_france + (getattr(self, f"valeur_{family}_{label}") or 0)
 
@@ -1844,7 +1842,7 @@ class Diagnostic(models.Model):
 
     def family_sum(self, family: str):
         """
-        NOTE: APPRO_LABELS does not include APPRO_LABELS_FRANCE
+        NOTE: APPRO_LABELS does not include APPRO_LABELS_ORIGINE & circuit_court & local
         """
         sum = 0
         for label in Diagnostic.APPRO_LABELS:
