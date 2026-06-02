@@ -17,6 +17,7 @@ const store = useRootStore()
 
 /* Canteen */
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
+const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 
 /* Purchase */
 const isLoading = ref(true)
@@ -25,7 +26,9 @@ const purchaseId = route.params.id
 const purchaseData = computedAsync(async () => {
   const response = await purchasesService.fetchPurchase(purchaseId)
   isLoading.value = false
-  return !response?.id ? {} : response
+  if (!response?.id) return {}
+  else if (response.canteen.id !== canteenId) return {}
+  else response
 }, {})
 
 /* Save */
