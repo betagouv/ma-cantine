@@ -21,10 +21,33 @@
           .
         </p>
         <v-row v-if="hasCanteens" align="center" class="mt-2 px-3">
-          <v-btn color="primary" :to="{ name: 'NewPurchase' }" large class="mr-2 my-3">
-            <v-icon>mdi-plus</v-icon>
-            Ajouter un produit
-          </v-btn>
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn color="primary" large class="mr-2 my-3" v-bind="attrs" v-on="on">
+                <v-icon class="mr-1">mdi-plus</v-icon>
+                Ajouter un produit
+                <v-icon v-if="attrs['aria-expanded'] === 'true'" class="ml-1">
+                  $arrow-up-s-line
+                </v-icon>
+                <v-icon v-else class="ml-1">$arrow-down-s-line</v-icon>
+              </v-btn>
+            </template>
+            <v-list dense>
+              <v-subheader class="text-uppercase text-caption font-weight-bold">
+                Pour quel établissement souhaitez-vous ajouter un produit ?
+              </v-subheader>
+              <v-list-item
+                v-for="canteen in userCanteens"
+                :key="canteen.id"
+                :to="{
+                  name: 'GestionnaireAchatsAjouter',
+                  params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+                }"
+              >
+                <v-list-item-title>{{ canteen.name }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
           <v-btn text color="primary" :to="{ name: 'GestionnaireImport' }" class="px-0 px-md-2 my-3">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
             Créer plusieurs achats depuis un fichier
