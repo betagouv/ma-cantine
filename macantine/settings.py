@@ -520,7 +520,6 @@ CSP_CONNECT_SRC = (
     "'self'",
     "stats.beta.gouv.fr",
     "ws:",
-    "api-adresse.data.gouv.fr",
     "geo.api.gouv.fr",
     "client.crisp.chat",
     "wss://client.relay.crisp.chat",
