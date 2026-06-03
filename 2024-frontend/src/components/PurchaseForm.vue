@@ -3,6 +3,7 @@ import { reactive, ref, computed } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError, toBase64 } from "@/utils.js"
+import achats from "@/data/achats.json"
 
 /* Props and emits */
 defineProps(["showCreateButton"])
@@ -16,14 +17,31 @@ const form = reactive({
   provider: null,
   priceHt: null,
   date: null,
+  family: null,
+  characteristicsEgalim: [],
+  characteristicsOrigines: [],
+  characteristicsCircuitCourt: [],
+  characteristicsLocal: [],
+  localDefinition: null,
 })
 
-const { required, decimal, minValue } = useValidators()
+const familleProduitOptions = Object.values(achats.familleProduit)
+const categoriesEgalimOptions = Object.values(achats.categoriesEgalim)
+const categoriesOriginesOptions = Object.values(achats.categoriesOrigines)
+const estCircuitCourtOptions = Object.values(achats.estCircuitCourt)
+const estLocalOptions = Object.values(achats.estLocal)
+const definitionLocalOptions = Object.values(achats.definitionLocal).map(option => ({ value: option.value, text: option.label }))
+
+const showLocalDefinition = computed(() => form.characteristicsLocal.length > 0)
+
+const { required, decimal, minValue, requiredIf } = useValidators()
 const rules = {
   description: { required },
   provider: { required },
   priceHt: { required, decimal, minValue: minValue(0.01) },
   date: { required },
+  family: { required },
+  localDefinition: { required: requiredIf(showLocalDefinition) },
 }
 
 const v$ = useVuelidate(rules, form)
@@ -56,9 +74,19 @@ const validateForm = async (action) => {
   const isValid = await v$.value.$validate()
   if (!isValid || invoiceFileError.value) return
 
-  const payload = { ...form }
+  const payload = formatPayload(form)
   if (invoiceFile.value) payload.invoiceFile = await toBase64(invoiceFile.value)
   emit("sendForm", { form: payload, action })
+}
+
+const formatPayload = (form) => {
+  const payload = { ...form }
+  payload.characteristics = [...payload.characteristicsEgalim, ...payload.characteristicsOrigines, ...payload.characteristicsCircuitCourt, ...payload.characteristicsLocal]
+  delete payload.characteristicsEgalim
+  delete payload.characteristicsOrigines
+  delete payload.characteristicsCircuitCourt
+  delete payload.characteristicsLocal
+  return payload
 }
 </script>
 
@@ -98,7 +126,66 @@ const validateForm = async (action) => {
       hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
       accept="image/jpeg,image/png,application/pdf"
       :error="invoiceFileError"
+      class="fr-mb-3w"
       @change="onInvoiceFileChange"
+    />
+    <DsfrRadioButtonSet
+      v-model="form.family"
+      legend="Famille de produit *"
+      :options="familleProduitOptions"
+      :error-message="formatError(v$.family)"
+    />
+
+    <DsfrMultiselect
+      v-model="form.characteristicsEgalim"
+      label="Catégories EGalim"
+      labelVisible
+      :options="categoriesEgalimOptions"
+      id-key="value"
+      :filtering-keys="['label', 'hint']"
+      search
+      maxOverflowHeight="300px"
+    >
+      <template #checkbox-label="{ option }">
+        <div>
+          <p class="fr-mb-0">{{ option.label }}</p>
+          <p v-if="option.hint" class="fr-mb-0 fr-hint-text">{{ option.hint }}</p>
+        </div>
+      </template>
+    </DsfrMultiselect>
+
+    <DsfrCheckboxSet
+      v-model="form.characteristicsOrigines"
+      legend="Origine"
+      :options="categoriesOriginesOptions"
+      small
+      inline
+    />
+
+    <DsfrCheckboxSet
+      v-model="form.characteristicsCircuitCourt"
+      legend="Circuit court"
+      :options="estCircuitCourtOptions"
+      small
+      inline
+    />
+
+    <DsfrCheckboxSet
+      v-model="form.characteristicsLocal"
+      legend="« Local »"
+      :options="estLocalOptions"
+      small
+      inline
+      class="fr-mb-n2w"
+    />
+    <DsfrSelect
+      v-if="showLocalDefinition"
+      v-model="form.localDefinition"
+      label="Précisions *"
+      hint="Précisez la provenance du produit"
+      labelVisible
+      :options="definitionLocalOptions"
+      :error-message="formatError(v$.localDefinition)"
     />
 
     <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
