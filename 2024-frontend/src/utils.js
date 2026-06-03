@@ -34,6 +34,16 @@ export const getPercentage = (partialValue, totalValue, round = true) => {
   }
 }
 
+// Reads a File into a base64 data URL (compatible with DRF's Base64FileField).
+export const toBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = (error) => reject(error)
+  })
+}
+
 // Formats ISO 8601 date strings (not datetime). Expects YYYY-MM-DD format.
 export const formatDate = (
   dateString,
