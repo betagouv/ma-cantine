@@ -33,7 +33,6 @@ import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
-import PurchasePage from "@/views/PurchasePage"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
 import DashboardManager from "@/views/DashboardManager"
@@ -303,25 +302,6 @@ const routes = [
     component: PurchasesHome,
     meta: {
       title: "Mes achats",
-      authenticationRequired: true,
-    },
-  },
-  {
-    path: "/mes-achats/:id",
-    name: "PurchasePage",
-    component: PurchasePage,
-    props: true,
-    meta: {
-      title: "Modifier mon achat",
-      authenticationRequired: true,
-    },
-  },
-  {
-    path: "/nouvel-achat/",
-    name: "NewPurchase",
-    component: PurchasePage,
-    meta: {
-      title: "Nouvel achat",
       authenticationRequired: true,
     },
   },
