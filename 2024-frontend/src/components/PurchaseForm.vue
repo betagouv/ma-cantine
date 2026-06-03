@@ -144,21 +144,27 @@ const formatPayload = (form) => {
     <datalist id="providers">
       <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
     </datalist>
-    <DsfrInputGroup
-      v-model.number="form.priceHt"
-      type="number"
-      label="Prix HT (€) *"
-      label-visible
-      :error-message="formatError(v$.priceHt)"
-    />
-    <DsfrInputGroup
-      v-model="form.date"
-      type="date"
-      label="Date d'achat *"
-      label-visible
-      :max="today"
-      :error-message="formatError(v$.date)"
-    />
+    <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
+      <div class="fr-col-12 fr-col-md-6">
+        <DsfrInputGroup
+          v-model.number="form.priceHt"
+          type="number"
+          label="Prix HT (€) *"
+          label-visible
+          :error-message="formatError(v$.priceHt)"
+        />
+      </div>
+      <div class="fr-col-12 fr-col-md-6">
+        <DsfrInputGroup
+          v-model="form.date"
+          type="date"
+          label="Date d'achat *"
+          label-visible
+          :max="today"
+          :error-message="formatError(v$.date)"
+        />
+      </div>
+    </div>
     <DsfrFileUpload
       v-model="invoiceFileInputValue"
       label="Facture"
