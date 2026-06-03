@@ -41,7 +41,12 @@
     </v-card-text>
     <v-spacer></v-spacer>
     <v-card-actions v-if="purchases.length || purchasesFetchingError" class="flex-wrap">
-      <v-btn :to="{ name: 'NewPurchase' }" outlined color="primary" class="mx-2 mb-2">
+      <v-btn
+        :to="{ name: 'GestionnaireAchatsAjouter', params: { canteenUrlComponent: canteenUrlComponent } }"
+        outlined
+        color="primary"
+        class="mx-2 mb-2"
+      >
         <v-icon small class="mr-2">$add-line</v-icon>
         Ajouter un achat
       </v-btn>
@@ -83,6 +88,9 @@ export default {
   computed: {
     canteenId() {
       return this.canteen.id
+    },
+    canteenUrlComponent() {
+      return this.$route.params.canteenUrlComponent
     },
     purchaseDataSourceString() {
       if (!this.purchases.length) return
