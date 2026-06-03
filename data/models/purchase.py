@@ -369,8 +369,8 @@ class Purchase(SoftDeletionModel):
         """
         cls._complete_diag_data_appro_labels(purchases, data)
         cls._complete_diag_data_appro_label_bio_dont_commerce_equitable(purchases, data)
-        if int(year) < 2026:
-            cls._complete_diag_appro_labels_france_europe_circuit_court_local_before_2026(purchases, data)
+        if int(year) == 2025:
+            cls._complete_diag_appro_labels_france_circuit_court_local_2025(purchases, data)
         else:
             cls._complete_diag_appro_labels_france_europe_circuit_court_local(purchases, data)
         cls._complete_diag_appro_labels_non_egalim(purchases, data)
@@ -426,12 +426,13 @@ class Purchase(SoftDeletionModel):
             data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_france_europe_circuit_court_local_before_2026(cls, purchases, data):
+    def _complete_diag_appro_labels_france_circuit_court_local_2025(cls, purchases, data):
         """
-        How we manage France/Europe/Circuit court/local:
+        How we manage France/Circuit court/local:
         - outside of APPRO_LABELS_EGALIM
         - products can be counted in multiple of these characteristics
-        - NOTE: before 2026, circuit_court & local were part of France, so we count them as France
+        - NOTE: in 2025, circuit_court & local were part of France, so we count them as France
+        - NOTE: in 2025, Europe did not exist yet
         """
         from data.models import Diagnostic
 
@@ -450,7 +451,6 @@ class Purchase(SoftDeletionModel):
             ).distinct()
             key = "valeur_" + family + "_france"
             data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
-            other_labels_characteristics.append(cls.Characteristic.FRANCE)
 
     @classmethod
     def _complete_diag_appro_labels_france_europe_circuit_court_local(cls, purchases, data):
@@ -459,6 +459,7 @@ class Purchase(SoftDeletionModel):
         - outside of APPRO_LABELS_EGALIM
         - products can be counted in multiple of these characteristics
         - NOTE: circuit_court & local are not counted as France
+        - NOTE: in 2026, Europe was added
         """
         from data.models import Diagnostic
 
