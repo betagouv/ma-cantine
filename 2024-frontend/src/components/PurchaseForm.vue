@@ -3,6 +3,7 @@ import { reactive, ref, computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
+import { helpers } from "@vuelidate/validators"
 import { formatError, toBase64 } from "@/utils.js"
 import achats from "@/data/achats.json"
 import purchases from "@/services/purchases.js"
@@ -70,7 +71,15 @@ const rules = {
   description: { required },
   provider: { required },
   priceHt: { required, decimal, minValue: minValue(0.01) },
-  date: { required },
+  date: {
+    required,
+    maxDate: helpers.withMessage(
+      "La date d'achat ne peut pas être dans le futur",
+      (date) => {
+        return new Date(date) < new Date()
+      }
+    )
+  },
   family: { required },
   localDefinition: { required: requiredIf(showLocalDefinition) },
 }
