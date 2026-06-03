@@ -123,7 +123,6 @@ export default Object.freeze({
   },
   Characteristics: {
     // NB: the order of these keys reflects the priority of the label in EGalim sum calculations
-    // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio" },
     LABEL_ROUGE: { text: "Label rouge" },
     AOCAOP: { text: "AOC / AOP", longText: "Appellation d'origine (AOC / AOP)" },
@@ -148,38 +147,6 @@ export default Object.freeze({
     FRANCE: { text: "Origine France" },
     CIRCUIT_COURT: { text: "Circuit court" },
     LOCAL: { text: "Local" },
-  },
-  PurchasesEGalimCategories: {
-    BIO: { text: "Bio ou « en conversion bio »" },
-    LABEL_ROUGE: { text: "Label rouge" },
-    AOCAOP: { text: "AOC / AOP", longText: "Appellation d'origine (AOC / AOP)" },
-    IGP: { text: "IGP", longText: "Indication géographique protégée (IGP)" },
-    STG: { text: "STG", longText: "Spécialité traditionnelle garantie (STG)" },
-    HVE: { text: "HVE", longText: "Certification environnementale de niveau 2 ou HVE" },
-    PECHE_DURABLE: { text: "Écolabel pêche durable" },
-    RUP: { text: "RUP", longText: "Région ultrapériphérique (RUP)" },
-    COMMERCE_EQUITABLE: { text: "Commerce équitable" },
-    FERMIER: { text: "Fermier", longText: "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »" },
-    EXTERNALITES: {
-      text: "Critère externalités environnementales",
-      longText:
-        "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
-    },
-    PERFORMANCE: {
-      text: "Critères protection de l'environnement et approvisionnement direct",
-      longText:
-        "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
-    },
-  },
-  PurchasesOriginesCategories: {
-    EUROPE: { text: "Origine Europe" },
-    FRANCE: { text: "Origine France" },
-  },
-  PurchasesLocalCategory: {
-    LOCAL: { text: "Produit « local » ou « de proximité »" },
-  },
-  PurchasesCircuitCourtCategory: {
-    CIRCUIT_COURT: { text: "Achat en circuit court ou approvisionnement direct" },
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
