@@ -31,7 +31,7 @@ const form = reactive({
   characteristicsOrigines: [],
   characteristicsCircuitCourt: [],
   characteristicsLocal: [],
-  localDefinition: null,
+  localDefinition: "",
 })
 
 const familleProduitOptions = Object.values(achats.familleProduit)
@@ -53,7 +53,7 @@ const prefillFields = () => {
   form.priceHt = hasPriceHt ? Number(props.purchaseData.priceHt) : null
   form.date = props.purchaseData.date
   form.family = props.purchaseData.family
-  form.localDefinition = props.purchaseData.localDefinition
+  form.localDefinition = props.purchaseData.localDefinition || ""
   const characteristics = props.purchaseData.characteristics || []
   form.characteristicsEgalim = characteristics.filter((c) => egalimValues.includes(c))
   form.characteristicsOrigines = characteristics.filter((c) => originesValues.includes(c))
