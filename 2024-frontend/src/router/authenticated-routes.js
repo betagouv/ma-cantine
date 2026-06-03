@@ -261,7 +261,7 @@ const routes = [
         name: "GestionnaireAchatsAjouter",
         component: GestionnaireAchatsAjouter,
         meta: {
-          title: "Nouvel achat",
+          title: "Ajouter un achat",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },

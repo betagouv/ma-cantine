@@ -1,12 +1,12 @@
 <script setup>
-import { reactive, ref, computed } from "vue"
+import { ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { useVuelidate } from "@vuelidate/core"
-import { useValidators } from "@/validators.js"
 import { useRootStore } from "@/stores/root"
-import { formatError, toBase64 } from "@/utils.js"
+import documentation from "@/data/documentation.json"
 import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
+import AppRessources from "@/components/AppRessources.vue"
+import PurchaseForm from "@/components/PurchaseForm.vue"
 
 /* Router and store */
 const route = useRoute()
@@ -17,71 +17,13 @@ const store = useRootStore()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 
-/* Form */
-const today = computed(() => new Date().toISOString().split("T")[0])
+/* Save purchase */
+const forceRerender = ref(0)
 
-const form = reactive({
-  description: null,
-  provider: null,
-  priceHt: null,
-  date: null,
-})
-
-const { required, decimal, minValue } = useValidators()
-const rules = {
-  description: { required },
-  provider: { required },
-  priceHt: { required, decimal, minValue: minValue(0.01) },
-  date: { required },
-}
-
-const v$ = useVuelidate(rules, form)
-
-/* Invoice file (Base64FileField on the backend; size enforced client-side) */
-const invoiceMaxSize = 10 * 1024 * 1024 // 10 Mo
-const invoiceFile = ref(null)
-const invoiceFileInputValue = ref("")
-const invoiceFileError = ref("")
-
-const onInvoiceFileChange = (files) => {
-  invoiceFileError.value = ""
-  const file = files?.[0]
-  if (!file) {
-    invoiceFile.value = null
-    return
-  }
-  if (file.size > invoiceMaxSize) {
-    invoiceFileError.value = "Le fichier dépasse la taille maximale de 10 Mo."
-    invoiceFile.value = null
-    return
-  }
-  invoiceFile.value = file
-}
-
-/* Submit */
-const isSaving = ref(false)
-
-const resetForm = () => {
-  form.description = null
-  form.provider = null
-  form.priceHt = null
-  form.date = null
-  invoiceFile.value = null
-  invoiceFileInputValue.value = ""
-  invoiceFileError.value = ""
-  v$.value.$reset()
-  window.scrollTo(0, 0)
-}
-
-const savePurchase = async (stayOnPage = false) => {
-  const isValid = await v$.value.$validate()
-  if (!isValid || invoiceFileError.value) return
-
-  isSaving.value = true
+const savePurchase = async (props) => {
+  const { form, action } = props
   const payload = { ...form, canteen: canteenId }
-  if (invoiceFile.value) payload.invoiceFile = await toBase64(invoiceFile.value)
   const response = await purchasesService.createPurchase(payload)
-  isSaving.value = false
 
   if (!response?.id) {
     store.notifyServerError(response)
@@ -94,96 +36,50 @@ const savePurchase = async (stayOnPage = false) => {
     status: "success",
   })
 
-  if (stayOnPage) resetForm()
-  else router.push({ name: "PurchasesHome" })
+  if (action === "stay-on-creation-page") resetForm()
+  if (action === "go-to-purchases-list") goToPurchasesList()
+}
+
+/* After purchase is saved */
+const goToPurchasesList = () => {
+  router.push({ name: "PurchasesHome" })
+}
+
+const resetForm = () => {
+  window.scrollTo(0, 0)
+  forceRerender.value++
 }
 </script>
 
 <template>
-  <h1>{{ route.meta.title }}</h1>
-
-  <form class="fr-mt-4w" @submit.prevent="">
-    <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-12 fr-col-md-8">
-        <div class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              v-model="form.description"
-              label="Description du produit *"
-              label-visible
-              placeholder="Yaourts bio, légumes bio de juin..."
-              :error-message="formatError(v$.description)"
-            />
-          </div>
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              v-model="form.provider"
-              label="Fournisseur *"
-              label-visible
-              :error-message="formatError(v$.provider)"
-            />
-          </div>
-        </div>
-
-        <div class="fr-grid-row fr-grid-row--gutters">
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              v-model.number="form.priceHt"
-              type="number"
-              label="Prix HT (€) *"
-              label-visible
-              :error-message="formatError(v$.priceHt)"
-            />
-          </div>
-          <div class="fr-col-12 fr-col-md-6">
-            <DsfrInputGroup
-              v-model="form.date"
-              type="date"
-              label="Date d'achat *"
-              label-visible
-              :max="today"
-              :error-message="formatError(v$.date)"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="fr-col-12 fr-col-md-4">
-        <div class="gestionnaire-achats-ajouter__facture fr-card ma-cantine--flex-center">
-          <DsfrFileUpload
-            v-model="invoiceFileInputValue"
-            label="Facture"
-            hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
-            accept="image/jpeg,image/png,application/pdf"
-            :error="invoiceFileError"
-            @change="onInvoiceFileChange"
-          />
-        </div>
-      </div>
+  <section class="fr-grid-row fr-grid-row--bottom">
+    <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
+      <h1>{{ route.meta.title }} pour la cantine «&nbsp;{{ canteenName }}&nbsp;»</h1>
+      <p>
+        Enregistrez ici les achats alimentaires de votre établissement pour suivre et faciliter la réalisation de votre déclaration.
+      </p>
     </div>
-
-    <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
-      <DsfrButton
-        label="Enregistrer et ajouter un nouvel achat"
-        secondary
-        class="fr-mr-1w"
-        @click="savePurchase(true)"
-      />
-      <DsfrButton
-        label="Enregistrer"
-        icon="fr-icon-save-line"
-        @click="savePurchase(false)"
-      />
-    </div>
-  </form>
+    <div class="fr-col-offset-md-1"></div>
+    <AppRessources>
+      <li>
+        <a :href="documentation.ajouterAchat" target="_blank">
+          Tutoriel pour ajouter un achat manuellement
+        </a>
+      </li>
+      <li>
+        <a :href="documentation.critèresQualiteDurabiliteProduits" target="_blank">
+          Comprendre les critères de qualité et durabilité des produits
+        </a>
+      </li>
+    </AppRessources>
+  </section>
+  <section
+    class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
+  >
+    <PurchaseForm
+      :showCreateButton="true"
+      :key="forceRerender"
+      @sendForm="(payload) => savePurchase(payload)"
+    />
+  </section>
 </template>
-
-<style lang="scss">
-.gestionnaire-achats-ajouter {
-  &__facture {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
-</style>
