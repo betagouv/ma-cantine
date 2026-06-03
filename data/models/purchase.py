@@ -404,7 +404,7 @@ class Purchase(SoftDeletionModel):
                         Q(caracteristiques__contains=[cls.Characteristic[label.upper()]])
                     ).distinct()
                 key = "valeur_" + family + "_" + label
-                data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+                data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
     def _complete_diag_data_appro_label_bio_dont_commerce_equitable(cls, purchases, data):
@@ -422,7 +422,7 @@ class Purchase(SoftDeletionModel):
                 & Q(caracteristiques__contains=[cls.Characteristic.COMMERCE_EQUITABLE])
             )
             key = "valeur_" + family + "_" + "bio_dont_commerce_equitable"
-            data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
+            data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
     def _complete_diag_appro_labels_france_europe_circuit_court_local(cls, purchases, data):
