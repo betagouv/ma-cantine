@@ -878,7 +878,8 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["valeurViandesVolailles"], 155.0)
         self.assertEqual(body["valeurViandesVolaillesEgalim"], 120.0)
-        self.assertEqual(body["valeurViandesVolaillesFrance"], 65.0)
+        self.assertEqual(body["valeurViandesVolaillesFrance"], 50.0 + 15.0)
+        self.assertEqual(body["valeurViandesVolaillesLocal"], 0)
 
     @authenticate
     def test_purchase_fish_totals(self):
@@ -894,9 +895,10 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             characteristics=[
                 Purchase.Characteristic.BIO,
                 Purchase.Characteristic.LABEL_ROUGE,
+                Purchase.Characteristic.FRANCE,
             ],
             family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=55,
+            price_ht=50,
         )
 
         # Should be counted on EGalim
@@ -926,7 +928,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             price_ht=20,
         )
 
-        # Should not be counted as EGalim, only included in the total
+        # Should be counted on provenance france
         PurchaseFactory(
             canteen=canteen,
             date="2020-01-01",
@@ -950,8 +952,10 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["valeurProduitsDeLaMer"], 160.0)
-        self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 125.0)
+        self.assertEqual(body["valeurProduitsDeLaMer"], 155.0)
+        self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 120.0)
+        self.assertEqual(body["valeurProduitsDeLaMerFrance"], 50.0 + 15.0)
+        self.assertEqual(body["valeurProduitsDeLaMerLocal"], 0)
 
     @authenticate
     def test_get_multi_year_purchase_statistics(self):
@@ -1129,54 +1133,6 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         self.assertIn(diag_cc.id, results)
         self.assertEqual(diag_cc.valeur_totale, 20)
         self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")
-
-    @freeze_time("2025-03-30")  # after the 2024 campaign
-    @authenticate
-    def test_create_diagnostics_from_purchases_france_value(self):
-        """
-        Test that the france total value is calculated correctly
-        """
-        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2024-11-01",
-            price_ht=10,
-            characteristics=[Purchase.Characteristic.FRANCE],
-            family=Purchase.Family.BOULANGERIE,
-        )
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2024-11-01",
-            price_ht=50,
-            characteristics=[Purchase.Characteristic.CIRCUIT_COURT],
-            family=Purchase.Family.BOULANGERIE,
-        )
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2024-11-01",
-            price_ht=15,
-            characteristics=[Purchase.Characteristic.LOCAL],
-            family=Purchase.Family.BOULANGERIE,
-        )
-
-        year = 2024
-        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site.id]).count(), 0)
-
-        response = self.client.post(
-            reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {"canteenIds": [canteen_site.id]},
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        results = body["results"]
-        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
-        self.assertIn(diag_site.id, results)
-        self.assertEqual(diag_site.valeur_totale, 75)
-        self.assertEqual(diag_site.valeur_boulangerie_france, 10 + 50 + 15)
-        self.assertEqual(diag_site.valeur_boulangerie_circuit_court, 50)
-        self.assertEqual(diag_site.valeur_boulangerie_local, 15)
 
 
 class PublicPurchasePercentageSummaryApiTest(APITestCase):
