@@ -372,7 +372,7 @@ class Purchase(SoftDeletionModel):
         if int(year) == 2025:
             cls._complete_diag_appro_labels_france_circuit_court_local_2025(purchases, data)
         else:
-            cls._complete_diag_appro_labels_france_europe_circuit_court_local(purchases, data)
+            cls._complete_diag_appro_labels_france_circuit_court_local(purchases, data)
         cls._complete_diag_appro_labels_non_egalim(purchases, data)
 
     @classmethod
@@ -453,13 +453,13 @@ class Purchase(SoftDeletionModel):
             data[key] = purchase_family_label.aggregate(total=Sum("price_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_france_europe_circuit_court_local(cls, purchases, data):
+    def _complete_diag_appro_labels_france_circuit_court_local(cls, purchases, data):
         """
-        How we manage France/Europe/Circuit court/local:
+        How we manage France/Circuit court/local:
         - outside of APPRO_LABELS_EGALIM
         - products can be counted in multiple of these characteristics
         - NOTE: circuit_court & local are not counted as France
-        - NOTE: in 2026, Europe was added
+        - TODO: in 2026, Europe was added
         """
         from data.models import Diagnostic
 
