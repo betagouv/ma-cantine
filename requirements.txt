@@ -23,9 +23,7 @@ asn1crypto==1.5.1
     #   pyhanko
     #   pyhanko-certvalidator
 astroid==3.3.6
-    # via
-    #   ma-cantine
-    #   pylint
+    # via pylint
 asttokens==3.0.0
     # via stack-data
 async-timeout==4.0.3
@@ -240,7 +238,6 @@ djangorestframework==3.16.1
 djangorestframework-camel-case==1.4.2
     # via ma-cantine
 djlint==1.36.3
-    # via ma-cantine
 draftjs-exporter==5.0.0
     # via
     #   ma-cantine
@@ -267,11 +264,8 @@ exceptiongroup==1.2.2
 executing==2.2.1
     # via stack-data
 factory-boy==3.3.3
-    # via ma-cantine
 faker==27.0.0
-    # via
-    #   factory-boy
-    #   ma-cantine
+    # via factory-boy
 filelock==3.15.4
     # via
     #   ma-cantine
@@ -281,7 +275,6 @@ filetype==1.2.0
     #   ma-cantine
     #   willow
 freezegun==1.5.2
-    # via ma-cantine
 fsspec==2024.9.0
     # via ma-cantine
 greenlet==3.2.2 ; (python_full_version < '3.13' and platform_machine == 'AMD64') or (python_full_version < '3.13' and platform_machine == 'WIN32') or (python_full_version < '3.13' and platform_machine == 'aarch64') or (python_full_version < '3.13' and platform_machine == 'amd64') or (python_full_version < '3.13' and platform_machine == 'ppc64le') or (python_full_version < '3.13' and platform_machine == 'win32') or (python_full_version < '3.13' and platform_machine == 'x86_64')
@@ -309,17 +302,13 @@ inflection==0.5.1
     #   drf-spectacular
     #   ma-cantine
 iniconfig==2.0.0
-    # via
-    #   ma-cantine
-    #   pytest
+    # via pytest
 ipython==9.5.0
     # via ma-cantine
 ipython-pygments-lexers==1.1.1
     # via ipython
 isort==5.13.2
-    # via
-    #   ma-cantine
-    #   pylint
+    # via pylint
 jedi==0.19.2
     # via ipython
 jinja2==3.1.6
@@ -371,11 +360,8 @@ markupsafe==3.0.3
 matplotlib-inline==0.1.7
     # via ipython
 mccabe==0.6.1
-    # via
-    #   ma-cantine
-    #   pylint
+    # via pylint
 mypy-extensions==1.0.0
-    # via ma-cantine
 nodeenv==1.9.1
     # via
     #   ma-cantine
@@ -432,20 +418,16 @@ pillow-heif==0.18.0
 pip==25.1.1
     # via pipdeptree
 pipdeptree==2.28.0
-    # via ma-cantine
 platformdirs==4.3.6
     # via
     #   ma-cantine
     #   pylint
     #   virtualenv
 pluggy==1.5.0
-    # via
-    #   ma-cantine
-    #   pytest
+    # via pytest
 polars==1.27.1
     # via datacompy
 pre-commit==4.0.1
-    # via ma-cantine
 prompt-toolkit==3.0.47
     # via
     #   click-repl
@@ -458,7 +440,6 @@ ptyprocess==0.7.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
 pure-eval==0.2.3
     # via stack-data
 py==1.11.0
-    # via ma-cantine
 pyarrow==20.0.0
     # via polars
 pycparser==2.22
@@ -500,11 +481,8 @@ pypng==0.20220715.0
     #   ma-cantine
     #   qrcode
 pytest==8.0.0
-    # via
-    #   ma-cantine
-    #   pytest-django
+    # via pytest-django
 pytest-django==4.8.0
-    # via ma-cantine
 python-bidi==0.4.2
     # via
     #   ma-cantine
@@ -561,14 +539,12 @@ requests==2.32.4
     #   requests-mock
     #   wagtail
 requests-mock==1.12.1
-    # via ma-cantine
 rpds-py==0.21.0
     # via
     #   jsonschema
     #   ma-cantine
     #   referencing
 ruff==0.14.2
-    # via ma-cantine
 s3transfer==0.10.4
     # via
     #   boto3
