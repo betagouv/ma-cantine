@@ -17,5 +17,4 @@ class ChoiceArrayField(ArrayField):
         defaults.update(kwargs)
         # Skip our parent's formfield implementation completely as we don't
         # care for it.
-        # pylint:disable=bad-super-call
         return super(ArrayField, self).formfield(**defaults)

@@ -3,13 +3,9 @@
 amqp==5.3.1
     # via kombu
 anyascii==0.3.2
-    # via
-    #   ma-cantine
-    #   wagtail
+    # via wagtail
 arabic-reshaper==3.0.0
-    # via
-    #   ma-cantine
-    #   xhtml2pdf
+    # via xhtml2pdf
 asgiref==3.8.1
     # via django
 asn1crypto==1.5.1
@@ -17,8 +13,6 @@ asn1crypto==1.5.1
     #   oscrypto
     #   pyhanko
     #   pyhanko-certvalidator
-astroid==3.3.6
-    # via pylint
 asttokens==3.0.0
     # via stack-data
 async-timeout==4.0.3 ; python_full_version < '3.11.3'
@@ -33,12 +27,6 @@ beautifulsoup4==4.12.3
     # via wagtail
 billiard==4.2.1
     # via celery
-boto3==1.35.57
-    # via ma-cantine
-botocore==1.35.58
-    # via
-    #   boto3
-    #   s3transfer
 celery==5.4.0
     # via
     #   django-celery-results
@@ -64,7 +52,6 @@ click==8.1.7
     #   click-didyoumean
     #   click-plugins
     #   click-repl
-    #   djlint
     #   pyhanko
 click-didyoumean==0.3.1
     # via celery
@@ -72,26 +59,18 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-colorama==0.4.6
+colorama==0.4.6 ; sys_platform == 'win32'
     # via
     #   click
-    #   djlint
     #   ipython
-    #   pylint
     #   pytest
     #   qrcode
-    #   tqdm
-cramjam==2.8.3
-    # via ma-cantine
 cryptography==43.0.1
     # via
     #   authlib
     #   jwcrypto
-    #   ma-cantine
     #   pyhanko
     #   pyhanko-certvalidator
-cssbeautifier==1.15.4
-    # via djlint
 cssselect2==0.7.0
     # via svglib
 datacompy==1.0.0a5
@@ -100,10 +79,6 @@ decorator==5.2.1
     # via ipython
 defusedxml==0.7.1
     # via willow
-dill==0.3.9
-    # via
-    #   ma-cantine
-    #   pylint
 distlib==0.3.9
     # via virtualenv
 django==5.2.14
@@ -189,8 +164,6 @@ djangorestframework==3.16.1
     #   wagtail
 djangorestframework-camel-case==1.4.2
     # via ma-cantine
-djlint==1.36.3
-    # via ma-cantine
 draftjs-exporter==5.0.0
     # via wagtail
 drf-base64==2.0
@@ -201,10 +174,6 @@ drf-spectacular==0.29.0
     # via ma-cantine
 drf-spectacular-sidecar==2026.1.1
     # via ma-cantine
-editorconfig==0.12.4
-    # via
-    #   cssbeautifier
-    #   jsbeautifier
 et-xmlfile==1.1.0
     # via openpyxl
 executing==2.2.1
@@ -220,8 +189,6 @@ filelock==3.15.4
 filetype==1.2.0
     # via willow
 freezegun==1.5.2
-    # via ma-cantine
-fsspec==2024.9.0
     # via ma-cantine
 greenlet==3.2.2 ; (python_full_version < '3.13' and platform_machine == 'AMD64') or (python_full_version < '3.13' and platform_machine == 'WIN32') or (python_full_version < '3.13' and platform_machine == 'aarch64') or (python_full_version < '3.13' and platform_machine == 'amd64') or (python_full_version < '3.13' and platform_machine == 'ppc64le') or (python_full_version < '3.13' and platform_machine == 'win32') or (python_full_version < '3.13' and platform_machine == 'x86_64')
     # via sqlalchemy
@@ -241,24 +208,10 @@ ipython==9.5.0
     # via ma-cantine
 ipython-pygments-lexers==1.1.1
     # via ipython
-isort==5.13.2
-    # via
-    #   ma-cantine
-    #   pylint
 jedi==0.19.2
     # via ipython
 jinja2==3.1.6
     # via datacompy
-jmespath==1.0.1
-    # via
-    #   boto3
-    #   botocore
-jsbeautifier==1.15.1
-    # via
-    #   cssbeautifier
-    #   djlint
-json5==0.9.25
-    # via djlint
 jsonschema==4.23.0
     # via drf-spectacular
 jsonschema-specifications==2024.10.1
@@ -270,15 +223,11 @@ kombu==5.4.2
 laces==0.1.1
     # via wagtail
 lxml==5.3.0
-    # via
-    #   ma-cantine
-    #   svglib
+    # via svglib
 markupsafe==3.0.3
     # via jinja2
 matplotlib-inline==0.1.7
     # via ipython
-mccabe==0.6.1
-    # via pylint
 nodeenv==1.9.1
     # via pre-commit
 numpy==2.4.1
@@ -297,9 +246,7 @@ ordered-set==4.1.0
 oscrypto==1.3.0
     # via pyhanko-certvalidator
 packaging==24.2
-    # via
-    #   pipdeptree
-    #   pytest
+    # via pytest
 pandas==3.0.0
     # via
     #   datacompy
@@ -307,8 +254,6 @@ pandas==3.0.0
     #   polars
 parso==0.8.5
     # via jedi
-pathspec==0.12.1
-    # via djlint
 pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
     # via ipython
 pillow==10.4.0
@@ -320,14 +265,8 @@ pillow==10.4.0
     #   xhtml2pdf
 pillow-heif==0.18.0
     # via willow
-pip==25.1.1
-    # via pipdeptree
-pipdeptree==2.28.0
-    # via ma-cantine
 platformdirs==4.3.6
-    # via
-    #   pylint
-    #   virtualenv
+    # via virtualenv
 pluggy==1.5.0
     # via pytest
 polars==1.27.1
@@ -358,17 +297,6 @@ pyhanko-certvalidator==0.26.3
     # via
     #   pyhanko
     #   xhtml2pdf
-pylint==3.3.1
-    # via
-    #   ma-cantine
-    #   pylint-django
-    #   pylint-plugin-utils
-pylint-django==2.5.5
-    # via ma-cantine
-pylint-plugin-utils==0.8.2
-    # via
-    #   ma-cantine
-    #   pylint-django
 pypdf==5.1.0
     # via xhtml2pdf
 pypng==0.20220715.0
@@ -383,7 +311,6 @@ python-bidi==0.4.2
     # via xhtml2pdf
 python-dateutil==2.9.0.post0
     # via
-    #   botocore
     #   celery
     #   faker
     #   freezegun
@@ -391,11 +318,8 @@ python-dateutil==2.9.0.post0
     #   sib-api-v3-sdk
 python-dotenv==1.0.1
     # via ma-cantine
-pytz==2024.2
-    # via ma-cantine
 pyyaml==6.0.2
     # via
-    #   djlint
     #   drf-spectacular
     #   pre-commit
     #   pyhanko
@@ -407,8 +331,6 @@ referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
-regex==2023.12.25
-    # via djlint
 reportlab==4.2.2
     # via
     #   svglib
@@ -430,17 +352,13 @@ rpds-py==0.21.0
     #   referencing
 ruff==0.14.2
     # via ma-cantine
-s3transfer==0.10.4
-    # via boto3
 sentry-sdk==2.10.0
     # via ma-cantine
 sib-api-v3-sdk==7.6.0
     # via ma-cantine
 six==1.17.0
     # via
-    #   cssbeautifier
     #   html5lib
-    #   jsbeautifier
     #   python-bidi
     #   python-dateutil
     #   sib-api-v3-sdk
@@ -462,10 +380,6 @@ tinycss2==1.4.0
     # via
     #   cssselect2
     #   svglib
-tomlkit==0.13.2
-    # via pylint
-tqdm==4.67.0
-    # via djlint
 traitlets==5.14.3
     # via
     #   ipython
@@ -493,7 +407,6 @@ uritools==4.0.3
     # via pyhanko-certvalidator
 urllib3==2.2.3
     # via
-    #   botocore
     #   django-anymail
     #   requests
     #   sentry-sdk
