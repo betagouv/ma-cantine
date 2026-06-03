@@ -712,7 +712,41 @@ export default {
     },
     capitalise: capitalise,
     duplicate(purchase) {
-      this.$router.push({ name: "PurchasePage", params: { id: purchase.id }, query: { dupliquer: true } })
+      // Date n'est pas renvoyée au même format par l'API, on doit le formatter manuellement, à changer plus tard en vue3
+      const monthNames = Array.from({ length: 12 }, (_, i) =>
+        new Date(2000, i, 1).toLocaleString("fr-FR", { month: "long" }).toLowerCase()
+      )
+      const [day, monthName, year] = purchase.date.toLowerCase().split(" ")
+      const month = String(monthNames.indexOf(monthName) + 1).padStart(2, "0")
+      const formattedDate = `${year}-${month}-${day.padStart(2, "0")}`
+
+      // Récupère les données de l'achat à dupliquer
+      const payload = {
+        canteen: `${purchase.canteen}`,
+        characteristics: [...purchase.characteristics],
+        description: purchase.description,
+        localDefinition: purchase.localDefinition || "",
+        family: purchase.family,
+        priceHt: purchase.priceHt,
+        date: formattedDate,
+        provider: purchase.provider,
+        importSource: "Duplication",
+        creationSource: "APP",
+      }
+      // Crée l'achat dupliqué
+      this.$store
+        .dispatch("createPurchase", { payload })
+        .then((newPurchase) => {
+          // Redirige vers la page de modification de l'achat dupliqué
+          this.$router.push({
+            name: "GestionnaireAchatsModifier",
+            params: { id: newPurchase.id, canteenUrlComponent: purchase.canteenUrlComponent },
+          })
+        })
+        .catch((e) => {
+          // Affiche une notification d'erreur
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
     duplicatePurchaseInstruction(purchase) {
       const readableDate = purchase.date.toLocaleString("fr-FR", {
