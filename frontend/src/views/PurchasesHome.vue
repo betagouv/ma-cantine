@@ -41,7 +41,7 @@
                   :items="userCanteens"
                   item-text="name"
                   item-value="id"
-                  :filter="canteenFilter"
+                  :filter="canteenAutocomplete"
                   placeholder="Sélectionnez une cantine"
                   hide-details
                   @input="onCanteenSelected"
@@ -515,7 +515,7 @@ export default {
       if (purchaseIndex === -1) this.selectedPurchases.push(purchase)
       else this.selectedPurchases.splice(purchaseIndex, 1)
     },
-    canteenFilter(item, queryText) {
+    canteenAutocomplete(item, queryText) {
       if (!queryText) return true
       const normalizedQuery = normaliseText(queryText).toLocaleLowerCase()
       const normalizedItemText = normaliseText(item.name).toLocaleLowerCase()
