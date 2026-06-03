@@ -289,7 +289,7 @@ class PurchaseCreateApiTest(APITestCase):
             "provider": "Test fournisseur",
             "family": "PRODUITS_DE_LA_MER",
             "characteristics": ["BIO", "LOCAL"],
-            "definition_local": "AUTOUR_SERVICE",
+            "local_definition": "AUTOUR_SERVICE",
             "price_ht": 15.23,
         }
 
