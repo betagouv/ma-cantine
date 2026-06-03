@@ -6,8 +6,8 @@ import { formatError, toBase64 } from "@/utils.js"
 import achats from "@/data/achats.json"
 
 /* Props and emits */
-defineProps(["showCreateButton"])
-const emit = defineEmits(["sendForm"])
+const props = defineProps(["purchaseData", "showCreateButton", "showCancelButton"])
+const emit = defineEmits(["sendForm", "cancel"])
 
 /* Form fields */
 const today = computed(() => new Date().toISOString().split("T")[0])
@@ -31,6 +31,28 @@ const categoriesOriginesOptions = Object.values(achats.categoriesOrigines)
 const estCircuitCourtOptions = Object.values(achats.estCircuitCourt)
 const estLocalOptions = Object.values(achats.estLocal)
 const definitionLocalOptions = Object.values(achats.definitionLocal).map(option => ({ value: option.value, text: option.label }))
+
+const egalimValues = categoriesEgalimOptions.map((option) => option.value)
+const originesValues = categoriesOriginesOptions.map((option) => option.value)
+const circuitCourtValues = estCircuitCourtOptions.map((option) => option.value)
+const localValues = estLocalOptions.map((option) => option.value)
+
+const prefillFields = () => {
+  form.description = props.purchaseData.description
+  form.provider = props.purchaseData.provider
+  const hasPriceHt = props.purchaseData.priceHt !== null && props.purchaseData.priceHt !== undefined
+  form.priceHt = hasPriceHt ? Number(props.purchaseData.priceHt) : null
+  form.date = props.purchaseData.date
+  form.family = props.purchaseData.family
+  form.localDefinition = props.purchaseData.localDefinition
+  const characteristics = props.purchaseData.characteristics || []
+  form.characteristicsEgalim = characteristics.filter((c) => egalimValues.includes(c))
+  form.characteristicsOrigines = characteristics.filter((c) => originesValues.includes(c))
+  form.characteristicsCircuitCourt = characteristics.filter((c) => circuitCourtValues.includes(c))
+  form.characteristicsLocal = characteristics.filter((c) => localValues.includes(c))
+}
+
+if (props.purchaseData) prefillFields()
 
 const showLocalDefinition = computed(() => form.characteristicsLocal.length > 0)
 
@@ -189,6 +211,14 @@ const formatPayload = (form) => {
     />
 
     <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
+      <DsfrButton
+        v-if="showCancelButton"
+        :disabled="isSaving"
+        label="Annuler"
+        tertiary
+        class="fr-mr-1w"
+        @click="emit('cancel')"
+      />
       <DsfrButton
         v-if="showCreateButton"
         :disabled="isSaving"
