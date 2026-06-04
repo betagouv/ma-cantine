@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: datawarehouse
+    description: >
+      Tables already present in the data warehouse, loaded by the existing Python ETL.
+      These can be used as sources immediately without FDW.
+    schema: public
+    tables:
+      - name: teledeclarations
+        description: Télédéclarations loaded by the Python ETL. Will be obsolete once 1td1site is live.
+      - name: canteens_raw
+        description: Raw canteen data dumped from the production database.
+      - name: canteen_managers_raw
+        description: Raw canteen-manager relationships dumped from the production database.
+      - name: diagnostics_raw
+        description: Raw diagnostics dumped from the production database.
+      - name: users_raw
+        description: Raw user data dumped from the production database.
+      - name: waste_measurements_raw
+        description: Raw waste measurements dumped from the production database.

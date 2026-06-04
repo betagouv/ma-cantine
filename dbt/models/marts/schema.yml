@@ -1,0 +1,205 @@
+version: 2
+
+models:
+  - name: mart_canteens
+    description: >
+      Fiche complète par cantine active (hors supprimées).
+      Inclut les informations géographiques, les caractéristiques de la cantine,
+      les emails des gestionnaires agrégés, et l'historique des déclarations.
+    columns:
+      - name: id
+        description: Identifiant unique de la cantine.
+        tests:
+          - unique
+          - not_null
+      - name: cantine_nom
+        description: Nom de la cantine.
+      - name: siret
+        description: Numéro SIRET de la cantine.
+      - name: siren_unite_legale
+        description: SIREN de l'unité légale.
+      - name: nbre_repas_jour
+        description: Nombre de repas servis par jour.
+      - name: nbre_repas_an
+        description: Nombre de repas servis par an.
+      - name: type_gestion
+        description: Mode de gestion (direct, conceded).
+      - name: type_production
+        description: Type de production (site, central, central_serving, on_site_central).
+      - name: modele_economique
+        description: Modèle économique de la cantine.
+      - name: secteur
+        description: Secteurs d'activité de la cantine (liste séparée par des virgules).
+      - name: categorie
+        description: Catégorie principale dérivée du premier secteur.
+      - name: ministere_tutelle
+        description: Ministère de tutelle pour les cantines SPE.
+      - name: spe
+        description: Vrai si la cantine est sous périmètre ministériel (SPE).
+      - name: departement
+        description: Code département de la cantine.
+      - name: department_lib
+        description: Libellé du département.
+      - name: region
+        description: Code région de la cantine.
+      - name: region_lib
+        description: Libellé de la région.
+      - name: epci
+        description: Code EPCI.
+      - name: epci_lib
+        description: Libellé de l'EPCI.
+      - name: pat_liste
+        description: Liste des PAT auxquels la cantine appartient.
+      - name: pat_lib_liste
+        description: Libellés des PAT.
+      - name: manager_emails
+        description: Emails des gestionnaires agrégés (séparés par des virgules).
+      - name: declaration_donnees_2021
+        description: La cantine a déclaré ses données pour 2021.
+      - name: declaration_donnees_2022
+        description: La cantine a déclaré ses données pour 2022.
+      - name: declaration_donnees_2023
+        description: La cantine a déclaré ses données pour 2023.
+      - name: declaration_donnees_2024
+        description: La cantine a déclaré ses données pour 2024.
+      - name: declaration_donnees_2025
+        description: La cantine a déclaré ses données pour 2025.
+
+  - name: mart_teledeclarations
+    description: >
+      Une ligne par télédéclaration soumise (status = SUBMITTED).
+      Exclut les cantines de type groupe et les diagnostics sans valeur totale ou bio.
+      Source actuelle : diagnostics_raw. Les infos cantine viennent du canteen_snapshot JSON.
+      Les colonnes sont préfixées cantine_ pour distinguer les infos cantine des données d'appro.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - canteen_id
+            - annee
+    columns:
+      - name: teledeclaration_id
+        description: >
+          Identifiant de la télédéclaration. Non unique — plusieurs cantines satellites
+          peuvent partager le même teledeclaration_id lorsqu'elles sont déclarées par un groupe.
+        tests:
+          - not_null
+      - name: canteen_id
+        description: >
+          Identifiant de la cantine. Non unique — une cantine peut télédéclarer chaque année.
+          La combinaison (canteen_id, annee) est unique.
+        tests:
+          - not_null
+      - name: annee
+        description: Année de déclaration.
+        tests:
+          - not_null
+      - name: version
+        description: Version du format de télédéclaration.
+      - name: date_teledeclaration
+        description: Date à laquelle la télédéclaration a été soumise.
+      - name: diagnostic_type
+        description: Type de diagnostic (SIMPLE ou COMPLETE).
+      - name: cantine_nom
+        description: Nom de la cantine au moment de la télédéclaration (snapshot).
+      - name: cantine_siret
+        description: SIRET de la cantine au moment de la télédéclaration.
+      - name: cantine_siren_unite_legale
+        description: SIREN de l'unité légale au moment de la télédéclaration.
+      - name: cantine_nbre_repas_jour
+        description: Nombre de repas par jour au moment de la télédéclaration.
+      - name: cantine_nbre_repas_an
+        description: Nombre de repas par an au moment de la télédéclaration.
+      - name: cantine_type_gestion
+        description: Mode de gestion de la cantine.
+      - name: cantine_type_production
+        description: Type de production de la cantine.
+      - name: cantine_modele_economique
+        description: Modèle économique de la cantine.
+      - name: cantine_secteur
+        description: Secteurs d'activité (liste séparée par des virgules).
+      - name: cantine_categorie
+        description: Catégorie principale dérivée du premier secteur.
+      - name: cantine_ministere_tutelle
+        description: Ministère de tutelle pour les cantines SPE.
+      - name: cantine_spe
+        description: Vrai si la cantine est sous périmètre ministériel.
+      - name: cantine_departement
+        description: Code département de la cantine.
+      - name: cantine_region
+        description: Code région de la cantine.
+      - name: cantine_code_insee_commune
+        description: Code INSEE de la commune.
+      - name: email_gestionnaire
+        description: Email du déclarant (applicant).
+      - name: valeur_totale
+        description: Valeur totale des achats alimentaires (€).
+      - name: valeur_bio
+        description: Valeur des achats bio (€).
+      - name: valeur_egalim_avec_bio
+        description: Valeur totale EGalim bio inclus (€).
+      - name: valeur_egalim_sans_bio
+        description: Valeur EGalim hors bio (€).
+      - name: valeur_siqo
+        description: Valeur des produits sous SIQO (€).
+      - name: valeur_externalites_performance
+        description: Valeur des produits externalités/performance (€).
+      - name: valeur_egalim_autres
+        description: Valeur des autres produits EGalim (€).
+      - name: valeur_viandes_volailles
+        description: Valeur totale viandes et volailles (€).
+      - name: valeur_produits_de_la_mer
+        description: Valeur totale produits de la mer (€).
+      - name: valeur_viandes_volailles_egalim
+        description: Valeur EGalim viandes et volailles (€).
+      - name: valeur_produits_de_la_mer_egalim
+        description: Valeur EGalim produits de la mer (€).
+      - name: valeur_viandes_et_poissons
+        description: Somme viandes volailles + produits de la mer (€).
+      - name: valeur_viandes_et_poissons_egalim
+        description: Somme EGalim viandes volailles + produits de la mer (€).
+      - name: valeur_viandes_volailles_france
+        description: Valeur viandes volailles d'origine France (€).
+      - name: valeur_charcuterie_france
+        description: Valeur charcuterie d'origine France (€).
+      - name: valeur_produits_de_la_mer_france
+        description: Valeur produits de la mer d'origine France (€).
+      - name: valeur_fruits_et_legumes_france
+        description: Valeur fruits et légumes d'origine France (€).
+      - name: valeur_produits_laitiers_france
+        description: Valeur produits laitiers d'origine France (€).
+      - name: valeur_boulangerie_france
+        description: Valeur boulangerie d'origine France (€).
+      - name: valeur_boissons_france
+        description: Valeur boissons d'origine France (€).
+      - name: valeur_autres_france
+        description: Valeur autres produits d'origine France (€).
+      - name: pourcentage_bio
+        description: Part des achats bio sur le total (%).
+      - name: pourcentage_egalim
+        description: Part des achats EGalim bio inclus sur le total (%).
+      - name: pourcentage_egalim_hors_bio
+        description: Part des achats EGalim hors bio sur le total (%).
+      - name: objectifs_egalim_atteints
+        description: Vrai si les objectifs EGalim sont atteints.
+      - name: type_service
+        description: Type de service de restauration.
+      - name: recurrence_vege
+        description: Fréquence hebdomadaire du menu végétarien.
+      - name: type_menu_vege
+        description: Type de menu végétarien proposé.
+      - name: diag_gaspi
+        description: La cantine a réalisé un diagnostic gaspillage.
+      - name: plan_action_gaspi
+        description: La cantine a un plan d'action anti-gaspillage.
+      - name: action_gaspi_inscription
+        description: Action gaspillage — inscription dans une démarche.
+      - name: action_gaspi_sensibilisation
+        description: Action gaspillage — sensibilisation des convives.
+      - name: action_gaspi_formation
+        description: Action gaspillage — formation du personnel.
+      - name: action_gaspi_distribution
+        description: Action gaspillage — optimisation de la distribution.
+      - name: action_gaspi_portions
+        description: Action gaspillage — adaptation des portions.
+      - name: action_gaspi_reutilisation
+        description: Action gaspillage — réutilisation des restes.

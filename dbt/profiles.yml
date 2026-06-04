@@ -1,0 +1,22 @@
+ma_cantine:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('DATA_WARE_HOUSE_HOST', 'localhost') }}"
+      user: "{{ env_var('DATA_WARE_HOUSE_USER') }}"
+      password: "{{ env_var('DATA_WARE_HOUSE_PASSWORD') }}"
+      port: "{{ env_var('DATA_WARE_HOUSE_PORT', '5432') | int }}"
+      dbname: "{{ env_var('DATA_WARE_HOUSE_DB') }}"
+      schema: dbt_dev
+      threads: 4
+
+    prod:
+      type: postgres
+      host: "{{ env_var('DATA_WARE_HOUSE_HOST') }}"
+      user: "{{ env_var('DATA_WARE_HOUSE_USER') }}"
+      password: "{{ env_var('DATA_WARE_HOUSE_PASSWORD') }}"
+      port: "{{ env_var('DATA_WARE_HOUSE_PORT', '5432') | int }}"
+      dbname: "{{ env_var('DATA_WARE_HOUSE_DB') }}"
+      schema: dbt_prod
+      threads: 8

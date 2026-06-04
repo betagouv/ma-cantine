@@ -1,3 +1,7 @@
+# Local credentials — never commit
+.env
+dbt/setup/fdw_setup.sql
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

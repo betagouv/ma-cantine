@@ -29,7 +29,7 @@ dependencies = [
     "click-plugins==1.1.1",
     "click-repl==0.3.0",
     "colorama==0.4.6",
-    "cramjam==2.8.3",
+    "cramjam>=2.9.0",
     "cryptography==43.0.1",
     "cssbeautifier==1.15.4",
     "cssselect2==0.7.0",
@@ -169,6 +169,8 @@ dependencies = [
     "webencodings==0.5.1",
     "wrapt==1.17.2",
     "xhtml2pdf==0.2.16",
+    "dbt-core>=1.9.0",
+    "dbt-postgres>=1.9.0",
 ]
 
 [tool.uv.sources]

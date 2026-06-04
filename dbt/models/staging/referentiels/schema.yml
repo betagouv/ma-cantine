@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: ref_regions
+    columns:
+      - name: code_region
+        tests:
+          - unique
+          - not_null
+
+  - name: ref_departements
+    columns:
+      - name: code_departement
+        tests:
+          - unique
+          - not_null
+
+  - name: ref_epci
+    columns:
+      - name: code_epci
+        tests:
+          - unique
+          - not_null
+
+  - name: ref_communes
+    columns:
+      - name: code_insee_commune
+        tests:
+          - unique
+          - not_null
+
+  - name: ref_pats
+    columns:
+      - name: code_pat
+        tests:
+          - unique
+          - not_null
