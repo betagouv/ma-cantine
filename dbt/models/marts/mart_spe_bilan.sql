@@ -58,9 +58,9 @@ ref_perimetre_with_groupe as (
 
 ref_cibles as (
     select * from (values
-        ('ecologie',                    null,   'Non renseignée'),
-        ('mer',                         null,   'Non renseignée'),
-        ('MTE',                           63,   'Cible ferme'),
+        ('ecologie',                      57,   'Cible ferme'),
+        ('mer',                            5,   'Cible ferme'),
+        ('MTE',                           62,   'Cible ferme'),
         ('affaires_etrangeres',            3,   'Cible ferme'),
         ('armee',                        244,   'Cible ferme'),
         ('autorites_independantes',      null,  'Non renseignée'),
@@ -70,9 +70,9 @@ ref_cibles as (
         ('enseignement_superieur',       439,   'Précision en cours'),
         ('sport',                         22,   'Cible ferme'),
         ('MEJSESR',                      481,   'Précision en cours'),
-        ('justice_hors_pjj',             336,   'Précision en cours'),
+        ('justice_hors_pjj',             290,   'Cible ferme'),
         ('justice_pjj',                   92,   'Cible ferme'),
-        ('Justice',                      428,   'Précision en cours'),
+        ('Justice',                      382,   'Cible ferme'),
         ('interieur',                    207,   'Précision en cours'),
         ('administration_territoriale',   96,   'Précision en cours'),
         ('Intérieur + ATE',              303,   'Précision en cours'),
@@ -80,7 +80,7 @@ ref_cibles as (
         ('agriculture',                   10,   'Cible ferme'),
         ('travail',                      null,  'Non renseignée'),
         ('sante',                        null,  'Non renseignée'),
-        ('Ministères sociaux',            87,   'Précision en cours'),
+        ('Ministères sociaux',           138,   'Cible ferme'),
         ('transformation',               null,  'Non renseignée')
     ) as t(perimetre_key, cible_etablissements, fiabilite_cible)
 ),
