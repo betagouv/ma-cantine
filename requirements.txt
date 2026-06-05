@@ -459,7 +459,7 @@ pure-eval==0.2.3
     # via stack-data
 py==1.11.0
     # via ma-cantine
-pyarrow==20.0.0
+pyarrow==23.0.1
     # via polars
 pycparser==2.22
     # via
