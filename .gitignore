@@ -1,5 +1,6 @@
 # Local credentials — never commit
 .env
+.envrc
 dbt/setup/fdw_setup.sql
 
 # Byte-compiled / optimized / DLL files

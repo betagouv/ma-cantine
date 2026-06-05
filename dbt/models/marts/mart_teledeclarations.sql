@@ -47,6 +47,23 @@ nb_cantines_inscrites as (
     cross join years y
     where c.creation_date <= make_date(y.year::int + 1, 4, 29)
     group by c.line_ministry_spe, y.year
+),
+
+td_years_by_canteen as (
+    select
+        t.canteen_id                    as cid,
+        bool_or(t.year = 2022)          as declaration_donnees_2022,
+        bool_or(t.year = 2023)          as declaration_donnees_2023,
+        bool_or(t.year = 2024)          as declaration_donnees_2024,
+        bool_or(t.year = 2025)          as declaration_donnees_2025,
+        bool_or(t.year = 2024) and bool_or(t.year = 2025)                                                          as iso_2024_2025,
+        bool_or(t.year = 2023) and bool_or(t.year = 2024) and bool_or(t.year = 2025)                               as iso_2023_2024_2025,
+        bool_or(t.year = 2022) and bool_or(t.year = 2023) and bool_or(t.year = 2024) and bool_or(t.year = 2025)    as iso_2022_2023_2024_2025
+    from teledeclarations t
+    where t.production_type != 'groupe'
+      and t.teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'
+      and (t.invalid_reason_list is null or t.invalid_reason_list::text = '[]')
+    group by t.canteen_id
 )
 
 select
@@ -109,11 +126,13 @@ select
     applicant_email                                     as email_gestionnaire,
 
     -- declarations history
-    declaration_donnees_2021                            as cantine_declaration_donnees_2021,
-    declaration_donnees_2022                            as cantine_declaration_donnees_2022,
-    declaration_donnees_2023                            as cantine_declaration_donnees_2023,
-    declaration_donnees_2024                            as cantine_declaration_donnees_2024,
-    declaration_donnees_2025                            as cantine_declaration_donnees_2025,
+    tdy.declaration_donnees_2022                        as cantine_declaration_donnees_2022,
+    tdy.declaration_donnees_2023                        as cantine_declaration_donnees_2023,
+    tdy.declaration_donnees_2024                        as cantine_declaration_donnees_2024,
+    tdy.declaration_donnees_2025                        as cantine_declaration_donnees_2025,
+    tdy.iso_2024_2025,
+    tdy.iso_2023_2024_2025,
+    tdy.iso_2022_2023_2024_2025,
 
     -- appro — valeurs
     valeur_totale,
@@ -338,24 +357,28 @@ select
             and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
     end                                                                     as atteint_bio_et_egalim,
     (valeur_viandes_et_poissons > 0
-        and valeur_viandes_et_poissons_egalim
-            / nullif(valeur_viandes_et_poissons, 0) >= 1.0)                as atteint_viandes_et_poissons_egalim,
+        and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >=
+            case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
+    )                                                                       as atteint_viandes_et_poissons_egalim,
     case
         when department = '976'
             then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.02
                  and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.05
                  and valeur_viandes_et_poissons > 0
-                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >= 1.0
+                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >=
+                     case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
         when objectif_zone_geo = 'droms'
             then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.05
                  and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.20
                  and valeur_viandes_et_poissons > 0
-                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >= 1.0
+                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >=
+                     case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
         else
             valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20
             and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
             and valeur_viandes_et_poissons > 0
-            and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >= 1.0
+            and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >=
+                case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
     end                                                                     as atteint_3_objectifs,
 
     -- SPE — objectif végétarien
@@ -374,6 +397,8 @@ left join ref_communes on ref_communes.code_insee_commune = teledeclarations.cit
 left join nb_cantines_inscrites
     on nb_cantines_inscrites.line_ministry_spe = teledeclarations.line_ministry
     and nb_cantines_inscrites.year = teledeclarations.year
+left join td_years_by_canteen tdy
+    on tdy.cid = teledeclarations.canteen_id
 where 1=1
   and production_type != 'groupe'
   and teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'
