@@ -269,7 +269,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 }
 
                 self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-                    instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
+                    instance=Diagnostic.objects.get(id=diagnostic.id)
                 )
                 data = self.serializer.data
                 self.assertEqual(data["ratio_egalim_sans_bio"], tc["expected_outcome"])
@@ -329,7 +329,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 "valeur_totale": diagnostic.valeur_totale,
             }
             self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-                instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
+                instance=Diagnostic.objects.get(id=diagnostic.id)
             )
             data = self.serializer.data
 
@@ -348,11 +348,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 "valeur_totale": diagnostic.valeur_totale,
             }
             self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-                instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
+                instance=Diagnostic.objects.get(id=diagnostic.id)
             )
             data = self.serializer.data
 
-            self.assertEqual(data["cout_denrees"], -1)
+            self.assertIsNone(data["cout_denrees"])
 
     def test_geo_columns(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
@@ -372,9 +372,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
             diagnostic = DiagnosticFactory(canteen=canteen_with_geo_data, year=2022)
             diagnostic.teledeclare(applicant=UserFactory())
 
-        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
-        )
+        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(instance=Diagnostic.objects.get(id=diagnostic.id))
         data = self.serializer.data
 
         self.assertEqual(data["epci"], "200040715")
@@ -399,7 +397,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
             diagnostic_half_geo.teledeclare(applicant=UserFactory())
 
         self.serializer_half_geo = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_half_geo.id)
+            instance=Diagnostic.objects.get(id=diagnostic_half_geo.id)
         )
         data = self.serializer_half_geo.data
 
@@ -425,7 +423,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
             diagnostic_without_geo.teledeclare(applicant=UserFactory())
 
         self.serializer_without_geo = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_without_geo.id)
+            instance=Diagnostic.objects.get(id=diagnostic_without_geo.id)
         )
         data_no_geo = self.serializer_without_geo.data
 
@@ -446,9 +444,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
             diagnostic = DiagnosticFactory(canteen=canteen_with_line_ministry, year=2022)
             diagnostic.teledeclare(applicant=UserFactory())
 
-        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
-        )
+        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(instance=Diagnostic.objects.get(id=diagnostic.id))
         data = self.serializer.data
 
         self.assertEqual(data["line_ministry"], Canteen.Ministries.AGRICULTURE)
@@ -460,7 +456,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
             diagnostic_without_line_ministry.teledeclare(applicant=UserFactory())
 
         self.serializer_without_line_ministry = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_without_line_ministry.id)
+            instance=Diagnostic.objects.get(id=diagnostic_without_line_ministry.id)
         )
         data_without_line_ministry = self.serializer_without_line_ministry.data
 

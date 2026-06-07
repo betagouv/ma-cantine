@@ -5,12 +5,12 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 from freezegun import freeze_time
-from api.tests.utils import assert_almost_equal
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Sector
 from data.models.diagnostic import (
     Diagnostic,
+    aberrant_values_query,
     canteen_has_siret_or_siren_unite_legale_query,
     canteen_soft_deleted_during_campaign_query,
     circuit_court_sup_france_query,
@@ -381,7 +381,7 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_missing_siret.siret = ""  # missing data
         cls.canteen_missing_siret.save(skip_validations=True)
         cls.canteen_missing_siret.refresh_from_db()
-        cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
+        cls.canteen_cout_repas_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
         cls.canteen_valeur_totale_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
         cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=1000)
         cls.canteen_deleted = CanteenFactory(
@@ -439,24 +439,24 @@ class DiagnosticQuerySetTest(TestCase):
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory(), skip_validations=True)
 
-        cls.diagnostic_canteen_meal_price_aberrant = DiagnosticFactory(
+        cls.diagnostic_canteen_cout_repas_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
-            canteen=cls.canteen_meal_price_aberrant,
-            valeur_totale=1000000.00,  # meal_price > 20
+            canteen=cls.canteen_cout_repas_aberrant,
+            valeur_totale=1000000.00,  # cout_repas > 20
             valeur_bio=200.00,
             invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_meal_price_aberrant.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_cout_repas_aberrant.teledeclare(applicant=UserFactory())
 
         cls.diagnostic_canteen_valeur_totale_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.canteen_valeur_totale_aberrant,
-            valeur_totale=1000001.00,  # aberrant but meal_price < 20
+            valeur_totale=1000001.00,  # aberrant but cout_repas < 20
             valeur_bio=200.00,
             invalid_reason_list=[],
         )
@@ -468,7 +468,7 @@ class DiagnosticQuerySetTest(TestCase):
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.canteen_aberrant,
-            valeur_totale=1000001.00,  # aberrant AND meal_price > 20
+            valeur_totale=1000001.00,  # aberrant AND cout_repas > 20
             valeur_bio=200.00,
             invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
         )
@@ -558,20 +558,9 @@ class DiagnosticQuerySetTest(TestCase):
         diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data, year_data - 1])
         self.assertEqual(diagnostics.count(), 6 + 6)
 
-    def test_with_meal_price(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.with_meal_price()
-        self.assertEqual(diagnostics.count(), 17)
-        self.assertEqual(
-            diagnostics.get(id=self.diagnostic_canteen_valid_1.id).canteen_yearly_meal_count_annotated, 1000
-        )
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).meal_price_annotated, 1.0)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).canteen_yearly_meal_count_annotated, 0)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).meal_price_annotated, None)
-
     def test_exclude_aberrant_values(self):
         self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.exclude_aberrant_values()
+        diagnostics = Diagnostic.objects.exclude(aberrant_values_query())
         self.assertEqual(diagnostics.count(), 16)
         self.assertNotIn(self.diagnostic_canteen_aberrant, diagnostics)
 
@@ -915,29 +904,6 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
             cls.diagnostic_satellite_draft = DiagnosticFactory(
                 canteen=cls.canteen_satellite_draft, year=year_data, valeur_totale=None
             )
-
-    def test_with_meal_price_queryset(self):
-        diagnostics = Diagnostic.objects.with_meal_price()
-
-        diagnostic_draft_canteen_empty = diagnostics.get(id=self.diagnostic_draft_canteen_empty.id)
-        self.assertEqual(diagnostic_draft_canteen_empty.canteen_yearly_meal_count_annotated, None)
-        self.assertEqual(diagnostic_draft_canteen_empty.meal_price_annotated, None)
-        diagnostic_draft_empty = diagnostics.get(id=self.diagnostic_draft_empty.id)
-        self.assertEqual(diagnostic_draft_empty.canteen_yearly_meal_count_annotated, None)
-        self.assertEqual(diagnostic_draft_empty.meal_price_annotated, None)
-        diagnostic_draft_filled = diagnostics.get(id=self.diagnostic_draft_filled.id)
-        self.assertEqual(
-            diagnostic_draft_filled.canteen_yearly_meal_count_annotated, None
-        )  # only if teledeclared (canteen_snapshot)
-        self.assertEqual(diagnostic_draft_filled.meal_price_annotated, None)  # only if teledeclared (canteen_snapshot)
-        diagnostic_groupe_teledeclared = diagnostics.get(id=self.diagnostic_groupe_teledeclared.id)
-        self.assertEqual(diagnostic_groupe_teledeclared.canteen_yearly_meal_count_annotated, 2000)
-        assert_almost_equal(
-            self, diagnostic_groupe_teledeclared.meal_price_annotated, Decimal("50.00025")
-        )  # annotate not rounded
-        diagnostic_satellite_teledeclared = diagnostics.get(id=self.diagnostic_satellite_teledeclared.id)
-        self.assertEqual(diagnostic_satellite_teledeclared.canteen_yearly_meal_count_annotated, 1300)
-        self.assertEqual(diagnostic_satellite_teledeclared.meal_price_annotated, None)  # valeur_totale is None
 
     def test_canteen_yearly_meal_count_property(self):
         self.assertEqual(self.diagnostic_draft_canteen_empty.canteen_yearly_meal_count, None)
