@@ -112,7 +112,7 @@ const isSaving = ref(false)
 const validateForm = async (action) => {
   const isValid = await v$.value.$validate()
   if (!isValid || invoiceFileError.value) return
-
+  isSaving.value = true
   const payload = formatPayload(form)
   if (invoiceFile.value) payload.invoiceFile = await toBase64(invoiceFile.value)
   emit("sendForm", { form: payload, action })
