@@ -296,6 +296,7 @@
       >
         <template v-slot:[`item.description`]="{ item }">
           <router-link
+            v-if="item.canteenUrlComponent"
             :to="{
               name: 'GestionnaireAchatsModifier',
               params: { id: item.id, canteenUrlComponent: item.canteenUrlComponent },
@@ -304,6 +305,10 @@
             {{ item.description || "[sans description]" }}
             <span class="d-sr-only">, {{ item.date }}</span>
           </router-link>
+          <p v-else>
+            {{ item.description || "[sans description]" }}
+            <span class="d-sr-only">, {{ item.date }}</span>
+          </p>
         </template>
         <template v-slot:[`item.family`]="{ item }">
           <v-chip outlined small :color="getProductFamilyDisplayValue(item.family).color" dark class="font-weight-bold">
