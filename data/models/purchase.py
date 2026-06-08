@@ -463,7 +463,7 @@ class Purchase(SoftDeletionModel):
 
         for family in Diagnostic.APPRO_FAMILIES:
             purchase_family = purchases.filter(family=family.upper())
-            for label in ["france", "circuit_court", "local"]:
+            for label in ["circuit_court", "local"]:  # "france" is done just after
                 purchase_family_label = purchase_family.filter(
                     Q(characteristics__contains=[cls.Characteristic[label.upper()]])
                 )
