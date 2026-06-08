@@ -75,9 +75,7 @@ const rules = {
     required,
     maxDate: helpers.withMessage(
       "La date d'achat ne peut pas être dans le futur",
-      (date) => {
-        return new Date(date) < new Date()
-      }
+      (date) => new Date(date) < new Date()
     )
   },
   family: { required },
