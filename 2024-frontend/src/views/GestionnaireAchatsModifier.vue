@@ -1,6 +1,5 @@
 <script setup>
-import { ref } from "vue"
-import { computedAsync } from "@vueuse/core"
+import { ref, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import documentation from "@/data/documentation.json"
@@ -14,6 +13,8 @@ import PurchaseForm from "@/components/PurchaseForm.vue"
 const route = useRoute()
 const router = useRouter()
 const store = useRootStore()
+const forceRerender = ref(0)
+const purchaseDeleted = ref(false)
 
 /* Canteen */
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
@@ -22,14 +23,18 @@ const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 /* Purchase */
 const isLoading = ref(true)
 const purchaseId = route.params.id
+const purchaseData = ref({})
 
-const purchaseData = computedAsync(async () => {
+const loadPurchase = async () => {
+  isLoading.value = true
   const response = await purchasesService.fetchPurchase(purchaseId)
+  const noPurchase = !response?.id
+  const notSameCanteen = response?.canteen !== Number(canteenId)
+  purchaseData.value = noPurchase || notSameCanteen ? {} : response
   isLoading.value = false
-  if (!response?.id) return {}
-  else if (response.canteen !== Number(canteenId)) return {}
-  else return response
-}, {})
+}
+
+onMounted(loadPurchase)
 
 /* Save */
 const savePurchase = async (props) => {
@@ -41,6 +46,9 @@ const savePurchase = async (props) => {
     return
   }
 
+  purchaseData.value = response
+  forceRerender.value++
+
   store.notify({
     title: "Achat mis à jour",
     message: `L'achat « ${form.description} » a bien été mis à jour pour la cantine « ${canteenName} ».`,
@@ -51,6 +59,39 @@ const savePurchase = async (props) => {
   window.scrollTo(0, 0)
 }
 
+/* Delete */
+const deletePurchase = () => {
+  if (!purchaseId) return
+  purchasesService.deletePurchase(purchaseId)
+    .then(() => {
+      purchaseDeleted.value = true
+      purchaseData.value = {}
+      forceRerender.value++
+    })
+    .catch(error => {
+      store.notifyServerError(error)
+    })
+}
+
+/* Restore */
+const restorePurchase = () => {
+  if (!purchaseId) return
+  purchasesService.restorePurchases([purchaseId])
+    .then(() => {
+      purchaseDeleted.value = false
+      loadPurchase()
+      store.notify({
+        title: "Achat restauré",
+        message: `L'achat a bien été restauré pour la cantine « ${canteenName} ».`,
+        status: "success",
+      })
+    })
+    .catch(error => {
+      store.notifyServerError(error)
+    })
+}
+
+/* Redirect */
 const goToPurchasesList = () => {
   router.push({ name: "PurchasesHome" })
 }
@@ -75,17 +116,30 @@ const goToPurchasesList = () => {
       </li>
     </AppRessources>
   </section>
-  <section
-    class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
-  >
+  <section class="fr-mt-4w">
     <AppLoader v-if="isLoading" />
-    <PurchaseForm
-      v-else-if="purchaseData.id"
-      :purchase-data="purchaseData"
-      :showCancelButton="true"
-      @sendForm="(payload) => savePurchase(payload)"
-      @cancel="goToPurchasesList"
-    />
+    <div v-else-if="purchaseData.id" class="fr-background-alt--blue-france fr-p-3w fr-grid-row fr-grid-row--center">
+      <PurchaseForm
+        :key="forceRerender"
+        :purchase-data="purchaseData"
+        :showCancelButton="true"
+        :showDeleteButton="true"
+        @sendForm="(payload) => savePurchase(payload)"
+        @cancel="goToPurchasesList"
+        @delete="deletePurchase"
+      />
+    </div>
+    <div v-else-if="purchaseDeleted" class="fr-col-12 fr-col-lg-7">
+      <p>
+        L'achat a bien été supprimé pour la cantine « {{ canteenName }} ». <br />
+        Il s'agit d'une erreur ? Vous pouvez le restaurer en cliquant sur le bouton ci-dessous.
+      </p>
+      <DsfrButton
+        label="Annuler la suppression et restaurer l'achat"
+        tertiary
+        @click="restorePurchase"
+      />
+    </div>
     <p v-else class="fr-mb-0" >
       Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
     </p>

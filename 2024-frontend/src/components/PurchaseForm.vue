@@ -3,13 +3,14 @@ import { reactive, ref, computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
+import { helpers } from "@vuelidate/validators"
 import { formatError, toBase64 } from "@/utils.js"
 import achats from "@/data/achats.json"
 import purchases from "@/services/purchases.js"
 
 /* Props and emits */
-const props = defineProps(["purchaseData", "showCreateButton", "showCancelButton"])
-const emit = defineEmits(["sendForm", "cancel"])
+const props = defineProps(["purchaseData", "showCreateButton", "showCancelButton", "showDeleteButton"])
+const emit = defineEmits(["sendForm", "cancel", "delete"])
 
 /* Form fields */
 const today = computed(() => new Date().toISOString().split("T")[0])
@@ -31,7 +32,7 @@ const form = reactive({
   characteristicsOrigines: [],
   characteristicsCircuitCourt: [],
   characteristicsLocal: [],
-  localDefinition: null,
+  localDefinition: "",
 })
 
 const familleProduitOptions = Object.values(achats.familleProduit)
@@ -53,12 +54,13 @@ const prefillFields = () => {
   form.priceHt = hasPriceHt ? Number(props.purchaseData.priceHt) : null
   form.date = props.purchaseData.date
   form.family = props.purchaseData.family
-  form.localDefinition = props.purchaseData.localDefinition
+  form.localDefinition = props.purchaseData.localDefinition || ""
   const characteristics = props.purchaseData.characteristics || []
   form.characteristicsEgalim = characteristics.filter((c) => egalimValues.includes(c))
   form.characteristicsOrigines = characteristics.filter((c) => originesValues.includes(c))
   form.characteristicsCircuitCourt = characteristics.filter((c) => circuitCourtValues.includes(c))
   form.characteristicsLocal = characteristics.filter((c) => localValues.includes(c))
+  form.invoiceUrl = props.purchaseData.invoiceFile
 }
 
 if (props.purchaseData) prefillFields()
@@ -70,7 +72,13 @@ const rules = {
   description: { required },
   provider: { required },
   priceHt: { required, decimal, minValue: minValue(0.01) },
-  date: { required },
+  date: {
+    required,
+    maxDate: helpers.withMessage(
+      "La date d'achat ne peut pas être dans le futur",
+      (date) => new Date(date) < new Date()
+    )
+  },
   family: { required },
   localDefinition: { required: requiredIf(showLocalDefinition) },
 }
@@ -104,7 +112,7 @@ const isSaving = ref(false)
 const validateForm = async (action) => {
   const isValid = await v$.value.$validate()
   if (!isValid || invoiceFileError.value) return
-
+  isSaving.value = true
   const payload = formatPayload(form)
   if (invoiceFile.value) payload.invoiceFile = await toBase64(invoiceFile.value)
   emit("sendForm", { form: payload, action })
@@ -144,30 +152,45 @@ const formatPayload = (form) => {
     <datalist id="providers">
       <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
     </datalist>
-    <DsfrInputGroup
-      v-model.number="form.priceHt"
-      type="number"
-      label="Prix HT (€) *"
-      label-visible
-      :error-message="formatError(v$.priceHt)"
-    />
-    <DsfrInputGroup
-      v-model="form.date"
-      type="date"
-      label="Date d'achat *"
-      label-visible
-      :max="today"
-      :error-message="formatError(v$.date)"
-    />
-    <DsfrFileUpload
-      v-model="invoiceFileInputValue"
-      label="Facture"
-      hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
-      accept="image/jpeg,image/png,application/pdf"
-      :error="invoiceFileError"
-      class="fr-mb-3w"
-      @change="onInvoiceFileChange"
-    />
+    <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
+      <div class="fr-col-12 fr-col-md-6">
+        <DsfrInputGroup
+          v-model.number="form.priceHt"
+          type="number"
+          label="Prix HT (€) *"
+          label-visible
+          :error-message="formatError(v$.priceHt)"
+        />
+      </div>
+      <div class="fr-col-12 fr-col-md-6">
+        <DsfrInputGroup
+          v-model="form.date"
+          type="date"
+          label="Date d'achat *"
+          label-visible
+          :max="today"
+          :error-message="formatError(v$.date)"
+        />
+      </div>
+    </div>
+    <div class="fr-mb-3w">
+      <p class="fr-legend-text fr-mb-1w">Facture</p>
+      <div class="fr-grid-row fr-grid-row--top fr-grid-row--gutters">
+        <div v-if="form.invoiceUrl" class="fr-col-12 fr-col-md-6">
+          <p class="fr-mb-2w">Vous avez déjà importé une facture pour cet achat, accéder au fichier en <a :href="form.invoiceUrl" target="_blank">cliquant ici</a>.</p>
+        </div>
+        <div class="fr-col-12" :class="{ 'fr-col-md-6': form.invoiceUrl }">
+          <DsfrFileUpload
+            v-model="invoiceFileInputValue"
+            :label="form.invoiceUrl ? 'Télécharger un nouveau fichier' : 'Télécharger un fichier'"
+            hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
+            accept="image/jpeg,image/png,application/pdf"
+            :error="invoiceFileError"
+            @change="onInvoiceFileChange"
+          />
+        </div>
+      </div>
+    </div>
     <DsfrRadioButtonSet
       v-model="form.family"
       legend="Famille de produit *"
@@ -226,14 +249,20 @@ const formatPayload = (form) => {
       :options="definitionLocalOptions"
       :error-message="formatError(v$.localDefinition)"
     />
-
-    <div class="fr-grid-row fr-grid-row--right fr-grid-row--gutters fr-mt-4w">
+    <div class="fr-mt-6w ma-cantine--flex-end">
+      <DsfrButton
+        v-if="showDeleteButton"
+        :disabled="isSaving"
+        label="Supprimer"
+        icon="fr-icon-delete-bin-line"
+        tertiary
+        @click="emit('delete')"
+      />
       <DsfrButton
         v-if="showCancelButton"
         :disabled="isSaving"
         label="Annuler"
-        tertiary
-        class="fr-mr-1w"
+        secondary
         @click="emit('cancel')"
       />
       <DsfrButton
@@ -241,7 +270,6 @@ const formatPayload = (form) => {
         :disabled="isSaving"
         label="Enregistrer et ajouter un nouvel achat"
         secondary
-        class="fr-mr-1w"
         @click="validateForm('stay-on-creation-page')"
       />
       <DsfrButton
