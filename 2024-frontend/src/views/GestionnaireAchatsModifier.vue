@@ -28,11 +28,9 @@ const purchaseData = ref({})
 const loadPurchase = async () => {
   isLoading.value = true
   const response = await purchasesService.fetchPurchase(purchaseId)
-  if (!response?.id || response.canteen !== Number(canteenId)) {
-    purchaseData.value = {}
-  } else {
-    purchaseData.value = response
-  }
+  const noPurchase = !response?.id
+  const notSameCanteen = response?.canteen !== Number(canteenId)
+  purchaseData.value = noPurchase || notSameCanteen ? {} : response
   isLoading.value = false
 }
 
