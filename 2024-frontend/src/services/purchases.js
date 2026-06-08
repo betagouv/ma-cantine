@@ -63,10 +63,24 @@ const deletePurchase = (id) => {
     .then((response) => response)
 }
 
+const restorePurchases = (ids) => {
+  return fetch(`/api/v1/purchases/restore/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ids }),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+}
+
 export default {
   createPurchase,
   fetchPurchase,
   fetchPurchasesOptions,
   updatePurchase,
   deletePurchase,
+  restorePurchases,
 }
