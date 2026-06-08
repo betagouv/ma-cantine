@@ -66,7 +66,7 @@ const deletePurchase = (id) => {
 export default {
   createPurchase,
   fetchPurchase,
-  updatePurchase,
   fetchPurchasesOptions,
+  updatePurchase,
   deletePurchase,
 }
