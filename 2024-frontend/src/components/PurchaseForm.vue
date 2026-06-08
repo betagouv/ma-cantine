@@ -252,6 +252,7 @@ const formatPayload = (form) => {
     <div class="fr-mt-6w ma-cantine--flex-end">
       <DsfrButton
         v-if="showDeleteButton"
+        :disabled="isSaving"
         label="Supprimer"
         icon="fr-icon-delete-bin-line"
         tertiary
