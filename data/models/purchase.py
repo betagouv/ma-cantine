@@ -180,18 +180,21 @@ class Purchase(SoftDeletionModel):
         Characteristic.COMMERCE_EQUITABLE,
     ]
 
-    CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL = [
-        Characteristic.FRANCE,
-        Characteristic.CIRCUIT_COURT,
-        Characteristic.LOCAL,
-    ]
-
+    # when transformed into diagnostics, only the top label will be counted
     CHARACTERISTIC_LABELS_EGALIM = (
         CHARACTERISTIC_LABELS_BIO
         + CHARACTERISTIC_LABELS_SIQO
         + CHARACTERISTIC_LABELS_EXTERNALITES_PERFORMANCE
         + CHARACTERISTIC_LABELS_EGALIM_AUTRES
     )
+
+    CHARACTERISTIC_LABELS_ORIGINE = [Characteristic.EUROPE, Characteristic.FRANCE]
+
+    # when transformed into diagnostics, all labels will be counted
+    CHARACTERISTIC_LABELS_INFO = CHARACTERISTIC_LABELS_ORIGINE + [
+        Characteristic.CIRCUIT_COURT,
+        Characteristic.LOCAL,
+    ]
 
     CREATION_META_FIELDS = [
         "creation_date",
@@ -371,10 +374,12 @@ class Purchase(SoftDeletionModel):
         """
         cls._complete_diag_data_appro_labels(purchases, data)
         cls._complete_diag_data_appro_label_bio_dont_commerce_equitable(purchases, data)
-        if int(year) == 2025:
-            cls._complete_diag_appro_labels_france_circuit_court_local_2025(purchases, data)
+        if int(year) < 2025:
+            cls._complete_diag_appro_labels_origine_circuit_court_local_before_2025(purchases, data)
+        elif int(year) == 2025:
+            cls._complete_diag_appro_labels_origine_circuit_court_local_2025(purchases, data)
         else:
-            cls._complete_diag_appro_labels_france_circuit_court_local(purchases, data)
+            cls._complete_diag_appro_labels_origine_circuit_court_local(purchases, data)
         cls._complete_diag_appro_labels_non_egalim(purchases, data)
 
     @classmethod
@@ -414,7 +419,7 @@ class Purchase(SoftDeletionModel):
         """
         How we manage bio_dont_commerce_equitable:
         - outside of APPRO_LABELS_EGALIM
-        - products can be counted twice across characteristics
+        - products can be counted twice across caracteristiques
         """
         from data.models import Diagnostic
 
@@ -428,11 +433,31 @@ class Purchase(SoftDeletionModel):
             data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_france_circuit_court_local_2025(cls, purchases, data):
+    def _complete_diag_appro_labels_origine_circuit_court_local_before_2025(cls, purchases, data):
         """
         How we manage France/Circuit court/local:
         - outside of APPRO_LABELS_EGALIM
-        - products can be counted in multiple of these characteristics
+        - products can be counted in multiple of these caracteristiques
+        - NOTE: before 2025, circuit_court & local are not counted as France
+        - NOTE: before 2025, Europe did not exist yet
+        """
+        from data.models import Diagnostic
+
+        for family in Diagnostic.APPRO_FAMILIES:
+            purchase_family = purchases.filter(famille_produits=family.upper())
+            for label in ["france", "circuit_court", "local"]:
+                purchase_family_label = purchase_family.filter(
+                    Q(caracteristiques__contains=[cls.Characteristic[label.upper()]])
+                )
+                key = "valeur_" + family + "_" + label.lower()
+                data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
+
+    @classmethod
+    def _complete_diag_appro_labels_origine_circuit_court_local_2025(cls, purchases, data):
+        """
+        How we manage France/Circuit court/local:
+        - outside of APPRO_LABELS_EGALIM
+        - products can be counted in multiple of these caracteristiques
         - NOTE: in 2025, circuit_court & local were part of France, so we count them as France
         - NOTE: in 2025, Europe did not exist yet
         """
@@ -440,36 +465,38 @@ class Purchase(SoftDeletionModel):
 
         for family in Diagnostic.APPRO_FAMILIES:
             purchase_family = purchases.filter(famille_produits=family.upper())
-            other_labels_characteristics = []
-            for label in Diagnostic.APPRO_LABELS_FRANCE_SUBCATEGORIES:
-                characteristic = cls.Characteristic[label.upper()]
-                purchase_family_label = purchase_family.filter(Q(caracteristiques__contains=[characteristic]))
+            for label in ["circuit_court", "local"]:  # "france" is done just after
+                purchase_family_label = purchase_family.filter(
+                    Q(caracteristiques__contains=[cls.Characteristic[label.upper()]])
+                )
                 key = "valeur_" + family + "_" + label
                 data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
-                other_labels_characteristics.append(characteristic)
             # France total
             purchase_family_label = purchase_family.filter(
-                caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL
+                caracteristiques__overlap=[
+                    cls.Characteristic(label.upper()) for label in ["france", "circuit_court", "local"]
+                ]
             ).distinct()
             key = "valeur_" + family + "_france"
             data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_france_circuit_court_local(cls, purchases, data):
+    def _complete_diag_appro_labels_origine_circuit_court_local(cls, purchases, data):
         """
-        How we manage France/Circuit court/local:
+        How we manage France/Europe/Circuit court/local:
         - outside of APPRO_LABELS_EGALIM
-        - products can be counted in multiple of these characteristics
+        - products can be counted in multiple of these caracteristiques
         - NOTE: circuit_court & local are not counted as France
-        - TODO: in 2026, Europe was added
+        - NOTE: in 2026, Europe was added
         """
         from data.models import Diagnostic
 
         for family in Diagnostic.APPRO_FAMILIES:
             purchase_family = purchases.filter(famille_produits=family.upper())
-            for label in cls.CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL:
-                characteristic = cls.Characteristic[label]
-                purchase_family_label = purchase_family.filter(Q(caracteristiques__contains=[characteristic]))
+            for label in cls.CHARACTERISTIC_LABELS_INFO:
+                purchase_family_label = purchase_family.filter(
+                    Q(caracteristiques__contains=[cls.Characteristic[label]])
+                )
                 key = "valeur_" + family + "_" + label.lower()
                 data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
