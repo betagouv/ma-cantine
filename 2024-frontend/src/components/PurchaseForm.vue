@@ -127,15 +127,23 @@ const formatPayload = (form) => {
       v-model="form.description"
       label="Description du produit *"
       label-visible
+      list="descriptions"
       placeholder="Yaourts bio, légumes bio de juin..."
       :error-message="formatError(v$.description)"
     />
+    <datalist id="descriptions">
+      <option v-for="description in autocompleteOptions.descriptions" :key="description" :value="description"></option>
+    </datalist>
     <DsfrInputGroup
       v-model="form.provider"
       label="Fournisseur *"
       label-visible
+      list="providers"
       :error-message="formatError(v$.provider)"
     />
+    <datalist id="providers">
+      <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
+    </datalist>
     <DsfrInputGroup
       v-model.number="form.priceHt"
       type="number"
