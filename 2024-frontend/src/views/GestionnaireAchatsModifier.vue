@@ -1,6 +1,5 @@
 <script setup>
-import { ref } from "vue"
-import { computedAsync } from "@vueuse/core"
+import { ref, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import documentation from "@/data/documentation.json"
@@ -14,6 +13,7 @@ import PurchaseForm from "@/components/PurchaseForm.vue"
 const route = useRoute()
 const router = useRouter()
 const store = useRootStore()
+const forceRerender = ref(0)
 
 /* Canteen */
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
@@ -22,14 +22,20 @@ const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 /* Purchase */
 const isLoading = ref(true)
 const purchaseId = route.params.id
+const purchaseData = ref({})
 
-const purchaseData = computedAsync(async () => {
+const loadPurchase = async () => {
+  isLoading.value = true
   const response = await purchasesService.fetchPurchase(purchaseId)
+  if (!response?.id || response.canteen !== Number(canteenId)) {
+    purchaseData.value = {}
+  } else {
+    purchaseData.value = response
+  }
   isLoading.value = false
-  if (!response?.id) return {}
-  else if (response.canteen !== Number(canteenId)) return {}
-  else return response
-}, {})
+}
+
+onMounted(loadPurchase)
 
 /* Save */
 const savePurchase = async (props) => {
@@ -40,6 +46,9 @@ const savePurchase = async (props) => {
     store.notifyServerError(response)
     return
   }
+
+  purchaseData.value = response
+  forceRerender.value++
 
   store.notify({
     title: "Achat mis à jour",
@@ -81,6 +90,7 @@ const goToPurchasesList = () => {
     <AppLoader v-if="isLoading" />
     <PurchaseForm
       v-else-if="purchaseData.id"
+      :key="forceRerender"
       :purchase-data="purchaseData"
       :showCancelButton="true"
       @sendForm="(payload) => savePurchase(payload)"
