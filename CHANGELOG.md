@@ -6,6 +6,38 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.37.0](https://github.com/betagouv/ma-cantine/compare/v2026.36.1...v2026.37.0) (2026-06-08)
+
+
+### Nouveautés
+
+* **Achats:** ajoute la modification d'un achat à partir du nouveau formulaire ([#6783](https://github.com/betagouv/ma-cantine/issues/6783)) ([9c605f8](https://github.com/betagouv/ma-cantine/commit/9c605f8b7f3fe4f9fe942f69fb60a886906e941f))
+* **Achats:** début migration de la page de création en vue3 ([#6759](https://github.com/betagouv/ma-cantine/issues/6759)) ([49aad6a](https://github.com/betagouv/ma-cantine/commit/49aad6af5665384337b5aba0d01e7df15b7043d3))
+* **Achats:** remplace l'ancienne url par la nouvelle officiellement ([#6789](https://github.com/betagouv/ma-cantine/issues/6789)) ([be821f8](https://github.com/betagouv/ma-cantine/commit/be821f872bff08ffecad4b38eb9be7132ed8c983))
+
+
+### Améliorations
+
+* **Achats:** ajoute l'autocomplétion aux champs "Description" et "Fournisseurs" ([#6797](https://github.com/betagouv/ma-cantine/issues/6797)) ([6e8a1ed](https://github.com/betagouv/ma-cantine/commit/6e8a1ed9caddb2ab90e57ed565c586d629974630))
+* **Achats:** ajoute les champs caractéristiques et famille de produit ([#6782](https://github.com/betagouv/ma-cantine/issues/6782)) ([b52d445](https://github.com/betagouv/ma-cantine/commit/b52d44522c6c4bab7c9d69e8e95fc6af7e00dd76))
+* **Achats:** renommer les champs du modèle en français ([#6765](https://github.com/betagouv/ma-cantine/issues/6765)) ([d05f6d2](https://github.com/betagouv/ma-cantine/commit/d05f6d21d9dedaa82c7c4be9713ec7638253c803))
+* **Achats:** séparer FRANCE de CIRCUIT_COURT & LOCAL dans les calculs d'aggrégation ([#6731](https://github.com/betagouv/ma-cantine/issues/6731)) ([f052aff](https://github.com/betagouv/ma-cantine/commit/f052aff85d3f61ab9a6e7a4005a8a8f574aa9e57))
+* **Achats:** stylisation du formulaire ([#6760](https://github.com/betagouv/ma-cantine/issues/6760)) ([3b77bff](https://github.com/betagouv/ma-cantine/commit/3b77bff0f4939edced13dfa5c6c81aec66aefaa9))
+
+
+### Corrections (bugs, typos...)
+
+* **Achats:** divers correctifs suite au recettage avant mise en ligne ([#6800](https://github.com/betagouv/ma-cantine/issues/6800)) ([55e7227](https://github.com/betagouv/ma-cantine/commit/55e7227d866679ff472442630cde8decde72d4a1))
+* **Achats:** répare qq tests (oublis) suite au renommage dans [#6765](https://github.com/betagouv/ma-cantine/issues/6765) ([8c10724](https://github.com/betagouv/ma-cantine/commit/8c10724dbfb284c867eed5ac0fd35012327b1f34))
+* **ci:** corrige tests ([#6801](https://github.com/betagouv/ma-cantine/issues/6801)) ([44438ec](https://github.com/betagouv/ma-cantine/commit/44438ece2e4ec7799208ce7b10508fc51b2d92e3))
+
+
+### Technique
+
+* **Achats:** séparer canteen_summary_for_year complete_diag en 4 morceaux pour faciliter la lecture/modification/tests ([#6784](https://github.com/betagouv/ma-cantine/issues/6784)) ([daf61ef](https://github.com/betagouv/ma-cantine/commit/daf61ef600fe98c3569928db1faa850fe5679edd))
+* **Diagnostic:** plus besoin de meal_price_annotated, ménage ([#6794](https://github.com/betagouv/ma-cantine/issues/6794)) ([8c53608](https://github.com/betagouv/ma-cantine/commit/8c536084cca59459273f6c1ad4293db86dbe7965))
+* **Données Géo:** on ne se sert plus de l'API Adresse, enlever le code inutile ([#6787](https://github.com/betagouv/ma-cantine/issues/6787)) ([eef441b](https://github.com/betagouv/ma-cantine/commit/eef441b83b29545408a144494a469aee6f36af17))
+
 ## [2026.36.1](https://github.com/betagouv/ma-cantine/compare/v2026.36.0...v2026.36.1) (2026-06-02)
 
 
