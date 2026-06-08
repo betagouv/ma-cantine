@@ -960,9 +960,9 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["valeurProduitsDeLaMer"], 155.0)
-        self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 120.0)
-        self.assertEqual(body["valeurProduitsDeLaMerFrance"], 50.0 + 15.0)
+        self.assertEqual(body["valeurProduitsDeLaMer"], 55 + 40 + 30 + 20 + 15)
+        self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 55 + 40 + 30)
+        self.assertEqual(body["valeurProduitsDeLaMerFrance"], 55 + 15)
         self.assertEqual(body["valeurProduitsDeLaMerLocal"], 0)
 
     @authenticate
@@ -1147,6 +1147,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
     def test_create_diagnostics_from_purchases_france_value(self):
         """
         Test that the france total value is calculated correctly
+        see data/tests/test_purchases.py#PurchaseSummaryFranceTest for variations
         """
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
         PurchaseFactory(
@@ -1185,8 +1186,8 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         results = body["results"]
         diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
         self.assertIn(diag_site.id, results)
-        self.assertEqual(diag_site.valeur_totale, 75)
-        self.assertEqual(diag_site.valeur_boulangerie_france, 10 + 50 + 15)
+        self.assertEqual(diag_site.valeur_totale, 10 + 50 + 15)
+        self.assertEqual(diag_site.valeur_boulangerie_france, 10)
         self.assertEqual(diag_site.valeur_boulangerie_circuit_court, 50)
         self.assertEqual(diag_site.valeur_boulangerie_local, 15)
 
