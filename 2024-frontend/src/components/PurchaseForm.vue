@@ -130,7 +130,7 @@ const formatPayload = (form) => {
 </script>
 
 <template>
-  <form class="purchase-form fr-p-2w fr-p-md-7w fr-col-12 fr-col-lg-8 fr-background-default--grey fr-mt-4w" @submit.prevent="">
+  <form class="purchase-form fr-p-2w fr-p-md-7w fr-col-12 fr-col-lg-7 fr-background-default--grey fr-mt-4w" @submit.prevent="">
     <DsfrInputGroup
       v-model="form.description"
       label="Description du produit *"
@@ -252,7 +252,7 @@ const formatPayload = (form) => {
     <div class="fr-mt-6w ma-cantine--flex-end">
       <DsfrButton
         v-if="showDeleteButton"
-        label="Supprimer l'achat"
+        label="Supprimer"
         icon="fr-icon-delete-bin-line"
         tertiary
         @click="emit('delete')"
@@ -260,7 +260,7 @@ const formatPayload = (form) => {
       <DsfrButton
         v-if="showCancelButton"
         :disabled="isSaving"
-        label="Annuler la modification"
+        label="Annuler"
         secondary
         @click="emit('cancel')"
       />
