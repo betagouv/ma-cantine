@@ -1,9 +1,11 @@
 <script setup>
 import { reactive, ref, computed } from "vue"
+import { computedAsync } from "@vueuse/core"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError, toBase64 } from "@/utils.js"
 import achats from "@/data/achats.json"
+import purchases from "@/services/purchases.js"
 
 /* Props and emits */
 const props = defineProps(["purchaseData", "showCreateButton", "showCancelButton"])
@@ -11,6 +13,13 @@ const emit = defineEmits(["sendForm", "cancel"])
 
 /* Form fields */
 const today = computed(() => new Date().toISOString().split("T")[0])
+const autocompleteOptions = computedAsync(async () => {
+  const response = await purchases.fetchPurchasesOptions()
+  return {
+    descriptions: response.products || [],
+    providers: response.providers || [],
+  }
+}, {})
 
 const form = reactive({
   description: null,
@@ -118,15 +127,23 @@ const formatPayload = (form) => {
       v-model="form.description"
       label="Description du produit *"
       label-visible
+      list="descriptions"
       placeholder="Yaourts bio, légumes bio de juin..."
       :error-message="formatError(v$.description)"
     />
+    <datalist id="descriptions">
+      <option v-for="description in autocompleteOptions.descriptions" :key="description" :value="description"></option>
+    </datalist>
     <DsfrInputGroup
       v-model="form.provider"
       label="Fournisseur *"
       label-visible
+      list="providers"
       :error-message="formatError(v$.provider)"
     />
+    <datalist id="providers">
+      <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
+    </datalist>
     <DsfrInputGroup
       v-model.number="form.priceHt"
       type="number"
