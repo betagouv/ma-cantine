@@ -60,6 +60,7 @@ const prefillFields = () => {
   form.characteristicsOrigines = characteristics.filter((c) => originesValues.includes(c))
   form.characteristicsCircuitCourt = characteristics.filter((c) => circuitCourtValues.includes(c))
   form.characteristicsLocal = characteristics.filter((c) => localValues.includes(c))
+  form.invoiceUrl = props.purchaseData.invoiceFile
 }
 
 if (props.purchaseData) prefillFields()
@@ -172,15 +173,19 @@ const formatPayload = (form) => {
         />
       </div>
     </div>
-    <DsfrFileUpload
-      v-model="invoiceFileInputValue"
-      label="Facture"
-      hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
-      accept="image/jpeg,image/png,application/pdf"
-      :error="invoiceFileError"
-      class="fr-mb-3w"
-      @change="onInvoiceFileChange"
-    />
+    <div>
+      <p class="fr-legend-text fr-mb-1w">Facture</p>
+      <p v-if="form.invoiceUrl" class="fr-mb-2w">Vous avez déjà importé une facture pour cet achat, accéder au fichier en <a :href="form.invoiceUrl" target="_blank">cliquant ici</a>.</p>
+      <DsfrFileUpload
+        v-model="invoiceFileInputValue"
+        :label="form.invoiceUrl ? 'Télécharger un nouveau fichier' : 'Télécharger un fichier'"
+        hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
+        accept="image/jpeg,image/png,application/pdf"
+        :error="invoiceFileError"
+        class="fr-mb-3w"
+        @change="onInvoiceFileChange"
+      />
+    </div>
     <DsfrRadioButtonSet
       v-model="form.family"
       legend="Famille de produit *"
