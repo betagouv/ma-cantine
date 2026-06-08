@@ -21,10 +21,43 @@
           .
         </p>
         <v-row v-if="hasCanteens" align="center" class="mt-2 px-3">
-          <v-btn color="primary" :to="{ name: 'NewPurchase' }" large class="mr-2 my-3">
-            <v-icon>mdi-plus</v-icon>
-            Ajouter un produit
-          </v-btn>
+          <v-dialog v-model="addPurchaseDialog" width="500">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn color="primary" large class="mr-2 my-3" v-bind="attrs" v-on="on">
+                <v-icon class="mr-1">mdi-plus</v-icon>
+                Ajouter un produit
+              </v-btn>
+            </template>
+
+            <v-card class="text-left">
+              <v-card-title>
+                <h1 class="fr-h6 mb-0">
+                  Pour quel établissement souhaitez-vous ajouter un produit ?
+                </h1>
+              </v-card-title>
+
+              <v-card-text>
+                <DsfrCombobox
+                  :items="userCanteens"
+                  item-text="name"
+                  item-value="id"
+                  :filter="canteenAutocomplete"
+                  placeholder="Sélectionnez une cantine"
+                  hide-details
+                  @input="onCanteenSelected"
+                />
+              </v-card-text>
+
+              <v-divider aria-hidden="true" role="presentation"></v-divider>
+
+              <v-card-actions class="pa-4">
+                <v-spacer></v-spacer>
+                <v-btn outlined text @click="addPurchaseDialog = false">
+                  Annuler
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
           <v-btn text color="primary" :to="{ name: 'GestionnaireImport' }" class="px-0 px-md-2 my-3">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
             Créer plusieurs achats depuis un fichier
@@ -262,7 +295,12 @@
         }"
       >
         <template v-slot:[`item.description`]="{ item }">
-          <router-link :to="{ name: 'PurchasePage', params: { id: item.id } }">
+          <router-link
+            :to="{
+              name: 'GestionnaireAchatsModifier',
+              params: { id: item.id, canteenUrlComponent: item.canteenUrlComponent },
+            }"
+          >
             {{ item.description || "[sans description]" }}
             <span class="d-sr-only">, {{ item.date }}</span>
           </router-link>
@@ -346,6 +384,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
+import DsfrCombobox from "@/components/DsfrCombobox"
 
 export default {
   name: "PurchasesHome",
@@ -355,6 +394,7 @@ export default {
     DsfrSelect,
     DsfrSearchField,
     DsfrAutocomplete,
+    DsfrCombobox,
   },
   data() {
     return {
@@ -397,6 +437,7 @@ export default {
         endDate: null,
       },
       selectedPurchases: [],
+      addPurchaseDialog: false,
     }
   },
   computed: {
@@ -414,7 +455,8 @@ export default {
         const canteen = canteens.find((y) => y.id === x.canteen)
         const date = x.date ? formatDate(x.date) : null
         const hasAttachment = !!x.invoiceFile
-        return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment })
+        const canteenUrlComponent = canteen ? this.$store.getters.getCanteenUrlComponent(canteen) : null
+        return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment, canteenUrlComponent })
       })
     },
     exportUrl() {
@@ -472,6 +514,21 @@ export default {
       const purchaseIndex = this.selectedPurchases.findIndex((p) => p.id === purchase.id)
       if (purchaseIndex === -1) this.selectedPurchases.push(purchase)
       else this.selectedPurchases.splice(purchaseIndex, 1)
+    },
+    canteenAutocomplete(item, queryText) {
+      if (!queryText) return true
+      const normalizedQuery = normaliseText(queryText).toLocaleLowerCase()
+      const normalizedItemText = normaliseText(item.name).toLocaleLowerCase()
+      return normalizedItemText.includes(normalizedQuery)
+    },
+    onCanteenSelected(value) {
+      const canteen = this.userCanteens.find((c) => c.id === value)
+      if (!canteen) return
+      this.addPurchaseDialog = false
+      this.$router.push({
+        name: "GestionnaireAchatsAjouter",
+        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+      })
     },
     // the following requires that purchases are SoftDeletionObjects
     // in 2nd PR: if too many purchase objects in soft deleted state, make weekly bot to clear out purchases that have been deleted for > 1 week (or whatever time period)
@@ -655,7 +712,41 @@ export default {
     },
     capitalise: capitalise,
     duplicate(purchase) {
-      this.$router.push({ name: "PurchasePage", params: { id: purchase.id }, query: { dupliquer: true } })
+      // Date n'est pas renvoyée au même format par l'API, on doit le formatter manuellement, à changer plus tard en vue3
+      const monthNames = Array.from({ length: 12 }, (_, i) =>
+        new Date(2000, i, 1).toLocaleString("fr-FR", { month: "long" }).toLowerCase()
+      )
+      const [day, monthName, year] = purchase.date.toLowerCase().split(" ")
+      const month = String(monthNames.indexOf(monthName) + 1).padStart(2, "0")
+      const formattedDate = `${year}-${month}-${day.padStart(2, "0")}`
+
+      // Récupère les données de l'achat à dupliquer
+      const payload = {
+        canteen: `${purchase.canteen}`,
+        characteristics: [...purchase.characteristics],
+        description: purchase.description,
+        localDefinition: purchase.localDefinition || "",
+        family: purchase.family,
+        priceHt: purchase.priceHt,
+        date: formattedDate,
+        provider: purchase.provider,
+        importSource: "Duplication",
+        creationSource: "APP",
+      }
+      // Crée l'achat dupliqué
+      this.$store
+        .dispatch("createPurchase", { payload })
+        .then((newPurchase) => {
+          // Redirige vers la page de modification de l'achat dupliqué
+          this.$router.push({
+            name: "GestionnaireAchatsModifier",
+            params: { id: newPurchase.id, canteenUrlComponent: purchase.canteenUrlComponent },
+          })
+        })
+        .catch((e) => {
+          // Affiche une notification d'erreur
+          this.$store.dispatch("notifyServerError", e)
+        })
     },
     duplicatePurchaseInstruction(purchase) {
       const readableDate = purchase.date.toLocaleString("fr-FR", {
