@@ -33,7 +33,6 @@ import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
-import PurchasePage from "@/views/PurchasePage"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
 import DashboardManager from "@/views/DashboardManager"
@@ -307,25 +306,6 @@ const routes = [
     },
   },
   {
-    path: "/mes-achats/:id",
-    name: "PurchasePage",
-    component: PurchasePage,
-    props: true,
-    meta: {
-      title: "Modifier mon achat",
-      authenticationRequired: true,
-    },
-  },
-  {
-    path: "/nouvel-achat/",
-    name: "NewPurchase",
-    component: PurchasePage,
-    meta: {
-      title: "Nouvel achat",
-      authenticationRequired: true,
-    },
-  },
-  {
     path: "/synthese-achats",
     name: "PurchasesSummary",
     component: PurchasesSummary,
@@ -436,6 +416,14 @@ const vue3Routes = [
   {
     path: "/tableau-de-bord/cantines/ajouter",
     name: "GestionnaireCantineRestaurantAjouter",
+  },
+  {
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/achats/ajouter",
+    name: "GestionnaireAchatsAjouter",
+  },
+  {
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/achats/:id/modifier",
+    name: "GestionnaireAchatsModifier",
   },
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/gerer",

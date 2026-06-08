@@ -28,15 +28,6 @@ const vue2routes = [
     },
   },
   {
-    path: "/nouvel-achat/",
-    name: "NewPurchase",
-    meta: {
-      title: "Nouvel achat",
-      siteMap: diag,
-      authenticationRequired: true,
-    },
-  },
-  {
     path: "/synthese-achats",
     name: "PurchasesSummary",
     meta: {
