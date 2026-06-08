@@ -8,12 +8,14 @@ import purchasesService from "@/services/purchases.js"
 import AppLoader from "@/components/AppLoader.vue"
 import AppRessources from "@/components/AppRessources.vue"
 import PurchaseForm from "@/components/PurchaseForm.vue"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 /* Router and store */
 const route = useRoute()
 const router = useRouter()
 const store = useRootStore()
 const forceRerender = ref(0)
+const purchaseDeleted = ref(false)
 
 /* Canteen */
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
@@ -64,13 +66,7 @@ const savePurchase = async (props) => {
 const deletePurchase = async () => {
   if (!purchaseId) return
   purchasesService.deletePurchase(purchaseId).then( () => {
-    purchaseData.value = {}
-    forceRerender.value++
-    store.notify({
-      title: "Achat supprimé",
-      message: `L'achat a bien été supprimé pour la cantine « ${canteenName} ».`,
-      status: "success",
-    })
+    purchaseDeleted.value = true
   }).catch(error => {
     store.notifyServerError(error)
   })
@@ -83,55 +79,64 @@ const goToPurchasesList = () => {
 </script>
 
 <template>
-  <section class="fr-grid-row fr-grid-row--bottom">
-    <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
-      <h1>{{ route.meta.title }} pour la cantine «&nbsp;{{ canteenName }}&nbsp;»</h1>
-    </div>
-    <div class="fr-col-offset-md-1"></div>
-    <AppRessources>
-      <li>
-        <a :href="documentation.ajouterAchat" target="_blank">
-          Tutoriel pour ajouter un achat manuellement
-        </a>
-      </li>
-      <li>
-        <a :href="documentation.critèresQualiteDurabiliteProduits" target="_blank">
-          Comprendre les critères de qualité et durabilité des produits
-        </a>
-      </li>
-    </AppRessources>
-  </section>
-  <section
-    class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
-  >
-    <AppLoader v-if="isLoading" />
-    <PurchaseForm
-      v-else-if="purchaseData.id"
-      :key="forceRerender"
-      :purchase-data="purchaseData"
-      :showCancelButton="true"
-      @sendForm="(payload) => savePurchase(payload)"
-      @cancel="goToPurchasesList"
-    />
-    <p v-else class="fr-mb-0" >
-      Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
+  <DsfrAlert v-if="purchaseDeleted" class="fr-mt-4w" title="Achat supprimé" type="success">
+    <p>
+      L'achat a bien été supprimé pour la cantine « {{ canteenName }} ».
+      <AppLinkRouter :to="{ name: 'PurchasesHome' }" title="Retourner à la liste des achats" />.
     </p>
-  </section>
-  <section v-if="purchaseData.id" class="fr-background-alt--red-marianne fr-p-3w fr-mt-3w fr-grid-row fr-grid-row--center">
-    <div class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
-      <h2 class="fr-h5 fr-text-default--error">
-        <span class="fr-icon-delete-bin-line"></span>
-        Supprimer cet achat
-      </h2>
-      <p>
-        Vous ne souhaitez plus faire apparaître l'achat « {{ purchaseData.description }} » de l'établissement « {{ canteenName }} »,
-        vous pouvez le supprimer en cliquant sur le bouton ci-dessous.
-      </p>
-      <DsfrButton
-        label="Supprimer l'achat"
-        tertiary
-        @click="deletePurchase"
+  </DsfrAlert>
+  <template v-else>
+    <section class="fr-grid-row fr-grid-row--bottom">
+      <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
+        <h1>{{ route.meta.title }} pour la cantine «&nbsp;{{ canteenName }}&nbsp;»</h1>
+      </div>
+      <div class="fr-col-offset-md-1"></div>
+      <AppRessources>
+        <li>
+          <a :href="documentation.ajouterAchat" target="_blank">
+            Tutoriel pour ajouter un achat manuellement
+          </a>
+        </li>
+        <li>
+          <a :href="documentation.critèresQualiteDurabiliteProduits" target="_blank">
+            Comprendre les critères de qualité et durabilité des produits
+          </a>
+        </li>
+      </AppRessources>
+    </section>
+    <section
+      class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
+    >
+      <AppLoader v-if="isLoading" />
+      <PurchaseForm
+        v-else-if="purchaseData.id"
+        :key="forceRerender"
+        :purchase-data="purchaseData"
+        :showCancelButton="true"
+        @sendForm="(payload) => savePurchase(payload)"
+        @cancel="goToPurchasesList"
       />
-    </div>
-  </section>
+      <p v-else class="fr-mb-0" >
+        Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
+      </p>
+    </section>
+    <section v-if="purchaseData.id" class="fr-background-alt--red-marianne fr-p-3w fr-mt-3w fr-grid-row fr-grid-row--center">
+      <div class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
+        <h2 class="fr-h5 fr-text-default--error">
+          <span class="fr-icon-delete-bin-line"></span>
+          Supprimer cet achat
+        </h2>
+        <p>
+          Vous ne souhaitez plus faire apparaître l'achat « {{ purchaseData.description }} » de l'établissement « {{ canteenName }} »,
+          vous pouvez le supprimer en cliquant sur le bouton ci-dessous.
+        </p>
+        <DsfrButton
+          label="Supprimer l'achat"
+          tertiary
+          @click="deletePurchase"
+        />
+      </div>
+    </section>
+
+  </template>
 </template>
