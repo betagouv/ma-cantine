@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.management import call_command
 from django.db.models.signals import post_save
 from django.test import TestCase
@@ -787,6 +789,37 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             satellite_2_diagnostic.valeur_totale,
             total_value / (self.groupe_satellites_yearly_meal_count_sum / self.satellite_2.yearly_meal_count),
         )
+
+    @authenticate
+    def test_cout_repas_computed_per_satellite(self):
+        """
+        cout_repas depends on the satellite's yearly_meal_count.
+        on save, it will be computed & stored.
+        """
+        total_value = 1011 * 4  # 1011 is the canteen's yearly_meal_count
+        # meal_price = 4
+        with freeze_time("2026-03-30"):  # during the 2025 campaign
+            groupe_diagnostic = DiagnosticFactory(
+                canteen=self.groupe,
+                year=2025,
+                valeur_totale=total_value,
+            )
+            groupe_diagnostic.teledeclare(applicant=authenticate.user, skip_validations=True)
+
+        # Before the script is run
+        groupe_diagnostic = Diagnostic.all_objects.in_year(2025).teledeclared().get(canteen=self.groupe)
+        self.assertEqual(groupe_diagnostic.cout_repas, 4)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
+
+        # After the script is run
+        satellite_1_diagnostic = Diagnostic.all_objects.in_year(2025).teledeclared().get(canteen=self.satellite_1)
+        satellite_2_diagnostic = Diagnostic.all_objects.in_year(2025).teledeclared().get(canteen=self.satellite_2)
+        self.assertNotEqual(satellite_1_diagnostic.cout_repas, groupe_diagnostic.cout_repas)
+        self.assertNotEqual(satellite_2_diagnostic.cout_repas, groupe_diagnostic.cout_repas)
+        self.assertEqual(satellite_1_diagnostic.cout_repas, Decimal("4.04"))
+        self.assertEqual(satellite_2_diagnostic.cout_repas, Decimal("4.04"))
 
     @authenticate
     def test_groupe_type_simple(self):
