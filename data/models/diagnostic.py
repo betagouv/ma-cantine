@@ -538,7 +538,7 @@ class Diagnostic(models.Model):
     APPRO_LABELS_NON_EGALIM = [
         "non_egalim",
     ]
-    APPRO_LABELS_ORIGINE = ["europe", "france"]
+    APPRO_LABELS_ORIGINE = ["france"]  # TODO: add "europe" before
     APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
     APPRO_LABELS_ALL = (
         APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_ORIGINE + ["circuit_court", "local"]
