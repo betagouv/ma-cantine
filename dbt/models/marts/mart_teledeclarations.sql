@@ -400,6 +400,6 @@ left join nb_cantines_inscrites
 left join td_years_by_canteen tdy
     on tdy.cid = teledeclarations.canteen_id
 where 1=1
-  and production_type != 'groupe'
+  and production_type not in ('groupe', 'central', 'central_serving')
   and teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'
   and (invalid_reason_list is null or invalid_reason_list::text = '[]')
