@@ -8,7 +8,6 @@ import purchasesService from "@/services/purchases.js"
 import AppLoader from "@/components/AppLoader.vue"
 import AppRessources from "@/components/AppRessources.vue"
 import PurchaseForm from "@/components/PurchaseForm.vue"
-import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 /* Router and store */
 const route = useRoute()
@@ -76,6 +75,22 @@ const deletePurchase = async () => {
     })
 }
 
+/* Restore */
+const restorePurchase = async () => {
+  if (!purchaseId) return
+  purchasesService.restorePurchases([purchaseId])
+    .then(() => {
+      purchaseDeleted.value = false
+      loadPurchase()
+      store.notify({
+        title: "Achat restauré",
+        message: `L'achat a bien été restauré pour la cantine « ${canteenName} ».`,
+        status: "success",
+      })
+    })
+    .catch(error => {
+      store.notifyServerError(error)
+    })
 }
 
 /* Redirect */
@@ -85,37 +100,28 @@ const goToPurchasesList = () => {
 </script>
 
 <template>
-  <DsfrAlert v-if="purchaseDeleted" class="fr-mt-4w" title="Achat supprimé" type="success">
-    <p>
-      L'achat a bien été supprimé pour la cantine « {{ canteenName }} ».
-      <AppLinkRouter :to="{ name: 'PurchasesHome' }" title="Retourner à la liste des achats" />.
-    </p>
-  </DsfrAlert>
-  <template v-else>
-    <section class="fr-grid-row fr-grid-row--bottom">
-      <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
-        <h1>{{ route.meta.title }} pour la cantine «&nbsp;{{ canteenName }}&nbsp;»</h1>
-      </div>
-      <div class="fr-col-offset-md-1"></div>
-      <AppRessources>
-        <li>
-          <a :href="documentation.ajouterAchat" target="_blank">
-            Tutoriel pour ajouter un achat manuellement
-          </a>
-        </li>
-        <li>
-          <a :href="documentation.critèresQualiteDurabiliteProduits" target="_blank">
-            Comprendre les critères de qualité et durabilité des produits
-          </a>
-        </li>
-      </AppRessources>
-    </section>
-    <section
-      class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
-    >
-      <AppLoader v-if="isLoading" />
+  <section class="fr-grid-row fr-grid-row--bottom">
+    <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
+      <h1>{{ route.meta.title }} pour la cantine «&nbsp;{{ canteenName }}&nbsp;»</h1>
+    </div>
+    <div class="fr-col-offset-md-1"></div>
+    <AppRessources>
+      <li>
+        <a :href="documentation.ajouterAchat" target="_blank">
+          Tutoriel pour ajouter un achat manuellement
+        </a>
+      </li>
+      <li>
+        <a :href="documentation.critèresQualiteDurabiliteProduits" target="_blank">
+          Comprendre les critères de qualité et durabilité des produits
+        </a>
+      </li>
+    </AppRessources>
+  </section>
+  <section class="fr-mt-4w">
+    <AppLoader v-if="isLoading" />
+    <div v-else-if="purchaseData.id" class="fr-background-alt--blue-france fr-p-3w fr-grid-row fr-grid-row--center">
       <PurchaseForm
-        v-else-if="purchaseData.id"
         :key="forceRerender"
         :purchase-data="purchaseData"
         :showCancelButton="true"
@@ -124,10 +130,20 @@ const goToPurchasesList = () => {
         @cancel="goToPurchasesList"
         @delete="deletePurchase"
       />
-      <p v-else class="fr-mb-0" >
-        Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
+    </div>
+    <div v-else-if="purchaseDeleted" class="fr-col-12 fr-col-lg-7">
+      <p>
+        L'achat a bien été supprimé pour la cantine « {{ canteenName }} ». <br />
+        Il s'agit d'une erreur ? Vous pouvez le restaurer en cliquant sur le bouton ci-dessous.
       </p>
-    </section>
-
-  </template>
+      <DsfrButton
+        label="Annuler la suppression et restaurer l'achat"
+        tertiary
+        @click="restorePurchase"
+      />
+    </div>
+    <p v-else class="fr-mb-0" >
+      Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
+    </p>
+  </section>
 </template>
