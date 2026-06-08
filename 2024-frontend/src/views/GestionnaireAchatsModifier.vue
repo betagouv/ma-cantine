@@ -60,13 +60,25 @@ const savePurchase = async (props) => {
   window.scrollTo(0, 0)
 }
 
-const goToPurchasesList = () => {
-  router.push({ name: "PurchasesHome" })
+/* Delete */
+const deletePurchase = async () => {
+  if (!purchaseId) return
+  purchasesService.deletePurchase(purchaseId).then( () => {
+    purchaseData.value = {}
+    forceRerender.value++
+    store.notify({
+      title: "Achat supprimé",
+      message: `L'achat a bien été supprimé pour la cantine « ${canteenName} ».`,
+      status: "success",
+    })
+  }).catch(error => {
+    store.notifyServerError(error)
+  })
 }
 
-/* Delete */
-const deletePurchase = (id) => {
-  console.log("deletePurchase", id)
+/* Redirect */
+const goToPurchasesList = () => {
+  router.push({ name: "PurchasesHome" })
 }
 </script>
 
