@@ -469,7 +469,7 @@ class Purchase(SoftDeletionModel):
             purchase_family = purchases.filter(famille_produits=family.upper())
             for label in cls.CHARACTERISTIC_LABELS_FRANCE_CIRCUIT_COURT_LOCAL:
                 characteristic = cls.Characteristic[label]
-                purchase_family_label = purchase_family.filter(Q(characteristiques__contains=[characteristic]))
+                purchase_family_label = purchase_family.filter(Q(caracteristiques__contains=[characteristic]))
                 key = "valeur_" + family + "_" + label.lower()
                 data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
