@@ -184,34 +184,34 @@ class PurchaseSummaryFranceTest(TestCase):
         PurchaseFactory(
             canteen=cls.canteen,
             date="2026-11-01",
-            characteristics=[Purchase.Characteristic.FRANCE],
-            family=Purchase.Family.BOULANGERIE,
-            price_ht=10,
+            caracteristiques=[Purchase.Characteristic.FRANCE],
+            famille_produits=Purchase.Family.BOULANGERIE,
+            prix_ht=10,
         )
         PurchaseFactory(
             canteen=cls.canteen,
             date="2026-11-01",
-            characteristics=[Purchase.Characteristic.CIRCUIT_COURT],
-            family=Purchase.Family.BOULANGERIE,
-            price_ht=50,
+            caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
+            famille_produits=Purchase.Family.BOULANGERIE,
+            prix_ht=50,
         )
         PurchaseFactory(
             canteen=cls.canteen,
             date="2026-11-01",
-            characteristics=[Purchase.Characteristic.EUROPE, Purchase.Characteristic.LOCAL],  # e.g. border
-            family=Purchase.Family.BOULANGERIE,
-            price_ht=15,
+            caracteristiques=[Purchase.Characteristic.EUROPE, Purchase.Characteristic.LOCAL],  # e.g. border
+            famille_produits=Purchase.Family.BOULANGERIE,
+            prix_ht=15,
         )
         PurchaseFactory(
             canteen=cls.canteen,
             date="2026-11-01",
-            characteristics=[
+            caracteristiques=[
                 Purchase.Characteristic.FRANCE,
                 Purchase.Characteristic.CIRCUIT_COURT,
                 Purchase.Characteristic.LOCAL,
             ],
-            family=Purchase.Family.BOULANGERIE,
-            price_ht=15,
+            famille_produits=Purchase.Family.BOULANGERIE,
+            prix_ht=15,
         )
 
     def test_canteen_summary_for_year_france_seperated(self):
