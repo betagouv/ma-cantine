@@ -173,18 +173,23 @@ const formatPayload = (form) => {
         />
       </div>
     </div>
-    <div>
+    <div class="fr-mb-3w">
       <p class="fr-legend-text fr-mb-1w">Facture</p>
-      <p v-if="form.invoiceUrl" class="fr-mb-2w">Vous avez déjà importé une facture pour cet achat, accéder au fichier en <a :href="form.invoiceUrl" target="_blank">cliquant ici</a>.</p>
-      <DsfrFileUpload
-        v-model="invoiceFileInputValue"
-        :label="form.invoiceUrl ? 'Télécharger un nouveau fichier' : 'Télécharger un fichier'"
-        hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
-        accept="image/jpeg,image/png,application/pdf"
-        :error="invoiceFileError"
-        class="fr-mb-3w"
-        @change="onInvoiceFileChange"
-      />
+      <div class="fr-grid-row fr-grid-row--top fr-grid-row--gutters">
+        <div v-if="form.invoiceUrl" class="fr-col-12 fr-col-md-6">
+          <p class="fr-mb-2w">Vous avez déjà importé une facture pour cet achat, accéder au fichier en <a :href="form.invoiceUrl" target="_blank">cliquant ici</a>.</p>
+        </div>
+        <div class="fr-col-12" :class="{ 'fr-col-md-6': form.invoiceUrl }">
+          <DsfrFileUpload
+            v-model="invoiceFileInputValue"
+            :label="form.invoiceUrl ? 'Télécharger un nouveau fichier' : 'Télécharger un fichier'"
+            hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
+            accept="image/jpeg,image/png,application/pdf"
+            :error="invoiceFileError"
+            @change="onInvoiceFileChange"
+          />
+        </div>
+      </div>
     </div>
     <DsfrRadioButtonSet
       v-model="form.family"
