@@ -65,11 +65,17 @@ const savePurchase = async (props) => {
 /* Delete */
 const deletePurchase = async () => {
   if (!purchaseId) return
-  purchasesService.deletePurchase(purchaseId).then( () => {
-    purchaseDeleted.value = true
-  }).catch(error => {
-    store.notifyServerError(error)
-  })
+  purchasesService.deletePurchase(purchaseId)
+    .then(() => {
+      purchaseDeleted.value = true
+      purchaseData.value = {}
+      forceRerender.value++
+    })
+    .catch(error => {
+      store.notifyServerError(error)
+    })
+}
+
 }
 
 /* Redirect */
