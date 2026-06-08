@@ -62,7 +62,7 @@ const savePurchase = async (props) => {
 }
 
 /* Delete */
-const deletePurchase = async () => {
+const deletePurchase = () => {
   if (!purchaseId) return
   purchasesService.deletePurchase(purchaseId)
     .then(() => {
@@ -76,7 +76,7 @@ const deletePurchase = async () => {
 }
 
 /* Restore */
-const restorePurchase = async () => {
+const restorePurchase = () => {
   if (!purchaseId) return
   purchasesService.restorePurchases([purchaseId])
     .then(() => {
