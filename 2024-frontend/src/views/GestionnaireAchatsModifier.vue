@@ -63,6 +63,11 @@ const savePurchase = async (props) => {
 const goToPurchasesList = () => {
   router.push({ name: "PurchasesHome" })
 }
+
+/* Delete */
+const deletePurchase = (id) => {
+  console.log("deletePurchase", id)
+}
 </script>
 
 <template>
@@ -99,5 +104,22 @@ const goToPurchasesList = () => {
     <p v-else class="fr-mb-0" >
       Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
     </p>
+  </section>
+  <section class="fr-background-alt--red-marianne fr-p-3w fr-mt-3w fr-grid-row fr-grid-row--center">
+    <div class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w">
+      <h2 class="fr-h5 fr-text-default--error">
+        <span class="fr-icon-delete-bin-line"></span>
+        Supprimer cet achat
+      </h2>
+      <p>
+        Vous ne souhaitez plus faire apparaître l'achat « {{ purchaseData.description }} » de l'établissement « {{ canteenName }} »,
+        vous pouvez le supprimer en cliquant sur le bouton ci-dessous.
+      </p>
+      <DsfrButton
+        label="Supprimer l'achat"
+        tertiary
+        @click="deletePurchase"
+      />
+    </div>
   </section>
 </template>
