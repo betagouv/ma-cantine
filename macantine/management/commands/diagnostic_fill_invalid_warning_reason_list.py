@@ -223,7 +223,7 @@ def fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs, apply):
         _remove_reason_item("invalid", reason_item)
 
     # Step 2: queryset
-    diagnostic_qs = diagnostic_qs.with_meal_price().filter(aberrant_values_query())
+    diagnostic_qs = diagnostic_qs.filter(aberrant_values_query())
     logger.info(f"Found {diagnostic_qs.count()} diagnostics with aberrant values")
 
     # Step 3: update

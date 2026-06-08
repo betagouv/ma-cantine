@@ -5,10 +5,9 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models, transaction
-from django.db.models import Case, DecimalField, F, Func, IntegerField, Q, Sum, Value, When
+from django.db.models import DecimalField, F, Func, IntegerField, Q, Sum, Value
 from django.db.models.expressions import RawSQL
-from django.db.models.fields.json import KT
-from django.db.models.functions import Cast, Coalesce
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
@@ -133,10 +132,8 @@ def aberrant_values_query():
     - Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
     Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
     nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
-
-    Note: requires meal_price annotation
     """
-    return Q(meal_price_annotated__isnull=False, meal_price_annotated__gt=20, valeur_totale__gt=1000000)
+    return Q(cout_repas__isnull=False, cout_repas__gt=20, valeur_totale__gt=1000000)
 
 
 def incoherent_values_query():
@@ -263,25 +260,6 @@ class DiagnosticQuerySet(models.QuerySet):
         )
         return self.annotate(**{f"{family}_sum": sum_expression})
 
-    def with_meal_price(self):
-        """
-        Le coût denrées est calculé en divisant la valeur d'achat alimentaire total par le nombre de repas annuels.
-        """
-        # Cast to FloatField first to handle legacy float values in JSON, then to IntegerField
-        return self.annotate(
-            canteen_yearly_meal_count_annotated=Cast(
-                KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField()
-            )
-        ).annotate(
-            meal_price_annotated=Case(
-                When(
-                    canteen_yearly_meal_count_annotated__gt=0,
-                    then=F("valeur_totale") / F("canteen_yearly_meal_count_annotated"),
-                ),
-                default=None,
-            )
-        )
-
     def with_satellites_snapshot_stats(self):
         return self.annotate(
             satellites_snapshot_count_annotated=Func(
@@ -294,9 +272,6 @@ class DiagnosticQuerySet(models.QuerySet):
                 output_field=IntegerField(),
             )
         )
-
-    def exclude_aberrant_values(self):
-        return self.with_meal_price().exclude(aberrant_values_query())
 
     def canteen_for_stat(self, year):
         return (
@@ -315,7 +290,7 @@ class DiagnosticQuerySet(models.QuerySet):
                 .exclude(teledeclaration_mode_satellite_without_appro_query())
                 .filter(valeur_bio_agg_is_filled_query())  # Chaîne de traitement n°5
                 .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
-                .exclude_aberrant_values()  # Chaîne de traitement n°8
+                .exclude(aberrant_values_query())  # Chaîne de traitement n°8
                 .exclude(incoherent_values_query())  # Chaîne de traitement n°8
             )
         else:

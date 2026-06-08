@@ -16,7 +16,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     siren_unite_legale = serializers.CharField(source="canteen_snapshot.siren_unite_legale", read_only=True)
     daily_meal_count = serializers.IntegerField(source="canteen_snapshot.daily_meal_count", read_only=True)
     yearly_meal_count = serializers.IntegerField(source="canteen_snapshot.yearly_meal_count", read_only=True)
-    cout_denrees = serializers.SerializerMethodField()
+    cout_denrees = serializers.FloatField(source="cout_repas", read_only=True)
     cuisine_centrale = serializers.SerializerMethodField()
     central_producer_siret = serializers.CharField(source="canteen_snapshot.central_producer_siret", read_only=True)
     code_insee_commune = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
@@ -159,9 +159,6 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "genere_par_cuisine_centrale",
         )
         read_only_fields = fields
-
-    def get_cout_denrees(self, obj):
-        return obj.meal_price_annotated if obj.meal_price_annotated else -1
 
     def get_cuisine_centrale(self, obj):
         production_type = obj.canteen_snapshot.get("production_type", None)
