@@ -961,8 +961,8 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["valeurProduitsDeLaMer"], 15 + 20 + 30 + 40 + 55)
-        self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 120.0)
-        self.assertEqual(body["valeurProduitsDeLaMerFrance"], 50.0 + 15.0)
+        self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 55 + 40 + 30)
+        self.assertEqual(body["valeurProduitsDeLaMerFrance"], 55 + 15)
         self.assertEqual(body["valeurProduitsDeLaMerLocal"], 0)
 
     @authenticate
