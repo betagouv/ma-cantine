@@ -960,7 +960,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["valeurProduitsDeLaMer"], 155.0)
+        self.assertEqual(body["valeurProduitsDeLaMer"], 15 + 20 + 30 + 40 + 55)
         self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 120.0)
         self.assertEqual(body["valeurProduitsDeLaMerFrance"], 50.0 + 15.0)
         self.assertEqual(body["valeurProduitsDeLaMerLocal"], 0)
@@ -1142,11 +1142,59 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         self.assertEqual(diag_cc.valeur_totale, 20)
         self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")
 
-    @freeze_time("2025-03-30")  # after the 2024 campaign
+    @freeze_time("2026-03-15")  # during the 2025 campaign
     @authenticate
-    def test_create_diagnostics_from_purchases_france_value(self):
+    def test_create_diagnostics_from_purchases_france_value_2025(self):
         """
-        Test that the france total value is calculated correctly
+        Test that the france total value is calculated correctly : France + Circuit court + Local
+        """
+        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
+        PurchaseFactory(
+            canteen=canteen_site,
+            date="2025-11-01",
+            prix_ht=10,
+            caracteristiques=[Purchase.Characteristic.FRANCE],
+            famille_produits=Purchase.Family.BOULANGERIE,
+        )
+        PurchaseFactory(
+            canteen=canteen_site,
+            date="2025-11-01",
+            prix_ht=50,
+            caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
+            famille_produits=Purchase.Family.BOULANGERIE,
+        )
+        PurchaseFactory(
+            canteen=canteen_site,
+            date="2025-11-01",
+            prix_ht=15,
+            caracteristiques=[Purchase.Characteristic.LOCAL],
+            famille_produits=Purchase.Family.BOULANGERIE,
+        )
+
+        year = 2025
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site.id]).count(), 0)
+
+        response = self.client.post(
+            reverse("diagnostics_from_purchases", kwargs={"year": year}),
+            {"canteenIds": [canteen_site.id]},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        results = body["results"]
+        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
+        self.assertIn(diag_site.id, results)
+        self.assertEqual(diag_site.valeur_totale, 75)
+        self.assertEqual(diag_site.valeur_boulangerie_france, 10 + 50 + 15)
+        self.assertEqual(diag_site.valeur_boulangerie_circuit_court, 50)
+        self.assertEqual(diag_site.valeur_boulangerie_local, 15)
+
+    @freeze_time("2024-03-30")  # before the 2025 campaign
+    @authenticate
+    def test_create_diagnostics_from_purchases_france_value_before_2025(self):
+        """
+        Test that the france total value is calculated correctly : France only
         """
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
         PurchaseFactory(
@@ -1186,7 +1234,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
         self.assertIn(diag_site.id, results)
         self.assertEqual(diag_site.valeur_totale, 75)
-        self.assertEqual(diag_site.valeur_boulangerie_france, 10 + 50 + 15)
+        self.assertEqual(diag_site.valeur_boulangerie_france, 10)
         self.assertEqual(diag_site.valeur_boulangerie_circuit_court, 50)
         self.assertEqual(diag_site.valeur_boulangerie_local, 15)
 
