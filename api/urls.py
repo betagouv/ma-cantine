@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from api.views import (
@@ -13,9 +13,6 @@ from api.views import (
     CanteenMinistriesView,
     CanteenPurchasesPercentageSummaryView,
     CanteenPurchasesSummaryView,
-    CanteensCreateImportView,
-    CanteensUpdateImportView,
-    CanteensManagersImportView,
     CanteenStatisticsView,
     CanteenStatusBySirenView,
     CanteenStatusBySiretView,
@@ -26,8 +23,6 @@ from api.views import (
     CommunityEventsView,
     DiagnosticCreateView,
     DiagnosticsFromPurchasesView,
-    DiagnosticsCompleteImportView,
-    DiagnosticsSimpleImportView,
     DiagnosticsToTeledeclareListView,
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
@@ -50,7 +45,6 @@ from api.views import (
     PurchaseOptionsView,
     PurchaseRetrieveUpdateDestroyView,
     PurchasesDeleteView,
-    PurchasesImportView,
     PurchasesRestoreView,
     RemoveManagerView,
     ReservationExpeView,
@@ -182,12 +176,7 @@ urlpatterns = {
         RemoveManagerView.as_view(),
         name="remove_manager",
     ),
-    path("importPurchases/", PurchasesImportView.as_view(), name="purchases_import"),
-    path("importCanteens/create/", CanteensCreateImportView.as_view(), name="canteens_create_import"),
-    path("importCanteens/update/", CanteensUpdateImportView.as_view(), name="canteens_update_import"),
-    path("importCanteensManagers/", CanteensManagersImportView.as_view(), name="canteens_managers_import"),
-    path("importDiagnostics/simple/", DiagnosticsSimpleImportView.as_view(), name="diagnostics_simple_import"),
-    path("importDiagnostics/complete/", DiagnosticsCompleteImportView.as_view(), name="diagnostics_complete_import"),
+    path("", include("backend.imports.urls")),
     path("emailDiagnosticImportFile/", EmailDiagnosticImportFileView.as_view(), name="email_diagnostic_file"),
     path("campaignDates/", TeledeclarationCampaignDatesListView.as_view(), name="list_teledeclaration_campaign_dates"),
     path(

@@ -1047,6 +1047,6 @@
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
   "name": "import-bilans-detaille",
-  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/bilans_detaille.json",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/backend/imports/schemas/bilans_detaille.json",
   "title": "Schema import des bilans (detaille)"
 }

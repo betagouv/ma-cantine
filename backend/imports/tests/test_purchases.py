@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.purchase_import import PURCHASE_SIRET_SCHEMA_FILE_PATH
+from backend.imports.purchase import PURCHASE_SIRET_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.creation_source import CreationSource

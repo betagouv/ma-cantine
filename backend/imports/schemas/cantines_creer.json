@@ -208,6 +208,6 @@
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
   "name": "import-cantines-creer",
-  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_creer.json",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/backend/imports/schemas/cantines_creer.json",
   "title": "Schema créer des cantines"
 }

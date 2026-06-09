@@ -178,6 +178,6 @@
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
   "name": "import-bilans-simple-siret",
-  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/bilans_simple_siret.json",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/backend/imports/schemas/bilans_simple_siret.json",
   "title": "Schema import des bilans (simple) par SIRET"
 }

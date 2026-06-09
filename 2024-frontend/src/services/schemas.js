@@ -1,6 +1,6 @@
 const getFields = async (schemaFile) => {
   const gitBranch = window.GIT_BRANCH
-  const url = `https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/${gitBranch}/data/schemas/imports/${schemaFile}`
+  const url = `https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/${gitBranch}/backend/imports/schemas/${schemaFile}`
   return await fetch(url)
     .then((response) => response.json())
     .then((json) => json.fields)

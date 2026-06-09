@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.diagnostic_import import DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH
+from backend.imports.diagnostic import DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource

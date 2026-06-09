@@ -142,7 +142,7 @@ class Command(BaseCommand):
             )
             return
 
-        schema_path = Path(settings.BASE_DIR) / "data" / "schemas" / "imports" / schema_spec["file_name"]
+        schema_path = Path(settings.BASE_DIR) / "backend" / "imports" / "schemas" / schema_spec["file_name"]
         old_schema = self._read_schema_text(schema_path)
         new_schema = self._build_schema(schema_spec)
         new_schema_json = json.dumps(new_schema, ensure_ascii=False, indent=2, sort_keys=True)
@@ -164,7 +164,7 @@ class Command(BaseCommand):
             "fields": [],
             "homepage": settings.GITHUB_REPO_URL,
             "name": schema_spec["schema_name"],
-            "path": f"{settings.GITHUB_RAW_BASE_URL}/data/schemas/imports/{schema_spec['file_name']}",
+            "path": f"{settings.GITHUB_RAW_BASE_URL}/backend/imports/schemas/{schema_spec['file_name']}",
             "title": schema_spec["schema_title"],
         }
 

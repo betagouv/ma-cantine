@@ -88,14 +88,15 @@ INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
     "ckeditor",
     "ckeditor_uploader",
     "macantine",
+    "common",
     "data",
     "api",
+    "backend.imports",
     "web",
     "magicauth",
     "django_extensions",
     "django_filters",
     "django_celery_results",
-    "common",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "simple_history",
@@ -525,7 +526,7 @@ CSP_CONNECT_SRC = (
     "wss://client.relay.crisp.chat",
     "entreprise.data.gouv.fr",
     "plateforme.adresse.data.gouv.fr",
-    "raw.githubusercontent.com/betagouv/ma-cantine/",  # data/schemas/imports/
+    "raw.githubusercontent.com/betagouv/ma-cantine/",  # backend/imports/schemas/
     "api.iconify.design",  # dsfr icon
 )
 if DEBUG:

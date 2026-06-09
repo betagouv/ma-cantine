@@ -41,6 +41,6 @@
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
   "name": "import-cantines-gestionnaires",
-  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_gestionnaires.json",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/backend/imports/schemas/cantines_gestionnaires.json",
   "title": "Schema import des gestionnaires de cantines"
 }

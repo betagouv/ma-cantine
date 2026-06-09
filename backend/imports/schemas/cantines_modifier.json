@@ -240,6 +240,6 @@
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
   "name": "import-cantines-modifier",
-  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_modifier.json",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/backend/imports/schemas/cantines_modifier.json",
   "title": "Schema modifier des cantines"
 }
