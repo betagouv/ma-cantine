@@ -58,13 +58,14 @@
     }
   },
   "categoriesOrigines": {
-    "europe": {
-      "label": "Origine Europe",
-      "value": "EUROPE"
-    },
     "france": {
-      "label": "Origine France",
+      "label": "France",
       "value": "FRANCE"
+    },
+    "europe": {
+      "label": "Europe (hors France)",
+      "hint": "Espace Économique Européen qui inclut l'Union Européenne, l'Islande, la Norvège et le Liechtenstein",
+      "value": "EUROPE"
     }
   },
   "definitionLocal": {
