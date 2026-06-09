@@ -227,7 +227,6 @@ const formatPayload = (form) => {
       legend="Origine"
       :options="categoriesOriginesOptions"
       small
-      inline
       :error-message="formatError(v$.characteristicsOrigines)"
     />
 
