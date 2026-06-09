@@ -82,7 +82,7 @@ const rules = {
   family: { required },
   characteristicsOrigines: {
     oneValue: helpers.withMessage(
-      "Une seule origine peut être sélectionnée",
+      "Une seule origine doit être sélectionnée",
       (origines) => origines.length <= 1
     )
    },
