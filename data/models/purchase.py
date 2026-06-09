@@ -269,6 +269,7 @@ class Purchase(SoftDeletionModel):
 
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
+            purchase_validators.validate_purchase_date(self),
             purchase_validators.validate_purchase_caracteristiques(self),
             purchase_validators.validate_purchase_definition_local(self),
         )

@@ -1,4 +1,20 @@
+from datetime import date
+
 from common.utils import utils as utils_utils
+
+
+def validate_purchase_date(instance):
+    """
+    - clean_fields() (called by full_clean()) already checks that the value is empty or a date
+    - extra validation:
+        - date cannot be in the future
+    """
+    errors = {}
+    field_name = "date"
+    value = getattr(instance, field_name)
+    if value and str(value) > str(date.today()):
+        utils_utils.add_validation_error(errors, field_name, "La date ne peut pas être dans le futur.")
+    return errors
 
 
 def validate_purchase_caracteristiques(instance):
