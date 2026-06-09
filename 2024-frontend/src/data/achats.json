@@ -73,13 +73,13 @@
       "label": "200 km autour du lieu de service",
       "value": "AUTOUR_SERVICE"
     },
-    "departement": {
-      "label": "Provenant du même département",
-      "value": "DEPARTEMENT"
-    },
     "region": {
       "label": "Provenant de la même région",
       "value": "REGION"
+    },
+    "departement": {
+      "label": "Provenant du même département",
+      "value": "DEPARTEMENT"
     },
     "pat": {
       "label": "Issu du Projet Alimentaire Territorial (PAT)",
