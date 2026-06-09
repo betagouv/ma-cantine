@@ -141,7 +141,7 @@ class Purchase(SoftDeletionModel):
         COMMERCE_EQUITABLE = "COMMERCE_EQUITABLE", "Commerce équitable"
         PERFORMANCE = "PERFORMANCE", "Produits acquis sur la base de leurs performances en matière environnementale"
         EQUIVALENTS = "EQUIVALENTS", "Produits équivalents"  # not used anymore
-        EUROPE = "EUROPE", "Origine Europe"
+        EUROPE = "EUROPE", "Origine Europe (hors France)"
         FRANCE = "FRANCE", "Origine France"
         CIRCUIT_COURT = "CIRCUIT_COURT", "Circuit-court"
         LOCAL = "LOCAL", "Produit local"
@@ -266,6 +266,7 @@ class Purchase(SoftDeletionModel):
 
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
+            purchase_validators.validate_purchase_caracteristiques(self),
             purchase_validators.validate_purchase_definition_local(self),
         )
         if validation_errors:

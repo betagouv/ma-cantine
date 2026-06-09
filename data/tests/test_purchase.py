@@ -33,6 +33,7 @@ class PurchaseModelSaveTest(TransactionTestCase):
         """
         - field is optional
         - must be a list of choices if provided
+        - EUROPE & FRANCE cannot be selected at the same time
         """
         for TUPLE_OK in (
             [(None, None), ([], []), ([""], [""])]
@@ -41,6 +42,7 @@ class PurchaseModelSaveTest(TransactionTestCase):
                 (
                     [Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
                     [Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
+                    [Purchase.Characteristic.BIO, Purchase.Characteristic.FRANCE],
                 )
             ]
         ):
@@ -52,7 +54,13 @@ class PurchaseModelSaveTest(TransactionTestCase):
                     else None,
                 )
                 self.assertEqual(purchase.caracteristiques, TUPLE_OK[1])
-        for VALUE_NOT_OK in [["  "], [123], ["invalid"], ["123"]]:
+        for VALUE_NOT_OK in [
+            ["  "],
+            [123],
+            ["invalid"],
+            ["123"],
+            [Purchase.Characteristic.EUROPE, Purchase.Characteristic.FRANCE],
+        ]:
             with self.subTest(caracteristiques=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, PurchaseFactory, caracteristiques=VALUE_NOT_OK)
 
