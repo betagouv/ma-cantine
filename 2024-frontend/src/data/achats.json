@@ -64,7 +64,7 @@
     },
     "europe": {
       "label": "Europe (hors France)",
-      "hint": "Espace Économique Européen qui inclut l'Union Européenne, l'Islande, la Norvège et le Liechtenstein",
+      "hint": "Espace Économique Européen qui inclut l'Union Européenne, l'Islande, le Liechtenstein et la Norvège",
       "value": "EUROPE"
     }
   },
