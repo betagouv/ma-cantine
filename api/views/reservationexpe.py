@@ -3,13 +3,13 @@ import logging
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.http.response import Http404
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
 
 from api.exceptions import DuplicateException
-from api.permissions import IsAuthenticated, IsLinkedCanteenManager
+from api.permissions import IsAuthenticated, IsCanteenManagerUrlParam
 from api.serializers import ReservationExpeSerializer
 from data.models import Canteen, ReservationExpe
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class ReservationExpeView(CreateModelMixin, RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
     http_method_names = ["get", "post", "patch"]  # disable "put"
     queryset = ReservationExpe.objects.all()
     serializer_class = ReservationExpeSerializer
@@ -43,11 +43,6 @@ class ReservationExpeView(CreateModelMixin, RetrieveUpdateAPIView):
         canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")
         try:
             canteen = Canteen.objects.get(pk=canteen_id)
-            if not canteen.managers.filter(pk=self.request.user.pk).exists():
-                logger.error(
-                    f"User {self.request.user.id} attempted to create a reservation expe in someone else's canteen: {canteen_id}"
-                )
-                raise PermissionDenied()
             if self.get_queryset().filter(canteen=canteen).exists():
                 logger.error(
                     f"User {self.request.user.id} attempted to create a duplicate reservation expe in canteen {canteen_id}"
