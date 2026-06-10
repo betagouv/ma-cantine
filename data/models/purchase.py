@@ -284,7 +284,26 @@ class Purchase(SoftDeletionModel):
         super().save(**kwargs)
 
     @property
-    def famille_produits_display(self):
+    def categories_egalim(self) -> list[str]:
+        return [c for c in (self.caracteristiques or []) if c in Purchase.CHARACTERISTIC_LABELS_EGALIM]
+
+    @property
+    def origine(self) -> str | None:
+        for origine in Purchase.CHARACTERISTIC_LABELS_ORIGINE:
+            if origine in (self.caracteristiques or []):
+                return origine
+        return None
+
+    @property
+    def est_local(self) -> bool:
+        return Purchase.Characteristic.LOCAL in (self.caracteristiques or [])
+
+    @property
+    def est_circuit_court(self) -> bool:
+        return Purchase.Characteristic.CIRCUIT_COURT in (self.caracteristiques or [])
+
+    @property
+    def famille_produits_display(self) -> str | None:
         if not self.famille_produits:
             return None
         try:
@@ -293,7 +312,7 @@ class Purchase(SoftDeletionModel):
             return None
 
     @property
-    def caracteristiques_display(self):
+    def caracteristiques_display(self) -> str | None:
         if not self.caracteristiques:
             return None
         caracteristiques_display = []
