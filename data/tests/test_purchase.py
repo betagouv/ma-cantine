@@ -1,4 +1,5 @@
 from decimal import Decimal
+from datetime import date
 
 from django.test import TransactionTestCase, TestCase
 from django.core.exceptions import ValidationError
@@ -13,7 +14,20 @@ class PurchaseModelSaveTest(TransactionTestCase):
         pass
 
     # def test_purchase_canteen_validation(self):
-    # def test_purchase_date_validation(self):
+
+    def test_purchase_date_validation(self):
+        """
+        - field is mandatory
+        - cannot be in the future
+        """
+        for TUPLE_OK in [("2024-01-01", "2024-01-01"), (str(date.today()), str(date.today()))]:
+            with self.subTest(date=TUPLE_OK[0]):
+                purchase = PurchaseFactory(date=TUPLE_OK[0])
+                self.assertEqual(str(purchase.date), TUPLE_OK[1])
+        for VALUE_NOT_OK in [None, "", "  ", "invalid", "123", "3000-01-01"]:
+            with self.subTest(date=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, PurchaseFactory, date=VALUE_NOT_OK)
+
     # def test_purchase_category_validation(self):  # not used anymore
 
     def test_purchase_famille_produits_validation(self):
@@ -191,28 +205,28 @@ class PurchaseSummaryFranceTest(TestCase):
         cls.canteen = CanteenFactory()
         PurchaseFactory(
             canteen=cls.canteen,
-            date="2026-11-01",
+            date="2026-01-01",
             caracteristiques=[Purchase.Characteristic.FRANCE],
             famille_produits=Purchase.Family.BOULANGERIE,
             prix_ht=10,
         )
         PurchaseFactory(
             canteen=cls.canteen,
-            date="2026-11-01",
+            date="2026-01-01",
             caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
             famille_produits=Purchase.Family.BOULANGERIE,
             prix_ht=50,
         )
         PurchaseFactory(
             canteen=cls.canteen,
-            date="2026-11-01",
+            date="2026-01-01",
             caracteristiques=[Purchase.Characteristic.EUROPE, Purchase.Characteristic.LOCAL],  # e.g. border
             famille_produits=Purchase.Family.BOULANGERIE,
             prix_ht=15,
         )
         PurchaseFactory(
             canteen=cls.canteen,
-            date="2026-11-01",
+            date="2026-01-01",
             caracteristiques=[
                 Purchase.Characteristic.FRANCE,
                 Purchase.Characteristic.CIRCUIT_COURT,
@@ -223,14 +237,14 @@ class PurchaseSummaryFranceTest(TestCase):
         )
         PurchaseFactory(
             canteen=cls.canteen,
-            date="2026-11-01",
+            date="2026-01-01",
             caracteristiques=[Purchase.Characteristic.EUROPE],
             famille_produits=Purchase.Family.BOULANGERIE,
             prix_ht=5,
         )
         PurchaseFactory(
             canteen=cls.canteen,
-            date="2026-11-01",
+            date="2026-01-01",
             caracteristiques=[],
             famille_produits=Purchase.Family.BOULANGERIE,
             prix_ht=5,
@@ -238,7 +252,7 @@ class PurchaseSummaryFranceTest(TestCase):
 
     def test_canteen_summary_for_year_france_2024(self):
         # before 2025, circuit court and local were seperated from France (like 2026)
-        Purchase.objects.filter(canteen=self.canteen).update(date="2024-11-01")
+        Purchase.objects.filter(canteen=self.canteen).update(date="2024-01-01")
 
         result = Purchase.canteen_summary_for_year(self.canteen, 2024)
 
@@ -249,7 +263,7 @@ class PurchaseSummaryFranceTest(TestCase):
 
     def test_canteen_summary_for_year_france_2025(self):
         # in 2025, circuit court and local were counted as France
-        Purchase.objects.filter(canteen=self.canteen).update(date="2025-11-01")
+        Purchase.objects.filter(canteen=self.canteen).update(date="2025-01-01")
 
         result = Purchase.canteen_summary_for_year(self.canteen, 2025)
 

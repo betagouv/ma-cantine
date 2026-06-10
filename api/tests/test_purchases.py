@@ -1151,21 +1151,21 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
         PurchaseFactory(
             canteen=canteen_site,
-            date="2025-11-01",
+            date="2025-01-01",
             prix_ht=10,
             caracteristiques=[Purchase.Characteristic.FRANCE],
             famille_produits=Purchase.Family.BOULANGERIE,
         )
         PurchaseFactory(
             canteen=canteen_site,
-            date="2025-11-01",
+            date="2025-01-01",
             prix_ht=50,
             caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
             famille_produits=Purchase.Family.BOULANGERIE,
         )
         PurchaseFactory(
             canteen=canteen_site,
-            date="2025-11-01",
+            date="2025-01-01",
             prix_ht=15,
             caracteristiques=[Purchase.Characteristic.LOCAL],
             famille_produits=Purchase.Family.BOULANGERIE,
@@ -1199,21 +1199,21 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
         PurchaseFactory(
             canteen=canteen_site,
-            date="2024-11-01",
+            date="2024-01-01",
             prix_ht=10,
             caracteristiques=[Purchase.Characteristic.FRANCE],
             famille_produits=Purchase.Family.BOULANGERIE,
         )
         PurchaseFactory(
             canteen=canteen_site,
-            date="2024-11-01",
+            date="2024-01-01",
             prix_ht=50,
             caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
             famille_produits=Purchase.Family.BOULANGERIE,
         )
         PurchaseFactory(
             canteen=canteen_site,
-            date="2024-11-01",
+            date="2024-01-01",
             prix_ht=15,
             caracteristiques=[Purchase.Characteristic.LOCAL],
             famille_produits=Purchase.Family.BOULANGERIE,
