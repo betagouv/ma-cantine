@@ -27,9 +27,9 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_create_diagnostic_if_canteen_does_not_exist(self):
+    def test_cannot_create_diagnostic_if_canteen_unknown(self):
         response = self.client.post(
-            reverse("diagnostic_creation", kwargs={"canteen_pk": 999}), self.DIAGNOSTIC_PAYLOAD
+            reverse("diagnostic_creation", kwargs={"canteen_pk": 9999}), self.DIAGNOSTIC_PAYLOAD
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -405,12 +405,42 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.year, 2019)
 
     @authenticate
+    def test_cannot_update_diagnostic_if_canteen_unknown(self):
+        response = self.client.patch(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": 9999, "pk": self.diagnostic.id},
+            ),
+            {"year": 2020},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.diagnostic.refresh_from_db()
+        self.assertEqual(self.diagnostic.year, 2019)
+
+    @authenticate
     def test_cannot_update_diagnostic_if_not_canteen_manager(self):
         payload = {"year": 2020}
 
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.diagnostic.refresh_from_db()
+        self.assertEqual(self.diagnostic.year, 2019)
+
+    @authenticate
+    def test_cannot_update_diagnostic_if_diagnostic_unknown(self):
+        self.diagnostic.canteen.managers.add(authenticate.user)
+
+        response = self.client.patch(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": 9999},
+            ),
+            {"year": 2020},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.year, 2019)
 

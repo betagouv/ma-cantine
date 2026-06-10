@@ -1,12 +1,12 @@
 import logging
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
@@ -15,8 +15,7 @@ from api.exceptions import DuplicateException
 from api.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
-    IsCanteenManager,
-    IsLinkedCanteenManager,
+    IsCanteenManagerUrlParam,
 )
 from api.serializers import (
     DiagnosticAndCanteenSerializer,
@@ -39,7 +38,7 @@ logger = logging.getLogger(__name__)
     )
 )
 class DiagnosticCreateView(CreateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
     model = Diagnostic
     serializer_class = ManagerDiagnosticSerializer
@@ -49,22 +48,22 @@ class DiagnosticCreateView(CreateAPIView):
         kwargs.setdefault("action", "create")
         return ManagerDiagnosticSerializer(*args, **kwargs)
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def perform_create(self, serializer):
         try:
-            canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")
-            canteen = Canteen.objects.get(pk=canteen_id)
-            if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-                raise PermissionDenied()
+            canteen = self._get_canteen()
             serializer.is_valid(raise_exception=True)
             creation_user = self.request.user
             creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
             diagnostic = serializer.save(canteen=canteen, creation_user=creation_user, creation_source=creation_source)
             update_change_reason_with_auth(self, diagnostic)
-        except ObjectDoesNotExist as e:
-            logger.warning(f"Attempt to create a diagnostic from an unexistent canteen ID : {canteen_id}: \n{e}")
-            raise NotFound()
         except IntegrityError as e:
-            logger.warning(f"Attempt to create an existing diagnostic for canteen ID {canteen_id}:\n{e}")
+            logger.warning(
+                f"Attempt to create an existing diagnostic for canteen ID {self.kwargs['canteen_pk']}:\n{e}"
+            )
             raise DuplicateException()
 
 
@@ -75,7 +74,7 @@ class DiagnosticCreateView(CreateAPIView):
     ),
 )
 class DiagnosticUpdateView(UpdateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
     http_method_names = ["patch"]  # disable "put"
     queryset = Diagnostic.objects.all()
