@@ -34,9 +34,12 @@ class DiagnosticTeledeclarationCreateView(APIView):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
         return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
 
-    def post(self, request, *args, **kwargs):
+    def get_object(self):
         canteen = self._get_canteen()
-        diagnostic = get_object_or_404(canteen.diagnostics, pk=kwargs.get("pk"))
+        return get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
+
+    def post(self, request, *args, **kwargs):
+        diagnostic = self.get_object()
 
         # if ValidationError, it will be raised (and handled by custom_exception_handler)
         diagnostic.teledeclare(request.user)
@@ -52,9 +55,12 @@ class DiagnosticTeledeclarationCancelView(APIView):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
         return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
 
-    def post(self, request, *args, **kwargs):
+    def get_object(self):
         canteen = self._get_canteen()
-        diagnostic = get_object_or_404(canteen.diagnostics, pk=kwargs.get("pk"))
+        return get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
+
+    def post(self, request, *args, **kwargs):
+        diagnostic = self.get_object()
 
         # if ValidationError, it will be raised (and handled by custom_exception_handler)
         diagnostic.cancel()
@@ -81,9 +87,12 @@ class DiagnosticTeledeclarationPdfView(APIView):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
         return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
 
-    def get(self, request, *args, **kwargs):
+    def get_object(self):
         canteen = self._get_canteen()
-        diagnostic = get_object_or_404(canteen.diagnostics, pk=kwargs.get("pk"))
+        return get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
+
+    def get(self, request, *args, **kwargs):
+        diagnostic = self.get_object()
 
         if not diagnostic.is_teledeclared:
             raise ValidationError("Le diagnostic n'a pas été télédéclaré.")

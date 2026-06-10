@@ -373,6 +373,26 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
+class DiagnosticRetrieveApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.diagnostic = DiagnosticFactory(year=2019, canteen=cls.canteen)
+        cls.url = reverse(
+            "diagnostic_update",
+            kwargs={"canteen_pk": cls.diagnostic.canteen.id, "pk": cls.diagnostic.id},
+        )
+
+    @authenticate
+    def test_retrieve_diagnostic_not_allowed(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
 class DiagnosticUpdateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -443,6 +463,35 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.year, 2019)
+
+    @authenticate
+    def test_cannot_update_diagnostic_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory()
+        diagnostic_other = DiagnosticFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.patch(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": diagnostic_other.id},
+            ),
+            {"year": 2020},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if the user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        response = self.client.patch(
+            reverse(
+                "diagnostic_update",
+                kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": diagnostic_other.id},
+            ),
+            {"year": 2020},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_update_diagnostic(self):
