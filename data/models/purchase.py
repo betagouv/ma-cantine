@@ -284,25 +284,40 @@ class Purchase(SoftDeletionModel):
         super().save(**kwargs)
 
     @property
-    def famille_produits_display(self):
-        if not self.famille_produits:
-            return None
+    def categories_egalim(self) -> list[str]:
+        return [c for c in (self.caracteristiques or []) if c in Purchase.CHARACTERISTIC_LABELS_EGALIM]
+
+    @property
+    def origine(self) -> str | None:
+        for origine in Purchase.CHARACTERISTIC_LABELS_ORIGINE:
+            if origine in (self.caracteristiques or []):
+                return origine
+        return None
+
+    @property
+    def est_local(self) -> bool:
+        return Purchase.Characteristic.LOCAL in (self.caracteristiques or [])
+
+    @property
+    def est_circuit_court(self) -> bool:
+        return Purchase.Characteristic.CIRCUIT_COURT in (self.caracteristiques or [])
+
+    @property
+    def famille_produits_display(self) -> str:
         try:
             return Purchase.Family(self.famille_produits).label
         except Exception:
-            return None
+            return ""
 
     @property
-    def caracteristiques_display(self):
-        if not self.caracteristiques:
-            return None
+    def caracteristiques_display(self) -> str:
         caracteristiques_display = []
-        for c in self.caracteristiques:
+        for c in self.caracteristiques or []:
             try:
                 caracteristiques_display.append(Purchase.Characteristic(c).label)
             except Exception:
                 pass
-        return ", ".join(caracteristiques_display) if caracteristiques_display else None
+        return ", ".join(caracteristiques_display) if caracteristiques_display else ""
 
     @classmethod
     def canteen_summary_for_year(cls, canteen, year):
