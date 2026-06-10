@@ -21,13 +21,16 @@ class CanteenGroupeSatellitesListView(ListAPIView):
     model = Canteen
     serializer_class = SatelliteCanteenSerializer
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def get_queryset(self):
         year = timezone.now().year - 1
-        canteen_pk = self.kwargs["canteen_pk"]
+        canteen_groupe = self._get_canteen()
         user = self.request.user
         return (
-            Canteen.objects.get(pk=canteen_pk)
-            .satellites.annotate_with_is_managed_by_user(user)
+            canteen_groupe.satellites.annotate_with_is_managed_by_user(user)
             .annotate_with_action_for_year(year)
             .order_by("name")
         )
@@ -41,8 +44,12 @@ class CanteenGroupeSatelliteLinkView(APIView):
     # required_scopes = ["canteen"]
     serializer_class = FullCanteenSerializer
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def post(self, request, canteen_pk, satellite_pk):
-        canteen_groupe = Canteen.objects.get(pk=canteen_pk)
+        canteen_groupe = self._get_canteen()
 
         try:
             canteen_satellite = Canteen.objects.get(pk=satellite_pk)
@@ -80,8 +87,12 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
     # required_scopes = ["canteen"]
     serializer_class = FullCanteenSerializer
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def post(self, request, canteen_pk, satellite_pk):
-        canteen_groupe = Canteen.objects.get(pk=canteen_pk)
+        canteen_groupe = self._get_canteen()
 
         try:
             canteen_satellite = Canteen.objects.get(pk=satellite_pk)

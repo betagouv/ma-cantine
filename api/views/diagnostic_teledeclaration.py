@@ -9,7 +9,7 @@ from django.utils.text import slugify
 from django_filters import rest_framework as django_filters
 from drf_spectacular.openapi import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
@@ -17,8 +17,7 @@ from xhtml2pdf import pisa
 from api.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
-    IsCanteenManager,
-    IsLinkedCanteenManager,
+    IsCanteenManagerUrlParam,
 )
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer, DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
@@ -28,14 +27,16 @@ logger = logging.getLogger(__name__)
 
 
 class DiagnosticTeledeclarationCreateView(APIView):
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def post(self, request, *args, **kwargs):
-        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
-        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-            raise PermissionDenied()
-        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+        canteen = self._get_canteen()
+        diagnostic = get_object_or_404(canteen.diagnostics, pk=kwargs.get("pk"))
 
         # if ValidationError, it will be raised (and handled by custom_exception_handler)
         diagnostic.teledeclare(request.user)
@@ -44,14 +45,16 @@ class DiagnosticTeledeclarationCreateView(APIView):
 
 
 class DiagnosticTeledeclarationCancelView(APIView):
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def post(self, request, *args, **kwargs):
-        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
-        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-            raise PermissionDenied()
-        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+        canteen = self._get_canteen()
+        diagnostic = get_object_or_404(canteen.diagnostics, pk=kwargs.get("pk"))
 
         # if ValidationError, it will be raised (and handled by custom_exception_handler)
         diagnostic.cancel()
@@ -71,14 +74,16 @@ class DiagnosticTeledeclarationPdfView(APIView):
     This view returns a PDF for proof of teledeclaration
     """
 
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["teledeclaration"]
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def get(self, request, *args, **kwargs):
-        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
-        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-            raise PermissionDenied()
-        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+        canteen = self._get_canteen()
+        diagnostic = get_object_or_404(canteen.diagnostics, pk=kwargs.get("pk"))
 
         if not diagnostic.is_teledeclared:
             raise ValidationError("Le diagnostic n'a pas été télédéclaré.")
