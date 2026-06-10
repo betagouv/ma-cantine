@@ -1,15 +1,12 @@
 import logging
 
-from django.core.exceptions import ObjectDoesNotExist
 from django_filters import rest_framework as django_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
 from api.permissions import (
     IsAuthenticatedOrTokenHasResourceScope,
-    IsCanteenManager,
-    IsLinkedCanteenManager,
+    IsCanteenManagerUrlParam,
 )
 from api.serializers import WasteMeasurementSerializer
 from api.views.utils import update_change_reason_with_auth
@@ -37,7 +34,7 @@ class WasteMeasurementFilterSet(django_filters.FilterSet):
     )
 )
 class CanteenWasteMeasurementsView(ListCreateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     queryset = WasteMeasurement.objects.none()
     serializer_class = WasteMeasurementSerializer
     filter_backends = [
@@ -46,19 +43,8 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
     filterset_class = WasteMeasurementFilterSet
 
     def _get_canteen(self):
-        canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")
-        try:
-            canteen = Canteen.objects.get(pk=canteen_id)
-        except ObjectDoesNotExist as e:
-            logger.warning(
-                f"Attempt to create/view a waste measurement from an unexistent canteen ID : {canteen_id}: \n{e}"
-            )
-            raise NotFound()
-
-        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-            raise PermissionDenied()
-
-        return canteen
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
 
     def get_queryset(self):
         canteen = self._get_canteen()
@@ -78,7 +64,7 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
     )
 )
 class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     http_method_names = ["get", "patch"]  # disable "put"
     queryset = WasteMeasurement.objects.all()
     serializer_class = WasteMeasurementSerializer
