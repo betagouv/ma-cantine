@@ -717,7 +717,11 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         The period dates cannot be removed
         """
         self.canteen.managers.add(authenticate.user)
-        measurement = WasteMeasurementFactory(canteen=self.canteen)
+        measurement = WasteMeasurementFactory(
+            canteen=self.canteen,
+            period_start_date=datetime.date(2024, 7, 1),
+            period_end_date=datetime.date(2024, 7, 5),
+        )
 
         payload = {
             "period_start_date": None,
