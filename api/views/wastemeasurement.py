@@ -68,3 +68,11 @@ class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
     http_method_names = ["get", "patch"]  # disable "put"
     queryset = WasteMeasurement.objects.all()
     serializer_class = WasteMeasurementSerializer
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_queryset(self):
+        canteen = self._get_canteen()
+        return self.queryset.filter(canteen=canteen)

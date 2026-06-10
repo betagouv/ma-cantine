@@ -80,6 +80,14 @@ class DiagnosticUpdateView(UpdateAPIView):
     queryset = Diagnostic.objects.all()
     serializer_class = ManagerDiagnosticSerializer
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_queryset(self):
+        canteen = self._get_canteen()
+        return self.queryset.filter(canteen=canteen)
+
     def perform_update(self, serializer):
         if self.get_object().is_teledeclared:
             # if the user wants to cancel, see DiagnosticTeledeclarationCancelView

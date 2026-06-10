@@ -226,6 +226,34 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_teledeclare_diagnostic_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        diagnostic_other = DiagnosticFactory(canteen=canteen_other, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if the user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_teledeclare_with_oauth2_token(self):
         user, token = get_oauth2_token("canteen:write")
@@ -415,6 +443,34 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_cancel_teledeclaration_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        diagnostic_other = DiagnosticFactory(canteen=canteen_other, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if the user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_cancel_teledeclaration_with_oauth2_token(self):

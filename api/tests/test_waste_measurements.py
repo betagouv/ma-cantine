@@ -461,6 +461,35 @@ class WasteMeasurementsDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
+    def test_cannot_get_waste_measurement_if_not_corresponding_canteen(self):
+        canteen2 = CanteenFactory()
+        measurement2 = WasteMeasurementFactory(
+            canteen=canteen2, period_start_date=datetime.date(2023, 1, 1), period_end_date=datetime.date(2023, 1, 5)
+        )
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(
+            reverse(
+                "canteen_waste_measurement_detail",
+                kwargs={"pk": measurement2.id, "canteen_pk": self.canteen.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if user manages the canteen of the measurement
+        canteen2.managers.add(authenticate.user)
+
+        response = self.client.get(
+            reverse(
+                "canteen_waste_measurement_detail",
+                kwargs={"pk": measurement2.id, "canteen_pk": self.canteen.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
     def test_get_waste_measurement(self):
         self.canteen.managers.add(authenticate.user)
 
@@ -548,6 +577,40 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_update_waste_measurement_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory()
+        measurement_other = WasteMeasurementFactory(
+            canteen=canteen_other,
+            period_start_date=datetime.date(2023, 1, 1),
+            period_end_date=datetime.date(2023, 1, 5),
+        )
+        self.canteen.managers.add(authenticate.user)
+        payload = {"mealCount": 200}
+
+        response = self.client.patch(
+            reverse(
+                "canteen_waste_measurement_detail",
+                kwargs={"pk": measurement_other.id, "canteen_pk": self.canteen.id},
+            ),
+            payload,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        response = self.client.patch(
+            reverse(
+                "canteen_waste_measurement_detail",
+                kwargs={"pk": measurement_other.id, "canteen_pk": self.canteen.id},
+            ),
+            payload,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_update_waste_measurement(self):
