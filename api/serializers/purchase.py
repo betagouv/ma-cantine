@@ -4,7 +4,7 @@ from rest_framework import serializers
 from data.models import Purchase
 
 
-class PurchaseSerializer(serializers.ModelSerializer):
+class PurchaseOldSerializer(serializers.ModelSerializer):
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
     provider = serializers.CharField(source="fournisseur", required=False, allow_blank=True)
     family = serializers.ChoiceField(
