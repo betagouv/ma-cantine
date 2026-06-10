@@ -203,7 +203,9 @@ class PurchaseModelPropertiesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
-        cls.purchase_empty = PurchaseFactory(canteen=cls.canteen, date="2026-01-01", caracteristiques=[], prix_ht=15)
+        cls.purchase_empty = PurchaseFactory(
+            canteen=cls.canteen, date="2026-01-01", caracteristiques=[], famille_produits=None, prix_ht=15
+        )
         cls.purchase = PurchaseFactory(
             canteen=cls.canteen,
             date="2026-01-01",
@@ -232,6 +234,17 @@ class PurchaseModelPropertiesTest(TestCase):
     def test_purchase_est_circuit_court_property(self):
         self.assertFalse(self.purchase_empty.est_circuit_court)
         self.assertTrue(self.purchase.est_circuit_court)
+
+    def test_purchase_famille_produits_display_property(self):
+        self.assertEqual(self.purchase_empty.famille_produits_display, None)
+        self.assertEqual(self.purchase.famille_produits_display, "Boulangerie/Pâtisserie fraîches et surgelées")
+
+    def test_purchase_caracteristiques_display_property(self):
+        self.assertEqual(self.purchase_empty.caracteristiques_display, None)
+        self.assertEqual(
+            self.purchase.caracteristiques_display,
+            "Bio, Origine France, Circuit-court, Produit local",
+        )
 
 
 class PurchaseSummaryFranceTest(TestCase):
