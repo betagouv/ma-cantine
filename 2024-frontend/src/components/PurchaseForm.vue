@@ -80,6 +80,12 @@ const rules = {
     )
   },
   family: { required },
+  characteristicsOrigines: {
+    oneValue: helpers.withMessage(
+      "Une seule origine doit être sélectionnée",
+      (origines) => origines.length <= 1
+    )
+   },
   localDefinition: { required: requiredIf(showLocalDefinition) },
 }
 
@@ -221,7 +227,7 @@ const formatPayload = (form) => {
       legend="Origine"
       :options="categoriesOriginesOptions"
       small
-      inline
+      :error-message="formatError(v$.characteristicsOrigines)"
     />
 
     <DsfrCheckboxSet
