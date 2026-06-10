@@ -48,7 +48,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_list_if_group_does_not_exist(self):
+    def test_cannot_list_if_group_unknown(self):
         url = reverse(
             "canteen_groupe_satellites_list",
             kwargs={"canteen_pk": 9999},
@@ -56,7 +56,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         self.client.force_authenticate(user=authenticate.user)
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)  # should be 404
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_list_if_user_not_group_manager(self):
@@ -188,7 +188,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_link_unlink_satellite_if_group_does_not_exist(self):
+    def test_cannot_link_unlink_satellite_if_group_unknown(self):
         # self.canteen_satellite_0 is not linked yet
         url = reverse(
             "canteen_groupe_satellite_link",
@@ -196,7 +196,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         )
         response = self.client.post(url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)  # should be 404
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # self.canteen_satellite_11 is linked to groupe_1
         url = reverse(
@@ -205,7 +205,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         )
         response = self.client.post(url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)  # should be 404
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_link_unlink_satellite_if_user_not_group_manager(self):
