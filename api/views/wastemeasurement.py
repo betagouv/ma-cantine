@@ -68,3 +68,6 @@ class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
     http_method_names = ["get", "patch"]  # disable "put"
     queryset = WasteMeasurement.objects.all()
     serializer_class = WasteMeasurementSerializer
+
+    def get_queryset(self):
+        return WasteMeasurement.objects.filter(canteen_id=self.kwargs["canteen_pk"])

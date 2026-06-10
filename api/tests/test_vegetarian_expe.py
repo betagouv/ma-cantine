@@ -76,7 +76,7 @@ class VegetarianExpeCreateApiTest(APITestCase):
         self.assertEqual(float(VegetarianExpe.objects.get(canteen=canteen).vegetarian_menu_percentage_t0), 0.32)
         self.assertEqual(VegetarianExpe.objects.get(canteen=canteen).satisfaction_guests_t0, 5)
 
-    def test_cannot_create_vegetarian_expe_not_authenticated(self):
+    def test_cannot_create_vegetarian_expe_if_unauthenticated(self):
         """
         Shouldn't be able to create a vegetarian expe if not authenticated
         """
