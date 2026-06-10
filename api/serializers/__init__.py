@@ -52,7 +52,7 @@ from .teledeclaration import (  # noqa: F401
     CampaignDatesFullSerializer,
 )  # noqa: F401
 from .purchase import (  # noqa: F401
-    PurchaseSerializer,
+    PurchaseOldSerializer,
     PurchaseSummarySerializer,
     PurchasePercentageSummarySerializer,
     PurchaseExportSerializer,

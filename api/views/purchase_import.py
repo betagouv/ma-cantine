@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 
-from api.serializers import PurchaseSerializer
+from api.serializers import PurchaseOldSerializer
 from api.views.base_import import BaseImportView
 from common.utils import file_import
 from common.utils import utils as utils_utils
@@ -14,7 +14,6 @@ from data.models import Canteen, ImportType, Purchase
 from data.models.creation_source import CreationSource
 
 from .utils import camelize
-
 
 PURCHASE_SIRET_SCHEMA_FILE_NAME = "achats_siret.json"
 PURCHASE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SIRET_SCHEMA_FILE_NAME}"
@@ -187,7 +186,7 @@ class PurchasesImportView(BaseImportView):
         """Return purchase-specific response data"""
         return {
             "count": len(self.purchases),
-            "duplicatePurchases": camelize(PurchaseSerializer(self.duplicate_purchases, many=True).data),
+            "duplicatePurchases": camelize(PurchaseOldSerializer(self.duplicate_purchases, many=True).data),
             "duplicateFile": self.is_duplicate_file,
             "duplicatePurchaseCount": self.duplicate_purchase_count,
         }
