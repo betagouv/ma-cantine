@@ -14,8 +14,8 @@ from rest_framework.views import APIView
 from api.filters.utils import UnaccentSearchFilter
 from api.permissions import IsAuthenticated, IsCanteenManager, IsLinkedCanteenManager
 from api.serializers import (
+    PurchaseOldSerializer,
     PurchasePercentageSummarySerializer,
-    PurchaseSerializer,
     PurchaseSummarySerializer,
 )
 from data.models import Canteen, Diagnostic, Purchase
@@ -91,7 +91,7 @@ class PurchaseFilterSet(django_filters.FilterSet):
 class PurchaseListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
-    serializer_class = PurchaseSerializer
+    serializer_class = PurchaseOldSerializer
     pagination_class = PurchasesPagination
     filter_backends = [
         UnaccentSearchFilter,
@@ -142,7 +142,7 @@ class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     http_method_names = ["get", "patch", "delete"]  # disable "put"
     model = Purchase
-    serializer_class = PurchaseSerializer
+    serializer_class = PurchaseOldSerializer
 
     def get_queryset(self):
         return Purchase.objects.for_user(self.request.user)
