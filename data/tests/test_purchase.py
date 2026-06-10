@@ -236,11 +236,11 @@ class PurchaseModelPropertiesTest(TestCase):
         self.assertTrue(self.purchase.est_circuit_court)
 
     def test_purchase_famille_produits_display_property(self):
-        self.assertEqual(self.purchase_empty.famille_produits_display, None)
+        self.assertEqual(self.purchase_empty.famille_produits_display, "")
         self.assertEqual(self.purchase.famille_produits_display, "Boulangerie/Pâtisserie fraîches et surgelées")
 
     def test_purchase_caracteristiques_display_property(self):
-        self.assertEqual(self.purchase_empty.caracteristiques_display, None)
+        self.assertEqual(self.purchase_empty.caracteristiques_display, "")
         self.assertEqual(
             self.purchase.caracteristiques_display,
             "Bio, Origine France, Circuit-court, Produit local",

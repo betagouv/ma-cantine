@@ -303,25 +303,21 @@ class Purchase(SoftDeletionModel):
         return Purchase.Characteristic.CIRCUIT_COURT in (self.caracteristiques or [])
 
     @property
-    def famille_produits_display(self) -> str | None:
-        if not self.famille_produits:
-            return None
+    def famille_produits_display(self) -> str:
         try:
             return Purchase.Family(self.famille_produits).label
         except Exception:
-            return None
+            return ""
 
     @property
-    def caracteristiques_display(self) -> str | None:
-        if not self.caracteristiques:
-            return None
+    def caracteristiques_display(self) -> str:
         caracteristiques_display = []
-        for c in self.caracteristiques:
+        for c in self.caracteristiques or []:
             try:
                 caracteristiques_display.append(Purchase.Characteristic(c).label)
             except Exception:
                 pass
-        return ", ".join(caracteristiques_display) if caracteristiques_display else None
+        return ", ".join(caracteristiques_display) if caracteristiques_display else ""
 
     @classmethod
     def canteen_summary_for_year(cls, canteen, year):
