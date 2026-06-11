@@ -6,6 +6,26 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.37.1](https://github.com/betagouv/ma-cantine/compare/v2026.37.0...v2026.37.1) (2026-06-10)
+
+
+### Améliorations
+
+* **Achats:** gérer EUROPE dans les calculs d'aggrégation ([#6788](https://github.com/betagouv/ma-cantine/issues/6788)) ([5b9f917](https://github.com/betagouv/ma-cantine/commit/5b9f917d644de397542b3aa5226fa70f9ae3910a))
+* **Achats:** mise à jour des valeurs "Origines" autorisées et ordonnancement des valeurs "Définition de locale" ([#6803](https://github.com/betagouv/ma-cantine/issues/6803)) ([b963fed](https://github.com/betagouv/ma-cantine/commit/b963fed4cf2191e13e7cda4a10c4f6cddd75fa8f))
+
+
+### Technique
+
+* **1TD1Site:** rajouter un test sur le calcul du cout_repas pour les satellites ([#6796](https://github.com/betagouv/ma-cantine/issues/6796)) ([feeb50c](https://github.com/betagouv/ma-cantine/commit/feeb50c894a2589962a9cd3ea51b369940653d80))
+* **Achats:** Règles métiers: s'assurer qu'EUROPE & FRANCE ne peuvent pas cohabiter sur un même achat ([#6804](https://github.com/betagouv/ma-cantine/issues/6804)) ([a3f240a](https://github.com/betagouv/ma-cantine/commit/a3f240a741a1c4ecda9d32ca85630bd816797244))
+* **Achats:** Règles métiers: s'assurer que la date n'est pas dans le futur ([#6805](https://github.com/betagouv/ma-cantine/issues/6805)) ([4b13b03](https://github.com/betagouv/ma-cantine/commit/4b13b03f9f08cc9e650c252e9b02aa1d43d1e7da))
+* **API:** diagnostic_teledeclaration: utiliser IsCanteenManagerUrlParam au lieu de IsLinkedCanteenManager ([#6812](https://github.com/betagouv/ma-cantine/issues/6812)) ([95089ff](https://github.com/betagouv/ma-cantine/commit/95089ffa9f1bdaa41264ed0b19135f2f73975f83))
+* **API:** diagnostics: utiliser IsCanteenManagerUrlParam au lieu de IsLinkedCanteenManager ([#6815](https://github.com/betagouv/ma-cantine/issues/6815)) ([41325f6](https://github.com/betagouv/ma-cantine/commit/41325f68bd489b478b2506f3e06b49e9d3b68709))
+* **API:** renvoyer proprement un 404 quand la cantine est inconnue ([#6811](https://github.com/betagouv/ma-cantine/issues/6811)) ([b1c188d](https://github.com/betagouv/ma-cantine/commit/b1c188dae08187ded01e17b503d706bcaae4f3e9))
+* **API:** renvoyer un 404 si l'objet n'appartient pas à la cantine (diagnostic & wastemeasurement) ([#6816](https://github.com/betagouv/ma-cantine/issues/6816)) ([6aae555](https://github.com/betagouv/ma-cantine/commit/6aae555b6576c7df01c8b7f6f23e61f8fd9649fa))
+* **API:** waste_measurements: utiliser IsCanteenManagerUrlParam au lieu de IsLinkedCanteenManager ([#6814](https://github.com/betagouv/ma-cantine/issues/6814)) ([27c6f56](https://github.com/betagouv/ma-cantine/commit/27c6f56a4152830957f374d77a278af136db193d))
+
 ## [2026.37.0](https://github.com/betagouv/ma-cantine/compare/v2026.36.1...v2026.37.0) (2026-06-08)
 
 
