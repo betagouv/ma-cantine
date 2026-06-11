@@ -44,9 +44,10 @@ from api.views import (
     PublicCanteenPreviewView,
     PublishedCanteenSingleView,
     PublishedCanteensView,
-    PurchaseCreateRetrieveUpdateDestroyView,
-    PurchaseListCreateView,
+    PurchaseCreateView,
     PurchaseListExportView,
+    PurchaseOldListCreateView,
+    PurchaseOldRetrieveUpdateDestroyView,
     PurchaseOptionsView,
     PurchaseRetrieveUpdateDestroyView,
     PurchasesDeleteView,
@@ -106,12 +107,12 @@ urlpatterns = {
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
     path(
         "canteens/<int:canteen_pk>/purchases/",
-        PurchaseCreateRetrieveUpdateDestroyView.as_view(),
+        PurchaseCreateView.as_view(),
         name="canteen_purchase_create",
     ),
     path(
         "canteens/<int:canteen_pk>/purchases/<int:pk>",
-        PurchaseCreateRetrieveUpdateDestroyView.as_view(),
+        PurchaseRetrieveUpdateDestroyView.as_view(),
         name="canteen_purchase_retrieve_update_destroy",
     ),
     path(
@@ -209,7 +210,7 @@ urlpatterns = {
     path("inquiry/", InquiryView.as_view(), name="inquiry"),
     path(
         "purchases/",
-        PurchaseListCreateView.as_view(),
+        PurchaseOldListCreateView.as_view(),
         name="purchase_list_create",
     ),
     path(
@@ -219,7 +220,7 @@ urlpatterns = {
     ),
     path(
         "purchases/<int:pk>",
-        PurchaseRetrieveUpdateDestroyView.as_view(),
+        PurchaseOldRetrieveUpdateDestroyView.as_view(),
         name="purchase_retrieve_update_destroy",
     ),
     path(

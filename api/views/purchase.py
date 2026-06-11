@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -31,9 +31,30 @@ from data.models.creation_source import CreationSource
 logger = logging.getLogger(__name__)
 
 
-class PurchaseCreateRetrieveUpdateDestroyView(CreateModelMixin, RetrieveUpdateDestroyAPIView):
+class PurchaseCreateView(CreateModelMixin, GenericAPIView):
     permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
-    http_method_names = ["get", "post", "patch", "delete"]  # disable "put"
+    http_method_names = ["post"]
+    model = Purchase
+    serializer_class = PurchaseSerializer
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def perform_create(self, serializer):
+        canteen = self._get_canteen()
+        serializer.is_valid(raise_exception=True)
+        creation_user = self.request.user
+        creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
+        serializer.save(canteen=canteen, creation_user=creation_user, creation_source=creation_source)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    http_method_names = ["get", "patch", "delete"]  # disable "put"
     model = Purchase
     serializer_class = PurchaseSerializer
 
@@ -44,20 +65,6 @@ class PurchaseCreateRetrieveUpdateDestroyView(CreateModelMixin, RetrieveUpdateDe
     def get_queryset(self):
         canteen = self._get_canteen()
         return Purchase.objects.filter(canteen=canteen)
-
-    def perform_create(self, serializer):
-        canteen = self._get_canteen()
-        serializer.is_valid(raise_exception=True)
-        creation_user = self.request.user
-        creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-        serializer.save(canteen=canteen, creation_user=creation_user, creation_source=creation_source)
-
-    def perform_update(self, serializer):
-        serializer.is_valid(raise_exception=True)
-        serializer.save(canteen=self._get_canteen())
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
 
 
 class PurchasesPagination(LimitOffsetPagination):
@@ -124,7 +131,7 @@ class PurchaseFilterSet(django_filters.FilterSet):
         return queryset
 
 
-class PurchaseListCreateView(ListCreateAPIView):
+class PurchaseOldListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     model = Purchase
     serializer_class = PurchaseOldSerializer
@@ -174,7 +181,7 @@ class PurchaseListCreateView(ListCreateAPIView):
             raise NotFound() from e
 
 
-class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+class PurchaseOldRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
     http_method_names = ["get", "patch", "delete"]  # disable "put"
     model = Purchase
