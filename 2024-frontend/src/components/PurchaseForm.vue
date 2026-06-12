@@ -237,7 +237,7 @@ const formatPayload = (form) => {
     <DsfrSelect
       v-if="showLocalDefinition"
       v-model="form.localDefinition"
-      label="Précisions *"
+      label="Précisions"
       hint="Précisez la provenance du produit"
       labelVisible
       :options="definitionLocalOptions"
