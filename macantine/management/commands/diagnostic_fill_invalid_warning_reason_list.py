@@ -22,11 +22,11 @@ from data.utils import has_arrayfield_missing_query
 logger = logging.getLogger(__name__)
 
 
-def _remove_reason_item(field_prefix, reason_item):
+def _remove_reason_item(year, field_prefix, reason_item):
     """
     field_prefix: "invalid" or "warning"
     """
-    Diagnostic.objects.filter(**{f"{field_prefix}_reason_list__contains": [reason_item]}).update(
+    Diagnostic.objects.filter(year=year).filter(**{f"{field_prefix}_reason_list__contains": [reason_item]}).update(
         **{
             f"{field_prefix}_reason_list": Func(
                 F(f"{field_prefix}_reason_list"),
@@ -89,21 +89,21 @@ class Command(BaseCommand):
 
         #########################################################
         # invalid_reason_list
-        fill_invalid_reason_CANTINE_SUPPRIMEE(diagnostic_qs, apply)
+        fill_invalid_reason_CANTINE_SUPPRIMEE(diagnostic_qs, year, apply)
         fill_invalid_reason_CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE(diagnostic_qs, year, apply)
-        fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs, apply)
-        fill_invalid_reason_TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO(diagnostic_qs, apply)
-        fill_invalid_reason_VALEUR_TOTALE_VIDE(diagnostic_qs, apply)
-        fill_invalid_reason_VALEUR_BIO_AGG_VIDE(diagnostic_qs, apply)
-        fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs, apply)
-        fill_invalid_reason_VALEURS_INCOHERENTES(diagnostic_qs, apply)
+        fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs, year, apply)
+        fill_invalid_reason_TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO(diagnostic_qs, year, apply)
+        fill_invalid_reason_VALEUR_TOTALE_VIDE(diagnostic_qs, year, apply)
+        fill_invalid_reason_VALEUR_BIO_AGG_VIDE(diagnostic_qs, year, apply)
+        fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs, year, apply)
+        fill_invalid_reason_VALEURS_INCOHERENTES(diagnostic_qs, year, apply)
         # fill_invalid_reason_DOUBLON_1TD1SITE()  # done in teledeclaration_generate_1td1site.py
 
         #########################################################
         # warning_reason_list
-        fill_warning_reason_CIRCUIT_COURT_SUP_FRANCE(diagnostic_qs, apply)
-        fill_warning_reason_LOCAL_SUP_FRANCE(diagnostic_qs, apply)
-        fill_warning_reason_COMMERCE_EQUITABLE_SUP_BIO(diagnostic_qs, apply)
+        fill_warning_reason_CIRCUIT_COURT_SUP_FRANCE(diagnostic_qs, year, apply)
+        fill_warning_reason_LOCAL_SUP_FRANCE(diagnostic_qs, year, apply)
+        fill_warning_reason_COMMERCE_EQUITABLE_SUP_BIO(diagnostic_qs, year, apply)
 
         logger.info("Task completed: diagnostic_fill_invalid_warning_reason_list")
         diagnostic_invalid_qs = diagnostic_qs.exclude(has_arrayfield_missing_query("invalid_reason_list"))
@@ -112,13 +112,13 @@ class Command(BaseCommand):
         logger.info(f"Found {diagnostic_warning_qs.count()} diagnostics with a warning reason")
 
 
-def fill_invalid_reason_CANTINE_SUPPRIMEE(diagnostic_qs, apply):
+def fill_invalid_reason_CANTINE_SUPPRIMEE(diagnostic_qs, year, apply):
     reason_item = Diagnostic.InvalidReason.CANTINE_SUPPRIMEE
     logger.info(f"fill_invalid_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("invalid", reason_item)
+        _remove_reason_item(year, "invalid", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = diagnostic_qs.filter(canteen_deleted_query())
@@ -135,7 +135,7 @@ def fill_invalid_reason_CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE(diagnostic_qs, y
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("invalid", reason_item)
+        _remove_reason_item(year, "invalid", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = diagnostic_qs.filter(canteen_soft_deleted_during_campaign_query(year))
@@ -146,13 +146,13 @@ def fill_invalid_reason_CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE(diagnostic_qs, y
         _append_reason_item(diagnostic_qs, "invalid", reason_item)
 
 
-def fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs, apply):
+def fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs, year, apply):
     reason_item = Diagnostic.InvalidReason.CANTINE_SANS_SIRET_OU_SIREN
     logger.info(f"fill_invalid_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("invalid", reason_item)
+        _remove_reason_item(year, "invalid", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = diagnostic_qs.exclude(canteen_has_siret_or_siren_unite_legale_query())
@@ -163,13 +163,13 @@ def fill_invalid_reason_CANTINE_SANS_SIRET_OU_SIREN(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "invalid", reason_item)
 
 
-def fill_invalid_reason_TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO(diagnostic_qs, apply):
+def fill_invalid_reason_TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO(diagnostic_qs, year, apply):
     reason_item = Diagnostic.InvalidReason.TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO
     logger.info(f"fill_invalid_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("invalid", reason_item)
+        _remove_reason_item(year, "invalid", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = diagnostic_qs.filter(teledeclaration_mode_satellite_without_appro_query())
@@ -180,13 +180,13 @@ def fill_invalid_reason_TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO(diagnostic_
         _append_reason_item(diagnostic_qs, "invalid", reason_item)
 
 
-def fill_invalid_reason_VALEUR_TOTALE_VIDE(diagnostic_qs, apply):
+def fill_invalid_reason_VALEUR_TOTALE_VIDE(diagnostic_qs, year, apply):
     reason_item = Diagnostic.InvalidReason.VALEUR_TOTALE_VIDE
     logger.info(f"fill_invalid_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("invalid", reason_item)
+        _remove_reason_item(year, "invalid", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = diagnostic_qs.exclude(valeur_totale_is_filled_query())
@@ -197,13 +197,13 @@ def fill_invalid_reason_VALEUR_TOTALE_VIDE(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "invalid", reason_item)
 
 
-def fill_invalid_reason_VALEUR_BIO_AGG_VIDE(diagnostic_qs, apply):
+def fill_invalid_reason_VALEUR_BIO_AGG_VIDE(diagnostic_qs, year, apply):
     reason_item = Diagnostic.InvalidReason.VALEUR_BIO_AGG_VIDE
     logger.info(f"fill_invalid_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("invalid", reason_item)
+        _remove_reason_item(year, "invalid", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = diagnostic_qs.exclude(valeur_bio_agg_is_filled_query())
@@ -214,13 +214,13 @@ def fill_invalid_reason_VALEUR_BIO_AGG_VIDE(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "invalid", reason_item)
 
 
-def fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs, apply):
+def fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs, year, apply):
     reason_item = Diagnostic.InvalidReason.VALEURS_ABERRANTES
     logger.info(f"fill_invalid_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("invalid", reason_item)
+        _remove_reason_item(year, "invalid", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = diagnostic_qs.filter(aberrant_values_query())
@@ -231,13 +231,13 @@ def fill_invalid_reason_VALEURS_ABERRANTES(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "invalid", reason_item)
 
 
-def fill_invalid_reason_VALEURS_INCOHERENTES(diagnostic_qs, apply):
+def fill_invalid_reason_VALEURS_INCOHERENTES(diagnostic_qs, year, apply):
     reason_item = Diagnostic.InvalidReason.VALEURS_INCOHERENTES
     logger.info(f"fill_invalid_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("invalid", reason_item)
+        _remove_reason_item(year, "invalid", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = diagnostic_qs.filter(incoherent_values_query())
@@ -248,13 +248,13 @@ def fill_invalid_reason_VALEURS_INCOHERENTES(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "invalid", reason_item)
 
 
-def fill_warning_reason_CIRCUIT_COURT_SUP_FRANCE(diagnostic_qs, apply):
+def fill_warning_reason_CIRCUIT_COURT_SUP_FRANCE(diagnostic_qs, year, apply):
     reason_item = Diagnostic.WarningReason.CIRCUIT_COURT_SUP_FRANCE
     logger.info(f"fill_warning_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("warning", reason_item)
+        _remove_reason_item(year, "warning", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = (
@@ -267,13 +267,13 @@ def fill_warning_reason_CIRCUIT_COURT_SUP_FRANCE(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "warning", reason_item)
 
 
-def fill_warning_reason_LOCAL_SUP_FRANCE(diagnostic_qs, apply):
+def fill_warning_reason_LOCAL_SUP_FRANCE(diagnostic_qs, year, apply):
     reason_item = Diagnostic.WarningReason.LOCAL_SUP_FRANCE
     logger.info(f"fill_warning_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("warning", reason_item)
+        _remove_reason_item(year, "warning", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = diagnostic_qs.with_label_sum("local").with_label_sum("france").filter(local_sup_france_query())
@@ -284,13 +284,13 @@ def fill_warning_reason_LOCAL_SUP_FRANCE(diagnostic_qs, apply):
         _append_reason_item(diagnostic_qs, "warning", reason_item)
 
 
-def fill_warning_reason_COMMERCE_EQUITABLE_SUP_BIO(diagnostic_qs, apply):
+def fill_warning_reason_COMMERCE_EQUITABLE_SUP_BIO(diagnostic_qs, year, apply):
     reason_item = Diagnostic.WarningReason.COMMERCE_EQUITABLE_SUP_BIO
     logger.info(f"fill_warning_reason: {reason_item}")
 
     # Step 1: cleanup
     if apply:
-        _remove_reason_item("warning", reason_item)
+        _remove_reason_item(year, "warning", reason_item)
 
     # Step 2: queryset
     diagnostic_qs = (
