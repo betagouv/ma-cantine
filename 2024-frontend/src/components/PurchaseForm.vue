@@ -68,7 +68,7 @@ if (props.purchaseData) prefillFields()
 
 const showLocalDefinition = computed(() => form.characteristicsLocal.length > 0)
 
-const { required, decimal, minValue, requiredIf } = useValidators()
+const { required, decimal, minValue } = useValidators()
 const rules = {
   description: { required },
   provider: { required },
@@ -81,7 +81,6 @@ const rules = {
     )
   },
   family: { required },
-  localDefinition: { required: requiredIf(showLocalDefinition) },
 }
 
 const v$ = useVuelidate(rules, form)
@@ -242,7 +241,6 @@ const formatPayload = (form) => {
       hint="Précisez la provenance du produit"
       labelVisible
       :options="definitionLocalOptions"
-      :error-message="formatError(v$.localDefinition)"
     />
     <div class="fr-mt-6w ma-cantine--flex-end">
       <DsfrButton
