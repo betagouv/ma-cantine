@@ -107,6 +107,11 @@ const onInvoiceFileChange = (files) => {
   invoiceFile.value = file
 }
 
+/* Local change */
+const onLocalChange = () => {
+  form.localDefinition = ""
+}
+
 /* Form submission */
 const isSaving = ref(false)
 
@@ -228,6 +233,7 @@ const formatPayload = (form) => {
       small
       inline
       class="fr-mb-n2w"
+      @change="onLocalChange"
     />
     <DsfrSelect
       v-if="showLocalDefinition"
