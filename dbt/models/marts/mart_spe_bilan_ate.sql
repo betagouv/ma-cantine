@@ -92,22 +92,69 @@ nb_inscrites_region_sector as (
     group by c.region, c.region_lib, c.secteur, y.annee
 ),
 
-ref_cibles_region as (
+-- Cibles ventilées par secteur (RIA / RA) pour toutes les régions ATE
+ref_cibles_region_sector as (
     select * from (values
-        ('11', 'Île-de-France',                    7,  'Cible ferme'),
-        ('24', 'Centre-Val de Loire',              6,  'Cible ferme'),
-        ('27', 'Bourgogne-Franche-Comté',          4,  'Cible ferme'),
-        ('28', 'Normandie',                        8,  'Cible ferme'),
-        ('32', 'Hauts-de-France',                  5,  'Cible ferme'),
-        ('44', 'Grand Est',                       12,  'Cible ferme'),
-        ('52', 'Pays de la Loire',                10,  'Cible ferme'),
-        ('53', 'Bretagne',                         5,  'Cible ferme'),
-        ('75', 'Nouvelle-Aquitaine',              12,  'Précision en cours'),
-        ('76', 'Occitanie',                       10,  'Cible ferme'),
-        ('84', 'Auvergne-Rhône-Alpes',            12,  'Précision en cours'),
-        ('93', 'Provence-Alpes-Côte d''Azur',      4,  'Cible ferme'),
-        ('94', 'Corse',                            1,  'Cible ferme')
-    ) as t(region, region_lib, cible_etablissements, fiabilite_cible)
+        -- AURA
+        ('84', 'administration_inter_administratif',  12, 'Cible ferme'),
+        ('84', 'administration_administratif',          1, 'Cible à préciser'),
+        -- BFC
+        ('27', 'administration_inter_administratif',   4, 'Cible ferme'),
+        ('27', 'administration_administratif',          1, 'Cible ferme'),
+        -- BZH
+        ('53', 'administration_inter_administratif',   5, 'Cible ferme'),
+        ('53', 'administration_administratif',          0, 'Cible ferme'),
+        -- CVL
+        ('24', 'administration_inter_administratif',   6, 'Cible ferme'),
+        ('24', 'administration_administratif',          0, 'Cible ferme'),
+        -- Corse
+        ('94', 'administration_inter_administratif',   1, 'Cible ferme'),
+        ('94', 'administration_administratif',          0, 'Cible ferme'),
+        -- Grand Est
+        ('44', 'administration_inter_administratif',  12, 'Cible ferme'),
+        ('44', 'administration_administratif',          0, 'Cible ferme'),
+        -- Hauts-de-France
+        ('32', 'administration_inter_administratif',   4, 'Cible ferme'),
+        ('32', 'administration_administratif',          1, 'Cible ferme'),
+        -- Île-de-France
+        ('11', 'administration_inter_administratif',   7, 'Cible ferme'),
+        ('11', 'administration_administratif',          3, 'Cible ferme'),
+        -- Normandie
+        ('28', 'administration_inter_administratif',   7, 'Cible ferme'),
+        ('28', 'administration_administratif',          1, 'Précision en cours'),
+        -- Nouvelle-Aquitaine
+        ('75', 'administration_inter_administratif',  12, 'Cible ferme'),
+        ('75', 'administration_administratif',          6, 'Précision en cours'),
+        -- Occitanie
+        ('76', 'administration_inter_administratif',   9, 'Cible ferme'),
+        ('76', 'administration_administratif',          1, 'Précision en cours'),
+        -- PACA
+        ('93', 'administration_inter_administratif',   4, 'Cible ferme'),
+        ('93', 'administration_administratif',          0, 'Cible ferme'),
+        -- Pays de la Loire
+        ('52', 'administration_inter_administratif',  10, 'Cible ferme'),
+        ('52', 'administration_administratif',          0, 'Cible ferme')
+    ) as t(region, secteur, cible_etablissements, fiabilite_cible)
+),
+
+-- Cibles région : somme des cibles secteur (toutes les régions ont désormais un détail)
+ref_cibles_region as (
+    select
+        region,
+        null::text                                                                      as region_lib,
+        sum(cible_etablissements)                                                       as cible_etablissements,
+        case when bool_and(fiabilite_cible = 'Cible ferme')
+             then 'Cible ferme' else 'Précision en cours'
+        end                                                                             as fiabilite_cible
+    from ref_cibles_region_sector
+    group by region
+),
+
+-- Cantines à inclure dans le périmètre ATE avec secteur forcé (hors line_ministry standard)
+overrides_secteur_ate as (
+    select * from (values
+        ('94807198000015', 'administration_inter_administratif')
+    ) as t(siret, secteur_force)
 ),
 
 -- Totaux par région
@@ -141,8 +188,9 @@ stats_region as (
         sum(atteint_vege_quotidien::int)                                            as nb_vege_quotidien,
         sum(td_volet_diversification_complet::int)                                  as nb_td_diversification_complet
     from {{ ref('mart_teledeclarations') }}
-    where cantine_line_ministry = 'administration_territoriale'
-      and cantine_region is not null
+    left join overrides_secteur_ate o on o.siret = cantine_siret
+    where (cantine_line_ministry = 'administration_territoriale' and cantine_region is not null)
+       or o.siret is not null
     group by annee, cantine_region, cantine_lib_region
 ),
 
@@ -152,7 +200,7 @@ stats_secteur as (
         annee,
         cantine_region                                                              as region,
         cantine_lib_region                                                          as lib_region,
-        cantine_secteur                                                             as secteur,
+        coalesce(o.secteur_force, cantine_secteur)                                 as secteur,
         false                                                                       as est_total_region,
         count(*)                                                                    as nb_td,
         sum(valeur_totale)                                                          as valeur_totale,
@@ -177,9 +225,10 @@ stats_secteur as (
         sum(atteint_vege_quotidien::int)                                            as nb_vege_quotidien,
         sum(td_volet_diversification_complet::int)                                  as nb_td_diversification_complet
     from {{ ref('mart_teledeclarations') }}
-    where cantine_line_ministry = 'administration_territoriale'
-      and cantine_region is not null
-    group by annee, cantine_region, cantine_lib_region, cantine_secteur
+    left join overrides_secteur_ate o on o.siret = cantine_siret
+    where (cantine_line_ministry = 'administration_territoriale' and cantine_region is not null)
+       or o.siret is not null
+    group by annee, cantine_region, cantine_lib_region, coalesce(o.secteur_force, cantine_secteur)
 ),
 
 all_stats as (
@@ -209,20 +258,20 @@ select
     round((100.0 * s.vv_france         / nullif(s.vv, 0))::numeric, 1)             as part_vv_france_pct,
 
     s.nb_bio                                                                        as nb_cantines_atteint_bio,
-    round((100.0 * s.nb_bio            / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_bio_pct,
+    round((100.0 * s.nb_bio            / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else coalesce(crs.cible_etablissements, is_.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_bio_pct,
     s.nb_egalim                                                                     as nb_cantines_atteint_egalim,
-    round((100.0 * s.nb_egalim         / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_egalim_pct,
+    round((100.0 * s.nb_egalim         / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else coalesce(crs.cible_etablissements, is_.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_egalim_pct,
     s.nb_bio_et_egalim                                                              as nb_cantines_atteint_bio_et_egalim,
-    round((100.0 * s.nb_bio_et_egalim  / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_bio_et_egalim_pct,
+    round((100.0 * s.nb_bio_et_egalim  / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else coalesce(crs.cible_etablissements, is_.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_bio_et_egalim_pct,
     s.nb_vp_egalim                                                                  as nb_cantines_atteint_vp_egalim,
-    round((100.0 * s.nb_vp_egalim      / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_vp_egalim_pct,
+    round((100.0 * s.nb_vp_egalim      / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else coalesce(crs.cible_etablissements, is_.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_vp_egalim_pct,
     s.nb_3_obj                                                                      as nb_cantines_atteint_3_objectifs,
-    round((100.0 * s.nb_3_obj          / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_atteint_3_objectifs_pct,
+    round((100.0 * s.nb_3_obj          / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else coalesce(crs.cible_etablissements, is_.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_3_objectifs_pct,
 
     s.nb_td_vp_renseignes                                                           as nb_td_vp_renseignes,
-    round((100.0 * s.nb_td_vp_renseignes    / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_td_vp_renseignes_pct,
+    round((100.0 * s.nb_td_vp_renseignes    / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else coalesce(crs.cible_etablissements, is_.nb_inscrites) end, 0))::numeric, 1) as taux_td_vp_renseignes_pct,
     s.nb_td_egalim_renseignes                                                       as nb_td_egalim_renseignes,
-    round((100.0 * s.nb_td_egalim_renseignes / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else is_.nb_inscrites end, 0))::numeric, 1) as taux_td_egalim_renseignes_pct,
+    round((100.0 * s.nb_td_egalim_renseignes / nullif(case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else coalesce(crs.cible_etablissements, is_.nb_inscrites) end, 0))::numeric, 1) as taux_td_egalim_renseignes_pct,
 
     s.nb_choix_multiple                                                             as nb_cantines_choix_multiple,
     s.nb_vege_quotidien                                                             as nb_cantines_vege_quotidien,
@@ -252,19 +301,25 @@ select
         else                                                                             'Non atteint'
     end                                                                             as niveau_ademe,
 
-    -- cible établissements (région uniquement, fallback nb_inscrites)
+    -- cible établissements : région (fallback nb_inscrites) ou secteur si cible connue
     case when s.est_total_region
          then coalesce(cr.cible_etablissements, i.nb_inscrites)
+         when crs.cible_etablissements is not null
+         then crs.cible_etablissements
          else null
     end                                                                             as cible_etablissements,
     case when s.est_total_region
          then coalesce(cr.fiabilite_cible, 'Non renseignée')
+         when crs.fiabilite_cible is not null
+         then crs.fiabilite_cible
          else null
     end                                                                             as fiabilite_cible,
 
-    -- taux d'inscription : null si pas de cible officielle
+    -- taux d'inscription : région si cible officielle, secteur si cible secteur connue
     case when s.est_total_region
          then round((100.0 * i.nb_inscrites / nullif(cr.cible_etablissements, 0))::numeric, 1)
+         when crs.cible_etablissements is not null
+         then round((100.0 * is_.nb_inscrites / nullif(crs.cible_etablissements, 0))::numeric, 1)
          else null
     end                                                                             as taux_inscription_pct
 
@@ -281,6 +336,10 @@ left join nb_inscrites_region_sector is_
 left join ref_cibles_region cr
     on cr.region = s.region
     and s.est_total_region = true
+left join ref_cibles_region_sector crs
+    on crs.region = s.region
+    and crs.secteur is not distinct from s.secteur
+    and s.est_total_region = false
 left join waste_by_region wr
     on wr.region = s.region
     and wr.annee = s.annee

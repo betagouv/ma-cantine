@@ -25,23 +25,24 @@ ref_perimetre as (
         (5,  'armee',                       'Armées',                                      null,                 false),
         (6,  'autorites_independantes',     'AAI',                                         null,                 false),
         (7,  'culture',                     'Culture',                                     null,                 false),
-        (8,  'economie',                    'Économie et finances',                        null,                 false),
-        (9,  'jeunesse',                    'Éducation nationale',                         'MEJSESR',            false),
-        (10, 'enseignement_superieur',      'Enseignement supérieur et recherche',         'MEJSESR',            false),
-        (11, 'sport',                       'Sports',                                      'MEJSESR',            false),
-        (12, 'MEJSESR',                     'TOTAL MEJSESR',                               'MEJSESR',            true),
-        (13, 'justice_hors_pjj',            'Justice hors PJJ',                            'Justice',            false),
-        (14, 'justice_pjj',                 'Justice PJJ',                                 'Justice',            false),
-        (15, 'Justice',                     'TOTAL Justice',                               'Justice',            true),
-        (16, 'interieur',                   'Intérieur',                                   'Intérieur + ATE',    false),
-        (17, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Intérieur + ATE',   false),
-        (18, 'Intérieur + ATE',             'TOTAL Intérieur + ATE',                       'Intérieur + ATE',    true),
-        (19, 'premier_ministre',            'Premier ministre',                            null,                 false),
-        (20, 'agriculture',                 'Agriculture',                                 null,                 false),
-        (21, 'travail',                     'Travail',                                     'Ministères sociaux', false),
-        (22, 'sante',                       'Santé',                                       'Ministères sociaux', false),
-        (23, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
-        (24, 'transformation',              'Fonction Publique',                            null,                false)
+        (8,  'economie',                    'Économie et finances',                        'MACP',               false),
+        (9,  'transformation',              'Fonction Publique',                           'MACP',               false),
+        (10, 'MACP',                        'TOTAL MACP',                                  'MACP',               true),
+        (11, 'jeunesse',                    'Éducation nationale',                         'MEJSESR',            false),
+        (12, 'enseignement_superieur',      'Enseignement supérieur et recherche',         'MEJSESR',            false),
+        (13, 'sport',                       'Sports',                                      'MEJSESR',            false),
+        (14, 'MEJSESR',                     'TOTAL MEJSESR',                               'MEJSESR',            true),
+        (15, 'justice_hors_pjj',            'Justice hors PJJ',                            'Justice',            false),
+        (16, 'justice_pjj',                 'Justice PJJ',                                 'Justice',            false),
+        (17, 'Justice',                     'TOTAL Justice',                               'Justice',            true),
+        (18, 'interieur',                   'Intérieur',                                   'Intérieur + ATE',    false),
+        (19, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Intérieur + ATE',  false),
+        (20, 'Intérieur + ATE',             'TOTAL Intérieur + ATE',                       'Intérieur + ATE',   true),
+        (21, 'premier_ministre',            'Premier ministre',                            null,                 false),
+        (22, 'agriculture',                 'Agriculture',                                 null,                 false),
+        (23, 'travail',                     'Travail',                                     'Ministères sociaux', false),
+        (24, 'sante',                       'Santé',                                       'Ministères sociaux', false),
+        (25, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true)
     ) as t(sort_order, perimetre_key, perimetre_lib, groupe_spe, est_total_groupe)
 ),
 
@@ -66,6 +67,7 @@ ref_cibles as (
         ('autorites_independantes',      null,  'Non renseignée'),
         ('culture',                       18,   'Cible ferme'),
         ('economie',                     169,   'Cible ferme'),
+        ('MACP',                         169,   'Précision en cours'),
         ('jeunesse',                      20,   'Cible ferme'),
         ('enseignement_superieur',       439,   'Précision en cours'),
         ('sport',                         22,   'Cible ferme'),
@@ -118,6 +120,7 @@ stats as (
         sum(td_volet_diversification_complet::int)                                          as nb_td_diversification_complet
     from {{ ref('mart_teledeclarations') }}
     where cantine_line_ministry is not null
+      and cantine_secteur != 'administration_etablissement_public'
     group by annee, cantine_line_ministry
 ),
 
