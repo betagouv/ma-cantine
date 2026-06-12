@@ -29,7 +29,7 @@ const form = reactive({
   date: null,
   family: null,
   characteristicsEgalim: [],
-  characteristicsOrigines: [],
+  characteristicsOrigines: null,
   characteristicsCircuitCourt: [],
   characteristicsLocal: [],
   localDefinition: "",
@@ -37,7 +37,7 @@ const form = reactive({
 
 const familleProduitOptions = Object.values(achats.familleProduit)
 const categoriesEgalimOptions = Object.values(achats.categoriesEgalim)
-const categoriesOriginesOptions = Object.values(achats.categoriesOrigines)
+const categoriesOriginesOptions = Object.values(achats.categoriesOrigines).map(option => ({ value: option.value, text: option.label }))
 const estCircuitCourtOptions = Object.values(achats.estCircuitCourt)
 const estLocalOptions = Object.values(achats.estLocal)
 const definitionLocalOptions = Object.values(achats.definitionLocal).map(option => ({ value: option.value, text: option.label }))
@@ -57,7 +57,8 @@ const prefillFields = () => {
   form.localDefinition = props.purchaseData.localDefinition || ""
   const characteristics = props.purchaseData.characteristics || []
   form.characteristicsEgalim = characteristics.filter((c) => egalimValues.includes(c))
-  form.characteristicsOrigines = characteristics.filter((c) => originesValues.includes(c))
+  const origineValue = characteristics.filter((c) => originesValues.includes(c))
+  form.characteristicsOrigines = origineValue.length > 0 ? origineValue[0] : ""
   form.characteristicsCircuitCourt = characteristics.filter((c) => circuitCourtValues.includes(c))
   form.characteristicsLocal = characteristics.filter((c) => localValues.includes(c))
   form.invoiceUrl = props.purchaseData.invoiceFile
@@ -80,12 +81,6 @@ const rules = {
     )
   },
   family: { required },
-  characteristicsOrigines: {
-    oneValue: helpers.withMessage(
-      "Une seule origine doit être sélectionnée",
-      (origines) => origines.length <= 1
-    )
-   },
   localDefinition: { required: requiredIf(showLocalDefinition) },
 }
 
@@ -126,7 +121,8 @@ const validateForm = async (action) => {
 
 const formatPayload = (form) => {
   const payload = { ...form }
-  payload.characteristics = [...payload.characteristicsEgalim, ...payload.characteristicsOrigines, ...payload.characteristicsCircuitCourt, ...payload.characteristicsLocal]
+  payload.characteristics = [...payload.characteristicsEgalim, ...payload.characteristicsCircuitCourt, ...payload.characteristicsLocal]
+  if (payload.characteristicsOrigines) payload.characteristics.push(payload.characteristicsOrigines)
   delete payload.characteristicsEgalim
   delete payload.characteristicsOrigines
   delete payload.characteristicsCircuitCourt
@@ -222,12 +218,10 @@ const formatPayload = (form) => {
       </template>
     </DsfrMultiselect>
 
-    <DsfrCheckboxSet
+    <DsfrSelect
       v-model="form.characteristicsOrigines"
-      legend="Origine"
-      :options="categoriesOriginesOptions"
-      small
-      :error-message="formatError(v$.characteristicsOrigines)"
+      label="Origine"
+      :options="[{ value: '', text: '--' }, ...categoriesOriginesOptions]"
     />
 
     <DsfrCheckboxSet
