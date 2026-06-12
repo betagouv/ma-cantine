@@ -80,6 +80,7 @@ const rules = {
       (date) => new Date(date) < new Date()
     )
   },
+  localKm: { minValue: minValue(0) },
   family: { required },
 }
 
@@ -109,6 +110,7 @@ const onInvoiceFileChange = (files) => {
 /* Local change */
 const onLocalChange = () => {
   form.localDefinition = ""
+  form.localKm = ""
 }
 
 /* Form submission */
@@ -237,10 +239,19 @@ const formatPayload = (form) => {
     <DsfrSelect
       v-if="showLocalDefinition"
       v-model="form.localDefinition"
-      label="Précisions"
-      hint="Précisez la provenance du produit"
+      label="Précision géographique"
+      hint="Précisez la provenance géographique du produit"
       labelVisible
       :options="definitionLocalOptions"
+    />
+    <DsfrInputGroup
+      v-if="showLocalDefinition"
+      v-model="form.localKm"
+      label="Précision distancielle"
+      hint="Précisez le nombre de kilomètres entre le lieu de service et le lieu de production du produit"
+      labelVisible
+      type="number"
+      :error-message="formatError(v$.localKm)"
     />
     <div class="fr-mt-6w ma-cantine--flex-end">
       <DsfrButton
