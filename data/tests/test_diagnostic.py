@@ -446,7 +446,7 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_cout_repas_aberrant,
             valeur_totale=1000000.00,  # cout_repas > 20
             valeur_bio=200.00,
-            invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
+            invalid_reason_list=[],  # not aberrant
         )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_cout_repas_aberrant.teledeclare(applicant=UserFactory())
@@ -475,6 +475,18 @@ class DiagnosticQuerySetTest(TestCase):
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_aberrant.teledeclare(applicant=UserFactory())
 
+        cls.diagnostic_canteen_aberrant_2025 = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2025,
+            creation_date=date_in_teledeclaration_campaign,
+            canteen=cls.canteen_aberrant,
+            valeur_totale=50,  # cout_repas < 0.1
+            valeur_bio=20,
+            invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
+        )
+        with freeze_time("2026-03-15"):  # during the 2025 campaign
+            cls.diagnostic_canteen_aberrant_2025.teledeclare(applicant=UserFactory())
+
         cls.diagnostic_canteen_deleted = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
@@ -487,27 +499,26 @@ class DiagnosticQuerySetTest(TestCase):
         with freeze_time(date_in_teledeclaration_campaign):
             cls.diagnostic_canteen_deleted.teledeclare(applicant=UserFactory())
 
+    def test_count(self):
+        self.assertEqual(Diagnostic.objects.count(), 18)
+
     def test_canteen_soft_deleted_during_campaign_query(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.filter(canteen_soft_deleted_during_campaign_query(year_data))
         self.assertEqual(diagnostics.count(), 1)
         self.assertIn(self.diagnostic_canteen_deleted, diagnostics)
 
     def test_canteen_has_siret_or_siren_unite_legale_query(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.filter(canteen_has_siret_or_siren_unite_legale_query())
-        self.assertEqual(diagnostics.count(), 16)
+        self.assertEqual(diagnostics.count(), 17)
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)
 
     def test_canteen_for_stat(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.canteen_for_stat(year_data)
-        self.assertEqual(diagnostics.count(), 15)
+        self.assertEqual(diagnostics.count(), 16)
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
     def test_teledeclared_for_year(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.teledeclared_for_year(year_data)
         self.assertEqual(diagnostics.count(), 11)
         self.assertIn(self.diagnostic_canteen_valid_1, diagnostics)
@@ -517,7 +528,6 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(diagnostics.count(), 6)
 
     def test_valid_td_by_year(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.valid_td_by_year(year_data - 1)
         self.assertEqual(diagnostics.count(), 6)
         self.assertIn(self.diagnostic_last_year_canteen_valid_1, diagnostics)  # groupe (but 2023)
@@ -528,19 +538,17 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
     def test_valid_td_site_by_year(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        self.assertEqual(Diagnostic.all_objects.count(), 17)  # we didn't generate 1TD1Site for now
+        self.assertEqual(Diagnostic.all_objects.count(), 18)  # we didn't generate 1TD1Site for now
         diagnostics = Diagnostic.all_objects.valid_td_site_by_year(year_data - 1)
         self.assertEqual(diagnostics.count(), 6)
         self.assertIn(self.diagnostic_last_year_canteen_valid_1, diagnostics)  # groupe (but 2023)
         diagnostics = Diagnostic.all_objects.valid_td_site_by_year(year_data)
-        self.assertEqual(diagnostics.count(), 6)
+        self.assertEqual(diagnostics.count(), 7)
         self.assertNotIn(self.diagnostic_canteen_valid_1, diagnostics)  # groupe (and 2024)  # difference
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
     def test_valid_td_all_years(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.valid_td_all_years([year_data])
         self.assertEqual(diagnostics.count(), 8)
         diagnostics = Diagnostic.objects.valid_td_all_years([year_data - 1])
@@ -549,37 +557,33 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(diagnostics.count(), 8 + 6)
 
     def test_valid_td_site_all_years(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        self.assertEqual(Diagnostic.all_objects.count(), 17)  # we didn't generate 1TD1Site for now
+        self.assertEqual(Diagnostic.all_objects.count(), 18)  # we didn't generate 1TD1Site for now
         diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data])
-        self.assertEqual(diagnostics.count(), 6)  # difference
+        self.assertEqual(diagnostics.count(), 7)  # difference
         diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data - 1])
         self.assertEqual(diagnostics.count(), 6)
         diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data, year_data - 1])
-        self.assertEqual(diagnostics.count(), 6 + 6)
+        self.assertEqual(diagnostics.count(), 7 + 6)
 
     def test_exclude_aberrant_values(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.exclude(aberrant_values_query())
         self.assertEqual(diagnostics.count(), 16)
         self.assertNotIn(self.diagnostic_canteen_aberrant, diagnostics)
+        self.assertNotIn(self.diagnostic_canteen_aberrant_2025, diagnostics)
 
     def test_publicly_visible(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 15)  # army excluded
+        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 16)  # army excluded
 
     def test_with_appro_percent_stats(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.with_appro_percent_stats()
-        self.assertEqual(diagnostics.count(), 17)
+        self.assertEqual(diagnostics.count(), 18)
         self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).pourcentage_bio, 20)
         self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).pourcentage_egalim, 50)
 
     def test_exclude_generated(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         DiagnosticFactory(generated_from_groupe_diagnostic=True)
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        self.assertEqual(Diagnostic.all_objects.count(), 18)
+        self.assertEqual(Diagnostic.objects.count(), 18)
+        self.assertEqual(Diagnostic.all_objects.count(), 18 + 1)
 
 
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):

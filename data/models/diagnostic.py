@@ -132,8 +132,9 @@ def aberrant_values_query():
     - Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
     Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
     nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
+    - En 2025, coût denrées existe et < 0.1 euros
     """
-    return Q(cout_repas__isnull=False, cout_repas__gt=20, valeur_totale__gt=1000000)
+    return Q(cout_repas__isnull=False, cout_repas__gt=20, valeur_totale__gt=1000000) | Q(year=2025, cout_repas__lt=0.1)
 
 
 def incoherent_values_query():
