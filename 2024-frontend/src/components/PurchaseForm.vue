@@ -200,23 +200,12 @@ const formatPayload = (form) => {
       :error-message="formatError(v$.family)"
     />
 
-    <DsfrMultiselect
+    <DsfrCheckboxSet
       v-model="form.characteristicsEgalim"
-      label="Catégories EGalim"
-      labelVisible
+      legend="Catégories EGalim"
       :options="categoriesEgalimOptions"
-      id-key="value"
-      :filtering-keys="['label', 'hint']"
-      search
-      maxOverflowHeight="300px"
-    >
-      <template #checkbox-label="{ option }">
-        <div>
-          <p class="fr-mb-0">{{ option.label }}</p>
-          <p v-if="option.hint" class="fr-mb-0 fr-hint-text">{{ option.hint }}</p>
-        </div>
-      </template>
-    </DsfrMultiselect>
+      small
+    />
 
     <DsfrSelect
       v-model="form.characteristicsOrigines"
