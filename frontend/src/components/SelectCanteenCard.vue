@@ -7,14 +7,14 @@
     </v-card-title>
 
     <v-card-text>
-      <DsfrCombobox
+      <DsfrAutocomplete
         :items="canteens"
+        :value="selectedCanteenId"
         item-text="name"
         item-value="id"
-        :filter="canteenAutocomplete"
         placeholder="Sélectionnez une cantine"
         hide-details
-        @input="onSelect"
+        @input="onInput"
       />
     </v-card-text>
 
@@ -25,17 +25,19 @@
       <v-btn outlined text @click="$emit('cancel')">
         Annuler
       </v-btn>
+      <v-btn color="primary" :disabled="!selectedCanteen" @click="onConfirm">
+        Valider
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import { normaliseText } from "@/utils"
-import DsfrCombobox from "@/components/DsfrCombobox"
+import DsfrAutocomplete from "@/components/DsfrAutocomplete"
 
 export default {
   name: "SelectCanteenCard",
-  components: { DsfrCombobox },
+  components: { DsfrAutocomplete },
   props: {
     title: {
       type: String,
@@ -45,18 +47,34 @@ export default {
       type: Array,
       required: true,
     },
+    defaultCanteenId: {
+      type: [Number, String],
+      required: false,
+      default: null,
+    },
+  },
+  data() {
+    return {
+      selectedCanteenId: this.defaultCanteenId,
+    }
+  },
+  computed: {
+    selectedCanteen() {
+      return this.canteens.find((c) => c.id === this.selectedCanteenId) || null
+    },
+  },
+  watch: {
+    defaultCanteenId(newId) {
+      this.selectedCanteenId = newId
+    },
   },
   methods: {
-    canteenAutocomplete(item, queryText) {
-      if (!queryText) return true
-      const normalizedQuery = normaliseText(queryText).toLocaleLowerCase()
-      const normalizedItemText = normaliseText(item.name).toLocaleLowerCase()
-      return normalizedItemText.includes(normalizedQuery)
+    onInput(value) {
+      this.selectedCanteenId = value
     },
-    onSelect(value) {
-      const canteen = this.canteens.find((c) => c.id === value)
-      if (!canteen) return
-      this.$emit("select", canteen)
+    onConfirm() {
+      if (!this.selectedCanteen) return
+      this.$emit("select", this.selectedCanteen)
     },
   },
 }
