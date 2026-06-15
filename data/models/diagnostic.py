@@ -1737,7 +1737,7 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords(excluded_fields=["canteen_snapshot", "satellites_snapshot", "applicant_snapshot"])
+    history = HistoricalRecords(excluded_fields=TELEDECLARATION_SNAPSHOT_FIELDS)
 
     objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)(exclude_generated=True)
     all_objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)()
