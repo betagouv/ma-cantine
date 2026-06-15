@@ -30,6 +30,7 @@
             </template>
 
             <SelectCanteenCard
+              v-if="addPurchaseDialog"
               title="Pour quel établissement souhaitez-vous ajouter un produit ?"
               :canteens="userCanteens"
               @select="onCanteenSelected"
@@ -328,8 +329,10 @@
       </v-expand-transition>
       <v-dialog v-model="duplicatePurchaseDialog" width="500">
         <SelectCanteenCard
+          v-if="duplicatePurchaseDialog"
           title="Pour quel établissement souhaitez-vous dupliquer ce produit ?"
           :canteens="userCanteens"
+          :default-canteen-id="purchaseToDuplicate && purchaseToDuplicate.canteen"
           @select="onDuplicateCanteenSelected"
           @cancel="closeDuplicateDialog"
         />
