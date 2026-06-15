@@ -306,7 +306,7 @@
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <div class="d-flex justify-center">
-            <v-icon @click.stop="duplicate(item)" color="primary" :title="duplicatePurchaseInstruction(item)">
+            <v-icon @click.stop="openDuplicateDialog(item)" color="primary" :title="duplicatePurchaseInstruction(item)">
               $file-add-line
             </v-icon>
           </div>
@@ -326,6 +326,14 @@
           </v-btn>
         </div>
       </v-expand-transition>
+      <v-dialog v-model="duplicatePurchaseDialog" width="500">
+        <SelectCanteenCard
+          title="Pour quel établissement souhaitez-vous dupliquer ce produit ?"
+          :canteens="userCanteens"
+          @select="onDuplicateCanteenSelected"
+          @cancel="closeDuplicateDialog"
+        />
+      </v-dialog>
     </v-card>
     <v-row v-else-if="visiblePurchases" class="mt-4">
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -421,6 +429,8 @@ export default {
       },
       selectedPurchases: [],
       addPurchaseDialog: false,
+      duplicatePurchaseDialog: false,
+      purchaseToDuplicate: null,
     }
   },
   computed: {
@@ -686,7 +696,19 @@ export default {
       this.$watch("$route", this.onRouteChange)
     },
     capitalise: capitalise,
-    duplicate(purchase) {
+    openDuplicateDialog(purchase) {
+      this.purchaseToDuplicate = purchase
+      this.duplicatePurchaseDialog = true
+    },
+    closeDuplicateDialog() {
+      this.duplicatePurchaseDialog = false
+      this.purchaseToDuplicate = null
+    },
+    onDuplicateCanteenSelected(canteen) {
+      const purchase = this.purchaseToDuplicate
+      this.duplicatePurchaseDialog = false
+      if (!purchase) return
+
       // Date n'est pas renvoyée au même format par l'API, on doit le formatter manuellement, à changer plus tard en vue3
       const monthNames = Array.from({ length: 12 }, (_, i) =>
         new Date(2000, i, 1).toLocaleString("fr-FR", { month: "long" }).toLowerCase()
@@ -695,9 +717,8 @@ export default {
       const month = String(monthNames.indexOf(monthName) + 1).padStart(2, "0")
       const formattedDate = `${year}-${month}-${day.padStart(2, "0")}`
 
-      // Récupère les données de l'achat à dupliquer
       const payload = {
-        canteen: `${purchase.canteen}`,
+        canteen: `${canteen.id}`,
         characteristics: [...purchase.characteristics],
         description: purchase.description,
         localDefinition: purchase.localDefinition || "",
@@ -708,18 +729,20 @@ export default {
         importSource: "Duplication",
         creationSource: "APP",
       }
-      // Crée l'achat dupliqué
       this.$store
         .dispatch("createPurchase", { payload })
         .then((newPurchase) => {
-          // Redirige vers la page de modification de l'achat dupliqué
+          this.purchaseToDuplicate = null
           this.$router.push({
             name: "GestionnaireAchatsModifier",
-            params: { id: newPurchase.id, canteenUrlComponent: purchase.canteenUrlComponent },
+            params: {
+              id: newPurchase.id,
+              canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen),
+            },
           })
         })
         .catch((e) => {
-          // Affiche une notification d'erreur
+          this.purchaseToDuplicate = null
           this.$store.dispatch("notifyServerError", e)
         })
     },
