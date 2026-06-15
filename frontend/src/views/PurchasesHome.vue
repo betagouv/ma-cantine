@@ -29,34 +29,12 @@
               </v-btn>
             </template>
 
-            <v-card class="text-left">
-              <v-card-title>
-                <h1 class="fr-h6 mb-0">
-                  Pour quel établissement souhaitez-vous ajouter un produit ?
-                </h1>
-              </v-card-title>
-
-              <v-card-text>
-                <DsfrCombobox
-                  :items="userCanteens"
-                  item-text="name"
-                  item-value="id"
-                  :filter="canteenAutocomplete"
-                  placeholder="Sélectionnez une cantine"
-                  hide-details
-                  @input="onCanteenSelected"
-                />
-              </v-card-text>
-
-              <v-divider aria-hidden="true" role="presentation"></v-divider>
-
-              <v-card-actions class="pa-4">
-                <v-spacer></v-spacer>
-                <v-btn outlined text @click="addPurchaseDialog = false">
-                  Annuler
-                </v-btn>
-              </v-card-actions>
-            </v-card>
+            <SelectCanteenCard
+              title="Pour quel établissement souhaitez-vous ajouter un produit ?"
+              :canteens="userCanteens"
+              @select="onCanteenSelected"
+              @cancel="addPurchaseDialog = false"
+            />
           </v-dialog>
           <v-btn text color="primary" :to="{ name: 'GestionnaireImport' }" class="px-0 px-md-2 my-3">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
@@ -389,7 +367,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import DsfrCombobox from "@/components/DsfrCombobox"
+import SelectCanteenCard from "@/components/SelectCanteenCard"
 
 export default {
   name: "PurchasesHome",
@@ -399,7 +377,7 @@ export default {
     DsfrSelect,
     DsfrSearchField,
     DsfrAutocomplete,
-    DsfrCombobox,
+    SelectCanteenCard,
   },
   data() {
     return {
@@ -520,15 +498,7 @@ export default {
       if (purchaseIndex === -1) this.selectedPurchases.push(purchase)
       else this.selectedPurchases.splice(purchaseIndex, 1)
     },
-    canteenAutocomplete(item, queryText) {
-      if (!queryText) return true
-      const normalizedQuery = normaliseText(queryText).toLocaleLowerCase()
-      const normalizedItemText = normaliseText(item.name).toLocaleLowerCase()
-      return normalizedItemText.includes(normalizedQuery)
-    },
-    onCanteenSelected(value) {
-      const canteen = this.userCanteens.find((c) => c.id === value)
-      if (!canteen) return
+    onCanteenSelected(canteen) {
       this.addPurchaseDialog = false
       this.$router.push({
         name: "GestionnaireAchatsAjouter",
