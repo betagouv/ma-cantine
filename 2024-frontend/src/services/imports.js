@@ -6,6 +6,9 @@ const importFile = (payload) => {
   const importType = payload.importType || "siret"
   form.append("file", file)
   form.append("type", importType)
+  if (payload.schema) {
+    form.append("schema", payload.schema)
+  }
   return fetch(`/api/v1/${payload.apiUrl}/`, {
     method: "POST",
     headers: {

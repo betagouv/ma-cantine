@@ -22,6 +22,19 @@ PURCHASE_SIRET_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cant
 PURCHASE_ID_SCHEMA_FILE_NAME = "achats_id.json"
 PURCHASE_ID_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_ID_SCHEMA_FILE_NAME}"
 PURCHASE_ID_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_ID_SCHEMA_FILE_PATH}"
+PURCHASE_SIRET_2026_SCHEMA_FILE_NAME = "achats_siret_2026.json"
+PURCHASE_SIRET_2026_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SIRET_2026_SCHEMA_FILE_NAME}"
+PURCHASE_SIRET_2026_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SIRET_2026_SCHEMA_FILE_PATH}"
+PURCHASE_ID_2026_SCHEMA_FILE_NAME = "achats_id_2026.json"
+PURCHASE_ID_2026_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_ID_2026_SCHEMA_FILE_NAME}"
+PURCHASE_ID_2026_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_ID_2026_SCHEMA_FILE_PATH}"
+
+# Accepted values for the optional `schema` parameter on the import endpoint.
+# When omitted (or set to SCHEMA_VERSION_DEFAULT), the historical schemas
+# (achats_siret.json / achats_id.json) are used. When set to SCHEMA_VERSION_2026,
+# the new achats_siret_2026.json / achats_id_2026.json schemas are used instead.
+SCHEMA_VERSION_DEFAULT = "default"
+SCHEMA_VERSION_2026 = "2026"
 
 
 class PurchasesImportView(BaseImportView):
@@ -40,6 +53,7 @@ class PurchasesImportView(BaseImportView):
     def post(self, request):
         # Set import type based on request
         self.is_siret_import = request.data.get("type") == "siret"
+        self.is_2026_import = request.data.get("schema") == SCHEMA_VERSION_2026
         self.import_type = ImportType.PURCHASE if self.is_siret_import else ImportType.PURCHASE_ID
         # Override to add file digest check before base processing
         self.file = request.data.get("file")
@@ -55,6 +69,18 @@ class PurchasesImportView(BaseImportView):
         return super().post(request)
 
     def _get_schema_config(self):
+        if self.is_2026_import:
+            if self.is_siret_import:
+                return {
+                    "name": PURCHASE_SIRET_2026_SCHEMA_FILE_NAME,
+                    "url": PURCHASE_SIRET_2026_SCHEMA_URL,
+                    "path": PURCHASE_SIRET_2026_SCHEMA_FILE_PATH,
+                }
+            return {
+                "name": PURCHASE_ID_2026_SCHEMA_FILE_NAME,
+                "url": PURCHASE_ID_2026_SCHEMA_URL,
+                "path": PURCHASE_ID_2026_SCHEMA_FILE_PATH,
+            }
         return {
             "name": PURCHASE_SIRET_SCHEMA_FILE_NAME if self.is_siret_import else PURCHASE_ID_SCHEMA_FILE_NAME,
             "url": PURCHASE_SIRET_SCHEMA_URL if self.is_siret_import else PURCHASE_ID_SCHEMA_URL,
