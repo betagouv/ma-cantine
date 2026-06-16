@@ -35,9 +35,9 @@ ref_perimetre as (
         (15, 'justice_hors_pjj',            'Justice hors PJJ',                            'Justice',            false),
         (16, 'justice_pjj',                 'Justice PJJ',                                 'Justice',            false),
         (17, 'Justice',                     'TOTAL Justice',                               'Justice',            true),
-        (18, 'interieur',                   'Intérieur',                                   'Intérieur + ATE',    false),
-        (19, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Intérieur + ATE',  false),
-        (20, 'Intérieur + ATE',             'TOTAL Intérieur + ATE',                       'Intérieur + ATE',   true),
+        (18, 'interieur',                   'Intérieur',                                   'Périmètre intérieur',    false),
+        (19, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Périmètre intérieur',  false),
+        (20, 'Périmètre intérieur',             'TOTAL Périmètre intérieur',                       'Périmètre intérieur',   true),
         (21, 'premier_ministre',            'Premier ministre',                            null,                 false),
         (22, 'agriculture',                 'Agriculture',                                 null,                 false),
         (23, 'travail',                     'Travail',                                     'Ministères sociaux', false),
@@ -77,7 +77,7 @@ ref_cibles as (
         ('Justice',                      382,   'Cible ferme'),
         ('interieur',                    207,   'Précision en cours'),
         ('administration_territoriale',   96,   'Précision en cours'),
-        ('Intérieur + ATE',              303,   'Précision en cours'),
+        ('Périmètre intérieur',          303,   'Précision en cours'),
         ('premier_ministre',               5,   'Cible ferme'),
         ('agriculture',                   10,   'Cible ferme'),
         ('travail',                      null,  'Non renseignée'),
@@ -120,7 +120,7 @@ stats as (
         sum(td_volet_diversification_complet::int)                                          as nb_td_diversification_complet
     from {{ ref('mart_teledeclarations') }}
     where cantine_line_ministry is not null
-      and cantine_secteur != 'administration_etablissement_public'
+      and (cantine_secteur != 'administration_etablissement_public' or cantine_line_ministry != 'administration_territoriale')
     group by annee, cantine_line_ministry
 ),
 

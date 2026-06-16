@@ -21,6 +21,7 @@ with waste_base as (
         on c.canteen_id = w.canteen_id
         and c.line_ministry = 'administration_territoriale'
         and c.region is not null
+        and not (c.sector_list::jsonb @> '["administration_etablissement_public"]'::jsonb)
 ),
 
 waste_by_region as (
@@ -59,6 +60,7 @@ canteens_ate as (
     where line_ministry = 'administration_territoriale'
       and region is not null
       and region != ''
+      and not (sector_list::jsonb @> '["administration_etablissement_public"]'::jsonb)
 ),
 
 years as (
@@ -150,6 +152,12 @@ ref_cibles_region as (
     group by region
 ),
 
+-- Base teledeclarations ATE : EPA exclus ici pour stats_region et stats_secteur
+td_ate as (
+    select * from {{ ref('mart_teledeclarations') }}
+    where cantine_secteur != 'administration_etablissement_public'
+),
+
 -- Cantines à inclure dans le périmètre ATE avec secteur forcé (hors line_ministry standard)
 overrides_secteur_ate as (
     select * from (values
@@ -187,7 +195,7 @@ stats_region as (
         sum(choix_multiple::int)                                                    as nb_choix_multiple,
         sum(atteint_vege_quotidien::int)                                            as nb_vege_quotidien,
         sum(td_volet_diversification_complet::int)                                  as nb_td_diversification_complet
-    from {{ ref('mart_teledeclarations') }}
+    from td_ate
     left join overrides_secteur_ate o on o.siret = cantine_siret
     where (cantine_line_ministry = 'administration_territoriale' and cantine_region is not null)
        or o.siret is not null
@@ -224,7 +232,7 @@ stats_secteur as (
         sum(choix_multiple::int)                                                    as nb_choix_multiple,
         sum(atteint_vege_quotidien::int)                                            as nb_vege_quotidien,
         sum(td_volet_diversification_complet::int)                                  as nb_td_diversification_complet
-    from {{ ref('mart_teledeclarations') }}
+    from td_ate
     left join overrides_secteur_ate o on o.siret = cantine_siret
     where (cantine_line_ministry = 'administration_territoriale' and cantine_region is not null)
        or o.siret is not null

@@ -37,7 +37,7 @@ by_groupe as (
             when perimetre_key in ('jeunesse', 'enseignement_superieur', 'sport') then 'MEJSESR'
             when perimetre_key in ('justice_hors_pjj', 'justice_pjj')             then 'Justice'
             when perimetre_key in ('travail', 'sante')                            then 'Ministères sociaux'
-            when perimetre_key in ('interieur', 'administration_territoriale')    then 'Intérieur + ATE'
+            when perimetre_key in ('interieur', 'administration_territoriale')    then 'Périmètre intérieur'
         end                                                                        as perimetre_key,
         sum(nb_canteens_avec_mesure)                               as nb_canteens_avec_mesure,
         sum(total_mass_kg)                                         as total_mass_kg,
@@ -57,7 +57,7 @@ by_groupe as (
             when perimetre_key in ('jeunesse', 'enseignement_superieur', 'sport') then 'MEJSESR'
             when perimetre_key in ('justice_hors_pjj', 'justice_pjj')             then 'Justice'
             when perimetre_key in ('travail', 'sante')                            then 'Ministères sociaux'
-            when perimetre_key in ('interieur', 'administration_territoriale')    then 'Intérieur + ATE'
+            when perimetre_key in ('interieur', 'administration_territoriale')    then 'Périmètre intérieur'
         end
 ),
 
