@@ -29,34 +29,13 @@
               </v-btn>
             </template>
 
-            <v-card class="text-left">
-              <v-card-title>
-                <h1 class="fr-h6 mb-0">
-                  Pour quel établissement souhaitez-vous ajouter un produit ?
-                </h1>
-              </v-card-title>
-
-              <v-card-text>
-                <DsfrCombobox
-                  :items="userCanteens"
-                  item-text="name"
-                  item-value="id"
-                  :filter="canteenAutocomplete"
-                  placeholder="Sélectionnez une cantine"
-                  hide-details
-                  @input="onCanteenSelected"
-                />
-              </v-card-text>
-
-              <v-divider aria-hidden="true" role="presentation"></v-divider>
-
-              <v-card-actions class="pa-4">
-                <v-spacer></v-spacer>
-                <v-btn outlined text @click="addPurchaseDialog = false">
-                  Annuler
-                </v-btn>
-              </v-card-actions>
-            </v-card>
+            <SelectCanteenCard
+              v-if="addPurchaseDialog"
+              title="Pour quel établissement souhaitez-vous ajouter un produit ?"
+              :canteens="userCanteens"
+              @select="onCanteenSelected"
+              @cancel="addPurchaseDialog = false"
+            />
           </v-dialog>
           <v-btn text color="primary" :to="{ name: 'GestionnaireImport' }" class="px-0 px-md-2 my-3">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
@@ -328,7 +307,7 @@
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <div class="d-flex justify-center">
-            <v-icon @click.stop="duplicate(item)" color="primary" :title="duplicatePurchaseInstruction(item)">
+            <v-icon @click.stop="openDuplicateDialog(item)" color="primary" :title="duplicatePurchaseInstruction(item)">
               $file-add-line
             </v-icon>
           </div>
@@ -348,6 +327,16 @@
           </v-btn>
         </div>
       </v-expand-transition>
+      <v-dialog v-model="duplicatePurchaseDialog" width="500">
+        <SelectCanteenCard
+          v-if="duplicatePurchaseDialog"
+          title="Pour quel établissement souhaitez-vous dupliquer ce produit ?"
+          :canteens="userCanteens"
+          :default-canteen-id="purchaseToDuplicate && purchaseToDuplicate.canteen"
+          @select="onDuplicateCanteenSelected"
+          @cancel="closeDuplicateDialog"
+        />
+      </v-dialog>
     </v-card>
     <v-row v-else-if="visiblePurchases" class="mt-4">
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -389,7 +378,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import DsfrCombobox from "@/components/DsfrCombobox"
+import SelectCanteenCard from "@/components/SelectCanteenCard"
 
 export default {
   name: "PurchasesHome",
@@ -399,7 +388,7 @@ export default {
     DsfrSelect,
     DsfrSearchField,
     DsfrAutocomplete,
-    DsfrCombobox,
+    SelectCanteenCard,
   },
   data() {
     return {
@@ -443,6 +432,8 @@ export default {
       },
       selectedPurchases: [],
       addPurchaseDialog: false,
+      duplicatePurchaseDialog: false,
+      purchaseToDuplicate: null,
     }
   },
   computed: {
@@ -520,15 +511,7 @@ export default {
       if (purchaseIndex === -1) this.selectedPurchases.push(purchase)
       else this.selectedPurchases.splice(purchaseIndex, 1)
     },
-    canteenAutocomplete(item, queryText) {
-      if (!queryText) return true
-      const normalizedQuery = normaliseText(queryText).toLocaleLowerCase()
-      const normalizedItemText = normaliseText(item.name).toLocaleLowerCase()
-      return normalizedItemText.includes(normalizedQuery)
-    },
-    onCanteenSelected(value) {
-      const canteen = this.userCanteens.find((c) => c.id === value)
-      if (!canteen) return
+    onCanteenSelected(canteen) {
       this.addPurchaseDialog = false
       this.$router.push({
         name: "GestionnaireAchatsAjouter",
@@ -716,7 +699,19 @@ export default {
       this.$watch("$route", this.onRouteChange)
     },
     capitalise: capitalise,
-    duplicate(purchase) {
+    openDuplicateDialog(purchase) {
+      this.purchaseToDuplicate = purchase
+      this.duplicatePurchaseDialog = true
+    },
+    closeDuplicateDialog() {
+      this.duplicatePurchaseDialog = false
+      this.purchaseToDuplicate = null
+    },
+    onDuplicateCanteenSelected(canteen) {
+      const purchase = this.purchaseToDuplicate
+      this.duplicatePurchaseDialog = false
+      if (!purchase) return
+
       // Date n'est pas renvoyée au même format par l'API, on doit le formatter manuellement, à changer plus tard en vue3
       const monthNames = Array.from({ length: 12 }, (_, i) =>
         new Date(2000, i, 1).toLocaleString("fr-FR", { month: "long" }).toLowerCase()
@@ -725,9 +720,8 @@ export default {
       const month = String(monthNames.indexOf(monthName) + 1).padStart(2, "0")
       const formattedDate = `${year}-${month}-${day.padStart(2, "0")}`
 
-      // Récupère les données de l'achat à dupliquer
       const payload = {
-        canteen: `${purchase.canteen}`,
+        canteen: `${canteen.id}`,
         characteristics: [...purchase.characteristics],
         description: purchase.description,
         localDefinition: purchase.localDefinition || "",
@@ -738,18 +732,20 @@ export default {
         importSource: "Duplication",
         creationSource: "APP",
       }
-      // Crée l'achat dupliqué
       this.$store
         .dispatch("createPurchase", { payload })
         .then((newPurchase) => {
-          // Redirige vers la page de modification de l'achat dupliqué
+          this.purchaseToDuplicate = null
           this.$router.push({
             name: "GestionnaireAchatsModifier",
-            params: { id: newPurchase.id, canteenUrlComponent: purchase.canteenUrlComponent },
+            params: {
+              id: newPurchase.id,
+              canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen),
+            },
           })
         })
         .catch((e) => {
-          // Affiche une notification d'erreur
+          this.purchaseToDuplicate = null
           this.$store.dispatch("notifyServerError", e)
         })
     },
