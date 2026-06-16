@@ -874,7 +874,6 @@ class Diagnostic(models.Model):
         "modification_date",
         "creation_user",
         "creation_source",
-        "generated_from_groupe_diagnostic",
     ]
 
     MATOMO_FIELDS = [
@@ -900,7 +899,12 @@ class Diagnostic(models.Model):
     TELEDECLARATION_SNAPSHOT_FIELDS = [
         "canteen_snapshot",
         "satellites_snapshot",
+        "groupe_snapshot",
         "applicant_snapshot",
+    ]
+    TELEDECLARATION_1TD1SITE_FIELDS = [
+        "generated_from_groupe_diagnostic",
+        "groupe_snapshot",
     ]
 
     APPRO_PERCENTAGE_PROPERTY_FIELDS = [
@@ -947,12 +951,6 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Quelles données sont déclarées par ce groupe ? (seulement pertinent pour les groupes)",
-    )
-
-    # Relevant only for satellites
-    generated_from_groupe_diagnostic = models.BooleanField(
-        verbose_name="A été automatiquement généré depuis le bilan du groupe (seulement pertinent pour les satellites)",
-        default=False,
     )
 
     # progress fields
@@ -1660,13 +1658,25 @@ class Diagnostic(models.Model):
         encoder=CustomJSONEncoder,
     )
     satellites_snapshot = models.JSONField(
-        verbose_name="satellites (copie au moment de la télédéclaration)",
+        verbose_name="satellites (copie au moment de la télédéclaration) (seulement pertinent pour les groupes)",
         blank=True,
         null=True,
         encoder=CustomJSONEncoder,
     )
     applicant_snapshot = models.JSONField(
         verbose_name="déclarant (copie au moment de la télédéclaration)",
+        blank=True,
+        null=True,
+        encoder=CustomJSONEncoder,
+    )
+
+    # 1TD1Site
+    generated_from_groupe_diagnostic = models.BooleanField(
+        verbose_name="A été automatiquement généré depuis le bilan du groupe (seulement pertinent pour les satellites)",
+        default=False,
+    )
+    groupe_snapshot = models.JSONField(
+        verbose_name="groupe (copie lors de la génération depuis le bilan du groupe) (seulement pertinent pour les satellites)",
         blank=True,
         null=True,
         encoder=CustomJSONEncoder,
@@ -1727,7 +1737,7 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords(excluded_fields=["canteen_snapshot", "satellites_snapshot", "applicant_snapshot"])
+    history = HistoricalRecords(excluded_fields=TELEDECLARATION_SNAPSHOT_FIELDS)
 
     objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)(exclude_generated=True)
     all_objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)()

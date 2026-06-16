@@ -183,6 +183,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 )
             },
         ),
+        ("1TD1Site", {"fields": (*Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,)}),
         (
             "Metadonnées",
             {
@@ -201,10 +202,12 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         *Diagnostic.AGGREGATED_APPRO_FIELDS,
         *Diagnostic.EGALIM_STATS_FIELDS,
         *Diagnostic.TELEDECLARATION_FIELDS,
+        *Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,
         "applicant",
         "canteen_snapshot_pretty",
         "satellites_snapshot_pretty",
         "applicant_snapshot_pretty",
+        "groupe_snapshot_pretty",
         "invalid_reason_list",
         "warning_reason_list",
         *Diagnostic.CREATION_META_FIELDS,
@@ -256,3 +259,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         return mark_safe(f"<pre>{data}</pre>")
 
     applicant_snapshot_pretty.short_description = Diagnostic._meta.get_field("applicant_snapshot").verbose_name
+
+    def groupe_snapshot_pretty(self, obj):
+        data = json.dumps(obj.groupe_snapshot, indent=2)
+        return mark_safe(f"<pre>{data}</pre>")
+
+    groupe_snapshot_pretty.short_description = Diagnostic._meta.get_field("groupe_snapshot").verbose_name
