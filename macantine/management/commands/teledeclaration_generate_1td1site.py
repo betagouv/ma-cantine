@@ -164,6 +164,13 @@ def create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, app
     # change the id (to create a new object)
     diagnostic_satellite.pk = None
 
+    # init TD fields
+    # diagnostic_satellite.creation_date = diagnostic.teledeclaration_date  # won't work. see update_generated_diagnostic_teledeclared_creation_date
+    diagnostic_satellite.teledeclaration_mode = Diagnostic.TeledeclarationMode.SITE
+    diagnostic_satellite.groupe_snapshot = diagnostic.canteen_snapshot
+    diagnostic_satellite.satellites_snapshot = None
+    diagnostic_satellite.generated_from_groupe_diagnostic = True
+
     # change the canteen FK & canteen_snapshot
     diagnostic_satellite.canteen = None
     # we fetch the canteen satellite as of the creation date of the diagnostic, for accurate snapshot
@@ -194,12 +201,6 @@ def create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, app
     )
     for field in updated_diagnostic_appro_fields.keys():
         setattr(diagnostic_satellite, field, updated_diagnostic_appro_fields[field])
-
-    # change some last fields
-    # diagnostic_satellite.creation_date = diagnostic.teledeclaration_date  # won't work. see update_generated_diagnostic_teledeclared_creation_date
-    diagnostic_satellite.teledeclaration_mode = Diagnostic.TeledeclarationMode.SITE
-    diagnostic_satellite.satellites_snapshot = None
-    diagnostic_satellite.generated_from_groupe_diagnostic = True
 
     if apply:
         try:

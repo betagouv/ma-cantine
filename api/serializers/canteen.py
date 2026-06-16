@@ -552,6 +552,7 @@ CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS = (
     "management_type",
     "economic_model",
     "central_producer_siret",
+    # cout_repas,
     "groupe_id",
     "is_filled",
 )

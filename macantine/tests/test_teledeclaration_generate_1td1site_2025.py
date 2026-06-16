@@ -389,7 +389,63 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
 
 class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
     @authenticate
-    def test_empty_satellites_snapshot(self):
+    def test_set_correct_creation_date(self):
+        """
+        The creation date of the generated diagnostics should be the date of the teledeclaration of the central diagnostic.
+        """
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, daily_meal_count=3
+        )
+        satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
+        )
+
+        with freeze_time("2026-03-30"):  # during the 2025 campaign
+            central_diagnostic = DiagnosticFactory(
+                canteen=central,
+                year=2025,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            central_diagnostic.teledeclare(applicant=authenticate.user)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
+
+        # After the script is run
+        diagnostic_generated = Diagnostic.all_objects.in_year(2025).teledeclared().get(canteen=satellite)
+        self.assertEqual(diagnostic_generated.creation_date, central_diagnostic.teledeclaration_date)
+
+    @authenticate
+    def test_groupe_snapshot_filled(self):
+        """
+        The groupe_snapshot should be filled for the generated diagnostics.
+        """
+        groupe = CanteenFactory(
+            production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=1011, daily_meal_count=3
+        )
+        satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
+
+        with freeze_time("2026-03-30"):  # during the 2025 campaign
+            groupe_diagnostic = DiagnosticFactory(
+                canteen=groupe,
+                year=2025,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            groupe_diagnostic.teledeclare(applicant=authenticate.user)
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
+
+        # After the script is run
+        diagnostic_generated = Diagnostic.all_objects.in_year(2025).teledeclared().get(canteen=satellite)
+        self.assertIsNotNone(diagnostic_generated.groupe_snapshot)
+        self.assertEqual(diagnostic_generated.groupe_snapshot["id"], groupe.id)
+        self.assertEqual(diagnostic_generated.groupe_snapshot["name"], groupe.name)
+
+    @authenticate
+    def test_satellites_snapshot_empty(self):
         """
         The satellites_snapshot should be empty for the generated diagnostics.
         """
