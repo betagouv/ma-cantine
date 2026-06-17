@@ -9,6 +9,7 @@ from rest_framework.test import APITestCase
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, WasteMeasurementFactory
 from data.models import WasteMeasurement
+from data.models.creation_source import CreationSource
 
 
 class WasteMeasurementsListApiTest(APITestCase):
@@ -152,6 +153,7 @@ class WasteMeasurementsCreateApiTest(APITestCase):
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
         cls.url = reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": cls.canteen.id})
+        cls.WM_PAYLOAD = {"period_start_date": "2024-08-01", "period_end_date": "2024-08-10"}
 
     def test_cannot_create_waste_measurement_if_unauthenticated(self):
         response = self.client.post(self.url, {})
@@ -160,27 +162,17 @@ class WasteMeasurementsCreateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_create_waste_measurement_if_canteen_unknown(self):
-        response = self.client.post(
-            reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": 9999}),
-            {
-                "period_start_date": "2024-08-01",
-                "period_end_date": "2024-08-10",
-                "meal_count": 500,
-            },
-        )
+        payload = {**self.WM_PAYLOAD, "meal_count": 500}
+
+        response = self.client.post(reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": 9999}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_create_waste_measurement_if_not_canteen_manager(self):
-        response = self.client.post(
-            self.url,
-            {
-                "period_start_date": "2024-08-01",
-                "period_end_date": "2024-08-10",
-                "meal_count": 500,
-            },
-        )
+        payload = {**self.WM_PAYLOAD, "meal_count": 500}
+
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -193,8 +185,7 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.canteen.managers.add(authenticate.user)
 
         payload = {
-            "period_start_date": "2024-08-01",
-            "period_end_date": "2024-08-10",
+            **self.WM_PAYLOAD,
             "meal_count": 500,
             "total_mass": 100,
             "is_sorted_by_source": True,
@@ -212,7 +203,7 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        waste_measurement = WasteMeasurement.objects.get(canteen__id=self.canteen.id)
+        waste_measurement = WasteMeasurement.objects.first()
         self.assertEqual(waste_measurement.period_start_date, datetime.date(2024, 8, 1))
         self.assertEqual(waste_measurement.period_end_date, datetime.date(2024, 8, 10))
         self.assertEqual(waste_measurement.meal_count, 500)
@@ -230,14 +221,14 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(waste_measurement.leftovers_is_sorted, None)
         self.assertEqual(waste_measurement.leftovers_edible_mass, None)
         self.assertEqual(waste_measurement.leftovers_inedible_mass, None)
+        self.assertEqual(waste_measurement.creation_user, authenticate.user)
 
     def test_create_waste_measurement_via_oauth2(self):
         user, token = get_oauth2_token("waste_measurements:create")
         self.canteen.managers.add(user)
 
         payload = {
-            "period_start_date": "2024-08-01",
-            "period_end_date": "2024-08-10",
+            **self.WM_PAYLOAD,
             "meal_count": 500,
             "total_mass": 100,
             "is_sorted_by_source": True,
@@ -256,6 +247,36 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        waste_measurement = WasteMeasurement.objects.first()
+        self.assertEqual(waste_measurement.creation_user, user)
+
+    @authenticate
+    def test_create_waste_measurement_creation_source(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # from the APP
+        payload = {**self.WM_PAYLOAD, "creation_source": "APP"}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        waste_measurement = WasteMeasurement.objects.first()
+        self.assertEqual(waste_measurement.creation_source, CreationSource.APP)
+
+        # cleanup
+        WasteMeasurement.objects.all().delete()
+
+        # defaults to API
+        response = self.client.post(self.url, self.WM_PAYLOAD)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        waste_measurement = WasteMeasurement.objects.first()
+        self.assertEqual(waste_measurement.creation_source, CreationSource.API)
+
+        # cleanup
+        WasteMeasurement.objects.all().delete()
+
+        # returns a 404 if the creation_source is not valid
+        payload = {**self.WM_PAYLOAD, "creation_source": "UNKNOWN"}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
     def test_create_waste_measurement_single_day(self):
@@ -305,7 +326,7 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()["periodEndDate"][0], "La date ne peut pas être dans le futur")
+        self.assertEqual(response.json()["periodEndDate"][0], "La date de fin ne peut pas être dans le futur")
 
     @authenticate
     def test_start_date_must_be_before_end_date(self):
@@ -497,6 +518,8 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
             meal_count=100,
             period_start_date=datetime.date(2023, 1, 1),
             period_end_date=datetime.date(2023, 1, 5),
+            creation_user=cls.user,
+            creation_source=CreationSource.APP,
         )
         cls.url = reverse(
             "canteen_waste_measurement_detail", kwargs={"pk": cls.measurement.id, "canteen_pk": cls.canteen.id}
@@ -604,6 +627,21 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.assertEqual(body["mealCount"], 200)
 
     @authenticate
+    def test_update_waste_measurement_does_not_update_creation_user_and_source(self):
+        self.canteen.managers.add(authenticate.user)
+        self.assertEqual(self.measurement.creation_user, self.user)
+        self.assertEqual(self.measurement.creation_source, CreationSource.APP)
+
+        payload = {"mealCount": 200}
+
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.measurement.refresh_from_db()
+        self.assertEqual(self.measurement.creation_user, self.user)  # unchanged
+        self.assertEqual(self.measurement.creation_source, CreationSource.APP)  # unchanged
+
+    @authenticate
     @freeze_time("2024-08-10")
     def test_cannot_update_date_to_future(self):
         """
@@ -621,7 +659,7 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()["periodEndDate"][0], "La date ne peut pas être dans le futur")
+        self.assertEqual(response.json()["periodEndDate"][0], "La date de fin ne peut pas être dans le futur")
 
     @authenticate
     def test_start_date_must_be_before_end_date_in_update(self):
@@ -789,6 +827,8 @@ class WasteMeasurementsDeleteApiTest(APITestCase):
             meal_count=100,
             period_start_date=datetime.date(2023, 1, 1),
             period_end_date=datetime.date(2023, 1, 5),
+            creation_user=cls.user,
+            creation_source=CreationSource.APP,
         )
         cls.url = reverse(
             "canteen_waste_measurement_detail", kwargs={"pk": cls.measurement.id, "canteen_pk": cls.canteen.id}

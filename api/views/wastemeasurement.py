@@ -11,6 +11,7 @@ from api.permissions import (
 from api.serializers import WasteMeasurementSerializer
 from api.views.utils import update_change_reason_with_auth
 from data.models import Canteen, WasteMeasurement
+from data.models.creation_source import CreationSource
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +38,7 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     queryset = WasteMeasurement.objects.none()
     serializer_class = WasteMeasurementSerializer
-    filter_backends = [
-        django_filters.DjangoFilterBackend,
-    ]
+    filter_backends = [django_filters.DjangoFilterBackend]
     filterset_class = WasteMeasurementFilterSet
 
     def _get_canteen(self):
@@ -53,8 +52,12 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
     def perform_create(self, serializer):
         canteen = self._get_canteen()
         serializer.is_valid(raise_exception=True)
-        measurement = serializer.save(canteen=canteen)
-        update_change_reason_with_auth(self, measurement)
+        creation_user = self.request.user
+        creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
+        waste_measurement = serializer.save(
+            canteen=canteen, creation_user=creation_user, creation_source=creation_source
+        )
+        update_change_reason_with_auth(self, waste_measurement)
 
 
 @extend_schema_view(
