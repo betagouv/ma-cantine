@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from simple_history.models import HistoricalRecords
 
+from common.utils import utils as utils_utils
+from data.validators import wastemeasurement as wastemeasurement_validators
 from data.utils import make_optional_positive_decimal_field
 
 from .canteen import Canteen
@@ -65,18 +67,20 @@ class WasteMeasurement(models.Model):
         verbose_name="restes assiette - masse non-comestible (kg)",
     )
 
-    history = HistoricalRecords()
-
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "évaluation du gaspillage alimentaire"
         verbose_name_plural = "évaluations du gaspillage alimentaire"
 
     def clean(self):
-        self.validate_dates()
-        return super().clean()
+        validation_errors = utils_utils.merge_validation_errors(
+            wastemeasurement_validators.validate_dates(self),
+        )
+        if validation_errors:
+            raise ValidationError(validation_errors)
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -94,44 +98,3 @@ class WasteMeasurement(models.Model):
         if not canteen_yearly_meal_count or not self.meal_count or not has_total_mass:
             return None
         return self.total_mass / self.meal_count * canteen_yearly_meal_count
-
-    def validate_dates(self):
-        start_date = self.period_start_date
-        end_date = self.period_end_date
-        start_date_changed = start_date is not None
-        end_date_changed = end_date is not None
-
-        # if this is an update, check which date(s) have been changed so that we can raise relevant errors
-        if self.id:
-            original_object = WasteMeasurement.objects.get(id=self.id)
-            start_date_changed = original_object.period_start_date != start_date
-            end_date_changed = original_object.period_end_date != end_date
-
-        WasteMeasurement._validate_start_before_end(start_date, end_date, start_date_changed, end_date_changed)
-
-        other_measurements = WasteMeasurement.objects.filter(canteen=self.canteen)
-        if self.id:
-            other_measurements = other_measurements.exclude(id=self.id)
-
-        if start_date_changed or end_date_changed:
-            WasteMeasurement._validate_period_not_in_other_period(other_measurements, start_date, end_date)
-
-    def _validate_start_before_end(start_date, end_date, start_date_changed, end_date_changed):
-        if start_date_changed and start_date > end_date:
-            raise ValidationError({"period_start_date": ["La date de début ne peut pas être après la date de fin"]})
-        elif end_date_changed and end_date < start_date:
-            raise ValidationError({"period_end_date": ["La date de fin ne peut pas être avant la date de début"]})
-
-    def _validate_period_not_in_other_period(other_measurements, start_date, end_date):
-        measurements_within_period = other_measurements.filter(
-            period_end_date__gte=start_date, period_start_date__lte=end_date
-        )
-        if measurements_within_period.exists():
-            wm_count = measurements_within_period.count()
-            if wm_count > 1:
-                raise ValidationError(
-                    f"Il existe déjà {wm_count} autres évaluations dans la période {start_date} à {end_date}. Veuillez modifier les évaluations existantes ou corriger les dates de la période."
-                )
-            raise ValidationError(
-                f"Il existe déjà une autre évaluation dans la période {start_date} à {end_date}. Veuillez modifier l'évaluation existante ou corriger les dates de la période."
-            )
