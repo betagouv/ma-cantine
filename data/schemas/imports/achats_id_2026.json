@@ -151,6 +151,12 @@
         "required": false
       },
       "description": "Laisser vide si l'achat n'est pas en circuit court.",
+      "doc_enum": [
+        "oui",
+        "x",
+        "1",
+        "laisser vide si 'non'"
+      ],
       "example": "oui",
       "falseValues": [
         "non",
