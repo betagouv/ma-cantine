@@ -316,7 +316,7 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_create_empty_diagnostic_error(self):
+    def test_create_empty_purchase_error(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.post(self.url, {})
@@ -338,21 +338,14 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE])
         self.assertEqual(purchase.creation_user, authenticate.user)
 
-    def test_create_minimal_diagnostic_via_oauth2(self):
+    def test_cannot_create_minimal_purchase_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        purchase = Purchase.objects.first()
-        self.assertEqual(purchase.description, self.PURCHASE_MINIMAL_PAYLOAD["description"])
-        self.assertEqual(purchase.fournisseur, self.PURCHASE_MINIMAL_PAYLOAD["fournisseur"])
-        self.assertEqual(float(purchase.prix_ht), self.PURCHASE_MINIMAL_PAYLOAD["prix_ht"])
-        self.assertEqual(purchase.famille_produits, Purchase.Family.PRODUITS_DE_LA_MER)
-        self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE])
-        self.assertEqual(purchase.creation_user, user)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PurchaseOldCreateApiTest(APITestCase):
