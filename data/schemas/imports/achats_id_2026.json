@@ -126,20 +126,21 @@
       "constraints": {
         "required": false
       },
-      "description": "Laisser vide si l'achat n'est pas local",
+      "description": "",
       "doc_enum": [
         "oui",
-        "vrai",
+        "non",
         "x",
-        "true",
-        "1"
+        "1",
+        "laisser vide pour dire 'non'"
       ],
       "example": "oui",
       "falseValues": [
         "non",
+        "false",
         "",
-        0,
-        "false"
+        "0",
+        0
       ],
       "format": "default",
       "name": "est_local",
@@ -149,7 +150,6 @@
         "true",
         "x",
         "1",
-        "vrai",
         1
       ],
       "type": "boolean"
@@ -158,13 +158,21 @@
       "constraints": {
         "required": false
       },
-      "description": "Laisser vide si l'achat n'est pas en circuit court",
+      "description": "",
+      "doc_enum": [
+        "oui",
+        "non",
+        "x",
+        "1",
+        "laisser vide pour dire 'non'"
+      ],
       "example": "oui",
       "falseValues": [
         "non",
+        "false",
         "",
-        0,
-        "false"
+        "0",
+        0
       ],
       "format": "default",
       "name": "est_circuit_court",
