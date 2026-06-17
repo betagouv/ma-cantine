@@ -1,26 +1,28 @@
-from datetime import datetime
-
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
+from data.models.creation_source import CreationSource
 from data.validators import wastemeasurement as wastemeasurement_validators
 from data.utils import make_optional_positive_decimal_field
 
 from .canteen import Canteen
 
 
-def validate_before_today(value):
-    if value > datetime.now().date():
-        raise ValidationError("La date ne peut pas être dans le futur")
-
-
 class WasteMeasurement(models.Model):
+    CREATION_META_FIELDS = [
+        "creation_date",
+        "modification_date",
+        "creation_user",
+        "creation_source",
+    ]
+
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
 
     period_start_date = models.DateField(verbose_name="date de début")
-    period_end_date = models.DateField(verbose_name="date de fin", validators=[validate_before_today])
+    period_end_date = models.DateField(verbose_name="date de fin")
     meal_count = models.IntegerField(verbose_name="couverts sur la période", null=True, blank=True)
 
     total_mass = make_optional_positive_decimal_field(
@@ -65,6 +67,22 @@ class WasteMeasurement(models.Model):
     )
     leftovers_inedible_mass = make_optional_positive_decimal_field(
         verbose_name="restes assiette - masse non-comestible (kg)",
+    )
+
+    creation_user = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="waste_measurements_created",
+        verbose_name="utilisateur qui a créé l'évaluation du gaspillage alimentaire",
+    )
+    creation_source = models.CharField(
+        max_length=255,
+        choices=CreationSource.choices,
+        blank=True,
+        null=True,
+        verbose_name="Source de création de l'évaluation du gaspillage alimentaire",
     )
 
     creation_date = models.DateTimeField(auto_now_add=True)
