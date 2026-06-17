@@ -43,11 +43,6 @@ class DiagnosticCreateView(CreateAPIView):
     model = Diagnostic
     serializer_class = ManagerDiagnosticSerializer
 
-    def get_serializer(self, *args, **kwargs):
-        kwargs.setdefault("context", self.get_serializer_context())
-        kwargs.setdefault("action", "create")
-        return ManagerDiagnosticSerializer(*args, **kwargs)
-
     def _get_canteen(self):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
         return Canteen.objects.get(pk=self.kwargs["canteen_pk"])

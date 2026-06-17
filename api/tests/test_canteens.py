@@ -923,6 +923,7 @@ class CanteenUpdateApiTest(APITestCase):
         payload = {
             "managementType": Canteen.ManagementType.CONCEDED,
             "reservationExpeParticipant": True,
+            "creationSource": CreationSource.API,
         }
 
         response = self.client.patch(reverse("single_canteen", kwargs={"pk": self.canteen.id}), payload)

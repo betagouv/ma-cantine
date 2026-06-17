@@ -424,23 +424,6 @@ class PurchaseUpdateApiTest(APITestCase):
         self.assertEqual(float(self.purchase.prix_ht), 15.23)
 
     @authenticate
-    def test_update_purchase_does_not_update_creation_user(self):
-        self.purchase.canteen.managers.add(authenticate.user)
-        payload = {
-            "description": "Saumon",
-            "provider": "Test fournisseur",
-            "price_ht": 15.23,
-            "creation_source": CreationSource.API,
-        }
-
-        response = self.client.patch(self.url, payload)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.purchase.refresh_from_db()
-        self.assertEqual(self.purchase.creation_user, self.user)  # unchanged
-        # self.assertEqual(self.purchase.creation_source, CreationSource.APP)  # TODO: should not be possible
-
-    @authenticate
     def test_update_purchase_does_not_update_creation_user_and_source(self):
         self.purchase.canteen.managers.add(authenticate.user)
         self.assertEqual(self.purchase.creation_user, self.user)
@@ -450,6 +433,7 @@ class PurchaseUpdateApiTest(APITestCase):
             "description": "Saumon",
             "provider": "Test fournisseur",
             "price_ht": 15.23,
+            "creationSource": CreationSource.API,
         }
 
         response = self.client.patch(self.url, payload)

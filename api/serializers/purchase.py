@@ -44,6 +44,15 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "modification_date",
         )
 
+    def get_fields(self):
+        fields = super().get_fields()
+        # some fields are only available on create
+        if self.instance is not None:
+            fields.pop("creation_source", None)
+        else:
+            fields["creation_source"].write_only = True
+        return fields
+
     # TODO: remove once we finish the translation to French
     @staticmethod
     def _normalize_characteristics(validated_data):

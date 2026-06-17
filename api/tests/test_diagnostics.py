@@ -520,7 +520,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.creation_user, self.user)
         self.assertEqual(self.diagnostic.creation_source, CreationSource.APP)
 
-        payload = {"year": 2020}
+        payload = {"year": 2020, "creationSource": CreationSource.API}
 
         response = self.client.patch(self.url, payload)
 
