@@ -1,8 +1,11 @@
+from decimal import Decimal
+
 from django.urls import reverse
 from django.utils import timezone
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
 from data.models import Canteen, Diagnostic, Purchase
@@ -344,6 +347,294 @@ class PurchaseCreateApiTest(APITestCase):
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class PurchaseRetrieveApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.purchase = PurchaseFactory(
+            canteen=cls.canteen,
+            description="tomates",
+            fournisseur="fournisseur",
+            date="2022-01-13",
+            prix_ht=Decimal(4.5),
+            famille_produits=Purchase.Family.FRUITS_ET_LEGUMES,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE],
+            creation_user=cls.user,
+            creation_source=CreationSource.APP,
+        )
+        cls.url = reverse(
+            "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id}
+        )
+
+    def test_cannot_retrieve_purchase_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_retrieve_if_canteen_unknown(self):
+        response = self.client.get(
+            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 999, "pk": self.purchase.id})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_retrieve_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_retrieve_if_purchase_unknown(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(
+            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": 9999})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_retrieve_purchase_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory()
+        purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(
+            reverse(
+                "canteen_purchase_retrieve_update_destroy",
+                kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if the user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        response = self.client.get(
+            reverse(
+                "canteen_purchase_retrieve_update_destroy",
+                kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_retrieve_purchase(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.purchase.id)
+        self.assertEqual(body["canteen"], self.canteen.id)
+        self.assertEqual(body["description"], "tomates")
+        self.assertEqual(body["fournisseur"], "fournisseur")
+        self.assertEqual(body["date"], "2022-01-13")
+        self.assertEqual(body["prixHt"], 4.5)
+        self.assertNotIn("caracteristiques", body)
+        self.assertEqual(body["familleProduits"], Purchase.Family.FRUITS_ET_LEGUMES)
+        self.assertEqual(body["categoriesEgalim"], [Purchase.Characteristic.BIO])
+        self.assertEqual(body["origine"], Purchase.Characteristic.EUROPE)
+        self.assertEqual(body["estLocal"], False)
+        self.assertEqual(body["estCircuitCourt"], False)
+        self.assertIsNone(body["definitionLocal"])
+        self.assertNotIn("creationUser", body)
+        self.assertEqual(body["creationSource"], CreationSource.APP)
+        self.assertIsNone(body["importSource"])
+        self.assertIn("creationDate", body)
+        self.assertIn("modificationDate", body)
+
+    def test_cannot_retrieve_purchase_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class PurchaseUpdateApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.purchase = PurchaseFactory(
+            canteen=cls.canteen,
+            creation_user=cls.user,
+            creation_source=CreationSource.APP,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE],
+        )
+        cls.url = reverse(
+            "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id}
+        )
+
+    def test_cannot_update_purchase_if_unauthenticated(self):
+        payload = {
+            "prix_ht": 15.23,
+        }
+
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_update_if_canteen_unknown(self):
+        payload = {
+            "prix_ht": 15.23,
+        }
+
+        response = self.client.patch(
+            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 999, "pk": self.purchase.id}),
+            payload,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_update_if_not_canteen_manager(self):
+        payload = {
+            "description": "Saumon",
+            "prix_ht": 15.23,
+        }
+
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_update_if_purchase_unknown(self):
+        self.canteen.managers.add(authenticate.user)
+        payload = {
+            "prix_ht": 15.23,
+        }
+
+        response = self.client.patch(
+            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": 9999}),
+            payload,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_update_purchase_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory()
+        purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+        payload = {
+            "prix_ht": 15.23,
+        }
+
+        response = self.client.patch(
+            reverse(
+                "canteen_purchase_retrieve_update_destroy",
+                kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
+            ),
+            payload,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if the user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        response = self.client.patch(
+            reverse(
+                "canteen_purchase_retrieve_update_destroy",
+                kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
+            ),
+            payload,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_update_purchase(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+        payload = {
+            "description": "Saumon",
+            "prix_ht": 15.23,
+            "categories_egalim": [Purchase.Characteristic.HVE],
+            "origine": Purchase.Characteristic.FRANCE,
+            "est_local": True,
+            "est_circuit_court": False,
+            "definition_local": Purchase.Local.AUTRE,
+        }
+
+        response = self.client.patch(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.description, "Saumon")
+        self.assertEqual(float(self.purchase.prix_ht), 15.23)
+        self.assertEqual(
+            self.purchase.caracteristiques,
+            [
+                Purchase.Characteristic.HVE,
+                Purchase.Characteristic.FRANCE,
+                Purchase.Characteristic.LOCAL,
+            ],
+        )
+
+    def test_cannot_update_purchase_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.patch(self.url, {"description": "Updated"}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class PurchaseDeleteApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.purchase = PurchaseFactory(canteen=cls.canteen, creation_user=cls.user)
+        cls.url = reverse(
+            "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id}
+        )
+
+    def test_cannot_delete_if_unauthenticated(self):
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Purchase.objects.count(), 1)
+
+    @authenticate
+    def test_cannot_delete_if_not_canteen_manager(self):
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Purchase.objects.count(), 1)
+
+    @authenticate
+    def test_delete_purchase(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Purchase.objects.count(), 0)
+        self.assertEqual(Purchase.all_objects.count(), 1)
+
+    def test_cannot_delete_purchase_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
