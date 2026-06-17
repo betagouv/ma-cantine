@@ -12,7 +12,7 @@ This file provides guidance to Github Copilot (github.com/features/copilot) when
 
 **Backend:**
 - Python 3.11+, Django 5.1, Django REST Framework, Wagtail CMS
-- PostgreSQL database, Redis/Celery for async tasks
+- PostgreSQL database, Celery for async tasks
 - Sentry for error tracking, Brevo for email, S3-compatible storage
 
 **Frontend:**

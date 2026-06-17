@@ -29,9 +29,7 @@ astroid==3.3.6
 asttokens==3.0.0
     # via stack-data
 async-timeout==4.0.3
-    # via
-    #   ma-cantine
-    #   redis
+    # via ma-cantine
 attrs==24.2.0
     # via
     #   jsonschema
@@ -535,8 +533,6 @@ qrcode==7.4.2
     # via
     #   ma-cantine
     #   pyhanko
-redis==5.2.0
-    # via ma-cantine
 referencing==0.35.1
     # via
     #   jsonschema
