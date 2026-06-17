@@ -5,9 +5,19 @@
 -- ISO 3 ans : cantines ayant TD en n-2, n-1 ET n — classification figée sur n-2
 -- nb_td identique sur toutes les années comparées (isométrique par construction)
 
-with base as (
+with overrides_spe as (
+    select * from (values
+        ('19691861900012', 'economie', false),
+        ('19572647600011', 'economie', false),
+        ('21400312100172', null,       true),
+        ('26760171400087', null,       true)
+    ) as t(siret, line_ministry_force, exclure)
+),
+
+base as (
     select
         canteen_id,
+        cantine_siret,
         annee,
         cantine_line_ministry,
         valeur_totale,
@@ -45,30 +55,34 @@ td_years as (
 iso_sample as (
     select
         t.canteen_id,
-        t.annee                             as annee_ref,
-        '2ans'::text                        as iso_type,
-        b_n.cantine_line_ministry           as perimetre_key
+        t.annee                                                     as annee_ref,
+        '2ans'::text                                                as iso_type,
+        coalesce(o.line_ministry_force, b_n.cantine_line_ministry)  as perimetre_key
     from td_years t
     join base b_n
         on b_n.canteen_id = t.canteen_id
         and b_n.annee = t.annee
+    left join overrides_spe o on o.siret = b_n.cantine_siret
     where t.prev_1 = t.annee - 1
       and b_n.cantine_line_ministry is not null
+      and coalesce(o.exclure, false) = false
 
     union all
 
     select
         t.canteen_id,
-        t.annee                             as annee_ref,
-        '3ans'::text                        as iso_type,
-        b_n.cantine_line_ministry           as perimetre_key
+        t.annee                                                     as annee_ref,
+        '3ans'::text                                                as iso_type,
+        coalesce(o.line_ministry_force, b_n.cantine_line_ministry)  as perimetre_key
     from td_years t
     join base b_n
         on b_n.canteen_id = t.canteen_id
         and b_n.annee = t.annee
+    left join overrides_spe o on o.siret = b_n.cantine_siret
     where t.prev_1 = t.annee - 1
       and t.prev_2 = t.annee - 2
       and b_n.cantine_line_ministry is not null
+      and coalesce(o.exclure, false) = false
 ),
 
 -- TDs des cantines ISO pour toutes les années concernées

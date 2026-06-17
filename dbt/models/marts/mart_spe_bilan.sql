@@ -6,11 +6,34 @@
 -- /!\ les libellés périmètres inconnus sont à vérifier (affaires_etrangeres, armees, etc.)
 
 with inscriptions as (
-    select * from {{ ref('int_spe_inscriptions') }}
+    select perimetre, type_perimetre, annee, nb_inscrites
+    from {{ ref('int_spe_inscriptions') }}
+    union all
+    select 'TOTAL', 'total', annee, sum(nb_inscrites)
+    from {{ ref('int_spe_inscriptions') }}
+    where type_perimetre = 'line_ministry'
+    group by annee
 ),
 
 waste as (
-    select * from {{ ref('int_spe_waste') }}
+    select annee, perimetre_key, nb_canteens_avec_mesure, total_mass_kg, total_meal_count,
+           nb_niveau_3, nb_niveau_2, nb_niveau_1, nb_non_atteint, gaspi_g_par_couvert
+    from {{ ref('int_spe_waste') }}
+    union all
+    select
+        annee,
+        'TOTAL'                                                                         as perimetre_key,
+        sum(nb_canteens_avec_mesure)                                                    as nb_canteens_avec_mesure,
+        sum(total_mass_kg)                                                              as total_mass_kg,
+        sum(total_meal_count)                                                           as total_meal_count,
+        sum(nb_niveau_3)                                                                as nb_niveau_3,
+        sum(nb_niveau_2)                                                                as nb_niveau_2,
+        sum(nb_niveau_1)                                                                as nb_niveau_1,
+        sum(nb_non_atteint)                                                             as nb_non_atteint,
+        round((sum(total_mass_kg) * 1000 / nullif(sum(total_meal_count), 0))::numeric, 1) as gaspi_g_par_couvert
+    from {{ ref('int_spe_waste') }}
+    where perimetre_key not in ('MTE', 'MEJSESR', 'Justice', 'Ministères sociaux', 'Périmètre intérieur')
+    group by annee
 ),
 
 -- Référentiel périmètres : sort_order, clé DB, libellé affiché, groupe, est_total_groupe
@@ -42,7 +65,8 @@ ref_perimetre as (
         (22, 'agriculture',                 'Agriculture',                                 null,                 false),
         (23, 'travail',                     'Travail',                                     'Ministères sociaux', false),
         (24, 'sante',                       'Santé',                                       'Ministères sociaux', false),
-        (25, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true)
+        (25, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
+        (26, 'TOTAL',                       'TOTAL GÉNÉRAL',                               null,                 true)
     ) as t(sort_order, perimetre_key, perimetre_lib, groupe_spe, est_total_groupe)
 ),
 
@@ -87,11 +111,21 @@ ref_cibles as (
     ) as t(perimetre_key, cible_etablissements, fiabilite_cible)
 ),
 
+-- Corrections SPE : reclassements et exclusions par SIRET
+overrides_spe as (
+    select * from (values
+        ('19691861900012', 'economie', false),
+        ('19572647600011', 'economie', false),
+        ('21400312100172', null,       true),
+        ('26760171400087', null,       true)
+    ) as t(siret, line_ministry_force, exclure)
+),
+
 -- Agrégations par line_ministry
 stats as (
     select
         annee,
-        cantine_line_ministry                                                       as perimetre_key,
+        coalesce(o.line_ministry_force, cantine_line_ministry)                      as perimetre_key,
         count(*)                                                                    as nb_td,
         sum(valeur_totale)                                                          as valeur_totale,
         sum(valeur_bio_agg)                                                         as valeur_bio_agg,
@@ -119,9 +153,11 @@ stats as (
         -- diversification : dénominateur = nb_inscrites
         sum(td_volet_diversification_complet::int)                                          as nb_td_diversification_complet
     from {{ ref('mart_teledeclarations') }}
+    left join overrides_spe o on o.siret = cantine_siret
     where cantine_line_ministry is not null
       and (cantine_secteur != 'administration_etablissement_public' or cantine_line_ministry != 'administration_territoriale')
-    group by annee, cantine_line_ministry
+      and coalesce(o.exclure, false) = false
+    group by annee, coalesce(o.line_ministry_force, cantine_line_ministry)
 ),
 
 -- Sous-totaux par groupe (somme des line_ministry appartenant au groupe)
@@ -156,10 +192,43 @@ stats_groupe as (
     group by s.annee, r.groupe_spe
 ),
 
+-- Total global : somme des line_ministry uniquement (pas de double compte avec stats_groupe)
+stats_total as (
+    select
+        annee,
+        'TOTAL'                                      as perimetre_key,
+        sum(nb_td)                                   as nb_td,
+        sum(valeur_totale)                           as valeur_totale,
+        sum(valeur_bio_agg)                          as valeur_bio_agg,
+        sum(valeur_egalim_agg)                       as valeur_egalim_agg,
+        sum(vv)                                      as vv,
+        sum(vv_egalim)                               as vv_egalim,
+        sum(pdm)                                     as pdm,
+        sum(pdm_egalim)                              as pdm_egalim,
+        sum(total_france)                            as total_france,
+        sum(vv_france)                               as vv_france,
+        sum(nb_bio)                                  as nb_bio,
+        sum(nb_egalim)                               as nb_egalim,
+        sum(nb_bio_et_egalim)                        as nb_bio_et_egalim,
+        sum(nb_vp_egalim)                            as nb_vp_egalim,
+        sum(nb_3_obj)                                as nb_3_obj,
+        sum(nb_td_vp_renseignes)                     as nb_td_vp_renseignes,
+        sum(nb_td_egalim_renseignes)                 as nb_td_egalim_renseignes,
+        sum(nb_choix_multiple)                       as nb_choix_multiple,
+        sum(nb_vege_quotidien)                       as nb_vege_quotidien,
+        sum(nb_td_diversification_complet)           as nb_td_diversification_complet
+    from stats s
+    join ref_perimetre_with_groupe r on r.perimetre_key = s.perimetre_key
+    where r.est_total_groupe = false
+    group by s.annee
+),
+
 all_stats as (
     select * from stats
     union all
     select * from stats_groupe
+    union all
+    select * from stats_total
 )
 
 select
@@ -229,7 +298,10 @@ select
     w.nb_canteens_avec_mesure                                                       as nb_canteens_mesure_gaspi,
     round((100.0 * w.nb_canteens_avec_mesure / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_representativite_gaspi_pct,
     w.gaspi_g_par_couvert,
-    w.niveau_ademe,
+    w.nb_niveau_3                                                                   as nb_cantines_niveau_3_ademe,
+    w.nb_niveau_2                                                                   as nb_cantines_niveau_2_ademe,
+    w.nb_niveau_1                                                                   as nb_cantines_niveau_1_ademe,
+    w.nb_non_atteint                                                                as nb_cantines_non_atteint_ademe,
 
     -- cible établissements (fallback sur nb_inscrites si pas de cible officielle)
     coalesce(c.cible_etablissements, i.nb_inscrites)                                 as cible_etablissements,

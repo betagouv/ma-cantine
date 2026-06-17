@@ -24,14 +24,38 @@ with waste_base as (
         and not (c.sector_list::jsonb @> '["administration_etablissement_public"]'::jsonb)
 ),
 
+-- Agrégation par cantine : une cantine peut avoir plusieurs mesures sur l'année
+waste_by_canteen as (
+    select
+        annee,
+        region,
+        canteen_id,
+        secteur,
+        sum(total_mass)                                                 as total_mass_kg,
+        sum(meal_count)                                                 as total_meal_count,
+        case
+            when sum(meal_count) is null or sum(meal_count) = 0        then null
+            when sum(total_mass) * 1000 / sum(meal_count) <= 47        then 'Niveau 3'
+            when sum(total_mass) * 1000 / sum(meal_count) <= 74        then 'Niveau 2'
+            when sum(total_mass) * 1000 / sum(meal_count) <= 95        then 'Niveau 1'
+            else                                                             'Non atteint'
+        end                                                             as niveau_ademe
+    from waste_base
+    group by annee, region, canteen_id, secteur
+),
+
 waste_by_region as (
     select
         annee,
         region,
-        count(distinct canteen_id)          as nb_canteens_avec_mesure,
-        sum(total_mass)                     as total_mass_kg,
-        sum(meal_count)                     as total_meal_count
-    from waste_base
+        count(canteen_id)                                               as nb_canteens_avec_mesure,
+        sum(total_mass_kg)                                              as total_mass_kg,
+        sum(total_meal_count)                                           as total_meal_count,
+        count(case when niveau_ademe = 'Niveau 3'    then 1 end)       as nb_niveau_3,
+        count(case when niveau_ademe = 'Niveau 2'    then 1 end)       as nb_niveau_2,
+        count(case when niveau_ademe = 'Niveau 1'    then 1 end)       as nb_niveau_1,
+        count(case when niveau_ademe = 'Non atteint' then 1 end)       as nb_non_atteint
+    from waste_by_canteen
     group by annee, region
 ),
 
@@ -40,10 +64,14 @@ waste_by_region_sector as (
         annee,
         region,
         secteur,
-        count(distinct canteen_id)          as nb_canteens_avec_mesure,
-        sum(total_mass)                     as total_mass_kg,
-        sum(meal_count)                     as total_meal_count
-    from waste_base
+        count(canteen_id)                                               as nb_canteens_avec_mesure,
+        sum(total_mass_kg)                                              as total_mass_kg,
+        sum(total_meal_count)                                           as total_meal_count,
+        count(case when niveau_ademe = 'Niveau 3'    then 1 end)       as nb_niveau_3,
+        count(case when niveau_ademe = 'Niveau 2'    then 1 end)       as nb_niveau_2,
+        count(case when niveau_ademe = 'Niveau 1'    then 1 end)       as nb_niveau_1,
+        count(case when niveau_ademe = 'Non atteint' then 1 end)       as nb_non_atteint
+    from waste_by_canteen
     group by annee, region, secteur
 ),
 
@@ -297,17 +325,10 @@ select
     ))::numeric, 1)                                                                 as taux_representativite_gaspi_pct,
     round((coalesce(wrs.total_mass_kg, wr.total_mass_kg) * 1000
            / nullif(coalesce(wrs.total_meal_count, wr.total_meal_count), 0))::numeric, 1) as gaspi_g_par_couvert,
-    case
-        when coalesce(wrs.total_meal_count, wr.total_meal_count) is null
-          or coalesce(wrs.total_meal_count, wr.total_meal_count) = 0               then null
-        when coalesce(wrs.total_mass_kg, wr.total_mass_kg) * 1000
-             / coalesce(wrs.total_meal_count, wr.total_meal_count) <= 47            then 'Niveau 3'
-        when coalesce(wrs.total_mass_kg, wr.total_mass_kg) * 1000
-             / coalesce(wrs.total_meal_count, wr.total_meal_count) <= 74            then 'Niveau 2'
-        when coalesce(wrs.total_mass_kg, wr.total_mass_kg) * 1000
-             / coalesce(wrs.total_meal_count, wr.total_meal_count) <= 95            then 'Niveau 1'
-        else                                                                             'Non atteint'
-    end                                                                             as niveau_ademe,
+    coalesce(wrs.nb_niveau_3,    wr.nb_niveau_3)                                    as nb_cantines_niveau_3_ademe,
+    coalesce(wrs.nb_niveau_2,    wr.nb_niveau_2)                                    as nb_cantines_niveau_2_ademe,
+    coalesce(wrs.nb_niveau_1,    wr.nb_niveau_1)                                    as nb_cantines_niveau_1_ademe,
+    coalesce(wrs.nb_non_atteint, wr.nb_non_atteint)                                 as nb_cantines_non_atteint_ademe,
 
     -- cible établissements : région (fallback nb_inscrites) ou secteur si cible connue
     case when s.est_total_region
