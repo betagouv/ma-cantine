@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.urls import reverse
 from django.utils import timezone
 from freezegun import freeze_time
@@ -356,9 +358,14 @@ class PurchaseRetrieveApiTest(APITestCase):
         cls.canteen = CanteenFactory(managers=[cls.user])
         cls.purchase = PurchaseFactory(
             canteen=cls.canteen,
+            description="tomates",
+            fournisseur="fournisseur",
+            date="2022-01-13",
+            prix_ht=Decimal(4.5),
+            famille_produits=Purchase.Family.FRUITS_ET_LEGUMES,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE],
             creation_user=cls.user,
             creation_source=CreationSource.APP,
-            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE],
         )
         cls.url = reverse(
             "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id}
@@ -429,10 +436,32 @@ class PurchaseRetrieveApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], self.purchase.id)
+        self.assertEqual(body["canteen"], self.canteen.id)
+        self.assertEqual(body["description"], "tomates")
+        self.assertEqual(body["fournisseur"], "fournisseur")
+        self.assertEqual(body["date"], "2022-01-13")
+        self.assertEqual(body["prixHt"], 4.5)
+        self.assertNotIn("caracteristiques", body)
+        self.assertEqual(body["familleProduits"], Purchase.Family.FRUITS_ET_LEGUMES)
         self.assertEqual(body["categoriesEgalim"], [Purchase.Characteristic.BIO])
         self.assertEqual(body["origine"], Purchase.Characteristic.EUROPE)
         self.assertEqual(body["estLocal"], False)
         self.assertEqual(body["estCircuitCourt"], False)
+        self.assertIsNone(body["definitionLocal"])
+        self.assertNotIn("creationUser", body)
+        self.assertEqual(body["creationSource"], CreationSource.APP)
+        self.assertIsNone(body["importSource"])
+        self.assertIn("creationDate", body)
+        self.assertIn("modificationDate", body)
+
+    def test_cannot_retrieve_purchase_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PurchaseUpdateApiTest(APITestCase):
@@ -557,6 +586,15 @@ class PurchaseUpdateApiTest(APITestCase):
             ],
         )
 
+    def test_cannot_update_purchase_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.patch(self.url, {"description": "Updated"}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class PurchaseDeleteApiTest(APITestCase):
     @classmethod
@@ -590,6 +628,15 @@ class PurchaseDeleteApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Purchase.objects.count(), 0)
         self.assertEqual(Purchase.all_objects.count(), 1)
+
+    def test_cannot_delete_purchase_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PurchaseOldCreateApiTest(APITestCase):
