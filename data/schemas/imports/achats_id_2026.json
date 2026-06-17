@@ -111,8 +111,12 @@
         "pattern": "^ *(EUROPE|FRANCE) *$",
         "required": false
       },
-      "description": "",
-      "example": "oui",
+      "description": "Une seule origine peut être renseignée, EUROPE (hors France) ou FRANCE.",
+      "doc_enum": [
+        "EUROPE",
+        "FRANCE"
+      ],
+      "example": "FRANCE",
       "format": "default",
       "name": "origine",
       "title": "Origine",
@@ -171,7 +175,7 @@
         "pattern": "^ *(AUTOUR_SERVICE|DEPARTEMENT|REGION|PAT|AUTRE) *$",
         "required": false
       },
-      "description": "Obligatoire si l'achat a la caractéristique de LOCAL.",
+      "description": "Obligatoire si l'achat est renseigné comme 'est_local'",
       "doc_enum": [
         "AUTOUR_SERVICE",
         "DEPARTEMENT",
