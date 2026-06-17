@@ -13,6 +13,29 @@ from data.utils import read_csv
 logger = logging.getLogger(__name__)
 
 DEFAULT_SLEEP_SECONDS = 0.25
+BATCH_WRITE_EVERY = 100
+
+CSV_HEADERS = [
+    "siret",
+    "canteen_count",
+    "status",
+    "name",
+    "city_insee_code",
+    "postal_code",
+    "city",
+    "address",
+    "latitude",
+    "longitude",
+    "epci",
+    "department",
+    "region",
+    "etat_administratif",
+    "date_creation",
+    "date_debut_activite",
+    "date_fermeture",
+    "activite_principale",
+    "activite_principale_naf25",
+]
 
 
 class Command(BaseCommand):
@@ -26,21 +49,6 @@ class Command(BaseCommand):
     """
 
     help = "Export a reusable CSV cache of Recherche Entreprises responses for canteen SIRETs"
-
-    CSV_HEADERS = [
-        "siret",
-        "canteen_count",
-        "status",
-        "name",
-        "city_insee_code",
-        "postal_code",
-        "city",
-        "epci",
-        "department",
-        "region",
-        "etat_administratif",
-        "date_fermeture",
-    ]
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -75,9 +83,7 @@ class Command(BaseCommand):
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         cached_sirets = set()
-        existing_rows = []
         if resume and output_path.exists():
-            existing_rows = read_csv(output_path)
             cached_sirets = self._read_existing_sirets(output_path)
             logger.info("Resume mode: loaded %s cached SIRETs from %s", len(cached_sirets), output_path)
 
@@ -90,10 +96,6 @@ class Command(BaseCommand):
         logger.info("SIRETs to fetch: %s", total_to_process)
 
         if total_to_process == 0:
-            if resume and output_path.exists():
-                sorted_rows = self._sort_rows_by_siret(existing_rows)
-                self._write_rows_to_csv(output_path, sorted_rows)
-                logger.info("No new SIRETs. Existing CSV re-sorted by SIRET at %s", output_path)
             logger.info("Nothing to do.")
             return
 
@@ -104,27 +106,37 @@ class Command(BaseCommand):
             "api_calls": 0,
         }
 
-        new_rows = []
-        for index, row in enumerate(base_qs.iterator(), start=1):
-            siret = row["siret"]
-            canteen_count = row["canteen_count"]
+        file_exists = output_path.exists()
+        write_mode = "a" if resume and file_exists else "w"
+        should_write_header = write_mode == "w" or output_path.stat().st_size == 0
 
-            api_response, status = self._fetch_and_track_status(siret, stats)
-            csv_row = self._build_csv_row(siret, canteen_count, api_response, status)
-            new_rows.append(csv_row)
+        with output_path.open(write_mode, newline="", encoding="utf-8") as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=CSV_HEADERS)
+            if should_write_header:
+                writer.writeheader()
 
-            if index % 1000 == 0:
-                logger.info("Progress: %s/%s", index, total_to_process)
+            batch_rows = []
+            for index, row in enumerate(base_qs.iterator(), start=1):
+                siret = row["siret"]
+                canteen_count = row["canteen_count"]
 
-            time.sleep(DEFAULT_SLEEP_SECONDS)
+                api_response, status = self._fetch_and_track_status(siret, stats)
+                csv_row = self._build_csv_row(siret, canteen_count, api_response, status)
+                batch_rows.append(csv_row)
 
-        rows_to_write = new_rows
-        if resume and output_path.exists():
-            rows_by_siret = {row.get("siret"): row for row in existing_rows if row.get("siret")}
-            rows_by_siret.update({row["siret"]: row for row in new_rows})
-            rows_to_write = self._sort_rows_by_siret(rows_by_siret.values())
+                if len(batch_rows) == BATCH_WRITE_EVERY:
+                    writer.writerows(batch_rows)
+                    csv_file.flush()
+                    batch_rows = []
 
-        self._write_rows_to_csv(output_path, rows_to_write)
+                if index % 1000 == 0:
+                    logger.info("Progress: %s/%s", index, total_to_process)
+
+                time.sleep(DEFAULT_SLEEP_SECONDS)
+
+            if batch_rows:
+                writer.writerows(batch_rows)
+                csv_file.flush()
 
         logger.info("CSV written to %s", output_path)
         logger.info("API calls: %s", stats["api_calls"])
@@ -159,6 +171,7 @@ class Command(BaseCommand):
             return
 
         stats = {"ok": 0, "not_found": 0, "error": 0, "api_calls": 0}
+        updated_since_last_write = 0
 
         for seq_index, (row_index, original_row) in enumerate(error_indices.items(), start=1):
             siret = original_row["siret"]
@@ -167,19 +180,20 @@ class Command(BaseCommand):
 
             # Update row in-place
             all_rows[row_index] = self._build_csv_row(siret, canteen_count, api_response, status)
+            updated_since_last_write += 1
+
+            if updated_since_last_write == BATCH_WRITE_EVERY:
+                self._write_rows_to_csv(csv_path, all_rows)
+                logger.info("Progress: %s/%s (checkpoint saved)", seq_index, len(error_indices))
+                updated_since_last_write = 0
 
             if seq_index % 100 == 0:
                 logger.info("Progress: %s/%s", seq_index, len(error_indices))
 
             time.sleep(DEFAULT_SLEEP_SECONDS)
 
-        # Write all rows back to CSV in original order
-        csv_path.parent.mkdir(parents=True, exist_ok=True)
-        with csv_path.open("w", newline="", encoding="utf-8") as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=self.CSV_HEADERS)
-            writer.writeheader()
-            for row in all_rows:
-                writer.writerow(row)
+        # Final write to persist remaining updates in original order
+        self._write_rows_to_csv(csv_path, all_rows)
 
         logger.info("CSV updated at %s", csv_path)
         logger.info("Retried API calls: %s", stats["api_calls"])
@@ -205,24 +219,23 @@ class Command(BaseCommand):
 
     @staticmethod
     def _build_csv_row(siret, canteen_count, api_response, status):
-        return {
+        base = {
             "siret": siret,
             "canteen_count": canteen_count,
             "status": status,
-            "name": api_response.get("name") if api_response else None,
-            "city_insee_code": api_response.get("city_insee_code") if api_response else None,
-            "postal_code": api_response.get("postal_code") if api_response else None,
-            "city": api_response.get("city") if api_response else None,
-            "epci": api_response.get("epci") if api_response else None,
-            "department": api_response.get("department") if api_response else None,
-            "region": api_response.get("region") if api_response else None,
-            "etat_administratif": api_response.get("etat_administratif") if api_response else None,
-            "date_fermeture": api_response.get("date_fermeture") if api_response else None,
+        }
+        response_data = {
+            field: (api_response.get(field) if api_response else None) for field in CSV_HEADERS if field not in base
+        }
+        # TODO: replace "[NON-DIFFUSIBLE]" with ""
+        return {
+            **base,
+            **response_data,
         }
 
     def _write_rows_to_csv(self, output_path, rows):
         with output_path.open("w", newline="", encoding="utf-8") as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=self.CSV_HEADERS)
+            writer = csv.DictWriter(csv_file, fieldnames=CSV_HEADERS)
             writer.writeheader()
             for row in rows:
                 writer.writerow(row)
