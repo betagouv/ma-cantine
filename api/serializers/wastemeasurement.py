@@ -31,5 +31,21 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
             "leftovers_is_sorted",
             "leftovers_edible_mass",
             "leftovers_inedible_mass",
+            "creation_source",
+            "creation_date",
+            "modification_date",
         )
-        read_only_fields = ("id",)
+        read_only_fields = (
+            "id",
+            "creation_date",
+            "modification_date",
+        )
+
+    def get_fields(self):
+        fields = super().get_fields()
+        # some fields are only available on create
+        if self.instance is not None:
+            fields.pop("creation_source", None)
+        else:
+            fields["creation_source"].write_only = True
+        return fields
