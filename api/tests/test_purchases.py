@@ -332,16 +332,20 @@ class PurchaseCreateApiTest(APITestCase):
         payload = {**self.PURCHASE_PAYLOAD, "creation_source": CreationSource.APP}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        created_purchase = Purchase.objects.get(pk=body["id"])
-        self.assertEqual(created_purchase.creation_source, CreationSource.APP)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_source, CreationSource.APP)
+
+        # cleanup
+        Purchase.objects.all().delete()
 
         # defaults to API
         response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        created_purchase = Purchase.objects.get(pk=body["id"])
-        self.assertEqual(created_purchase.creation_source, CreationSource.API)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_source, CreationSource.API)
+
+        # cleanup
+        Purchase.objects.all().delete()
 
         # returns a 404 if the creation_source is not valid
         payload = {**self.PURCHASE_PAYLOAD, "creation_source": "UNKNOWN"}
@@ -449,7 +453,7 @@ class PurchaseDeleteApiTest(APITestCase):
     def setUpTestData(cls):
         cls.user = UserFactory()
         cls.canteen = CanteenFactory(managers=[cls.user])
-        cls.purchase = PurchaseFactory(canteen=cls.canteen, creation_user=cls.user)
+        cls.purchase = PurchaseFactory(canteen=cls.canteen, creation_user=cls.user, creation_source=CreationSource.APP)
         cls.url = reverse("purchase_retrieve_update_destroy", kwargs={"pk": cls.purchase.id})
 
     def test_cannot_delete_if_unauthenticated(self):

@@ -536,30 +536,27 @@ class CanteenCreateApiTest(APITestCase):
         mock_get_pat_csv(mock)
 
         # from the APP
-        response = self.client.post(
-            reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "APP"}
-        )
-
+        payload = {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "APP"}
+        response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        created_canteen = Canteen.objects.get(pk=body["id"])
-        self.assertEqual(created_canteen.creation_source, CreationSource.APP)
-        created_canteen.hard_delete()
+        canteen = Canteen.objects.first()
+        self.assertEqual(canteen.creation_source, CreationSource.APP)
+
+        # cleanup
+        Canteen.objects.all().delete()
 
         # defaults to API
         response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        created_canteen = Canteen.objects.get(pk=body["id"])
-        self.assertEqual(created_canteen.creation_source, CreationSource.API)
-        created_canteen.hard_delete()
+        canteen = Canteen.objects.first()
+        self.assertEqual(canteen.creation_source, CreationSource.API)
+
+        # cleanup
+        Canteen.objects.all().delete()
 
         # returns a 404 if the creation_source is not valid
-        response = self.client.post(
-            reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "UNKNOWN"}
-        )
-
+        payload = {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "UNKNOWN"}
+        response = self.client.post(reverse("user_canteens"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -962,7 +959,7 @@ class CanteenDeleteApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.canteen = CanteenFactory(managers=[cls.user], creation_user=cls.user, creation_source=CreationSource.APP)
         cls.url = reverse("single_canteen", kwargs={"pk": cls.canteen.id})
 
     def test_cannot_delete_canteen_if_unauthenticated(self):

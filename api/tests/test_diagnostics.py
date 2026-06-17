@@ -90,18 +90,23 @@ class DiagnosticCreateApiTest(APITestCase):
         payload = {**self.DIAGNOSTIC_PAYLOAD, "creation_source": "APP"}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        diagnostic = Diagnostic.objects.get(canteen__id=self.canteen.id)
+        diagnostic = Diagnostic.objects.first()
         self.assertEqual(diagnostic.creation_source, CreationSource.APP)
 
+        # cleanup
+        Diagnostic.objects.all().delete()
+
         # defaults to API
-        payload = {"year": 2021}
-        response = self.client.post(self.url, payload)
+        response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        diagnostic = Diagnostic.objects.get(canteen__id=self.canteen.id, year=2021)
+        diagnostic = Diagnostic.objects.first()
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
 
+        # cleanup
+        Diagnostic.objects.all().delete()
+
         # returns a 404 if the creation_source is not valid
-        payload = {"year": 2022, "creation_source": "UNKNOWN"}
+        payload = {**self.DIAGNOSTIC_PAYLOAD, "creation_source": "UNKNOWN"}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
