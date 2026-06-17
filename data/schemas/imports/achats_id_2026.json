@@ -111,7 +111,7 @@
         "pattern": "^ *(EUROPE|FRANCE) *$",
         "required": false
       },
-      "description": "Une seule origine peut être renseignée, EUROPE (hors France) ou FRANCE.",
+      "description": "Une seule origine peut être renseignée, EUROPE (hors France) ou FRANCE",
       "doc_enum": [
         "EUROPE",
         "FRANCE"
@@ -126,7 +126,7 @@
       "constraints": {
         "required": false
       },
-      "description": "Laisser vide si l'achat n'est pas local.",
+      "description": "Laisser vide si l'achat n'est pas local",
       "example": "oui",
       "falseValues": [
         "non",
@@ -150,13 +150,7 @@
       "constraints": {
         "required": false
       },
-      "description": "Laisser vide si l'achat n'est pas en circuit court.",
-      "doc_enum": [
-        "oui",
-        "x",
-        "1",
-        "laisser vide si 'non'"
-      ],
+      "description": "Laisser vide si l'achat n'est pas en circuit court",
       "example": "oui",
       "falseValues": [
         "non",
