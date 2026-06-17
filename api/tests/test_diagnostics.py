@@ -67,7 +67,6 @@ class DiagnosticCreateApiTest(APITestCase):
         diagnostic = Diagnostic.objects.first()
         self.assertEqual(diagnostic.canteen, self.canteen)
         self.assertEqual(diagnostic.year, 2020)
-        self.assertEqual(diagnostic.creation_user, authenticate.user)
 
     def test_create_minimal_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
@@ -83,13 +82,16 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.creation_user, user)
 
     @authenticate
-    def test_create_diagnostic_creation_source(self):
+    def test_create_diagnostic_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
 
         # from the APP
         payload = {**self.DIAGNOSTIC_PAYLOAD, "creation_source": "APP"}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
         diagnostic = Diagnostic.objects.first()
         self.assertEqual(diagnostic.creation_source, CreationSource.APP)
 
@@ -99,6 +101,9 @@ class DiagnosticCreateApiTest(APITestCase):
         # defaults to API
         response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
         diagnostic = Diagnostic.objects.first()
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
 
@@ -109,6 +114,29 @@ class DiagnosticCreateApiTest(APITestCase):
         payload = {**self.DIAGNOSTIC_PAYLOAD, "creation_source": "UNKNOWN"}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_create_diagnostic_with_tracking_info(self):
+        self.canteen.managers.add(authenticate.user)
+
+        payload = {
+            **self.DIAGNOSTIC_PAYLOAD,
+            "creation_mtm_source": "mtm_source_value",
+            "creation_mtm_campaign": "mtm_campaign_value",
+            "creation_mtm_medium": "mtm_medium_value",
+        }
+
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_mtm_source", body)
+        self.assertNotIn("creation_mtm_campaign", body)
+        self.assertNotIn("creation_mtm_medium", body)
+        diagnostic = Diagnostic.objects.first()
+        self.assertEqual(diagnostic.creation_mtm_source, "mtm_source_value")
+        self.assertEqual(diagnostic.creation_mtm_campaign, "mtm_campaign_value")
+        self.assertEqual(diagnostic.creation_mtm_medium, "mtm_medium_value")
 
     @authenticate
     def test_create_full_diagnostic(self):
@@ -155,9 +183,6 @@ class DiagnosticCreateApiTest(APITestCase):
             "communicates_on_food_plan": True,
             "communicates_on_food_quality": True,
             "communication_frequency": "YEARLY",
-            "creation_mtm_source": "mtm_source_value",
-            "creation_mtm_campaign": "mtm_campaign_value",
-            "creation_mtm_medium": "mtm_medium_value",
             # detailed value fields
             "valeur_viandes_volailles_bio": 10,
             "valeur_produits_de_la_mer_bio": 10,
@@ -292,9 +317,6 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.communication_frequency, "YEARLY")
         self.assertTrue(diagnostic.communicates_on_food_quality)
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
-        self.assertEqual(diagnostic.creation_mtm_source, "mtm_source_value")
-        self.assertEqual(diagnostic.creation_mtm_campaign, "mtm_campaign_value")
-        self.assertEqual(diagnostic.creation_mtm_medium, "mtm_medium_value")
         self.assertEqual(diagnostic.label_sum("bio"), 80)
         self.assertEqual(diagnostic.label_sum("label_rouge"), 80)
         self.assertEqual(diagnostic.label_sum("aocaop_igp_stg"), 80)
@@ -551,6 +573,10 @@ class DiagnosticUpdateApiTest(APITestCase):
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertNotIn("creation_mtm_source", body)
+        self.assertNotIn("creation_mtm_campaign", body)
+        self.assertNotIn("creation_mtm_medium", body)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.year, 2020)
         self.assertIsNone(self.diagnostic.creation_mtm_source)

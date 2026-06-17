@@ -322,17 +322,20 @@ class PurchaseCreateApiTest(APITestCase):
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.definition_local, Purchase.Local.AUTOUR_SERVICE)
         self.assertEqual(len(purchase.caracteristiques), 2)
-        self.assertEqual(purchase.creation_user, authenticate.user)
 
     @authenticate
-    def test_create_purchase_creation_source(self):
+    def test_create_purchase_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
 
         # from the APP
         payload = {**self.PURCHASE_PAYLOAD, "creation_source": CreationSource.APP}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
         purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, authenticate.user)
         self.assertEqual(purchase.creation_source, CreationSource.APP)
 
         # cleanup
@@ -341,7 +344,11 @@ class PurchaseCreateApiTest(APITestCase):
         # defaults to API
         response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
         purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, authenticate.user)
         self.assertEqual(purchase.creation_source, CreationSource.API)
 
         # cleanup
@@ -443,6 +450,9 @@ class PurchaseUpdateApiTest(APITestCase):
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
         self.purchase.refresh_from_db()
         self.assertEqual(self.purchase.creation_user, self.user)  # unchanged
         self.assertEqual(self.purchase.creation_source, CreationSource.APP)  # unchanged
