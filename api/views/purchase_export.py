@@ -2,11 +2,11 @@ from drf_excel.mixins import XLSXFileMixin
 from drf_excel.renderers import XLSXRenderer
 from rest_framework.exceptions import MethodNotAllowed
 
-from api.views.purchase import PurchaseListCreateView
 from api.serializers import PurchaseExportSerializer
+from api.views.purchase import PurchaseOldListCreateView
 
 
-class PurchaseListExportView(PurchaseListCreateView, XLSXFileMixin):
+class PurchaseListExportView(PurchaseOldListCreateView, XLSXFileMixin):
     renderer_classes = (XLSXRenderer,)
     pagination_class = None
     serializer_class = PurchaseExportSerializer
