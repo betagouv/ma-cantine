@@ -106,20 +106,26 @@ class PublicServiceDiagnosticSerializer(DiagnosticSerializer):
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        read_only_fields = ("id",)
         fields = (
             FIELDS + Diagnostic.MATOMO_FIELDS + Diagnostic.CREATION_META_FIELDS + Diagnostic.TUNNEL_PROGRESS_FIELDS
         )
+        read_only_fields = ("id",)
 
-    def __init__(self, *args, **kwargs):
-        action = kwargs.pop("action", None)
-        super().__init__(*args, **kwargs)
-        if action == "create":
-            for field in REQUIRED_FIELDS:
-                self.fields[field].required = True
-        else:
+    def get_fields(self):
+        fields = super().get_fields()
+        # some fields are required
+        for field in REQUIRED_FIELDS:
+            fields[field].required = True
+        # some fields are only available on create
+        if self.instance is not None:
+            fields.pop("creation_source", None)
             for field in Diagnostic.MATOMO_FIELDS:
-                self.fields.pop(field)
+                fields.pop(field, None)
+        else:
+            fields["creation_source"].write_only = True
+            for field in Diagnostic.MATOMO_FIELDS:
+                fields[field].write_only = True
+        return fields
 
     def validate(self, data):
         # TODO: move these rules to the model

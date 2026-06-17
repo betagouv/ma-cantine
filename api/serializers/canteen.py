@@ -20,6 +20,9 @@ from .user import CanteenManagerSerializer
 logger = logging.getLogger(__name__)
 
 
+REQUIRED_FIELDS = ("name", "siret")
+
+
 class CanteenImageSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     id = serializers.IntegerField(required=False)
@@ -188,7 +191,6 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        read_only_fields = ("publication_status",)
         fields = (
             "id",
             "name",
@@ -218,6 +220,7 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
             "central_kitchen_diagnostics",
             "publication_status",  # property
         )
+        read_only_fields = ("publication_status",)
 
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
@@ -228,10 +231,6 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        read_only_fields = (
-            "id",
-            "publication_status",
-        )
         fields = (
             "id",
             "name",
@@ -245,6 +244,10 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "publication_status",  # property
             "is_managed_by_user",  # annotate
             "action",  # annotate
+        )
+        read_only_fields = (
+            "id",
+            "publication_status",
         )
 
 
@@ -268,30 +271,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        read_only_fields = (
-            "id",
-            "epci",
-            "epci_lib",
-            "pat_list",
-            "pat_lib_list",
-            "department_lib",
-            "region",
-            "region_lib",
-            "managers",
-            "manager_invitations",
-            "publication_status",
-            "groupe",
-            "central_kitchen",
-            "central_kitchen_diagnostics",
-            "satellites",
-            "satellites_count",
-            "satellites_missing_data_count",
-            "satellites_already_teledeclared_count",
-            "is_satellite",
-            "modification_date",
-            "badges",
-            "resource_actions",
-        )
         fields = (
             "id",
             "name",
@@ -348,16 +327,46 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "badges",
             "resource_actions",
         )
+        read_only_fields = (
+            "id",
+            "epci",
+            "epci_lib",
+            "pat_list",
+            "pat_lib_list",
+            "department_lib",
+            "region",
+            "region_lib",
+            "managers",
+            "manager_invitations",
+            "publication_status",
+            "groupe",
+            "central_kitchen",
+            "central_kitchen_diagnostics",
+            "satellites",
+            "satellites_count",
+            "satellites_missing_data_count",
+            "satellites_already_teledeclared_count",
+            "is_satellite",
+            "modification_date",
+            "badges",
+            "resource_actions",
+        )
 
-        extra_kwargs = {"name": {"required": True}, "siret": {"required": True}}
-
-    def __init__(self, *args, **kwargs):
-        action = kwargs.pop("action", None)
-        super().__init__(*args, **kwargs)
-        if action != "create":
-            self.fields.pop("creation_mtm_source")
-            self.fields.pop("creation_mtm_campaign")
-            self.fields.pop("creation_mtm_medium")
+    def get_fields(self):
+        fields = super().get_fields()
+        # some fields are required
+        for field in REQUIRED_FIELDS:
+            fields[field].required = True
+        # some fields are only available on create
+        if self.instance is not None:
+            fields.pop("creation_source", None)
+            for field in Canteen.MATOMO_FIELDS:
+                fields.pop(field, None)
+        else:
+            fields["creation_source"].write_only = True
+            for field in Canteen.MATOMO_FIELDS:
+                fields[field].write_only = True
+        return fields
 
     def update(self, instance, validated_data):
         if "images" not in validated_data:

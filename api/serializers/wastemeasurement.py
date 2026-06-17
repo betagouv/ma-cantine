@@ -9,7 +9,6 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WasteMeasurement
-        read_only_fields = ("id",)
         fields = (
             "id",
             "canteen_id",
@@ -33,3 +32,4 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
             "leftovers_edible_mass",
             "leftovers_inedible_mass",
         )
+        read_only_fields = ("id",)
