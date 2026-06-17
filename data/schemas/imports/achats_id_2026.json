@@ -80,7 +80,7 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|EUROPE|FRANCE|CIRCUIT_COURT|LOCAL)( *, *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|EUROPE|FRANCE|CIRCUIT_COURT|LOCAL))* *$",
+        "pattern": "^ *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE)( *, *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE))* *$",
         "required": false
       },
       "description": "",
@@ -96,19 +96,75 @@
         "COMMERCE_EQUITABLE",
         "FERMIER",
         "EXTERNALITES",
-        "PERFORMANCE",
-        "EUROPE",
-        "FRANCE",
-        "CIRCUIT_COURT",
-        "LOCAL"
+        "PERFORMANCE"
       ],
       "doc_enum_multiple": true,
       "doc_enum_multiple_seperator": ",",
       "example": "BIO,IGP",
       "format": "default",
-      "name": "caracteristiques",
-      "title": "Caractéristiques de l'achat",
+      "name": "categories_egalim",
+      "title": "Catégories EGalim",
       "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^ *(EUROPE|FRANCE) *$",
+        "required": false
+      },
+      "description": "",
+      "example": "oui",
+      "format": "default",
+      "name": "origine",
+      "title": "Origine",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Laisser vide si l'achat n'est pas local.",
+      "example": "oui",
+      "falseValues": [
+        "non",
+        "",
+        0,
+        "false"
+      ],
+      "format": "default",
+      "name": "est_local",
+      "title": "Local ou de proximité",
+      "trueValues": [
+        "oui",
+        "true",
+        "x",
+        "1",
+        1
+      ],
+      "type": "boolean"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Laisser vide si l'achat n'est pas en circuit court.",
+      "example": "oui",
+      "falseValues": [
+        "non",
+        "",
+        0,
+        "false"
+      ],
+      "format": "default",
+      "name": "est_circuit_court",
+      "title": "Circuit court",
+      "trueValues": [
+        "oui",
+        "true",
+        "x",
+        "1",
+        1
+      ],
+      "type": "boolean"
     },
     {
       "constraints": {
