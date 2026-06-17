@@ -1,60 +1,60 @@
 {
   "categoriesEgalim": {
-    "aocaop": {
-      "hint": "Appellation d'origine (AOC / AOP)",
-      "label": "AOC / AOP",
-      "value": "AOCAOP"
-    },
     "bio": {
       "label": "Bio ou « en conversion bio »",
       "value": "BIO"
     },
-    "commerceEquitable": {
-      "label": "Commerce équitable",
-      "value": "COMMERCE_EQUITABLE"
+    "labelRouge": {
+      "label": "Label rouge",
+      "value": "LABEL_ROUGE"
     },
-    "externalites": {
-      "hint": "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
-      "label": "Critère externalités environnementales",
-      "value": "EXTERNALITES"
-    },
-    "fermier": {
-      "hint": "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »",
-      "label": "Fermier",
-      "value": "FERMIER"
-    },
-    "hve": {
-      "hint": "Certification environnementale de niveau 2 ou HVE",
-      "label": "HVE",
-      "value": "HVE"
+    "aocaop": {
+      "hint": "Appellation d'origine (AOC / AOP)",
+      "label": "AOC / AOP",
+      "value": "AOCAOP"
     },
     "igp": {
       "hint": "Indication géographique protégée (IGP)",
       "label": "IGP",
       "value": "IGP"
     },
-    "labelRouge": {
-      "label": "Label rouge",
-      "value": "LABEL_ROUGE"
+    "stg": {
+      "hint": "Spécialité traditionnelle garantie (STG)",
+      "label": "STG",
+      "value": "STG"
+    },
+    "hve": {
+      "hint": "Certification environnementale de niveau 2 ou HVE",
+      "label": "HVE",
+      "value": "HVE"
     },
     "pecheDurable": {
       "label": "Écolabel pêche durable",
       "value": "PECHE_DURABLE"
-    },
-    "performance": {
-      "hint": "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
-      "label": "Critères protection de l'environnement et approvisionnement direct",
-      "value": "PERFORMANCE"
     },
     "rup": {
       "hint": "Région ultrapériphérique (RUP)",
       "label": "RUP",
       "value": "RUP"
     },
-    "stg": {
-      "hint": "Spécialité traditionnelle garantie (STG)",
-      "label": "STG",
-      "value": "STG"
+    "commerceEquitable": {
+      "label": "Commerce équitable",
+      "value": "COMMERCE_EQUITABLE"
+    },
+    "fermier": {
+      "hint": "Mention « fermier » ou « produit de la ferme » ou « produit à la ferme »",
+      "label": "Fermier",
+      "value": "FERMIER"
+    },
+    "externalites": {
+      "hint": "Produits acquis prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "label": "Critère externalités environnementales",
+      "value": "EXTERNALITES"
+    },   
+    "performance": {
+      "hint": "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
+      "label": "Critères protection de l'environnement et approvisionnement direct",
+      "value": "PERFORMANCE"
     }
   },
   "categoriesOrigines": {
