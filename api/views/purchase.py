@@ -6,16 +6,22 @@ from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.filters.utils import UnaccentSearchFilter
-from api.permissions import IsAuthenticated, IsCanteenManager, IsLinkedCanteenManager
+from api.permissions import (
+    IsAuthenticated,
+    IsCanteenManager,
+    IsCanteenManagerUrlParam,
+    IsLinkedCanteenManager,
+)
 from api.serializers import (
     PurchaseOldSerializer,
     PurchasePercentageSummarySerializer,
+    PurchaseSerializer,
     PurchaseSummarySerializer,
 )
 from api.views.utils import get_oauth_application
@@ -23,6 +29,22 @@ from data.models import Canteen, Diagnostic, Purchase
 from data.models.creation_source import CreationSource
 
 logger = logging.getLogger(__name__)
+
+
+class PurchaseCreateView(CreateAPIView):
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    model = Purchase
+    serializer_class = PurchaseSerializer
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def perform_create(self, serializer):
+        canteen = self._get_canteen()
+        creation_user = self.request.user
+        creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
+        serializer.save(canteen=canteen, creation_user=creation_user, creation_source=creation_source)
 
 
 class PurchasesPagination(LimitOffsetPagination):
