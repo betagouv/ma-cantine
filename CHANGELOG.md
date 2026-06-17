@@ -6,6 +6,22 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.37.2](https://github.com/betagouv/ma-cantine/compare/v2026.37.1...v2026.37.2) (2026-06-17)
+
+
+### Améliorations
+
+* **1TD1Site:** nouveau champ `Diagnostic.groupe_snapshot` et l'afficher dans l'admin (1/2) ([#6799](https://github.com/betagouv/ma-cantine/issues/6799)) ([c2b77f1](https://github.com/betagouv/ma-cantine/commit/c2b77f123a1f269f8e0f1ceb71c4145b4b10682b))
+* **1TD1Site:** remplir le champ groupe_snapshot pour les TD générées (2/2) ([#6818](https://github.com/betagouv/ma-cantine/issues/6818)) ([12f079e](https://github.com/betagouv/ma-cantine/commit/12f079eb9edcaf3d0aff95b0ca354b5e4d126025))
+* **Achats:** ajoute un sélecteur de cantine à la duplication d'un achat ([#6823](https://github.com/betagouv/ma-cantine/issues/6823)) ([9ee4862](https://github.com/betagouv/ma-cantine/commit/9ee486248721c81ac641b73dc4bc7f7d3159b125))
+* **Achats:** change l'affichage pour les champs "EGalim" et "Origine" ([#6826](https://github.com/betagouv/ma-cantine/issues/6826)) ([bee09dd](https://github.com/betagouv/ma-cantine/commit/bee09ddd308fae3943efecf9ed3133a10c7f745e))
+* **Diagnostics:** Marquer comme aberrant les TD avec un cout_repas &lt; 0.1 ([#6795](https://github.com/betagouv/ma-cantine/issues/6795)) ([d45dfe9](https://github.com/betagouv/ma-cantine/commit/d45dfe960507c08cb080acbef7da49c11e6783b1))
+
+
+### Corrections (bugs, typos...)
+
+* **Diagnostics:** améliore le script pour remplir les champs `invalid_reason_list` & `warning_reason_list` [1TD1Site] ([#6820](https://github.com/betagouv/ma-cantine/issues/6820)) ([dc21c53](https://github.com/betagouv/ma-cantine/commit/dc21c5326d250238f13d1b5bbc0d326a8779818c))
+
 ## [2026.37.1](https://github.com/betagouv/ma-cantine/compare/v2026.37.0...v2026.37.1) (2026-06-10)
 
 
