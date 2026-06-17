@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, WasteMeasurementFactory
+from data.factories import CanteenFactory, WasteMeasurementFactory, UserFactory
 from data.models import WasteMeasurement
 from data.models.creation_source import CreationSource
 
@@ -151,7 +151,8 @@ class WasteMeasurementsListApiTest(APITestCase):
 class WasteMeasurementsCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen = CanteenFactory()
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
         cls.url = reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": cls.canteen.id})
         cls.WM_PAYLOAD = {"period_start_date": "2024-08-01", "period_end_date": "2024-08-10"}
 
@@ -221,7 +222,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(waste_measurement.leftovers_is_sorted, None)
         self.assertEqual(waste_measurement.leftovers_edible_mass, None)
         self.assertEqual(waste_measurement.leftovers_inedible_mass, None)
-        self.assertEqual(waste_measurement.creation_user, authenticate.user)
 
     def test_create_waste_measurement_via_oauth2(self):
         user, token = get_oauth2_token("waste_measurements:create")
@@ -251,14 +251,18 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(waste_measurement.creation_user, user)
 
     @authenticate
-    def test_create_waste_measurement_creation_source(self):
+    def test_create_waste_measurement_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
 
         # from the APP
         payload = {**self.WM_PAYLOAD, "creation_source": "APP"}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
         waste_measurement = WasteMeasurement.objects.first()
+        self.assertEqual(waste_measurement.creation_user, authenticate.user)
         self.assertEqual(waste_measurement.creation_source, CreationSource.APP)
 
         # cleanup
@@ -267,7 +271,11 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         # defaults to API
         response = self.client.post(self.url, self.WM_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
         waste_measurement = WasteMeasurement.objects.first()
+        self.assertEqual(waste_measurement.creation_user, authenticate.user)
         self.assertEqual(waste_measurement.creation_source, CreationSource.API)
 
         # cleanup
@@ -428,9 +436,14 @@ class WasteMeasurementsCreateApiTest(APITestCase):
 class WasteMeasurementsDetailApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen = CanteenFactory()
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
         cls.measurement = WasteMeasurementFactory(
-            canteen=cls.canteen, period_start_date=datetime.date(2023, 1, 1), period_end_date=datetime.date(2023, 1, 5)
+            canteen=cls.canteen,
+            period_start_date=datetime.date(2023, 1, 1),
+            period_end_date=datetime.date(2023, 1, 5),
+            creation_user=cls.user,
+            creation_source=CreationSource.APP,
         )
         cls.url = reverse(
             "canteen_waste_measurement_detail", kwargs={"pk": cls.measurement.id, "canteen_pk": cls.canteen.id}
@@ -512,7 +525,8 @@ class WasteMeasurementsDetailApiTest(APITestCase):
 class WasteMeasurementsUpdateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen = CanteenFactory()
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
         cls.measurement = WasteMeasurementFactory(
             canteen=cls.canteen,
             meal_count=100,
@@ -632,11 +646,14 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.assertEqual(self.measurement.creation_user, self.user)
         self.assertEqual(self.measurement.creation_source, CreationSource.APP)
 
-        payload = {"mealCount": 200}
+        payload = {"mealCount": 200, "creationSource": CreationSource.API}
 
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
         self.measurement.refresh_from_db()
         self.assertEqual(self.measurement.creation_user, self.user)  # unchanged
         self.assertEqual(self.measurement.creation_source, CreationSource.APP)  # unchanged
@@ -821,7 +838,8 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
 class WasteMeasurementsDeleteApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen = CanteenFactory()
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
         cls.measurement = WasteMeasurementFactory(
             canteen=cls.canteen,
             meal_count=100,
