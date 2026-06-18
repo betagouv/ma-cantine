@@ -136,11 +136,12 @@ urlpatterns = [
         TemplateView.as_view(template_name="googlefbd6f06a151f47ee.html"),
         name="google_verification",
     ),
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/schema", SpectacularAPIView.as_view(), name="schema"),
+    path("api/docs", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path(
         "swagger-ui/",
-        SpectacularSwaggerView.as_view(url_name="schema"),
-        name="swagger-ui",
+        RedirectView.as_view(pattern_name="swagger-ui", permanent=True),
+        name="swagger-ui-old",
     ),
 ]
 
