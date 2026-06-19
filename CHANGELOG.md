@@ -6,6 +6,18 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.38.0](https://github.com/betagouv/ma-cantine/compare/v2026.37.2...v2026.38.0) (2026-06-19)
+
+
+### Nouveautés
+
+* **Ressources:** ajout des nouveaux guides du CNRC ([#6835](https://github.com/betagouv/ma-cantine/issues/6835)) ([ddc38f6](https://github.com/betagouv/ma-cantine/commit/ddc38f6ced74d1c41394837e12d33e3b3ce03ca1))
+
+
+### Technique
+
+* **API:** meilleur facon de créer les champs metadata (et ne pas les renvoyer ensuite) ([#6829](https://github.com/betagouv/ma-cantine/issues/6829)) ([929b471](https://github.com/betagouv/ma-cantine/commit/929b471c939fb1e37d7f86ad65d82e1731fa2367))
+
 ## [2026.37.2](https://github.com/betagouv/ma-cantine/compare/v2026.37.1...v2026.37.2) (2026-06-17)
 
 
