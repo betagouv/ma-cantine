@@ -1,7 +1,7 @@
 {{ config(materialized='table') }}
 
 -- Indicateurs gaspillage alimentaire par (perimetre_key, annee)
--- Source : stg_waste_measurements JOIN stg_canteens (classification courante)
+-- Source : stg_waste_measurements JOIN stg_teledeclarations (cantines ayant télédéclaré uniquement)
 -- Inclut les périmètres line_ministry ET les sous-totaux groupe (UNION ALL)
 -- Le niveau ADEME est calculé par cantine avant agrégation (évite les moyennes de ratios)
 
@@ -9,13 +9,22 @@ with waste as (
     select * from {{ ref('stg_waste_measurements') }}
 ),
 
+-- Restreint aux cantines ayant effectivement télédéclaré pour l'année concernée
+-- Applique les mêmes exclusions que les marts SPE (EPA en ATE, SIRETs exclus)
 canteens as (
-    select
+    select distinct
         canteen_id,
-        line_ministry
-    from {{ ref('stg_canteens') }}
+        line_ministry,
+        year
+    from {{ ref('stg_teledeclarations') }}
     where line_ministry is not null
       and line_ministry != ''
+      and production_type not in ('groupe', 'central', 'central_serving')
+      and teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'
+      and (invalid_reason_list is null or invalid_reason_list::text = '[]')
+      and (secteur != 'administration_etablissement_public' or line_ministry != 'administration_territoriale')
+      and siret not in ('21400312100172', '26760171400087')
+      and line_ministry != 'transformation'
 ),
 
 -- Agrégation par cantine : une cantine peut avoir plusieurs mesures sur l'année
@@ -34,8 +43,12 @@ by_canteen as (
             else                                                             'Non atteint'
         end                                                             as niveau_ademe
     from waste w
-    join canteens c on c.canteen_id = w.canteen_id
+    join canteens c on c.canteen_id = w.canteen_id and c.year = w.annee
     group by w.annee, c.line_ministry, w.canteen_id
+    having
+        sum(w.meal_count) > 0
+        and (sum(w.total_mass) * 1000 / sum(w.meal_count)) >= 10
+        and (sum(w.total_mass) * 1000 / sum(w.meal_count)) <= 500
 ),
 
 by_line_ministry as (

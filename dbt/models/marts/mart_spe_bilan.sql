@@ -5,13 +5,75 @@
 -- sort_order suit la nomenclature officielle Vue 1 (22 lignes)
 -- /!\ les libellés périmètres inconnus sont à vérifier (affaires_etrangeres, armees, etc.)
 
-with inscriptions as (
-    select perimetre, type_perimetre, annee, nb_inscrites
-    from {{ ref('int_spe_inscriptions') }}
+with overrides_spe as (
+    select * from (values
+        ('19691861900012', 'economie', false),
+        ('19572647600011', 'economie', false),
+        ('21400312100172', null,       true),
+        ('26760171400087', null,       true)
+    ) as t(siret, line_ministry_force, exclure)
+),
+
+-- Cantines SPE avec overrides appliqués (reclassements + exclusions)
+canteens_spe as (
+    select
+        coalesce(o.line_ministry_force, c.line_ministry)    as line_ministry,
+        c.creation_date
+    from {{ ref('stg_canteens') }} c
+    left join overrides_spe o on o.siret = c.siret
+    where c.line_ministry is not null
+      and c.line_ministry != ''
+      and coalesce(o.exclure, false) = false
+),
+
+spe_years as (
+    select distinct year as annee
+    from {{ ref('stg_teledeclarations') }}
+    where line_ministry is not null and line_ministry != ''
+),
+
+inscriptions_by_ministry as (
+    select
+        c.line_ministry                                      as perimetre,
+        'line_ministry'                                      as type_perimetre,
+        y.annee,
+        count(*)                                             as nb_inscrites
+    from canteens_spe c
+    cross join spe_years y
+    where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
+    group by c.line_ministry, y.annee
+),
+
+inscriptions_by_groupe as (
+    select
+        case
+            when perimetre in ('ecologie', 'mer')                             then 'MTE'
+            when perimetre in ('jeunesse', 'enseignement_superieur', 'sport') then 'MEJSESR'
+            when perimetre in ('justice_hors_pjj', 'justice_pjj')             then 'Justice'
+            when perimetre in ('travail', 'sante')                            then 'Ministères sociaux'
+            when perimetre in ('interieur', 'administration_territoriale')    then 'Périmètre intérieur'
+        end                                                                    as perimetre,
+        'groupe'                                                               as type_perimetre,
+        annee,
+        sum(nb_inscrites)                                                      as nb_inscrites
+    from inscriptions_by_ministry
+    where perimetre in (
+        'ecologie', 'mer',
+        'jeunesse', 'enseignement_superieur', 'sport',
+        'justice_hors_pjj', 'justice_pjj',
+        'travail', 'sante',
+        'interieur', 'administration_territoriale'
+    )
+    group by 1, annee
+),
+
+inscriptions as (
+    select perimetre, type_perimetre, annee, nb_inscrites from inscriptions_by_ministry
+    union all
+    select perimetre, type_perimetre, annee, nb_inscrites from inscriptions_by_groupe
     union all
     select 'TOTAL', 'total', annee, sum(nb_inscrites)
-    from {{ ref('int_spe_inscriptions') }}
-    where type_perimetre = 'line_ministry'
+    from inscriptions_by_ministry
     group by annee
 ),
 
@@ -48,25 +110,24 @@ ref_perimetre as (
         (5,  'armee',                       'Armées',                                      null,                 false),
         (6,  'autorites_independantes',     'AAI',                                         null,                 false),
         (7,  'culture',                     'Culture',                                     null,                 false),
-        (8,  'economie',                    'Économie et finances',                        'MACP',               false),
-        (9,  'transformation',              'Fonction Publique',                           'MACP',               false),
-        (10, 'MACP',                        'TOTAL MACP',                                  'MACP',               true),
-        (11, 'jeunesse',                    'Éducation nationale',                         'MEJSESR',            false),
-        (12, 'enseignement_superieur',      'Enseignement supérieur et recherche',         'MEJSESR',            false),
-        (13, 'sport',                       'Sports',                                      'MEJSESR',            false),
-        (14, 'MEJSESR',                     'TOTAL MEJSESR',                               'MEJSESR',            true),
-        (15, 'justice_hors_pjj',            'Justice hors PJJ',                            'Justice',            false),
-        (16, 'justice_pjj',                 'Justice PJJ',                                 'Justice',            false),
-        (17, 'Justice',                     'TOTAL Justice',                               'Justice',            true),
-        (18, 'interieur',                   'Intérieur',                                   'Périmètre intérieur',    false),
-        (19, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Périmètre intérieur',  false),
-        (20, 'Périmètre intérieur',             'TOTAL Périmètre intérieur',                       'Périmètre intérieur',   true),
-        (21, 'premier_ministre',            'Premier ministre',                            null,                 false),
-        (22, 'agriculture',                 'Agriculture',                                 null,                 false),
-        (23, 'travail',                     'Travail',                                     'Ministères sociaux', false),
-        (24, 'sante',                       'Santé',                                       'Ministères sociaux', false),
-        (25, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
-        (26, 'TOTAL',                       'TOTAL GÉNÉRAL',                               null,                 true)
+        (8,  'economie',                    'Économie et finances',                        null,                 false),
+        (9,  'transformation',              'Fonction Publique',                           null,                 false),
+        (10, 'jeunesse',                    'Éducation nationale',                         'MEJSESR',            false),
+        (11, 'enseignement_superieur',      'Enseignement supérieur et recherche',         'MEJSESR',            false),
+        (12, 'sport',                       'Sports',                                      'MEJSESR',            false),
+        (13, 'MEJSESR',                     'TOTAL MEJSESR',                               'MEJSESR',            true),
+        (14, 'justice_hors_pjj',            'Justice hors PJJ',                            'Justice',            false),
+        (15, 'justice_pjj',                 'Justice PJJ',                                 'Justice',            false),
+        (16, 'Justice',                     'TOTAL Justice',                               'Justice',            true),
+        (17, 'interieur',                   'Intérieur',                                   'Périmètre intérieur',    false),
+        (18, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Périmètre intérieur',  false),
+        (19, 'Périmètre intérieur',         'TOTAL Périmètre intérieur',                   'Périmètre intérieur',   true),
+        (20, 'premier_ministre',            'Premier ministre',                            null,                 false),
+        (21, 'agriculture',                 'Agriculture',                                 null,                 false),
+        (22, 'travail',                     'Travail',                                     'Ministères sociaux', false),
+        (23, 'sante',                       'Santé',                                       'Ministères sociaux', false),
+        (24, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
+        (25, 'TOTAL',                       'TOTAL GÉNÉRAL',                               null,                 true)
     ) as t(sort_order, perimetre_key, perimetre_lib, groupe_spe, est_total_groupe)
 ),
 
@@ -91,7 +152,6 @@ ref_cibles as (
         ('autorites_independantes',      null,  'Non renseignée'),
         ('culture',                       18,   'Cible ferme'),
         ('economie',                     169,   'Cible ferme'),
-        ('MACP',                         169,   'Précision en cours'),
         ('jeunesse',                      20,   'Cible ferme'),
         ('enseignement_superieur',       439,   'Précision en cours'),
         ('sport',                         22,   'Cible ferme'),
@@ -109,16 +169,6 @@ ref_cibles as (
         ('Ministères sociaux',           138,   'Cible ferme'),
         ('transformation',               null,  'Non renseignée')
     ) as t(perimetre_key, cible_etablissements, fiabilite_cible)
-),
-
--- Corrections SPE : reclassements et exclusions par SIRET
-overrides_spe as (
-    select * from (values
-        ('19691861900012', 'economie', false),
-        ('19572647600011', 'economie', false),
-        ('21400312100172', null,       true),
-        ('26760171400087', null,       true)
-    ) as t(siret, line_ministry_force, exclure)
 ),
 
 -- Agrégations par line_ministry
