@@ -376,6 +376,8 @@ OAUTH2_PROVIDER = {
     },
 }
 
+OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
+
 AUTHLIB_OAUTH_CLIENTS = {
     "moncomptepro": {
         "client_id": os.getenv("MONCOMPTEPRO_CLIENT_ID"),

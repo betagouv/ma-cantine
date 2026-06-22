@@ -1,12 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
+from oauth2_provider.models import Application
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
 from data.models.creation_source import CreationSource
-from data.validators import wastemeasurement as wastemeasurement_validators
 from data.utils import make_optional_positive_decimal_field
+from data.validators import wastemeasurement as wastemeasurement_validators
 
 from .canteen import Canteen
 
@@ -17,6 +18,7 @@ class WasteMeasurement(models.Model):
         "modification_date",
         "creation_user",
         "creation_source",
+        "creation_source_api_app",
     ]
 
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
@@ -83,6 +85,14 @@ class WasteMeasurement(models.Model):
         blank=True,
         null=True,
         verbose_name="Source de création de l'évaluation du gaspillage alimentaire",
+    )
+    creation_source_api_app = models.ForeignKey(
+        Application,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="waste_measurements_created",
+        verbose_name="OAuth app which created this record",
     )
 
     creation_date = models.DateTimeField(auto_now_add=True)
