@@ -156,8 +156,7 @@ class PurchasesImportView(BaseImportView):
 
     def _save_data_from_row(self, row):
         """Not used in purchase import due to chunking, but required by base class"""
-        identifier = utils_utils.normalize_string(row[0]) if self.is_siret_import else row[0]
-        return self._create_purchase_for_canteen(identifier, row)
+        pass
 
     def _create_purchase_for_canteen(self, identifier, row):
         """Create a purchase object for a canteen from row data"""
