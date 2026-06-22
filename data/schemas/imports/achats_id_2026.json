@@ -140,8 +140,7 @@
         "non",
         "false",
         "",
-        "0",
-        0
+        "0"
       ],
       "format": "default",
       "name": "est_circuit_court",
@@ -151,8 +150,7 @@
         "oui",
         "true",
         "x",
-        "1",
-        1
+        "1"
       ],
       "type": "boolean"
     },
@@ -174,8 +172,7 @@
         "non",
         "false",
         "",
-        "0",
-        0
+        "0"
       ],
       "format": "default",
       "name": "est_local",
@@ -185,8 +182,7 @@
         "oui",
         "true",
         "x",
-        "1",
-        1
+        "1"
       ],
       "type": "boolean"
     },
