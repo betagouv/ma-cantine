@@ -1,9 +1,15 @@
+import json
+
 from django import forms
-from common.cache.admin import CacheAdmin  # needed to help Django discover the models in the subfolders  # noqa
 from django.contrib.auth.models import Group
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.utils.safestring import mark_safe
+
+from common.models import CommandLog
+from common.cache.admin import CacheAdmin  # needed to help Django discover the models in the subfolders  # noqa
+from data.admin.utils import ReadOnlyAdminMixin
 
 
 User = get_user_model()
@@ -58,3 +64,56 @@ class GroupAdmin(admin.ModelAdmin):
     @admin.display(description="Utilisateurs")
     def users_count(self, obj):
         return obj.user_set.count()
+
+
+@admin.register(CommandLog)
+class CommandLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+    list_display = (
+        "command_name",
+        "status",
+        "start_date",
+        "duration_display",
+        "creation_date",
+    )
+    list_filter = ("command_name", "status")
+    search_fields = ("command_name",)
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "command_name",
+                    "input_data_pretty",
+                )
+            },
+        ),
+        (
+            "Résultat",
+            {
+                "fields": (
+                    "status",
+                    "start_date",
+                    "end_date",
+                    "duration_display",
+                    "output_data",
+                )
+            },
+        ),
+        (
+            "Métadonnées",
+            {"fields": (*CommandLog.CREATION_META_FIELDS,)},
+        ),
+    )
+
+    @admin.display(description="Durée")
+    def duration_display(self, obj):
+        if obj.duration is None:
+            return "-"
+        return f"{obj.duration:.2f} s"
+
+    def input_data_pretty(self, obj):
+        data = json.dumps(obj.input_data, indent=2)
+        return mark_safe(f"<pre>{data}</pre>")
+
+    input_data_pretty.short_description = CommandLog._meta.get_field("input_data").verbose_name
