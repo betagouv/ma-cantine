@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.purchase_import import PURCHASE_SIRET_SCHEMA_FILE_PATH
+from api.views.purchase_import import PURCHASE_SIRET_SCHEMA_FILE_PATH, PURCHASE_ID_2026_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.creation_source import CreationSource
@@ -72,6 +72,75 @@ class PurchasesSchemaTest(TestCase):
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
         for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION"]:
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
+
+class Purchases2026SchemaTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.schema = json.load(open(PURCHASE_ID_2026_SCHEMA_FILE_PATH))
+
+    def test_famille_produits_regex(self):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "famille_produits"), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        for VALUE_OK in ["PRODUITS_LAITIERS", "PRODUITS_LAITIERS ", " PRODUITS_LAITIERS "]:
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["", "TEST", "PRODUITS_LAITIERS,", "PRODUITS_LAITIERS,VIANDES_VOLAILLES"]:
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
+    def test_categories_egalim_regex(self):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "categories_egalim"), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        for VALUE_OK in [
+            "BIO",
+            "BIO ",
+            "BIO,COMMERCE_EQUITABLE",
+            "BIO,COMMERCE_EQUITABLE ",
+            " BIO,COMMERCE_EQUITABLE ",
+            " BIO, COMMERCE_EQUITABLE ",
+            " BIO,      COMMERCE_EQUITABLE ",
+            "BIO,BIO",
+        ]:
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["", "TEST"]:
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
+    def test_definition_local_regex(self):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "definition_local"), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        for VALUE_OK in [
+            "AUTOUR_SERVICE",
+            "DEPARTEMENT",
+            "DEPARTEMENT ",
+            " DEPARTEMENT ",
+            "REGION",
+            "PAT",
+            " PAT ",
+            "AUTRE",
+        ]:
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION"]:
+            with self.subTest(VALUE=VALUE_NOT_OK):
+                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
+    def test_origine_regex(self):
+        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "origine"), None)
+        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
+        for VALUE_OK in [
+            "EUROPE",
+            "FRANCE",
+            "FRANCE ",
+            " FRANCE ",
+        ]:
+            with self.subTest(VALUE=VALUE_OK):
+                self.assertTrue(re.match(pattern, VALUE_OK))
+        for VALUE_NOT_OK in ["", "TEST", "FRANCE,", "FRANCE,EUROPE"]:
             with self.subTest(VALUE=VALUE_NOT_OK):
                 self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
