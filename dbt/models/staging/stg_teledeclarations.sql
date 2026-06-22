@@ -360,6 +360,12 @@ renamed as (
         vegetarian_weekly_recurrence,
         vegetarian_menu_type,
 
+        -- dons
+        has_donation_agreement                              as convention_dons,
+        donation_frequency                                  as frequence_dons,
+        donation_quantity::numeric                         as quantite_dons,
+        donation_food_type                                  as type_nourriture_dons,
+
         -- gaspillage
         has_waste_diagnostic,
         has_waste_plan,

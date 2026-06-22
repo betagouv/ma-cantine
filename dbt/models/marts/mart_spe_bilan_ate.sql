@@ -315,13 +315,13 @@ select
 
     s.nb_td_diversification_complet                                                 as nb_td_diversification_complet,
     round((100.0 * s.nb_td_diversification_complet / nullif(
-        case when s.est_total_region then i.nb_inscrites else is_.nb_inscrites end, 0
+        case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else coalesce(crs.cible_etablissements, is_.nb_inscrites) end, 0
     ))::numeric, 1)                                                                 as taux_td_diversification_complet_pct,
 
     -- gaspillage : région pour les totaux, secteur pour le détail
     coalesce(wrs.nb_canteens_avec_mesure, wr.nb_canteens_avec_mesure)               as nb_canteens_mesure_gaspi,
     round((100.0 * coalesce(wrs.nb_canteens_avec_mesure, wr.nb_canteens_avec_mesure) / nullif(
-        case when s.est_total_region then i.nb_inscrites else is_.nb_inscrites end, 0
+        case when s.est_total_region then coalesce(cr.cible_etablissements, i.nb_inscrites) else coalesce(crs.cible_etablissements, is_.nb_inscrites) end, 0
     ))::numeric, 1)                                                                 as taux_representativite_gaspi_pct,
     round((coalesce(wrs.total_mass_kg, wr.total_mass_kg) * 1000
            / nullif(coalesce(wrs.total_meal_count, wr.total_meal_count), 0))::numeric, 1) as gaspi_g_par_couvert,
@@ -338,11 +338,15 @@ select
          else null
     end                                                                             as cible_etablissements,
     case when s.est_total_region
-         then coalesce(cr.fiabilite_cible, 'Non renseignée')
+         then null
          when crs.fiabilite_cible is not null
          then crs.fiabilite_cible
          else null
     end                                                                             as fiabilite_cible,
+    case
+        when crs.fiabilite_cible = 'Cible ferme' then 'Dernière Bilatérale'
+        else null
+    end                                                                             as source_cible,
 
     -- taux d'inscription : région si cible officielle, secteur si cible secteur connue
     case when s.est_total_region

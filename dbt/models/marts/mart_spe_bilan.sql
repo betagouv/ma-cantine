@@ -146,7 +146,6 @@ ref_cibles as (
     select * from (values
         ('ecologie',                      57,   'Cible ferme'),
         ('mer',                            5,   'Cible ferme'),
-        ('MTE',                           62,   'Cible ferme'),
         ('affaires_etrangeres',            3,   'Cible ferme'),
         ('armee',                        244,   'Cible ferme'),
         ('autorites_independantes',      null,  'Non renseignée'),
@@ -155,26 +154,40 @@ ref_cibles as (
         ('jeunesse',                      20,   'Cible ferme'),
         ('enseignement_superieur',       439,   'Précision en cours'),
         ('sport',                         22,   'Cible ferme'),
-        ('MEJSESR',                      481,   'Précision en cours'),
         ('justice_hors_pjj',             290,   'Cible ferme'),
         ('justice_pjj',                   92,   'Cible ferme'),
-        ('Justice',                      382,   'Cible ferme'),
         ('interieur',                    207,   'Précision en cours'),
-        ('administration_territoriale',   96,   'Précision en cours'),
-        ('Périmètre intérieur',          303,   'Précision en cours'),
+        ('administration_territoriale',   107,   'Précision en cours'),
         ('premier_ministre',               5,   'Cible ferme'),
         ('agriculture',                   10,   'Cible ferme'),
-        ('travail',                      null,  'Non renseignée'),
-        ('sante',                        null,  'Non renseignée'),
-        ('Ministères sociaux',           138,   'Cible ferme'),
+        ('travail',                      116,   'Précision en cours'),
+        ('sante',                        23,    'Précision en cours'),
         ('transformation',               null,  'Non renseignée')
     ) as t(perimetre_key, cible_etablissements, fiabilite_cible)
 ),
 
-cible_total as (
+-- Cibles dynamiques pour les sous-totaux groupe ET le TOTAL GÉNÉRAL
+-- = sum(coalesce(cible_officielle, nb_inscrites)) des line_ministry composants
+cible_groupes as (
+    -- Sous-totaux groupe : agréger uniquement les ministères appartenant au groupe
     select
+        r.groupe_spe                                                           as perimetre_key,
         i.annee,
-        sum(coalesce(c.cible_etablissements, i.nb_inscrites)) as cible_etablissements
+        sum(coalesce(c.cible_etablissements, i.nb_inscrites))                  as cible_etablissements
+    from inscriptions_by_ministry i
+    left join ref_cibles c on c.perimetre_key = i.perimetre
+    join ref_perimetre_with_groupe r on r.perimetre_key = i.perimetre
+    where r.est_total_groupe = false
+      and r.groupe_spe is not null
+    group by r.groupe_spe, i.annee
+
+    union all
+
+    -- TOTAL GÉNÉRAL : tous les line_ministry
+    select
+        'TOTAL'                                                                as perimetre_key,
+        i.annee,
+        sum(coalesce(c.cible_etablissements, i.nb_inscrites))                  as cible_etablissements
     from inscriptions_by_ministry i
     left join ref_cibles c on c.perimetre_key = i.perimetre
     group by i.annee
@@ -362,17 +375,22 @@ select
     w.nb_niveau_1                                                                   as nb_cantines_niveau_1_ademe,
     w.nb_non_atteint                                                                as nb_cantines_non_atteint_ademe,
 
-    -- cible établissements (fallback sur nb_inscrites si pas de cible officielle)
-    -- TOTAL GÉNÉRAL : somme des coalesce(cible, nb_inscrites) par line_ministry
+    -- cible établissements : valeur officielle pour les line_ministry,
+    -- dynamique (sum des composants) pour les groupes et TOTAL GÉNÉRAL
     case
-        when r.perimetre_key = 'TOTAL'
-            then ct.cible_etablissements
+        when r.est_total_groupe
+            then cg.cible_etablissements
         else coalesce(c.cible_etablissements, i.nb_inscrites)
     end                                                                              as cible_etablissements,
     case
-        when c.cible_etablissements is null then 'Non renseignée'
+        when r.est_total_groupe                then null
+        when c.cible_etablissements is null    then 'Non renseignée'
         else c.fiabilite_cible
     end                                                                              as fiabilite_cible,
+    case
+        when c.fiabilite_cible = 'Cible ferme' then 'Dernière Bilatérale'
+        else null
+    end                                                                              as source_cible,
 
     -- taux d'inscription : null si pas de cible officielle
     round((100.0 * i.nb_inscrites / nullif(c.cible_etablissements, 0))::numeric, 1) as taux_inscription_pct
@@ -387,6 +405,7 @@ left join waste w
     and w.annee        = s.annee
 left join ref_cibles c
     on c.perimetre_key = r.perimetre_key
-left join cible_total ct
-    on ct.annee = s.annee
+left join cible_groupes cg
+    on cg.perimetre_key = r.perimetre_key
+    and cg.annee        = s.annee
 order by s.annee, r.sort_order

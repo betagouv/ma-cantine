@@ -316,6 +316,12 @@ select
     vegetarian_weekly_recurrence                        as recurrence_vege,
     vegetarian_menu_type                                as type_menu_vege,
 
+    -- dons
+    convention_dons,
+    frequence_dons,
+    quantite_dons,
+    type_nourriture_dons,
+
     -- gaspillage
     has_waste_diagnostic                                as diag_gaspi,
     has_waste_plan                                      as plan_action_gaspi,
