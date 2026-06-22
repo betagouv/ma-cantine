@@ -171,6 +171,15 @@ ref_cibles as (
     ) as t(perimetre_key, cible_etablissements, fiabilite_cible)
 ),
 
+cible_total as (
+    select
+        i.annee,
+        sum(coalesce(c.cible_etablissements, i.nb_inscrites)) as cible_etablissements
+    from inscriptions_by_ministry i
+    left join ref_cibles c on c.perimetre_key = i.perimetre
+    group by i.annee
+),
+
 -- Agrégations par line_ministry
 stats as (
     select
@@ -354,7 +363,12 @@ select
     w.nb_non_atteint                                                                as nb_cantines_non_atteint_ademe,
 
     -- cible établissements (fallback sur nb_inscrites si pas de cible officielle)
-    coalesce(c.cible_etablissements, i.nb_inscrites)                                 as cible_etablissements,
+    -- TOTAL GÉNÉRAL : somme des coalesce(cible, nb_inscrites) par line_ministry
+    case
+        when r.perimetre_key = 'TOTAL'
+            then ct.cible_etablissements
+        else coalesce(c.cible_etablissements, i.nb_inscrites)
+    end                                                                              as cible_etablissements,
     case
         when c.cible_etablissements is null then 'Non renseignée'
         else c.fiabilite_cible
@@ -373,4 +387,6 @@ left join waste w
     and w.annee        = s.annee
 left join ref_cibles c
     on c.perimetre_key = r.perimetre_key
+left join cible_total ct
+    on ct.annee = s.annee
 order by s.annee, r.sort_order

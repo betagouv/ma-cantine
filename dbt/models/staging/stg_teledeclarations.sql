@@ -365,11 +365,11 @@ renamed as (
         has_waste_plan,
         -- waste_actions est un array → extraction des actions individuelles par matching
         waste_actions::text ilike '%inscription%'                       as action_gaspi_inscription,
-        waste_actions::text ilike '%sensibilisation%'                   as action_gaspi_sensibilisation,
-        waste_actions::text ilike '%formation%'                         as action_gaspi_formation,
+        waste_actions::text ilike '%awareness%'                   as action_gaspi_sensibilisation,
+        waste_actions::text ilike '%training%'                         as action_gaspi_formation,
         waste_actions::text ilike '%distribution%'                      as action_gaspi_distribution,
         waste_actions::text ilike '%portions%'                          as action_gaspi_portions,
-        waste_actions::text ilike '%reutilisation%'                     as action_gaspi_reutilisation,
+        waste_actions::text ilike '%reuse%'                     as action_gaspi_reutilisation,
 
         -- tunnels de complétion
         tunnel_appro,

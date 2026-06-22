@@ -14,6 +14,60 @@ with overrides_spe as (
     ) as t(siret, line_ministry_force, exclure)
 ),
 
+-- Inscriptions SPE : nombre de cantines enregistrées par (perimetre_key, annee)
+-- Utilisé comme dénominateur pour les métriques de représentativité (V&P renseignés)
+canteens_spe as (
+    select
+        coalesce(o.line_ministry_force, c.line_ministry) as line_ministry,
+        c.creation_date
+    from {{ ref('stg_canteens') }} c
+    left join overrides_spe o on o.siret = c.siret
+    where c.line_ministry is not null
+      and c.line_ministry != ''
+      and coalesce(o.exclure, false) = false
+),
+
+spe_years as (
+    select distinct year as annee
+    from {{ ref('stg_teledeclarations') }}
+    where line_ministry is not null and line_ministry != ''
+),
+
+inscriptions_by_ministry as (
+    select
+        c.line_ministry as perimetre_key,
+        y.annee,
+        count(*)        as nb_inscrites
+    from canteens_spe c
+    cross join spe_years y
+    where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
+    group by c.line_ministry, y.annee
+),
+
+inscriptions as (
+    select perimetre_key, annee, nb_inscrites from inscriptions_by_ministry
+    union all
+    select
+        case
+            when perimetre_key in ('ecologie', 'mer')                             then 'MTE'
+            when perimetre_key in ('jeunesse', 'enseignement_superieur', 'sport') then 'MEJSESR'
+            when perimetre_key in ('justice_hors_pjj', 'justice_pjj')             then 'Justice'
+            when perimetre_key in ('travail', 'sante')                            then 'Ministères sociaux'
+            when perimetre_key in ('interieur', 'administration_territoriale')    then 'Périmètre intérieur'
+        end as perimetre_key,
+        annee,
+        sum(nb_inscrites) as nb_inscrites
+    from inscriptions_by_ministry
+    where perimetre_key in (
+        'ecologie', 'mer',
+        'jeunesse', 'enseignement_superieur', 'sport',
+        'justice_hors_pjj', 'justice_pjj',
+        'travail', 'sante',
+        'interieur', 'administration_territoriale'
+    )
+    group by 1, annee
+),
+
 base as (
     select
         canteen_id,
@@ -441,8 +495,8 @@ select
     -- Représentativité V&P renseignés
     p.nb_td_vp_n                                                                    as nb_td_vp_renseignes_n,
     p.nb_td_vp_n1                                                                   as nb_td_vp_renseignes_n1,
-    round((100.0 * p.nb_td_vp_n  / nullif(p.nb_td_n,  0))::numeric, 1)             as taux_td_vp_renseignes_n,
-    round((100.0 * p.nb_td_vp_n1 / nullif(p.nb_td_n1, 0))::numeric, 1)             as taux_td_vp_renseignes_n1,
+    round((100.0 * p.nb_td_vp_n  / nullif(i_n.nb_inscrites,  0))::numeric, 1)       as taux_td_vp_renseignes_n,
+    round((100.0 * p.nb_td_vp_n1 / nullif(i_n1.nb_inscrites, 0))::numeric, 1)      as taux_td_vp_renseignes_n1,
 
     -- Végétarien : offre quotidienne parmi cantines à choix multiple
     p.nb_choix_multiple_n,
@@ -477,6 +531,12 @@ select
 
 from pivoted p
 join ref_perimetre_with_groupe r on r.perimetre_key = p.perimetre_key
+left join inscriptions i_n
+    on i_n.perimetre_key = r.perimetre_key
+    and i_n.annee = p.annee_ref
+left join inscriptions i_n1
+    on i_n1.perimetre_key = r.perimetre_key
+    and i_n1.annee = p.annee_ref - 1
 left join waste w_n
     on w_n.perimetre_key = r.perimetre_key
     and w_n.annee = p.annee_ref
