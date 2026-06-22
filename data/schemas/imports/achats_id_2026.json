@@ -129,17 +129,13 @@
       "description": "Si la cellule contient une des valeurs acceptées, le champ sera considéré comme 'oui', sinon le champ sera considéré comme 'non'",
       "doc_enum": [
         "OUI",
-        "x",
-        "1",
-        "true"
+        "x"
       ],
       "example": "OUI",
       "falseValues": [
         "non",
         "NON",
-        "false",
-        "",
-        "0"
+        ""
       ],
       "format": "default",
       "name": "est_circuit_court",
@@ -147,9 +143,7 @@
       "trueValues": [
         "OUI",
         "oui",
-        "true",
-        "x",
-        "1"
+        "x"
       ],
       "type": "boolean"
     },
@@ -160,17 +154,13 @@
       "description": "Si la cellule contient une des valeurs acceptées, le champ sera considéré comme 'oui', sinon le champ sera considéré comme 'non'",
       "doc_enum": [
         "OUI",
-        "x",
-        "1",
-        "true"
+        "x"
       ],
       "example": "OUI",
       "falseValues": [
         "non",
         "NON",
-        "false",
-        "",
-        "0"
+        ""
       ],
       "format": "default",
       "name": "est_local",
@@ -178,9 +168,7 @@
       "trueValues": [
         "OUI",
         "oui",
-        "true",
-        "x",
-        "1"
+        "x"
       ],
       "type": "boolean"
     },
