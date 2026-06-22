@@ -144,8 +144,8 @@
         0
       ],
       "format": "default",
-      "name": "est_local",
-      "title": "Local ou de proximité",
+      "name": "est_circuit_court",
+      "title": "Circuit court",
       "trueValues": [
         "OUI",
         "oui",
@@ -178,8 +178,8 @@
         0
       ],
       "format": "default",
-      "name": "est_circuit_court",
-      "title": "Circuit court",
+      "name": "est_local",
+      "title": "Local ou de proximité",
       "trueValues": [
         "OUI",
         "oui",
