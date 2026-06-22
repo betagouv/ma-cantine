@@ -12,7 +12,6 @@ python manage.py teledeclaration_submit_outside_of_campaign --year 2025 --diagno
 
 import logging
 
-from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 from simple_history.utils import update_change_reason
 from django.utils import timezone
@@ -23,12 +22,13 @@ from macantine.utils import (
     get_year_campaign_end_date_or_today_date,
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
+from common.utils.commands import MaCantineBaseCommand
 
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     help = "Submit teledeclarations outside of the campaign"
 
     def add_arguments(self, parser):

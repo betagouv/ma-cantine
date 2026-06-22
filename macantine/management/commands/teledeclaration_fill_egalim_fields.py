@@ -1,13 +1,12 @@
 import logging
 
-from django.core.management.base import BaseCommand
-
 from data.models import Diagnostic
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Goal: after adding the Diagnostic.EGALIM_STATS_FIELDS, command to fill those fields
 

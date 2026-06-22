@@ -13,17 +13,17 @@ Ran on 2026-04-15 (last day of 2025 campaign)
 import logging
 
 from django.db import transaction
-from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 from simple_history.utils import update_change_reason
 
 from data.models import Diagnostic
+from common.utils.commands import MaCantineBaseCommand
 
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     help = "Resubmit teledeclarations for a specified list of diagnostics"
 
     def add_arguments(self, parser):

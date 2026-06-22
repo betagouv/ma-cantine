@@ -1,14 +1,14 @@
 import logging
 
-from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from data.models import Canteen, Diagnostic
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Rules:
     - every canteen that has a diagnostic teledeclared for the given year

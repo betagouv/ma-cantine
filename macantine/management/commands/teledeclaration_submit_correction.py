@@ -9,17 +9,17 @@ python manage.py teledeclaration_submit_correction --year 2025
 
 import logging
 
-from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 from simple_history.utils import update_change_reason
 
 from data.models import Diagnostic, User
+from common.utils.commands import MaCantineBaseCommand
 
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     help = "Submit CORRECTION teledeclarations (during the correction campaign)"
 
     def add_arguments(self, parser):
