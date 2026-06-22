@@ -184,8 +184,16 @@ class PurchasesImportView(BaseImportView):
             pass
 
         famille_produits = row[5]
-        caracteristiques = [c.strip() for c in row[6].split(",")] if row[6] else []
-        definition_local = row[7].strip() if row[7] else None
+        caracteristiques = (
+            self.get_purchase_caracteristics_2026(row)
+            if self.is_2026_import
+            else self.get_purchase_caracteristics_before_2026(row)
+        )
+        definition_local = (
+            self.get_purchase_definition_local_2026(row)
+            if self.is_2026_import
+            else self.get_purchase_definition_local_before_2026(row)
+        )
 
         purchase = Purchase(
             canteen=canteen,
@@ -202,6 +210,41 @@ class PurchasesImportView(BaseImportView):
         )
         purchase.full_clean()
         return purchase
+
+    def get_purchase_caracteristics_before_2026(self, row):
+        """Get purchase characteristics for before 2026 import schema"""
+        return [c.strip() for c in row[6].split(",")] if row[6] else []
+
+    def get_purchase_definition_local_before_2026(self, row):
+        """Get local definition for before 2026 import schema"""
+        return row[7].strip() if row[7] else None
+
+    def get_purchase_caracteristics_2026(self, row):
+        """Get purchase characteristics for 2026 import schema"""
+        boolean_true_values = ["oui", "x"]
+        # Clean none value
+        categories_egalim = row[6].strip() if row[6] else ""
+        origine = row[7].strip() if row[7] else ""
+        est_local = row[8].strip().lower() if row[8] else ""
+        est_circuit_court = row[9].strip().lower() if row[9] else ""
+        # Format values for caracteristics
+        egalim_caracteristics = categories_egalim.split(",") if categories_egalim else []
+        origine_caracteristics = origine.split(",") if origine else []
+        local_caracteristics = [Purchase.Characteristic.LOCAL] if est_local in boolean_true_values else []
+        circuit_court_caracteristics = (
+            [Purchase.Characteristic.CIRCUIT_COURT] if est_circuit_court in boolean_true_values else []
+        )
+        # Merge caracteristics
+        caracteristics = (
+            egalim_caracteristics + origine_caracteristics + local_caracteristics + circuit_court_caracteristics
+        )
+        return caracteristics
+
+    def get_purchase_definition_local_2026(self, row):
+        """Get local definition for 2026 import schema"""
+        est_local = row[8].strip() if row[8] else ""
+        definition_local = row[10].strip() if row[10] else ""
+        return definition_local if est_local == "x" else ""
 
     def _post_process_file(self):
         """Update all purchases's import source with file digest"""
