@@ -128,13 +128,14 @@
       },
       "description": "",
       "doc_enum": [
+        "OUI",
         "oui",
         "non",
         "x",
         "1",
         "laisser vide pour dire 'non'"
       ],
-      "example": "oui",
+      "example": "OUI",
       "falseValues": [
         "non",
         "false",
@@ -146,6 +147,7 @@
       "name": "est_local",
       "title": "Local ou de proximité",
       "trueValues": [
+        "OUI",
         "oui",
         "true",
         "x",
@@ -160,13 +162,14 @@
       },
       "description": "",
       "doc_enum": [
+        "OUI",
         "oui",
         "non",
         "x",
         "1",
         "laisser vide pour dire 'non'"
       ],
-      "example": "oui",
+      "example": "OUI",
       "falseValues": [
         "non",
         "false",
@@ -178,6 +181,7 @@
       "name": "est_circuit_court",
       "title": "Circuit court",
       "trueValues": [
+        "OUI",
         "oui",
         "true",
         "x",
