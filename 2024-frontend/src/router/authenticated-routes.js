@@ -12,8 +12,8 @@ import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRe
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
-import GestionImportAchats2026 from "@/views/GestionImportAchats2026.vue"
-import GestionImportAchatsSiret2026 from "@/views/GestionImportAchatsSiret2026.vue"
+import GestionnaireImportAchats2026 from "@/views/GestionnaireImportAchats2026.vue"
+// import GestionImportAchatsSiret2026 from "@/views/GestionImportAchatsSiret2026.vue"
 import GestionnaireImport from "@/views/GestionnaireImport.vue"
 import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
 import GestionnaireImportAchatsSIRET from "@/views/GestionnaireImportAchatsSIRET.vue"
@@ -101,8 +101,8 @@ const routes = [
       },
       {
         path: "achats-2026",
-        name: "GestionImportAchats2026",
-        component: GestionImportAchats2026,
+        name: "GestionnaireImportAchats2026",
+        component: GestionnaireImportAchats2026,
         meta: {
           title: "Ajouter des achats 2026 via l'ID de la cantine",
           breadcrumbs: [
@@ -111,18 +111,18 @@ const routes = [
           ],
         },
       },
-      {
-        path: "achats-siret-2026",
-        name: "GestionImportAchatsSiret2026",
-        component: GestionImportAchatsSiret2026,
-        meta: {
-          title: "Ajouter des achats 2026 via le SIRET de la cantine",
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
-          ],
-        },
-      },
+      // {
+      //   path: "achats-siret-2026",
+      //   name: "GestionImportAchatsSiret2026",
+      //   component: GestionImportAchatsSiret2026,
+      //   meta: {
+      //     title: "Ajouter des achats 2026 via le SIRET de la cantine",
+      //     breadcrumbs: [
+      //       { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+      //       { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+      //     ],
+      //   },
+      // },
       {
         path: "bilans-simples",
         name: "GestionnaireImportBilansSimples",
