@@ -116,6 +116,7 @@ def process_header_errors(user_file_header, expected_header):
 
 
 def get_common_error_informations(error):
+    print(error)
     return {
         "row": error["rowNumber"],
         "tags": error["tags"],
