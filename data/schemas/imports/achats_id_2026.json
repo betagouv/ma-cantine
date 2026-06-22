@@ -126,7 +126,7 @@
       "constraints": {
         "required": false
       },
-      "description": "Si la cellule est vide, le champ sera considéré comme 'non'",
+      "description": "Si la cellule contient une des valeurs acceptées, le champ sera considéré comme 'oui', sinon le champ sera considéré comme 'non'",
       "doc_enum": [
         "OUI",
         "x",
@@ -157,7 +157,7 @@
       "constraints": {
         "required": false
       },
-      "description": "Si la cellule est vide, le champ sera considéré comme 'non'",
+      "description": "Si la cellule contient une des valeurs acceptées, le champ sera considéré comme 'oui', sinon le champ sera considéré comme 'non'",
       "doc_enum": [
         "OUI",
         "x",
