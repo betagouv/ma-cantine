@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -20,6 +20,8 @@ from api.permissions import (
     IsLinkedCanteenManager,
 )
 from api.serializers import (
+    PurchaseFactureResponseSerializer,
+    PurchaseFactureUploadSerializer,
     PurchaseOldSerializer,
     PurchasePercentageSummarySerializer,
     PurchaseSerializer,
@@ -207,6 +209,36 @@ class PurchaseOldRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
                 f"User {self.request.user.id} attempted to update a purchase to an nonexistent canteen {canteen_id}"
             )
             raise NotFound() from e
+
+
+class PurchaseFactureView(APIView):
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    http_method_names = ["post", "delete"]
+
+    def get_object(self):
+        return get_object_or_404(Purchase, pk=self.kwargs.get("pk"), canteen__pk=self.kwargs.get("canteen_pk"))
+
+    def post(self, request, *args, **kwargs):
+        purchase = self.get_object()
+
+        serializer = PurchaseFactureUploadSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+
+        purchase.facture = serializer.validated_data["facture"]
+        purchase.save()
+
+        response_serializer = PurchaseFactureResponseSerializer(purchase, context={"request": request})
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        purchase = self.get_object()
+
+        if purchase.facture:
+            purchase.facture.delete()
+            purchase.facture = None
+            purchase.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CanteenPurchasesSummaryView(APIView):

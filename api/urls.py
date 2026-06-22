@@ -45,6 +45,7 @@ from api.views import (
     PublishedCanteenSingleView,
     PublishedCanteensView,
     PurchaseCreateView,
+    PurchaseFactureView,
     PurchaseListExportView,
     PurchaseOldListCreateView,
     PurchaseOldRetrieveUpdateDestroyView,
@@ -114,6 +115,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/purchases/<int:pk>",
         PurchaseRetrieveUpdateDestroyView.as_view(),
         name="canteen_purchase_retrieve_update_destroy",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/purchases/<int:pk>/facture",
+        PurchaseFactureView.as_view(),
+        name="purchase_facture",
     ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/",

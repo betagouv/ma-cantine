@@ -53,6 +53,7 @@ from .purchase import (  # noqa: F401
     CanteenPurchasesSummaryView,
     DiagnosticsFromPurchasesView,
     PurchaseCreateView,
+    PurchaseFactureView,
     PurchaseOldListCreateView,
     PurchaseOldRetrieveUpdateDestroyView,
     PurchaseOptionsView,
