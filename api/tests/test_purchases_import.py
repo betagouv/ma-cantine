@@ -776,7 +776,7 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class Purchases2026ImportIdApiSuccessTest(TestCase):
     @authenticate
-    def test_import_2026_separeted_caracteristics(self):
+    def test_import_2026_id_separeted_caracteristics(self):
         """
         Tests that can import a file with 2026 schema caracteristics works for splitted columns :
         - categories_egalim
@@ -810,6 +810,53 @@ class Purchases2026ImportIdApiSuccessTest(TestCase):
         self.assertEqual(purchase_1.definition_local, "REGION")
 
         purchase_2 = Purchase.objects.filter(description="Pomme 2").first()
+        self.assertEqual(purchase_2.prix_ht, Decimal("200.00"))
+        self.assertEqual(purchase_2.famille_produits, Purchase.Family.AUTRES)
+        self.assertIn(Purchase.Characteristic.BIO, purchase_2.caracteristiques)
+        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_2.caracteristiques)
+        self.assertNotIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_2.caracteristiques)
+        self.assertEqual(purchase_2.definition_local, "")
+
+    @authenticate
+    def test_import_2026_siret_separeted_caracteristics(self):
+        """
+        Tests that can import a file with 2026 schema caracteristics works for splitted columns
+        when using SIRET-based import :
+        - categories_egalim
+        - origine
+        - est_local
+        - est_circuit_court
+        """
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_siret_2026.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(
+                reverse("purchases_import"), {"file": purchase_file, "type": "siret", "schema": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 2)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 2)
+        self.assertEqual(len(errors), 0, errors)
+
+        purchase_1 = Purchase.objects.filter(description="Pomme 1").first()
+        self.assertEqual(purchase_1.canteen.siret, "21010034300016")
+        self.assertEqual(purchase_1.prix_ht, Decimal("100.00"))
+        self.assertEqual(purchase_1.famille_produits, Purchase.Family.AUTRES)
+        self.assertIn(Purchase.Characteristic.BIO, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.LOCAL, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.FRANCE, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_1.caracteristiques)
+        self.assertEqual(purchase_1.definition_local, "REGION")
+
+        purchase_2 = Purchase.objects.filter(description="Pomme 2").first()
+        self.assertEqual(purchase_2.canteen.siret, "21010034300016")
         self.assertEqual(purchase_2.prix_ht, Decimal("200.00"))
         self.assertEqual(purchase_2.famille_produits, Purchase.Family.AUTRES)
         self.assertIn(Purchase.Characteristic.BIO, purchase_2.caracteristiques)
