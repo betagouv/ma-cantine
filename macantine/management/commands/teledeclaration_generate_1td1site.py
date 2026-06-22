@@ -2,7 +2,6 @@ import logging
 import time
 from copy import deepcopy
 
-from django.core.management.base import BaseCommand
 from django.db.models import F, Func, Value
 from django.db.utils import IntegrityError
 
@@ -12,11 +11,12 @@ from macantine.utils import (
     set_satellite_common_fields_from_groupe_diagnostic,
     set_satellite_diagnostic_appro_values_from_groupe_diagnostic,
 )
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Goal: Generate diagnostics for satellite canteens that are linked to a groupe (or groupe), based on the diagnostic of their groupe.
 

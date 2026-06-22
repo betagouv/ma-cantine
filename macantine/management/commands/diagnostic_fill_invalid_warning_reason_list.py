@@ -1,6 +1,5 @@
 import logging
 
-from django.core.management.base import BaseCommand
 from django.db.models import F, Func, Value
 
 from data.models import Diagnostic
@@ -18,6 +17,7 @@ from data.models.diagnostic import (
     valeur_totale_is_filled_query,
 )
 from data.utils import has_arrayfield_missing_query
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ def _append_reason_item(qs, field_prefix, reason_item):
     )
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Goal: fill the invalid_reason_list & warning_reason_list fields
 

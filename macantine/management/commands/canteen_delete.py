@@ -8,12 +8,11 @@ python manage.py canteen_delete --canteen-siret-list 92341284500011,234567890123
 Ran on 2025-04-24
 """
 
-from django.core.management.base import BaseCommand
-
 from data.models import Canteen, Diagnostic, Teledeclaration
+from common.utils.commands import MaCantineBaseCommand
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     help = "Soft delete a specified list of canteens"
 
     def add_arguments(self, parser):

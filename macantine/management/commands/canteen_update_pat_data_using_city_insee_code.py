@@ -1,15 +1,14 @@
 import logging
 
-from django.core.management.base import BaseCommand
-
 from common.api.datagouv import fetch_commune_pat_list, map_pat_list_to_communes_insee_code, PAT_DATAGOUV_DATE
 from data.models import Canteen
 from data.utils import has_charfield_missing_query
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Usage:
     - python manage.py canteen_update_pat_data_using_city_insee_code

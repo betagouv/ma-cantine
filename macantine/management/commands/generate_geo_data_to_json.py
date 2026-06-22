@@ -1,7 +1,5 @@
 import json
 
-from django.core.management.base import BaseCommand
-
 from common.utils.utils import clean_unicode_string
 from common.api.datagouv import fetch_pats
 from common.api.decoupage_administratif import (
@@ -11,9 +9,10 @@ from common.api.decoupage_administratif import (
     fetch_epcis,
     fetch_regions,
 )
+from common.utils.commands import MaCantineBaseCommand
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Usage: python manage.py generate_geo_data_to_json --scope region
     """

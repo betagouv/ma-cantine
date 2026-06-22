@@ -1,8 +1,7 @@
 import logging
 
-from django.core.management.base import BaseCommand
-
 from data.models import Diagnostic
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
@@ -10,7 +9,7 @@ logger = logging.getLogger(__name__)
 FIELD_LIST = Diagnostic.AGGREGATED_APPRO_FIELDS + Diagnostic.EGALIM_STATS_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Goal: command to fill Diagnostic "computed" fields (see FIELD_LIST)
 

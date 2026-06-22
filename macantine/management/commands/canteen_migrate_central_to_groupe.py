@@ -1,11 +1,11 @@
 import logging
 from collections import Counter
 
-from django.core.management.base import BaseCommand
 from simple_history.utils import update_change_reason
 
 from data.models import Canteen
 from api.serializers import SatelliteTeledeclarationSerializer
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ def satellite_from_central_dict(canteen_central_dict):
     }
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Rules:
     - CENTRAL => GROUPE

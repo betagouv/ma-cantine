@@ -2,16 +2,17 @@ import logging
 import time
 from pathlib import Path
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import CommandError
 
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.models import Canteen
 from data.utils import read_csv
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Script to cleanup the canteen geolocation data (using the SIRET) (API Recherche Entreprises)
     - empty API response: canteen SIRET is probably unknown, reset geolocation data (siret_inconnu will be updated)

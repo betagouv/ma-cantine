@@ -1,6 +1,5 @@
 from collections import Counter
 
-from django.core.management.base import BaseCommand
 from django.db.models import Func, IntegerField
 from simple_history.utils import update_change_reason
 
@@ -9,9 +8,10 @@ from common.api.decoupage_administratif import map_communes_infos
 from data.models import Canteen, Diagnostic
 from data.models.sector import get_sector_list_from_old_sector_dict_list
 from data.utils import has_charfield_missing_query
+from common.utils.commands import MaCantineBaseCommand
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     set_canteen_id_before_v4
     - Description: dans les premières versions de la télédéclaration (avant v4), le canteen_id n'était pas stocké dans le canteen_snapshot du diagnostic. On peut le récupérer via la FK vers Canteen.
