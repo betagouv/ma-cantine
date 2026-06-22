@@ -126,14 +126,12 @@
       "constraints": {
         "required": false
       },
-      "description": "",
+      "description": "Si la cellule est vide, le champ sera considéré comme 'non'",
       "doc_enum": [
         "OUI",
-        "oui",
-        "non",
         "x",
         "1",
-        "laisser vide pour dire 'non'"
+        "true"
       ],
       "example": "OUI",
       "falseValues": [
@@ -159,14 +157,12 @@
       "constraints": {
         "required": false
       },
-      "description": "",
+      "description": "Si la cellule est vide, le champ sera considéré comme 'non'",
       "doc_enum": [
         "OUI",
-        "oui",
-        "non",
         "x",
         "1",
-        "laisser vide pour dire 'non'"
+        "true"
       ],
       "example": "OUI",
       "falseValues": [
