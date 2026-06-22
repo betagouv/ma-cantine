@@ -138,6 +138,7 @@
       "example": "OUI",
       "falseValues": [
         "non",
+        "NON",
         "false",
         "",
         "0"
@@ -170,6 +171,7 @@
       "example": "OUI",
       "falseValues": [
         "non",
+        "NON",
         "false",
         "",
         "0"
