@@ -8,6 +8,7 @@ import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
 import ImportFilesExample from "@/components/ImportFilesExample.vue"
+import ImportDeprecatedWarning from "@/components/ImportDeprecatedWarning.vue"
 
 /* Router */
 const route = useRoute()
@@ -42,6 +43,7 @@ const success = (count) => {
 </script>
 
 <template>
+  <ImportDeprecatedWarning />
   <h1>{{ route.meta.title }}</h1>
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet d’ajouter les achats de toutes vos cantines d’un coup.
