@@ -1,17 +1,17 @@
 import logging
 from collections import Counter
 
-from django.core.management.base import BaseCommand
 from django.db.models import Q, Case, When, F, Value
 from django.db.models.functions import Length
 
+from common.utils.commands import MaCantineBaseCommand
 from data.utils import has_charfield_missing_query
 from data.models import Canteen
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Usage:
     - python manage.py canteen_fill_creation_user_and_source --field creation_user
