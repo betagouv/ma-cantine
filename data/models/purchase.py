@@ -1,18 +1,19 @@
 from datetime import date
 from decimal import Decimal
 
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, ValidationError
 from django.db import models
 from django.db.models import Q, Sum
 from django.db.models.functions import ExtractYear
-from django.contrib.auth import get_user_model
+from oauth2_provider.models import Application as OAuth2Application
 
-from macantine.etl import utils
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models import Canteen
 from data.models.creation_source import CreationSource
 from data.validators import purchase as purchase_validators
+from macantine.etl import utils
 
 from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
 
@@ -204,6 +205,7 @@ class Purchase(SoftDeletionModel):
         "modification_date",
         "creation_user",
         "creation_source",
+        "creation_source_api_oauth2_application",
         "import_source",
     ]
 
@@ -253,6 +255,14 @@ class Purchase(SoftDeletionModel):
         blank=True,
         null=True,
         verbose_name="Source de création de l'achat",
+    )
+    creation_source_api_oauth2_application = models.ForeignKey(
+        OAuth2Application,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="purchases_created",
+        verbose_name="app OAuth2 (API) qui a créé l'achat",
     )
 
     creation_date = models.DateTimeField(auto_now_add=True)

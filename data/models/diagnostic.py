@@ -9,6 +9,7 @@ from django.db.models import DecimalField, F, Func, IntegerField, Q, Sum, Value
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from oauth2_provider.models import Application as OAuth2Application
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
@@ -874,6 +875,7 @@ class Diagnostic(models.Model):
         "modification_date",
         "creation_user",
         "creation_source",
+        "creation_source_api_oauth2_application",
     ]
 
     MATOMO_FIELDS = [
@@ -1733,6 +1735,14 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         verbose_name="Source de création du diagnostic",
+    )
+    creation_source_api_oauth2_application = models.ForeignKey(
+        OAuth2Application,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="diagnostics_created",
+        verbose_name="app OAuth2 (API) qui a créé le diagnostic",
     )
 
     creation_date = models.DateTimeField(auto_now_add=True)

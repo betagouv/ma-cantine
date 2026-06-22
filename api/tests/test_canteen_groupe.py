@@ -114,7 +114,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body), 0)
 
-    def test_canteen_groupe_satellites_list_with_oauth2_token(self):
+    def test_canteen_groupe_satellites_list_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen_groupe_1.managers.add(user)
         self.client.credentials(Authorization=f"Bearer {token}")
@@ -365,7 +365,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.canteen_satellite_11.refresh_from_db()
         self.assertIsNone(self.canteen_satellite_11.groupe_id)
 
-    def test_canteen_groupe_satellite_link_unlink_correct_token(self):
+    def test_canteen_groupe_satellite_link_unlink_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen_groupe_1.managers.add(user)
         self.canteen_groupe_2.managers.add(user)

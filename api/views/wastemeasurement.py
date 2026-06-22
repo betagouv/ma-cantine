@@ -54,12 +54,12 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         creation_user = self.request.user
         creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-        creation_source_api_app = get_oauth_application(self.request)
+        creation_source_api_oauth2_application = get_oauth_application(self.request)
         waste_measurement = serializer.save(
             canteen=canteen,
             creation_user=creation_user,
             creation_source=creation_source,
-            creation_source_api_app=creation_source_api_app,
+            creation_source_api_oauth2_application=creation_source_api_oauth2_application,
         )
         update_change_reason_with_auth(self, waste_measurement)
 

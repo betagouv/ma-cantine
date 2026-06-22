@@ -80,6 +80,8 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.canteen, self.canteen)
         self.assertEqual(diagnostic.year, 2020)
         self.assertEqual(diagnostic.creation_user, user)
+        self.assertEqual(diagnostic.creation_source, CreationSource.API)
+        self.assertEqual(diagnostic.creation_source_api_oauth2_application, token.application)
 
     @authenticate
     def test_create_diagnostic_creation_user_and_source(self):
@@ -92,8 +94,11 @@ class DiagnosticCreateApiTest(APITestCase):
         body = response.json()
         self.assertNotIn("creation_user", body)
         self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
         diagnostic = Diagnostic.objects.first()
+        self.assertEqual(diagnostic.creation_user, authenticate.user)
         self.assertEqual(diagnostic.creation_source, CreationSource.APP)
+        self.assertEqual(diagnostic.creation_source_api_oauth2_application, None)
 
         # cleanup
         Diagnostic.objects.all().delete()
@@ -104,8 +109,11 @@ class DiagnosticCreateApiTest(APITestCase):
         body = response.json()
         self.assertNotIn("creation_user", body)
         self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
         diagnostic = Diagnostic.objects.first()
+        self.assertEqual(diagnostic.creation_user, authenticate.user)
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
+        self.assertEqual(diagnostic.creation_source_api_oauth2_application, None)
 
         # cleanup
         Diagnostic.objects.all().delete()
@@ -546,6 +554,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.diagnostic.canteen.managers.add(authenticate.user)
         self.assertEqual(self.diagnostic.creation_user, self.user)
         self.assertEqual(self.diagnostic.creation_source, CreationSource.APP)
+        self.assertEqual(self.diagnostic.creation_source_api_oauth2_application, None)
 
         payload = {"year": 2020, "creationSource": CreationSource.API}
 
@@ -555,6 +564,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.creation_user, self.user)  # unchanged
         self.assertEqual(self.diagnostic.creation_source, CreationSource.APP)  # unchanged
+        self.assertEqual(self.diagnostic.creation_source_api_oauth2_application, None)  # unchanged
 
     @authenticate
     def test_cannot_update_diagnostic_tracking_info(self):
