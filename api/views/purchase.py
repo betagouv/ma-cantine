@@ -213,10 +213,19 @@ class PurchaseOldRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
 class PurchaseFactureView(APIView):
     permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
-    http_method_names = ["post", "delete"]
+    http_method_names = ["get", "post", "delete"]
 
     def get_object(self):
         return get_object_or_404(Purchase, pk=self.kwargs.get("pk"), canteen__pk=self.kwargs.get("canteen_pk"))
+
+    def get(self, request, *args, **kwargs):
+        purchase = self.get_object()
+
+        if not purchase.facture:
+            raise NotFound()
+
+        serializer = PurchaseFactureResponseSerializer(purchase, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         purchase = self.get_object()
@@ -233,11 +242,12 @@ class PurchaseFactureView(APIView):
     def delete(self, request, *args, **kwargs):
         purchase = self.get_object()
 
-        if purchase.facture:
-            purchase.facture.delete()
-            purchase.facture = None
-            purchase.save()
+        if not purchase.facture:
+            raise NotFound()
 
+        purchase.facture.delete()
+        purchase.facture = None
+        purchase.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
