@@ -6,6 +6,21 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.38.1](https://github.com/betagouv/ma-cantine/compare/v2026.38.0...v2026.38.1) (2026-06-22)
+
+
+### Améliorations
+
+* **Evaluation Gaspillage:** nouveaux champs `creation_user` & `creation_source` ([#6831](https://github.com/betagouv/ma-cantine/issues/6831)) ([d45c53a](https://github.com/betagouv/ma-cantine/commit/d45c53a6ad4cbedaae1bbad93dfc7dcd5f42dfe0))
+* **Management Commands:** logger les résultats de commande dans une table dédiée `CommandLog` ([#6837](https://github.com/betagouv/ma-cantine/issues/6837)) ([35ac7cd](https://github.com/betagouv/ma-cantine/commit/35ac7cd28fba2f633716970a8fd7e5ceee0417f3))
+* **Management Commands:** nouvelle class `MaCantineBaseCommand` pour gérer le loggage des résultats de nos commandes ([#6838](https://github.com/betagouv/ma-cantine/issues/6838)) ([e888e79](https://github.com/betagouv/ma-cantine/commit/e888e79d74bf588c46c29e9fcb94a5c1243f4e34))
+
+
+### Technique
+
+* **Evaluation Gaspillage:** regrouper les validateurs dans un fichier dédié. cleanup des tests ([#6827](https://github.com/betagouv/ma-cantine/issues/6827)) ([40e2714](https://github.com/betagouv/ma-cantine/commit/40e27140bb244d47b05ddf8d100ea5abb945298a))
+* **Evaluation Gaspillage:** script pour remplir creation_user & creation_source (grâce à l'historisation) ([#6836](https://github.com/betagouv/ma-cantine/issues/6836)) ([811a87c](https://github.com/betagouv/ma-cantine/commit/811a87c9c25d782e8e9b1a288e5209a66de05d7c))
+
 ## [2026.38.0](https://github.com/betagouv/ma-cantine/compare/v2026.37.2...v2026.38.0) (2026-06-19)
 
 
