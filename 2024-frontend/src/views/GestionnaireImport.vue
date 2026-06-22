@@ -89,7 +89,7 @@ const commonPages = [
   },
   {
     title: "Ajouter des achats via le SIRET de la cantine (2026)",
-    to: { name: "GestionnaireImportAchatsSiret2026" },
+    to: { name: "GestionnaireImportAchatsSIRET2026" },
     description: "Pour ajouter des achat à des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
     badges: [
       {

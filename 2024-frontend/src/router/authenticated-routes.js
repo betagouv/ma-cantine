@@ -13,7 +13,7 @@ import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImportAchats2026 from "@/views/GestionnaireImportAchats2026.vue"
-import GestionnaireImportAchatsSiret2026 from "@/views/GestionnaireImportAchatsSiret2026.vue"
+import GestionnaireImportAchatsSIRET2026 from "@/views/GestionnaireImportAchatsSIRET2026.vue"
 import GestionnaireImport from "@/views/GestionnaireImport.vue"
 import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
 import GestionnaireImportAchatsSIRET from "@/views/GestionnaireImportAchatsSIRET.vue"
@@ -113,8 +113,8 @@ const routes = [
       },
       {
         path: "achats-siret-2026",
-        name: "GestionnaireImportAchatsSiret2026",
-        component: GestionnaireImportAchatsSiret2026,
+        name: "GestionnaireImportAchatsSIRET2026",
+        component: GestionnaireImportAchatsSIRET2026,
         meta: {
           title: "Ajouter des achats 2026 via le SIRET de la cantine",
           breadcrumbs: [
