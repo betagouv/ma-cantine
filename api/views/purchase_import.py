@@ -16,23 +16,23 @@ from data.models.creation_source import CreationSource
 from .utils import camelize
 
 
-PURCHASE_SIRET_SCHEMA_FILE_NAME = "achats_siret.json"
+PURCHASE_SIRET_SCHEMA_FILE_NAME = "achats_siret_old.json"
 PURCHASE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SIRET_SCHEMA_FILE_NAME}"
 PURCHASE_SIRET_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SIRET_SCHEMA_FILE_PATH}"
-PURCHASE_ID_SCHEMA_FILE_NAME = "achats_id.json"
+PURCHASE_ID_SCHEMA_FILE_NAME = "achats_id_old.json"
 PURCHASE_ID_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_ID_SCHEMA_FILE_NAME}"
 PURCHASE_ID_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_ID_SCHEMA_FILE_PATH}"
-PURCHASE_SIRET_2026_SCHEMA_FILE_NAME = "achats_siret_2026.json"
+PURCHASE_SIRET_2026_SCHEMA_FILE_NAME = "achats_siret.json"
 PURCHASE_SIRET_2026_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SIRET_2026_SCHEMA_FILE_NAME}"
 PURCHASE_SIRET_2026_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SIRET_2026_SCHEMA_FILE_PATH}"
-PURCHASE_ID_2026_SCHEMA_FILE_NAME = "achats_id_2026.json"
+PURCHASE_ID_2026_SCHEMA_FILE_NAME = "achats_id.json"
 PURCHASE_ID_2026_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_ID_2026_SCHEMA_FILE_NAME}"
 PURCHASE_ID_2026_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_ID_2026_SCHEMA_FILE_PATH}"
 
 # Accepted values for the optional `schema` parameter on the import endpoint.
 # When omitted (or set to SCHEMA_VERSION_DEFAULT), the historical schemas
-# (achats_siret.json / achats_id.json) are used. When set to SCHEMA_VERSION_2026,
-# the new achats_siret_2026.json / achats_id_2026.json schemas are used instead.
+# (achats_siret_old.json / achats_id_old.json) are used. When set to SCHEMA_VERSION_2026,
+# the new achats_siret.json / achats_id.json schemas are used instead.
 SCHEMA_VERSION_DEFAULT = "default"
 SCHEMA_VERSION_2026 = "2026"
 
