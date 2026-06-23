@@ -55,21 +55,21 @@ const purchasesLinks = [
 
 const diagnosticsLinks = [
   {
-    label: "Renseigner saisie simplifiée pour des cantines avec SIRET",
-    icon: "fr-icon-file-text-line",
-    route: "GestionnaireImportBilansSimplesSIRET",
-  },
-  {
-    label: "Renseigner saisie simplifiée pour des groupes ou cantines sans SIRET",
-    icon: "fr-icon-file-text-line",
-    route: "GestionnaireImportBilansSimples",
-  },
-  {
-    label: "Renseigner saisie détaillée",
+    label: "Renseigner les approvisionnements détaillés",
     icon: "fr-icon-file-text-fill",
     route: "GestionnaireImportBilansDetailles",
     description: "Uniquement pour les cantines avec un numéro SIRET.",
   },
+  {
+    label: "Renseigner les approvisionnements simplifiés des cantines avec SIRET",
+    icon: "fr-icon-file-text-fill",
+    route: "GestionnaireImportBilansSimplesSIRET",
+  },
+  {
+    label: "Renseigner les approvisionnements simplifiés des groupes ou cantines sans SIRET",
+    icon: "fr-icon-file-text-fill",
+    route: "GestionnaireImportBilansSimples",
+  }
 ]
 </script>
 
@@ -111,7 +111,7 @@ const diagnosticsLinks = [
     <div class="fr-col-12 fr-col-md-4">
       <ImportCard title="Bilans" :icon="diagnosticsPicto" :buttons="diagnosticsLinks">
         <template #callout>
-          <p class="fr-text--sm">Si vous connaissez le total des achats par catégories EGalim et familles de produits, vous pouvez renseigner la saisie détaillée, sinon renseignez la saisie simplifiée.</p>
+          <p class="fr-text--sm">Si vous connaissez le total des achats par catégories EGalim et familles de produits, vous pouvez renseigner les approvisionnements détaillés, sinon renseignez les simplifiés.</p>
         </template>
       </ImportCard>
     </div>
