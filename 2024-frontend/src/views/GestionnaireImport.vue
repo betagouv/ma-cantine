@@ -40,7 +40,7 @@ const gotTo = (name) => {
         </div>
         <div v-if="store.loggedUser.isStaff">
           <DsfrButton tertiary label="Ajouter des gestionnaires" @click="gotTo('GestionnaireImportCantinesGestionnaires')" icon="fr-icon-user-add-fill"/>
-          <p class="fr-text--xs fr-mb-0">Uniquement pour les administrateurs.</p>
+          <p class="fr-text--xs fr-mb-0">Uniquement pour les administrateurs et les cantines avec un numéro SIRET.</p>
         </div>
       </ImportCard>
     </div>
@@ -48,10 +48,10 @@ const gotTo = (name) => {
     <div class="fr-col-12 fr-col-md-4">
       <ImportCard title="Créer des achats" description="Deux imports sont disponibles pour créer des achats en fonction de vos établissements." :icon="purchasesPicto">
         <div class="fr-mb-2w">
-          <DsfrButton tertiary label="Créer des achats pour des cantines avec SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportCantinesCreer')" />
+          <DsfrButton tertiary label="Créer des achats pour des cantines avec SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportAchatsSIRET')" />
         </div>
         <div class="fr-mb-2w">
-          <DsfrButton tertiary label="Créer des achats pour des groupes ou cantines sans SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportCantinesModifier')" />
+          <DsfrButton tertiary label="Créer des achats pour des groupes ou cantines sans SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportAchatsID')" />
         </div>
         <DsfrCallout class="fr-mb-0" icon="fr-icon-warning-line">
           <div>
