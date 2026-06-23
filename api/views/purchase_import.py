@@ -28,7 +28,6 @@ class PurchasesImportView(BasePurchasesImportView):
         }
 
     def _get_caracteristiques(self, row):
-        boolean_true_values = ["oui", "x"]
         categories_egalim = row[6].strip() if row[6] else ""
         origine = row[7].strip() if row[7] else ""
         est_circuit_court = row[8].strip().lower() if row[8] else ""
@@ -36,13 +35,13 @@ class PurchasesImportView(BasePurchasesImportView):
 
         egalim_caracteristics = categories_egalim.split(",") if categories_egalim else []
         origine_caracteristics = origine.split(",") if origine else []
-        local_caracteristics = [Purchase.Characteristic.LOCAL] if est_local in boolean_true_values else []
+        local_caracteristics = [Purchase.Characteristic.LOCAL] if self.is_true_value(est_local) else []
         circuit_court_caracteristics = (
-            [Purchase.Characteristic.CIRCUIT_COURT] if est_circuit_court in boolean_true_values else []
+            [Purchase.Characteristic.CIRCUIT_COURT] if self.is_true_value(est_circuit_court) else []
         )
         return egalim_caracteristics + origine_caracteristics + local_caracteristics + circuit_court_caracteristics
 
     def _get_definition_local(self, row):
         est_local = row[9].strip() if row[9] else ""
         definition_local = row[10].strip() if row[10] else ""
-        return definition_local if est_local == "x" else ""
+        return definition_local if self.is_true_value(est_local) else ""

@@ -95,6 +95,12 @@ class BaseImportView(ABC, APIView):
         """
         pass
 
+    def is_true_value(self, value):
+        """
+        Check if a value is a true value.
+        """
+        return value.strip().lower() in ["oui", "x"]
+
     def post(self, request):
         self.start_time = time.time()
         self._log_import_start()
