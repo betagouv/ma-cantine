@@ -33,13 +33,13 @@ const gotTo = (name) => {
     <div class="fr-col-12 fr-col-md-4">
       <ImportCard title="Gérer des cantines" description="Il n'est pas possible d'utiliser ces imports pour gérer des groupes de restaurants satellites." :icon="canteenPicto">
         <div class="fr-mb-2w">
-          <DsfrButton secondary label="Créer des cantines avec SIRET" icon="fr-icon-add-line" @click="gotTo('GestionnaireImportCantinesCreer')" />
+          <DsfrButton tertiary label="Créer des cantines avec SIRET" icon="fr-icon-add-line" @click="gotTo('GestionnaireImportCantinesCreer')" />
         </div>
         <div class="fr-mb-2w">
-          <DsfrButton secondary label="Modifier des cantines" icon="fr-icon-edit-fill" @click="gotTo('GestionnaireImportCantinesModifier')" />
+          <DsfrButton tertiary label="Modifier des cantines" icon="fr-icon-edit-fill" @click="gotTo('GestionnaireImportCantinesModifier')" />
         </div>
         <div v-if="store.loggedUser.isStaff">
-          <DsfrButton secondary label="Ajouter des gestionnaires" @click="gotTo('GestionnaireImportCantinesGestionnaires')" icon="fr-icon-user-add-fill"/>
+          <DsfrButton tertiary label="Ajouter des gestionnaires" @click="gotTo('GestionnaireImportCantinesGestionnaires')" icon="fr-icon-user-add-fill"/>
           <p class="fr-text--xs fr-mb-0">Uniquement pour les administrateurs.</p>
         </div>
       </ImportCard>
@@ -48,10 +48,10 @@ const gotTo = (name) => {
     <div class="fr-col-12 fr-col-md-4">
       <ImportCard title="Créer des achats" description="Deux imports sont disponibles pour créer des achats en fonction de vos établissements." :icon="purchasesPicto">
         <div class="fr-mb-2w">
-          <DsfrButton secondary label="Créer des achats pour des cantines avec SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportCantinesCreer')" />
+          <DsfrButton tertiary label="Créer des achats pour des cantines avec SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportCantinesCreer')" />
         </div>
         <div class="fr-mb-2w">
-          <DsfrButton secondary label="Créer des achats pour des groupes ou cantines sans SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportCantinesModifier')" />
+          <DsfrButton tertiary label="Créer des achats pour des groupes ou cantines sans SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportCantinesModifier')" />
           <p class="fr-text--xs fr-mb-0">Vous aurez besoin du <a :href="documentation.trouverIdCantine" target="_blank">numéro ID</a> de l'établissement.</p>
         </div>
         <DsfrCallout class="fr-mb-0" icon="fr-icon-warning-line">
@@ -69,14 +69,14 @@ const gotTo = (name) => {
     <div class="fr-col-12 fr-col-md-4">
       <ImportCard title="Gérer des bilans" description="Les deux modes de saisie sont disponibles : la saisie simplifiée ou la saisie détaillée." :icon="diagnosticsPicto">
         <div class="fr-mb-2w">
-          <DsfrButton secondary label="Renseigner saisie détaillée" icon="fr-icon-file-text-fill" @click="gotTo('GestionnaireImportBilansDetailles')" />
+          <DsfrButton tertiary label="Renseigner saisie détaillée" icon="fr-icon-file-text-fill" @click="gotTo('GestionnaireImportBilansDetailles')" />
           <p class="fr-text--xs fr-mb-0">Uniquement pour les cantines avec un numéro SIRET.</p>
         </div>
         <div class="fr-mb-2w">
-          <DsfrButton secondary label="Renseigner saisie simplifiée pour des cantines avec SIRET" icon="fr-icon-file-text-line" @click="gotTo('GestionnaireImportBilansSimplesSIRET')" />
+          <DsfrButton tertiary label="Renseigner saisie simplifiée pour des cantines avec SIRET" icon="fr-icon-file-text-line" @click="gotTo('GestionnaireImportBilansSimplesSIRET')" />
         </div>
         <div class="fr-mb-2w">
-          <DsfrButton secondary label="Renseigner saisie simplifiée pour des groupes ou cantines sans SIRET" icon="fr-icon-file-text-line" @click="gotTo('GestionnaireImportBilansSimples')" />
+          <DsfrButton tertiary label="Renseigner saisie simplifiée pour des groupes ou cantines sans SIRET" icon="fr-icon-file-text-line" @click="gotTo('GestionnaireImportBilansSimples')" />
           <p class="fr-text--xs fr-mb-0">Vous aurez besoin du <a :href="documentation.trouverIdCantine" target="_blank">numéro ID</a> de l'établissement.</p>
         </div>
       </ImportCard>
