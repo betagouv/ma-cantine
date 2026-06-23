@@ -12,13 +12,6 @@ PURCHASE_ID_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine
 
 
 class PurchasesImportOldView(BasePurchasesImportView):
-    """
-    Legacy purchases import (pre-2026 schema).
-
-    Deprecated: scheduled for removal at the end of the 2027 teledeclaration campaign.
-    See `2024-frontend/src/components/ImportDeprecatedWarning.vue`.
-    """
-
     def _get_schema_config(self):
         if self.is_siret_import:
             return {

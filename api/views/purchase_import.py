@@ -14,8 +14,6 @@ PURCHASE_ID_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine
 
 
 class PurchasesImportView(BasePurchasesImportView):
-    """Purchases import using the 2026 schema (categories EGalim, origine, local, circuit court)."""
-
     def _get_schema_config(self):
         if self.is_siret_import:
             return {

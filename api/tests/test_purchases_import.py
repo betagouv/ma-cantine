@@ -23,8 +23,6 @@ from data.models.purchase import Purchase
 
 
 class PurchasesSchemaTest(TestCase):
-    """Regex validation for the 2026 purchase import schemas (SIRET + ID)."""
-
     @classmethod
     def setUpTestData(cls):
         cls.schemas = {
@@ -703,7 +701,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
     @authenticate
     def test_import_siret_separated_caracteristics(self):
         """
-        Tests that can import a file with the 2026 schema caracteristics split into:
+        Tests that can import a file with the caracteristics split into:
         - categories_egalim
         - origine
         - est_local
@@ -712,7 +710,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good_siret_2026.csv"
+        file_path = "./api/tests/files/achats/purchases_good_siret_caracteristics.csv"
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
@@ -813,7 +811,7 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
     @authenticate
     def test_import_id_separated_caracteristics(self):
         """
-        Tests that can import a file with the 2026 schema caracteristics split into:
+        Tests that can import a file with the caracteristics split into:
         - categories_egalim
         - origine
         - est_local
@@ -822,7 +820,7 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user], id=949)
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good_2026.csv"
+        file_path = "./api/tests/files/achats/purchases_good_id_caracteristics.csv"
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
 

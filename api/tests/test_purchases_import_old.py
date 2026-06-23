@@ -23,8 +23,6 @@ from data.models.purchase import Purchase
 
 
 class PurchasesOldSchemaTest(TestCase):
-    """Regex validation for the pre-2026 purchase import schemas (SIRET + ID)."""
-
     @classmethod
     def setUpTestData(cls):
         cls.schemas = {
