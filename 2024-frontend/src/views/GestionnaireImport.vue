@@ -47,7 +47,7 @@ const commonPages = [
   },
   {
     title: "Ajouter des achats (ancien format)",
-    to: { name: "GestionnaireImportAchatsOld" },
+    to: { name: "GestionnaireImportAchatsIDOld" },
     description: "Pour ajouter des achats à des cantines dont vous êtes gestionnaire.",
     detail: "Pour les cantines et les groupes de restaurants satellites",
     badges: [
@@ -60,7 +60,7 @@ const commonPages = [
   },
   {
     title: "Ajouter des achats",
-    to: { name: "GestionnaireImportAchats" },
+    to: { name: "GestionnaireImportAchatsID" },
     description: "Pour ajouter des achats à des cantines dont vous êtes gestionnaire.",
     detail: "Pour les cantines et les groupes de restaurants satellites",
     badges: [

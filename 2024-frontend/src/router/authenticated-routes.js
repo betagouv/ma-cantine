@@ -12,10 +12,10 @@ import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRe
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
-import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
+import GestionnaireImportAchatsID from "@/views/GestionnaireImportAchatsID.vue"
 import GestionnaireImportAchatsSIRET from "@/views/GestionnaireImportAchatsSIRET.vue"
 import GestionnaireImport from "@/views/GestionnaireImport.vue"
-import GestionnaireImportAchatsOld from "@/views/GestionnaireImportAchatsOld.vue"
+import GestionnaireImportAchatsIDOld from "@/views/GestionnaireImportAchatsIDOld.vue"
 import GestionnaireImportAchatsSIRETOld from "@/views/GestionnaireImportAchatsSIRETOld.vue"
 import GestionnaireImportBilansSimples from "@/views/GestionnaireImportBilansSimples.vue"
 import GestionnaireImportBilansDetailles from "@/views/GestionnaireImportBilansDetailles.vue"
@@ -77,8 +77,8 @@ const routes = [
       },
       {
         path: "achats-ancien-format",
-        name: "GestionnaireImportAchatsOld",
-        component: GestionnaireImportAchatsOld,
+        name: "GestionnaireImportAchatsIDOld",
+        component: GestionnaireImportAchatsIDOld,
         meta: {
           title: "Ajouter des achats via l'ID de la cantine (ancien format)",
           breadcrumbs: [
@@ -101,8 +101,8 @@ const routes = [
       },
       {
         path: "achats-id",
-        name: "GestionnaireImportAchats",
-        component: GestionnaireImportAchats,
+        name: "GestionnaireImportAchatsID",
+        component: GestionnaireImportAchatsID,
         meta: {
           title: "Ajouter des achats via l'ID de la cantine",
           breadcrumbs: [
