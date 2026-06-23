@@ -653,7 +653,7 @@ class PurchaseOldCreateApiTest(APITestCase):
             "price_ht": 15.23,
             "family": "PRODUITS_DE_LA_MER",
             "characteristics": ["BIO", "LOCAL"],
-            "local_definition": "AUTOUR_SERVICE",
+            "local_definition": "COMMUNE",
         }
 
     def test_cannot_create_purchase_if_unauthenticated(self):
@@ -683,8 +683,9 @@ class PurchaseOldCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         purchase = Purchase.objects.first()
-        self.assertEqual(purchase.definition_local, Purchase.Local.AUTOUR_SERVICE)
         self.assertEqual(len(purchase.caracteristiques), 2)
+        self.assertEqual(purchase.definition_local, Purchase.Local.COMMUNE)
+        self.assertEqual(purchase.definition_local_km, None)
 
     @authenticate
     def test_create_purchase_creation_user_and_source(self):

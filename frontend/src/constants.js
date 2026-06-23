@@ -189,10 +189,11 @@ export default Object.freeze({
     LOCAL: { text: "Origine France : dont local", additional: true },
   },
   LocalDefinitions: {
-    AUTOUR_SERVICE: { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
-    DEPARTEMENT: { text: "Provenant du même département", value: "DEPARTEMENT" },
     REGION: { text: "Provenant de la même région", value: "REGION" },
+    DEPARTEMENT: { text: "Provenant du même département", value: "DEPARTEMENT" },
     PAT: { text: "Issu du Projet Alimentaire Territorial (PAT)", value: "PAT" },
+    COMMUNE: { text: "Provenant de la même commune", value: "COMMUNE" },
+    KM: { text: "Distance en km", value: "KM" },
     AUTRE: { text: "Autre", value: "AUTRE" },
   },
   TeledeclarationCharacteristicGroups: {

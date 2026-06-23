@@ -43,8 +43,9 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "category",
         "caracteristiques",
         "prix_ht",
-        "facture",
         "definition_local",
+        "definition_local_km",
+        "facture",
         *Purchase.CREATION_META_FIELDS,
         "deletion_date",
     )
