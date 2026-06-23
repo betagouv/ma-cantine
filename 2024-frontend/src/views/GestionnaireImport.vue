@@ -46,7 +46,7 @@ const gotTo = (name) => {
     </div>
 
     <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Créer des achats" description="Deux formats d'import sont disponibles pour créer des achats en fonction de vos établissements." :icon="purchasesPicto">
+      <ImportCard title="Créer des achats" description="Deux imports sont disponibles pour créer des achats en fonction de vos établissements." :icon="purchasesPicto">
         <div class="fr-mb-2w">
           <DsfrButton secondary label="Créer des achats pour des cantines avec SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportCantinesCreer')" />
         </div>
@@ -54,13 +54,13 @@ const gotTo = (name) => {
           <DsfrButton secondary label="Créer des achats pour des groupes ou cantines sans SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportCantinesModifier')" />
           <p class="fr-text--xs fr-mb-0">Vous aurez besoin du <a :href="documentation.trouverIdCantine" target="_blank">numéro ID</a> de l'établissement.</p>
         </div>
-        <DsfrCallout class="fr-mb-0">
+        <DsfrCallout class="fr-mb-0" icon="fr-icon-warning-line">
           <div>
-            <p class="fr-mb-1w fr-text--bold">Le format d'import des achats a été modifié en 2026.</p>
-            <p class="fr-mb-1w fr-text--sm">La précédente version reste disponible jusqu'à la fin de la campagne de télédéclaration 2027 :</p>
+            <p class="fr-mb-1w fr-text--bold">Mise à jour des imports achats</p>
+            <p class="fr-mb-1w fr-text--sm">Le format des données des imports achats à été modifié en 2026. Le précédent format reste disponible sur ces pages : </p>
             <DsfrButton size="sm" tertiary label="Créer des achats pour des cantines avec SIRET (ancien&nbsp;format)" @click="gotTo('GestionnaireImportAchatsIDOld')" />
             <DsfrButton size="sm" tertiary label="Créer des achats pour des groupes ou cantines sans SIRET (ancien&nbsp;format)"  @click="gotTo('GestionnaireImportAchatsIDOld')" />
-            <p class="fr-mt-2w fr-text--sm">Passé ce délai, il faudra utiliser le format ci-dessus.</p>
+            <p class="fr-mt-2w fr-text--sm">À la fin de la campagne de télédéclaration 2027 ces pages d'imports seront supprimées.</p>
           </div>
         </DsfrCallout>
       </ImportCard>
