@@ -776,7 +776,7 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class Purchases2026ImportIdApiSuccessTest(TestCase):
     @authenticate
-    def test_import_2026_id_separeted_caracteristics(self):
+    def test_import_2026_id_separated_caracteristics(self):
         """
         Tests that can import a file with 2026 schema caracteristics works for splitted columns :
         - categories_egalim
@@ -818,7 +818,7 @@ class Purchases2026ImportIdApiSuccessTest(TestCase):
         self.assertEqual(purchase_2.definition_local, "")
 
     @authenticate
-    def test_import_2026_siret_separeted_caracteristics(self):
+    def test_import_2026_siret_separated_caracteristics(self):
         """
         Tests that can import a file with 2026 schema caracteristics works for splitted columns
         when using SIRET-based import :
