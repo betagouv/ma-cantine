@@ -10,7 +10,7 @@ defineProps(["title", "icon", "buttons"])
         <img :src="icon" class="import-card__icon" :alt="`Illustration de ${title}`">
       </div>
       <div v-for="button in buttons" :key="button.label" class="fr-mb-2w">
-        <AppLinkRouter :to="button.route" :title="button.label" :icon="button.icon" />
+        <AppLinkRouter :to="{name: button.route}" :title="button.label" :icon="button.icon" />
         <p v-if="button.description" class="fr-text--xs fr-mb-0">{{ button.description }}</p>
       </div>
       <DsfrCallout v-if="$slots.callout" class="fr-mb-0">
