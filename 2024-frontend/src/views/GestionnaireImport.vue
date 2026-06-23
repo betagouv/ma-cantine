@@ -1,10 +1,9 @@
 <script setup>
 import { computed } from "vue"
-import { useRoute, useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import ImportCard from "@/components/ImportCard.vue"
-
-const router = useRouter()
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 /* Picto */
 const canteenPicto = "/static/images/picto-dsfr/companie.svg"
@@ -15,8 +14,7 @@ const diagnosticsPicto = "/static/images/picto-dsfr/money.svg"
 const route = useRoute()
 const store = useRootStore()
 
-const goTo = (name) => router.push({ name })
-
+/* Links */
 const canteenButtons = computed(() => {
   const buttons = [
     {
@@ -97,8 +95,14 @@ const diagnosticsButtons = [
       <ImportCard title="Achats" :icon="purchasesPicto" :buttons="purchasesButtons">
         <template #callout>
           <p class="fr-mb-1w fr-text--sm">Le format de données des imports achats à été modifié en 2026. Le précédent format reste disponible sur ces pages : </p>
-          <DsfrButton size="sm" tertiary label="Créer des achats pour des cantines avec SIRET (ancien&nbsp;format)" @click="goTo('GestionnaireImportAchatsIDOld')" />
-          <DsfrButton size="sm" tertiary label="Créer des achats pour des groupes ou cantines sans SIRET (ancien&nbsp;format)" @click="goTo('GestionnaireImportAchatsIDOld')" />
+          <ul>
+            <li>
+              <AppLinkRouter class="fr-text--sm" :to="{to: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des cantines avec SIRET (ancien format)" />
+            </li>
+            <li>
+              <AppLinkRouter class="fr-text--sm" :to="{to: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des groupes ou cantines sans SIRET (ancien format)" />
+            </li>
+          </ul>
           <p class="fr-mt-2w fr-text--sm">À la fin de la campagne de télédéclaration 2027 ces pages d'imports seront supprimées.</p>
         </template>
       </ImportCard>
