@@ -261,8 +261,8 @@ const formatPayload = (form) => {
           />
         </div>
         <div class="fr-col-12 fr-col-md-4">
-          <div v-if="form.invoiceUrl" class="fr-col-12 fr-col-md-6">
-            <p class="fr-mb-2w">Vous avez déjà importé une facture pour cet achat, accéder au fichier en <a :href="form.invoiceUrl" target="_blank">cliquant ici</a>.</p>
+          <div v-if="form.invoiceUrl">
+            <p class="fr-mb-2w">Vous avez déjà importé une facture pour cet achat : <a :href="form.invoiceUrl" target="_blank">voir le fichier</a>.</p>
           </div>
        </div>
       </div>
@@ -312,7 +312,6 @@ const formatPayload = (form) => {
   &__inline-col {
     .fr-fieldset {
       align-items: flex-start !important;
-      padding: 0.75rem;
     }
     .fr-fieldset__element--inline {
       width: 33% !important;
