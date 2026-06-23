@@ -15,143 +15,83 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.purchase_import import PURCHASE_ID_SCHEMA_FILE_PATH as PURCHASE_ID_2026_SCHEMA_FILE_PATH
-from api.views.purchase_import_old import PURCHASE_SIRET_SCHEMA_FILE_PATH
+from api.views.purchase_import_old import PURCHASE_ID_SCHEMA_FILE_PATH, PURCHASE_SIRET_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.creation_source import CreationSource
 from data.models.purchase import Purchase
 
 
-class PurchasesSchemaTest(TestCase):
+class PurchasesOldSchemaTest(TestCase):
+    """Regex validation for the pre-2026 purchase import schemas (SIRET + ID)."""
+
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open(PURCHASE_SIRET_SCHEMA_FILE_PATH))
+        cls.schemas = {
+            "siret": json.load(open(PURCHASE_SIRET_SCHEMA_FILE_PATH)),
+            "id": json.load(open(PURCHASE_ID_SCHEMA_FILE_PATH)),
+        }
+
+    @staticmethod
+    def _pattern_for(schema, field_name):
+        field = next(f for f in schema["fields"] if f["name"] == field_name)
+        return field["constraints"]["pattern"]
 
     def test_famille_produits_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "famille_produits"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in ["PRODUITS_LAITIERS", "PRODUITS_LAITIERS ", " PRODUITS_LAITIERS "]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST", "PRODUITS_LAITIERS,", "PRODUITS_LAITIERS,VIANDES_VOLAILLES"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+        for schema_name, schema in self.schemas.items():
+            pattern = self._pattern_for(schema, "famille_produits")
+            for VALUE_OK in ["PRODUITS_LAITIERS", "PRODUITS_LAITIERS ", " PRODUITS_LAITIERS "]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
+                    self.assertTrue(re.match(pattern, VALUE_OK))
+            for VALUE_NOT_OK in ["", "TEST", "PRODUITS_LAITIERS,", "PRODUITS_LAITIERS,VIANDES_VOLAILLES"]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
+                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_caracteristiques_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "caracteristiques"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in [
-            "BIO",
-            "BIO ",
-            "BIO,LOCAL",
-            "BIO,LOCAL ",
-            " BIO,LOCAL ",
-            " BIO, LOCAL ",
-            " BIO,      LOCAL ",
-            "BIO,BIO",
-        ]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+        for schema_name, schema in self.schemas.items():
+            pattern = self._pattern_for(schema, "caracteristiques")
+            for VALUE_OK in [
+                "BIO",
+                "BIO ",
+                "BIO,LOCAL",
+                "BIO,LOCAL ",
+                " BIO,LOCAL ",
+                " BIO, LOCAL ",
+                " BIO,      LOCAL ",
+                "BIO,BIO",
+            ]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
+                    self.assertTrue(re.match(pattern, VALUE_OK))
+            for VALUE_NOT_OK in ["", "TEST"]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
+                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_definition_local_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "definition_local"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in [
-            "AUTOUR_SERVICE",
-            "DEPARTEMENT",
-            "DEPARTEMENT ",
-            " DEPARTEMENT ",
-            "REGION",
-            "PAT",
-            " PAT ",
-            "AUTRE",
-        ]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
-
-class Purchases2026SchemaTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.schema = json.load(open(PURCHASE_ID_2026_SCHEMA_FILE_PATH))
-
-    def test_famille_produits_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "famille_produits"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in ["PRODUITS_LAITIERS", "PRODUITS_LAITIERS ", " PRODUITS_LAITIERS "]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST", "PRODUITS_LAITIERS,", "PRODUITS_LAITIERS,VIANDES_VOLAILLES"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
-    def test_categories_egalim_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "categories_egalim"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in [
-            "BIO",
-            "BIO ",
-            "BIO,COMMERCE_EQUITABLE",
-            "BIO,COMMERCE_EQUITABLE ",
-            " BIO,COMMERCE_EQUITABLE ",
-            " BIO, COMMERCE_EQUITABLE ",
-            " BIO,      COMMERCE_EQUITABLE ",
-            "BIO,BIO",
-        ]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
-    def test_definition_local_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "definition_local"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in [
-            "AUTOUR_SERVICE",
-            "DEPARTEMENT",
-            "DEPARTEMENT ",
-            " DEPARTEMENT ",
-            "REGION",
-            "PAT",
-            " PAT ",
-            "AUTRE",
-        ]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
-    def test_origine_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "origine"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in [
-            "EUROPE",
-            "FRANCE",
-            "FRANCE ",
-            " FRANCE ",
-        ]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST", "FRANCE,", "FRANCE,EUROPE"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+        for schema_name, schema in self.schemas.items():
+            pattern = self._pattern_for(schema, "definition_local")
+            for VALUE_OK in [
+                "AUTOUR_SERVICE",
+                "DEPARTEMENT",
+                "DEPARTEMENT ",
+                " DEPARTEMENT ",
+                "REGION",
+                "PAT",
+                " PAT ",
+                "AUTRE",
+            ]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
+                    self.assertTrue(re.match(pattern, VALUE_OK))
+            for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION"]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
+                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class PurchasesImportApiErrorTest(APITestCase):
+class PurchasesImportOldApiErrorTest(APITestCase):
     def test_unauthenticated(self):
         self.assertEqual(Purchase.objects.count(), 0)
 
-        response = self.client.post(reverse("purchases_import"), {"type": "siret"})
+        response = self.client.post(reverse("purchases_import_old"), {"type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -165,9 +105,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         # header missing
-        file_path = "./api/tests/files/achats/purchases_bad_no_header.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_no_header_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -180,9 +120,9 @@ class PurchasesImportApiErrorTest(APITestCase):
             self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
         # wrong header
-        file_path = "./api/tests/files/achats/purchases_bad_wrong_header.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_wrong_header_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -195,9 +135,9 @@ class PurchasesImportApiErrorTest(APITestCase):
             self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
         # partial header
-        file_path = "./api/tests/files/achats/purchases_bad_partial_header.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_partial_header_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -223,9 +163,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         CanteenFactory(siret="99775491534896", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_bad_wrong_header_typo.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_wrong_header_typo_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -281,9 +221,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         CanteenFactory(siret="99775491534896", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_bad_extra_columns.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_extra_columns_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -308,9 +248,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_bad_empty_rows.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_empty_rows_old.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("purchases_import"), {"file": canteen_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": canteen_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -333,9 +273,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         CanteenFactory(siret="36462492895701")
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_bad.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -384,9 +324,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_bad_no_definition_local.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_no_definition_local_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -405,9 +345,9 @@ class PurchasesImportApiErrorTest(APITestCase):
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good.csv"
+        file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -424,9 +364,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21010034300016")
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good.csv"
+        file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -446,9 +386,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         CanteenFactory(siret="36462492895701")
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good.csv"
+        file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -467,9 +407,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_bad_one_error.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_one_error_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -484,9 +424,9 @@ class PurchasesImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_bad_corrupt.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_corrupt_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -505,7 +445,7 @@ class PurchasesImportApiErrorTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class PurchasesImportApiSuccessTest(APITestCase):
+class PurchasesImportOldApiSuccessTest(APITestCase):
     @authenticate
     def test_import_good_purchases(self):
         """
@@ -514,9 +454,9 @@ class PurchasesImportApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good.csv"
+        file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 5)
@@ -551,7 +491,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(purchase.famille_produits, Purchase.Family.AUTRES)
         self.assertEqual(purchase.caracteristiques, [])
         # Test that the purchase import source contains the complete file digest
-        filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()
+        filebytes = Path("./api/tests/files/achats/purchases_good_old.csv").read_bytes()
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
         self.assertEqual(Purchase.objects.first().import_source, filehash_md5)
 
@@ -563,9 +503,9 @@ class PurchasesImportApiSuccessTest(APITestCase):
         CanteenFactory(siret="65449096241683", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good_with_empty_columns.xlsx"
+        file_path = "./api/tests/files/achats/purchases_good_with_empty_columns_old.xlsx"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
@@ -579,9 +519,9 @@ class PurchasesImportApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good_separator_comma.csv"
+        file_path = "./api/tests/files/achats/purchases_good_separator_comma_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -602,9 +542,9 @@ class PurchasesImportApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good.xlsx"
+        file_path = "./api/tests/files/achats/purchases_good_old.xlsx"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -626,18 +566,18 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         # tab
-        file_path = "./api/tests/files/achats/purchases_good_separator_tab.tsv"
+        file_path = "./api/tests/files/achats/purchases_good_separator_tab_old.tsv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
         self.assertFalse(ImportFailure.objects.exists())
 
         # semicolon
-        file_path = "./api/tests/files/achats/purchases_good_separator_semicolon.csv"
+        file_path = "./api/tests/files/achats/purchases_good_separator_semicolon_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1 + 1)
@@ -645,16 +585,16 @@ class PurchasesImportApiSuccessTest(APITestCase):
 
     @authenticate
     @override_settings(CSV_PURCHASE_CHUNK_LINES=1)
-    @patch("api.views.PurchasesImportView._process_chunk")
+    @patch("api.views.PurchasesImportOldView._process_chunk")
     def test_import_batch_purchases(self, _process_chunk_mock):
         """
         Tests that actually split the file into chunks. The header is considered as a line.
         """
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
 
-        file_path = "./api/tests/files/achats/purchases_good.csv"
+        file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            _ = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            _ = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(_process_chunk_mock.call_count, 5)
 
@@ -667,9 +607,9 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         # first upload: success
-        file_path = "./api/tests/files/achats/purchases_good.csv"
+        file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 5)
@@ -677,7 +617,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
 
         # second upload: duplicate warning
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 5)  # no additional purchases created
@@ -698,9 +638,9 @@ class PurchasesImportApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good_floating_number.csv"
+        file_path = "./api/tests/files/achats/purchases_good_floating_number_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -709,14 +649,14 @@ class PurchasesImportApiSuccessTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class PurchasesImportIdApiErrorTest(APITestCase):
+class PurchasesImportOldIdApiErrorTest(APITestCase):
     @authenticate
     def test_canteen_not_found_with_id(self):
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good_id.csv"
+        file_path = "./api/tests/files/achats/purchases_good_id_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -728,7 +668,7 @@ class PurchasesImportIdApiErrorTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class PurchasesImportIdApiSuccessTest(APITestCase):
+class PurchasesImportOldIdApiSuccessTest(APITestCase):
     @authenticate
     def test_import_default_type_is_id(self):
         """
@@ -737,9 +677,9 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user], id=949)
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good_id.csv"
+        file_path = "./api/tests/files/achats/purchases_good_id_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -757,9 +697,9 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user], id=949)
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_good_id.csv"
+        file_path = "./api/tests/files/achats/purchases_good_id_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -772,95 +712,3 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
         purchase = Purchase.objects.filter(description="Pommes, rouges").first()
         self.assertEqual(purchase.prix_ht, Decimal("90.11"))
         self.assertEqual(purchase.canteen.id, 949)
-
-
-@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class Purchases2026ImportIdApiSuccessTest(TestCase):
-    @authenticate
-    def test_import_2026_id_separated_caracteristics(self):
-        """
-        Tests that can import a file with 2026 schema caracteristics works for splitted columns :
-        - categories_egalim
-        - origine
-        - est_local
-        - est_circuit_court
-        """
-        CanteenFactory(siret="21010034300016", managers=[authenticate.user], id=949)
-        self.assertEqual(Purchase.objects.count(), 0)
-
-        file_path = "./api/tests/files/achats/purchases_good_2026.csv"
-        with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "schema": "2026"})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 2)
-        self.assertFalse(ImportFailure.objects.exists())
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 2)
-        self.assertEqual(len(errors), 0, errors)
-
-        purchase_1 = Purchase.objects.filter(description="Pomme 1").first()
-        self.assertEqual(purchase_1.prix_ht, Decimal("100.00"))
-        self.assertEqual(purchase_1.famille_produits, Purchase.Family.AUTRES)
-        self.assertIn(Purchase.Characteristic.BIO, purchase_1.caracteristiques)
-        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_1.caracteristiques)
-        self.assertIn(Purchase.Characteristic.LOCAL, purchase_1.caracteristiques)
-        self.assertIn(Purchase.Characteristic.FRANCE, purchase_1.caracteristiques)
-        self.assertIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_1.caracteristiques)
-        self.assertEqual(purchase_1.definition_local, "REGION")
-
-        purchase_2 = Purchase.objects.filter(description="Pomme 2").first()
-        self.assertEqual(purchase_2.prix_ht, Decimal("200.00"))
-        self.assertEqual(purchase_2.famille_produits, Purchase.Family.AUTRES)
-        self.assertIn(Purchase.Characteristic.BIO, purchase_2.caracteristiques)
-        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_2.caracteristiques)
-        self.assertNotIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_2.caracteristiques)
-        self.assertEqual(purchase_2.definition_local, "")
-
-    @authenticate
-    def test_import_2026_siret_separated_caracteristics(self):
-        """
-        Tests that can import a file with 2026 schema caracteristics works for splitted columns
-        when using SIRET-based import :
-        - categories_egalim
-        - origine
-        - est_local
-        - est_circuit_court
-        """
-        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
-        self.assertEqual(Purchase.objects.count(), 0)
-
-        file_path = "./api/tests/files/achats/purchases_good_siret_2026.csv"
-        with open(file_path) as purchase_file:
-            response = self.client.post(
-                reverse("purchases_import"), {"file": purchase_file, "type": "siret", "schema": "2026"}
-            )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 2)
-        self.assertFalse(ImportFailure.objects.exists())
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 2)
-        self.assertEqual(len(errors), 0, errors)
-
-        purchase_1 = Purchase.objects.filter(description="Pomme 1").first()
-        self.assertEqual(purchase_1.canteen.siret, "21010034300016")
-        self.assertEqual(purchase_1.prix_ht, Decimal("100.00"))
-        self.assertEqual(purchase_1.famille_produits, Purchase.Family.AUTRES)
-        self.assertIn(Purchase.Characteristic.BIO, purchase_1.caracteristiques)
-        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_1.caracteristiques)
-        self.assertIn(Purchase.Characteristic.LOCAL, purchase_1.caracteristiques)
-        self.assertIn(Purchase.Characteristic.FRANCE, purchase_1.caracteristiques)
-        self.assertIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_1.caracteristiques)
-        self.assertEqual(purchase_1.definition_local, "REGION")
-
-        purchase_2 = Purchase.objects.filter(description="Pomme 2").first()
-        self.assertEqual(purchase_2.canteen.siret, "21010034300016")
-        self.assertEqual(purchase_2.prix_ht, Decimal("200.00"))
-        self.assertEqual(purchase_2.famille_produits, Purchase.Family.AUTRES)
-        self.assertIn(Purchase.Characteristic.BIO, purchase_2.caracteristiques)
-        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_2.caracteristiques)
-        self.assertNotIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_2.caracteristiques)
-        self.assertEqual(purchase_2.definition_local, "")
