@@ -52,7 +52,7 @@ const resetForm = () => {
 </script>
 
 <template>
-  <section class="fr-grid-row fr-grid-row--bottom">
+  <section class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
     <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
       <h1>{{ route.meta.title }} pour la cantine «&nbsp;{{ canteenName }}&nbsp;»</h1>
       <p>
@@ -73,13 +73,9 @@ const resetForm = () => {
       </li>
     </AppRessources>
   </section>
-  <section
-    class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
-  >
-    <PurchaseForm
-      :showCreateButton="true"
-      :key="forceRerender"
-      @sendForm="(payload) => savePurchase(payload)"
-    />
-  </section>
+  <PurchaseForm
+    :showCreateButton="true"
+    :key="forceRerender"
+    @sendForm="(payload) => savePurchase(payload)"
+  />
 </template>
