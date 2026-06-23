@@ -24,15 +24,14 @@ const gotTo = (name) => {
   <section class="gestionnaire-import fr-col-12 fr-col-md-7">
     <h1>{{ route.meta.title }}</h1>
     <p>
-      Gagnez du temps en important vos données directement dans
-      <em>ma cantine.</em>
-      <br />
-      Pour une expérience optimale, veuillez bien respecter les formats attendus.
+      Notre solution d'import par tableur vous permet d'importer vos données directement dans <em>ma cantine</em> pour les établissements dont vous êtes gestionnaire.
+      Nous acceptons les fichiers au format <DsfrBadge class="fr-mr-1v" type="info" label="Excel" no-icon /> ou
+      <DsfrBadge class="fr-mr-1v" type="info" label="CSV" no-icon />.
     </p>
   </section>
   <section class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
     <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Gérer des cantines" description="Vous pouver créer et/ou modifier les cantines dont vous êtes gestionnaire. Il n'est pas possible d'utiliser ces imports pour gérer des groupes de restaurants satellites." :icon="canteenPicto">
+      <ImportCard title="Gérer des cantines" description="Il n'est pas possible d'utiliser ces imports pour gérer des groupes de restaurants satellites." :icon="canteenPicto">
         <div class="fr-mb-2w">
           <DsfrButton secondary label="Créer des cantines avec SIRET" icon="fr-icon-add-line" @click="gotTo('GestionnaireImportCantinesCreer')" />
         </div>
@@ -47,7 +46,7 @@ const gotTo = (name) => {
     </div>
 
     <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Créer des achats" description="Vous pouvez créer des achats uniquement pour les établissements dont vous êtes gestionnaire. Deux formats d'import sont disponibles pour créer des achats en fonction de vos établissements." :icon="purchasesPicto">
+      <ImportCard title="Créer des achats" description="Deux formats d'import sont disponibles pour créer des achats en fonction de vos établissements." :icon="purchasesPicto">
         <div class="fr-mb-2w">
           <DsfrButton secondary label="Créer des achats pour des cantines avec SIRET" icon="fr-icon-shopping-cart-2-fill" @click="gotTo('GestionnaireImportCantinesCreer')" />
         </div>
@@ -68,20 +67,17 @@ const gotTo = (name) => {
     </div>
 
     <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Gérer des bilans" description="Vous pouvez créer ou modifier les données d'approvisionnement des bilans pour les établissements dont vous êtes gestionnaire." :icon="diagnosticsPicto">
-        <p>Deux modes de saisie sont disponibles :</p>
-        <p><span class="fr-text--bold">• Saisie simplifiée :</span> si vous connaissez uniquement les valeurs totales de vos achats bio et de qualité</p>
+      <ImportCard title="Gérer des bilans" description="Les deux modes de saisie sont disponibles : la saisie simplifiée ou la saisie détaillée." :icon="diagnosticsPicto">
+        <div class="fr-mb-2w">
+          <DsfrButton secondary label="Renseigner saisie détaillée" icon="fr-icon-file-text-fill" @click="gotTo('GestionnaireImportBilansDetailles')" />
+          <p class="fr-text--xs fr-mb-0">Uniquement pour les cantines avec un numéro SIRET.</p>
+        </div>
         <div class="fr-mb-2w">
           <DsfrButton secondary label="Renseigner saisie simplifiée pour des cantines avec SIRET" icon="fr-icon-file-text-line" @click="gotTo('GestionnaireImportBilansSimplesSIRET')" />
         </div>
         <div class="fr-mb-2w">
           <DsfrButton secondary label="Renseigner saisie simplifiée pour des groupes ou cantines sans SIRET" icon="fr-icon-file-text-line" @click="gotTo('GestionnaireImportBilansSimples')" />
           <p class="fr-text--xs fr-mb-0">Vous aurez besoin du <a :href="documentation.trouverIdCantine" target="_blank">numéro ID</a> de l'établissement.</p>
-        </div>
-        <p><span class="fr-text--bold">• Saisie détaillée :</span> si vous connaissez les valeurs totales par labels et les familles de produits de vos achats.</p>
-        <div class="fr-mb-2w">
-          <DsfrButton secondary label="Renseigner saisie détaillée" icon="fr-icon-file-text-fill" @click="gotTo('GestionnaireImportBilansDetailles')" />
-          <p class="fr-text--xs fr-mb-0">Uniquement disponible pour les cantines avec un numéro SIRET.</p>
         </div>
       </ImportCard>
     </div>
