@@ -57,7 +57,6 @@ const success = (count) => {
     @success="success"
     apiUrl="importPurchases"
     apiImportType="siret"
-    apiSchema="2026"
     eventMatomo="import-purchases-siret-success"
   />
   <ImportSuccessModal
