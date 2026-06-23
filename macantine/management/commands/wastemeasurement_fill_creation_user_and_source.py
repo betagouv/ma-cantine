@@ -1,15 +1,14 @@
 import logging
 from collections import Counter
 
-from django.core.management.base import BaseCommand
-
+from common.utils.commands import MaCantineBaseCommand
 from data.utils import has_charfield_missing_query
 from data.models import WasteMeasurement
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Usage:
     - python manage.py wastemeasurement_fill_creation_user_and_source --field creation_user

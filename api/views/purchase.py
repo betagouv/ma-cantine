@@ -49,7 +49,13 @@ class PurchaseCreateView(CreateModelMixin, GenericAPIView):
         serializer.is_valid(raise_exception=True)
         creation_user = self.request.user
         creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-        serializer.save(canteen=canteen, creation_user=creation_user, creation_source=creation_source)
+        creation_source_api_oauth2_application = get_oauth_application(self.request)
+        serializer.save(
+            canteen=canteen,
+            creation_user=creation_user,
+            creation_source=creation_source,
+            creation_source_api_oauth2_application=creation_source_api_oauth2_application,
+        )
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
