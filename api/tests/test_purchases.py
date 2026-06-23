@@ -3,6 +3,7 @@ from django.utils import timezone
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
 from data.models import Canteen, Diagnostic, Purchase
@@ -334,9 +335,11 @@ class PurchaseCreateApiTest(APITestCase):
         body = response.json()
         self.assertNotIn("creation_user", body)
         self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.creation_user, authenticate.user)
         self.assertEqual(purchase.creation_source, CreationSource.APP)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, None)
 
         # cleanup
         Purchase.objects.all().delete()
@@ -347,9 +350,11 @@ class PurchaseCreateApiTest(APITestCase):
         body = response.json()
         self.assertNotIn("creation_user", body)
         self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.creation_user, authenticate.user)
         self.assertEqual(purchase.creation_source, CreationSource.API)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, None)
 
         # cleanup
         Purchase.objects.all().delete()
@@ -439,6 +444,7 @@ class PurchaseUpdateApiTest(APITestCase):
         self.purchase.canteen.managers.add(authenticate.user)
         self.assertEqual(self.purchase.creation_user, self.user)
         self.assertEqual(self.purchase.creation_source, CreationSource.APP)
+        self.assertEqual(self.purchase.creation_source_api_oauth2_application, None)
 
         payload = {
             "description": "Saumon",
@@ -453,9 +459,11 @@ class PurchaseUpdateApiTest(APITestCase):
         body = response.json()
         self.assertNotIn("creation_user", body)
         self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
         self.purchase.refresh_from_db()
         self.assertEqual(self.purchase.creation_user, self.user)  # unchanged
         self.assertEqual(self.purchase.creation_source, CreationSource.APP)  # unchanged
+        self.assertEqual(self.purchase.creation_source_api_oauth2_application, None)  # unchanged
 
 
 class PurchaseDeleteApiTest(APITestCase):

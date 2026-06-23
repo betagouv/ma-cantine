@@ -1,20 +1,20 @@
 import base64
 import os
 from decimal import Decimal
-import requests_mock
 
+import requests_mock
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory, UserFactory
-from data.models import Canteen, Diagnostic, Sector, Teledeclaration
-from data.models.creation_source import CreationSource
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
+from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory, UserFactory
+from data.models import Canteen, Diagnostic, Sector, Teledeclaration
+from data.models.creation_source import CreationSource
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -38,7 +38,7 @@ class CanteenListApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_get_canteens_wrong_token(self):
+    def test_cannot_get_canteens_with_wrong_oauth2_token(self):
         _, token = get_oauth2_token("user:read")
         self.client.credentials(Authorization=f"Bearer {token}")
 
@@ -46,7 +46,7 @@ class CanteenListApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_get_canteens_correct_token(self):
+    def test_get_canteens_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         canteen = CanteenFactory(managers=[user])
 
@@ -153,7 +153,7 @@ class CanteenListPreviewApiTest(APITestCase):
         self.assertEqual(body[0].get("id"), user_canteens[1].id)
         self.assertEqual(body[1].get("id"), user_canteens[0].id)
 
-    def test_canteen_preview_wrong_token(self):
+    def test_cannot_get_canteen_preview_with_wrong_oauth2_token(self):
         user, token = get_oauth2_token("user:read")
         CanteenFactory(managers=[user])
 
@@ -162,7 +162,7 @@ class CanteenListPreviewApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_canteen_preview_correct_token(self):
+    def test_canteen_preview_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         canteen = CanteenFactory(managers=[user])
 
@@ -525,6 +525,8 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(created_canteen.management_type, Canteen.ManagementType.DIRECT)
         self.assertIn(user, created_canteen.managers.all())
         self.assertEqual(created_canteen.creation_user, user)
+        self.assertEqual(created_canteen.creation_source, CreationSource.API)
+        self.assertEqual(created_canteen.creation_source_api_oauth2_application, token.application)
 
     @requests_mock.Mocker()
     @authenticate
@@ -937,6 +939,7 @@ class CanteenUpdateApiTest(APITestCase):
         body = response.json()
         self.assertNotIn("creation_user", body)
         self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
         self.canteen.refresh_from_db()
         self.assertEqual(self.canteen.management_type, Canteen.ManagementType.CONCEDED)
         self.assertEqual(self.canteen.reservation_expe_participant, True)

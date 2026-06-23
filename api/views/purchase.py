@@ -18,6 +18,7 @@ from api.serializers import (
     PurchaseSerializer,
     PurchaseSummarySerializer,
 )
+from api.views.utils import get_oauth_application
 from data.models import Canteen, Diagnostic, Purchase
 from data.models.creation_source import CreationSource
 
@@ -130,7 +131,13 @@ class PurchaseListCreateView(ListCreateAPIView):
             serializer.is_valid(raise_exception=True)
             creation_user = self.request.user
             creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-            serializer.save(canteen=canteen, creation_user=creation_user, creation_source=creation_source)
+            creation_source_api_oauth2_application = get_oauth_application(self.request)
+            serializer.save(
+                canteen=canteen,
+                creation_user=creation_user,
+                creation_source=creation_source,
+                creation_source_api_oauth2_application=creation_source_api_oauth2_application,
+            )
         except ObjectDoesNotExist as e:
             logger.error(
                 f"User {self.request.user.id} attempted to create a purchase in nonexistent canteen {canteen_id}"

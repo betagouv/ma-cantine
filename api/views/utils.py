@@ -2,6 +2,7 @@ import json
 import logging
 
 from djangorestframework_camel_case.render import CamelCaseJSONRenderer
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from simple_history.utils import update_change_reason
 
 logger = logging.getLogger(__name__)
@@ -10,6 +11,14 @@ logger = logging.getLogger(__name__)
 def camelize(data):
     camel_case_bytes = CamelCaseJSONRenderer().render(data)
     return json.loads(camel_case_bytes.decode("utf-8"))
+
+
+def get_oauth_application(request):
+    """Extract OAuth Application object from request if authenticated via token"""
+    if isinstance(request.successful_authenticator, OAuth2Authentication):
+        if request.auth and hasattr(request.auth, "application"):
+            return request.auth.application
+    return None
 
 
 def update_change_reason_with_auth(view, object):

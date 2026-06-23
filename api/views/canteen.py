@@ -46,7 +46,7 @@ from api.serializers import (
     PublicCanteenPreviewSerializer,
     PublicCanteenSerializer,
 )
-from api.views.utils import update_change_reason_with_auth
+from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.api.recherche_entreprises import fetch_geo_data_from_siren, fetch_geo_data_from_siret
 from common.utils import send_mail
 from data.models import Canteen, Diagnostic, ManagerInvitation, Sector, SectorM2M
@@ -300,7 +300,12 @@ class UserCanteensView(ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         creation_user = self.request.user
         creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-        canteen = serializer.save(creation_user=creation_user, creation_source=creation_source)
+        creation_source_api_oauth2_application = get_oauth_application(self.request)
+        canteen = serializer.save(
+            creation_user=creation_user,
+            creation_source=creation_source,
+            creation_source_api_oauth2_application=creation_source_api_oauth2_application,
+        )
         canteen.managers.add(self.request.user)
         update_change_reason_with_auth(self, canteen)
 

@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, WasteMeasurementFactory, UserFactory
+from data.factories import CanteenFactory, UserFactory, WasteMeasurementFactory
 from data.models import WasteMeasurement
 from data.models.creation_source import CreationSource
 
@@ -58,9 +58,6 @@ class WasteMeasurementsListApiTest(APITestCase):
         self.assertEqual(body[1]["id"], measurement_july.id)
 
     def test_get_waste_measurements_via_oauth2(self):
-        """
-        Canteen managers can fetch all the waste measurements for a canteen they manage via oauth2 token
-        """
         user, token = get_oauth2_token("waste_measurements:read")
         self.canteen.managers.add(user)
         measurement_july = WasteMeasurementFactory(
@@ -179,10 +176,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
 
     @authenticate
     def test_create_waste_measurement(self):
-        """
-        When calling this API on a canteen that the user manages
-        we expect a waste_measurement to be created
-        """
         self.canteen.managers.add(authenticate.user)
 
         payload = {
@@ -249,6 +242,8 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         waste_measurement = WasteMeasurement.objects.first()
         self.assertEqual(waste_measurement.creation_user, user)
+        self.assertEqual(waste_measurement.creation_source, CreationSource.API)
+        self.assertEqual(waste_measurement.creation_source_api_oauth2_application, token.application)
 
     @authenticate
     def test_create_waste_measurement_creation_user_and_source(self):
@@ -261,9 +256,11 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         body = response.json()
         self.assertNotIn("creation_user", body)
         self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
         waste_measurement = WasteMeasurement.objects.first()
         self.assertEqual(waste_measurement.creation_user, authenticate.user)
         self.assertEqual(waste_measurement.creation_source, CreationSource.APP)
+        self.assertEqual(waste_measurement.creation_source_api_oauth2_application, None)
 
         # cleanup
         WasteMeasurement.objects.all().delete()
@@ -274,9 +271,11 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         body = response.json()
         self.assertNotIn("creation_user", body)
         self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
         waste_measurement = WasteMeasurement.objects.first()
         self.assertEqual(waste_measurement.creation_user, authenticate.user)
         self.assertEqual(waste_measurement.creation_source, CreationSource.API)
+        self.assertEqual(waste_measurement.creation_source_api_oauth2_application, None)
 
         # cleanup
         WasteMeasurement.objects.all().delete()
@@ -613,9 +612,6 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
 
     @authenticate
     def test_update_waste_measurement(self):
-        """
-        Canteen managers can edit the waste measurement of a canteen they manage
-        """
         self.canteen.managers.add(authenticate.user)
         payload = {"mealCount": 200}
 
@@ -626,9 +622,6 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.assertEqual(body["mealCount"], 200)
 
     def test_update_waste_measurement_via_oauth2(self):
-        """
-        Canteen managers can edit the waste measurement of a canteen they manage via oauth2 token
-        """
         user, token = get_oauth2_token("waste_measurements:write")
         self.canteen.managers.add(user)
         payload = {"mealCount": 200}
@@ -645,6 +638,7 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.canteen.managers.add(authenticate.user)
         self.assertEqual(self.measurement.creation_user, self.user)
         self.assertEqual(self.measurement.creation_source, CreationSource.APP)
+        self.assertEqual(self.measurement.creation_source_api_oauth2_application, None)
 
         payload = {"mealCount": 200, "creationSource": CreationSource.API}
 
@@ -654,9 +648,11 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         body = response.json()
         self.assertNotIn("creation_user", body)
         self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
         self.measurement.refresh_from_db()
         self.assertEqual(self.measurement.creation_user, self.user)  # unchanged
         self.assertEqual(self.measurement.creation_source, CreationSource.APP)  # unchanged
+        self.assertEqual(self.measurement.creation_source_api_oauth2_application, None)  # unchanged
 
     @authenticate
     @freeze_time("2024-08-10")

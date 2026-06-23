@@ -168,7 +168,7 @@ class TestLoggedUserApi(APITestCase):
         self.assertEqual(body["source"], "OTHER")
         self.assertEqual(body["otherSourceDescription"], "Narnia")
 
-    def test_user_update_wrong_token(self):
+    def test_cannot_update_user_with_wrong_oauth2_token(self):
         user, token = get_oauth2_token("user:read")
         self.client.credentials(Authorization=f"Bearer {token}")
         payload = {

@@ -11,6 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.functional import cached_property
+from oauth2_provider.models import Application as OAuth2Application
 from simple_history.models import HistoricalRecords
 from simple_history.utils import update_change_reason
 
@@ -479,6 +480,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         "modification_date",
         "creation_user",
         "creation_source",
+        "creation_source_api_oauth2_application",
         "import_source",
     ]
 
@@ -664,6 +666,14 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         blank=True,
         null=True,
         verbose_name="Source de création de la cantine",
+    )
+    creation_source_api_oauth2_application = models.ForeignKey(
+        OAuth2Application,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="canteens_created",
+        verbose_name="app OAuth2 (API) qui a créé la cantine",
     )
 
     creation_date = models.DateTimeField(auto_now_add=True)

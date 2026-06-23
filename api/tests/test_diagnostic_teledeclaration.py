@@ -255,7 +255,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_teledeclare_with_oauth2_token(self):
+    def test_cannot_teledeclare_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         self.canteen_site.managers.add(user)
@@ -473,7 +473,7 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_cancel_teledeclaration_with_oauth2_token(self):
+    def test_cannot_cancel_teledeclaration_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen_site.managers.add(user)
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
