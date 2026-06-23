@@ -1,20 +1,16 @@
 <script setup>
-import { useRouter } from "vue-router"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 defineProps(["title", "icon", "buttons"])
-
-/* Router */
-const router = useRouter()
-const goTo = (name) => router.push({ name })
 </script>
 <template>
-  <div class="fr-card fr-p-4w">
+  <div class="import-card fr-card fr-px-4w fr-py-2w">
     <div>
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--left fr-mb-2w">
-        <img :src="icon" :alt="`Illustration de ${title}`">
-        <h2 class="fr-h5 fr-text-title--blue-france fr-mb-0 fr-ml-2w">{{ title }}</h2>
+      <div class="import-card__header fr-mb-2w">
+        <h2 class="fr-h5 fr-mb-0">{{ title }}</h2>
+        <img :src="icon" class="import-card__icon" :alt="`Illustration de ${title}`">
       </div>
       <div v-for="button in buttons" :key="button.label" class="fr-mb-2w">
-        <DsfrButton tertiary :label="button.label" :icon="button.icon" @click="goTo(button.route)" />
+        <AppLinkRouter :to="button.route" :title="button.label" :icon="button.icon" />
         <p v-if="button.description" class="fr-text--xs fr-mb-0">{{ button.description }}</p>
       </div>
       <DsfrCallout v-if="$slots.callout" class="fr-mb-0">
@@ -23,3 +19,18 @@ const goTo = (name) => router.push({ name })
     </div>
   </div>
 </template>
+
+<style lang="scss">
+.import-card {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__icon {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+</style>
