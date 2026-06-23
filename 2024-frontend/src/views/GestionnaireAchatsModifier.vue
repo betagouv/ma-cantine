@@ -118,17 +118,16 @@ const goToPurchasesList = () => {
   </section>
   <section class="fr-mt-4w">
     <AppLoader v-if="isLoading" />
-    <div v-else-if="purchaseData.id" class="fr-background-alt--blue-france fr-p-3w fr-grid-row fr-grid-row--center">
-      <PurchaseForm
-        :key="forceRerender"
-        :purchase-data="purchaseData"
-        :showCancelButton="true"
-        :showDeleteButton="true"
-        @sendForm="(payload) => savePurchase(payload)"
-        @cancel="goToPurchasesList"
-        @delete="deletePurchase"
-      />
-    </div>
+    <PurchaseForm
+      v-else-if="purchaseData.id"
+      :key="forceRerender"
+      :purchase-data="purchaseData"
+      :showCancelButton="true"
+      :showDeleteButton="true"
+      @sendForm="(payload) => savePurchase(payload)"
+      @cancel="goToPurchasesList"
+      @delete="deletePurchase"
+    />
     <div v-else-if="purchaseDeleted" class="fr-col-12 fr-col-lg-7">
       <p>
         L'achat a bien été supprimé pour la cantine « {{ canteenName }} ». <br />
