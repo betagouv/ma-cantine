@@ -15,8 +15,8 @@ const route = useRoute()
 const store = useRootStore()
 
 /* Links */
-const canteenButtons = computed(() => {
-  const buttons = [
+const canteenLinks = computed(() => {
+  const links = [
     {
       label: "Créer des cantines",
       icon: "fr-icon-add-line",
@@ -30,17 +30,17 @@ const canteenButtons = computed(() => {
     },
   ]
   if (store.loggedUser.isStaff) {
-    buttons.push({
+    links.push({
       label: "Ajouter des gestionnaires",
       icon: "fr-icon-user-add-fill",
       route: "GestionnaireImportCantinesGestionnaires",
       description: "Uniquement pour les administrateurs et les cantines avec un numéro SIRET.",
     })
   }
-  return buttons
+  return links
 })
 
-const purchasesButtons = [
+const purchasesLinks = [
   {
     label: "Créer des achats pour des cantines avec SIRET",
     icon: "fr-icon-shopping-cart-2-fill",
@@ -53,7 +53,7 @@ const purchasesButtons = [
   },
 ]
 
-const diagnosticsButtons = [
+const diagnosticsLinks = [
   {
     label: "Renseigner saisie simplifiée pour des cantines avec SIRET",
     icon: "fr-icon-file-text-line",
@@ -84,7 +84,7 @@ const diagnosticsButtons = [
   </section>
   <section class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mt-4w">
     <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Cantines" :icon="canteenPicto" :buttons="canteenButtons">
+      <ImportCard title="Cantines" :icon="canteenPicto" :buttons="canteenLinks">
         <template #callout>
           <p class="fr-text--sm">Il n'est pas possible d'utiliser les imports ci-dessous pour des groupes de restaurants satellites.</p>
         </template>
@@ -92,7 +92,7 @@ const diagnosticsButtons = [
     </div>
 
     <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Achats" :icon="purchasesPicto" :buttons="purchasesButtons">
+      <ImportCard title="Achats" :icon="purchasesPicto" :buttons="purchasesLinks">
         <template #callout>
           <p class="fr-mb-1w fr-text--sm">Le format de données des imports achats à été modifié en 2026. Le précédent format reste disponible sur ces pages : </p>
           <ul>
@@ -109,7 +109,7 @@ const diagnosticsButtons = [
     </div>
 
     <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Bilans" :icon="diagnosticsPicto" :buttons="diagnosticsButtons">
+      <ImportCard title="Bilans" :icon="diagnosticsPicto" :buttons="diagnosticsLinks">
         <template #callout>
           <p class="fr-text--sm">Si vous connaissez le total des achats par catégorie EGalim et familles de produits, vous pouvez utiliser la saisie détaillée, sinon utilisez la saisie simplifiée.</p>
         </template>
