@@ -33,6 +33,7 @@ repos:
       - id: check-json
       - id: pretty-format-json
         args: [--autofix, --no-ensure-ascii]
+        exclude: ^2024-frontend/src/data/.*\.json$
 
   # UV
   - repo: https://github.com/astral-sh/uv-pre-commit
