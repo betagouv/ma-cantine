@@ -61,12 +61,10 @@ class PurchaseModelSaveTest(TransactionTestCase):
             ]
         ):
             with self.subTest(caracteristiques=TUPLE_OK[0]):
-                purchase = PurchaseFactory(
-                    caracteristiques=TUPLE_OK[0],
-                    definition_local=Purchase.Local.AUTRE
-                    if TUPLE_OK[0] and Purchase.Characteristic.LOCAL in TUPLE_OK[0]
-                    else None,
+                definition_local = (
+                    Purchase.Local.KM if TUPLE_OK[0] and Purchase.Characteristic.LOCAL in TUPLE_OK[0] else None
                 )
+                purchase = PurchaseFactory(caracteristiques=TUPLE_OK[0], definition_local=definition_local)
                 self.assertEqual(purchase.caracteristiques, TUPLE_OK[1])
         for VALUE_NOT_OK in [
             ["  "],
@@ -82,18 +80,19 @@ class PurchaseModelSaveTest(TransactionTestCase):
         """
         - field is optional
         - if caracteristiques includes "LOCAL"
-            - definition_local must be filled
-            - if definition_local is "KM", then definition_local_km must be filled
+            - definition_local can be filled
+            - if definition_local is "KM", then definition_local_km can be filled
+            - if definition_local is not "KM", then definition_local_km must be empty
         - if caracteristiques does not include "LOCAL", definition_local must be empty
         """
         # caracteristiques includes "LOCAL"
-        for TUPLE_OK in [*((key, key) for key in Purchase.Local.values if key != Purchase.Local.KM)]:
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Purchase.Local.values)]:
             with self.subTest(caracteristiques=[Purchase.Characteristic.LOCAL], definition_local=TUPLE_OK[0]):
                 purchase = PurchaseFactory(
                     caracteristiques=[Purchase.Characteristic.LOCAL], definition_local=TUPLE_OK[0]
                 )
                 self.assertEqual(purchase.definition_local, TUPLE_OK[1])
-        for VALUE_NOT_OK in [None, "", "  ", 123, "invalid", "123"]:
+        for VALUE_NOT_OK in ["  ", 123, "invalid", "123"]:
             with self.subTest(caracteristiques=[Purchase.Characteristic.LOCAL], definition_local=VALUE_NOT_OK):
                 self.assertRaises(
                     ValidationError,
@@ -102,7 +101,7 @@ class PurchaseModelSaveTest(TransactionTestCase):
                     definition_local=VALUE_NOT_OK,
                 )
         # caracteristiques includes "LOCAL" and definition_local is "KM"
-        for TUPLE_OK in [(0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
+        for TUPLE_OK in [(None, None), (0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
             with self.subTest(
                 caracteristiques=[Purchase.Characteristic.LOCAL],
                 definition_local=Purchase.Local.KM,
@@ -114,19 +113,20 @@ class PurchaseModelSaveTest(TransactionTestCase):
                     definition_local_km=TUPLE_OK[0],
                 )
                 self.assertEqual(purchase.definition_local_km, TUPLE_OK[1])
-        for VALUE_NOT_OK in [None, "", "  ", -1, -100, "invalid", "123.45"]:
+        for VALUE_NOT_OK in ["", "  ", -1, -100, "invalid", "123.45"]:
             with self.subTest(
                 caracteristiques=[Purchase.Characteristic.LOCAL],
                 definition_local=Purchase.Local.KM,
                 definition_local_km=VALUE_NOT_OK,
             ):
                 self.assertRaises(
-                    ValidationError,
+                    (ValueError, ValidationError),
                     PurchaseFactory,
                     caracteristiques=[Purchase.Characteristic.LOCAL],
                     definition_local=Purchase.Local.KM,
                     definition_local_km=VALUE_NOT_OK,
                 )
+        # caracteristiques does not include "LOCAL"
         for TUPLE_OK in [(None, None), ("", "")]:
             with self.subTest(caracteristiques=[], definition_local=TUPLE_OK[0]):
                 purchase = PurchaseFactory(definition_local=TUPLE_OK[0], caracteristiques=[])

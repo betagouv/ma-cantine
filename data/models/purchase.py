@@ -151,12 +151,11 @@ class Purchase(SoftDeletionModel):
         LOCAL = "LOCAL", "Produit local"
 
     class Local(models.TextChoices):
-        REGION = "REGION", "Région"
-        DEPARTEMENT = "DEPARTEMENT", "Département"
         PAT = "PAT", "Issu du Projet Alimentaire Territorial (PAT)"
         COMMUNE = "COMMUNE", "Commune"
+        DEPARTEMENT = "DEPARTEMENT", "Département"
+        REGION = "REGION", "Région"
         KM = "KM", "Distance en km"
-        AUTRE = "AUTRE", "Autre"
 
     CHARACTERISTIC_LABELS_BIO = [
         Characteristic.BIO,

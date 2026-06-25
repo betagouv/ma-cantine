@@ -69,10 +69,6 @@
     }
   },
   "definitionLocal": {
-    "autre": {
-      "label": "Autre",
-      "value": "AUTRE"
-    },
     "commune": {
       "label": "Provenant de la même commune",
       "value": "COMMUNE"

@@ -568,7 +568,7 @@ class PurchaseUpdateApiTest(APITestCase):
             "origine": Purchase.Characteristic.FRANCE,
             "est_local": True,
             "est_circuit_court": False,
-            "definition_local": Purchase.Local.AUTRE,
+            "definition_local": Purchase.Local.PAT,
         }
 
         response = self.client.patch(self.url, payload, format="json")
@@ -1105,7 +1105,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
                 Purchase.Characteristic.CIRCUIT_COURT,
                 Purchase.Characteristic.LOCAL,
             ],
-            definition_local=Purchase.Local.AUTRE,
+            definition_local=Purchase.Local.PAT,
             prix_ht=10,
         )
 
@@ -1131,7 +1131,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             date=d,
             famille_produits=Purchase.Family.AUTRES,
             caracteristiques=[Purchase.Characteristic.LOCAL],
-            definition_local=Purchase.Local.AUTRE,
+            definition_local=Purchase.Local.PAT,
             prix_ht=50,
         )
         PurchaseFactory(
@@ -1139,7 +1139,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             date=d,
             famille_produits=Purchase.Family.AUTRES,
             caracteristiques=[Purchase.Characteristic.LOCAL],
-            definition_local=Purchase.Local.AUTRE,
+            definition_local=Purchase.Local.PAT,
             prix_ht=50,
         )
 

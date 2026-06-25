@@ -16,7 +16,7 @@ def migrate_autour_service_to_km(apps, schema_editor):
     )
 
 
-def reverse_migrate(apps, schema_editor):
+def reverse_migrate_autour_service_to_km(apps, schema_editor):
     """
     Reverse
     """
@@ -24,6 +24,26 @@ def reverse_migrate(apps, schema_editor):
     Purchase.objects.filter(definition_local='KM', definition_local_km=200).update(
         definition_local='AUTOUR_SERVICE',
         definition_local_km=None
+    )
+
+
+def migrate_autre_to_km(apps, schema_editor):
+    """
+    AUTRE --> KM
+    """
+    Purchase = apps.get_model('data', 'Purchase')
+    Purchase.objects.filter(definition_local='AUTRE').update(
+        definition_local='KM'
+    )
+
+
+def reverse_migrate_autre_to_km(apps, schema_editor):
+    """
+    Reverse
+    """
+    Purchase = apps.get_model('data', 'Purchase')
+    Purchase.objects.filter(definition_local='KM').update(
+        definition_local='AUTRE'
     )
 
 
@@ -37,12 +57,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchase',
             name='definition_local',
-            field=models.CharField(blank=True, choices=[('REGION', 'Région'), ('DEPARTEMENT', 'Département'), ('PAT', 'Issu du Projet Alimentaire Territorial (PAT)'), ('COMMUNE', 'Commune'), ('KM', 'Distance en km'), ('AUTRE', 'Autre')], max_length=255, null=True, verbose_name='définition de local'),
+            field=models.CharField(blank=True, choices=[('PAT', 'Issu du Projet Alimentaire Territorial (PAT)'), ('COMMUNE', 'Commune'), ('DEPARTEMENT', 'Département'), ('REGION', 'Région'), ('KM', 'Distance en km')], max_length=255, null=True, verbose_name='définition de local'),
         ),
         migrations.AddField(
             model_name='purchase',
             name='definition_local_km',
             field=models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0)], verbose_name='définition de local (distance en km)'),
         ),
-        migrations.RunPython(migrate_autour_service_to_km, reverse_migrate),
+        migrations.RunPython(migrate_autour_service_to_km, reverse_migrate_autour_service_to_km),
+        migrations.RunPython(migrate_autre_to_km, reverse_migrate_autre_to_km),
     ]
