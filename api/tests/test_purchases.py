@@ -568,7 +568,7 @@ class PurchaseUpdateApiTest(APITestCase):
             "origine": Purchase.Characteristic.FRANCE,
             "est_local": True,
             "est_circuit_court": False,
-            "definition_local": Purchase.Local.AUTRE,
+            "definition_local": Purchase.Local.PAT,
         }
 
         response = self.client.patch(self.url, payload, format="json")
@@ -653,7 +653,7 @@ class PurchaseOldCreateApiTest(APITestCase):
             "price_ht": 15.23,
             "family": "PRODUITS_DE_LA_MER",
             "characteristics": ["BIO", "LOCAL"],
-            "local_definition": "AUTOUR_SERVICE",
+            "local_definition": "COMMUNE",
         }
 
     def test_cannot_create_purchase_if_unauthenticated(self):
@@ -683,8 +683,9 @@ class PurchaseOldCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         purchase = Purchase.objects.first()
-        self.assertEqual(purchase.definition_local, Purchase.Local.AUTOUR_SERVICE)
         self.assertEqual(len(purchase.caracteristiques), 2)
+        self.assertEqual(purchase.definition_local, Purchase.Local.COMMUNE)
+        self.assertEqual(purchase.definition_local_km, None)
 
     @authenticate
     def test_create_purchase_creation_user_and_source(self):
@@ -1104,7 +1105,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
                 Purchase.Characteristic.CIRCUIT_COURT,
                 Purchase.Characteristic.LOCAL,
             ],
-            definition_local=Purchase.Local.AUTRE,
+            definition_local=Purchase.Local.PAT,
             prix_ht=10,
         )
 
@@ -1130,7 +1131,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             date=d,
             famille_produits=Purchase.Family.AUTRES,
             caracteristiques=[Purchase.Characteristic.LOCAL],
-            definition_local=Purchase.Local.AUTRE,
+            definition_local=Purchase.Local.PAT,
             prix_ht=50,
         )
         PurchaseFactory(
@@ -1138,7 +1139,7 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             date=d,
             famille_produits=Purchase.Family.AUTRES,
             caracteristiques=[Purchase.Characteristic.LOCAL],
-            definition_local=Purchase.Local.AUTRE,
+            definition_local=Purchase.Local.PAT,
             prix_ht=50,
         )
 
