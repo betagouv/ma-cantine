@@ -18,6 +18,7 @@ from simple_history.utils import update_change_reason
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
+from data.models import AuthenticationMethodHistoricalRecords
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region, get_region_from_department
 from data.models.sector import (
@@ -678,7 +679,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[AuthenticationMethodHistoricalRecords])
 
     objects = CanteenManager.from_queryset(CanteenQuerySet)()
     all_objects = CanteenManager.from_queryset(CanteenQuerySet)(alive_only=False)

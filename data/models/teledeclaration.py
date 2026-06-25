@@ -190,11 +190,7 @@ class Teledeclaration(models.Model):
     yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="Nombre de repas servis par an")
     meal_price = models.FloatField(null=True, blank=True, verbose_name="Coût denrées")
 
-    history = HistoricalRecords(
-        bases=[
-            AuthenticationMethodHistoricalRecords,
-        ]
-    )
+    history = HistoricalRecords(bases=[AuthenticationMethodHistoricalRecords])
 
     status = models.CharField(
         max_length=255,
