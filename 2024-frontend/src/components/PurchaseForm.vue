@@ -248,7 +248,10 @@ const formatPayload = (form) => {
       <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
         <div class="fr-col-12 fr-col-md-4">
           <p class="fr-legend-text fr-mb-1w">Facture</p>
-          <p class="fr-hint-text fr-mb-2w">Ce champ n'est pas obligatoire, vous pouvez le laisser vide si vous n'avez pas de facture pour cet achat, ou si vous utilisez un autre moyen pour stocker vos justificatifs.</p>
+          <p class="fr-hint-text fr-mb-2w">Ce champ est facultatif.
+Il n'est pas nécessaire d'importer ses factures pdf si vous disposez déjà d'un espace de stockage fiable et sécurisé (sur votre ordinateur ou autre logiciel par exemple).
+
+</p>
         </div>
         <div class="fr-col-12 fr-col-md-4">
           <DsfrFileUpload
