@@ -52,11 +52,11 @@ const resetForm = () => {
 </script>
 
 <template>
-  <section class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
+  <section class="fr-grid-row fr-grid-row--middle fr-mb-4w">
     <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
-      <h1>{{ route.meta.title }} pour la cantine «&nbsp;{{ canteenName }}&nbsp;»</h1>
+      <h1>{{ route.meta.title }}</h1>
       <p>
-        Enregistrez ici les achats alimentaires de votre établissement pour suivre et faciliter la réalisation de votre déclaration.
+        Pour la cantine «&nbsp;{{ canteenName }}&nbsp;»
       </p>
     </div>
     <div class="fr-col-offset-md-1"></div>
