@@ -52,8 +52,6 @@ const purchasesLinks = [
     route: "GestionnaireImportAchatsID",
   },
 ]
-
-const diagnosticsLinks = []
 </script>
 
 <template>
@@ -77,10 +75,10 @@ const diagnosticsLinks = []
         <p class="fr-mb-1w fr-text--sm">Le format de données des imports achats à été modifié en 2026. L'import avec l'ancien format reste disponible sur les pages suivantes : </p>
         <ul>
           <li>
-            <AppLinkRouter class="fr-text--sm" :to="{to: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des cantines avec SIRET (ancien format)" />
+            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des cantines avec SIRET (ancien format)" />
           </li>
           <li>
-            <AppLinkRouter class="fr-text--sm" :to="{to: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des groupes ou cantines sans SIRET (ancien format)" />
+            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des groupes ou cantines sans SIRET (ancien format)" />
           </li>
         </ul>
         <p class="fr-mt-2w fr-text--sm">À la fin de la campagne de télédéclaration 2027 ces pages seront supprimées.</p>
@@ -90,7 +88,6 @@ const diagnosticsLinks = []
     <ImportCard
       title="Bilans"
       :icon="diagnosticsPicto"
-      :buttons="diagnosticsLinks"
     >
       <template #disabled>
         <p>
