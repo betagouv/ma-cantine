@@ -83,14 +83,14 @@ class PurchasesSchemaTest(TestCase):
         for schema_name, schema in self.schemas.items():
             pattern = self._pattern_for(schema, "definition_local")
             for VALUE_OK in [
-                "AUTOUR_SERVICE",
+                "PAT",
+                " PAT ",
+                "COMMUNE",
                 "DEPARTEMENT",
                 "DEPARTEMENT ",
                 " DEPARTEMENT ",
                 "REGION",
-                "PAT",
-                " PAT ",
-                "AUTRE",
+                "KM",
             ]:
                 with self.subTest(schema=schema_name, VALUE=VALUE_OK):
                     self.assertTrue(re.match(pattern, VALUE_OK))
