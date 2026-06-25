@@ -1,6 +1,5 @@
 {
   "accueil": "https://ma-cantine.crisp.help/fr/",
-  "ajouterAchat": "https://ma-cantine.crisp.help/fr/article/ajouter-manuellement-un-produit-via-loutil-de-suivi-des-achats-egalim-zdbhv7/",
   "bienDemarrer": "https://ma-cantine.crisp.help/fr/category/bien-demarrer-1fn9r2h/",
   "calculerNombreCouverts": "https://ma-cantine.crisp.help/fr/article/bien-calculer-son-nombre-de-couverts-1w58ozp/?bust=1766138160563",
   "correctionCampaign": "https://ma-cantine.crisp.help/fr/article/la-campagne-de-correction-pour-ma-teledeclaration-faq-1sk8ipw/",
@@ -14,6 +13,7 @@
   "lutteGaspillageAlimentaire": "https://ma-cantine.crisp.help/fr/article/comprendre-mes-obligations-lutte-contre-le-gaspillage-alimentaire-5ekzj7/",
   "qualiteDurabiliteProduits": "https://ma-cantine.crisp.help/fr/article/comprendre-mes-obligations-qualite-et-durabilite-des-produits-w3xg0f/",
   "rapportsBilansStatistiquesEgalim": "https://ma-cantine.crisp.help/fr/article/rapports-bilans-statistiques-egalim-de-la-restauration-collective-18z8ru0/",
+  "suiviAchatsEgalim": "https://ma-cantine.crisp.help/fr/category/suivis-des-achats-l57vl7/",
   "teledeclaration": "https://ma-cantine.crisp.help/fr/category/teledeclaration-18r0z84/",
   "trouverIdCantine": "https://ma-cantine.crisp.help/fr/article/ou-trouver-lid-de-ma-cantine-ou-de-mon-groupe-th6t5u/"
 }

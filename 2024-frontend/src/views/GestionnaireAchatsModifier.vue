@@ -108,8 +108,8 @@ const goToPurchasesList = () => {
     <div class="fr-col-offset-md-1"></div>
     <AppRessources>
       <li>
-        <a :href="documentation.ajouterAchat" target="_blank">
-          Tutoriel pour ajouter un achat manuellement
+        <a :href="documentation.suiviAchatsEgalim" target="_blank">
+          En savoir plus sur l'outil de suivi des achats EGalim
         </a>
       </li>
       <li>
