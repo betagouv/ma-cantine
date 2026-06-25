@@ -98,15 +98,18 @@ const goToPurchasesList = () => {
 </script>
 
 <template>
-  <section class="fr-grid-row fr-grid-row--bottom">
+  <section class="fr-grid-row fr-grid-row--middle">
     <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
-      <h1>{{ route.meta.title }} pour la cantine «&nbsp;{{ canteenName }}&nbsp;»</h1>
+      <h1>{{ route.meta.title }}</h1>
+      <p>
+        Pour la cantine «&nbsp;{{ canteenName }}&nbsp;»
+      </p>
     </div>
     <div class="fr-col-offset-md-1"></div>
     <AppRessources>
       <li>
-        <a :href="documentation.ajouterAchat" target="_blank">
-          Tutoriel pour ajouter un achat manuellement
+        <a :href="documentation.suiviAchatsEgalim" target="_blank">
+          En savoir plus sur l'outil de suivi des achats EGalim
         </a>
       </li>
       <li>
@@ -118,17 +121,16 @@ const goToPurchasesList = () => {
   </section>
   <section class="fr-mt-4w">
     <AppLoader v-if="isLoading" />
-    <div v-else-if="purchaseData.id" class="fr-background-alt--blue-france fr-p-3w fr-grid-row fr-grid-row--center">
-      <PurchaseForm
-        :key="forceRerender"
-        :purchase-data="purchaseData"
-        :showCancelButton="true"
-        :showDeleteButton="true"
-        @sendForm="(payload) => savePurchase(payload)"
-        @cancel="goToPurchasesList"
-        @delete="deletePurchase"
-      />
-    </div>
+    <PurchaseForm
+      v-else-if="purchaseData.id"
+      :key="forceRerender"
+      :purchase-data="purchaseData"
+      :showCancelButton="true"
+      :showDeleteButton="true"
+      @sendForm="(payload) => savePurchase(payload)"
+      @cancel="goToPurchasesList"
+      @delete="deletePurchase"
+    />
     <div v-else-if="purchaseDeleted" class="fr-col-12 fr-col-lg-7">
       <p>
         L'achat a bien été supprimé pour la cantine « {{ canteenName }} ». <br />

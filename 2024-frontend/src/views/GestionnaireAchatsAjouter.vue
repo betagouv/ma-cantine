@@ -52,18 +52,18 @@ const resetForm = () => {
 </script>
 
 <template>
-  <section class="fr-grid-row fr-grid-row--bottom">
+  <section class="fr-grid-row fr-grid-row--middle fr-mb-4w">
     <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
-      <h1>{{ route.meta.title }} pour la cantine «&nbsp;{{ canteenName }}&nbsp;»</h1>
+      <h1>{{ route.meta.title }}</h1>
       <p>
-        Enregistrez ici les achats alimentaires de votre établissement pour suivre et faciliter la réalisation de votre déclaration.
+        Pour la cantine «&nbsp;{{ canteenName }}&nbsp;»
       </p>
     </div>
     <div class="fr-col-offset-md-1"></div>
     <AppRessources>
       <li>
-        <a :href="documentation.ajouterAchat" target="_blank">
-          Tutoriel pour ajouter un achat manuellement
+        <a :href="documentation.suiviAchatsEgalim" target="_blank">
+          En savoir plus sur l'outil de suivi des achats EGalim
         </a>
       </li>
       <li>
@@ -73,13 +73,9 @@ const resetForm = () => {
       </li>
     </AppRessources>
   </section>
-  <section
-    class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
-  >
-    <PurchaseForm
-      :showCreateButton="true"
-      :key="forceRerender"
-      @sendForm="(payload) => savePurchase(payload)"
-    />
-  </section>
+  <PurchaseForm
+    :showCreateButton="true"
+    :key="forceRerender"
+    @sendForm="(payload) => savePurchase(payload)"
+  />
 </template>

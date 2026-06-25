@@ -137,30 +137,22 @@ const formatPayload = (form) => {
 </script>
 
 <template>
-  <form class="purchase-form fr-p-2w fr-p-md-7w fr-col-12 fr-col-lg-7 fr-background-default--grey fr-mt-4w" @submit.prevent="">
-    <DsfrInputGroup
-      v-model="form.description"
-      label="Description du produit *"
-      label-visible
-      list="descriptions"
-      placeholder="Yaourts bio, légumes bio de juin..."
-      :error-message="formatError(v$.description)"
-    />
-    <datalist id="descriptions">
-      <option v-for="description in autocompleteOptions.descriptions" :key="description" :value="description"></option>
-    </datalist>
-    <DsfrInputGroup
-      v-model="form.provider"
-      label="Fournisseur *"
-      label-visible
-      list="providers"
-      :error-message="formatError(v$.provider)"
-    />
-    <datalist id="providers">
-      <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
-    </datalist>
-    <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
-      <div class="fr-col-12 fr-col-md-6">
+  <form class="purchase-form" @submit.prevent="">
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-12 fr-col-md-8">
+        <DsfrInputGroup
+          v-model="form.description"
+          label="Description du produit *"
+          label-visible
+          list="descriptions"
+          placeholder="Yaourts bio, légumes bio de juin..."
+          :error-message="formatError(v$.description)"
+        />
+        <datalist id="descriptions">
+          <option v-for="description in autocompleteOptions.descriptions" :key="description" :value="description"></option>
+        </datalist>
+      </div>
+      <div class="fr-col-12 fr-col-md-4">
         <DsfrInputGroup
           v-model.number="form.priceHt"
           type="number"
@@ -169,7 +161,21 @@ const formatPayload = (form) => {
           :error-message="formatError(v$.priceHt)"
         />
       </div>
-      <div class="fr-col-12 fr-col-md-6">
+    </div>
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-12 fr-col-md-8">
+        <DsfrInputGroup
+          v-model="form.provider"
+          label="Fournisseur *"
+          label-visible
+          list="providers"
+          :error-message="formatError(v$.provider)"
+        />
+        <datalist id="providers">
+          <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
+        </datalist>
+      </div>
+      <div class="fr-col-12 fr-col-md-4">
         <DsfrInputGroup
           v-model="form.date"
           type="date"
@@ -180,13 +186,71 @@ const formatPayload = (form) => {
         />
       </div>
     </div>
-    <div class="fr-mb-3w">
-      <p class="fr-legend-text fr-mb-1w">Facture</p>
-      <div class="fr-grid-row fr-grid-row--top fr-grid-row--gutters">
-        <div v-if="form.invoiceUrl" class="fr-col-12 fr-col-md-6">
-          <p class="fr-mb-2w">Vous avez déjà importé une facture pour cet achat, accéder au fichier en <a :href="form.invoiceUrl" target="_blank">cliquant ici</a>.</p>
+
+    <DsfrRadioButtonSet
+      class="purchase-form__inline-col"
+      v-model="form.family"
+      legend="Famille de produit *"
+      inline
+      :options="familleProduitOptions"
+      :error-message="formatError(v$.family)"
+    />
+
+    <DsfrCheckboxSet
+      class="purchase-form__inline-col"
+      v-model="form.characteristicsEgalim"
+      legend="Catégories EGalim"
+      :options="categoriesEgalimOptions"
+      small
+      inline
+    />
+
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-12 fr-col-md-4">
+        <DsfrSelect
+          v-model="form.characteristicsOrigines"
+          label="Origine"
+          :options="[{ value: '', text: '--' }, ...categoriesOriginesOptions]"
+        />
+      </div>
+      <div class="fr-col-12 fr-col-md-4">
+        <DsfrCheckboxSet
+          v-model="form.characteristicsCircuitCourt"
+          legend="Circuit court"
+          :options="estCircuitCourtOptions"
+          small
+          inline
+        />
+      </div>
+      <div class="fr-col-12 fr-col-md-4">
+        <DsfrCheckboxSet
+          v-model="form.characteristicsLocal"
+          legend="« Local »"
+          :options="estLocalOptions"
+          small
+          inline
+          class="fr-mb-n2w"
+          @change="onLocalChange"
+        />
+        <DsfrSelect
+          v-if="showLocalDefinition"
+          v-model="form.localDefinition"
+          label="Précisions *"
+          hint="Précisez la provenance du produit"
+          labelVisible
+          :options="definitionLocalOptions"
+          :error-message="formatError(v$.localDefinition)"
+        />
+      </div>
+    </div>
+
+    <div class="fr-card fr-p-3w">
+      <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
+        <div class="fr-col-12 fr-col-md-4">
+          <p class="fr-legend-text fr-mb-1w">Facture</p>
+          <p class="fr-hint-text fr-mb-2w">Ce champ est facultatif. Il n'est pas nécessaire d'importer ses factures pdf si vous disposez déjà d'un espace de stockage fiable et sécurisé (sur votre ordinateur ou autre logiciel par exemple).</p>
         </div>
-        <div class="fr-col-12" :class="{ 'fr-col-md-6': form.invoiceUrl }">
+        <div class="fr-col-12 fr-col-md-4">
           <DsfrFileUpload
             v-model="invoiceFileInputValue"
             :label="form.invoiceUrl ? 'Télécharger un nouveau fichier' : 'Télécharger un fichier'"
@@ -196,54 +260,14 @@ const formatPayload = (form) => {
             @change="onInvoiceFileChange"
           />
         </div>
+        <div class="fr-col-12 fr-col-md-4">
+          <div v-if="form.invoiceUrl">
+            <p class="fr-mb-2w">Vous avez déjà importé une facture pour cet achat : <a :href="form.invoiceUrl" target="_blank">voir le fichier</a>.</p>
+          </div>
+       </div>
       </div>
     </div>
-    <DsfrRadioButtonSet
-      v-model="form.family"
-      legend="Famille de produit *"
-      :options="familleProduitOptions"
-      :error-message="formatError(v$.family)"
-    />
 
-    <DsfrCheckboxSet
-      v-model="form.characteristicsEgalim"
-      legend="Catégories EGalim"
-      :options="categoriesEgalimOptions"
-      small
-    />
-
-    <DsfrSelect
-      v-model="form.characteristicsOrigines"
-      label="Origine"
-      :options="[{ value: '', text: '--' }, ...categoriesOriginesOptions]"
-    />
-
-    <DsfrCheckboxSet
-      v-model="form.characteristicsCircuitCourt"
-      legend="Circuit court"
-      :options="estCircuitCourtOptions"
-      small
-      inline
-    />
-
-    <DsfrCheckboxSet
-      v-model="form.characteristicsLocal"
-      legend="« Local »"
-      :options="estLocalOptions"
-      small
-      inline
-      class="fr-mb-n2w"
-      @change="onLocalChange"
-    />
-    <DsfrSelect
-      v-if="showLocalDefinition"
-      v-model="form.localDefinition"
-      label="Précisions *"
-      hint="Précisez la provenance du produit"
-      labelVisible
-      :options="definitionLocalOptions"
-      :error-message="formatError(v$.localDefinition)"
-    />
     <div class="fr-mt-6w ma-cantine--flex-end">
       <DsfrButton
         v-if="showDeleteButton"
@@ -283,6 +307,15 @@ const formatPayload = (form) => {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  &__inline-col {
+    .fr-fieldset {
+      align-items: flex-start !important;
+    }
+    .fr-fieldset__element--inline {
+      width: 33% !important;
+    }
   }
 }
 </style>
