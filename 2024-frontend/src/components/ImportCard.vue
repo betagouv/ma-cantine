@@ -3,23 +3,26 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
 defineProps(["title", "icon", "buttons", "disabled"])
 </script>
 <template>
-  <div class="import-card fr-card fr-px-4w fr-py-2w" :class="{ 'fr-background-alt--grey': disabled }">
-    <div>
-      <div class="import-card__header fr-mb-2w">
-        <h2 class="fr-h5 fr-mb-0">{{ title }}</h2>
-        <img :src="icon" class="import-card__icon" :alt="`Illustration de ${title}`">
+  <div class="import-card fr-card fr-px-4w fr-py-2w fr-mb-2w" :class="{ 'fr-background-alt--grey': disabled }">
+    <div class="import-card__header fr-mb-2w">
+      <h2 class="fr-h5 fr-mb-0">{{ title }} <DsfrBadge v-if="disabled" type="neutral" label="Non disponible" class="fr-ml-2w" /></h2>
+      <img :src="icon" class="import-card__icon" :alt="`Illustration de ${title}`">
+    </div>
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-12" :class="{ 'fr-col-md-6': $slots.callout }">
+        <p v-if="disabled" class="fr-text--sm fr-mb-0">{{ disabled }}</p>
+        <ul class="ma-cantine--unstyled-list fr-mb-3w">
+          <li v-for="button in buttons" :key="button.label" class="fr-mb-1w">
+            <AppLinkRouter :to="{name: button.route}" :title="button.label" :icon="button.icon" />
+            <p v-if="button.description" class="fr-text--xs fr-mb-0">{{ button.description }}</p>
+          </li>
+        </ul>
       </div>
-      <div v-if="disabled">
-        <DsfrBadge type="neutral" label="Non disponible" />
-        <p class="fr-text--sm fr-mt-2w">{{ disabled }}</p>
+      <div class="fr-col-12 fr-col-md-6" v-if="$slots.callout">
+        <DsfrCallout class="fr-mb-0">
+          <slot name="callout"></slot>
+        </DsfrCallout>
       </div>
-      <div v-for="button in buttons" :key="button.label" class="fr-mb-2w">
-        <AppLinkRouter :to="{name: button.route}" :title="button.label" :icon="button.icon" />
-        <p v-if="button.description" class="fr-text--xs fr-mb-0">{{ button.description }}</p>
-      </div>
-      <DsfrCallout v-if="$slots.callout" class="fr-mb-0">
-        <slot name="callout"></slot>
-      </DsfrCallout>
     </div>
   </div>
 </template>

@@ -65,39 +65,33 @@ const diagnosticsLinks = []
       <DsfrBadge class="fr-mr-1v" type="info" label="CSV" no-icon />.
     </p>
   </section>
-  <section class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mt-4w">
-    <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Cantines" :icon="canteenPicto" :buttons="canteenLinks">
-        <template #callout>
-          <p class="fr-text--sm">Il n'est pas possible d'utiliser les imports ci-dessus pour des groupes de restaurants satellites.</p>
-        </template>
-      </ImportCard>
-    </div>
+  <section class="fr-mt-4w">
+    <ImportCard title="Cantines" :icon="canteenPicto" :buttons="canteenLinks">
+      <template #callout>
+        <p class="fr-text--sm">Il n'est pas possible d'utiliser ces imports pour des groupes de restaurants satellites.</p>
+      </template>
+    </ImportCard>
 
-    <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Achats" :icon="purchasesPicto" :buttons="purchasesLinks">
-        <template #callout>
-          <p class="fr-mb-1w fr-text--sm">Le format de données des imports achats à été modifié en 2026. L'import avec l'ancien format reste disponible sur les pages suivantes : </p>
-          <ul>
-            <li>
-              <AppLinkRouter class="fr-text--sm" :to="{to: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des cantines avec SIRET (ancien format)" />
-            </li>
-            <li>
-              <AppLinkRouter class="fr-text--sm" :to="{to: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des groupes ou cantines sans SIRET (ancien format)" />
-            </li>
-          </ul>
-          <p class="fr-mt-2w fr-text--sm">À la fin de la campagne de télédéclaration 2027 ces pages seront supprimées.</p>
-        </template>
-      </ImportCard>
-    </div>
+    <ImportCard title="Achats" :icon="purchasesPicto" :buttons="purchasesLinks">
+      <template #callout>
+        <p class="fr-mb-1w fr-text--sm">Le format de données des imports achats à été modifié en 2026. L'import avec l'ancien format reste disponible sur les pages suivantes : </p>
+        <ul>
+          <li>
+            <AppLinkRouter class="fr-text--sm" :to="{to: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des cantines avec SIRET (ancien format)" />
+          </li>
+          <li>
+            <AppLinkRouter class="fr-text--sm" :to="{to: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des groupes ou cantines sans SIRET (ancien format)" />
+          </li>
+        </ul>
+        <p class="fr-mt-2w fr-text--sm">À la fin de la campagne de télédéclaration 2027 ces pages seront supprimées.</p>
+      </template>
+    </ImportCard>
 
-    <div class="fr-col-12 fr-col-md-4">
-      <ImportCard
-        title="Bilans"
-        :icon="diagnosticsPicto"
-        :buttons="diagnosticsLinks"
-        disabled="L'import de bilans est possible uniquement lors des campagnes de télédéclaration EGalim. Les bilans de l'année n ne peuvent être importés qu'en début d'année n+1."
-      />
-    </div>
+    <ImportCard
+      title="Bilans"
+      :icon="diagnosticsPicto"
+      :buttons="diagnosticsLinks"
+      disabled="L'import de bilans est possible uniquement lors des campagnes de télédéclaration EGalim. Les bilans de l'année n ne peuvent être importés qu'en début d'année n+1."
+    />
   </section>
 </template>
