@@ -360,7 +360,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
-        self.assertEqual(len(errors), 5)
+        self.assertEqual(len(errors), 8)
         self.assertEqual(
             errors.pop(0)["message"], "Une cantine avec le siret « 21010034300016 » n'existe pas sur la plateforme."
         )
@@ -379,7 +379,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
-        self.assertEqual(len(errors), 5)
+        self.assertEqual(len(errors), 8)
         self.assertEqual(errors.pop(0)["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
     @authenticate
@@ -465,11 +465,11 @@ class PurchasesImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 5)
+        self.assertEqual(Purchase.objects.count(), 8)
         self.assertFalse(ImportFailure.objects.exists())
         body = response.json()
         errors = body["errors"]
-        self.assertEqual(body["count"], 5)
+        self.assertEqual(body["count"], 8)
         self.assertEqual(len(errors), 0, errors)
         self.assertIn("seconds", body)
 
@@ -485,17 +485,30 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertIsNotNone(purchase.import_source)
         self.assertEqual(purchase.creation_user, authenticate.user)
         self.assertEqual(purchase.creation_source, CreationSource.IMPORT)
-        # purchase with definition_local empty
-        purchase = Purchase.objects.filter(description="Pommes, vertes 1").first()
-        self.assertEqual(purchase.canteen.siret, "21010034300016")
-        self.assertEqual(purchase.famille_produits, Purchase.Family.PRODUITS_LAITIERS)
-        self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.RUP])
-        self.assertEqual(purchase.definition_local, "")
         # purchase with characteristics empty
-        purchase = Purchase.objects.filter(description="Pommes, vertes 4").first()
+        purchase = Purchase.objects.filter(description="Pommes, vertes 1").first()
         self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.famille_produits, Purchase.Family.AUTRES)
         self.assertEqual(purchase.caracteristiques, [])
+        # purchase with characteristics RUP
+        purchase = Purchase.objects.filter(description="Pommes, vertes 2").first()
+        self.assertEqual(purchase.canteen.siret, "21010034300016")
+        self.assertEqual(purchase.famille_produits, Purchase.Family.PRODUITS_LAITIERS)
+        self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.RUP])
+        # purchase with definition_local empty
+        purchase = Purchase.objects.filter(description="Pommes, vertes 4").first()
+        self.assertEqual(purchase.definition_local, "")
+        # purchase with definition_local COMMUNE
+        purchase = Purchase.objects.filter(description="Pommes, vertes 5").first()
+        self.assertEqual(purchase.definition_local, Purchase.Local.COMMUNE)
+        # purchase with definition_local KM
+        purchase = Purchase.objects.filter(description="Pommes, vertes 6").first()
+        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local_km, None)
+        # purchase with definition_local KM & 200
+        purchase = Purchase.objects.filter(description="Pommes, vertes 7").first()
+        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local_km, 200)
         # Test that the purchase import source contains the complete file digest
         filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()
         filehash_md5 = hashlib.md5(filebytes).hexdigest()
@@ -602,7 +615,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         with open(file_path) as purchase_file:
             _ = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
-        self.assertEqual(_process_chunk_mock.call_count, 5)
+        self.assertEqual(_process_chunk_mock.call_count, 8)
 
     @authenticate
     def test_warn_duplicate_file(self):
@@ -618,7 +631,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 5)
+        self.assertEqual(Purchase.objects.count(), 8)
         self.assertFalse(ImportFailure.objects.exists())
 
         # second upload: duplicate warning
@@ -626,15 +639,15 @@ class PurchasesImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 5)  # no additional purchases created
+        self.assertEqual(Purchase.objects.count(), 8)  # no additional purchases created
         assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(errors.pop(0)["message"], "Ce fichier a déjà été utilisé pour un import")
         self.assertEqual(body["count"], 0)
         self.assertTrue(body["duplicateFile"])
-        self.assertEqual(len(body["duplicatePurchases"]), 5)
-        self.assertEqual(body["duplicatePurchaseCount"], 5)
+        self.assertEqual(len(body["duplicatePurchases"]), 8)
+        self.assertEqual(body["duplicatePurchaseCount"], 8)
 
     @authenticate
     def test_round_cents(self):

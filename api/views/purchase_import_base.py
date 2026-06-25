@@ -69,6 +69,11 @@ class BasePurchasesImportView(BaseImportView):
         """Return the `definition_local` string for this row (or empty string)."""
         pass
 
+    @abstractmethod
+    def _get_definition_local_km(self, row):
+        """Return the `definition_local_km` string for this row (or empty string)."""
+        pass
+
     def _process_file(self, data):
         """Process file with chunking for better performance"""
         chunk = []
@@ -172,6 +177,7 @@ class BasePurchasesImportView(BaseImportView):
             famille_produits=famille_produits.strip(),
             caracteristiques=self._get_caracteristiques(row),
             definition_local=self._get_definition_local(row),
+            definition_local_km=self._get_definition_local_km(row),
             import_source=self.tmp_id,
             creation_user=self.request.user,
             creation_source=CreationSource.IMPORT,
