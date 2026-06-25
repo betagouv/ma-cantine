@@ -3,7 +3,7 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
 defineProps(["title", "icon", "buttons"])
 </script>
 <template>
-  <div class="import-card fr-card fr-px-4w fr-py-2w fr-mb-2w" :class="{ 'fr-background-alt--grey': disabled }">
+  <div class="import-card fr-card fr-px-4w fr-py-2w fr-mb-2w" :class="{ 'fr-background-alt--grey': $slots.disabled }">
     <div class="import-card__header fr-mb-2w">
       <h2 class="fr-h5 fr-mb-0">
         {{ title }}
