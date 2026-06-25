@@ -93,12 +93,12 @@ const onLocalChange = () => {
 /* Form submission */
 const isSaving = ref(false)
 
-const validateForm = async (action) => {
+const validateForm = async () => {
   const isValid = await v$.value.$validate()
   if (!isValid) return
   isSaving.value = true
   const payload = formatPayload(form)
-  emit("sendForm", { form: payload, action })
+  emit("sendForm", payload)
 }
 
 const formatPayload = (form) => {
@@ -241,7 +241,7 @@ const formatPayload = (form) => {
         :disabled="isSaving"
         label="Enregistrer"
         icon="fr-icon-save-line"
-        @click="validateForm('go-to-purchases-list')"
+        @click="validateForm()"
       />
     </div>
   </form>

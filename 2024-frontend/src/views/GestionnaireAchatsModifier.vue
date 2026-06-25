@@ -37,8 +37,7 @@ const loadPurchase = async () => {
 onMounted(loadPurchase)
 
 /* Save */
-const savePurchase = async (props) => {
-  const { form } = props
+const savePurchase = async (form) => {
   const response = await purchasesService.updatePurchase(form, purchaseId)
 
   if (!response?.id) {
