@@ -174,22 +174,33 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(AUTOUR_SERVICE|DEPARTEMENT|REGION|PAT|AUTRE) *$",
+        "pattern": "^ *(PAT|COMMUNE|DEPARTEMENT|REGION|KM) *$",
         "required": false
       },
-      "description": "Obligatoire si l'achat est renseigné comme 'est_local'",
+      "description": "Facultatif. Seulement si l'achat est renseigné comme 'est_local'",
       "doc_enum": [
-        "AUTOUR_SERVICE",
+        "PAT",
+        "COMMUNE",
         "DEPARTEMENT",
         "REGION",
-        "PAT",
-        "AUTRE"
+        "KM"
       ],
-      "example": "AUTOUR_SERVICE",
+      "example": "PAT",
       "format": "default",
       "name": "definition_local",
       "title": "Définition de local",
       "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Facultatif. Seulement si l'achat est renseigné comme 'est_local' et que la définition de local est 'KM'",
+      "example": "50",
+      "format": "default",
+      "name": "definition_local_km",
+      "title": "Distance en kilomètres",
+      "type": "number"
     }
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",

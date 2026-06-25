@@ -29,4 +29,13 @@ class PurchasesImportOldView(BasePurchasesImportView):
         return [c.strip() for c in row[6].split(",")] if row[6] else []
 
     def _get_definition_local(self, row):
-        return row[7].strip() if row[7] else None
+        definition_local = row[7].strip() if row[7] else None
+        if definition_local in ["AUTOUR_SERVICE", "AUTRE"]:
+            return "KM"
+        return definition_local
+
+    def _get_definition_local_km(self, row):
+        definition_local = row[7].strip() if row[7] else None
+        if definition_local == "AUTOUR_SERVICE":
+            return "200"
+        return None
