@@ -151,11 +151,11 @@ class Purchase(SoftDeletionModel):
         LOCAL = "LOCAL", "Produit local"
 
     class Local(models.TextChoices):
-        REGION = "REGION", "Région"
-        DEPARTEMENT = "DEPARTEMENT", "Département"
-        AUTOUR_SERVICE = "AUTOUR_SERVICE", "200 km autour du lieu de service"
         PAT = "PAT", "Issu du Projet Alimentaire Territorial (PAT)"
-        AUTRE = "AUTRE", "Autre"
+        COMMUNE = "COMMUNE", "Commune et/ou intercommunalité"
+        DEPARTEMENT = "DEPARTEMENT", "Département"
+        REGION = "REGION", "Région"
+        KM = "KM", "Distance en km"
 
     CHARACTERISTIC_LABELS_BIO = [
         Characteristic.BIO,
@@ -234,10 +234,14 @@ class Purchase(SoftDeletionModel):
         verbose_name="prix HT",
         validators=[MinValueValidator(Decimal("0"))],
     )
-    facture = models.FileField(null=True, blank=True, upload_to="invoices/%Y/")
     definition_local = models.CharField(
         max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
     )
+    definition_local_km = models.PositiveIntegerField(
+        null=True, blank=True, verbose_name="définition de local (distance en km)", validators=[MinValueValidator(0)]
+    )
+
+    facture = models.FileField(null=True, blank=True, upload_to="invoices/%Y/")
 
     import_source = models.TextField(null=True, blank=True, verbose_name="source de l'import de l'achat")
 
