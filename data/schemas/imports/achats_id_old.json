@@ -112,12 +112,13 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(AUTOUR_SERVICE|DEPARTEMENT|REGION|PAT|AUTRE) *$",
+        "pattern": "^ *(AUTOUR_SERVICE|COMMUNE|DEPARTEMENT|REGION|PAT|AUTRE) *$",
         "required": false
       },
       "description": "Obligatoire si l'achat a la caractéristique de LOCAL.",
       "doc_enum": [
         "AUTOUR_SERVICE",
+        "COMMUNE",
         "DEPARTEMENT",
         "REGION",
         "PAT",

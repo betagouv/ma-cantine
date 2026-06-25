@@ -41,6 +41,7 @@ class PurchasesImportView(BasePurchasesImportView):
         return egalim_caracteristics + origine_caracteristics + local_caracteristics + circuit_court_caracteristics
 
     def _get_definition_local(self, row):
-        est_local = row[9].strip() if row[9] else ""
-        definition_local = row[10].strip() if row[10] else ""
-        return definition_local if self.is_true_value(est_local) else ""
+        return row[10].strip() if row[10] else ""
+
+    def _get_definition_local_km(self, row):
+        return row[11].strip() if row[11] else None
