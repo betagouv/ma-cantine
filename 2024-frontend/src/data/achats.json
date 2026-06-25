@@ -78,15 +78,15 @@
       "value": "COMMUNE"
     },
     "departement": {
-      "label": "Provenant du même département",
+      "label": "Département",
       "value": "DEPARTEMENT"
     },
     "region": {
-      "label": "Provenant de la même région",
+      "label": "Région",
       "value": "REGION"
     },
     "km": {
-      "label": "Distance en kilomètres",
+      "label": "Distance (en km)",
       "value": "KM"
     }
   },
