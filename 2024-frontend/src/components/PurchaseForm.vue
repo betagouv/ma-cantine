@@ -9,7 +9,7 @@ import achats from "@/data/achats.json"
 import purchases from "@/services/purchases.js"
 
 /* Props and emits */
-const props = defineProps(["purchaseData", "showCreateButton", "showCancelButton", "showDeleteButton"])
+const props = defineProps(["purchaseData", "showCancelButton", "showDeleteButton"])
 const emit = defineEmits(["sendForm", "cancel", "delete"])
 
 /* Form fields */
@@ -283,13 +283,6 @@ const formatPayload = (form) => {
         label="Annuler"
         secondary
         @click="emit('cancel')"
-      />
-      <DsfrButton
-        v-if="showCreateButton"
-        :disabled="isSaving"
-        label="Enregistrer et ajouter un nouvel achat"
-        secondary
-        @click="validateForm('stay-on-creation-page')"
       />
       <DsfrButton
         :disabled="isSaving"
