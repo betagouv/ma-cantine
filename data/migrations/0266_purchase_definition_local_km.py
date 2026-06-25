@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchase',
             name='definition_local',
-            field=models.CharField(blank=True, choices=[('PAT', 'Issu du Projet Alimentaire Territorial (PAT)'), ('COMMUNE', 'Commune'), ('DEPARTEMENT', 'Département'), ('REGION', 'Région'), ('KM', 'Distance en km')], max_length=255, null=True, verbose_name='définition de local'),
+            field=models.CharField(blank=True, choices=[('PAT', 'Issu du Projet Alimentaire Territorial (PAT)'), ('COMMUNE', 'Commune et/ou intercommunalité'), ('DEPARTEMENT', 'Département'), ('REGION', 'Région'), ('KM', 'Distance en km')], max_length=255, null=True, verbose_name='définition de local'),
         ),
         migrations.AddField(
             model_name='purchase',
