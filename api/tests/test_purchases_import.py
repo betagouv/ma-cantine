@@ -60,14 +60,14 @@ class PurchasesSchemaTest(TestCase):
         field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "definition_local"), None)
         pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
         for VALUE_OK in [
-            "PAT",
-            " PAT ",
-            "COMMUNE",
+            "AUTOUR_SERVICE",
             "DEPARTEMENT",
             "DEPARTEMENT ",
             " DEPARTEMENT ",
             "REGION",
-            "KM",
+            "PAT",
+            " PAT ",
+            "AUTRE",
         ]:
             with self.subTest(VALUE=VALUE_OK):
                 self.assertTrue(re.match(pattern, VALUE_OK))
