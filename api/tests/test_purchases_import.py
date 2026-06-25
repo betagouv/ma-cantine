@@ -128,7 +128,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 11)
+        self.assertEqual(len(errors), 12)
         for error in errors:
             self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
@@ -143,7 +143,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 4)
+        self.assertEqual(len(errors), 5)
         for error in errors:
             self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
@@ -186,7 +186,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 11)
+        self.assertEqual(len(errors), 12)
         # siret
         self.assertEqual(errors[0]["field"], "colonne siret")
         self.assertEqual(errors[0]["title"], "Valeur incorrecte vous avez écrit « s_iret » au lieu de « siret »")
@@ -236,6 +236,12 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(
             errors[10]["title"],
             "Valeur incorrecte vous avez écrit « définition local » au lieu de « definition_local »",
+        )
+        # definition_local_km
+        self.assertEqual(errors[11]["field"], "colonne definition_local_km")
+        self.assertEqual(
+            errors[11]["title"],
+            "Valeur incorrecte vous avez écrit « distance » au lieu de « definition_local_km »",
         )
 
     @authenticate

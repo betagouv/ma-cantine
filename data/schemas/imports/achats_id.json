@@ -190,6 +190,17 @@
       "name": "definition_local",
       "title": "Définition de local",
       "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Facultatif. Seulement si l'achat est renseigné comme 'est_local' et que la définition de local est 'KM'",
+      "example": "50",
+      "format": "default",
+      "name": "definition_local_km",
+      "title": "Distance en kilomètres",
+      "type": "number"
     }
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
