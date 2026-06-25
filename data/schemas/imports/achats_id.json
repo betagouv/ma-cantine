@@ -80,7 +80,7 @@
     },
     {
       "constraints": {
-        "pattern": "^ *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|EUROPE|FRANCE|CIRCUIT_COURT|LOCAL)( *, *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|EUROPE|FRANCE|CIRCUIT_COURT|LOCAL))* *$",
+        "pattern": "^ *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE)( *, *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE))* *$",
         "required": false
       },
       "description": "",
@@ -96,26 +96,88 @@
         "COMMERCE_EQUITABLE",
         "FERMIER",
         "EXTERNALITES",
-        "PERFORMANCE",
-        "EUROPE",
-        "FRANCE",
-        "CIRCUIT_COURT",
-        "LOCAL"
+        "PERFORMANCE"
       ],
       "doc_enum_multiple": true,
       "doc_enum_multiple_seperator": ",",
       "example": "BIO,IGP",
       "format": "default",
-      "name": "caracteristiques",
-      "title": "Caractéristiques de l'achat",
+      "name": "categories_egalim",
+      "title": "Catégories EGalim",
       "type": "string"
+    },
+    {
+      "constraints": {
+        "pattern": "^ *(EUROPE|FRANCE) *$",
+        "required": false
+      },
+      "description": "Une seule origine peut être renseignée, EUROPE (hors France) ou FRANCE",
+      "doc_enum": [
+        "EUROPE",
+        "FRANCE"
+      ],
+      "example": "FRANCE",
+      "format": "default",
+      "name": "origine",
+      "title": "Origine",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Si la cellule contient une des valeurs acceptées, le champ sera considéré comme 'oui', sinon le champ sera considéré comme 'non'",
+      "doc_enum": [
+        "OUI",
+        "x"
+      ],
+      "example": "OUI",
+      "falseValues": [
+        "non",
+        "NON",
+        ""
+      ],
+      "format": "default",
+      "name": "est_circuit_court",
+      "title": "Circuit court",
+      "trueValues": [
+        "OUI",
+        "oui",
+        "x"
+      ],
+      "type": "boolean"
+    },
+    {
+      "constraints": {
+        "required": false
+      },
+      "description": "Si la cellule contient une des valeurs acceptées, le champ sera considéré comme 'oui', sinon le champ sera considéré comme 'non'",
+      "doc_enum": [
+        "OUI",
+        "x"
+      ],
+      "example": "OUI",
+      "falseValues": [
+        "non",
+        "NON",
+        ""
+      ],
+      "format": "default",
+      "name": "est_local",
+      "title": "Local ou de proximité",
+      "trueValues": [
+        "OUI",
+        "oui",
+        "x"
+      ],
+      "type": "boolean"
     },
     {
       "constraints": {
         "pattern": "^ *(AUTOUR_SERVICE|DEPARTEMENT|REGION|PAT|AUTRE) *$",
         "required": false
       },
-      "description": "Obligatoire si l'achat a la caractéristique de LOCAL.",
+      "description": "Obligatoire si l'achat est renseigné comme 'est_local'",
       "doc_enum": [
         "AUTOUR_SERVICE",
         "DEPARTEMENT",
@@ -131,7 +193,7 @@
     }
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
-  "name": "import-achats",
-  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats.json",
-  "title": "Schema import des achats"
+  "name": "import-achats-id",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats_id.json",
+  "title": "Schema import des achats via l'ID de la cantine"
 }

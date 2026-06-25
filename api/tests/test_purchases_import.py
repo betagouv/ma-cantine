@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.purchase_import import PURCHASE_SIRET_SCHEMA_FILE_PATH
+from api.views.purchase_import import PURCHASE_ID_SCHEMA_FILE_PATH, PURCHASE_SIRET_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.creation_source import CreationSource
@@ -25,55 +25,78 @@ from data.models.purchase import Purchase
 class PurchasesSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open(PURCHASE_SIRET_SCHEMA_FILE_PATH))
+        cls.schemas = {
+            "siret": json.load(open(PURCHASE_SIRET_SCHEMA_FILE_PATH)),
+            "id": json.load(open(PURCHASE_ID_SCHEMA_FILE_PATH)),
+        }
+
+    @staticmethod
+    def _pattern_for(schema, field_name):
+        field = next(f for f in schema["fields"] if f["name"] == field_name)
+        return field["constraints"]["pattern"]
 
     def test_famille_produits_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "famille_produits"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in ["PRODUITS_LAITIERS", "PRODUITS_LAITIERS ", " PRODUITS_LAITIERS "]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST", "PRODUITS_LAITIERS,", "PRODUITS_LAITIERS,VIANDES_VOLAILLES"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+        for schema_name, schema in self.schemas.items():
+            pattern = self._pattern_for(schema, "famille_produits")
+            for VALUE_OK in ["PRODUITS_LAITIERS", "PRODUITS_LAITIERS ", " PRODUITS_LAITIERS "]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
+                    self.assertTrue(re.match(pattern, VALUE_OK))
+            for VALUE_NOT_OK in ["", "TEST", "PRODUITS_LAITIERS,", "PRODUITS_LAITIERS,VIANDES_VOLAILLES"]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
+                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
-    def test_caracteristiques_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "caracteristiques"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in [
-            "BIO",
-            "BIO ",
-            "BIO,LOCAL",
-            "BIO,LOCAL ",
-            " BIO,LOCAL ",
-            " BIO, LOCAL ",
-            " BIO,      LOCAL ",
-            "BIO,BIO",
-        ]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+    def test_categories_egalim_regex(self):
+        for schema_name, schema in self.schemas.items():
+            pattern = self._pattern_for(schema, "categories_egalim")
+            for VALUE_OK in [
+                "BIO",
+                "BIO ",
+                "BIO,COMMERCE_EQUITABLE",
+                "BIO,COMMERCE_EQUITABLE ",
+                " BIO,COMMERCE_EQUITABLE ",
+                " BIO, COMMERCE_EQUITABLE ",
+                " BIO,      COMMERCE_EQUITABLE ",
+                "BIO,BIO",
+            ]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
+                    self.assertTrue(re.match(pattern, VALUE_OK))
+            for VALUE_NOT_OK in ["", "TEST"]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
+                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
+    def test_origine_regex(self):
+        for schema_name, schema in self.schemas.items():
+            pattern = self._pattern_for(schema, "origine")
+            for VALUE_OK in [
+                "EUROPE",
+                "FRANCE",
+                "FRANCE ",
+                " FRANCE ",
+            ]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
+                    self.assertTrue(re.match(pattern, VALUE_OK))
+            for VALUE_NOT_OK in ["", "TEST", "FRANCE,", "FRANCE,EUROPE"]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
+                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
     def test_definition_local_regex(self):
-        field_index = next((i for i, f in enumerate(self.schema["fields"]) if f["name"] == "definition_local"), None)
-        pattern = self.schema["fields"][field_index]["constraints"]["pattern"]
-        for VALUE_OK in [
-            "AUTOUR_SERVICE",
-            "DEPARTEMENT",
-            "DEPARTEMENT ",
-            " DEPARTEMENT ",
-            "REGION",
-            "PAT",
-            " PAT ",
-            "AUTRE",
-        ]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+        for schema_name, schema in self.schemas.items():
+            pattern = self._pattern_for(schema, "definition_local")
+            for VALUE_OK in [
+                "AUTOUR_SERVICE",
+                "DEPARTEMENT",
+                "DEPARTEMENT ",
+                " DEPARTEMENT ",
+                "REGION",
+                "PAT",
+                " PAT ",
+                "AUTRE",
+            ]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
+                    self.assertTrue(re.match(pattern, VALUE_OK))
+            for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION"]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
+                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
@@ -105,7 +128,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 8)
+        self.assertEqual(len(errors), 11)
         for error in errors:
             self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
@@ -120,7 +143,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 5)
+        self.assertEqual(len(errors), 4)
         for error in errors:
             self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
@@ -163,7 +186,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 8)
+        self.assertEqual(len(errors), 11)
         # siret
         self.assertEqual(errors[0]["field"], "colonne siret")
         self.assertEqual(errors[0]["title"], "Valeur incorrecte vous avez écrit « s_iret » au lieu de « siret »")
@@ -190,16 +213,28 @@ class PurchasesImportApiErrorTest(APITestCase):
             errors[5]["title"],
             "Valeur incorrecte vous avez écrit « famille de produits » au lieu de « famille_produits »",
         )
-        # caractéristiques
-        self.assertEqual(errors[6]["field"], "colonne caracteristiques")
+        # categories egalim
+        self.assertEqual(errors[6]["field"], "colonne categories_egalim")
         self.assertEqual(
             errors[6]["title"],
-            "Valeur incorrecte vous avez écrit « caractéristiques » au lieu de « caracteristiques »",
+            "Valeur incorrecte vous avez écrit « catégories egalim » au lieu de « categories_egalim »",
         )
-        # local
-        self.assertEqual(errors[7]["field"], "colonne definition_local")
+        # origine
+        self.assertEqual(errors[7]["field"], "colonne origine")
+        self.assertEqual(errors[7]["title"], "Valeur incorrecte vous avez écrit « Origine » au lieu de « origine »")
+        # est_circuit_court
+        self.assertEqual(errors[8]["field"], "colonne est_circuit_court")
         self.assertEqual(
-            errors[7]["title"],
+            errors[8]["title"],
+            "Valeur incorrecte vous avez écrit « circuit_court » au lieu de « est_circuit_court »",
+        )
+        # est_local
+        self.assertEqual(errors[9]["field"], "colonne est_local")
+        self.assertEqual(errors[9]["title"], "Valeur incorrecte vous avez écrit « local » au lieu de « est_local »")
+        # definition_local
+        self.assertEqual(errors[10]["field"], "colonne definition_local")
+        self.assertEqual(
+            errors[10]["title"],
             "Valeur incorrecte vous avez écrit « définition local » au lieu de « definition_local »",
         )
 
@@ -474,7 +509,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(purchase.canteen.siret, "21010034300016")
         self.assertEqual(purchase.famille_produits, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.RUP])
-        self.assertEqual(purchase.definition_local, None)
+        self.assertEqual(purchase.definition_local, "")
         # purchase with characteristics empty
         purchase = Purchase.objects.filter(description="Pommes, vertes 4").first()
         self.assertEqual(purchase.canteen.siret, "21010034300016")
@@ -637,6 +672,76 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertFalse(ImportFailure.objects.exists())
         self.assertEqual(Purchase.objects.first().prix_ht, Decimal("90.11"))
 
+    @authenticate
+    def test_import_local_and_circuit_court_independent(self):
+        """
+        Tests that can import a file can be local or circuit court independently.
+        """
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_local_vs_circuit_court.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 2)
+        self.assertFalse(ImportFailure.objects.exists())
+
+        only_local = Purchase.objects.filter(description="Only local").first()
+        self.assertIn(Purchase.Characteristic.LOCAL, only_local.caracteristiques)
+        self.assertNotIn(Purchase.Characteristic.CIRCUIT_COURT, only_local.caracteristiques)
+        self.assertEqual(only_local.definition_local, "DEPARTEMENT")
+
+        only_cc = Purchase.objects.filter(description="Only circuit court").first()
+        self.assertIn(Purchase.Characteristic.CIRCUIT_COURT, only_cc.caracteristiques)
+        self.assertNotIn(Purchase.Characteristic.LOCAL, only_cc.caracteristiques)
+        self.assertEqual(only_cc.definition_local, "")
+
+    @authenticate
+    def test_import_siret_separated_caracteristics(self):
+        """
+        Tests that can import a file with the caracteristics split into:
+        - categories_egalim
+        - origine
+        - est_local
+        - est_circuit_court
+        """
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_siret_caracteristics.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 2)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 2)
+        self.assertEqual(len(errors), 0, errors)
+
+        purchase_1 = Purchase.objects.filter(description="Pomme 1").first()
+        self.assertEqual(purchase_1.canteen.siret, "21010034300016")
+        self.assertEqual(purchase_1.prix_ht, Decimal("100.00"))
+        self.assertEqual(purchase_1.famille_produits, Purchase.Family.AUTRES)
+        self.assertIn(Purchase.Characteristic.BIO, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.LOCAL, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.FRANCE, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_1.caracteristiques)
+        self.assertEqual(purchase_1.definition_local, "REGION")
+
+        purchase_2 = Purchase.objects.filter(description="Pomme 2").first()
+        self.assertEqual(purchase_2.canteen.siret, "21010034300016")
+        self.assertEqual(purchase_2.prix_ht, Decimal("200.00"))
+        self.assertEqual(purchase_2.famille_produits, Purchase.Family.AUTRES)
+        self.assertIn(Purchase.Characteristic.BIO, purchase_2.caracteristiques)
+        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_2.caracteristiques)
+        self.assertNotIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_2.caracteristiques)
+        self.assertEqual(purchase_2.definition_local, "")
+
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class PurchasesImportIdApiErrorTest(APITestCase):
@@ -702,3 +807,45 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
         purchase = Purchase.objects.filter(description="Pommes, rouges").first()
         self.assertEqual(purchase.prix_ht, Decimal("90.11"))
         self.assertEqual(purchase.canteen.id, 949)
+
+    @authenticate
+    def test_import_id_separated_caracteristics(self):
+        """
+        Tests that can import a file with the caracteristics split into:
+        - categories_egalim
+        - origine
+        - est_local
+        - est_circuit_court
+        """
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user], id=949)
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_id_caracteristics.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 2)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 2)
+        self.assertEqual(len(errors), 0, errors)
+
+        purchase_1 = Purchase.objects.filter(description="Pomme 1").first()
+        self.assertEqual(purchase_1.prix_ht, Decimal("100.00"))
+        self.assertEqual(purchase_1.famille_produits, Purchase.Family.AUTRES)
+        self.assertIn(Purchase.Characteristic.BIO, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.LOCAL, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.FRANCE, purchase_1.caracteristiques)
+        self.assertIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_1.caracteristiques)
+        self.assertEqual(purchase_1.definition_local, "REGION")
+
+        purchase_2 = Purchase.objects.filter(description="Pomme 2").first()
+        self.assertEqual(purchase_2.prix_ht, Decimal("200.00"))
+        self.assertEqual(purchase_2.famille_produits, Purchase.Family.AUTRES)
+        self.assertIn(Purchase.Characteristic.BIO, purchase_2.caracteristiques)
+        self.assertIn(Purchase.Characteristic.COMMERCE_EQUITABLE, purchase_2.caracteristiques)
+        self.assertNotIn(Purchase.Characteristic.CIRCUIT_COURT, purchase_2.caracteristiques)
+        self.assertEqual(purchase_2.definition_local, "")

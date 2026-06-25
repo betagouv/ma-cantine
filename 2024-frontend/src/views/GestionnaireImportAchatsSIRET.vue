@@ -16,12 +16,12 @@ const route = useRoute()
 const schemaFile = "achats_siret.json"
 const exampleFile = {
   name: "achats_siret_fichier_exemple_ma_cantine.xlsx",
-  size: "6 ko",
+  size: "8 ko",
 }
 const filePreviews = {
-  success: "achats_siret_fichier_exemple_fichier_accepte.jpg?v=1",
+  success: "achats_siret_fichier_exemple_fichier_accepte.jpg?v=5",
   altSuccess: "Exemple de fichier accepté pour importer des achats, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "achats_siret_fichier_exemple_fichier_rejete.jpg?v=1",
+  error: "achats_siret_fichier_exemple_fichier_rejete.jpg?v=5",
   altError: "Exemple de fichier rejeté pour importer des achats, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 const links = [
@@ -53,7 +53,12 @@ const success = (count) => {
   <ImportExplanation :exampleFile :links />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
-  <ImportFileUpload @success="success" apiUrl="importPurchases" apiImportType="siret" eventMatomo="import-purchases-siret-success"/>
+  <ImportFileUpload
+    @success="success"
+    apiUrl="importPurchases"
+    apiImportType="siret"
+    eventMatomo="import-purchases-siret-success"
+  />
   <ImportSuccessModal
     :opened="showModal"
     :message="

@@ -46,8 +46,8 @@ const commonPages = [
     ],
   },
   {
-    title: "Ajouter des achats",
-    to: { name: "GestionnaireImportAchats" },
+    title: "Ajouter des achats (ancien format)",
+    to: { name: "GestionnaireImportAchatsIDOld" },
     description: "Pour ajouter des achats à des cantines dont vous êtes gestionnaire.",
     detail: "Pour les cantines et les groupes de restaurants satellites",
     badges: [
@@ -59,10 +59,43 @@ const commonPages = [
     ],
   },
   {
+    title: "Ajouter des achats",
+    to: { name: "GestionnaireImportAchatsID" },
+    description: "Pour ajouter des achats à des cantines dont vous êtes gestionnaire.",
+    detail: "Pour les cantines et les groupes de restaurants satellites",
+    badges: [
+      {
+        label: "Nouveau",
+        type: "new",
+      },
+      {
+        label: "ID",
+        noIcon: true,
+        type: "info",
+      }
+    ],
+  },
+  {
+    title: "Ajouter des achats via le SIRET de la cantine  (ancien format)",
+    to: { name: "GestionnaireImportAchatsSIRETOld" },
+    description: "Pour ajouter des achat à des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
+    badges: [
+      {
+        label: "SIRET",
+        noIcon: true,
+        type: "info",
+      }
+    ],
+  },
+  {
     title: "Ajouter des achats via le SIRET de la cantine",
     to: { name: "GestionnaireImportAchatsSIRET" },
     description: "Pour ajouter des achat à des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
     badges: [
+      {
+        label: "Nouveau",
+        type: "new",
+      },
       {
         label: "SIRET",
         noIcon: true,

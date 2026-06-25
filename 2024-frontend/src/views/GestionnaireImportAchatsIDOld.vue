@@ -8,20 +8,21 @@ import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
 import ImportFilesExample from "@/components/ImportFilesExample.vue"
+import ImportDeprecatedWarning from "@/components/ImportDeprecatedWarning.vue"
 
 /* Router */
 const route = useRoute()
 
 /* Data */
-const schemaFile = "achats_id.json"
+const schemaFile = "achats_id_old.json"
 const exampleFile = {
-  name: "achats_fichier_exemple_ma_cantine.xlsx",
+  name: "achats_id_ancien_format_fichier_exemple_ma_cantine.xlsx",
   size: "6 ko",
 }
 const filePreviews = {
-  success: "achats_fichier_exemple_fichier_accepte.jpg?v=4",
+  success: "achats_id_ancien_format_fichier_exemple_fichier_accepte.jpg?v=5",
   altSuccess: "Exemple de fichier accepté pour importer des achats, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "achats_fichier_exemple_fichier_rejete.jpg?v=4",
+  error: "achats_id_ancien_format_fichier_exemple_fichier_rejete.jpg?v=5",
   altError: "Exemple de fichier rejeté pour importer des achats, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 const links = [
@@ -46,6 +47,7 @@ const success = (count) => {
 </script>
 
 <template>
+  <ImportDeprecatedWarning :redirectTo="{ name: 'GestionnaireImportAchatsID' }" />
   <h1>{{ route.meta.title }}</h1>
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet d’ajouter les achats de toutes vos cantines d’un coup.
@@ -57,7 +59,7 @@ const success = (count) => {
   <ImportExplanation :exampleFile :links />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
-  <ImportFileUpload @success="success" apiUrl="importPurchases" apiImportType="id" eventMatomo="import-purchases-id-success"/>
+  <ImportFileUpload @success="success" apiUrl="importPurchasesOld" apiImportType="id" eventMatomo="import-purchases-id-old-success"/>
   <ImportSuccessModal
     :opened="showModal"
     :message="
