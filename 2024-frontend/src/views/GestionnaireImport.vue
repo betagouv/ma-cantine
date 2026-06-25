@@ -43,12 +43,12 @@ const canteenLinks = computed(() => {
 const purchasesLinks = [
   {
     label: "Créer des achats pour des cantines avec SIRET",
-    icon: "fr-icon-shopping-cart-2-fill",
+    icon: "fr-icon-add-line",
     route: "GestionnaireImportAchatsSIRET",
   },
   {
     label: "Créer des achats pour des groupes ou cantines sans SIRET",
-    icon: "fr-icon-shopping-cart-2-fill",
+    icon: "fr-icon-add-line",
     route: "GestionnaireImportAchatsID",
   },
 ]
