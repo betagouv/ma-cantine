@@ -1,16 +1,19 @@
 <script setup>
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-defineProps(["title", "icon", "buttons", "disabled"])
+defineProps(["title", "icon", "buttons"])
 </script>
 <template>
   <div class="import-card fr-card fr-px-4w fr-py-2w fr-mb-2w" :class="{ 'fr-background-alt--grey': disabled }">
     <div class="import-card__header fr-mb-2w">
-      <h2 class="fr-h5 fr-mb-0">{{ title }} <DsfrBadge v-if="disabled" type="neutral" label="Non disponible" class="fr-ml-2w" /></h2>
+      <h2 class="fr-h5 fr-mb-0">
+        {{ title }}
+        <DsfrBadge v-if="$slots.disabled" type="neutral" label="Non disponible" class="fr-ml-2w" />
+      </h2>
       <img :src="icon" class="import-card__icon" :alt="`Illustration de ${title}`">
     </div>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12" :class="{ 'fr-col-md-6': $slots.callout }">
-        <p v-if="disabled" class="fr-text--sm fr-mb-0">{{ disabled }}</p>
+        <slot name="disabled"></slot>
         <ul class="ma-cantine--unstyled-list fr-mb-3w">
           <li v-for="button in buttons" :key="button.label" class="fr-mb-1w">
             <AppLinkRouter :to="{name: button.route}" :title="button.label" :icon="button.icon" />

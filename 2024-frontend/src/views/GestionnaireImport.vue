@@ -91,7 +91,13 @@ const diagnosticsLinks = []
       title="Bilans"
       :icon="diagnosticsPicto"
       :buttons="diagnosticsLinks"
-      disabled="L'import de bilans est possible uniquement lors des campagnes de télédéclaration EGalim. Les bilans de l'année n ne peuvent être importés qu'en début d'année n+1."
-    />
+    >
+      <template #disabled>
+        <p>
+          L'import de bilans est possible uniquement lors des campagnes de télédéclaration EGalim. <br/>
+          Les bilans de l'année n ne peuvent être importés qu'en début d'année n+1.
+        </p>
+      </template>
+    </ImportCard>
   </section>
 </template>
