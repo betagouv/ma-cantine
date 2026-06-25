@@ -53,24 +53,7 @@ const purchasesLinks = [
   },
 ]
 
-const diagnosticsLinks = [
-  {
-    label: "Renseigner les approvisionnements détaillés",
-    icon: "fr-icon-file-text-fill",
-    route: "GestionnaireImportBilansDetailles",
-    description: "Uniquement pour les cantines avec un numéro SIRET.",
-  },
-  {
-    label: "Renseigner les approvisionnements simplifiés des cantines avec SIRET",
-    icon: "fr-icon-file-text-fill",
-    route: "GestionnaireImportBilansSimplesSIRET",
-  },
-  {
-    label: "Renseigner les approvisionnements simplifiés des groupes ou cantines sans SIRET",
-    icon: "fr-icon-file-text-fill",
-    route: "GestionnaireImportBilansSimples",
-  }
-]
+const diagnosticsLinks = []
 </script>
 
 <template>
@@ -109,11 +92,12 @@ const diagnosticsLinks = [
     </div>
 
     <div class="fr-col-12 fr-col-md-4">
-      <ImportCard title="Bilans" :icon="diagnosticsPicto" :buttons="diagnosticsLinks">
-        <template #callout>
-          <p class="fr-text--sm">Si vous connaissez le total des achats par catégories EGalim et familles de produits, vous pouvez renseigner les approvisionnements détaillés, sinon renseignez les simplifiés.</p>
-        </template>
-      </ImportCard>
+      <ImportCard
+        title="Bilans"
+        :icon="diagnosticsPicto"
+        :buttons="diagnosticsLinks"
+        disabled="Les imports des bilans sont disponibles uniquement pendant la campagne de télédéclaration"
+      />
     </div>
   </section>
 </template>
