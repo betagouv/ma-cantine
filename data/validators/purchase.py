@@ -43,15 +43,15 @@ def validate_purchase_definition_local(instance):
             - definition_local can be filled
             - if definition_local is "KM", then definition_local_km can be filled
             - if definition_local is not "KM", then definition_local_km must be empty
-        - if caracteristiques does not include "LOCAL", definition_local must be empty
+        - if caracteristiques does not include "LOCAL", definition_local & definition_local_km must be empty
     """
     errors = {}
     field_name = "definition_local"
     value = getattr(instance, field_name)
+    definition_local_km = getattr(instance, "definition_local_km")
     caracteristiques = getattr(instance, "caracteristiques") or []
     if instance.Characteristic.LOCAL in caracteristiques:
         if value != instance.Local.KM:
-            definition_local_km = getattr(instance, "definition_local_km")
             if definition_local_km not in [None, ""]:
                 utils_utils.add_validation_error(
                     errors,
@@ -63,6 +63,12 @@ def validate_purchase_definition_local(instance):
             utils_utils.add_validation_error(
                 errors,
                 field_name,
+                f"La caractéristique {instance.Characteristic.LOCAL} n'est pas sélectionnée : le champ doit être vide.",
+            )
+        if definition_local_km not in [None, ""]:
+            utils_utils.add_validation_error(
+                errors,
+                "definition_local_km",
                 f"La caractéristique {instance.Characteristic.LOCAL} n'est pas sélectionnée : le champ doit être vide.",
             )
     return errors

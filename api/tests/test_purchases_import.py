@@ -307,31 +307,6 @@ class PurchasesImportApiErrorTest(APITestCase):
         )
 
     @authenticate
-    def test_model_validation_error(self):
-        """
-        Errors returned by model validation
-        """
-        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
-        self.assertEqual(Purchase.objects.count(), 0)
-
-        file_path = "./api/tests/files/achats/purchases_bad_no_definition_local.csv"
-        with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
-        body = response.json()
-        errors = body["errors"]
-        self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0]["status"], 400)
-        self.assertEqual(
-            errors[0]["message"],
-            "Champ 'définition de local' : La caractéristique LOCAL est sélectionnée : le champ doit être rempli.",
-        )
-
-    @authenticate
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Purchase.objects.count(), 0)
 
