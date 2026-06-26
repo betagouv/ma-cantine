@@ -25,6 +25,7 @@ const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const isLoading = ref(true)
 const purchaseId = route.params.id
 const purchaseData = ref({})
+const errors = ref({})
 
 const loadPurchase = async () => {
   isLoading.value = true
@@ -39,10 +40,11 @@ onMounted(loadPurchase)
 
 /* Save */
 const savePurchase = async (form) => {
+  errors.value = {}
   const response = await purchasesService.updatePurchase(canteenId, purchaseId, form)
 
   if (!response?.id) {
-    store.notifyServerError(response)
+    displayErrors(response)
     return
   }
 
@@ -57,6 +59,15 @@ const savePurchase = async (form) => {
 
   // Pas de redirection car on arrive sur une page vue2 et on va perdre la notification
   window.scrollTo(0, 0)
+}
+
+const displayErrors = (response) => {
+  store.notifyServerError({
+    title: "Erreur lors de la modification de l'achat",
+    message: "Veuillez vérifier les champs du formulaire et réessayer.",
+    status: "error",
+  })
+  errors.value = response.list
 }
 
 /* Delete */
@@ -130,6 +141,7 @@ const goToPurchasesList = () => {
       :purchase-data="purchaseData"
       :showCancelButton="true"
       :showDeleteButton="true"
+      :errors="errors"
       @sendForm="(payload) => savePurchase(payload)"
       @cancel="goToPurchasesList"
       @delete="deletePurchase"
