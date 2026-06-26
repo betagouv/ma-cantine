@@ -73,6 +73,10 @@
       "label": "Issu du Projet Alimentaire Territorial (PAT)",
       "value": "PAT"
     },
+    "pat": {
+      "label": "Issu du Projet Alimentaire Territorial (PAT)",
+      "value": "PAT"
+    },
     "commune": {
       "label": "Commune et/ou intercommunalité",
       "value": "COMMUNE"
