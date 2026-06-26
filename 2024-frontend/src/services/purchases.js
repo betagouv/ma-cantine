@@ -101,6 +101,17 @@ const uploadInvoice = async (payload) => {
     .then((response) => response)
 }
 
+const deleteInvoice = async (canteenId, purchaseId) => {
+  return await fetch(`/api/v1/canteens/${canteenId}/purchases/${purchaseId}/facture`, {
+    method: "DELETE",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+}
+
 export default {
   createPurchase,
   fetchPurchase,
@@ -110,4 +121,5 @@ export default {
   restorePurchases,
   fetchInvoice,
   uploadInvoice,
+  deleteInvoice,
 }
