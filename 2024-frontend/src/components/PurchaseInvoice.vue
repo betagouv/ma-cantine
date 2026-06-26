@@ -57,6 +57,7 @@ const uploadInvoice = async (file) => {
   }
   purchasesService.uploadInvoice(payload).then(response => {
     invoiceUrl.value = response.facture
+    invoiceFileInputValue.value = null
     store.notify({
       title: "Facture enregistrée",
       message: "La facture de l'achat a bien été enregistrée.",
@@ -89,18 +90,17 @@ const deleteInvoice = async () => {
 </script>
 <template>
   <div class="fr-card fr-p-3w fr-background-alt--grey">
-    <p class="fr-h6"><span class="fr-icon-file-line"></span> Facture</p>
-    <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-12 fr-col-md-8 fr-pr-5w">
-        <p class="fr-text--sm fr-mb-3w">Ce champ est facultatif. Il n'est pas nécessaire d'importer ses factures pdf si vous disposez déjà d'un espace de stockage fiable et sécurisé (sur votre ordinateur ou autre logiciel par exemple).</p>
-        <div v-if="invoiceUrl" class="purchase-invoice__actions">
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+      <div class="fr-col-12 fr-col-md-8">
+        <p class="fr-h6"><span class="fr-icon-file-line"></span> Facture</p>
+        <p class="fr-text--sm">Ce champ est facultatif. Il n'est pas nécessaire d'importer ses factures pdf si vous disposez déjà d'un espace de stockage fiable et sécurisé (sur votre ordinateur ou autre logiciel par exemple).</p>
+        <div v-if="invoiceUrl" class="purchase-invoice__actions fr-mt-3w">
           <DsfrButton
             :disabled="isUploadingInvoice"
             label="Voir la facture"
             secondary
             icon="fr-icon-eye-line"
             @click="openInvoice"
-            class="fr-mb-1w"
           />
           <DsfrButton
             :disabled="isUploadingInvoice"
@@ -108,11 +108,10 @@ const deleteInvoice = async () => {
             tertiary
             icon="fr-icon-delete-line"
             @click="deleteInvoice"
-            class="fr-mb-1w"
           />
         </div>
       </div>
-      <div class="purchase-invoice__file-upload fr-col-12 fr-col-md-4">
+      <div class="purchase-invoice__file-upload fr-col-12 fr-col-md-4 fr-pb-3w">
         <DsfrFileUpload
           v-model="invoiceFileInputValue"
           :label="invoiceUrl ? 'Télécharger une nouvelle facture' : 'Télécharger une facture'"
