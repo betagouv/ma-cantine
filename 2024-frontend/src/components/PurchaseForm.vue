@@ -196,6 +196,9 @@ const formatPayload = (form) => {
           inline
         />
       </div>
+    </div>
+
+    <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-4">
         <DsfrCheckboxSet
           v-model="form.estLocal"
@@ -206,16 +209,19 @@ const formatPayload = (form) => {
           class="fr-mb-n2w"
           @change="onLocalChange"
         />
+      </div>
+      <div class="fr-col-12 fr-col-md-4">
         <DsfrSelect
           v-if="showLocalDefinition"
           v-model="form.definitionLocal"
-          label="Précisions *"
-          hint="Précisez la provenance du produit"
+          label="Précisez la provenance du produit *"
           labelVisible
           :options="definitionLocalOptions"
           :error-message="formatError(v$.definitionLocal)"
           @change="onDefinitionLocalChange"
         />
+      </div>
+      <div class="fr-col-12 fr-col-md-4">
         <DsfrInputGroup
           v-if="showKMDefinition"
           v-model.number="form.definitionLocalKm"
