@@ -28,7 +28,7 @@ const fetchPurchase = (canteenId, purchaseId) => {
 }
 
 const updatePurchase = (canteenId, purchaseId, payload) => {
-  return fetch(`/api/v1/${canteenId}/purchases/${purchaseId}`, {
+  return fetch(`/api/v1/canteens/${canteenId}/purchases/${purchaseId}`, {
     method: "PATCH",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
