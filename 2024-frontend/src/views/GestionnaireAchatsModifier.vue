@@ -8,6 +8,7 @@ import purchasesService from "@/services/purchases.js"
 import AppLoader from "@/components/AppLoader.vue"
 import AppRessources from "@/components/AppRessources.vue"
 import PurchaseForm from "@/components/PurchaseForm.vue"
+import PurchaseInvoice from "@/components/PurchaseInvoice.vue"
 
 /* Router and store */
 const route = useRoute()
@@ -120,16 +121,18 @@ const goToPurchasesList = () => {
   </section>
   <section class="fr-mt-4w">
     <AppLoader v-if="isLoading" />
-    <PurchaseForm
-      v-else-if="purchaseData.id"
-      :key="forceRerender"
-      :purchase-data="purchaseData"
-      :showCancelButton="true"
-      :showDeleteButton="true"
-      @sendForm="(payload) => savePurchase(payload)"
-      @cancel="goToPurchasesList"
-      @delete="deletePurchase"
-    />
+    <div v-else-if="purchaseData.id">
+      <PurchaseForm
+        :key="forceRerender"
+        :purchase-data="purchaseData"
+        :showCancelButton="true"
+        :showDeleteButton="true"
+        @sendForm="(payload) => savePurchase(payload)"
+        @cancel="goToPurchasesList"
+        @delete="deletePurchase"
+      />
+      <PurchaseInvoice class="fr-mt-4w" :canteenId="canteenId" :purchaseId="purchaseId" />
+    </div>
     <div v-else-if="purchaseDeleted" class="fr-col-12 fr-col-lg-7">
       <p>
         L'achat a bien été supprimé pour la cantine « {{ canteenName }} ». <br />
