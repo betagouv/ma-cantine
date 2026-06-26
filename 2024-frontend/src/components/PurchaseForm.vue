@@ -3,7 +3,6 @@ import { reactive, ref, computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
-import { helpers } from "@vuelidate/validators"
 import { formatError } from "@/utils.js"
 import achats from "@/data/achats.json"
 import purchases from "@/services/purchases.js"
@@ -62,18 +61,12 @@ if (props.purchaseData) prefillFields()
 const showLocalDefinition = computed(() => form.estLocal)
 const showKMDefinition = computed(() => form.estLocal && form.definitionLocal === 'KM')
 
-const { required, minValue, requiredIf } = useValidators()
+const { required, requiredIf } = useValidators()
 const rules = {
   description: { required },
   fournisseur: { required },
-  prixHt: { required, minValue: minValue(0.01) },
-  date: {
-    required,
-    maxDate: helpers.withMessage(
-      "La date d'achat ne peut pas être dans le futur",
-      (date) => new Date(date) < new Date()
-    )
-  },
+  prixHt: { required },
+  date: { required },
   familleProduits: { required },
   definitionLocal: { required: requiredIf(showLocalDefinition) },
   definitionLocalKm: { required: requiredIf(showKMDefinition) },
@@ -106,6 +99,9 @@ const formatPayload = (form) => {
   const payload = { ...form }
   // Field origine cannot be empty
   if (payload.origine === '' || payload.origine === null) delete payload.origine
+  // Field prixHt must use "." decimal separator and not ","
+  const priceDot = typeof payload.prixHt === 'string' ? payload.prixHt.replace(',', '.') : payload.prixHt
+  payload.prixHt = priceDot
   return payload
 }
 </script>
@@ -128,8 +124,7 @@ const formatPayload = (form) => {
       </div>
       <div class="fr-col-12 fr-col-md-4">
         <DsfrInputGroup
-          v-model.number="form.prixHt"
-          type="number"
+          v-model="form.prixHt"
           label="Prix HT (€) *"
           label-visible
           :error-message="formatError(v$.prixHt)"
