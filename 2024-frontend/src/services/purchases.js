@@ -76,6 +76,31 @@ const restorePurchases = (ids) => {
     .then((response) => response)
 }
 
+const fetchInvoice = async (canteenId, purchaseId) => {
+  return await fetch(`/api/v1/canteens/${canteenId}/purchases/${purchaseId}/facture`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+}
+
+const uploadInvoice = async (payload) => {
+  const { canteenId, purchaseId, body } = payload
+  return await fetch(`/api/v1/canteens/${canteenId}/purchases/${purchaseId}/facture`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+}
+
 export default {
   createPurchase,
   fetchPurchase,
@@ -83,4 +108,6 @@ export default {
   updatePurchase,
   deletePurchase,
   restorePurchases,
+  fetchInvoice,
+  uploadInvoice,
 }
