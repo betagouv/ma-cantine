@@ -16,9 +16,8 @@ const isUploadingInvoice = ref(false)
 const loadInvoice = async () => {
   isLoading.value = true
   purchasesService.fetchInvoice(props.canteenId, props.purchaseId)
-    .then(response => {
-      invoiceUrl.value = response.facture
-    } )
+    .then(response => invoiceUrl.value = response.facture)
+    .catch(() => invoiceUrl.value = null)
     .finally(() => isLoading.value = false)
 }
 onMounted(loadInvoice)
