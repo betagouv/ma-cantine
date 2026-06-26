@@ -73,7 +73,18 @@ const openInvoice = () => {
 
 /* Delete */
 const deleteInvoice = async () => {
-  console.log("deleteInvoice")
+  isUploadingInvoice.value = true
+  purchasesService.deleteInvoice(props.canteenId, props.purchaseId)
+    .then(() => {
+      invoiceUrl.value = null
+      store.notify({
+        title: "Facture supprimée",
+        message: "La facture de l'achat a bien été supprimée.",
+        status: "success",
+      })
+    })
+    .catch(error => store.notifyServerError(error))
+    .finally(() => isUploadingInvoice.value = false)
 }
 </script>
 <template>
