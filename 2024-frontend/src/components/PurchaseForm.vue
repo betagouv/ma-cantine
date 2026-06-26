@@ -105,7 +105,7 @@ const validateForm = async () => {
 const formatPayload = (form) => {
   const payload = { ...form }
   // Field origine cannot be empty
-  if (payload.origine === '') delete payload.origine
+  if (payload.origine === '' || payload.origine === null) delete payload.origine
   return payload
 }
 </script>
