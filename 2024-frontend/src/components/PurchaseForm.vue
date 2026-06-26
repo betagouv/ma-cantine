@@ -33,6 +33,7 @@ const form = reactive({
   estCircuitCourt: null,
   estLocal: null,
   definitionLocal: "",
+  definitionLocalKm: null,
 })
 
 const familleProduitOptions = Object.values(achats.familleProduit)
@@ -53,11 +54,13 @@ const prefillFields = () => {
   form.estCircuitCourt = props.purchaseData.estCircuitCourt
   form.estLocal = props.purchaseData.estLocal
   form.definitionLocal = props.purchaseData.definitionLocal
+  form.definitionLocalKm = props.purchaseData.definitionLocalKm
 }
 
 if (props.purchaseData) prefillFields()
 
 const showLocalDefinition = computed(() => form.estLocal)
+const showKMDefinition = computed(() => form.estLocal && form.definitionLocal === 'KM')
 
 const { required, minValue, requiredIf } = useValidators()
 const rules = {
@@ -73,6 +76,7 @@ const rules = {
   },
   familleProduits: { required },
   definitionLocal: { required: requiredIf(showLocalDefinition) },
+  definitionLocalKm: { required: requiredIf(showKMDefinition) },
 }
 
 const v$ = useVuelidate(rules, form)
@@ -80,6 +84,10 @@ const v$ = useVuelidate(rules, form)
 /* Local change */
 const onLocalChange = () => {
   form.definitionLocal = ""
+}
+
+const onDefinitionLocalChange = () => {
+  form.definitionLocalKm = null
 }
 
 /* Form submission */
@@ -197,6 +205,14 @@ const validateForm = async () => {
           labelVisible
           :options="definitionLocalOptions"
           :error-message="formatError(v$.definitionLocal)"
+          @change="onDefinitionLocalChange"
+        />
+        <DsfrInputGroup
+          v-if="showKMDefinition"
+          v-model.number="form.definitionLocalKm"
+          label="Distance (en km) *"
+          label-visible
+          :error-message="formatError(v$.definitionLocalKm)"
         />
       </div>
     </div>
