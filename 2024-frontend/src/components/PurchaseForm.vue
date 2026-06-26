@@ -24,7 +24,7 @@ const autocompleteOptions = computedAsync(async () => {
 
 const form = reactive({
   description: null,
-  formatError: null,
+  fournisseur: null,
   prixHt: null,
   date: null,
   familleProduits: null,
