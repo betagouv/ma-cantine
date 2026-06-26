@@ -8,11 +8,10 @@ import achats from "@/data/achats.json"
 import purchases from "@/services/purchases.js"
 
 /* Props and emits */
-const props = defineProps(["purchaseData", "showCancelButton", "showDeleteButton"])
+const props = defineProps(["purchaseData", "showCancelButton", "showDeleteButton", "errors"])
 const emit = defineEmits(["sendForm", "cancel", "delete"])
 
 /* Form fields */
-const today = computed(() => new Date().toISOString().split("T")[0])
 const autocompleteOptions = computedAsync(async () => {
   const response = await purchases.fetchPurchasesOptions()
   return {
@@ -58,6 +57,7 @@ const prefillFields = () => {
 
 if (props.purchaseData) prefillFields()
 
+/* Fields errors */
 const showLocalDefinition = computed(() => form.estLocal)
 const showKMDefinition = computed(() => form.estLocal && form.definitionLocal === 'KM')
 
@@ -73,6 +73,20 @@ const rules = {
 }
 
 const v$ = useVuelidate(rules, form)
+
+const backendErrors = computed(() => {
+  if (!props.errors) return {}
+  const fieldsName = Object.keys(form)
+  const valuesErrors = Object.values(props.errors)
+  const errors = Object.fromEntries(fieldsName.map(field => [field, false]))
+
+  for (const error of valuesErrors) {
+    if (fieldsName.includes(error.field)) {
+      errors[error.field] = error.message.join(". ")
+    }
+  }
+  return errors
+})
 
 /* Local change */
 const onLocalChange = () => {
@@ -116,7 +130,7 @@ const formatPayload = (form) => {
           label-visible
           list="descriptions"
           placeholder="Yaourts bio, légumes bio de juin..."
-          :error-message="formatError(v$.description)"
+          :error-message="formatError(v$.description) || backendErrors.description"
         />
         <datalist id="descriptions">
           <option v-for="description in autocompleteOptions.descriptions" :key="description" :value="description"></option>
@@ -127,7 +141,7 @@ const formatPayload = (form) => {
           v-model="form.prixHt"
           label="Prix HT (€) *"
           label-visible
-          :error-message="formatError(v$.prixHt)"
+          :error-message="formatError(v$.prixHt) || backendErrors.prixHt"
         />
       </div>
     </div>
@@ -138,7 +152,7 @@ const formatPayload = (form) => {
           label="Fournisseur *"
           label-visible
           list="providers"
-          :error-message="formatError(v$.fournisseur)"
+          :error-message="formatError(v$.fournisseur) || backendErrors.fournisseur"
         />
         <datalist id="providers">
           <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
@@ -150,8 +164,7 @@ const formatPayload = (form) => {
           type="date"
           label="Date d'achat *"
           label-visible
-          :max="today"
-          :error-message="formatError(v$.date)"
+          :error-message="formatError(v$.date) || backendErrors.date"
         />
       </div>
     </div>
@@ -162,7 +175,7 @@ const formatPayload = (form) => {
       legend="Famille de produit *"
       inline
       :options="familleProduitOptions"
-      :error-message="formatError(v$.familleProduits)"
+      :error-message="formatError(v$.familleProduits) || backendErrors.familleProduits"
     />
 
     <DsfrCheckboxSet
@@ -180,6 +193,7 @@ const formatPayload = (form) => {
           v-model="form.origine"
           label="Origine"
           :options="[{ value: '', text: '--' }, ...categoriesOriginesOptions]"
+          :error-message="backendErrors.origine"
         />
       </div>
       <div class="fr-col-12 fr-col-md-4">
@@ -187,6 +201,7 @@ const formatPayload = (form) => {
           v-model="form.estCircuitCourt"
           legend="Circuit court"
           :options="estCircuitCourtOptions"
+          :error-message="backendErrors.estCircuitCourt"
           small
           inline
         />
@@ -199,6 +214,7 @@ const formatPayload = (form) => {
           v-model="form.estLocal"
           legend="« Local »"
           :options="estLocalOptions"
+          :error-message="backendErrors.estLocal"
           small
           inline
           class="fr-mb-n2w"
@@ -212,7 +228,7 @@ const formatPayload = (form) => {
           label="Précisez la provenance du produit *"
           labelVisible
           :options="definitionLocalOptions"
-          :error-message="formatError(v$.definitionLocal)"
+          :error-message="formatError(v$.definitionLocal) || backendErrors.definitionLocal"
           @change="onDefinitionLocalChange"
         />
       </div>
@@ -222,7 +238,7 @@ const formatPayload = (form) => {
           v-model.number="form.definitionLocalKm"
           label="Distance (en km) *"
           label-visible
-          :error-message="formatError(v$.definitionLocalKm)"
+          :error-message="formatError(v$.definitionLocalKm) || backendErrors.definitionLocalKm"
         />
       </div>
     </div>
