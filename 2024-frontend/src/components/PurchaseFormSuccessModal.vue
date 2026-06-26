@@ -11,7 +11,7 @@ const canteenUrlComponent = route.params.canteenUrlComponent
 
 /* Actions */
 const goToAddInvoice = () => {
-  router.push({ name: "GestionnaireAchatsModifier", params: { id: props.purchaseId, canteenUrlComponent: canteenUrlComponent } })
+  router.push({ name: "GestionnaireAchatsModifier", hash: "#facture", params: { id: props.purchaseId, canteenUrlComponent: canteenUrlComponent } })
 }
 
 const goToPurchasesList = () => {

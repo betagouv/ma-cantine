@@ -121,18 +121,19 @@ const goToPurchasesList = () => {
   </section>
   <section class="fr-mt-4w">
     <AppLoader v-if="isLoading" />
-    <div v-else-if="purchaseData.id">
-      <PurchaseForm
-        :key="forceRerender"
-        :purchase-data="purchaseData"
-        :showCancelButton="true"
-        :showDeleteButton="true"
-        @sendForm="(payload) => savePurchase(payload)"
-        @cancel="goToPurchasesList"
-        @delete="deletePurchase"
-      />
-      <PurchaseInvoice class="fr-mt-4w" :canteenId="canteenId" :purchaseId="purchaseId" />
-    </div>
+    <p v-else-if="!purchaseData.id" class="fr-mb-0" >
+      Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
+    </p>
+    <PurchaseForm
+      v-else-if="purchaseData.id"
+      :key="forceRerender"
+      :purchase-data="purchaseData"
+      :showCancelButton="true"
+      :showDeleteButton="true"
+      @sendForm="(payload) => savePurchase(payload)"
+      @cancel="goToPurchasesList"
+      @delete="deletePurchase"
+    />
     <div v-else-if="purchaseDeleted" class="fr-col-12 fr-col-lg-7">
       <p>
         L'achat a bien été supprimé pour la cantine « {{ canteenName }} ». <br />
@@ -144,8 +145,8 @@ const goToPurchasesList = () => {
         @click="restorePurchase"
       />
     </div>
-    <p v-else class="fr-mb-0" >
-      Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
-    </p>
+    <div id="facture">
+      <PurchaseInvoice v-if="purchaseData.id" class="fr-mt-4w" :canteenId="canteenId" :purchaseId="purchaseId" />
+    </div>
   </section>
 </template>
