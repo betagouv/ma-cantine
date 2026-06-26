@@ -75,10 +75,9 @@ const openInvoice = () => {
 const deleteInvoice = async () => {
   console.log("deleteInvoice")
 }
-
 </script>
 <template>
-  <div class="fr-card fr-p-3w">
+  <div class="fr-card fr-p-3w fr-background-alt--grey">
     <p class="fr-h6"><span class="fr-icon-file-line"></span> Facture</p>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-8 fr-pr-5w">
