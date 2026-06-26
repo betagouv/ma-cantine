@@ -30,8 +30,8 @@ const form = reactive({
   familleProduits: null,
   categoriesEgalim: [],
   origine: null,
-  estCircuitCourt: null,
-  estLocal: null,
+  estCircuitCourt: false,
+  estLocal: false,
   definitionLocal: "",
   definitionLocalKm: null,
 })
@@ -97,7 +97,16 @@ const validateForm = async () => {
   const isValid = await v$.value.$validate()
   if (!isValid) return
   isSaving.value = true
-  emit("sendForm", form)
+  const payload = formatPayload(form)
+  emit("sendForm", payload)
+  isSaving.value = false
+}
+
+const formatPayload = (form) => {
+  const payload = { ...form }
+  // Field origine cannot be empty
+  if (payload.origine === '') delete payload.origine
+  return payload
 }
 </script>
 
