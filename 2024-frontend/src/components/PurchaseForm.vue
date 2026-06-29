@@ -24,15 +24,15 @@ const autocompleteOptions = computedAsync(async () => {
 
 const form = reactive({
   description: null,
-  provider: null,
-  priceHt: null,
+  fournisseur: null,
+  prixHt: null,
   date: null,
-  family: null,
-  characteristicsEgalim: [],
-  characteristicsOrigines: null,
-  characteristicsCircuitCourt: [],
-  characteristicsLocal: [],
-  localDefinition: "",
+  familleProduits: null,
+  categoriesEgalim: [],
+  origine: null,
+  estCircuitCourt: null,
+  estLocal: null,
+  definitionLocal: "",
 })
 
 const familleProduitOptions = Object.values(achats.familleProduit)
@@ -42,36 +42,28 @@ const estCircuitCourtOptions = Object.values(achats.estCircuitCourt)
 const estLocalOptions = Object.values(achats.estLocal)
 const definitionLocalOptions = Object.values(achats.definitionLocal).map(option => ({ value: option.value, text: option.label }))
 
-const egalimValues = categoriesEgalimOptions.map((option) => option.value)
-const originesValues = categoriesOriginesOptions.map((option) => option.value)
-const circuitCourtValues = estCircuitCourtOptions.map((option) => option.value)
-const localValues = estLocalOptions.map((option) => option.value)
-
 const prefillFields = () => {
   form.description = props.purchaseData.description
-  form.provider = props.purchaseData.provider
-  const hasPriceHt = props.purchaseData.priceHt !== null && props.purchaseData.priceHt !== undefined
-  form.priceHt = hasPriceHt ? Number(props.purchaseData.priceHt) : null
+  form.fournisseur = props.purchaseData.fournisseur
+  form.prixHt = props.purchaseData.prixHt
   form.date = props.purchaseData.date
-  form.family = props.purchaseData.family
-  form.localDefinition = props.purchaseData.localDefinition || ""
-  const characteristics = props.purchaseData.characteristics || []
-  form.characteristicsEgalim = characteristics.filter((c) => egalimValues.includes(c))
-  const origineValue = characteristics.filter((c) => originesValues.includes(c))
-  form.characteristicsOrigines = origineValue.length > 0 ? origineValue[0] : ""
-  form.characteristicsCircuitCourt = characteristics.filter((c) => circuitCourtValues.includes(c))
-  form.characteristicsLocal = characteristics.filter((c) => localValues.includes(c))
+  form.familleProduits = props.purchaseData.familleProduits
+  form.categoriesEgalim = props.purchaseData.categoriesEgalim
+  form.origine = props.purchaseData.origine
+  form.estCircuitCourt = props.purchaseData.estCircuitCourt
+  form.estLocal = props.purchaseData.estLocal
+  form.definitionLocal = props.purchaseData.definitionLocal
 }
 
 if (props.purchaseData) prefillFields()
 
-const showLocalDefinition = computed(() => form.characteristicsLocal.length > 0)
+const showLocalDefinition = computed(() => form.estLocal)
 
-const { required, decimal, minValue, requiredIf } = useValidators()
+const { required, minValue, requiredIf } = useValidators()
 const rules = {
   description: { required },
-  provider: { required },
-  priceHt: { required, decimal, minValue: minValue(0.01) },
+  fournisseur: { required },
+  prixHt: { required, minValue: minValue(0.01) },
   date: {
     required,
     maxDate: helpers.withMessage(
@@ -79,15 +71,15 @@ const rules = {
       (date) => new Date(date) < new Date()
     )
   },
-  family: { required },
-  localDefinition: { required: requiredIf(showLocalDefinition) },
+  familleProduits: { required },
+  definitionLocal: { required: requiredIf(showLocalDefinition) },
 }
 
 const v$ = useVuelidate(rules, form)
 
 /* Local change */
 const onLocalChange = () => {
-  form.localDefinition = ""
+  form.definitionLocal = ""
 }
 
 /* Form submission */
@@ -97,19 +89,7 @@ const validateForm = async () => {
   const isValid = await v$.value.$validate()
   if (!isValid) return
   isSaving.value = true
-  const payload = formatPayload(form)
-  emit("sendForm", payload)
-}
-
-const formatPayload = (form) => {
-  const payload = { ...form }
-  payload.characteristics = [...payload.characteristicsEgalim, ...payload.characteristicsCircuitCourt, ...payload.characteristicsLocal]
-  if (payload.characteristicsOrigines) payload.characteristics.push(payload.characteristicsOrigines)
-  delete payload.characteristicsEgalim
-  delete payload.characteristicsOrigines
-  delete payload.characteristicsCircuitCourt
-  delete payload.characteristicsLocal
-  return payload
+  emit("sendForm", form)
 }
 </script>
 
@@ -131,22 +111,22 @@ const formatPayload = (form) => {
       </div>
       <div class="fr-col-12 fr-col-md-4">
         <DsfrInputGroup
-          v-model.number="form.priceHt"
+          v-model.number="form.prixHt"
           type="number"
           label="Prix HT (€) *"
           label-visible
-          :error-message="formatError(v$.priceHt)"
+          :error-message="formatError(v$.prixHt)"
         />
       </div>
     </div>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-8">
         <DsfrInputGroup
-          v-model="form.provider"
+          v-model="form.fournisseur"
           label="Fournisseur *"
           label-visible
           list="providers"
-          :error-message="formatError(v$.provider)"
+          :error-message="formatError(v$.fournisseur)"
         />
         <datalist id="providers">
           <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
@@ -166,16 +146,16 @@ const formatPayload = (form) => {
 
     <DsfrRadioButtonSet
       class="purchase-form__inline-col"
-      v-model="form.family"
+      v-model="form.familleProduits"
       legend="Famille de produit *"
       inline
       :options="familleProduitOptions"
-      :error-message="formatError(v$.family)"
+      :error-message="formatError(v$.familleProduits)"
     />
 
     <DsfrCheckboxSet
       class="purchase-form__inline-col"
-      v-model="form.characteristicsEgalim"
+      v-model="form.categoriesEgalim"
       legend="Catégories EGalim"
       :options="categoriesEgalimOptions"
       small
@@ -185,14 +165,14 @@ const formatPayload = (form) => {
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-4">
         <DsfrSelect
-          v-model="form.characteristicsOrigines"
+          v-model="form.origine"
           label="Origine"
           :options="[{ value: '', text: '--' }, ...categoriesOriginesOptions]"
         />
       </div>
       <div class="fr-col-12 fr-col-md-4">
         <DsfrCheckboxSet
-          v-model="form.characteristicsCircuitCourt"
+          v-model="form.estCircuitCourt"
           legend="Circuit court"
           :options="estCircuitCourtOptions"
           small
@@ -201,7 +181,7 @@ const formatPayload = (form) => {
       </div>
       <div class="fr-col-12 fr-col-md-4">
         <DsfrCheckboxSet
-          v-model="form.characteristicsLocal"
+          v-model="form.estLocal"
           legend="« Local »"
           :options="estLocalOptions"
           small
@@ -211,12 +191,12 @@ const formatPayload = (form) => {
         />
         <DsfrSelect
           v-if="showLocalDefinition"
-          v-model="form.localDefinition"
+          v-model="form.definitionLocal"
           label="Précisions *"
           hint="Précisez la provenance du produit"
           labelVisible
           :options="definitionLocalOptions"
-          :error-message="formatError(v$.localDefinition)"
+          :error-message="formatError(v$.definitionLocal)"
         />
       </div>
     </div>

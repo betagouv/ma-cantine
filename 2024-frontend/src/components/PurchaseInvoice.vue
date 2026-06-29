@@ -89,10 +89,10 @@ const deleteInvoice = async () => {
 </script>
 <template>
   <div class="fr-card fr-p-3w fr-background-alt--grey">
-    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
       <div class="fr-col-12 fr-col-md-8">
-        <p class="fr-h6"><span class="fr-icon-file-line"></span> Facture</p>
-        <p class="fr-text--sm">Ce champ est facultatif. Il n'est pas nécessaire d'importer ses factures pdf si vous disposez déjà d'un espace de stockage fiable et sécurisé (sur votre ordinateur ou autre logiciel par exemple).</p>
+        <p class="fr-h6 fr-mb-1w"><span class="fr-icon-file-line"></span> Facture</p>
+        <p class="fr-text--sm fr-mb-0">Ce champ est facultatif. Il n'est pas nécessaire d'importer ses factures pdf si vous disposez déjà d'un espace de stockage fiable et sécurisé (sur votre ordinateur ou autre logiciel par exemple).</p>
         <div v-if="invoiceUrl" class="purchase-invoice__actions fr-mt-3w">
           <DsfrButton
             :disabled="isUploadingInvoice"
