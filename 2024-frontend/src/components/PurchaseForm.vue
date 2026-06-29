@@ -139,6 +139,7 @@ const formatPayload = (form) => {
           label="Prix HT (€) *"
           label-visible
           :error-message="formatError(v$.prixHt) || backendErrors.prixHt"
+          class="fr-mb-4w"
         />
       </div>
     </div>
@@ -163,6 +164,7 @@ const formatPayload = (form) => {
           label="Date d'achat *"
           label-visible
           :error-message="formatError(v$.date) || backendErrors.date"
+          class="fr-mb-4w"
         />
       </div>
     </div>
@@ -192,12 +194,13 @@ const formatPayload = (form) => {
           label="Origine"
           :options="[{ value: '', text: '--' }, ...categoriesOriginesOptions]"
           :error-message="backendErrors.origine"
+          class="fr-mb-4w"
         />
       </div>
     </div>
 
     <div class="fr-grid-row fr-grid-row--gutters">
-      <div class="fr-col-12 fr-col-md-4">
+      <div class="fr-col-12 fr-col-md-12">
         <DsfrCheckboxSet
           v-model="form.estCircuitCourt"
           legend="Circuit court"
@@ -218,7 +221,6 @@ const formatPayload = (form) => {
           :error-message="backendErrors.estLocal"
           small
           inline
-          class="fr-mb-n2w"
           @change="onLocalChange"
         />
       </div>
