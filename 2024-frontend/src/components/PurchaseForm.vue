@@ -30,9 +30,10 @@ const form = reactive({
   familleProduits: null,
   categoriesEgalim: [],
   origine: null,
-  estCircuitCourt: null,
-  estLocal: null,
+  estCircuitCourt: false,
+  estLocal: false,
   definitionLocal: "",
+  definitionLocalKm: null,
 })
 
 const familleProduitOptions = Object.values(achats.familleProduit)
@@ -53,11 +54,13 @@ const prefillFields = () => {
   form.estCircuitCourt = props.purchaseData.estCircuitCourt
   form.estLocal = props.purchaseData.estLocal
   form.definitionLocal = props.purchaseData.definitionLocal
+  form.definitionLocalKm = props.purchaseData.definitionLocalKm
 }
 
 if (props.purchaseData) prefillFields()
 
 const showLocalDefinition = computed(() => form.estLocal)
+const showKMDefinition = computed(() => form.estLocal && form.definitionLocal === 'KM')
 
 const { required, minValue, requiredIf } = useValidators()
 const rules = {
@@ -73,6 +76,7 @@ const rules = {
   },
   familleProduits: { required },
   definitionLocal: { required: requiredIf(showLocalDefinition) },
+  definitionLocalKm: { required: requiredIf(showKMDefinition) },
 }
 
 const v$ = useVuelidate(rules, form)
@@ -82,6 +86,10 @@ const onLocalChange = () => {
   form.definitionLocal = ""
 }
 
+const onDefinitionLocalChange = () => {
+  form.definitionLocalKm = null
+}
+
 /* Form submission */
 const isSaving = ref(false)
 
@@ -89,7 +97,16 @@ const validateForm = async () => {
   const isValid = await v$.value.$validate()
   if (!isValid) return
   isSaving.value = true
-  emit("sendForm", form)
+  const payload = formatPayload(form)
+  emit("sendForm", payload)
+  isSaving.value = false
+}
+
+const formatPayload = (form) => {
+  const payload = { ...form }
+  // Field origine cannot be empty
+  if (payload.origine === '' || payload.origine === null) delete payload.origine
+  return payload
 }
 </script>
 
@@ -179,6 +196,9 @@ const validateForm = async () => {
           inline
         />
       </div>
+    </div>
+
+    <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-4">
         <DsfrCheckboxSet
           v-model="form.estLocal"
@@ -189,14 +209,25 @@ const validateForm = async () => {
           class="fr-mb-n2w"
           @change="onLocalChange"
         />
+      </div>
+      <div class="fr-col-12 fr-col-md-4">
         <DsfrSelect
           v-if="showLocalDefinition"
           v-model="form.definitionLocal"
-          label="Précisions *"
-          hint="Précisez la provenance du produit"
+          label="Précisez la provenance du produit *"
           labelVisible
           :options="definitionLocalOptions"
           :error-message="formatError(v$.definitionLocal)"
+          @change="onDefinitionLocalChange"
+        />
+      </div>
+      <div class="fr-col-12 fr-col-md-4">
+        <DsfrInputGroup
+          v-if="showKMDefinition"
+          v-model.number="form.definitionLocalKm"
+          label="Distance (en km) *"
+          label-visible
+          :error-message="formatError(v$.definitionLocalKm)"
         />
       </div>
     </div>
