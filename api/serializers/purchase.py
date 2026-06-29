@@ -79,6 +79,9 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
+REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
+
+
 class PurchaseSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -119,6 +122,15 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "creation_date",
             "modification_date",
         )
+
+    def get_fields(self):
+        fields = super().get_fields()
+        # some fields are required
+        for field in REQUIRED_FIELDS:
+            fields[field].required = True
+            fields[field].allow_null = False
+            fields[field].allow_blank = False
+        return fields
 
     def to_representation(self, instance):
         """

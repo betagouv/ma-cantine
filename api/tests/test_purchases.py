@@ -285,7 +285,7 @@ class PurchaseCreateApiTest(APITestCase):
         cls.user = UserFactory()
         cls.canteen = CanteenFactory(managers=[cls.user])
         cls.url = reverse("canteen_purchase_create", kwargs={"canteen_pk": cls.canteen.id})
-        cls.PURCHASE_MINIMAL_PAYLOAD = {
+        cls.PURCHASE_PAYLOAD = {
             # "canteen_id": cls.canteen.id,
             "description": "Saumon",
             "fournisseur": "Test fournisseur",
@@ -300,21 +300,21 @@ class PurchaseCreateApiTest(APITestCase):
         }
 
     def test_cannot_create_purchase_if_unauthenticated(self):
-        response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_create_purchase_if_canteen_does_not_exist(self):
         response = self.client.post(
-            reverse("canteen_purchase_create", kwargs={"canteen_pk": 999}), self.PURCHASE_MINIMAL_PAYLOAD
+            reverse("canteen_purchase_create", kwargs={"canteen_pk": 999}), self.PURCHASE_PAYLOAD
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_create_purchase_if_not_canteen_manager(self):
-        response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -330,13 +330,13 @@ class PurchaseCreateApiTest(APITestCase):
     def test_create_minimal_purchase(self):
         self.canteen.managers.add(authenticate.user)
 
-        response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         purchase = Purchase.objects.first()
-        self.assertEqual(purchase.description, self.PURCHASE_MINIMAL_PAYLOAD["description"])
-        self.assertEqual(purchase.fournisseur, self.PURCHASE_MINIMAL_PAYLOAD["fournisseur"])
-        self.assertEqual(float(purchase.prix_ht), self.PURCHASE_MINIMAL_PAYLOAD["prix_ht"])
+        self.assertEqual(purchase.description, self.PURCHASE_PAYLOAD["description"])
+        self.assertEqual(purchase.fournisseur, self.PURCHASE_PAYLOAD["fournisseur"])
+        self.assertEqual(float(purchase.prix_ht), self.PURCHASE_PAYLOAD["prix_ht"])
         self.assertEqual(purchase.famille_produits, Purchase.Family.PRODUITS_DE_LA_MER)
         self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE])
         self.assertEqual(purchase.creation_user, authenticate.user)
@@ -346,19 +346,93 @@ class PurchaseCreateApiTest(APITestCase):
         self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token}")
-        response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    # @authenticate
-    # def test_create_purchase
+    @authenticate
+    def test_create_purchase_required_fields(self):
+        self.canteen.managers.add(authenticate.user)
+
+        for field in ["description", "date", "prix_ht", "famille_produits"]:
+            with self.subTest(field=field):
+                payload = {**self.PURCHASE_PAYLOAD, field: ""}
+                response = self.client.post(self.url, payload)
+
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_create_purchase_optional_fields(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # fournisseur is optional
+        payload = {**self.PURCHASE_PAYLOAD, "fournisseur": ""}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.fournisseur, "")
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # categories_egalim is optional
+        payload = {**self.PURCHASE_PAYLOAD, "categories_egalim": []}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["categoriesEgalim"], [])
+        purchase = Purchase.objects.first()
+        self.assertEqual(len(purchase.caracteristiques), 1)  # EUROPE
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # origine is optional
+        payload = {**self.PURCHASE_PAYLOAD, "origine": ""}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["origine"], "")
+        purchase = Purchase.objects.first()
+        self.assertEqual(len(purchase.caracteristiques), 1)  # BIO
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # est_local is optional
+        payload = {**self.PURCHASE_PAYLOAD, "est_local": False}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["estLocal"], False)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_local, False)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # est_circuit_court is optional
+        payload = {**self.PURCHASE_PAYLOAD, "est_circuit_court": False}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["estCircuitCourt"], False)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_circuit_court, False)
+
+        # definition_local definition_local_km are optional (see below)
 
     @authenticate
     def test_create_purchase_with_definition_local(self):
         self.canteen.managers.add(authenticate.user)
 
         # definition_local is optional
-        payload = {**self.PURCHASE_MINIMAL_PAYLOAD, "est_local": True, "definition_local": ""}
+        payload = {**self.PURCHASE_PAYLOAD, "est_local": True, "definition_local": ""}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         purchase = Purchase.objects.first()
@@ -370,13 +444,13 @@ class PurchaseCreateApiTest(APITestCase):
         Purchase.objects.all().delete()
 
         # definition_local cannot be filled if est_local is False
-        payload = {**self.PURCHASE_MINIMAL_PAYLOAD, "est_local": False, "definition_local": Purchase.Local.KM}
+        payload = {**self.PURCHASE_PAYLOAD, "est_local": False, "definition_local": Purchase.Local.KM}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # definition_local_km is optional
         payload = {
-            **self.PURCHASE_MINIMAL_PAYLOAD,
+            **self.PURCHASE_PAYLOAD,
             "est_local": True,
             "definition_local": Purchase.Local.KM,
             "definition_local_km": "",
@@ -393,7 +467,7 @@ class PurchaseCreateApiTest(APITestCase):
 
         # definition_local_km can be filled if definition_local is KM
         payload = {
-            **self.PURCHASE_MINIMAL_PAYLOAD,
+            **self.PURCHASE_PAYLOAD,
             "est_local": True,
             "definition_local": Purchase.Local.KM,
             "definition_local_km": 10,
@@ -410,7 +484,7 @@ class PurchaseCreateApiTest(APITestCase):
 
         # definition_local_km cannot be filled if definition_local is not KM
         payload = {
-            **self.PURCHASE_MINIMAL_PAYLOAD,
+            **self.PURCHASE_PAYLOAD,
             "est_local": True,
             "definition_local": Purchase.Local.COMMUNE,
             "definition_local_km": 10,
@@ -713,7 +787,7 @@ class PurchaseOldCreateApiTest(APITestCase):
         cls.user = UserFactory()
         cls.canteen = CanteenFactory(managers=[cls.user])
         cls.url = reverse("purchase_list_create")
-        cls.PURCHASE_MINIMAL_PAYLOAD = {
+        cls.PURCHASE_PAYLOAD = {
             "canteen": cls.canteen.id,
             "description": "Saumon",
             "provider": "Test fournisseur",
@@ -725,13 +799,13 @@ class PurchaseOldCreateApiTest(APITestCase):
         }
 
     def test_cannot_create_purchase_if_unauthenticated(self):
-        response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_create_purchase_if_canteen_does_not_exist(self):
-        payload = {**self.PURCHASE_MINIMAL_PAYLOAD, "canteen": 9999}
+        payload = {**self.PURCHASE_PAYLOAD, "canteen": 9999}
 
         response = self.client.post(self.url, payload)
 
@@ -739,7 +813,7 @@ class PurchaseOldCreateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_create_purchase_if_not_canteen_manager(self):
-        response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -747,7 +821,7 @@ class PurchaseOldCreateApiTest(APITestCase):
     def test_create_purchase(self):
         self.canteen.managers.add(authenticate.user)
 
-        response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         purchase = Purchase.objects.first()
@@ -760,7 +834,7 @@ class PurchaseOldCreateApiTest(APITestCase):
         self.canteen.managers.add(authenticate.user)
 
         # from the APP
-        payload = {**self.PURCHASE_MINIMAL_PAYLOAD, "creation_source": CreationSource.APP}
+        payload = {**self.PURCHASE_PAYLOAD, "creation_source": CreationSource.APP}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -776,7 +850,7 @@ class PurchaseOldCreateApiTest(APITestCase):
         Purchase.objects.all().delete()
 
         # defaults to API
-        response = self.client.post(self.url, self.PURCHASE_MINIMAL_PAYLOAD)
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         self.assertNotIn("creation_user", body)
@@ -791,7 +865,7 @@ class PurchaseOldCreateApiTest(APITestCase):
         Purchase.objects.all().delete()
 
         # returns a 404 if the creation_source is not valid
-        payload = {**self.PURCHASE_MINIMAL_PAYLOAD, "creation_source": "UNKNOWN"}
+        payload = {**self.PURCHASE_PAYLOAD, "creation_source": "UNKNOWN"}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
