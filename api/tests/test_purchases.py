@@ -350,6 +350,74 @@ class PurchaseCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    # @authenticate
+    # def test_create_purchase
+
+    @authenticate
+    def test_create_purchase_with_definition_local(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # definition_local is optional
+        payload = {**self.PURCHASE_MINIMAL_PAYLOAD, "est_local": True, "definition_local": ""}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_local, True)
+        self.assertEqual(purchase.definition_local, "")
+        self.assertEqual(purchase.definition_local_km, None)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # definition_local cannot be filled if est_local is False
+        payload = {**self.PURCHASE_MINIMAL_PAYLOAD, "est_local": False, "definition_local": Purchase.Local.KM}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # definition_local_km is optional
+        payload = {
+            **self.PURCHASE_MINIMAL_PAYLOAD,
+            "est_local": True,
+            "definition_local": Purchase.Local.KM,
+            "definition_local_km": "",
+        }
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_local, True)
+        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local_km, None)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # definition_local_km can be filled if definition_local is KM
+        payload = {
+            **self.PURCHASE_MINIMAL_PAYLOAD,
+            "est_local": True,
+            "definition_local": Purchase.Local.KM,
+            "definition_local_km": 10,
+        }
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_local, True)
+        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local_km, 10)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # definition_local_km cannot be filled if definition_local is not KM
+        payload = {
+            **self.PURCHASE_MINIMAL_PAYLOAD,
+            "est_local": True,
+            "definition_local": Purchase.Local.COMMUNE,
+            "definition_local_km": 10,
+        }
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class PurchaseRetrieveApiTest(APITestCase):
     @classmethod
