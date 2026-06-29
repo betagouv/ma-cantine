@@ -64,7 +64,6 @@ const showKMDefinition = computed(() => form.estLocal && form.definitionLocal ==
 const { required } = useValidators()
 const rules = {
   description: { required },
-  fournisseur: { required },
   prixHt: { required },
   date: { required },
   familleProduits: { required },
@@ -148,10 +147,10 @@ const formatPayload = (form) => {
       <div class="fr-col-12 fr-col-md-8">
         <DsfrInputGroup
           v-model="form.fournisseur"
-          label="Fournisseur *"
+          label="Fournisseur"
           label-visible
           list="providers"
-          :error-message="formatError(v$.fournisseur) || backendErrors.fournisseur"
+          :error-message="backendErrors.fournisseur"
         />
         <datalist id="providers">
           <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
