@@ -4,12 +4,12 @@ import { computedAsync } from "@vueuse/core"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { helpers } from "@vuelidate/validators"
-import { formatError, toBase64 } from "@/utils.js"
+import { formatError } from "@/utils.js"
 import achats from "@/data/achats.json"
 import purchases from "@/services/purchases.js"
 
 /* Props and emits */
-const props = defineProps(["purchaseData", "showCreateButton", "showCancelButton", "showDeleteButton"])
+const props = defineProps(["purchaseData", "showCancelButton", "showDeleteButton"])
 const emit = defineEmits(["sendForm", "cancel", "delete"])
 
 /* Form fields */
@@ -61,7 +61,6 @@ const prefillFields = () => {
   form.characteristicsOrigines = origineValue.length > 0 ? origineValue[0] : ""
   form.characteristicsCircuitCourt = characteristics.filter((c) => circuitCourtValues.includes(c))
   form.characteristicsLocal = characteristics.filter((c) => localValues.includes(c))
-  form.invoiceUrl = props.purchaseData.invoiceFile
 }
 
 if (props.purchaseData) prefillFields()
@@ -86,27 +85,6 @@ const rules = {
 
 const v$ = useVuelidate(rules, form)
 
-/* Invoice file (Base64FileField on the backend; size enforced client-side) */
-const invoiceMaxSize = 10 * 1024 * 1024 // 10 Mo
-const invoiceFile = ref(null)
-const invoiceFileInputValue = ref("")
-const invoiceFileError = ref("")
-
-const onInvoiceFileChange = (files) => {
-  invoiceFileError.value = ""
-  const file = files?.[0]
-  if (!file) {
-    invoiceFile.value = null
-    return
-  }
-  if (file.size > invoiceMaxSize) {
-    invoiceFileError.value = "Le fichier dépasse la taille maximale de 10 Mo."
-    invoiceFile.value = null
-    return
-  }
-  invoiceFile.value = file
-}
-
 /* Local change */
 const onLocalChange = () => {
   form.localDefinition = ""
@@ -115,13 +93,12 @@ const onLocalChange = () => {
 /* Form submission */
 const isSaving = ref(false)
 
-const validateForm = async (action) => {
+const validateForm = async () => {
   const isValid = await v$.value.$validate()
-  if (!isValid || invoiceFileError.value) return
+  if (!isValid) return
   isSaving.value = true
   const payload = formatPayload(form)
-  if (invoiceFile.value) payload.invoiceFile = await toBase64(invoiceFile.value)
-  emit("sendForm", { form: payload, action })
+  emit("sendForm", payload)
 }
 
 const formatPayload = (form) => {
@@ -244,30 +221,6 @@ const formatPayload = (form) => {
       </div>
     </div>
 
-    <div class="fr-card fr-p-3w">
-      <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
-        <div class="fr-col-12 fr-col-md-4">
-          <p class="fr-legend-text fr-mb-1w">Facture</p>
-          <p class="fr-hint-text fr-mb-2w">Ce champ est facultatif. Il n'est pas nécessaire d'importer ses factures pdf si vous disposez déjà d'un espace de stockage fiable et sécurisé (sur votre ordinateur ou autre logiciel par exemple).</p>
-        </div>
-        <div class="fr-col-12 fr-col-md-4">
-          <DsfrFileUpload
-            v-model="invoiceFileInputValue"
-            :label="form.invoiceUrl ? 'Télécharger un nouveau fichier' : 'Télécharger un fichier'"
-            hint="PDF ou image (JPEG, PNG) — 10 Mo maximum"
-            accept="image/jpeg,image/png,application/pdf"
-            :error="invoiceFileError"
-            @change="onInvoiceFileChange"
-          />
-        </div>
-        <div class="fr-col-12 fr-col-md-4">
-          <div v-if="form.invoiceUrl">
-            <p class="fr-mb-2w">Vous avez déjà importé une facture pour cet achat : <a :href="form.invoiceUrl" target="_blank">voir le fichier</a>.</p>
-          </div>
-       </div>
-      </div>
-    </div>
-
     <div class="fr-mt-6w ma-cantine--flex-end">
       <DsfrButton
         v-if="showDeleteButton"
@@ -285,17 +238,10 @@ const formatPayload = (form) => {
         @click="emit('cancel')"
       />
       <DsfrButton
-        v-if="showCreateButton"
-        :disabled="isSaving"
-        label="Enregistrer et ajouter un nouvel achat"
-        secondary
-        @click="validateForm('stay-on-creation-page')"
-      />
-      <DsfrButton
         :disabled="isSaving"
         label="Enregistrer"
         icon="fr-icon-save-line"
-        @click="validateForm('go-to-purchases-list')"
+        @click="validateForm()"
       />
     </div>
   </form>

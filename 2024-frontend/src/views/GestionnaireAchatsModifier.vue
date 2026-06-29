@@ -8,6 +8,7 @@ import purchasesService from "@/services/purchases.js"
 import AppLoader from "@/components/AppLoader.vue"
 import AppRessources from "@/components/AppRessources.vue"
 import PurchaseForm from "@/components/PurchaseForm.vue"
+import PurchaseInvoice from "@/components/PurchaseInvoice.vue"
 
 /* Router and store */
 const route = useRoute()
@@ -37,8 +38,7 @@ const loadPurchase = async () => {
 onMounted(loadPurchase)
 
 /* Save */
-const savePurchase = async (props) => {
-  const { form } = props
+const savePurchase = async (form) => {
   const response = await purchasesService.updatePurchase(form, purchaseId)
 
   if (!response?.id) {
@@ -121,6 +121,9 @@ const goToPurchasesList = () => {
   </section>
   <section class="fr-mt-4w">
     <AppLoader v-if="isLoading" />
+    <p v-else-if="!purchaseData.id" class="fr-mb-0" >
+      Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
+    </p>
     <PurchaseForm
       v-else-if="purchaseData.id"
       :key="forceRerender"
@@ -142,8 +145,8 @@ const goToPurchasesList = () => {
         @click="restorePurchase"
       />
     </div>
-    <p v-else class="fr-mb-0" >
-      Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
-    </p>
+    <div id="facture">
+      <PurchaseInvoice v-if="purchaseData.id" class="fr-mt-4w" :canteenId="canteenId" :purchaseId="purchaseId" />
+    </div>
   </section>
 </template>
