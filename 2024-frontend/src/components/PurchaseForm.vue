@@ -61,15 +61,13 @@ if (props.purchaseData) prefillFields()
 const showLocalDefinition = computed(() => form.estLocal)
 const showKMDefinition = computed(() => form.estLocal && form.definitionLocal === 'KM')
 
-const { required, requiredIf } = useValidators()
+const { required } = useValidators()
 const rules = {
   description: { required },
   fournisseur: { required },
   prixHt: { required },
   date: { required },
   familleProduits: { required },
-  definitionLocal: { required: requiredIf(showLocalDefinition) },
-  definitionLocalKm: { required: requiredIf(showKMDefinition) },
 }
 
 const v$ = useVuelidate(rules, form)
@@ -229,10 +227,10 @@ const formatPayload = (form) => {
         <DsfrSelect
           v-if="showLocalDefinition"
           v-model="form.definitionLocal"
-          label="Précisez la provenance du produit *"
+          label="Précisez la provenance du produit"
           labelVisible
-          :options="definitionLocalOptions"
-          :error-message="formatError(v$.definitionLocal) || backendErrors.definitionLocal"
+          :options="[{ value: '', text: '--' }, ...definitionLocalOptions]"
+          :error-message="backendErrors.definitionLocal"
           @change="onDefinitionLocalChange"
         />
       </div>
@@ -240,9 +238,9 @@ const formatPayload = (form) => {
         <DsfrInputGroup
           v-if="showKMDefinition"
           v-model.number="form.definitionLocalKm"
-          label="Distance (en km) *"
+          label="Distance (en km)"
           label-visible
-          :error-message="formatError(v$.definitionLocalKm) || backendErrors.definitionLocalKm"
+          :error-message="backendErrors.definitionLocalKm"
         />
       </div>
     </div>
