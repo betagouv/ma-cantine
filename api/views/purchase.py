@@ -16,6 +16,7 @@ from api.filters.utils import UnaccentSearchFilter
 from api.permissions import (
     IsAuthenticated,
     IsCanteenManager,
+    IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManagerUrlParam,
     IsLinkedCanteenManager,
 )
@@ -35,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 
 class PurchaseCreateView(CreateModelMixin, GenericAPIView):
-    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     http_method_names = ["post"]
     model = Purchase
     serializer_class = PurchaseSerializer
@@ -62,7 +63,7 @@ class PurchaseCreateView(CreateModelMixin, GenericAPIView):
 
 
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     http_method_names = ["get", "patch", "delete"]  # disable "put"
     model = Purchase
     serializer_class = PurchaseSerializer
