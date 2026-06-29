@@ -16,13 +16,23 @@ const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 const forceRerender = ref(0)
 const purchaseCreatedId = ref(null)
+const errors = ref({})
 
 /* Save purchase */
 const savePurchase = async (form) => {
   const payload = { ...form }
   const response = await purchasesService.createPurchase(canteenId, payload)
-  if (!response?.id) store.notifyServerError(response)
+  if (!response?.id) displayErrors(response)
   else purchaseCreatedId.value = response.id
+}
+
+const displayErrors = (response) => {
+  store.notifyServerError({
+    title: "Erreur lors de la création de l'achat",
+    message: "Veuillez vérifier les champs du formulaire et réessayer.",
+    status: "error",
+  })
+  errors.value = response.list
 }
 
 /* Reset form */
@@ -58,6 +68,7 @@ const resetForm = () => {
   <PurchaseForm
     :key="forceRerender"
     @sendForm="(payload) => savePurchase(payload)"
+    :errors="errors"
   />
   <PurchaseFormSuccessModal
     v-if="purchaseCreatedId"
