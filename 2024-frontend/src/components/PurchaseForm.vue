@@ -145,6 +145,7 @@ const formatPayload = (form) => {
         />
       </div>
     </div>
+
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-8">
         <DsfrInputGroup
@@ -196,6 +197,9 @@ const formatPayload = (form) => {
           :error-message="backendErrors.origine"
         />
       </div>
+    </div>
+
+    <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-4">
         <DsfrCheckboxSet
           v-model="form.estCircuitCourt"
