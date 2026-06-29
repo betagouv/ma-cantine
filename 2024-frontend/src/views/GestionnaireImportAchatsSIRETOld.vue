@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue"
 import { useRoute } from "vue-router"
-import documentation from "@/data/documentation.json"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
@@ -25,12 +24,6 @@ const filePreviews = {
   error: "achats_siret_ancien_format_fichier_exemple_fichier_rejete.jpg?v=5",
   altError: "Exemple de fichier rejeté pour importer des achats, qui contient des erreurs dans les colonnes ou les valeurs",
 }
-const links = [
-  {
-    title: "Aide pour les formats d'import CSV, Excel, ODS",
-    href: documentation.importsFormatsFichiers,
-  }
-]
 
 /* Sucess */
 const showModal = ref(false)
@@ -52,7 +45,7 @@ const success = (count) => {
     <router-link :to="{ name: 'PurchasesHome' }">sur la plateforme</router-link>
     .
   </p>
-  <ImportExplanation :exampleFile :links />
+  <ImportExplanation :exampleFile />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
   <ImportFileUpload @success="success" apiUrl="importPurchasesOld" apiImportType="siret" eventMatomo="import-purchases-siret-old-success"/>

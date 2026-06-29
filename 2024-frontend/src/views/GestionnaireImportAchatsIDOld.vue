@@ -29,10 +29,6 @@ const links = [
   {
     title: "Où trouver l'ID de ma cantine ou de mon groupe ?",
     href: documentation.trouverIdCantine,
-  },
-  {
-    title: "Aide pour les formats d'import CSV, Excel, ODS",
-    href: documentation.importsFormatsFichiers,
   }
 ]
 

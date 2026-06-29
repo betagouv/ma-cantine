@@ -2,184 +2,99 @@
 import { computed } from "vue"
 import { useRoute } from "vue-router"
 import { useRootStore } from "@/stores/root"
+import ImportCard from "@/components/ImportCard.vue"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
-/* Pages */
-const staffPages = [
-{
-    title: "Ajouter des gestionnaires aux cantines",
-    to: { name: "GestionnaireImportCantinesGestionnaires" },
-    description: "Pour ajouter des gestionnaires à des cantines sans envoyer d'invitation email.",
-    detail: "Pour les utilisateurs administrateurs seulement",
-    badges: [
-      {
-        label: "SIRET",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-]
-const commonPages = [
-  {
-    title: "Créer des cantines",
-    to: { name: "GestionnaireImportCantinesCreer" },
-    description: "Pour créer des cantines en masse avec un numéro SIRET.",
-    badges: [
-      {
-        label: "SIRET",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-  {
-    title: "Modifier des cantines",
-    to: { name: "GestionnaireImportCantinesModifier" },
-    description: "Pour mettre à jour les informations des cantines dont vous êtes gestionnaire. Pour les cantines inscrites avec SIRET ou rattachées à une unité légale.",
-    detail: "Cet import n'est pas utilisable pour les groupes de restaurants satellites",
-    badges: [
-      {
-        label: "ID",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-  {
-    title: "Ajouter des achats (ancien format)",
-    to: { name: "GestionnaireImportAchatsIDOld" },
-    description: "Pour ajouter des achats à des cantines dont vous êtes gestionnaire.",
-    detail: "Pour les cantines et les groupes de restaurants satellites",
-    badges: [
-      {
-        label: "ID",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-  {
-    title: "Ajouter des achats",
-    to: { name: "GestionnaireImportAchatsID" },
-    description: "Pour ajouter des achats à des cantines dont vous êtes gestionnaire.",
-    detail: "Pour les cantines et les groupes de restaurants satellites",
-    badges: [
-      {
-        label: "Nouveau",
-        type: "new",
-      },
-      {
-        label: "ID",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-  {
-    title: "Ajouter des achats via le SIRET de la cantine  (ancien format)",
-    to: { name: "GestionnaireImportAchatsSIRETOld" },
-    description: "Pour ajouter des achat à des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
-    badges: [
-      {
-        label: "SIRET",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-  {
-    title: "Ajouter des achats via le SIRET de la cantine",
-    to: { name: "GestionnaireImportAchatsSIRET" },
-    description: "Pour ajouter des achat à des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
-    badges: [
-      {
-        label: "Nouveau",
-        type: "new",
-      },
-      {
-        label: "SIRET",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-  {
-    title: "Créer ou modifier des bilans simples",
-    to: { name: "GestionnaireImportBilansSimples" },
-    description: "Pour créer ou modifier des bilans simples pour des cantines, des groupes de restaurants satellites ou des cantines rattachées à une unité légale.",
-    detail: "Pour les cantines et les groupes de restaurants satellites",
-    badges: [
-      {
-        label: "ID",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-  {
-    title: "Créer ou modifier des bilans simples via le SIRET de la cantine",
-    to: { name: "GestionnaireImportBilansSimplesSIRET" },
-    description: "Pour créer ou modifier des bilans simples pour des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
-    badges: [
-      {
-        label: "SIRET",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-  {
-    title: "Créer ou modifier des bilans détaillés via le SIRET de la cantine",
-    to: { name: "GestionnaireImportBilansDetailles" },
-    description: "Pour créer ou modifier des bilans détaillés pour des cantines dont vous êtes gestionnaire inscrite avec un numéro SIRET.",
-    badges: [
-      {
-        label: "SIRET",
-        noIcon: true,
-        type: "info",
-      }
-    ],
-  },
-]
+/* Picto */
+const canteenPicto = "/static/images/picto-dsfr/companie.svg"
+const purchasesPicto = "/static/images/picto-dsfr/food.svg"
+const diagnosticsPicto = "/static/images/picto-dsfr/money.svg"
 
 /* Data */
 const route = useRoute()
 const store = useRootStore()
-const pages = computed(() =>  store.loggedUser.isStaff ? [...staffPages, ...commonPages] : commonPages)
+
+/* Links */
+const canteenLinks = computed(() => {
+  const links = [
+    {
+      label: "Créer des cantines",
+      icon: "fr-icon-add-line",
+      route: "GestionnaireImportCantinesCreer",
+      description: "Uniquement pour les cantines avec un numéro SIRET.",
+    },
+    {
+      label: "Modifier des cantines",
+      icon: "fr-icon-edit-fill",
+      route: "GestionnaireImportCantinesModifier",
+    },
+  ]
+  if (store.loggedUser.isStaff) {
+    links.push({
+      label: "Ajouter des gestionnaires",
+      icon: "fr-icon-user-add-fill",
+      route: "GestionnaireImportCantinesGestionnaires",
+      description: "Uniquement pour les administrateurs et les cantines avec un numéro SIRET.",
+    })
+  }
+  return links
+})
+
+const purchasesLinks = [
+  {
+    label: "Créer des achats pour des cantines avec SIRET",
+    icon: "fr-icon-add-line",
+    route: "GestionnaireImportAchatsSIRET",
+  },
+  {
+    label: "Créer des achats pour des groupes ou cantines sans SIRET",
+    icon: "fr-icon-add-line",
+    route: "GestionnaireImportAchatsID",
+  },
+]
 </script>
 
 <template>
   <section class="gestionnaire-import fr-col-12 fr-col-md-7">
     <h1>{{ route.meta.title }}</h1>
     <p>
-      Gagnez du temps en important vos données directement dans
-      <em>ma cantine.</em>
-      <br />
-      Pour une expérience optimale, veuillez bien respecter les formats attendus.
+      Notre solution d'import par tableur vous permet d'importer vos données directement dans <em>ma cantine</em> pour les établissements dont vous êtes gestionnaire.
+      Nous acceptons les fichiers au format <DsfrBadge class="fr-mr-1v" type="info" label="Excel" no-icon /> ou
+      <DsfrBadge class="fr-mr-1v" type="info" label="CSV" no-icon />.
     </p>
   </section>
-  <section>
-    <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
-      <li v-for="page in pages" :key="page.name" class="fr-col-12 fr-col-md-4">
-        <DsfrCard
-          class="gestionnaire-import__card"
-          :title="page.title"
-          :link="page.to"
-          :description="page.description"
-          :endDetail="page.detail"
-          :badges="page.badges"
-        />
-      </li>
-    </ul>
+  <section class="fr-mt-4w">
+    <ImportCard title="Cantines" :icon="canteenPicto" :buttons="canteenLinks">
+      <template #callout>
+        <p class="fr-text--sm">Il n'est pas possible d'utiliser ces imports pour des groupes de restaurants satellites.</p>
+      </template>
+    </ImportCard>
+
+    <ImportCard title="Achats" :icon="purchasesPicto" :buttons="purchasesLinks">
+      <template #callout>
+        <p class="fr-mb-1w fr-text--sm">Le format de données des imports achats à été modifié en 2026. L'import avec l'ancien format reste disponible sur les pages suivantes : </p>
+        <ul>
+          <li>
+            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des cantines avec SIRET (ancien format)" />
+          </li>
+          <li>
+            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des groupes ou cantines sans SIRET (ancien format)" />
+          </li>
+        </ul>
+        <p class="fr-mt-2w fr-text--sm">À la fin de la campagne de télédéclaration 2027 ces pages seront supprimées.</p>
+      </template>
+    </ImportCard>
+
+    <ImportCard
+      title="Bilans"
+      :icon="diagnosticsPicto"
+    >
+      <template #disabled>
+        <p>
+          L'import de bilans est possible uniquement lors des campagnes de télédéclaration EGalim. <br/>
+          Les bilans de l'année n ne peuvent être importés qu'en début d'année n+1.
+        </p>
+      </template>
+    </ImportCard>
   </section>
 </template>
-
-<style lang="scss">
-.gestionnaire-import {
-  &__card {
-    .fr-card__content {
-      padding-top: 3rem;
-    }
-  }
-}
-</style>
