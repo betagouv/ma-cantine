@@ -19,8 +19,8 @@ const purchaseCreatedId = ref(null)
 
 /* Save purchase */
 const savePurchase = async (form) => {
-  const payload = { ...form, canteen: canteenId }
-  const response = await purchasesService.createPurchase(payload)
+  const payload = { ...form }
+  const response = await purchasesService.createPurchase(canteenId, payload)
   if (!response?.id) store.notifyServerError(response)
   else purchaseCreatedId.value = response.id
 }

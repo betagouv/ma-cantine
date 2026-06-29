@@ -1,8 +1,8 @@
 import { verifyResponse } from "@/services/api.js"
 
-const createPurchase = (payload) => {
+const createPurchase = (canteenId, payload) => {
   payload["creationSource"] = "APP"
-  return fetch("/api/v1/purchases/", {
+  return fetch(`/api/v1/canteens/${canteenId}/purchases/`, {
     method: "POST",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -15,8 +15,8 @@ const createPurchase = (payload) => {
     .catch((e) => e)
 }
 
-const fetchPurchase = (id) => {
-  return fetch(`/api/v1/purchases/${id}`, {
+const fetchPurchase = (canteenId, purchaseId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/purchases/${purchaseId}`, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -27,8 +27,8 @@ const fetchPurchase = (id) => {
     .catch((e) => e)
 }
 
-const updatePurchase = (payload, id) => {
-  return fetch(`/api/v1/purchases/${id}`, {
+const updatePurchase = (canteenId, purchaseId, payload) => {
+  return fetch(`/api/v1/canteens/${canteenId}/purchases/${purchaseId}`, {
     method: "PATCH",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",

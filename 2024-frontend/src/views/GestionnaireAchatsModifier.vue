@@ -28,7 +28,7 @@ const purchaseData = ref({})
 
 const loadPurchase = async () => {
   isLoading.value = true
-  const response = await purchasesService.fetchPurchase(purchaseId)
+  const response = await purchasesService.fetchPurchase(canteenId, purchaseId)
   const noPurchase = !response?.id
   const notSameCanteen = response?.canteen !== Number(canteenId)
   purchaseData.value = noPurchase || notSameCanteen ? {} : response
@@ -39,7 +39,7 @@ onMounted(loadPurchase)
 
 /* Save */
 const savePurchase = async (form) => {
-  const response = await purchasesService.updatePurchase(form, purchaseId)
+  const response = await purchasesService.updatePurchase(canteenId, purchaseId, form)
 
   if (!response?.id) {
     store.notifyServerError(response)
