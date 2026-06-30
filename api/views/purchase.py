@@ -72,15 +72,15 @@ class PurchaseCreateView(CreateModelMixin, GenericAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary="Obtenir les détails d'un achat.",
-        description="Seulement les achats rattachés à la cantine de l'utilisateur connecté.",
+        description="Seulement les achats rattachés à la cantine de l'utilisateur connecté, et créés par l'application OAuth2 si applicable.",
     ),
     patch=extend_schema(
         summary="Modifier un achat existant.",
-        description="Seulement les achats rattachés à la cantine de l'utilisateur connecté.",
+        description="Seulement les achats rattachés à la cantine de l'utilisateur connecté, et créés par l'application OAuth2 si applicable.",
     ),
     delete=extend_schema(
         summary="Supprimer un achat existant.",
-        description="Seulement les achats rattachés à la cantine de l'utilisateur connecté.",
+        description="Seulement les achats rattachés à la cantine de l'utilisateur connecté, et créés par l'application OAuth2 si applicable.",
     ),
 )
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
