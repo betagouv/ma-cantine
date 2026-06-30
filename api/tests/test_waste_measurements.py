@@ -507,6 +507,8 @@ class WasteMeasurementsDetailApiTest(APITestCase):
         body = response.json()
         self.assertIn("periodStartDate", body)
         self.assertIn("periodEndDate", body)
+        self.assertNotIn("creationUser", body)
+        self.assertNotIn("creationSource", body)
 
     def test_get_waste_measurement_via_oauth2(self):
         user, token = get_oauth2_token("waste_measurements:read")

@@ -223,6 +223,8 @@ class CanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["id"], user_canteen.id)
         self.assertEqual(body["managers"][0]["email"], authenticate.user.email)
+        self.assertNotIn("creationUser", body)
+        self.assertNotIn("creationSource", body)
 
     @authenticate
     def test_get_single_user_canteen_groupe(self):

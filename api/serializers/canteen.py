@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 REQUIRED_FIELDS = ("name", "siret")
+CREATE_ONLY_FIELDS = ("creation_source", *Canteen.MATOMO_FIELDS)
 
 
 class CanteenImageSerializer(serializers.ModelSerializer):
@@ -357,15 +358,13 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         # some fields are required
         for field in REQUIRED_FIELDS:
             fields[field].required = True
-        # some fields are only available on create
-        if self.instance is not None:
-            fields.pop("creation_source", None)
-            for field in Canteen.MATOMO_FIELDS:
+        # some fields are only available on create (and hidden from the docs)
+        for field in CREATE_ONLY_FIELDS:
+            if self.instance is not None:
                 fields.pop(field, None)
-        else:
-            fields["creation_source"].write_only = True
-            for field in Canteen.MATOMO_FIELDS:
+            else:
                 fields[field].write_only = True
+                fields[field].exclude_from_schema = True
         return fields
 
     def update(self, instance, validated_data):

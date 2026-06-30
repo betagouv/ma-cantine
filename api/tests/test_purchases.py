@@ -386,6 +386,38 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(purchase.creation_source_api_oauth2_application, token.application)
 
     @authenticate
+    def test_create_purchase_creation_user_and_source(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # from the APP
+        payload = {**self.PURCHASE_PAYLOAD, "creation_source": "APP"}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, authenticate.user)
+        self.assertEqual(purchase.creation_source, CreationSource.APP)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, None)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # defaults to API
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, authenticate.user)
+        self.assertEqual(purchase.creation_source, CreationSource.API)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, None)
+
+    @authenticate
     def test_create_purchase_required_fields(self):
         self.canteen.managers.add(authenticate.user)
 
@@ -528,7 +560,7 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class PurchaseRetrieveApiTest(APITestCase):
+class PurchaseDetailApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -549,13 +581,13 @@ class PurchaseRetrieveApiTest(APITestCase):
             "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id}
         )
 
-    def test_cannot_retrieve_purchase_if_unauthenticated(self):
+    def test_cannot_get_purchase_if_unauthenticated(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_retrieve_if_canteen_unknown(self):
+    def test_cannot_get_purchase_if_canteen_unknown(self):
         response = self.client.get(
             reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 999, "pk": self.purchase.id})
         )
@@ -563,13 +595,13 @@ class PurchaseRetrieveApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_retrieve_if_not_canteen_manager(self):
+    def test_cannot_get_purchase_if_not_canteen_manager(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_retrieve_if_purchase_unknown(self):
+    def test_cannot_get_purchase_if_purchase_unknown(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.get(
@@ -579,7 +611,7 @@ class PurchaseRetrieveApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_retrieve_purchase_if_not_corresponding_canteen(self):
+    def test_cannot_get_purchase_if_not_corresponding_canteen(self):
         canteen_other = CanteenFactory()
         purchase_other = PurchaseFactory(canteen=canteen_other)
         self.canteen.managers.add(authenticate.user)
@@ -606,7 +638,7 @@ class PurchaseRetrieveApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_retrieve_purchase(self):
+    def test_get_purchase(self):
         self.purchase.canteen.managers.add(authenticate.user)
 
         response = self.client.get(self.url)
@@ -627,12 +659,12 @@ class PurchaseRetrieveApiTest(APITestCase):
         self.assertEqual(body["estCircuitCourt"], False)
         self.assertIsNone(body["definitionLocal"])
         self.assertNotIn("creationUser", body)
-        self.assertEqual(body["creationSource"], CreationSource.APP)
-        self.assertIsNone(body["importSource"])
+        self.assertNotIn("creationSource", body)
+        self.assertNotIn("importSource", body)
         self.assertIn("creationDate", body)
         self.assertIn("modificationDate", body)
 
-    def test_can_retrieve_purchase_via_oauth2_only_if_same_creation_source(self):
+    def test_get_purchase_via_oauth2_only_if_same_creation_source(self):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
 
