@@ -82,7 +82,9 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.creation_user, user)
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
         self.assertEqual(diagnostic.creation_source_api_oauth2_application, token.application)
-        self.assertEqual(diagnostic.history.first().history_source, CreationSource.API)
+        diagnostic_history = diagnostic.history.first()
+        self.assertEqual(diagnostic_history.history_source, CreationSource.API)
+        self.assertEqual(diagnostic_history.history_source_api_oauth2_application, token.application)
 
     @authenticate
     def test_create_diagnostic_creation_user_and_source(self):
@@ -100,7 +102,9 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.creation_user, authenticate.user)
         self.assertEqual(diagnostic.creation_source, CreationSource.APP)
         self.assertEqual(diagnostic.creation_source_api_oauth2_application, None)
-        self.assertEqual(diagnostic.history.first().history_source, CreationSource.APP)
+        diagnostic_history = diagnostic.history.first()
+        self.assertEqual(diagnostic_history.history_source, CreationSource.APP)
+        self.assertEqual(diagnostic_history.history_source_api_oauth2_application, None)
 
         # cleanup
         Diagnostic.objects.all().delete()
@@ -116,7 +120,9 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.creation_user, authenticate.user)
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
         self.assertEqual(diagnostic.creation_source_api_oauth2_application, None)
-        self.assertEqual(diagnostic.history.first().history_source, CreationSource.APP)
+        diagnostic_history = diagnostic.history.first()
+        self.assertEqual(diagnostic_history.history_source, CreationSource.APP)
+        self.assertEqual(diagnostic_history.history_source_api_oauth2_application, None)
 
         # cleanup
         Diagnostic.objects.all().delete()
@@ -558,7 +564,9 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.creation_user, self.user)
         self.assertEqual(self.diagnostic.creation_source, CreationSource.APP)
         self.assertEqual(self.diagnostic.creation_source_api_oauth2_application, None)
-        self.assertEqual(self.diagnostic.history.first().history_source, None)
+        diagnostic_history = self.diagnostic.history.first()
+        self.assertEqual(diagnostic_history.history_source, None)
+        self.assertEqual(diagnostic_history.history_source_api_oauth2_application, None)
 
         payload = {"year": 2020, "creationSource": CreationSource.API}
 
@@ -569,7 +577,9 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.creation_user, self.user)  # unchanged
         self.assertEqual(self.diagnostic.creation_source, CreationSource.APP)  # unchanged
         self.assertEqual(self.diagnostic.creation_source_api_oauth2_application, None)  # unchanged
-        self.assertEqual(self.diagnostic.history.first().history_source, CreationSource.APP)  # filled
+        diagnostic_history = self.diagnostic.history.first()
+        self.assertEqual(diagnostic_history.history_source, CreationSource.APP)  # filled
+        self.assertEqual(diagnostic_history.history_source_api_oauth2_application, None)  # filled
 
     @authenticate
     def test_cannot_update_diagnostic_tracking_info(self):

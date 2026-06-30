@@ -499,15 +499,17 @@ class CanteenCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
-        created_canteen = Canteen.objects.get(pk=body["id"])
-        self.assertEqual(created_canteen.siret, "92341284500011")
-        self.assertEqual(created_canteen.city, "Roubaix")  # ROUBAIX
-        self.assertEqual(created_canteen.management_type, Canteen.ManagementType.DIRECT)
-        self.assertIn(authenticate.user, created_canteen.managers.all())
-        self.assertEqual(created_canteen.creation_user, authenticate.user)
-        self.assertEqual(created_canteen.creation_source, CreationSource.API)
-        self.assertEqual(created_canteen.creation_source_api_oauth2_application, None)
-        self.assertEqual(created_canteen.history.first().history_source, CreationSource.APP)
+        canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(canteen.siret, "92341284500011")
+        self.assertEqual(canteen.city, "Roubaix")  # ROUBAIX
+        self.assertEqual(canteen.management_type, Canteen.ManagementType.DIRECT)
+        self.assertIn(authenticate.user, canteen.managers.all())
+        self.assertEqual(canteen.creation_user, authenticate.user)
+        self.assertEqual(canteen.creation_source, CreationSource.API)
+        self.assertEqual(canteen.creation_source_api_oauth2_application, None)
+        canteen_history = canteen.history.first()
+        self.assertEqual(canteen_history.history_source, CreationSource.APP)
+        self.assertEqual(canteen_history.history_source_api_oauth2_application, None)
 
     @requests_mock.Mocker()
     def test_create_canteen_via_oauth2(self, mock):
@@ -524,15 +526,17 @@ class CanteenCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
-        created_canteen = Canteen.objects.get(pk=body["id"])
-        self.assertEqual(created_canteen.siret, "92341284500011")
-        self.assertEqual(created_canteen.city, "Roubaix")  # ROUBAIX
-        self.assertEqual(created_canteen.management_type, Canteen.ManagementType.DIRECT)
-        self.assertIn(user, created_canteen.managers.all())
-        self.assertEqual(created_canteen.creation_user, user)
-        self.assertEqual(created_canteen.creation_source, CreationSource.API)
-        self.assertEqual(created_canteen.creation_source_api_oauth2_application, token.application)
-        self.assertEqual(created_canteen.history.first().history_source, CreationSource.API)
+        canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(canteen.siret, "92341284500011")
+        self.assertEqual(canteen.city, "Roubaix")  # ROUBAIX
+        self.assertEqual(canteen.management_type, Canteen.ManagementType.DIRECT)
+        self.assertIn(user, canteen.managers.all())
+        self.assertEqual(canteen.creation_user, user)
+        self.assertEqual(canteen.creation_source, CreationSource.API)
+        self.assertEqual(canteen.creation_source_api_oauth2_application, token.application)
+        canteen_history = canteen.history.first()
+        self.assertEqual(canteen_history.history_source, CreationSource.API)
+        self.assertEqual(canteen_history.history_source_api_oauth2_application, token.application)
 
     @requests_mock.Mocker()
     @authenticate
@@ -553,7 +557,9 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(canteen.creation_user, authenticate.user)
         self.assertEqual(canteen.creation_source, CreationSource.APP)
         self.assertEqual(canteen.creation_source_api_oauth2_application, None)
-        self.assertEqual(canteen.history.first().history_source, CreationSource.APP)
+        canteen_history = canteen.history.first()
+        self.assertEqual(canteen_history.history_source, CreationSource.APP)
+        self.assertEqual(canteen_history.history_source_api_oauth2_application, None)
 
         # cleanup
         Canteen.objects.all().delete()
@@ -567,7 +573,9 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(canteen.creation_user, authenticate.user)
         self.assertEqual(canteen.creation_source, CreationSource.API)
         self.assertEqual(canteen.creation_source_api_oauth2_application, None)
-        self.assertEqual(canteen.history.first().history_source, CreationSource.APP)
+        canteen_history = canteen.history.first()
+        self.assertEqual(canteen_history.history_source, CreationSource.APP)
+        self.assertEqual(canteen_history.history_source_api_oauth2_application, None)
 
         # cleanup
         Canteen.objects.all().delete()
@@ -601,10 +609,10 @@ class CanteenCreateApiTest(APITestCase):
         self.assertNotIn("creation_mtm_campaign", response.json())
         self.assertNotIn("creation_mtm_medium", response.json())
         body = response.json()
-        created_canteen = Canteen.objects.get(pk=body["id"])
-        self.assertEqual(created_canteen.creation_mtm_source, "mtm_source_value")
-        self.assertEqual(created_canteen.creation_mtm_campaign, "mtm_campaign_value")
-        self.assertEqual(created_canteen.creation_mtm_medium, "mtm_medium_value")
+        canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(canteen.creation_mtm_source, "mtm_source_value")
+        self.assertEqual(canteen.creation_mtm_campaign, "mtm_campaign_value")
+        self.assertEqual(canteen.creation_mtm_medium, "mtm_medium_value")
 
     @authenticate
     def test_cannot_create_canteen_without_siret(self):
@@ -711,8 +719,8 @@ class CanteenCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
-        created_canteen = Canteen.objects.get(pk=body["id"])
-        self.assertEqual(created_canteen.images.count(), 1)
+        canteen = Canteen.objects.get(pk=body["id"])
+        self.assertEqual(canteen.images.count(), 1)
 
 
 class CanteenUpdateApiTest(APITestCase):
@@ -937,7 +945,9 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.creation_user, self.user)
         self.assertEqual(self.canteen.creation_source, CreationSource.APP)
         self.assertEqual(self.canteen.creation_source_api_oauth2_application, None)
-        # self.assertEqual(self.canteen.history.first().history_source, None)  # deactivated in the factory
+        # canteen_history = self.canteen.history.first()  # deactivated in the factory
+        # self.assertEqual(canteen_history.history_source, None)
+        # self.assertEqual(canteen_history.history_source_api_oauth2_application, None)
 
         payload = {
             "managementType": Canteen.ManagementType.CONCEDED,
@@ -958,7 +968,9 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.creation_user, self.user)  # unchanged
         self.assertEqual(self.canteen.creation_source, CreationSource.APP)  # unchanged
         self.assertEqual(self.canteen.creation_source_api_oauth2_application, None)  # unchanged
-        self.assertEqual(self.canteen.history.first().history_source, CreationSource.APP)  # filled
+        canteen_history = self.canteen.history.first()
+        self.assertEqual(canteen_history.history_source, CreationSource.APP)  # filled
+        self.assertEqual(canteen_history.history_source_api_oauth2_application, None)  # filled
 
     @authenticate
     def test_cannot_update_canteen_tracking_info(self):

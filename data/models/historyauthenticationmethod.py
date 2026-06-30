@@ -1,7 +1,8 @@
 import logging
 
-from django.dispatch import receiver
 from django.db import models
+from django.dispatch import receiver
+from oauth2_provider.models import Application as OAuth2Application
 from simple_history.models import HistoricalRecords
 from simple_history.signals import pre_create_historical_record
 
@@ -12,7 +13,10 @@ logger = logging.getLogger(__name__)
 
 class AuthenticationMethodHistoricalRecords(models.Model):
     """
-    Abstract model for history models tracking the authentication method.
+    Abstract model for history models tracking the authentication method
+    Additional fields to track the source of the change and the OAuth2 application if applicable.
+
+    Existing history fields: history_id, history_date, history_change_reason, history_type, history_user
     """
 
     history_source = models.CharField(
@@ -21,6 +25,14 @@ class AuthenticationMethodHistoricalRecords(models.Model):
         verbose_name="source de modification",
         null=True,
         blank=True,
+    )
+
+    history_source_api_oauth2_application = models.ForeignKey(
+        OAuth2Application,
+        verbose_name="Application OAuth2 (API) qui a fait la modification",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     class Meta:
@@ -50,6 +62,8 @@ def historical_record_add_source(history_instance):
 
     if request.auth and hasattr(request.auth, "application"):
         history_instance.history_source = CreationSource.API
+        # we already have request.auth, no need to call get_oauth_application(request) again
+        history_instance.history_source_api_oauth2_application = request.auth.application
     else:
         history_instance.history_source = CreationSource.APP
 
