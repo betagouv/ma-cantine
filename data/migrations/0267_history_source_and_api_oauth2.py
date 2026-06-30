@@ -14,6 +14,10 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RemoveField(
+            model_name='historicaldiagnostic',
+            name='groupe_snapshot',
+        ),
+        migrations.RemoveField(
             model_name='historicalteledeclaration',
             name='authentication_method',
         ),
