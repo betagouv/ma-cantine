@@ -244,7 +244,9 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(waste_measurement.creation_user, user)
         self.assertEqual(waste_measurement.creation_source, CreationSource.API)
         self.assertEqual(waste_measurement.creation_source_api_oauth2_application, token.application)
-        self.assertEqual(waste_measurement.history.first().history_source, CreationSource.API)
+        waste_measurement_history = waste_measurement.history.first()
+        self.assertEqual(waste_measurement_history.history_source, CreationSource.API)
+        self.assertEqual(waste_measurement_history.history_source_api_oauth2_application, token.application)
 
     @authenticate
     def test_create_waste_measurement_creation_user_and_source(self):
@@ -262,7 +264,9 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(waste_measurement.creation_user, authenticate.user)
         self.assertEqual(waste_measurement.creation_source, CreationSource.APP)
         self.assertEqual(waste_measurement.creation_source_api_oauth2_application, None)
-        self.assertEqual(waste_measurement.history.first().history_source, CreationSource.APP)
+        waste_measurement_history = waste_measurement.history.first()
+        self.assertEqual(waste_measurement_history.history_source, CreationSource.APP)
+        self.assertEqual(waste_measurement_history.history_source_api_oauth2_application, None)
 
         # cleanup
         WasteMeasurement.objects.all().delete()
@@ -278,7 +282,9 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(waste_measurement.creation_user, authenticate.user)
         self.assertEqual(waste_measurement.creation_source, CreationSource.API)
         self.assertEqual(waste_measurement.creation_source_api_oauth2_application, None)
-        self.assertEqual(waste_measurement.history.first().history_source, CreationSource.APP)
+        waste_measurement_history = waste_measurement.history.first()
+        self.assertEqual(waste_measurement_history.history_source, CreationSource.APP)
+        self.assertEqual(waste_measurement_history.history_source_api_oauth2_application, None)
 
         # cleanup
         WasteMeasurement.objects.all().delete()
@@ -644,7 +650,9 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.assertEqual(self.measurement.creation_user, self.user)
         self.assertEqual(self.measurement.creation_source, CreationSource.APP)
         self.assertEqual(self.measurement.creation_source_api_oauth2_application, None)
-        self.assertEqual(self.measurement.history.first().history_source, None)
+        waste_measurement_history = self.measurement.history.first()
+        self.assertEqual(waste_measurement_history.history_source, None)
+        self.assertEqual(waste_measurement_history.history_source_api_oauth2_application, None)
 
         payload = {"mealCount": 200, "creationSource": CreationSource.API}
 
@@ -659,7 +667,9 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.assertEqual(self.measurement.creation_user, self.user)  # unchanged
         self.assertEqual(self.measurement.creation_source, CreationSource.APP)  # unchanged
         self.assertEqual(self.measurement.creation_source_api_oauth2_application, None)  # unchanged
-        self.assertEqual(self.measurement.history.first().history_source, CreationSource.APP)  # filled
+        waste_measurement_history = self.measurement.history.first()
+        self.assertEqual(waste_measurement_history.history_source, CreationSource.APP)  # filled
+        self.assertEqual(waste_measurement_history.history_source_api_oauth2_application, None)  # filled
 
     @authenticate
     @freeze_time("2024-08-10")
