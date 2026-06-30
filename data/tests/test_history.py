@@ -148,7 +148,7 @@ class HistoryModelTest(TestCase):
 
         self.assertEqual(canteen.history.count(), 1)
         self.assertEqual(canteen.history.first().history_type, "+")
-        self.assertNotIn("authentication_method", canteen.history.first().__dict__)
+        self.assertNotIn("history_source", canteen.history.first().__dict__)
 
         # only available in Teledeclaration
         diagnostic = DiagnosticFactory(canteen=canteen, year=2023)
@@ -159,4 +159,4 @@ class HistoryModelTest(TestCase):
 
         self.assertEqual(teledeclaration.history.count(), 1)
         self.assertEqual(teledeclaration.history.first().history_type, "+")
-        self.assertEqual(teledeclaration.history.first().authentication_method, "AUTO")
+        self.assertEqual(teledeclaration.history.first().history_source, None)  # created outside of a request context
