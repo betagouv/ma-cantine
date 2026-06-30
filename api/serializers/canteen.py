@@ -5,6 +5,7 @@ from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
 from data.models import Canteen, CanteenImage
+from api.serializers.utils import set_help_text_from_verbose_name
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -252,6 +253,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
         )
 
 
+@set_help_text_from_verbose_name
 class FullCanteenSerializer(serializers.ModelSerializer):
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)

@@ -1,12 +1,14 @@
 from rest_framework import serializers
 
 from data.models import WasteMeasurement
+from api.serializers.utils import set_help_text_from_verbose_name
 
 
 REQUIRED_FIELDS = ["period_start_date", "period_end_date"]
 CREATE_ONLY_FIELDS = ["creation_source"]
 
 
+@set_help_text_from_verbose_name
 class WasteMeasurementSerializer(serializers.ModelSerializer):
     days_in_period = serializers.IntegerField(read_only=True)  # property
     total_yearly_waste_estimation = serializers.FloatField(read_only=True, allow_null=True)  # property

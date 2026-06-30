@@ -4,6 +4,7 @@ from decimal import Decimal, InvalidOperation
 from rest_framework import serializers
 
 from data.models import Diagnostic
+from api.serializers.utils import set_help_text_from_verbose_name
 
 from .teledeclaration import ShortTeledeclarationSerializer
 
@@ -104,6 +105,7 @@ class PublicServiceDiagnosticSerializer(DiagnosticSerializer):
         read_only_fields = fields
 
 
+@set_help_text_from_verbose_name
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
