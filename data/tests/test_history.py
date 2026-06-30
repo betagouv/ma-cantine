@@ -1,4 +1,5 @@
 from datetime import timedelta
+from freezegun import freeze_time
 
 from django.test import TestCase
 from django.core.management import call_command
@@ -6,7 +7,8 @@ from django.test.utils import override_settings
 from django.db.models.signals import post_save
 
 from data.models.canteen import Canteen, fill_geo_fields_from_siret
-from data.factories import CanteenFactory
+from data.models import Teledeclaration
+from data.factories import CanteenFactory, DiagnosticFactory, TeledeclarationFactory, UserFactory
 from macantine import tasks
 
 
@@ -133,3 +135,28 @@ class HistoryModelTest(TestCase):
 
         # Verify all history items are still there
         self.assertEqual(canteen.history.count(), history_count)
+
+    @freeze_time("2024-02-10")  # during the 2023 campaign
+    def test_pre_save_add_auth_method(self):
+        # not available in Canteen
+        canteen = CanteenFactory.build(
+            siret="21340172201787",
+            city_insee_code="34172",
+            city=None,
+        )
+        canteen.save()
+
+        self.assertEqual(canteen.history.count(), 1)
+        self.assertEqual(canteen.history.first().history_type, "+")
+        self.assertNotIn("authentication_method", canteen.history.first().__dict__)
+
+        # only available in Teledeclaration
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2023)
+        diagnostic.teledeclare(applicant=UserFactory())
+        teledeclaration = TeledeclarationFactory(
+            diagnostic=diagnostic, status=Teledeclaration.TeledeclarationStatus.SUBMITTED, declared_data={"foo": "bar"}
+        )
+
+        self.assertEqual(teledeclaration.history.count(), 1)
+        self.assertEqual(teledeclaration.history.first().history_type, "+")
+        self.assertEqual(teledeclaration.history.first().authentication_method, "AUTO")
