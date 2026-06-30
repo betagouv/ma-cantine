@@ -61,15 +61,12 @@ if (props.purchaseData) prefillFields()
 const showLocalDefinition = computed(() => form.estLocal)
 const showKMDefinition = computed(() => form.estLocal && form.definitionLocal === 'KM')
 
-const { required, requiredIf } = useValidators()
+const { required } = useValidators()
 const rules = {
   description: { required },
-  fournisseur: { required },
   prixHt: { required },
   date: { required },
   familleProduits: { required },
-  definitionLocal: { required: requiredIf(showLocalDefinition) },
-  definitionLocalKm: { required: requiredIf(showKMDefinition) },
 }
 
 const v$ = useVuelidate(rules, form)
@@ -142,17 +139,19 @@ const formatPayload = (form) => {
           label="Prix HT (€) *"
           label-visible
           :error-message="formatError(v$.prixHt) || backendErrors.prixHt"
+          class="fr-mb-4w"
         />
       </div>
     </div>
+
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-8">
         <DsfrInputGroup
           v-model="form.fournisseur"
-          label="Fournisseur *"
+          label="Fournisseur"
           label-visible
           list="providers"
-          :error-message="formatError(v$.fournisseur) || backendErrors.fournisseur"
+          :error-message="backendErrors.fournisseur"
         />
         <datalist id="providers">
           <option v-for="provider in autocompleteOptions.providers" :key="provider" :value="provider"></option>
@@ -165,6 +164,7 @@ const formatPayload = (form) => {
           label="Date d'achat *"
           label-visible
           :error-message="formatError(v$.date) || backendErrors.date"
+          class="fr-mb-4w"
         />
       </div>
     </div>
@@ -194,9 +194,13 @@ const formatPayload = (form) => {
           label="Origine"
           :options="[{ value: '', text: '--' }, ...categoriesOriginesOptions]"
           :error-message="backendErrors.origine"
+          class="fr-mb-4w"
         />
       </div>
-      <div class="fr-col-12 fr-col-md-4">
+    </div>
+
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-12 fr-col-md-12">
         <DsfrCheckboxSet
           v-model="form.estCircuitCourt"
           legend="Circuit court"
@@ -217,7 +221,6 @@ const formatPayload = (form) => {
           :error-message="backendErrors.estLocal"
           small
           inline
-          class="fr-mb-n2w"
           @change="onLocalChange"
         />
       </div>
@@ -225,10 +228,10 @@ const formatPayload = (form) => {
         <DsfrSelect
           v-if="showLocalDefinition"
           v-model="form.definitionLocal"
-          label="Précisez la provenance du produit *"
+          label="Précisez la provenance du produit"
           labelVisible
-          :options="definitionLocalOptions"
-          :error-message="formatError(v$.definitionLocal) || backendErrors.definitionLocal"
+          :options="[{ value: '', text: '--' }, ...definitionLocalOptions]"
+          :error-message="backendErrors.definitionLocal"
           @change="onDefinitionLocalChange"
         />
       </div>
@@ -236,9 +239,9 @@ const formatPayload = (form) => {
         <DsfrInputGroup
           v-if="showKMDefinition"
           v-model.number="form.definitionLocalKm"
-          label="Distance (en km) *"
+          label="Distance (en km)"
           label-visible
-          :error-message="formatError(v$.definitionLocalKm) || backendErrors.definitionLocalKm"
+          :error-message="backendErrors.definitionLocalKm"
         />
       </div>
     </div>

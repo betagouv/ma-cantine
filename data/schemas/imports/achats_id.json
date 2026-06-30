@@ -26,7 +26,7 @@
     },
     {
       "constraints": {
-        "required": true
+        "required": false
       },
       "description": "",
       "example": "Le traiteur du village",
