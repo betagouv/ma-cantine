@@ -5,6 +5,8 @@ from django.db import models
 from simple_history.models import HistoricalRecords
 from simple_history.signals import pre_create_historical_record
 
+from data.models.creation_source import CreationSource
+
 logger = logging.getLogger(__name__)
 
 
@@ -13,16 +15,10 @@ class AuthenticationMethodHistoricalRecords(models.Model):
     Abstract model for history models tracking the authentication method.
     """
 
-    class AuthMethodChoices(models.TextChoices):
-        WEBSITE = "WEBSITE", "Via la plateforme en ligne"
-        API = "API", "Via une intégration API"
-        AUTO = "AUTO", "Via un script ou bot interne"
-        ADMIN = "ADMIN", "Via site admin"
-
-    authentication_method = models.CharField(
+    history_source = models.CharField(
         max_length=255,
-        choices=AuthMethodChoices.choices,
-        verbose_name="méthode d'authentification",
+        choices=CreationSource.choices,
+        verbose_name="source de modification",
         null=True,
         blank=True,
     )
@@ -31,12 +27,12 @@ class AuthenticationMethodHistoricalRecords(models.Model):
         abstract = True
 
 
-def historical_record_add_auth_method(history_instance):
-    if not hasattr(history_instance, "authentication_method"):
+def historical_record_add_source(history_instance):
+    if not hasattr(history_instance, "history_source"):
         return
 
     if not hasattr(HistoricalRecords, "context") or not hasattr(HistoricalRecords.context, "request"):
-        history_instance.authentication_method = "AUTO"
+        # history_instance.history_source = "AUTO"
         return
 
     metadata = HistoricalRecords.context.request.META
@@ -45,20 +41,22 @@ def historical_record_add_auth_method(history_instance):
     path_parts = path_info.split("/")
     path_root = path_parts[1] if len(path_parts) > 1 else path_parts[0]
     if path_root == "admin":
-        history_instance.authentication_method = "ADMIN"
+        history_instance.history_source = CreationSource.ADMIN
+        return
+    elif "import" in path_info:
+        history_instance.history_source = CreationSource.IMPORT
         return
 
     if "HTTP_AUTHORIZATION" in metadata:
-        history_instance.authentication_method = "API"
-        # save hostname to track usage of specific integrations?
+        history_instance.history_source = CreationSource.API
     else:
-        history_instance.authentication_method = "WEBSITE"
+        history_instance.history_source = CreationSource.APP
 
 
 @receiver(pre_create_historical_record)
 def pre_historical_record_save(sender, **kwargs):
     try:
         history_instance = kwargs["history_instance"]
-        historical_record_add_auth_method(history_instance)
+        historical_record_add_source(history_instance)
     except Exception as e:
         logger.error("Error when attempting to set authentication method on a history object", e)
