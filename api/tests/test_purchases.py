@@ -776,11 +776,23 @@ class PurchaseUpdateApiTest(APITestCase):
             ],
         )
 
-    def test_can_update_purchase_via_oauth2(self):
+    def test_can_update_purchase_via_oauth2_only_if_same_creation_source(self):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.patch(self.url, {"description": "Updated"}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # update the purchase
+        Purchase.objects.filter(id=self.purchase.id).update(
+            creation_user=user,
+            creation_source=CreationSource.API,
+            creation_source_api_oauth2_application=token.application,
+        )
+        self.purchase.refresh_from_db()
+
         response = self.client.patch(self.url, {"description": "Updated"}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -819,11 +831,23 @@ class PurchaseDeleteApiTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         self.assertEqual(Purchase.all_objects.count(), 1)
 
-    def test_can_delete_purchase_via_oauth2(self):
+    def test_can_delete_purchase_via_oauth2_only_if_same_creation_source(self):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # update the purchase
+        Purchase.objects.filter(id=self.purchase.id).update(
+            creation_user=user,
+            creation_source=CreationSource.API,
+            creation_source_api_oauth2_application=token.application,
+        )
+        self.purchase.refresh_from_db()
+
         response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
