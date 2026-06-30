@@ -14,7 +14,7 @@ from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
-from data.models import Canteen
+from data.models import Canteen, AuthenticationMethodHistoricalRecords
 from data.models.creation_source import CreationSource
 from data.utils import (
     CustomJSONEncoder,
@@ -1747,7 +1747,9 @@ class Diagnostic(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords(excluded_fields=TELEDECLARATION_SNAPSHOT_FIELDS)
+    history = HistoricalRecords(
+        bases=[AuthenticationMethodHistoricalRecords], excluded_fields=TELEDECLARATION_SNAPSHOT_FIELDS
+    )
 
     objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)(exclude_generated=True)
     all_objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)()

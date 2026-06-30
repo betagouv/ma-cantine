@@ -3,6 +3,7 @@ from simple_history.models import HistoricalRecords
 
 from .canteen import Canteen
 from .wasteaction import WasteAction
+from data.models import AuthenticationMethodHistoricalRecords
 
 
 class ResourceActionQuerySet(models.QuerySet):
@@ -31,7 +32,7 @@ class ResourceAction(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[AuthenticationMethodHistoricalRecords])
 
     objects = ResourceActionQuerySet.as_manager()
 
