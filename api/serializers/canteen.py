@@ -2,11 +2,11 @@ import logging
 import os
 
 from drf_base64.fields import Base64ImageField
-from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_serializer
+from rest_framework import serializers
 
-from data.models import Canteen, CanteenImage
 from api.serializers.utils import set_help_text_from_verbose_name
+from data.models import Canteen, CanteenImage
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 REQUIRED_FIELDS = ("name", "siret")
-WRITE_ONLY_FIELDS = ("creation_source", *Canteen.MATOMO_FIELDS)
+CREATE_ONLY_FIELDS = ("creation_source", *Canteen.MATOMO_FIELDS)
 # READ_ONLY_FIELDS: see serializers
 
 
@@ -256,7 +256,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
 
 
 @set_help_text_from_verbose_name
-@extend_schema_serializer(exclude_fields=WRITE_ONLY_FIELDS)
+@extend_schema_serializer(exclude_fields=CREATE_ONLY_FIELDS)
 class FullCanteenSerializer(serializers.ModelSerializer):
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
@@ -363,12 +363,14 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         # some fields are required
         for field in REQUIRED_FIELDS:
             fields[field].required = True
-            fields[field].allow_null = False
-            fields[field].allow_blank = False
+            # fields[field].allow_null = False
+            # fields[field].allow_blank = False
         # some fields are only available on create
         # and hidden from the docs (see extend_schema_serializer)
-        for field in WRITE_ONLY_FIELDS:
+        for field in CREATE_ONLY_FIELDS:
             fields[field].write_only = True
+            if self.instance is not None:
+                fields.pop(field, None)
         return fields
 
     def update(self, instance, validated_data):

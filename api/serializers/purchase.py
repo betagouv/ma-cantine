@@ -1,6 +1,6 @@
 from drf_base64.fields import Base64FileField
-from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_serializer
+from rest_framework import serializers
 
 from api.serializers.utils import PurchaseField, choice_list_to_choices, set_help_text_from_verbose_name
 from data.models import Purchase
@@ -81,12 +81,12 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
 
 
 REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
-WRITE_ONLY_FIELDS = ["creation_source", "import_source"]
+CREATE_ONLY_FIELDS = ["creation_source", "import_source"]
 READ_ONLY_FIELDS = ["id", "canteen", "creation_date", "modification_date"]
 
 
 @set_help_text_from_verbose_name
-@extend_schema_serializer(exclude_fields=WRITE_ONLY_FIELDS)
+@extend_schema_serializer(exclude_fields=CREATE_ONLY_FIELDS)
 class PurchaseSerializer(serializers.ModelSerializer):
     # caracteristiques is split into 4 fields
     categories_egalim = serializers.MultipleChoiceField(
@@ -132,8 +132,10 @@ class PurchaseSerializer(serializers.ModelSerializer):
             fields[field].allow_blank = False
         # some fields are only available on create
         # and hidden from the docs (see extend_schema_serializer)
-        for field in WRITE_ONLY_FIELDS:
+        for field in CREATE_ONLY_FIELDS:
             fields[field].write_only = True
+            if self.instance is not None:
+                fields.pop(field, None)
         # some fields are readonly
         for field in READ_ONLY_FIELDS:
             fields[field].read_only = True

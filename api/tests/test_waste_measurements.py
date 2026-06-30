@@ -648,9 +648,9 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertNotIn("creation_user", body)
-        self.assertNotIn("creation_source", body)
-        self.assertNotIn("creation_source_api_oauth2_application", body)
+        self.assertNotIn("creationUser", body)
+        self.assertNotIn("creationSource", body)
+        self.assertNotIn("creationSourceApiOauth2Application", body)
         self.measurement.refresh_from_db()
         self.assertEqual(self.measurement.creation_user, self.user)  # unchanged
         self.assertEqual(self.measurement.creation_source, CreationSource.APP)  # unchanged
