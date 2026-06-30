@@ -35,7 +35,8 @@ def historical_record_add_source(history_instance):
         # history_instance.history_source = "AUTO"
         return
 
-    metadata = HistoricalRecords.context.request.META
+    request = HistoricalRecords.context.request
+    metadata = request.META
 
     path_info = metadata["PATH_INFO"]
     path_parts = path_info.split("/")
@@ -47,7 +48,7 @@ def historical_record_add_source(history_instance):
         history_instance.history_source = CreationSource.IMPORT
         return
 
-    if "HTTP_AUTHORIZATION" in metadata:
+    if request.auth and hasattr(request.auth, "application"):
         history_instance.history_source = CreationSource.API
     else:
         history_instance.history_source = CreationSource.APP

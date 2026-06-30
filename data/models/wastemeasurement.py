@@ -6,6 +6,7 @@ from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
 from data.models.creation_source import CreationSource
+from data.models import AuthenticationMethodHistoricalRecords
 from data.utils import make_optional_positive_decimal_field
 from data.validators import wastemeasurement as wastemeasurement_validators
 
@@ -97,7 +98,7 @@ class WasteMeasurement(models.Model):
 
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[AuthenticationMethodHistoricalRecords])
 
     class Meta:
         verbose_name = "évaluation du gaspillage alimentaire"
