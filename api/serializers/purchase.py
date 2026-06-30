@@ -1,7 +1,7 @@
 from drf_base64.fields import Base64FileField
 from rest_framework import serializers
 
-from api.serializers.utils import PurchaseField, choice_list_to_choices
+from api.serializers.utils import PurchaseField, choice_list_to_choices, set_help_text_from_verbose_name
 from data.models import Purchase
 
 
@@ -83,17 +83,19 @@ REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
 CREATE_ONLY_FIELDS = ["creation_source", "import_source"]
 
 
+@set_help_text_from_verbose_name
 class PurchaseSerializer(serializers.ModelSerializer):
     # caracteristiques is split into 4 fields
     categories_egalim = serializers.MultipleChoiceField(
         choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_EGALIM),
+        help_text="Catégories EGalim",
         required=False,
     )
     origine = serializers.ChoiceField(
-        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_ORIGINE), required=False
+        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_ORIGINE), help_text="Origine", required=False
     )
-    est_circuit_court = serializers.BooleanField(required=False)
-    est_local = serializers.BooleanField(required=False)
+    est_circuit_court = serializers.BooleanField(help_text="Circuit court", required=False)
+    est_local = serializers.BooleanField(help_text="Local", required=False)
 
     class Meta:
         model = Purchase
