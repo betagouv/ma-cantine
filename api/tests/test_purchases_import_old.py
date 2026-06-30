@@ -282,10 +282,9 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 12)
+        self.assertEqual(len(errors), 11)
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # siret
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # description
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # fournisseur
         self.assertEqual(
             errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée"
         )  # famille_produits

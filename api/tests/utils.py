@@ -22,7 +22,15 @@ def get_oauth2_token(scope):
     today = timezone.now()
     expiration = today + timedelta(hours=1)
     user = UserFactory()
-    token = user.oauth2_provider_accesstoken.create(expires=expiration, token="token", scope=scope)
+    application = user.oauth2_provider_application.create(
+        name="Test Application",
+        redirect_uris="http://localhost",
+        client_type="confidential",
+        authorization_grant_type="password",
+    )
+    token = user.oauth2_provider_accesstoken.create(
+        expires=expiration, token="token", scope=scope, application=application
+    )
     return (user, token)
 
 
