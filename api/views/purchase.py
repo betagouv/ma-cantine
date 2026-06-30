@@ -4,6 +4,7 @@ from collections import OrderedDict
 from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
 from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
@@ -16,6 +17,7 @@ from api.filters.utils import UnaccentSearchFilter
 from api.permissions import (
     IsAuthenticated,
     IsCanteenManager,
+    IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManagerUrlParam,
     IsLinkedCanteenManager,
 )
@@ -34,8 +36,14 @@ from data.models.creation_source import CreationSource
 logger = logging.getLogger(__name__)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Créer un nouvel achat.",
+        description="Un achat doit être rattaché à une cantine.",
+    )
+)
 class PurchaseCreateView(CreateModelMixin, GenericAPIView):
-    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     http_method_names = ["post"]
     model = Purchase
     serializer_class = PurchaseSerializer
@@ -61,8 +69,22 @@ class PurchaseCreateView(CreateModelMixin, GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Obtenir les détails d'un achat.",
+        description="Seulement les achats rattachés à la cantine de l'utilisateur connecté.",
+    ),
+    patch=extend_schema(
+        summary="Modifier un achat existant.",
+        description="Seulement les achats rattachés à la cantine de l'utilisateur connecté.",
+    ),
+    delete=extend_schema(
+        summary="Supprimer un achat existant.",
+        description="Seulement les achats rattachés à la cantine de l'utilisateur connecté.",
+    ),
+)
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     http_method_names = ["get", "patch", "delete"]  # disable "put"
     model = Purchase
     serializer_class = PurchaseSerializer

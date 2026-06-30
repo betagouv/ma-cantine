@@ -341,14 +341,18 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE])
         self.assertEqual(purchase.creation_user, authenticate.user)
 
-    def test_cannot_create_minimal_purchase_via_oauth2(self):
+    def test_can_create_minimal_purchase_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, user)
+        self.assertEqual(purchase.creation_source, CreationSource.API)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, token.application)
 
     @authenticate
     def test_create_purchase_required_fields(self):
@@ -596,14 +600,14 @@ class PurchaseRetrieveApiTest(APITestCase):
         self.assertIn("creationDate", body)
         self.assertIn("modificationDate", body)
 
-    def test_cannot_retrieve_purchase_via_oauth2(self):
+    def test_can_retrieve_purchase_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.get(self.url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class PurchaseUpdateApiTest(APITestCase):
@@ -728,14 +732,14 @@ class PurchaseUpdateApiTest(APITestCase):
             ],
         )
 
-    def test_cannot_update_purchase_via_oauth2(self):
+    def test_can_update_purchase_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.patch(self.url, {"description": "Updated"}, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class PurchaseDeleteApiTest(APITestCase):
@@ -771,14 +775,14 @@ class PurchaseDeleteApiTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         self.assertEqual(Purchase.all_objects.count(), 1)
 
-    def test_cannot_delete_purchase_via_oauth2(self):
+    def test_can_delete_purchase_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.delete(self.url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class PurchaseOldCreateApiTest(APITestCase):
