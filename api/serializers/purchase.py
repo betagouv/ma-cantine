@@ -80,14 +80,14 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
 
 
 REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
+READ_ONLY_FIELDS = ["id", "canteen", "creation_source", "import_source", "creation_date", "modification_date"]
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
-    canteen = serializers.PrimaryKeyRelatedField(read_only=True)
     # caracteristiques is split into 4 fields
     categories_egalim = serializers.MultipleChoiceField(
-        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_EGALIM)
+        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_EGALIM),
+        required=False,
     )
     origine = serializers.ChoiceField(
         choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_ORIGINE),
@@ -95,10 +95,6 @@ class PurchaseSerializer(serializers.ModelSerializer):
     )
     est_local = serializers.BooleanField(required=False)
     est_circuit_court = serializers.BooleanField(required=False)
-    creation_source = serializers.CharField(read_only=True)
-    import_source = serializers.CharField(read_only=True)
-    creation_date = serializers.DateTimeField(read_only=True)
-    modification_date = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Purchase
@@ -130,6 +126,9 @@ class PurchaseSerializer(serializers.ModelSerializer):
             fields[field].required = True
             fields[field].allow_null = False
             fields[field].allow_blank = False
+        # some fields are readonly
+        for field in READ_ONLY_FIELDS:
+            fields[field].read_only = True
         return fields
 
     def to_representation(self, instance):
