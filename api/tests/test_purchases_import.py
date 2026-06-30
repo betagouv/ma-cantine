@@ -697,8 +697,8 @@ class PurchasesImportApiSuccessTest(APITestCase):
         Tests that can import a file with the caracteristics split into:
         - categories_egalim
         - origine
-        - est_local
         - est_circuit_court
+        - est_local
         """
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
@@ -807,8 +807,8 @@ class PurchasesImportIdApiSuccessTest(APITestCase):
         Tests that can import a file with the caracteristics split into:
         - categories_egalim
         - origine
-        - est_local
         - est_circuit_court
+        - est_local
         """
         CanteenFactory(siret="21010034300016", managers=[authenticate.user], id=949)
         self.assertEqual(Purchase.objects.count(), 0)

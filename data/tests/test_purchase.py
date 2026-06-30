@@ -302,13 +302,13 @@ class PurchaseModelPropertiesTest(TestCase):
         self.assertEqual(self.purchase_empty.origine, None)
         self.assertEqual(self.purchase.origine, Purchase.Characteristic.FRANCE)
 
-    def test_purchase_est_local_property(self):
-        self.assertFalse(self.purchase_empty.est_local)
-        self.assertTrue(self.purchase.est_local)
-
     def test_purchase_est_circuit_court_property(self):
         self.assertFalse(self.purchase_empty.est_circuit_court)
         self.assertTrue(self.purchase.est_circuit_court)
+
+    def test_purchase_est_local_property(self):
+        self.assertFalse(self.purchase_empty.est_local)
+        self.assertTrue(self.purchase.est_local)
 
     def test_purchase_famille_produits_display_property(self):
         self.assertEqual(self.purchase_empty.famille_produits_display, "")

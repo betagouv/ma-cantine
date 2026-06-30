@@ -325,8 +325,8 @@ class PurchaseCreateApiTest(APITestCase):
             "famille_produits": Purchase.Family.PRODUITS_DE_LA_MER,
             "categories_egalim": [Purchase.Characteristic.BIO],
             "origine": Purchase.Characteristic.EUROPE,
-            "est_local": False,
             "est_circuit_court": False,
+            "est_local": False,
             "definition_local": "",
         }
 
@@ -437,19 +437,6 @@ class PurchaseCreateApiTest(APITestCase):
         # cleanup
         Purchase.objects.all().delete()
 
-        # est_local is optional
-        payload = {**self.PURCHASE_PAYLOAD, "est_local": False}
-        response = self.client.post(self.url, payload)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        self.assertEqual(body["estLocal"], False)
-        purchase = Purchase.objects.first()
-        self.assertEqual(purchase.est_local, False)
-
-        # cleanup
-        Purchase.objects.all().delete()
-
         # est_circuit_court is optional
         payload = {**self.PURCHASE_PAYLOAD, "est_circuit_court": False}
         response = self.client.post(self.url, payload)
@@ -459,6 +446,19 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(body["estCircuitCourt"], False)
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.est_circuit_court, False)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # est_local is optional
+        payload = {**self.PURCHASE_PAYLOAD, "est_local": False}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["estLocal"], False)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_local, False)
 
         # definition_local definition_local_km are optional (see below)
 
@@ -756,8 +756,8 @@ class PurchaseUpdateApiTest(APITestCase):
             "prix_ht": 15.23,
             "categories_egalim": [Purchase.Characteristic.HVE],
             "origine": Purchase.Characteristic.FRANCE,
-            "est_local": True,
             "est_circuit_court": False,
+            "est_local": True,
             "definition_local": Purchase.Local.PAT,
         }
 
