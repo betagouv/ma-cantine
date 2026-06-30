@@ -1,10 +1,11 @@
 import logging
 from decimal import Decimal, InvalidOperation
 
+from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
-from data.models import Diagnostic
 from api.serializers.utils import set_help_text_from_verbose_name
+from data.models import Diagnostic
 
 from .teledeclaration import ShortTeledeclarationSerializer
 
@@ -18,6 +19,7 @@ FIELDS = (
 )
 REQUIRED_FIELDS = ("year",)
 CREATE_ONLY_FIELDS = ("creation_source", *Diagnostic.MATOMO_FIELDS)
+READ_ONLY_FIELDS = ("id",)
 
 
 class DiagnosticSerializer(serializers.ModelSerializer):
@@ -106,26 +108,33 @@ class PublicServiceDiagnosticSerializer(DiagnosticSerializer):
 
 
 @set_help_text_from_verbose_name
+@extend_schema_serializer(exclude_fields=CREATE_ONLY_FIELDS)
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = (
-            FIELDS + Diagnostic.MATOMO_FIELDS + Diagnostic.CREATION_META_FIELDS + Diagnostic.TUNNEL_PROGRESS_FIELDS
+            FIELDS
+            + Diagnostic.MATOMO_FIELDS
+            + ["creation_source", "creation_date", "modification_date"]
+            + Diagnostic.TUNNEL_PROGRESS_FIELDS
         )
-        read_only_fields = ("id",)
 
     def get_fields(self):
         fields = super().get_fields()
         # some fields are required
         for field in REQUIRED_FIELDS:
             fields[field].required = True
-        # some fields are only available on create (and hidden from the docs)
+            fields[field].allow_null = False
+            fields[field].allow_blank = False
+        # some fields are only available on create
+        # and hidden from the docs (see extend_schema_serializer)
         for field in CREATE_ONLY_FIELDS:
+            fields[field].write_only = True
             if self.instance is not None:
                 fields.pop(field, None)
-            else:
-                fields[field].write_only = True
-                fields[field].exclude_from_schema = True
+        # some fields are readonly
+        for field in READ_ONLY_FIELDS:
+            fields[field].read_only = True
         return fields
 
     def validate(self, data):

@@ -1,4 +1,5 @@
 from drf_base64.fields import Base64FileField
+from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
 from api.serializers.utils import PurchaseField, choice_list_to_choices, set_help_text_from_verbose_name
@@ -81,9 +82,11 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
 
 REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
 CREATE_ONLY_FIELDS = ["creation_source", "import_source"]
+READ_ONLY_FIELDS = ["id", "canteen", "creation_date", "modification_date"]
 
 
 @set_help_text_from_verbose_name
+@extend_schema_serializer(exclude_fields=CREATE_ONLY_FIELDS)
 class PurchaseSerializer(serializers.ModelSerializer):
     # caracteristiques is split into 4 fields
     categories_egalim = serializers.MultipleChoiceField(
@@ -119,14 +122,6 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "creation_date",
             "modification_date",
         )
-        read_only_fields = (
-            "id",
-            "canteen",
-            # "creation_source",
-            # "import_source",
-            "creation_date",
-            "modification_date",
-        )
 
     def get_fields(self):
         fields = super().get_fields()
@@ -135,13 +130,15 @@ class PurchaseSerializer(serializers.ModelSerializer):
             fields[field].required = True
             fields[field].allow_null = False
             fields[field].allow_blank = False
-        # some fields are only available on create (and hidden from the docs)
+        # some fields are only available on create
+        # and hidden from the docs (see extend_schema_serializer)
         for field in CREATE_ONLY_FIELDS:
+            fields[field].write_only = True
             if self.instance is not None:
                 fields.pop(field, None)
-            else:
-                fields[field].write_only = True
-                fields[field].exclude_from_schema = True
+        # some fields are readonly
+        for field in READ_ONLY_FIELDS:
+            fields[field].read_only = True
         return fields
 
     def to_representation(self, instance):
