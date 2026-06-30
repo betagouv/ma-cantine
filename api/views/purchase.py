@@ -95,7 +95,11 @@ class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         canteen = self._get_canteen()
-        return Purchase.objects.filter(canteen=canteen)
+        queryset = Purchase.objects.filter(canteen=canteen)
+        api_oauth2_application = get_oauth_application(self.request)
+        if api_oauth2_application:
+            queryset = queryset.filter(creation_source_api_oauth2_application=api_oauth2_application)
+        return queryset
 
 
 class PurchasesPagination(LimitOffsetPagination):
