@@ -386,6 +386,38 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(purchase.creation_source_api_oauth2_application, token.application)
 
     @authenticate
+    def test_create_purchase_creation_user_and_source(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # from the APP
+        payload = {**self.PURCHASE_PAYLOAD, "creation_source": "APP"}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, authenticate.user)
+        self.assertEqual(purchase.creation_source, CreationSource.APP)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, None)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # defaults to API
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creation_user", body)
+        self.assertNotIn("creation_source", body)
+        self.assertNotIn("creation_source_api_oauth2_application", body)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, authenticate.user)
+        self.assertEqual(purchase.creation_source, CreationSource.API)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, None)
+
+    @authenticate
     def test_create_purchase_required_fields(self):
         self.canteen.managers.add(authenticate.user)
 
@@ -627,8 +659,8 @@ class PurchaseRetrieveApiTest(APITestCase):
         self.assertEqual(body["estCircuitCourt"], False)
         self.assertIsNone(body["definitionLocal"])
         self.assertNotIn("creationUser", body)
-        self.assertEqual(body["creationSource"], CreationSource.APP)
-        self.assertIsNone(body["importSource"])
+        self.assertNotIn("creationSource", body)
+        self.assertNotIn("importSource", body)
         self.assertIn("creationDate", body)
         self.assertIn("modificationDate", body)
 

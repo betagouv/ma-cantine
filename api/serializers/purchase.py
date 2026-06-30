@@ -80,7 +80,7 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
 
 
 REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
-READ_ONLY_FIELDS = ["id", "canteen", "creation_source", "import_source", "creation_date", "modification_date"]
+CREATE_ONLY_FIELDS = ["creation_source", "import_source"]
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
@@ -117,6 +117,14 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "creation_date",
             "modification_date",
         )
+        read_only_fields = (
+            "id",
+            "canteen",
+            # "creation_source",
+            # "import_source",
+            "creation_date",
+            "modification_date",
+        )
 
     def get_fields(self):
         fields = super().get_fields()
@@ -125,9 +133,13 @@ class PurchaseSerializer(serializers.ModelSerializer):
             fields[field].required = True
             fields[field].allow_null = False
             fields[field].allow_blank = False
-        # some fields are readonly
-        for field in READ_ONLY_FIELDS:
-            fields[field].read_only = True
+        # some fields are only available on create (and hidden from the docs)
+        for field in CREATE_ONLY_FIELDS:
+            if self.instance is not None:
+                fields.pop(field, None)
+            else:
+                fields[field].write_only = True
+                fields[field].exclude_from_schema = True
         return fields
 
     def to_representation(self, instance):
