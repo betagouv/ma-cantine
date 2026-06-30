@@ -6,6 +6,44 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.39.0](https://github.com/betagouv/ma-cantine/compare/v2026.38.1...v2026.39.0) (2026-06-30)
+
+
+### Nouveautés
+
+* **Achat:** ajoute la définition de local avec les KM ([#6854](https://github.com/betagouv/ma-cantine/issues/6854)) ([e4eec10](https://github.com/betagouv/ma-cantine/commit/e4eec101717b47609d3fffdd8847eb67924f5e67))
+* **Achats:** API: nouvel endpoint pour créer des achats (caractéristiques divisées en 4) ([#6755](https://github.com/betagouv/ma-cantine/issues/6755)) ([b5f2703](https://github.com/betagouv/ma-cantine/commit/b5f270361f97f997dffbc2e5c12d77b7c8387508))
+* **Achats:** API: ouvrir l'accès aux éditeurs (oauth2) ([#6857](https://github.com/betagouv/ma-cantine/issues/6857)) ([deee10f](https://github.com/betagouv/ma-cantine/commit/deee10f2b96d9b7dcc5e13844587c9439fb53402))
+* **Achats:** endpoint dédié à l'upload et suppression de facture ([#6840](https://github.com/betagouv/ma-cantine/issues/6840)) ([6cb576c](https://github.com/betagouv/ma-cantine/commit/6cb576c9dd4c42ff9530fb74ee1e41e12f1bf5de))
+* **Achats:** nouvel endpoint pour pouvoir retrieve, modifier et supprimer des achats (caractéristiques divisées en 4) ([#6810](https://github.com/betagouv/ma-cantine/issues/6810)) ([7f41d46](https://github.com/betagouv/ma-cantine/commit/7f41d464867520068f95acd5c75c65ebe471c139))
+* **API:** stocker l'info de quelle app OAuth2 a créé quel cantine, bilan, achat ou évaluation gaspillage ([#6843](https://github.com/betagouv/ma-cantine/issues/6843)) ([f7c8378](https://github.com/betagouv/ma-cantine/commit/f7c83783222e3b17b60886f46bae59aa90c8053c))
+* **Imports:** Achats: ajoute les nouveaux formats d'imports ([#6841](https://github.com/betagouv/ma-cantine/issues/6841)) ([c4ea509](https://github.com/betagouv/ma-cantine/commit/c4ea509c51495453e671673626578939c47c39a8))
+
+
+### Améliorations
+
+* **Achats:** affiche les erreurs renvoyées par le backend ([#6855](https://github.com/betagouv/ma-cantine/issues/6855)) ([a7eff25](https://github.com/betagouv/ma-cantine/commit/a7eff253d02aafb92e8c9f2a00bdc81e3db569cb))
+* **Achats:** API: restreindre l'accès des éditeurs à seulement leurs achats ([#6858](https://github.com/betagouv/ma-cantine/issues/6858)) ([48d39ec](https://github.com/betagouv/ma-cantine/commit/48d39ec32bbcf8c3701533fca7f8e9464247d7f1))
+* **Achats:** détache la facture de la création et modification des achats ([#6852](https://github.com/betagouv/ma-cantine/issues/6852)) ([8625f88](https://github.com/betagouv/ma-cantine/commit/8625f88e0c5cc3f8a97ad3e77bb8ddb6610a2e7f))
+* **Achats:** nouvelles properties categories_egalim, origine, est_local & est_circuit_court ([#6807](https://github.com/betagouv/ma-cantine/issues/6807)) ([fec42dc](https://github.com/betagouv/ma-cantine/commit/fec42dcf61d405cf6457a5676d2185be9a5f9193))
+* **Achats:** refonte de definition_local (ajout d'un nouveau champ definition_local_km, modifications des choix, optionnels) ([#6845](https://github.com/betagouv/ma-cantine/issues/6845)) ([e8ff5d9](https://github.com/betagouv/ma-cantine/commit/e8ff5d9ba39d974c04b0a8482fd56ab842c7b657))
+* **Achats:** utilise la nouvelle API pour le formulaire ([#6853](https://github.com/betagouv/ma-cantine/issues/6853)) ([d5ada22](https://github.com/betagouv/ma-cantine/commit/d5ada222b9afeaa2db98d9206ce9c8658637ef97))
+* **Imports:** ré-organisation de la page ([#6846](https://github.com/betagouv/ma-cantine/issues/6846)) ([7b6f22d](https://github.com/betagouv/ma-cantine/commit/7b6f22dac5b1af204b16abc154324fb305f31b19))
+
+
+### Corrections (bugs, typos...)
+
+* **Achats:** Frontend: revert des changements sur le fichier achats.json (fix du pre-commit) ([#6848](https://github.com/betagouv/ma-cantine/issues/6848)) ([9a85180](https://github.com/betagouv/ma-cantine/commit/9a8518076b3817cb0e22f5b86745e734b6448e58))
+* **Achats:** passe le formulaire sur 3 colonnes et enlève le fond bleu ([#6847](https://github.com/betagouv/ma-cantine/issues/6847)) ([08b6f0f](https://github.com/betagouv/ma-cantine/commit/08b6f0fca7bc926c1f404c1a94e329081193ba97))
+
+
+### Technique
+
+* **Achats:** derniers ajustements sur le formulaire ([#6856](https://github.com/betagouv/ma-cantine/issues/6856)) ([10a7c0a](https://github.com/betagouv/ma-cantine/commit/10a7c0a1e615edc5023f700bdb11cb3d3498c4d7))
+* **Achats:** rebase suite aux merge d'autres PR en parallèle ([cfbaa1b](https://github.com/betagouv/ma-cantine/commit/cfbaa1be4819fa58ca241fa741829a3787155c6d))
+* **Achats:** renommer l'ancien serializer à PurchaseOldSerializer ([#6809](https://github.com/betagouv/ma-cantine/issues/6809)) ([3924163](https://github.com/betagouv/ma-cantine/commit/39241634b65143645062999347e0c7bf74e52aeb))
+* **Imports:** Achats: màj suite à la modification des valeurs dans definition_local & l'ajout de definition_local_km ([#6849](https://github.com/betagouv/ma-cantine/issues/6849)) ([a05d4cf](https://github.com/betagouv/ma-cantine/commit/a05d4cf6a15617a95055213ed962c4bc6bca1661))
+
 ## [2026.38.1](https://github.com/betagouv/ma-cantine/compare/v2026.38.0...v2026.38.1) (2026-06-22)
 
 
