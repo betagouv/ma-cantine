@@ -309,12 +309,12 @@ class Purchase(SoftDeletionModel):
         return None
 
     @property
-    def est_local(self) -> bool:
-        return Purchase.Characteristic.LOCAL in (self.caracteristiques or [])
-
-    @property
     def est_circuit_court(self) -> bool:
         return Purchase.Characteristic.CIRCUIT_COURT in (self.caracteristiques or [])
+
+    @property
+    def est_local(self) -> bool:
+        return Purchase.Characteristic.LOCAL in (self.caracteristiques or [])
 
     @property
     def famille_produits_display(self) -> str:

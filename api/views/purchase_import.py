@@ -34,11 +34,11 @@ class PurchasesImportView(BasePurchasesImportView):
 
         egalim_caracteristics = categories_egalim.split(",") if categories_egalim else []
         origine_caracteristics = origine.split(",") if origine else []
-        local_caracteristics = [Purchase.Characteristic.LOCAL] if self.is_true_value(est_local) else []
         circuit_court_caracteristics = (
             [Purchase.Characteristic.CIRCUIT_COURT] if self.is_true_value(est_circuit_court) else []
         )
-        return egalim_caracteristics + origine_caracteristics + local_caracteristics + circuit_court_caracteristics
+        local_caracteristics = [Purchase.Characteristic.LOCAL] if self.is_true_value(est_local) else []
+        return egalim_caracteristics + origine_caracteristics + circuit_court_caracteristics + local_caracteristics
 
     def _get_definition_local(self, row):
         return row[10].strip() if row[10] else ""

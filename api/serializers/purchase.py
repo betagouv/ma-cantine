@@ -90,11 +90,10 @@ class PurchaseSerializer(serializers.ModelSerializer):
         required=False,
     )
     origine = serializers.ChoiceField(
-        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_ORIGINE),
-        required=False,
+        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_ORIGINE), required=False
     )
-    est_local = serializers.BooleanField(required=False)
     est_circuit_court = serializers.BooleanField(required=False)
+    est_local = serializers.BooleanField(required=False)
 
     class Meta:
         model = Purchase
@@ -108,8 +107,8 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "famille_produits",
             "categories_egalim",
             "origine",
-            "est_local",
             "est_circuit_court",
+            "est_local",
             "definition_local",
             "definition_local_km",
             # "facture",
@@ -149,12 +148,12 @@ class PurchaseSerializer(serializers.ModelSerializer):
             ),
             "",
         )
-        representation["est_local"] = any(
-            characteristic == Purchase.Characteristic.LOCAL for characteristic in (instance.caracteristiques or [])
-        )
         representation["est_circuit_court"] = any(
             characteristic == Purchase.Characteristic.CIRCUIT_COURT
             for characteristic in (instance.caracteristiques or [])
+        )
+        representation["est_local"] = any(
+            characteristic == Purchase.Characteristic.LOCAL for characteristic in (instance.caracteristiques or [])
         )
         return representation
 
@@ -172,11 +171,11 @@ class PurchaseSerializer(serializers.ModelSerializer):
         if origine:
             caracteristiques.append(origine)
 
-        if internal_value.pop("est_local", False):
-            caracteristiques.append(Purchase.Characteristic.LOCAL)
-
         if internal_value.pop("est_circuit_court", False):
             caracteristiques.append(Purchase.Characteristic.CIRCUIT_COURT)
+
+        if internal_value.pop("est_local", False):
+            caracteristiques.append(Purchase.Characteristic.LOCAL)
 
         internal_value["caracteristiques"] = caracteristiques
         return internal_value
