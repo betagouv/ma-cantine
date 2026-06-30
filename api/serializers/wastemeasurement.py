@@ -3,6 +3,9 @@ from rest_framework import serializers
 from data.models import WasteMeasurement
 
 
+CREATE_ONLY_FIELDS = ["creation_source"]
+
+
 class WasteMeasurementSerializer(serializers.ModelSerializer):
     days_in_period = serializers.IntegerField(read_only=True)  # property
     total_yearly_waste_estimation = serializers.FloatField(read_only=True, allow_null=True)  # property
@@ -37,15 +40,18 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "id",
+            # "creation_source",
             "creation_date",
             "modification_date",
         )
 
     def get_fields(self):
         fields = super().get_fields()
-        # some fields are only available on create
-        if self.instance is not None:
-            fields.pop("creation_source", None)
-        else:
-            fields["creation_source"].write_only = True
+        # some fields are only available on create (and hidden from the docs)
+        for field in CREATE_ONLY_FIELDS:
+            if self.instance is not None:
+                fields.pop(field, None)
+            else:
+                fields[field].write_only = True
+                fields[field].exclude_from_schema = True
         return fields
