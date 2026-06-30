@@ -3,6 +3,7 @@ from rest_framework import serializers
 from data.models import WasteMeasurement
 
 
+REQUIRED_FIELDS = ["period_start_date", "period_end_date"]
 CREATE_ONLY_FIELDS = ["creation_source"]
 
 
@@ -47,6 +48,11 @@ class WasteMeasurementSerializer(serializers.ModelSerializer):
 
     def get_fields(self):
         fields = super().get_fields()
+        # some fields are required
+        for field in REQUIRED_FIELDS:
+            fields[field].required = True
+            fields[field].allow_null = False
+            fields[field].allow_blank = False
         # some fields are only available on create (and hidden from the docs)
         for field in CREATE_ONLY_FIELDS:
             if self.instance is not None:

@@ -408,7 +408,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class DiagnosticRetrieveApiTest(APITestCase):
+class DiagnosticDetailApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -420,7 +420,7 @@ class DiagnosticRetrieveApiTest(APITestCase):
         )
 
     @authenticate
-    def test_retrieve_diagnostic_not_allowed(self):
+    def test_cannot_get_diagnostic(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.get(self.url)
@@ -782,7 +782,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
 class DiagnosticDeleteApiTest(APITestCase):
     @authenticate
-    def test_delete_diagnostic_not_allowed(self):
+    def test_cannot_delete_diagnostic(self):
         diagnostic = DiagnosticFactory(year=2019)
         diagnostic.canteen.managers.add(authenticate.user)
 
