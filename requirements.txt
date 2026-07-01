@@ -72,7 +72,7 @@ cfgv==3.4.0
     # via
     #   ma-cantine
     #   pre-commit
-chardet==5.2.0
+chardet==7.4.3
     # via
     #   ma-cantine
     #   reportlab
