@@ -1677,7 +1677,7 @@ requires-dist = [
     { name = "toml", specifier = "==0.10.2" },
     { name = "tomli", specifier = "==2.2.1" },
     { name = "tomlkit", specifier = "==0.13.2" },
-    { name = "tqdm", specifier = "==4.67.0" },
+    { name = "tqdm", specifier = "==4.68.3" },
     { name = "typing-extensions", specifier = "==4.12.2" },
     { name = "tzdata", specifier = "==2024.2" },
     { name = "tzlocal", specifier = "==5.2" },
@@ -2934,14 +2934,14 @@ wheels = [
 
 [[package]]
 name = "tqdm"
-version = "4.67.0"
+version = "4.68.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e8/4f/0153c21dc5779a49a0598c445b1978126b1344bab9ee71e53e44877e14e0/tqdm-4.67.0.tar.gz", hash = "sha256:fe5a6f95e6fe0b9755e9469b77b9c3cf850048224ecaa8293d7d2d31f97d869a", size = 169739, upload-time = "2024-11-06T16:35:37.677Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/87/d7/0535a28b1f5f24f6612fb3ff1e89fb1a8d160fee0f976e0aa6803862134b/tqdm-4.68.3.tar.gz", hash = "sha256:00dfa48452b6b6cfae3dd9885636c23d3422d1ec97c66d96818cbd5e0821d482", size = 170596, upload-time = "2026-06-17T07:36:52.105Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2b/78/57043611a16c655c8350b4c01b8d6abfb38cc2acb475238b62c2146186d7/tqdm-4.67.0-py3-none-any.whl", hash = "sha256:0cd8af9d56911acab92182e88d763100d4788bdf421d251616040cc4d44863be", size = 78590, upload-time = "2024-11-06T16:35:35.023Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/8e/bb97bb0c71802080bfc8952937d174e49cfc50de5c951dd47b2496f0dcdb/tqdm-4.68.3-py3-none-any.whl", hash = "sha256:39832cc2def2789a6f29df83f172db7416cea70052c0907a57801c5f2fdccb03", size = 78337, upload-time = "2026-06-17T07:36:50.132Z" },
 ]
 
 [[package]]

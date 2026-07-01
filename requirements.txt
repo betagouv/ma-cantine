@@ -623,7 +623,7 @@ tomlkit==0.13.2
     # via
     #   ma-cantine
     #   pylint
-tqdm==4.67.0
+tqdm==4.68.3
     # via
     #   djlint
     #   ma-cantine
