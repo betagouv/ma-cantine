@@ -7,8 +7,6 @@
 
 with overrides_spe as (
     select * from (values
-        ('19691861900012', 'economie', false),
-        ('19572647600011', 'economie', false),
         ('21400312100172', null,       true),
         ('26760171400087', null,       true)
     ) as t(siret, line_ministry_force, exclure)
@@ -48,6 +46,7 @@ inscriptions_by_groupe as (
     select
         case
             when perimetre in ('ecologie', 'mer')                             then 'MTE'
+            when perimetre in ('economie', 'transformation')                  then 'MACP'
             when perimetre in ('jeunesse', 'enseignement_superieur', 'sport') then 'MEJSESR'
             when perimetre in ('justice_hors_pjj', 'justice_pjj')             then 'Justice'
             when perimetre in ('travail', 'sante')                            then 'Ministères sociaux'
@@ -59,6 +58,7 @@ inscriptions_by_groupe as (
     from inscriptions_by_ministry
     where perimetre in (
         'ecologie', 'mer',
+        'economie', 'transformation',
         'jeunesse', 'enseignement_superieur', 'sport',
         'justice_hors_pjj', 'justice_pjj',
         'travail', 'sante',
@@ -94,7 +94,7 @@ waste as (
         sum(nb_non_atteint)                                                             as nb_non_atteint,
         round((sum(total_mass_kg) * 1000 / nullif(sum(total_meal_count), 0))::numeric, 1) as gaspi_g_par_couvert
     from {{ ref('int_spe_waste') }}
-    where perimetre_key not in ('MTE', 'MEJSESR', 'Justice', 'Ministères sociaux', 'Périmètre intérieur')
+    where perimetre_key not in ('MTE', 'MACP', 'MEJSESR', 'Justice', 'Ministères sociaux', 'Périmètre intérieur')
     group by annee
 ),
 
@@ -110,24 +110,25 @@ ref_perimetre as (
         (5,  'armee',                       'Armées',                                      null,                 false),
         (6,  'autorites_independantes',     'AAI',                                         null,                 false),
         (7,  'culture',                     'Culture',                                     null,                 false),
-        (8,  'economie',                    'Économie et finances',                        null,                 false),
-        (9,  'transformation',              'Fonction Publique',                           null,                 false),
-        (10, 'jeunesse',                    'Éducation nationale',                         'MEJSESR',            false),
-        (11, 'enseignement_superieur',      'Enseignement supérieur et recherche',         'MEJSESR',            false),
-        (12, 'sport',                       'Sports',                                      'MEJSESR',            false),
-        (13, 'MEJSESR',                     'TOTAL MEJSESR',                               'MEJSESR',            true),
-        (14, 'justice_hors_pjj',            'Justice hors PJJ',                            'Justice',            false),
-        (15, 'justice_pjj',                 'Justice PJJ',                                 'Justice',            false),
-        (16, 'Justice',                     'TOTAL Justice',                               'Justice',            true),
-        (17, 'interieur',                   'Intérieur',                                   'Périmètre intérieur',    false),
-        (18, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Périmètre intérieur',  false),
-        (19, 'Périmètre intérieur',         'TOTAL Périmètre intérieur',                   'Périmètre intérieur',   true),
-        (20, 'premier_ministre',            'Premier ministre',                            null,                 false),
-        (21, 'agriculture',                 'Agriculture',                                 null,                 false),
-        (22, 'travail',                     'Travail',                                     'Ministères sociaux', false),
-        (23, 'sante',                       'Santé',                                       'Ministères sociaux', false),
-        (24, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
-        (25, 'TOTAL',                       'TOTAL GÉNÉRAL',                               null,                 true)
+        (8,  'economie',                    'Économie et finances',                        'MACP',          false),
+        (9,  'transformation',              'Transformation et Fonction publique',         'MACP',          false),
+        (10, 'MACP',                  'TOTAL MACP',                             'MACP',          true),
+        (11, 'jeunesse',                    'Éducation nationale',                         'MEJSESR',            false),
+        (12, 'enseignement_superieur',      'Enseignement supérieur et recherche',         'MEJSESR',            false),
+        (13, 'sport',                       'Sports',                                      'MEJSESR',            false),
+        (14, 'MEJSESR',                     'TOTAL MEJSESR',                               'MEJSESR',            true),
+        (15, 'justice_hors_pjj',            'Justice hors PJJ',                            'Justice',            false),
+        (16, 'justice_pjj',                 'Justice PJJ',                                 'Justice',            false),
+        (17, 'Justice',                     'TOTAL Justice',                               'Justice',            true),
+        (18, 'interieur',                   'Intérieur',                                   'Périmètre intérieur',    false),
+        (19, 'administration_territoriale', 'Administration territoriale de l''État (ATE)', 'Périmètre intérieur',  false),
+        (20, 'Périmètre intérieur',         'TOTAL Périmètre intérieur',                   'Périmètre intérieur',   true),
+        (21, 'premier_ministre',            'Premier ministre',                            null,                 false),
+        (22, 'agriculture',                 'Agriculture',                                 null,                 false),
+        (23, 'travail',                     'Travail',                                     'Ministères sociaux', false),
+        (24, 'sante',                       'Santé',                                       'Ministères sociaux', false),
+        (25, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
+        (26, 'TOTAL',                       'TOTAL GÉNÉRAL',                               null,                 true)
     ) as t(sort_order, perimetre_key, perimetre_lib, groupe_spe, est_total_groupe)
 ),
 
@@ -144,7 +145,7 @@ ref_perimetre_with_groupe as (
 
 ref_cibles as (
     select * from (values
-        ('ecologie',                      57,   'Cible ferme'),
+        ('ecologie',                      58,   'Cible ferme'),
         ('mer',                            5,   'Cible ferme'),
         ('affaires_etrangeres',            3,   'Cible ferme'),
         ('armee',                        244,   'Cible ferme'),
@@ -157,12 +158,12 @@ ref_cibles as (
         ('justice_hors_pjj',             290,   'Cible ferme'),
         ('justice_pjj',                   92,   'Cible ferme'),
         ('interieur',                    207,   'Précision en cours'),
-        ('administration_territoriale',   107,   'Précision en cours'),
-        ('premier_ministre',               5,   'Cible ferme'),
-        ('agriculture',                   10,   'Cible ferme'),
+        ('administration_territoriale',   105,   'Précision en cours'),
+        ('premier_ministre',               9,   'Cible ferme'),
+        ('agriculture',                   11,   'Cible ferme'),
         ('travail',                      116,   'Précision en cours'),
         ('sante',                        23,    'Précision en cours'),
-        ('transformation',               null,  'Non renseignée')
+        ('transformation',                  2,  'Précision en cours')
     ) as t(perimetre_key, cible_etablissements, fiabilite_cible)
 ),
 
@@ -301,6 +302,49 @@ all_stats as (
     select * from stats_groupe
     union all
     select * from stats_total
+),
+
+-- Médiane des sous-indicateurs 10.2 par périmètre (calculée au niveau cantine individuelle)
+medians_base as (
+    select
+        annee,
+        coalesce(o.line_ministry_force, cantine_line_ministry)                        as perimetre_key,
+        100.0 * valeur_bio_agg    / nullif(valeur_totale, 0)                          as pct_bio,
+        100.0 * valeur_egalim_agg / nullif(valeur_totale, 0)                          as pct_egalim,
+        100.0 * valeur_viandes_volailles_egalim / nullif(valeur_viandes_volailles, 0) as pct_vv_egalim
+    from {{ ref('mart_teledeclarations') }}
+    left join overrides_spe o on o.siret = cantine_siret
+    where cantine_line_ministry is not null
+      and (cantine_secteur != 'administration_etablissement_public' or cantine_line_ministry != 'administration_territoriale')
+      and coalesce(o.exclure, false) = false
+),
+
+medians as (
+    -- Par line_ministry
+    select annee, perimetre_key,
+        round(percentile_cont(0.5) within group (order by pct_bio)::numeric,       1) as mediane_part_bio_pct,
+        round(percentile_cont(0.5) within group (order by pct_egalim)::numeric,    1) as mediane_part_egalim_pct,
+        round(percentile_cont(0.5) within group (order by pct_vv_egalim)::numeric, 1) as mediane_part_vv_egalim_pct
+    from medians_base
+    group by annee, perimetre_key
+    union all
+    -- Par groupe
+    select mb.annee, r.groupe_spe as perimetre_key,
+        round(percentile_cont(0.5) within group (order by pct_bio)::numeric,       1),
+        round(percentile_cont(0.5) within group (order by pct_egalim)::numeric,    1),
+        round(percentile_cont(0.5) within group (order by pct_vv_egalim)::numeric, 1)
+    from medians_base mb
+    join ref_perimetre_with_groupe r on r.perimetre_key = mb.perimetre_key
+    where r.groupe_spe is not null and r.est_total_groupe = false
+    group by mb.annee, r.groupe_spe
+    union all
+    -- TOTAL GÉNÉRAL
+    select annee, 'TOTAL',
+        round(percentile_cont(0.5) within group (order by pct_bio)::numeric,       1),
+        round(percentile_cont(0.5) within group (order by pct_egalim)::numeric,    1),
+        round(percentile_cont(0.5) within group (order by pct_vv_egalim)::numeric, 1)
+    from medians_base
+    group by annee
 )
 
 select
@@ -333,6 +377,11 @@ select
 
     -- #8 part viandes/volailles EGalim uniquement
     round((100.0 * s.vv_egalim / nullif(s.vv, 0))::numeric, 1)                     as part_vv_egalim_pct,
+
+    -- médianes 10.2 (calculées au niveau cantine individuelle)
+    m.mediane_part_bio_pct,
+    m.mediane_part_egalim_pct,
+    m.mediane_part_vv_egalim_pct,
 
     -- #9 part viandes/volailles origine France
     round((100.0 * s.vv_france / nullif(s.vv, 0))::numeric, 1)                     as part_vv_france_pct,
@@ -388,6 +437,7 @@ select
         else c.fiabilite_cible
     end                                                                              as fiabilite_cible,
     case
+        when perimetre_lib in ('Environnement', 'Agriculture', 'Premier ministre') then 'Plan de correction EGalim'
         when c.fiabilite_cible = 'Cible ferme' then 'Dernière Bilatérale'
         else null
     end                                                                              as source_cible,
@@ -408,4 +458,7 @@ left join ref_cibles c
 left join cible_groupes cg
     on cg.perimetre_key = r.perimetre_key
     and cg.annee        = s.annee
+left join medians m
+    on m.perimetre_key  = r.perimetre_key
+    and m.annee         = s.annee
 order by s.annee, r.sort_order

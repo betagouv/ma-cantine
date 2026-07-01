@@ -64,12 +64,37 @@ td_years_by_canteen as (
       and t.teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'
       and (t.invalid_reason_list is null or t.invalid_reason_list::text = '[]')
     group by t.canteen_id
+),
+
+-- Mesures de gaspillage par (canteen_id, annee) — mêmes filtres qualité qu'int_spe_waste
+waste as (
+    select
+        canteen_id,
+        annee,
+        nb_mesures                      as gaspi_nb_mesures,
+        meal_count                      as gaspi_meal_count,
+        total_mass                      as gaspi_total_mass_kg,
+        preparation_total_mass          as gaspi_preparation_total_mass_kg,
+        preparation_edible_mass         as gaspi_preparation_edible_mass_kg,
+        preparation_inedible_mass       as gaspi_preparation_inedible_mass_kg,
+        unserved_total_mass             as gaspi_nonservi_total_mass_kg,
+        unserved_edible_mass            as gaspi_nonservi_edible_mass_kg,
+        unserved_inedible_mass          as gaspi_nonservi_inedible_mass_kg,
+        leftovers_total_mass            as gaspi_restes_total_mass_kg,
+        leftovers_edible_mass           as gaspi_restes_edible_mass_kg,
+        leftovers_inedible_mass         as gaspi_restes_inedible_mass_kg,
+        round(
+            (total_mass * 1000 / nullif(meal_count, 0))::numeric, 1
+        )                               as gaspi_g_par_couvert
+    from {{ ref('stg_waste_measurements') }}
+    where meal_count > 0
+      and (total_mass * 1000 / meal_count) between 10 and 500
 )
 
 select
     -- identifiers
     teledeclaration_id,
-    canteen_id,
+    teledeclarations.canteen_id,
     teledeclarations.year                               as annee,
     teledeclaration_version                             as version,
     creation_date                                       as date_creation,
@@ -312,9 +337,12 @@ select
     objectifs_egalim_atteints,
 
     -- diversification
+    has_diversification_plan                            as plan_diversification,
+    diversification_plan_actions                        as actions_plan_diversification,
     service_type                                        as type_service,
     vegetarian_weekly_recurrence                        as recurrence_vege,
     vegetarian_menu_type                                as type_menu_vege,
+    vegetarian_menu_bases                               as bases_menu_vege,
 
     -- dons
     convention_dons,
@@ -322,7 +350,7 @@ select
     quantite_dons,
     type_nourriture_dons,
 
-    -- gaspillage
+    -- gaspillage — volet déclaratif (tunnel TD)
     has_waste_diagnostic                                as diag_gaspi,
     has_waste_plan                                      as plan_action_gaspi,
     action_gaspi_inscription,
@@ -331,6 +359,21 @@ select
     action_gaspi_distribution,
     action_gaspi_portions,
     action_gaspi_reutilisation,
+
+    -- gaspillage — mesures (stg_waste_measurements, même année que la TD)
+    waste.gaspi_nb_mesures,
+    waste.gaspi_meal_count,
+    waste.gaspi_total_mass_kg,
+    waste.gaspi_preparation_total_mass_kg,
+    waste.gaspi_preparation_edible_mass_kg,
+    waste.gaspi_preparation_inedible_mass_kg,
+    waste.gaspi_nonservi_total_mass_kg,
+    waste.gaspi_nonservi_edible_mass_kg,
+    waste.gaspi_nonservi_inedible_mass_kg,
+    waste.gaspi_restes_total_mass_kg,
+    waste.gaspi_restes_edible_mass_kg,
+    waste.gaspi_restes_inedible_mass_kg,
+    waste.gaspi_g_par_couvert,
 
     -- tunnels de complétion
     tunnel_appro,
@@ -411,6 +454,9 @@ left join nb_cantines_inscrites
     and nb_cantines_inscrites.year = teledeclarations.year
 left join td_years_by_canteen tdy
     on tdy.cid = teledeclarations.canteen_id
+left join waste
+    on waste.canteen_id = teledeclarations.canteen_id
+    and waste.annee     = teledeclarations.year
 where 1=1
   and production_type not in ('groupe', 'central', 'central_serving')
   and teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'

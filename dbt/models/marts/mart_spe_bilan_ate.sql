@@ -153,8 +153,8 @@ ref_cibles_region_sector as (
         ('28', 'administration_inter_administratif',   7, 'Cible ferme'),
         ('28', 'administration_administratif',          1, 'Précision en cours'),
         -- Nouvelle-Aquitaine
-        ('75', 'administration_inter_administratif',  12, 'Cible ferme'),
-        ('75', 'administration_administratif',          6, 'Précision en cours'),
+        ('75', 'administration_inter_administratif',  13, 'Cible ferme'),
+        ('75', 'administration_administratif',          3, 'Précision en cours'),
         -- Occitanie
         ('76', 'administration_inter_administratif',   9, 'Cible ferme'),
         ('76', 'administration_administratif',          1, 'Précision en cours'),
@@ -271,6 +271,38 @@ all_stats as (
     select * from stats_region
     union all
     select * from stats_secteur
+),
+
+medians_base as (
+    select
+        annee,
+        cantine_region                                                                  as region,
+        coalesce(o.secteur_force, cantine_secteur)                                     as secteur,
+        100.0 * valeur_bio_agg    / nullif(valeur_totale, 0)                           as pct_bio,
+        100.0 * valeur_egalim_agg / nullif(valeur_totale, 0)                           as pct_egalim,
+        100.0 * valeur_viandes_volailles_egalim / nullif(valeur_viandes_volailles, 0)  as pct_vv_egalim
+    from td_ate
+    left join overrides_secteur_ate o on o.siret = cantine_siret
+    where (cantine_line_ministry = 'administration_territoriale' and cantine_region is not null)
+       or o.siret is not null
+),
+
+medians_region as (
+    select annee, region,
+        round(percentile_cont(0.5) within group (order by pct_bio)::numeric,       1) as mediane_part_bio_pct,
+        round(percentile_cont(0.5) within group (order by pct_egalim)::numeric,    1) as mediane_part_egalim_pct,
+        round(percentile_cont(0.5) within group (order by pct_vv_egalim)::numeric, 1) as mediane_part_vv_egalim_pct
+    from medians_base
+    group by annee, region
+),
+
+medians_region_sector as (
+    select annee, region, secteur,
+        round(percentile_cont(0.5) within group (order by pct_bio)::numeric,       1) as mediane_part_bio_pct,
+        round(percentile_cont(0.5) within group (order by pct_egalim)::numeric,    1) as mediane_part_egalim_pct,
+        round(percentile_cont(0.5) within group (order by pct_vv_egalim)::numeric, 1) as mediane_part_vv_egalim_pct
+    from medians_base
+    group by annee, region, secteur
 )
 
 select
@@ -287,10 +319,13 @@ select
     ))::numeric, 1)                                                                 as taux_td_pct,
 
     round((100.0 * s.valeur_egalim_agg / nullif(s.valeur_totale, 0))::numeric, 1)  as part_egalim_pct,
+    coalesce(mrs.mediane_part_egalim_pct, mr.mediane_part_egalim_pct)              as mediane_part_egalim_pct,
     round((100.0 * s.valeur_bio_agg    / nullif(s.valeur_totale, 0))::numeric, 1)  as part_bio_pct,
+    coalesce(mrs.mediane_part_bio_pct,    mr.mediane_part_bio_pct)                 as mediane_part_bio_pct,
     round((100.0 * s.total_france      / nullif(s.valeur_totale, 0))::numeric, 1)  as part_france_pct,
     round((100.0 * (s.vv_egalim + s.pdm_egalim) / nullif(s.vv + s.pdm, 0))::numeric, 1) as part_vp_egalim_pct,
     round((100.0 * s.vv_egalim         / nullif(s.vv, 0))::numeric, 1)             as part_vv_egalim_pct,
+    coalesce(mrs.mediane_part_vv_egalim_pct, mr.mediane_part_vv_egalim_pct)       as mediane_part_vv_egalim_pct,
     round((100.0 * s.vv_france         / nullif(s.vv, 0))::numeric, 1)             as part_vv_france_pct,
 
     s.nb_bio                                                                        as nb_cantines_atteint_bio,
@@ -381,5 +416,14 @@ left join waste_by_region_sector wrs
     on wrs.region = s.region
     and wrs.annee = s.annee
     and wrs.secteur is not distinct from s.secteur
+    and s.est_total_region = false
+left join medians_region mr
+    on mr.region = s.region
+    and mr.annee = s.annee
+    and s.est_total_region = true
+left join medians_region_sector mrs
+    on mrs.region = s.region
+    and mrs.annee = s.annee
+    and mrs.secteur is not distinct from s.secteur
     and s.est_total_region = false
 order by s.annee, coalesce(s.lib_region, i.region_lib, s.region), s.est_total_region desc, s.secteur

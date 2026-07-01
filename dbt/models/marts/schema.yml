@@ -203,3 +203,81 @@ models:
         description: Action gaspillage — adaptation des portions.
       - name: action_gaspi_reutilisation
         description: Action gaspillage — réutilisation des restes.
+
+  - name: mart_waste
+    description: >
+      Une ligne par (canteen_id, annee) ayant au moins une mesure de gaspillage alimentaire valide.
+      Les masses sont agrégées sur l'année civile via stg_waste_measurements.
+      Les cantines avec un ratio hors plage [10, 500] g/couvert sont exclues (données aberrantes).
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - canteen_id
+            - annee
+    columns:
+      - name: canteen_id
+        description: Identifiant de la cantine.
+        tests:
+          - not_null
+      - name: annee
+        description: Année civile des mesures.
+        tests:
+          - not_null
+      - name: siret
+        description: SIRET de la cantine.
+      - name: cantine_name
+        description: Nom de la cantine.
+      - name: line_ministry
+        description: Ministère de tutelle (SPE uniquement).
+      - name: management_type
+        description: Mode de gestion (direct, conceded).
+      - name: production_type
+        description: Type de production.
+      - name: daily_meal_count
+        description: Nombre de repas par jour déclaré sur la fiche cantine.
+      - name: yearly_meal_count
+        description: Nombre de repas par an déclaré sur la fiche cantine.
+      - name: sector_list
+        description: Secteurs d'activité (liste JSON).
+      - name: department
+        description: Code département.
+      - name: department_lib
+        description: Libellé du département.
+      - name: region
+        description: Code région.
+      - name: region_lib
+        description: Libellé de la région.
+      - name: epci
+        description: Code EPCI.
+      - name: epci_lib
+        description: Libellé de l'EPCI.
+      - name: nb_mesures
+        description: Nombre de mesures agrégées sur l'année.
+      - name: total_meal_count
+        description: Total couverts mesurés sur l'année.
+      - name: total_mass_kg
+        description: Masse totale de gaspillage (kg) sur l'année.
+      - name: preparation_total_mass
+        description: Masse totale flux préparation (kg).
+      - name: preparation_edible_mass
+        description: Masse comestible flux préparation (kg).
+      - name: preparation_inedible_mass
+        description: Masse non-comestible flux préparation (kg).
+      - name: unserved_total_mass
+        description: Masse totale flux non-servi (kg).
+      - name: unserved_edible_mass
+        description: Masse comestible flux non-servi (kg).
+      - name: unserved_inedible_mass
+        description: Masse non-comestible flux non-servi (kg).
+      - name: leftovers_total_mass
+        description: Masse totale flux restes assiette (kg).
+      - name: leftovers_edible_mass
+        description: Masse comestible flux restes assiette (kg).
+      - name: leftovers_inedible_mass
+        description: Masse non-comestible flux restes assiette (kg).
+      - name: gaspi_g_par_couvert
+        description: Ratio gaspillage en g/couvert (total_mass_kg × 1000 / total_meal_count).
+      - name: niveau_ademe
+        description: >
+          Niveau ADEME calculé sur le ratio agrégé annuel :
+          Niveau 3 (≤47 g/couvert), Niveau 2 (≤74), Niveau 1 (≤95), Non atteint (>95).
