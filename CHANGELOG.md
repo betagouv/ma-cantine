@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.40.0](https://github.com/betagouv/ma-cantine/compare/v2026.39.1...v2026.40.0) (2026-07-06)
+
+
+### Nouveautés
+
+* **Contact:** ajoute le bandeau de service réduit ([#6889](https://github.com/betagouv/ma-cantine/issues/6889)) ([15a6289](https://github.com/betagouv/ma-cantine/commit/15a6289ab1a8503a5ad15ff08ae23c20dcde0557))
+
+
+### Améliorations
+
+* **Achats:** mieux distinguer visuellement les libellés des champs des valeurs ([#6885](https://github.com/betagouv/ma-cantine/issues/6885)) ([e658928](https://github.com/betagouv/ma-cantine/commit/e658928bf86dfe7b2016f6ba72c0ee73d05a3c5b))
+* **Achats:** remonte le bloc de facture ([#6888](https://github.com/betagouv/ma-cantine/issues/6888)) ([5cbe759](https://github.com/betagouv/ma-cantine/commit/5cbe75920f159d5f2bab3f715fa6ea47baba8b72))
+* **API:** grouper les endpoints par lot fonctionnels ([#6886](https://github.com/betagouv/ma-cantine/issues/6886)) ([0a0c491](https://github.com/betagouv/ma-cantine/commit/0a0c491ca818dfbc0e31f31b718cf91b7fa2db24))
+
+
+### Corrections (bugs, typos...)
+
+* **API:** Swagger: réparer les warnings qui s'affichent dans la console ([#6891](https://github.com/betagouv/ma-cantine/issues/6891)) ([9895ceb](https://github.com/betagouv/ma-cantine/commit/9895ceb27eec51c8b6cdc4bdee201ed465ba8e2e))
+* **Famille de produit:** renomme la catégorie 'Boulangerie / Pâtisserie fraîches' (enlève 'et surgelées') ([#6890](https://github.com/betagouv/ma-cantine/issues/6890)) ([2207920](https://github.com/betagouv/ma-cantine/commit/2207920ac5db043e90816253759ce97d58490f22))
+* **Imports:** corrige le lien de l'ancienne page imports achats SIRET ([#6884](https://github.com/betagouv/ma-cantine/issues/6884)) ([0d76069](https://github.com/betagouv/ma-cantine/commit/0d760697f87bc7dc5e25f7cca3f84b3ed3c5e194))
+
 ## [2026.39.1](https://github.com/betagouv/ma-cantine/compare/v2026.39.0...v2026.39.1) (2026-06-30)
 
 
