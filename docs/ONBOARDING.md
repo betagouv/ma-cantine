@@ -171,6 +171,7 @@ ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
 ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation gaspillage alimentaire disponible
 SHOW_BANNER= Optionnel - `True` pour afficher le bandeau d'information sous le menu
+SHOW_CONTACT_ALERT= Optionnel - `True` pour afficher le message d'alerte service réduit sur la page contact
 ```
 
 ### Mise à jour des métadonnées sur data.gouv.fr
