@@ -287,6 +287,12 @@ const formatPayload = (form) => {
     .fr-fieldset__element--inline {
       width: 33% !important;
     }
+
+    @media (max-width: 768px) {
+      .fr-fieldset__element--inline {
+        width: 100% !important;
+      }
+    }
   }
 
   .fr-input-group label.fr-label,
