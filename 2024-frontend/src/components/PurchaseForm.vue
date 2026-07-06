@@ -288,5 +288,11 @@ const formatPayload = (form) => {
       width: 33% !important;
     }
   }
+
+  .fr-input-group label.fr-label,
+  .fr-select-group label.fr-label,
+  .fr-fieldset legend.fr-fieldset__legend {
+    font-weight: 700 !important;
+  }
 }
 </style>
