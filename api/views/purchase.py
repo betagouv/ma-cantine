@@ -38,8 +38,7 @@ logger = logging.getLogger(__name__)
 
 @extend_schema_view(
     post=extend_schema(
-        summary="Créer un nouvel achat.",
-        description="Un achat doit être rattaché à une cantine.",
+        summary="Créer un nouvel achat.", description="Un achat doit être rattaché à une cantine.", tags=["Achats"]
     )
 )
 class PurchaseCreateView(CreateModelMixin, GenericAPIView):
@@ -73,14 +72,17 @@ class PurchaseCreateView(CreateModelMixin, GenericAPIView):
     get=extend_schema(
         summary="Obtenir les détails d'un achat.",
         description="Seulement les achats rattachés à la cantine de l'utilisateur connecté, et créés par l'application OAuth2 si applicable.",
+        tags=["Achats"],
     ),
     patch=extend_schema(
         summary="Modifier un achat existant.",
         description="Seulement les achats rattachés à la cantine de l'utilisateur connecté, et créés par l'application OAuth2 si applicable.",
+        tags=["Achats"],
     ),
     delete=extend_schema(
         summary="Supprimer un achat existant.",
         description="Seulement les achats rattachés à la cantine de l'utilisateur connecté, et créés par l'application OAuth2 si applicable.",
+        tags=["Achats"],
     ),
 )
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
