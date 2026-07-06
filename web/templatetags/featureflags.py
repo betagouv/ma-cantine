@@ -37,3 +37,8 @@ def show_banner():
 @register.simple_tag
 def show_je_donne_mon_avis():
     return getattr(settings, "SHOW_JE_DONNE_MON_AVIS", "")
+
+
+@register.simple_tag
+def show_contact_alert():
+    return getattr(settings, "SHOW_CONTACT_ALERT", "")

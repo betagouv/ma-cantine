@@ -665,6 +665,7 @@ ENABLE_VUE3 = os.getenv("ENABLE_VUE3") == "True"
 ENABLE_WASTE_MEASUREMENTS = os.getenv("ENABLE_WASTE_MEASUREMENTS") == "True"
 SHOW_BANNER = os.getenv("SHOW_BANNER") == "True"
 SHOW_JE_DONNE_MON_AVIS = os.getenv("SHOW_JE_DONNE_MON_AVIS") == "True"
+SHOW_CONTACT_ALERT = os.getenv("SHOW_CONTACT_ALERT") == "True"
 
 
 # ma cantine: history cleanup

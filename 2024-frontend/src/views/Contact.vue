@@ -2,6 +2,7 @@
 import AppFormSendInquiry from "@/components/AppFormSendInquiry.vue"
 import documentation from "@/data/documentation.json"
 
+const showContactAlert = window.SHOW_CONTACT_ALERT
 const links = [
   {
     to: { name: "CommunityPage" },
@@ -41,7 +42,7 @@ const links = [
   </section>
   <section>
     <h2 class="mb-4">Avez-vous une autre question ?</h2>
-    <DsfrAlert class="fr-col-12 fr-col-md-8 fr-mb-4w" title="☀️ Pendant l'été, notre équipe fonctionne en effectif réduit." description="Nos délais de réponse peuvent être plus longs qu'à l'habitude. Soyez assurés que nous traitons chaque demande avec attention et vous répondrons dès que possible. Merci de votre compréhension et veuillez nous excuser pour la gêne occasionnée." />
+    <DsfrAlert v-if="showContactAlert" class="fr-col-12 fr-col-md-8 fr-mb-4w" title="☀️ Pendant l'été, notre équipe fonctionne en effectif réduit" description="Nos délais de réponse peuvent être plus longs qu'à l'habitude. Soyez assurés que nous traitons chaque demande avec attention et vous répondrons dès que possible. Merci de votre compréhension et veuillez nous excuser pour la gêne occasionnée." />
     <AppFormSendInquiry />
   </section>
 </template>
