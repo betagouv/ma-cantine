@@ -146,7 +146,7 @@ const goToPurchasesList = () => {
       @cancel="goToPurchasesList"
       @delete="deletePurchase"
     >
-      <template #additionalFields>
+      <template #additionalContent>
         <PurchaseInvoice class="fr-mt-2w" :canteenId="canteenId" :purchaseId="purchaseId" />
       </template>
     </PurchaseForm>
