@@ -89,7 +89,7 @@ const deleteInvoice = async () => {
 </script>
 <template>
   <div class="fr-card fr-p-3w fr-background-alt--grey">
-    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
+    <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-8">
         <p class="fr-h6 fr-mb-1w"><span class="fr-icon-file-line"></span> Facture</p>
         <p class="fr-text--sm fr-mb-0">Ce champ est facultatif. Il n'est pas nécessaire d'importer ses factures pdf si vous disposez déjà d'un espace de stockage fiable et sécurisé (sur votre ordinateur ou autre logiciel par exemple).</p>
@@ -103,14 +103,14 @@ const deleteInvoice = async () => {
           />
           <DsfrButton
             :disabled="isUploadingInvoice"
-            label="Supprimer le fichier"
+            label="Supprimer la facture"
             tertiary
             icon="fr-icon-delete-line"
             @click="deleteInvoice"
           />
         </div>
       </div>
-      <div class="purchase-invoice__file-upload fr-col-12 fr-col-md-4 fr-pb-3w">
+      <div class="purchase-invoice__file-upload fr-col-12 fr-col-md-4">
         <DsfrFileUpload
           v-model="invoiceFileInputValue"
           :label="invoiceUrl ? 'Télécharger une nouvelle facture' : 'Télécharger une facture'"
@@ -130,6 +130,16 @@ const deleteInvoice = async () => {
   &__actions {
     display: flex;
     gap: 1rem;
+  }
+
+  &__file-upload {
+    label.fr-label {
+      font-weight: 700;
+
+      span.fr-hint-text {
+        font-weight: 400;
+      }
+    }
   }
 }
 </style>

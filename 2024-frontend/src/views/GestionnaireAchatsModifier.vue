@@ -145,7 +145,11 @@ const goToPurchasesList = () => {
       @sendForm="(payload) => savePurchase(payload)"
       @cancel="goToPurchasesList"
       @delete="deletePurchase"
-    />
+    >
+      <template #additionalContent>
+        <PurchaseInvoice class="fr-mt-2w" :canteenId="canteenId" :purchaseId="purchaseId" />
+      </template>
+    </PurchaseForm>
     <div v-else-if="purchaseDeleted" class="fr-col-12 fr-col-lg-7">
       <p>
         L'achat a bien été supprimé pour la cantine « {{ canteenName }} ». <br />
@@ -156,9 +160,6 @@ const goToPurchasesList = () => {
         tertiary
         @click="restorePurchase"
       />
-    </div>
-    <div id="facture">
-      <PurchaseInvoice v-if="purchaseData.id" class="fr-mt-4w" :canteenId="canteenId" :purchaseId="purchaseId" />
     </div>
   </section>
 </template>
