@@ -163,7 +163,7 @@ ref_cibles as (
         ('agriculture',                   11,   'Cible ferme'),
         ('travail',                      116,   'Précision en cours'),
         ('sante',                        23,    'Précision en cours'),
-        ('transformation',                  2,  'Précision en cours')
+        ('transformation',                  2,  'Cible ferme')
     ) as t(perimetre_key, cible_etablissements, fiabilite_cible)
 ),
 
@@ -437,7 +437,7 @@ select
         else c.fiabilite_cible
     end                                                                              as fiabilite_cible,
     case
-        when perimetre_lib in ('Environnement', 'Agriculture', 'Premier ministre') then 'Plan de correction EGalim'
+        when perimetre_lib in ('Environnement', 'Agriculture', 'Premier ministre', 'Transformation et Fonction publique', 'Économie et finances') then 'Plan de correction EGalim'
         when c.fiabilite_cible = 'Cible ferme' then 'Dernière Bilatérale'
         else null
     end                                                                              as source_cible,
