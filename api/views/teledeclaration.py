@@ -14,7 +14,7 @@ from macantine.utils import (
 @extend_schema_view(
     get=extend_schema(
         summary="Lister les dates des campagnes.",
-        tags=["Télédeclaration"],
+        tags=["Télédéclaration"],
     ),
 )
 class TeledeclarationCampaignDatesListView(ListAPIView):
@@ -31,7 +31,7 @@ class TeledeclarationCampaignDatesListView(ListAPIView):
 @extend_schema_view(
     get=extend_schema(
         summary="Détails des dates de campagne pour une année donnée.",
-        tags=["Télédeclaration"],
+        tags=["Télédéclaration"],
     ),
 )
 class TeledeclarationCampaignDatesRetrieveView(RetrieveAPIView):

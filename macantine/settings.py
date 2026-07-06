@@ -320,6 +320,15 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
     ],
+    "TAGS": [
+        {"name": "Cantines"},
+        {"name": "Achats"},
+        {"name": "Bilans"},
+        {"name": "Télédéclaration"},
+        {"name": "Évaluations du gaspillage alimentaire"},
+        {"name": "Utilisateurs"},
+        {"name": "Statistiques"},
+    ],
     # Oauth2 related settings. used for example by django-oauth2-toolkit.
     # https://spec.openapis.org/oas/v3.0.3#oauth-flows-object
     "OAUTH2_FLOWS": ["authorizationCode"],
