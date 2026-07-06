@@ -38,7 +38,9 @@ logger = logging.getLogger(__name__)
 
 @extend_schema_view(
     post=extend_schema(
-        summary="Créer un nouvel achat.", description="Un achat doit être rattaché à une cantine.", tags=["Achats"]
+        summary="Créer un nouvel achat.",
+        description="Un achat doit être rattaché à une cantine.",
+        tags=["Achats"],
     )
 )
 class PurchaseCreateView(CreateModelMixin, GenericAPIView):

@@ -32,6 +32,7 @@ class WasteMeasurementFilterSet(django_filters.FilterSet):
     post=extend_schema(
         summary="Créer une nouvelle évaluation du gaspillage alimentaire.",
         description="Une évaluation doit être rattachée à une cantine.",
+        tags=["Évaluations du gaspillage alimentaire"],
     )
 )
 class CanteenWasteMeasurementsView(ListCreateAPIView):
@@ -68,6 +69,7 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
     patch=extend_schema(
         summary="Modifier une évaluation du gaspillage alimentaire existante.",
         description="",
+        tags=["Évaluations du gaspillage alimentaire"],
     )
 )
 class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
