@@ -103,7 +103,7 @@ const deleteInvoice = async () => {
           />
           <DsfrButton
             :disabled="isUploadingInvoice"
-            label="Supprimer le fichier"
+            label="Supprimer la facture"
             tertiary
             icon="fr-icon-delete-line"
             @click="deleteInvoice"
