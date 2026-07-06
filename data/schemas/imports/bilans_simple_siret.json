@@ -158,7 +158,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_france",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Origine France",
+      "title": "Boulangerie / Pâtisserie fraîches, Origine France",
       "type": "number"
     },
     {

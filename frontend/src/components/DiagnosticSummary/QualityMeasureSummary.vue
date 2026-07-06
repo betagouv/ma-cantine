@@ -340,8 +340,7 @@ export default {
           key: "valeurProduitsLaitiersBioDontCommerceEquitable",
         },
         {
-          text:
-            "Total (en € HT) de mes achats Boulangerie / Pâtisserie fraîches et surgelées dont Bio et Commerce équitable",
+          text: "Total (en € HT) de mes achats Boulangerie / Pâtisserie fraîches dont Bio et Commerce équitable",
           key: "valeurBoulangerieBioDontCommerceEquitable",
         },
         {
