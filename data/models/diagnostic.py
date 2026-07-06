@@ -1909,48 +1909,56 @@ class Diagnostic(models.Model):
             return round(self.valeur_totale / self.canteen_yearly_meal_count, 2)
 
     @property
-    def percentage_valeur_totale(self):
+    def percentage_valeur_totale(self) -> float:
         return 1
 
     @property
-    def percentage_valeur_bio(self):
+    def percentage_valeur_bio(self) -> float | None:
         if self.valeur_totale and self.valeur_bio is not None:
             return self.valeur_bio / self.valeur_totale
+        return None
 
     @property
-    def percentage_valeur_siqo(self):
+    def percentage_valeur_siqo(self) -> float | None:
         if self.valeur_totale and self.valeur_siqo is not None:
             return self.valeur_siqo / self.valeur_totale
+        return None
 
     @property
-    def percentage_valeur_externalites_performance(self):
+    def percentage_valeur_externalites_performance(self) -> float | None:
         if self.valeur_totale and self.valeur_externalites_performance is not None:
             return self.valeur_externalites_performance / self.valeur_totale
+        return None
 
     @property
-    def percentage_valeur_egalim_autres(self):
+    def percentage_valeur_egalim_autres(self) -> float | None:
         if self.valeur_totale and self.valeur_egalim_autres is not None:
             return self.valeur_egalim_autres / self.valeur_totale
+        return None
 
     @property
-    def percentage_valeur_viandes_volailles_egalim(self):
+    def percentage_valeur_viandes_volailles_egalim(self) -> float | None:
         if self.valeur_viandes_volailles and self.valeur_viandes_volailles_egalim is not None:
             return self.valeur_viandes_volailles_egalim / self.valeur_viandes_volailles
+        return None
 
     @property
-    def percentage_valeur_viandes_volailles_france(self):
+    def percentage_valeur_viandes_volailles_france(self) -> float | None:
         if self.valeur_viandes_volailles and self.valeur_viandes_volailles_france is not None:
             return self.valeur_viandes_volailles_france / self.valeur_viandes_volailles
+        return None
 
     @property
-    def percentage_valeur_produits_de_la_mer_egalim(self):
+    def percentage_valeur_produits_de_la_mer_egalim(self) -> float | None:
         if self.valeur_produits_de_la_mer and self.valeur_produits_de_la_mer_egalim is not None:
             return self.valeur_produits_de_la_mer_egalim / self.valeur_produits_de_la_mer
+        return None
 
     @property
-    def percentage_valeur_produits_de_la_mer_france(self):
+    def percentage_valeur_produits_de_la_mer_france(self) -> float | None:
         if self.valeur_produits_de_la_mer and self.valeur_produits_de_la_mer_france is not None:
             return self.valeur_produits_de_la_mer_france / self.valeur_produits_de_la_mer
+        return None
 
     @property
     def valeur_totale_is_filled(self):
