@@ -154,7 +154,7 @@ ref_cibles_region_sector as (
         ('28', 'administration_administratif',          1, 'Précision en cours'),
         -- Nouvelle-Aquitaine
         ('75', 'administration_inter_administratif',  13, 'Cible ferme'),
-        ('75', 'administration_administratif',          3, 'Précision en cours'),
+        ('75', 'administration_administratif',          7, 'Précision en cours'),
         -- Occitanie
         ('76', 'administration_inter_administratif',   9, 'Cible ferme'),
         ('76', 'administration_administratif',          1, 'Précision en cours'),

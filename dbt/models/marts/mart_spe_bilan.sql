@@ -158,7 +158,7 @@ ref_cibles as (
         ('justice_hors_pjj',             290,   'Cible ferme'),
         ('justice_pjj',                   92,   'Cible ferme'),
         ('interieur',                    207,   'Précision en cours'),
-        ('administration_territoriale',   105,   'Précision en cours'),
+        ('administration_territoriale',   109,   'Précision en cours'),
         ('premier_ministre',               9,   'Cible ferme'),
         ('agriculture',                   11,   'Cible ferme'),
         ('travail',                      116,   'Précision en cours'),
