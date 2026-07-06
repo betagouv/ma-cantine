@@ -246,7 +246,7 @@ const formatPayload = (form) => {
       </div>
     </div>
 
-    <slot name="additionalFields"></slot>
+    <slot name="additionalContent"></slot>
 
     <div class="fr-mt-6w ma-cantine--flex-end">
       <DsfrButton
