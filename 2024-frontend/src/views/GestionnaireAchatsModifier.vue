@@ -147,9 +147,7 @@ const goToPurchasesList = () => {
       @delete="deletePurchase"
     >
       <template #additionalFields>
-        <div id="facture">
-          <PurchaseInvoice v-if="purchaseData.id" class="fr-mt-4w" :canteenId="canteenId" :purchaseId="purchaseId" />
-        </div>
+        <PurchaseInvoice class="fr-mt-4w" :canteenId="canteenId" :purchaseId="purchaseId" />
       </template>
     </PurchaseForm>
     <div v-else-if="purchaseDeleted" class="fr-col-12 fr-col-lg-7">
