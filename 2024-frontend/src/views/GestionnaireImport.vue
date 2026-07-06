@@ -75,7 +75,7 @@ const purchasesLinks = [
         <p class="fr-mb-1w fr-text--sm">Le format de données des imports achats à été modifié en 2026. L'import avec l'ancien format reste disponible sur les pages suivantes : </p>
         <ul>
           <li>
-            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des cantines avec SIRET (ancien format)" />
+            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportAchatsSIRETOld'}" title="Créer des achats pour des cantines avec SIRET (ancien format)" />
           </li>
           <li>
             <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportAchatsIDOld'}" title="Créer des achats pour des groupes ou cantines sans SIRET (ancien format)" />
