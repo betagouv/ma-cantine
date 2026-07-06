@@ -71,7 +71,7 @@ class DiagnosticTeledeclarationCancelView(APIView):
 @extend_schema_view(
     get=extend_schema(
         summary="Obtenir une représentation PDF de la télédéclaration.",
-        tags=["teledeclaration"],
+        tags=["Télédéclaration"],
         responses={(200, "application/pdf"): OpenApiTypes.BINARY},
     ),
 )

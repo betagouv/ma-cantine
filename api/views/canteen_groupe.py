@@ -13,7 +13,7 @@ from macantine.utils import is_in_teledeclaration_or_correction
 
 
 @extend_schema_view(
-    get=extend_schema(summary="Lister les restaurants satellites d'un groupe."),
+    get=extend_schema(summary="Lister les restaurants satellites d'un groupe.", tags=["Cantines"]),
 )
 class CanteenGroupeSatellitesListView(ListAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
@@ -37,7 +37,7 @@ class CanteenGroupeSatellitesListView(ListAPIView):
 
 
 @extend_schema_view(
-    post=extend_schema(summary="Ajouter un restaurant satellite à un groupe."),
+    post=extend_schema(summary="Ajouter un restaurant satellite à un groupe.", tags=["Cantines"]),
 )
 class CanteenGroupeSatelliteLinkView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
@@ -80,7 +80,7 @@ class CanteenGroupeSatelliteLinkView(APIView):
 
 
 @extend_schema_view(
-    post=extend_schema(summary="Enlever un restaurant satellite d'un groupe."),
+    post=extend_schema(summary="Enlever un restaurant satellite d'un groupe.", tags=["Cantines"]),
 )
 class CanteenGroupeSatelliteUnlinkView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]

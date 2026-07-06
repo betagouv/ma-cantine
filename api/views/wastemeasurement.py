@@ -29,11 +29,16 @@ class WasteMeasurementFilterSet(django_filters.FilterSet):
 
 
 @extend_schema_view(
+    get=extend_schema(
+        summary="Lister les évaluations du gaspillage alimentaire d'une cantine.",
+        description="",
+        tags=["Évaluations du gaspillage alimentaire"],
+    ),
     post=extend_schema(
         summary="Créer une nouvelle évaluation du gaspillage alimentaire.",
         description="Une évaluation doit être rattachée à une cantine.",
         tags=["Évaluations du gaspillage alimentaire"],
-    )
+    ),
 )
 class CanteenWasteMeasurementsView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
@@ -66,11 +71,16 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
 
 
 @extend_schema_view(
+    get=extend_schema(
+        summary="Récupérer une évaluation du gaspillage alimentaire existante.",
+        description="",
+        tags=["Évaluations du gaspillage alimentaire"],
+    ),
     patch=extend_schema(
         summary="Modifier une évaluation du gaspillage alimentaire existante.",
         description="",
         tags=["Évaluations du gaspillage alimentaire"],
-    )
+    ),
 )
 class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]

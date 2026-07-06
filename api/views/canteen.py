@@ -271,10 +271,12 @@ class UserCanteensFilterSet(django_filters.FilterSet):
     get=extend_schema(
         summary="Lister avec une pagination des cantines gérées par l'utilisateur. Représentation complète.",
         description="Une pagination est mise en place pour cet endpoint. La représentation de la cantine est complète.",
+        tags=["Cantines"],
     ),
     post=extend_schema(
         summary="Créer une nouvelle cantine.",
         description="La nouvelle cantine aura comme gestionnaire l'utilisateur identifié.",
+        tags=["Cantines"],
     ),
 )
 class UserCanteensView(ListCreateAPIView):
@@ -339,7 +341,8 @@ class UserCanteensView(ListCreateAPIView):
     get=extend_schema(
         summary="Lister toutes les cantines gérées par l'utilisateur. Représentation partielle.",
         description="La totalité des cantines gérées par l'utilisateur - par contre seules certaines informations sont incluses.",
-    ),
+        tags=["Cantines"],
+    )
 )
 class UserCanteenPreviews(ListAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
@@ -351,6 +354,12 @@ class UserCanteenPreviews(ListAPIView):
         return self.request.user.canteens.all()
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="",
+        tags=["Cantines"],
+    )
+)
 class UserCanteenSummaries(ListAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
@@ -385,6 +394,7 @@ class UserCanteenActions(ListAPIView):
     get=extend_schema(
         summary="Obtenir les détails d'une cantine.",
         description="Permet d'obtenir toutes les informations sur une cantine spécifique tant que l'utilisateur soit un des gestionnaires.",
+        tags=["Cantines"],
     ),
     put=extend_schema(
         exclude=True,
@@ -392,10 +402,12 @@ class UserCanteenActions(ListAPIView):
     patch=extend_schema(
         summary="Modifier une cantine existante.",
         description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine.",
+        tags=["Cantines"],
     ),
     delete=extend_schema(
         summary="Supprimer une cantine existante.",
         description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine. Attention : les diagnostics créés seront aussi supprimés.",
+        tags=["Cantines"],
     ),
 )
 class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
@@ -430,6 +442,7 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 @extend_schema(
     summary="Obtenir les informations d'une cantine par SIRET.",
     responses={200: OpenApiTypes.OBJECT, 204: None},
+    tags=["Cantines"],
 )
 class CanteenStatusBySiretView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
@@ -448,6 +461,7 @@ class CanteenStatusBySiretView(APIView):
 @extend_schema(
     summary="Obtenir les informations des cantines d'une unité légale par SIREN.",
     responses={200: OpenApiTypes.OBJECT, 204: None},
+    tags=["Cantines"],
 )
 class CanteenStatusBySirenView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
@@ -797,6 +811,7 @@ class TerritoryCanteensListView(ListAPIView):
     get=extend_schema(
         summary="Lister les options pour le ministère de tutelle.",
         description="Certains secteurs nécessite la spécification d'un ministère du tutelle.",
+        tags=["Cantines"],
     ),
 )
 class CanteenMinistriesView(APIView):
