@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
     get=extend_schema(
         summary="Lister les secteurs des cantines.",
         description="Une cantine peut s'assigner un ou plusieurs secteurs d'activité.",
+        tags=["Cantines"],
     ),
 )
 class SectorListView(APIView):

@@ -36,6 +36,7 @@ FILTER_QUERY_FIELDS = FILTER_QUERY_FIELDS_IN + FILTER_QUERY_FIELDS_OVERLAP
 
 @extend_schema(
     summary="Récapitulatif statistique des données de ma-cantine",
+    tags=["Statistiques"],
 )
 class CanteenStatisticsView(APIView):
     include_in_documentation = True
