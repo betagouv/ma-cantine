@@ -144,7 +144,7 @@ const formatPayload = (form) => {
       </div>
     </div>
 
-    <div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
       <div class="fr-col-12 fr-col-md-8">
         <DsfrInputGroup
           v-model="form.fournisseur"
@@ -170,7 +170,7 @@ const formatPayload = (form) => {
     </div>
 
     <DsfrRadioButtonSet
-      class="purchase-form__inline-col"
+      class="purchase-form__inline-col fr-mb-4w"
       v-model="form.familleProduits"
       legend="Famille de produit *"
       inline
@@ -179,7 +179,7 @@ const formatPayload = (form) => {
     />
 
     <DsfrCheckboxSet
-      class="purchase-form__inline-col"
+      class="purchase-form__inline-col fr-mb-2w"
       v-model="form.categoriesEgalim"
       legend="Catégories EGalim"
       :options="categoriesEgalimOptions"
