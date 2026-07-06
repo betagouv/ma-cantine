@@ -120,7 +120,7 @@ class Purchase(SoftDeletionModel):
         PRODUITS_DE_LA_MER = "PRODUITS_DE_LA_MER", "Poissons, produits de la mer et de l'aquaculture"
         FRUITS_ET_LEGUMES = "FRUITS_ET_LEGUMES", "Fruits et légumes frais et surgelés"
         PRODUITS_LAITIERS = "PRODUITS_LAITIERS", "BOF (Produits laitiers, beurre et œufs)"
-        BOULANGERIE = "BOULANGERIE", "Boulangerie/Pâtisserie fraîches et surgelées"
+        BOULANGERIE = "BOULANGERIE", "Boulangerie / Pâtisserie fraîches"
         BOISSONS = "BOISSONS", "Boissons"
         AUTRES = "AUTRES", "Autres produits frais, surgelés et d'épicerie"
 
