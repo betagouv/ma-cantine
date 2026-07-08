@@ -35,6 +35,16 @@ class PurchasesSchemaTest(TestCase):
         field = next(f for f in schema["fields"] if f["name"] == field_name)
         return field["constraints"]["pattern"]
 
+    def test_prix_ht_regex(self):
+        for schema_name, schema in self.schemas.items():
+            pattern = self._pattern_for(schema, "prix_ht")
+            for VALUE_OK in ["1234", "1234.99", "1234,99"]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
+                    self.assertTrue(re.match(pattern, VALUE_OK))
+            for VALUE_NOT_OK in ["", "TEST", "1234.999", "1234,999", "1.2,34", "1,2.34"]:
+                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
+                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+
     def test_famille_produits_regex(self):
         for schema_name, schema in self.schemas.items():
             pattern = self._pattern_for(schema, "famille_produits")
@@ -535,6 +545,26 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_good_separator_comma.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(errors), 0, errors)
+
+        purchase = Purchase.objects.filter(description="Pommes, rouges").first()
+        self.assertEqual(purchase.prix_ht, Decimal("90.11"))
+
+    @authenticate
+    def test_import_number_decimal_comma(self):
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_decimal_comma.csv"
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 

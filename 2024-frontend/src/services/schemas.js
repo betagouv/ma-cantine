@@ -41,9 +41,9 @@ const getFieldType = (field) => {
       // examples: 'caracteristiques'
       fieldType = types[`${field.type}_enum_multiple`]
       break
-    case field.constaints?.pattern && field.doc_pattern:
-      // examples: 'number'
-      fieldType = types[field.doc_pattern]
+    case field.doc_type:
+      // examples: 'prix_ht'
+      fieldType = types[field.doc_type]
       break
     default:
       fieldType = types[field.type]
