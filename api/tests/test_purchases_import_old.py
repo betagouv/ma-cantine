@@ -498,10 +498,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
         self.assertFalse(ImportFailure.objects.exists())
 
     @authenticate
-    def test_import_comma_separated_numbers(self):
-        """
-        Tests that can import a file with comma-separated numbers
-        """
+    def test_import_number_decimal_point(self):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
@@ -551,13 +548,22 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
+        # comma
+        file_path = "./api/tests/files/achats/purchases_good_separator_comma_old.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+
         # tab
         file_path = "./api/tests/files/achats/purchases_good_separator_tab_old.tsv"
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.objects.count(), 1 + 1)
         self.assertFalse(ImportFailure.objects.exists())
 
         # semicolon
@@ -566,7 +572,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
             response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 1 + 1)
+        self.assertEqual(Purchase.objects.count(), 2 + 1)
         self.assertFalse(ImportFailure.objects.exists())
 
     @authenticate
