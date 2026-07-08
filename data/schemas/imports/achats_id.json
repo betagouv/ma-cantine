@@ -53,7 +53,7 @@
       },
       "description": "Utiliser un point ou une virgule comme séparateur décimal",
       "doc_type": "number",
-      "example": "1234.99",
+      "example": "1234,99",
       "name": "prix_ht",
       "title": "Prix HT de l'achat",
       "type": "string"
