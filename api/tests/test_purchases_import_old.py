@@ -315,6 +315,27 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         )
 
     @authenticate
+    def test_price_not_number_error(self):
+        """
+        A file should not be valid if the price is not a number
+        """
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_bad_one_error.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 1)
+        self.assertTrue(errors.pop(0)["message"].endswith("doit être un nombre décimal."))
+
+    @authenticate
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Purchase.objects.count(), 0)
 
