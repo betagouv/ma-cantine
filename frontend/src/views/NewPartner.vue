@@ -14,11 +14,11 @@
         <v-col cols="12" sm="6">
           <DsfrTextField
             v-model="partner.name"
-            label="Nom de votre structure / organisation"
+            label="Nom de votre structure / organisation *"
             :rules="[validators.required]"
           />
           <DsfrSelect
-            label="Type d'acteur"
+            label="Type d'acteur *"
             multiple
             :items="partnerTypes"
             v-model="partner.types"
@@ -60,7 +60,7 @@
         <DsfrSelect
           multiple
           clearable
-          label="Sur quels aspects, pouvez-vous aider des gestionnaires de restaurants collectifs ?"
+          label="Sur quels aspects, pouvez-vous aider des gestionnaires de restaurants collectifs ? *"
           :items="categories"
           v-model="partner.categories"
           :rules="[validators.required]"
@@ -68,7 +68,7 @@
       </v-col>
       <v-col class="pa-0" cols="12" md="9">
         <DsfrSelect
-          label="Secteurs d'activité"
+          label="Secteurs d'activité *"
           multiple
           :items="sectorCategories"
           v-model="partner.sectorCategories"
@@ -86,7 +86,7 @@
       </v-col>
       <v-col v-if="showDepartmentSelector" class="pa-0 mb-n4" cols="12" md="9">
         <DsfrSelect
-          label="Departements où votre activité est présente"
+          label="Departements où votre activité est présente *"
           multiple
           :items="departmentItems"
           v-model="partner.departments"
@@ -94,7 +94,7 @@
         />
       </v-col>
       <DsfrRadio
-        label="Quel type de service offrez-vous ?"
+        label="Quel type de service offrez-vous ? *"
         :items="serviceCostOptions"
         v-model="partner.gratuityOption"
         :rules="[validators.required]"
@@ -102,19 +102,19 @@
       />
       <DsfrTextarea
         v-model="partner.longDescription"
-        label="Comment présentez-vous en détail votre activité ?"
+        label="Comment présentez-vous en détail votre activité ? *"
         :rules="[validators.required]"
       />
       <DsfrTextarea
         v-model="partner.shortDescription"
-        label="Comment présentez-vous votre activité en quelques mots ?"
+        label="Comment présentez-vous votre activité en quelques mots ? *"
         :rules="[validators.required]"
         :rows="2"
       />
       <v-col class="pa-0" cols="12" sm="6">
         <DsfrTextField
           v-model="partner.website"
-          label="URL du site"
+          label="URL du site *"
           :rules="[validators.required, validators.urlOrEmpty]"
         />
       </v-col>
