@@ -586,10 +586,11 @@ export default new Vuex.Store({
       return fetch("/api/v1/inquiry/", { method: "POST", headers, body: JSON.stringify(payload) }).then(verifyResponse)
     },
 
-    createPurchase(context, { payload }) {
+    createPurchase(context, props) {
+      const { canteenId, payload } = props
       payload["creationSource"] = "APP"
       context.commit("SET_PURCHASES_LOADING_STATUS", Constants.LoadingStatus.LOADING)
-      return fetch(`/api/v1/purchases/`, {
+      return fetch(`/api/v1/canteens/${canteenId}/purchases/`, {
         method: "POST",
         headers,
         body: JSON.stringify(payload),

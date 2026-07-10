@@ -733,7 +733,7 @@ export default {
         creationSource: "APP",
       }
       this.$store
-        .dispatch("createPurchase", { payload })
+        .dispatch("createPurchase", { canteenId: canteen.id, payload: payload })
         .then((newPurchase) => {
           this.purchaseToDuplicate = null
           this.$router.push({
