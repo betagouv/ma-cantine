@@ -148,6 +148,25 @@ export default Object.freeze({
     CIRCUIT_COURT: { text: "Circuit court" },
     LOCAL: { text: "Local" },
   },
+  PurchaseCharacteristics: {
+    egalim: [
+      "BIO",
+      "LABEL_ROUGE",
+      "AOCAOP",
+      "IGP",
+      "STG",
+      "HVE",
+      "PECHE_DURABLE",
+      "RUP",
+      "COMMERCE_EQUITABLE",
+      "FERMIER",
+      "EXTERNALITES",
+      "PERFORMANCE",
+    ],
+    origine: ["FRANCE", "EUROPE"],
+    local: ["LOCAL"],
+    circuitCourt: ["CIRCUIT_COURT"],
+  },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio et Bio + Commerce équitable", color: "green" },
