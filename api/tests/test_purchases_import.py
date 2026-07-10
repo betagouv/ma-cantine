@@ -38,10 +38,10 @@ class PurchasesSchemaTest(TestCase):
     def test_prix_ht_regex(self):
         for schema_name, schema in self.schemas.items():
             pattern = self._pattern_for(schema, "prix_ht")
-            for VALUE_OK in ["1234", "1234.99", "1234,99"]:
+            for VALUE_OK in ["1234", "1234.99", "1234,99", "1234.9999", "1234,9999"]:
                 with self.subTest(schema=schema_name, VALUE=VALUE_OK):
                     self.assertTrue(re.match(pattern, VALUE_OK))
-            for VALUE_NOT_OK in ["", "TEST", "1234.999", "1234,999", "1.2,34", "1,2.34"]:
+            for VALUE_NOT_OK in ["", "TEST", "1.2,34", "1,2.34"]:
                 with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
                     self.assertFalse(re.match(pattern, VALUE_NOT_OK))
 
@@ -339,12 +339,8 @@ class PurchasesImportApiErrorTest(APITestCase):
             errors.pop(0)["message"],
             "La date doit être écrite sous la forme `aaaa-mm-jj`",
         )
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # price
-        self.assertTrue(
-            errors.pop(0)["message"].startswith(
-                "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal"
-            )
-        )
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # prix_ht
+        self.assertTrue(errors.pop(0)["message"].startswith("A price ne respecte pas le motif imposé"))
         self.assertTrue(
             errors.pop(0)["message"].startswith("NOPE ne respecte pas le motif imposé"),
         )
@@ -588,6 +584,26 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_good.xlsx"
+        with open(file_path, "rb") as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(errors), 0, errors)
+
+        purchase = Purchase.objects.filter(description="Pommes, rouges, local").first()
+        self.assertEqual(purchase.prix_ht, Decimal("90.11"))
+
+    @authenticate
+    def test_import_excel_file_number_decimal_comma(self):
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_decimal_comma.xlsx"
         with open(file_path, "rb") as purchase_file:
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
