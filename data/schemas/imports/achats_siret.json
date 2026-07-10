@@ -48,14 +48,13 @@
     },
     {
       "constraints": {
-        "pattern": "^\\d+([.,]\\d+)?$",
         "required": true
       },
       "description": "Utiliser un point ou une virgule comme séparateur décimal",
       "example": "1234,99",
       "name": "prix_ht",
       "title": "Prix HT de l'achat",
-      "type": "string"
+      "type": "any"
     },
     {
       "constraints": {
