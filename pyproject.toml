@@ -145,7 +145,7 @@ dependencies = [
     "sentry-sdk==2.10.0",
     "sib-api-v3-sdk==7.6.0",
     "six==1.17.0",
-    "soupsieve==2.5",
+    "soupsieve==2.8.4",
     "sqlalchemy==2.0.36",
     "sqlparse==0.5.3",
     "svglib==1.5.1",
