@@ -276,6 +276,10 @@ export default {
   },
   methods: {
     createPartner() {
+      // Reset la validation du formulaire
+      this.formIsValid = true
+      this.$store.dispatch("removeNotifications")
+      // Valide le formulaire
       this.$refs.form.validate()
       if (!this.formIsValid) {
         this.$store.dispatch("notifyRequiredFieldsError")
