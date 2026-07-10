@@ -740,11 +740,11 @@ export default {
       const localPurchaseCategory = hasCaracteristiques
         ? purchase.characteristics.filter((c) => localCategories.includes(c))
         : []
-      const hasLocal = localPurchaseCategory.length > 0
+      const estLocal = localPurchaseCategory.length > 0
       const localPurchaseCircuitCourt = hasCaracteristiques
         ? purchase.characteristics.filter((c) => circuitCourtCategories.includes(c))
         : []
-      const hasCircuitCourt = localPurchaseCircuitCourt.length > 0
+      const estCircuitCourt = localPurchaseCircuitCourt.length > 0
       const purchaseOrigine = hasCaracteristiques
         ? purchase.characteristics.filter((c) => origineCategories.includes(c))
         : []
@@ -758,10 +758,10 @@ export default {
         familleProduits: purchase.family,
         origine: purchaseOrigine.length > 0 ? purchaseOrigine[0] : null,
         categoriesEgalim: purchaseEgalim,
-        estCircuitCourt: hasCircuitCourt,
-        estLocal: hasLocal,
-        definitionLocal: hasLocal ? purchase.localDefinition : null,
-        definitionLocalKm: hasLocal ? purchase.definitionLocalKm : null,
+        estCircuitCourt: estCircuitCourt,
+        estLocal: estLocal,
+        definitionLocal: estLocal ? purchase.localDefinition : null,
+        definitionLocalKm: estLocal ? purchase.definitionLocalKm : null,
         date: purchase.dateUnformatted,
         importSource: "Duplication",
       }
