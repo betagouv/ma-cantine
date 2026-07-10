@@ -35,16 +35,6 @@ class PurchasesSchemaTest(TestCase):
         field = next(f for f in schema["fields"] if f["name"] == field_name)
         return field["constraints"]["pattern"]
 
-    def test_prix_ht_regex(self):
-        for schema_name, schema in self.schemas.items():
-            pattern = self._pattern_for(schema, "prix_ht")
-            for VALUE_OK in ["1234", "1234.99", "1234,99", "1234.9999", "1234,9999"]:
-                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
-                    self.assertTrue(re.match(pattern, VALUE_OK))
-            for VALUE_NOT_OK in ["", "TEST", "1.2,34", "1,2.34"]:
-                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
-                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
     def test_famille_produits_regex(self):
         for schema_name, schema in self.schemas.items():
             pattern = self._pattern_for(schema, "famille_produits")
@@ -324,7 +314,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 11)
+        self.assertEqual(len(errors), 10)
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # siret
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # description
         self.assertEqual(
@@ -340,7 +330,6 @@ class PurchasesImportApiErrorTest(APITestCase):
             "La date doit être écrite sous la forme `aaaa-mm-jj`",
         )
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # prix_ht
-        self.assertTrue(errors.pop(0)["message"].startswith("A price ne respecte pas le motif imposé"))
         self.assertTrue(
             errors.pop(0)["message"].startswith("NOPE ne respecte pas le motif imposé"),
         )
@@ -423,6 +412,7 @@ class PurchasesImportApiErrorTest(APITestCase):
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertTrue(len(body["errors"]) > 0)

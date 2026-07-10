@@ -385,6 +385,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
             response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertTrue(len(body["errors"]) > 0)
