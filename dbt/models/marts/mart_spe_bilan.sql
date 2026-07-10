@@ -361,7 +361,7 @@ select
 
     -- #1 / #2 : taux TD (nb TD / cible ou nb inscrits au 29 avril n+1)
     s.nb_td                                                                         as nb_teledeclarations,
-    round((100.0 * s.nb_td / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_td_pct,
+    round((100.0 * s.nb_td / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_td_pct,
 
     -- #4 part EGalim (bio inclus)
     round((100.0 * s.valeur_egalim_agg / nullif(s.valeur_totale, 0))::numeric, 1)  as part_egalim_pct,
@@ -388,23 +388,23 @@ select
 
     -- #3 objectifs par cantine (% sur cible ou nb inscrits)
     s.nb_bio                                                                        as nb_cantines_atteint_bio,
-    round((100.0 * s.nb_bio         / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_bio_pct,
+    round((100.0 * s.nb_bio         / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_bio_pct,
     s.nb_egalim                                                                     as nb_cantines_atteint_egalim,
-    round((100.0 * s.nb_egalim      / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_egalim_pct,
+    round((100.0 * s.nb_egalim      / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_egalim_pct,
     s.nb_bio_et_egalim                                                              as nb_cantines_atteint_bio_et_egalim,
-    round((100.0 * s.nb_bio_et_egalim / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_bio_et_egalim_pct,
+    round((100.0 * s.nb_bio_et_egalim / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_bio_et_egalim_pct,
     s.nb_vp_egalim                                                                  as nb_cantines_atteint_vp_egalim,
-    round((100.0 * s.nb_vp_egalim   / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_vp_egalim_pct,
+    round((100.0 * s.nb_vp_egalim   / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_vp_egalim_pct,
     s.nb_3_obj                                                                      as nb_cantines_atteint_3_objectifs,
-    round((100.0 * s.nb_3_obj       / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_atteint_3_objectifs_pct,
+    round((100.0 * s.nb_3_obj       / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_atteint_3_objectifs_pct,
 
     -- #15 représentativité V&P renseignés
     s.nb_td_vp_renseignes                                                           as nb_td_vp_renseignes,
-    round((100.0 * s.nb_td_vp_renseignes / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_td_vp_renseignes_pct,
+    round((100.0 * s.nb_td_vp_renseignes / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_td_vp_renseignes_pct,
 
     -- #16 représentativité EGalim renseigné
     s.nb_td_egalim_renseignes                                                       as nb_td_egalim_renseignes,
-    round((100.0 * s.nb_td_egalim_renseignes / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_td_egalim_renseignes_pct,
+    round((100.0 * s.nb_td_egalim_renseignes / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_td_egalim_renseignes_pct,
 
     -- végétarien : offre quotidienne parmi les cantines à choix multiple
     s.nb_choix_multiple                                                             as nb_cantines_choix_multiple,
@@ -413,11 +413,11 @@ select
 
     -- diversification : volet complet / cible ou nb inscrits
     s.nb_td_diversification_complet                                                 as nb_td_diversification_complet,
-    round((100.0 * s.nb_td_diversification_complet / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_td_diversification_complet_pct,
+    round((100.0 * s.nb_td_diversification_complet / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_td_diversification_complet_pct,
 
     -- gaspillage alimentaire
     w.nb_canteens_avec_mesure                                                       as nb_canteens_mesure_gaspi,
-    round((100.0 * w.nb_canteens_avec_mesure / nullif(coalesce(c.cible_etablissements, i.nb_inscrites), 0))::numeric, 1) as taux_representativite_gaspi_pct,
+    round((100.0 * w.nb_canteens_avec_mesure / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_representativite_gaspi_pct,
     w.gaspi_g_par_couvert,
     w.nb_niveau_3                                                                   as nb_cantines_niveau_3_ademe,
     w.nb_niveau_2                                                                   as nb_cantines_niveau_2_ademe,

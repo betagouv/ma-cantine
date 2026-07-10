@@ -66,6 +66,10 @@ inscriptions as (
         'interieur', 'administration_territoriale'
     )
     group by 1, annee
+    union all
+    select 'TOTAL' as perimetre_key, annee, sum(nb_inscrites)
+    from inscriptions_by_ministry
+    group by annee
 ),
 
 base as (
@@ -253,10 +257,42 @@ stats_groupe as (
         end
 ),
 
+-- Total général : somme des line_ministry uniquement (pas de double compte avec stats_groupe)
+stats_total as (
+    select
+        annee_ref,
+        iso_type,
+        annee_td,
+        'TOTAL'                     as perimetre_key,
+        sum(nb_td)                  as nb_td,
+        sum(valeur_totale)          as valeur_totale,
+        sum(valeur_bio_agg)         as valeur_bio_agg,
+        sum(valeur_egalim_agg)      as valeur_egalim_agg,
+        sum(vv)                     as vv,
+        sum(vv_egalim)              as vv_egalim,
+        sum(pdm)                    as pdm,
+        sum(pdm_egalim)             as pdm_egalim,
+        sum(total_france)           as total_france,
+        sum(vv_france)              as vv_france,
+        sum(nb_bio)                 as nb_bio,
+        sum(nb_egalim)              as nb_egalim,
+        sum(nb_bio_et_egalim)       as nb_bio_et_egalim,
+        sum(nb_vp_egalim)           as nb_vp_egalim,
+        sum(nb_3_obj)               as nb_3_obj,
+        sum(nb_td_vp_renseignes)    as nb_td_vp_renseignes,
+        sum(nb_choix_multiple)      as nb_choix_multiple,
+        sum(nb_vege_quotidien)      as nb_vege_quotidien,
+        sum(nb_td_diversification_complet) as nb_td_diversification_complet
+    from stats_lm
+    group by annee_ref, iso_type, annee_td
+),
+
 all_stats as (
     select * from stats_lm
     union all
     select * from stats_groupe
+    union all
+    select * from stats_total
 ),
 
 waste as (
@@ -363,7 +399,8 @@ ref_perimetre as (
         (21, 'travail',                     'Travail',                                     'Ministères sociaux', false),
         (22, 'sante',                       'Santé',                                       'Ministères sociaux', false),
         (23, 'Ministères sociaux',          'TOTAL Ministères sociaux',                    'Ministères sociaux', true),
-        (24, 'transformation',              'Fonction Publique',                            null,                false)
+        (24, 'transformation',              'Fonction Publique',                            null,                false),
+        (25, 'TOTAL',                       'TOTAL GÉNÉRAL',                               null,                 true)
     ) as t(sort_order, perimetre_key, perimetre_lib, groupe_spe, est_total_groupe)
 ),
 
