@@ -13,9 +13,15 @@ const currentRoute = computed(() => route.name)
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 const canteenInformation = computedAsync(async () => await canteenService.fetchCanteen(canteenId), false)
+const canteenIsGroupe = computed(() => canteenInformation.value?.productionType === "groupe")
 const canteenBadgeId = computed(() => canteenId ? `ID : ${canteenId}` : null)
 const canteenBadgeSiret = computed(() => canteenInformation.value?.siret ? `SIRET : ${canteenInformation.value.siret}` : null)
 const canteenBadgeSiren = computed(() => canteenInformation.value?.sirenUniteLegale ? `SIREN : ${canteenInformation.value.sirenUniteLegale}` : null)
+const canteenBadgeGroupe = computed(() => {
+  if (!canteenIsGroupe.value) return null
+  const nbRestaurants = canteenInformation.value?.satellitesCount
+  return `Groupe : ${nbRestaurants} ${nbRestaurants > 1 ? "restaurants" : "restaurant"}`
+})
 
 /* Sidebar links */
 const informationActive = computed(() => currentRoute.value === "GestionnaireBilanInformations")
@@ -48,6 +54,7 @@ const menuItems = [
     <h1>{{ canteenName }}</h1>
     <div class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-4w fr-mb-md-0">
       <DsfrBadge v-if="canteenBadgeId" type="neutral" :label="canteenBadgeId" />
+      <DsfrBadge v-if="canteenBadgeGroupe" type="neutral" :label="canteenBadgeGroupe" />
       <DsfrBadge v-if="canteenBadgeSiret" type="neutral" :label="canteenBadgeSiret" />
       <DsfrBadge v-if="canteenBadgeSiren" type="neutral" :label="canteenBadgeSiren" />
     </div>
