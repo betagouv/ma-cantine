@@ -150,6 +150,20 @@ address {
     gap: 0.5rem;
 }
 
+.ma-cantine--flex-start {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.ma-cantine--flex-gap-1 {
+    gap: 1rem;
+}
+
+.ma-cantine--flex-gap-2 {
+    gap: 1rem;
+}
+
 /* BACKGROUND */
 .ma-cantine--bg-blue {
     position: relative;
