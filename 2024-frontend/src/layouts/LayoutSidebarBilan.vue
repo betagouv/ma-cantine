@@ -24,29 +24,49 @@ const canteenBadgeGroupe = computed(() => {
 })
 
 /* Sidebar links */
-const informationActive = computed(() => currentRoute.value === "GestionnaireBilanInformations")
-const menuItems = [
-  {
-    text: "Mes informations",
+const menuItems = computed(() =>  {
+  const informationActive = currentRoute.value === "GestionnaireBilanInformations"
+  const gestionnairesActive = currentRoute.value === "GestionnaireBilanGestionnaires"
+  const pagePubliqueActive = currentRoute.value === "GestionnaireBilanPagePublique"
+  const toutesDeclarationsActive = currentRoute.value === "GestionnaireBilanToutesDeclarations"
+  const restaurantsActive = currentRoute.value === "GestionnaireBilanRestaurants"
+
+  const informationPage = {
+    text: canteenIsGroupe.value ? "Informations du groupe" : "Informations",
     to: { name: "GestionnaireBilanInformations" },
     active: informationActive
-  },
-  {
-    text: "Mes gestionnaires",
-    to: { name: "" },
-    active: false
-  },
-  {
-    text: "Ma page publique",
-    to: { name: "" },
-    active: false
-  },
-  {
+  }
+  const gestionnairesPage = {
+    text: "Gestionnaires",
+    to: '/',
+    active: gestionnairesActive
+  }
+  const restaurantsPages = {
+    text: "Restaurants",
+    to: '/',
+    active: restaurantsActive
+  }
+  const pagePubliquePage = {
+    text: "Page publique",
+    to: '/',
+    active: pagePubliqueActive
+  }
+  const teledeclarationsPage =  {
     text: "Toutes mes déclarations",
     to: { name: "" },
-    active: false
-  },
-]
+    active: toutesDeclarationsActive
+  }
+
+  // Dynamic links
+  const pages = []
+  pages.push(informationPage)
+  pages.push(gestionnairesPage)
+  if (canteenIsGroupe.value) pages.push(restaurantsPages)
+  if (!canteenIsGroupe.value) pages.push(pagePubliquePage)
+  pages.push(teledeclarationsPage)
+
+  return pages
+})
 </script>
 
 <template>
