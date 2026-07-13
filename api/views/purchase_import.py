@@ -44,4 +44,4 @@ class PurchasesImportView(BasePurchasesImportView):
         return row[10].strip() if row[10] else ""
 
     def _get_definition_local_km(self, row):
-        return row[11].strip() if row[11] else None
+        return row[11] or None
