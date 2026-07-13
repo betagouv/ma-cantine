@@ -6,6 +6,15 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.40.1](https://github.com/betagouv/ma-cantine/compare/v2026.40.0...v2026.40.1) (2026-07-13)
+
+
+### Corrections (bugs, typos...)
+
+* **Achats:** corrige la duplication avec le nouveau format attendu ([#6893](https://github.com/betagouv/ma-cantine/issues/6893)) ([535634c](https://github.com/betagouv/ma-cantine/commit/535634c0a856289c99c5971af1da571596083688))
+* **Acteurs de l'écosystème:** corrige le bug d'envoi du formulaire ([#6895](https://github.com/betagouv/ma-cantine/issues/6895)) ([a4b423c](https://github.com/betagouv/ma-cantine/commit/a4b423c4c7fc178203b0e41391bb0e9e85d5b513))
+* **Imports:** Achats: corrige la colonne "definition_local_km" dans les nouveaux imports ([#6896](https://github.com/betagouv/ma-cantine/issues/6896)) ([7568092](https://github.com/betagouv/ma-cantine/commit/7568092c2708f4a885ba511dce624b9c09e05097))
+
 ## [2026.40.0](https://github.com/betagouv/ma-cantine/compare/v2026.39.1...v2026.40.0) (2026-07-06)
 
 
