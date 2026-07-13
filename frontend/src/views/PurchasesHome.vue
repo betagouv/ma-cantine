@@ -711,29 +711,9 @@ export default {
       const purchase = this.purchaseToDuplicate
       this.duplicatePurchaseDialog = false
       if (!purchase) return
-
-      // Date n'est pas renvoyée au même format par l'API, on doit le formatter manuellement, à changer plus tard en vue3
-      const monthNames = Array.from({ length: 12 }, (_, i) =>
-        new Date(2000, i, 1).toLocaleString("fr-FR", { month: "long" }).toLowerCase()
-      )
-      const [day, monthName, year] = purchase.date.toLowerCase().split(" ")
-      const month = String(monthNames.indexOf(monthName) + 1).padStart(2, "0")
-      const formattedDate = `${year}-${month}-${day.padStart(2, "0")}`
-
-      const payload = {
-        canteen: `${canteen.id}`,
-        characteristics: [...purchase.characteristics],
-        description: purchase.description,
-        localDefinition: purchase.localDefinition || "",
-        family: purchase.family,
-        priceHt: purchase.priceHt,
-        date: formattedDate,
-        provider: purchase.provider,
-        importSource: "Duplication",
-        creationSource: "APP",
-      }
+      const payload = this.formatPurchasePayload(purchase)
       this.$store
-        .dispatch("createPurchase", { payload })
+        .dispatch("createPurchase", { canteenId: canteen.id, payload: payload })
         .then((newPurchase) => {
           this.purchaseToDuplicate = null
           this.$router.push({
@@ -748,6 +728,45 @@ export default {
           this.purchaseToDuplicate = null
           this.$store.dispatch("notifyServerError", e)
         })
+    },
+    formatPurchasePayload(purchase) {
+      // Les caractéristiques d'achats sont divisées en 4 catégories : EGalim, origine, local et circuit court.
+      const localCategories = Constants.PurchaseCharacteristics.local
+      const circuitCourtCategories = Constants.PurchaseCharacteristics.circuitCourt
+      const origineCategories = Constants.PurchaseCharacteristics.origine
+      const egalimCategories = Constants.PurchaseCharacteristics.egalim
+      // Mapping des anciennes caractéristiques vers les nouveaux champs
+      const hasCaracteristiques = purchase.characteristics?.length > 0
+      const localPurchaseCategory = hasCaracteristiques
+        ? purchase.characteristics.filter((c) => localCategories.includes(c))
+        : []
+      const estLocal = localPurchaseCategory.length > 0
+      const localPurchaseCircuitCourt = hasCaracteristiques
+        ? purchase.characteristics.filter((c) => circuitCourtCategories.includes(c))
+        : []
+      const estCircuitCourt = localPurchaseCircuitCourt.length > 0
+      const purchaseOrigine = hasCaracteristiques
+        ? purchase.characteristics.filter((c) => origineCategories.includes(c))
+        : []
+      const purchaseEgalim = hasCaracteristiques
+        ? purchase.characteristics.filter((c) => egalimCategories.includes(c))
+        : []
+      const payload = {
+        description: purchase.description,
+        prixHt: purchase.priceHt,
+        fournisseur: purchase.provider,
+        familleProduits: purchase.family,
+        origine: purchaseOrigine.length > 0 ? purchaseOrigine[0] : null,
+        categoriesEgalim: purchaseEgalim,
+        estCircuitCourt: estCircuitCourt,
+        estLocal: estLocal,
+        definitionLocal: estLocal ? purchase.localDefinition : null,
+        definitionLocalKm: estLocal ? purchase.definitionLocalKm : null,
+        date: purchase.dateUnformatted,
+        importSource: "Duplication",
+      }
+      if (payload.origine === null) delete payload.origine
+      return payload
     },
     duplicatePurchaseInstruction(purchase) {
       const readableDate = purchase.date.toLocaleString("fr-FR", {

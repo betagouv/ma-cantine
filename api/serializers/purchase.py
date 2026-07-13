@@ -20,6 +20,7 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
     local_definition = serializers.ChoiceField(
         source="definition_local", choices=Purchase.Local.choices, required=False, allow_blank=True
     )
+    date_unformatted = serializers.DateField(source="date", required=False)
 
     class Meta:
         model = Purchase
@@ -28,6 +29,7 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
             "canteen",
             "date",
             "description",
+            "date_unformatted",
             # TODO: update once we finish the translation to French
             "provider",  # "fournisseur",
             "family",  # "famille_produits",
