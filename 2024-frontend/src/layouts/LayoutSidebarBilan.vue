@@ -53,8 +53,8 @@ const menuItems = [
   <div>
     <h1>{{ canteenName }}</h1>
     <div class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-4w fr-mb-md-0">
+      <DsfrBadge v-if="canteenBadgeGroupe" type="info" :noIcon="true" :label="canteenBadgeGroupe" />
       <DsfrBadge v-if="canteenBadgeId" type="neutral" :label="canteenBadgeId" />
-      <DsfrBadge v-if="canteenBadgeGroupe" type="neutral" :label="canteenBadgeGroupe" />
       <DsfrBadge v-if="canteenBadgeSiret" type="neutral" :label="canteenBadgeSiret" />
       <DsfrBadge v-if="canteenBadgeSiren" type="neutral" :label="canteenBadgeSiren" />
     </div>
