@@ -7,6 +7,7 @@ import canteenService from "@/services/canteens.js"
 
 /* Route */
 const route = useRoute()
+const currentRoute = computed(() => route.name)
 
 /* Header */
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
@@ -15,6 +16,31 @@ const canteenInformation = computedAsync(async () => await canteenService.fetchC
 const canteenBadgeId = computed(() => canteenId ? `ID : ${canteenId}` : null)
 const canteenBadgeSiret = computed(() => canteenInformation.value?.siret ? `SIRET : ${canteenInformation.value.siret}` : null)
 const canteenBadgeSiren = computed(() => canteenInformation.value?.sirenUniteLegale ? `SIREN : ${canteenInformation.value.sirenUniteLegale}` : null)
+
+/* Sidebar links */
+const informationActive = computed(() => currentRoute.value === "GestionnaireBilanInformations")
+const menuItems = [
+  {
+    text: "Mes informations",
+    to: { name: "GestionnaireBilanInformations" },
+    active: informationActive
+  },
+  {
+    text: "Mes gestionnaires",
+    to: { name: "" },
+    active: false
+  },
+  {
+    text: "Ma page publique",
+    to: { name: "" },
+    active: false
+  },
+  {
+    text: "Toutes mes déclarations",
+    to: { name: "" },
+    active: false
+  },
+]
 </script>
 
 <template>
@@ -25,6 +51,15 @@ const canteenBadgeSiren = computed(() => canteenInformation.value?.sirenUniteLeg
       <DsfrBadge v-if="canteenBadgeSiret" type="neutral" :label="canteenBadgeSiret" />
       <DsfrBadge v-if="canteenBadgeSiren" type="neutral" :label="canteenBadgeSiren" />
     </div>
-    <slot></slot>
+    <div class="fr-grid-row fr-grid-row--top ma-cantine--sticky__container">
+      <div class="fr-col-12 fr-col-md-3 ma-cantine--sticky__top">
+        <DsfrSideMenu
+          :menu-items="menuItems"
+        />
+      </div>
+      <section class="fr-col-12 fr-col-md-9 fr-pt-3w">
+        <slot></slot>
+      </section>
+    </div>
   </div>
 </template>
