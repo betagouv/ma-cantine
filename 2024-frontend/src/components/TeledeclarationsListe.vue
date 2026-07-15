@@ -40,7 +40,7 @@ const getBadge = (isTeledeclared, isTeledeclaredByGroupe, groupeDiagMode) => {
     case groupeDiagMode === "APPRO" && isTeledeclaredByGroupe:
       return {
         type: "success",
-        label: "Approvisionnement télédéclarés par votre groupe",
+        label: "Approvisionnement télédéclaré par votre groupe",
       }
   }
 }
