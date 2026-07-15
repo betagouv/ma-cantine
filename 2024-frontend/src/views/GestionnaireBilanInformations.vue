@@ -63,7 +63,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
         <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatSiretOrSiren(canteenInformation.siret)" />
         <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatSiretOrSiren(canteenInformation.sirenUniteLegale)" />
         <AppFieldDisplay :label="canteenIsGroupe ? cantines.nameGroupe : cantines.nameCantine" :value="canteenInformation.name" />
-        <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount"
+        <AppFieldDisplay :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount"
           tooltip="Donnez une moyenne globale sur les jours ouverts de vos établissements (pour évaluer la taille de votre établissement)"
         />
         <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
@@ -107,7 +107,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       </li>
     </ol>
     <div v-if="canteenUrlComponent" class="fr-container fr-background-alt--red-marianne fr-p-4w fr-mt-3w">
-      <h2 class="fr-h5 fr-text-default--error fr-mb-2w">
+      <h2 class="fr-h6 fr-text-default--error fr-mb-2w">
         <span class="mdi mdi-archive"></span>
         Archiver cet établissement
       </h2>
