@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { computedAsync } from "@vueuse/core"
 import { formatSiretOrSiren } from '@/utils'
 import LayoutSidebarBilan from '@/layouts/LayoutSidebarBilan.vue'
@@ -9,8 +9,11 @@ import AppLinkRouter from '@/components/AppLinkRouter.vue'
 import cantines from '@/data/cantines.json'
 import sectorsService from '@/services/sectors'
 
-/* Edit dynamic button */
+const route = useRoute()
 const router = useRouter()
+const canteenUrlComponent = route.params.canteenUrlComponent
+
+/* Edit redirect */
 const goToEdit = (canteenIsGroupe) => {
   const pageName = canteenIsGroupe ? 'GestionnaireCantineGroupeModifier' : 'GestionnaireCantineRestaurantModifier'
   router.push({ name: pageName })
@@ -103,5 +106,15 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
         <p>{{ canteenInformation.publicationComments || 'Aucune description renseignée' }}</p>
       </li>
     </ol>
+    <div v-if="canteenUrlComponent" class="fr-container fr-background-alt--red-marianne fr-p-4w fr-mt-3w">
+      <h2 class="fr-h5 fr-text-default--error fr-mb-2w">
+        <span class="mdi mdi-archive"></span>
+        Archiver cet établissement
+      </h2>
+      <p class="fr-mb-0">
+        Vous ne souhaitez plus faire apparaître cet établissement sur la plateforme <em>ma cantine</em> ? <br />
+        Vous pouvez l’archiver <AppLinkRouter :to="{ name: 'GestionnaireCantineArchiver', params: { canteenUrlComponent: canteenUrlComponent } }" title="en cliquant ici" />
+      </p>
+    </div>
   </LayoutSidebarBilan>
 </template>
