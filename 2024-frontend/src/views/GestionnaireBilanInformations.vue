@@ -34,10 +34,10 @@ const getPrettyValue = (name, field) => {
       </li>
       <li class="fr-my-3w">
         <h3>Identification de l'établissement</h3>
-        <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" label="Numéro siret" :value="formatNumberWithSpaces(canteenInformation.siret)" />
-        <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" label="Numéro siren" :value="formatNumberWithSpaces(canteenInformation.sirenUniteLegale)" />
-        <AppFieldDisplay :label="canteenIsGroupe ? 'Nom du groupe' : 'Nom de la cantine'" :value="canteenInformation.name" />
-        <AppFieldDisplay v-if="!canteenIsGroupe" label="Nombre de couverts / jours" :value="canteenInformation.dailyMealCount"
+        <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatNumberWithSpaces(canteenInformation.siret)" />
+        <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatNumberWithSpaces(canteenInformation.sirenUniteLegale)" />
+        <AppFieldDisplay :label="canteenIsGroupe ? cantines.nameGroupe : cantines.nameCantine" :value="canteenInformation.name" />
+        <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount"
           tooltip="Donnez une moyenne globale sur les jours ouverts de vos établissements (pour évaluer la taille de votre établissement)"
         />
       </li>

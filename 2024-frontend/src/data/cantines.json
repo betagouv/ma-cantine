@@ -3,6 +3,7 @@
   "city": "Commune",
   "cityInseeCode": "Code Insee",
   "dailyMealCount": "Couverts par jour",
+  "dailyMealCountName": "Nombre de couverts / jours",
   "departmentLib": "Département",
   "economicModel": [
     {
@@ -35,6 +36,8 @@
   ],
   "managementTypeName": "Mode de gestion",
   "name": "Nom",
+  "nameCantine": "Nom de la cantine",
+  "nameGroupe": "Nom du groupe",
   "patLibList": "Projets Alimentaires Territoriaux (PAT)",
   "postalCode": "Code postal",
   "productionType": [
@@ -83,6 +86,8 @@
   },
   "sectorList": "Secteurs d'activité",
   "sirenUniteLegale": "SIREN",
+  "sirenUniteLegaleName": "Numéro SIREN",
   "siret": "SIRET",
+  "siretName": "Numéro SIRET",
   "yearlyMealCount": "Couverts par an"
 }
