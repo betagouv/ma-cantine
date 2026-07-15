@@ -21,7 +21,7 @@
   ],
   "economicModelName": "Modèle économique",
   "epciLib": "Établissement Public de Coopération Intercommunale (EPCI)",
-  "lineMinistry": "Ministère de tutelle",
+  "lineMinistry": "Administration générale de tutelle (ministère ou ATE)",
   "managementType": [
     {
       "apiName": "direct",

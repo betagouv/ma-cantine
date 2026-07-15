@@ -1,10 +1,13 @@
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { computedAsync } from "@vueuse/core"
 import { formatNumberWithSpaces } from '@/utils'
 import LayoutSidebarBilan from '@/layouts/LayoutSidebarBilan.vue'
 import AppFieldDisplay from '@/components/AppFieldDisplay.vue'
 import AppLinkRouter from '@/components/AppLinkRouter.vue'
 import cantines from '@/data/cantines.json'
+import sectorsService from '@/services/sectors'
 
 /* Edit dynamic button */
 const router = useRouter()
@@ -17,6 +20,23 @@ const goToEdit = (canteenIsGroupe) => {
 const getPrettyValue = (name, field) => {
   if (!name) return null
   return cantines[field].find(model => model.value === name).label
+}
+
+/* Sectors and line ministries */
+const sectorsList = computedAsync(async () => await sectorsService.getSectors(), [])
+const lineMinistriesList = computedAsync(async () => await sectorsService.getMinistries(), [])
+const showLineMinistry = ref(false)
+const getPrettySectors = (canteenSectors) => {
+  if (sectorsList.value.length === 0 || !canteenSectors || canteenSectors.length === 0) return []
+  const filteredSectors = sectorsList.value.filter((sector) => canteenSectors.includes(sector.value))
+  showLineMinistry.value = filteredSectors.some((sector) => sector.hasLineMinistry)
+  const filteredSectorsNames = filteredSectors.map((filter) => filter.name)
+  return filteredSectorsNames
+}
+const getPrettyLineMinistry = (canteenLineMinistry) => {
+  if (lineMinistriesList.value.length === 0 || !canteenLineMinistry ) return null
+  const filteredLineMinistries = lineMinistriesList.value.filter((ministry) => ministry.value === canteenLineMinistry)
+  return filteredLineMinistries.length > 0 ? filteredLineMinistries[0].name : null
 }
 </script>
 
@@ -65,6 +85,8 @@ const getPrettyValue = (name, field) => {
       </li>
       <li v-if="!canteenIsGroupe" class="fr-my-3w">
         <h3>Secteurs</h3>
+        <AppFieldDisplay :label="cantines.sectorList" :value="getPrettySectors(canteenInformation.sectorList)" />
+        <AppFieldDisplay v-if="showLineMinistry" :label="cantines.lineMinistry" :value="getPrettyLineMinistry(canteenInformation.lineMinistry)" />
       </li>
       <li v-if="canteenInformation.groupe !== null" class="fr-my-3w">
         <h3>Informations de mon groupe</h3>
