@@ -89,5 +89,6 @@
   "sirenUniteLegaleName": "Numéro SIREN",
   "siret": "SIRET",
   "siretName": "Numéro SIRET",
-  "yearlyMealCount": "Couverts par an"
+  "yearlyMealCount": "Couverts par an",
+  "id": "Identifiant / ID"
 }

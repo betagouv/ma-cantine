@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { formatNumberWithSpaces } from '@/utils'
 import LayoutSidebarBilan from '@/layouts/LayoutSidebarBilan.vue'
 import AppFieldDisplay from '@/components/AppFieldDisplay.vue'
+import AppLinkRouter from '@/components/AppLinkRouter.vue'
 import cantines from '@/data/cantines.json'
 
 /* Edit dynamic button */
@@ -31,18 +32,36 @@ const getPrettyValue = (name, field) => {
         <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" />
         <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" />
         <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" />
+        <AppFieldDisplay v-if="canteenInformation.centralProducerSiret" :label="cantines.centralProducerSiret" :value="canteenInformation.centralProducerSiret" />
       </li>
       <li class="fr-my-3w">
         <h3>Identification de l'établissement</h3>
+        <AppFieldDisplay :label="cantines.id" :value="canteenInformation.id" tooltip="Identifiant unique de l'établissement, ce champ ne peut pas être modifié."/>
         <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatNumberWithSpaces(canteenInformation.siret)" />
         <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatNumberWithSpaces(canteenInformation.sirenUniteLegale)" />
         <AppFieldDisplay :label="canteenIsGroupe ? cantines.nameGroupe : cantines.nameCantine" :value="canteenInformation.name" />
         <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount"
           tooltip="Donnez une moyenne globale sur les jours ouverts de vos établissements (pour évaluer la taille de votre établissement)"
         />
+        <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
+        <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
       </li>
       <li v-if="!canteenIsGroupe" class="fr-my-3w">
         <h3>Informations générées</h3>
+        <DsfrAlert title="Ces informations ne sont pas modifiables" type="info" class="fr-mb-2w">
+          À partir des informations renseignées, nous avons généré des données avec d'autres référentiels :
+          <a href="https://france-pat.fr" target="_blank">France PAT</a>
+          et
+          <a href="https://annuaire-entreprises.data.gouv.fr" target="_blank">l'annuaire des entreprises</a>.
+          Si vous remarquez une erreur, merci de <AppLinkRouter title="nous contacter" :to="{name: 'Contact'}" />.
+        </DsfrAlert>
+        <AppFieldDisplay v-if="!canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
+        <AppFieldDisplay v-if="!canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
+        <AppFieldDisplay :label="cantines.cityInseeCode" :value="canteenInformation.cityInseeCode" />
+        <AppFieldDisplay :label="cantines.departmentLib" :value="canteenInformation.departmentLib" />
+        <AppFieldDisplay :label="cantines.regionLib" :value="canteenInformation.regionLib" />
+        <AppFieldDisplay :label="cantines.patLibList" :value="canteenInformation.patLibList?.join(', ')" />
+        <AppFieldDisplay :label="cantines.epciLib" :value="canteenInformation.epciLib" />
       </li>
       <li v-if="!canteenIsGroupe" class="fr-my-3w">
         <h3>Secteurs</h3>
