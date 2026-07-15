@@ -57,3 +57,10 @@ export const formatDate = (
   const date = new Date(parseInt(dateSegments[0]), parseInt(dateSegments[1]) - 1, parseInt(dateSegments[2]))
   return date.toLocaleString("fr", options)
 }
+
+
+// Format SIRET or SIREN number
+export const formatNumberWithSpaces = (number) => {
+  if (number == null || number === '') return number
+  return String(number).replace(/\s/g, '').replace(/(\d{4})(?=\d)/g, '$1 ')
+}

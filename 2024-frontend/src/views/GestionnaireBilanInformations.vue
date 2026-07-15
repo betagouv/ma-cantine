@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { formatNumberWithSpaces } from '@/utils'
 import LayoutSidebarBilan from '@/layouts/LayoutSidebarBilan.vue'
 import AppFieldDisplay from '@/components/AppFieldDisplay.vue'
 import cantines from '@/data/cantines.json'
@@ -33,6 +34,12 @@ const getPrettyValue = (name, field) => {
       </li>
       <li class="fr-my-3w">
         <h3>Identification de l'établissement</h3>
+        <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" label="Numéro siret" :value="formatNumberWithSpaces(canteenInformation.siret)" />
+        <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" label="Numéro siren" :value="formatNumberWithSpaces(canteenInformation.sirenUniteLegale)" />
+        <AppFieldDisplay :label="canteenIsGroupe ? 'Nom du groupe' : 'Nom de la cantine'" :value="canteenInformation.name" />
+        <AppFieldDisplay v-if="!canteenIsGroupe" label="Nombre de couverts / jours" :value="canteenInformation.dailyMealCount"
+          tooltip="Donnez une moyenne globale sur les jours ouverts de vos établissements (pour évaluer la taille de votre établissement)"
+        />
       </li>
       <li v-if="!canteenIsGroupe" class="fr-my-3w">
         <h3>Informations générées</h3>
