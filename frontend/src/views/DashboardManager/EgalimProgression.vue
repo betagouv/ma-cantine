@@ -72,7 +72,7 @@
       <v-card-actions class="px-0 pt-0 pb-0 justify-center">
         <v-btn
           :to="{
-            name: 'GestionnaireCantineGroupeSatellites',
+            name: 'GestionnaireCantineGroupe',
             params: { canteenUrlComponent: canteenUrlComponent },
           }"
           color="primary"
