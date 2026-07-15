@@ -29,7 +29,7 @@ const menuItems = computed(() =>  {
   const informationActive = currentRoute.value === "GestionnaireCantineInformations"
   const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
   const pagePubliqueActive = currentRoute.value === "GestionnaireCantinePagePublique"
-  const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireCantineToutesTeledeclarations"
+  const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireCantineTeledeclarationsListe"
   const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
 
   const informationPage = {
@@ -54,7 +54,7 @@ const menuItems = computed(() =>  {
   }
   const teledeclarationsPage =  {
     text: "Toutes mes télédéclarations",
-    to: { name: "" },
+    to: { name: "GestionnaireCantineTeledeclarationsListe" },
     active: toutesTeledeclarationsActive
   }
 
