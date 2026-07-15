@@ -42,7 +42,7 @@ const tableHeaders = [
   },
   {
     key: "diagnostic",
-    label: `Bilan ${lastYear}`,
+    label: `Télédéclaration </br>${lastYear}`,
   },
   {
     key: "actions",
