@@ -167,6 +167,10 @@ address {
     gap: 1rem;
 }
 
+.ma-cantine--flex-top {
+    align-items: flex-start;
+}
+
 /* BACKGROUND */
 .ma-cantine--bg-blue {
     position: relative;

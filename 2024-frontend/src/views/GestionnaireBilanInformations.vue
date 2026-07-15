@@ -60,7 +60,7 @@ const getPrettyValue = (name, field) => {
         <AppFieldDisplay :label="cantines.cityInseeCode" :value="canteenInformation.cityInseeCode" />
         <AppFieldDisplay :label="cantines.departmentLib" :value="canteenInformation.departmentLib" />
         <AppFieldDisplay :label="cantines.regionLib" :value="canteenInformation.regionLib" />
-        <AppFieldDisplay :label="cantines.patLibList" :value="canteenInformation.patLibList?.join(', ')" />
+        <AppFieldDisplay :label="cantines.patLibList" :value="canteenInformation.patLibList" />
         <AppFieldDisplay :label="cantines.epciLib" :value="canteenInformation.epciLib" />
       </li>
       <li v-if="!canteenIsGroupe" class="fr-my-3w">
