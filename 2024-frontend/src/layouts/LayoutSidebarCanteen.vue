@@ -4,6 +4,7 @@ import { computedAsync } from "@vueuse/core"
 import { computed } from "vue"
 import urlService from "@/services/urls.js"
 import canteenService from "@/services/canteens.js"
+import AppSeparator from "@/components/AppSeparator.vue"
 
 /* Route */
 const route = useRoute()
@@ -83,7 +84,9 @@ const menuItems = computed(() =>  {
         <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu"/>
       </div>
       <section class="fr-col-12 fr-col-md-9">
-        <slot :canteenInformation="canteenInformation" :canteenIsGroupe="canteenIsGroupe"></slot>
+        <slot name="title" :canteenIsGroupe="canteenIsGroupe"></slot>
+        <AppSeparator class="fr-mt-3w fr-mb-5w" />
+        <slot name="content" :canteenInformation="canteenInformation" :canteenIsGroupe="canteenIsGroupe"></slot>
       </section>
     </div>
   </div>
@@ -97,6 +100,7 @@ const menuItems = computed(() =>  {
     }
     .fr-sidemenu__inner {
       padding-right: 0 !important;
+      box-shadow: none !important;
     }
   }
 }
