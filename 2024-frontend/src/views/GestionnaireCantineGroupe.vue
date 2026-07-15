@@ -79,7 +79,7 @@ const clickSearch = () => {
       <div class="fr-grid-row fr-grid-row--middle fr-mb-4w">
         <h1 class="fr-col-7 fr-mb-0">{{ route.meta.title }}</h1>
         <div class="fr-col-md-5 fr-grid-row fr-grid-row--right">
-          <DsfrButton primary label="Ajouter un restaurant satellite" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
+          <DsfrButton primary label="Ajouter une cantine" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
         </div>
       </div>
     </template>
