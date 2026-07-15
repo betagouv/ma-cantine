@@ -111,7 +111,7 @@ const updateSatellites = (index) => {
 }
 </script>
 <template>
-  <DsfrModal :opened="open" title="Ajouter un restaurant satellite" @close="closeModal()" size="lg">
+  <DsfrModal :opened="open" title="Ajouter une cantine à mon groupe" @close="closeModal()" size="lg">
     <p>Pour ajouter une cantine à votre groupe cette dernière doit : être enregistrée sur la plateforme, être de type "Restaurant satellite", ne doit pas déjà être associée à un groupe.</p>
     <DsfrRadioButtonSet
       v-model="hasSiret"

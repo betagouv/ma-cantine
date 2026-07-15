@@ -74,7 +74,7 @@ const getDropdownLinks = (canteen) => {
 
   if (canteen.productionType === "groupe") {
     links.push({
-      to: { name: "GestionnaireCantineGroupeSatellites", params: { canteenUrlComponent: canteenUrlComponent } },
+      to: { name: "GestionnaireCantineGroupe", params: { canteenUrlComponent: canteenUrlComponent } },
       label: "Gérer les restaurants satellites",
     })
   }
@@ -108,7 +108,7 @@ const getDropdownLinks = (canteen) => {
           </p>
           <p v-if="cell.satellitesCountSentence" class="fr-text-title--blue-france fr-mb-0 fr-text--sm">
             <VIcon name="ri-node-tree" class="fr-pb-0-5v" />
-            <router-link :to="{ name: 'GestionnaireCantineGroupeSatellites', params: { canteenUrlComponent: cell.url } }">
+            <router-link :to="{ name: 'GestionnaireCantineGroupe', params: { canteenUrlComponent: cell.url } }">
               {{ cell.satellitesCountSentence }}
             </router-link>
           </p>
