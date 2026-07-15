@@ -94,9 +94,9 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
           Cela lui permet de réaliser une déclaration unique pour laquelle le montant total des achats du groupe est ensuite réparti automatiquement entre chaque restaurant satellite, au prorata de son nombre de couverts annuels.
           Si vous remarquez une erreur ou souhaitez ne plus être associer au groupe, merci de <AppLinkRouter title="nous contacter" :to="{name: 'Contact'}" />.
         </DsfrAlert>
-        <AppFieldDisplay :label="cantines.nameGroupe" :value="canteenInformation.groupe.name" />
-        <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe.id" />
-        <AppFieldDisplay :label="`${cantines.sirenUniteLegaleName} du groupe`" :value="formatSiretOrSiren(canteenInformation.groupe.sirenUniteLegale)" />
+        <AppFieldDisplay :label="cantines.nameGroupe" :value="canteenInformation.groupe?.name" />
+        <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe?.id" />
+        <AppFieldDisplay :label="`${cantines.sirenUniteLegaleName} du groupe`" :value="formatSiretOrSiren(canteenInformation.groupe?.sirenUniteLegale)" />
       </li>
       <li v-if="!canteenIsGroupe" class="fr-my-3w">
         <h3>Description</h3>
