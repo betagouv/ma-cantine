@@ -44,7 +44,7 @@ const menuItems = computed(() =>  {
   }
   const cantinesGroupePage = {
     text: "Cantines du groupe",
-    to: '/',
+    to: { name: "GestionnaireCantineGroupe" },
     active: cantinesGroupeActive
   }
   const pagePubliquePage = {
