@@ -9,6 +9,7 @@ import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupe
 import GestionnaireCantineGroupe from "@/views/GestionnaireCantineGroupe.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
+import GestionnaireCantineTeledeclarationsListe from "@/views/GestionnaireCantineTeledeclarationsListe.vue"
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
@@ -233,6 +234,30 @@ const routes = [
         },
       },
       {
+        path: "cantines-groupe",
+        name: "GestionnaireCantineGroupe",
+        component: GestionnaireCantineGroupe,
+        meta: {
+          title: "Cantines du groupe",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+          ],
+        },
+      },
+      {
+        path: "teledeclarations",
+        name: "GestionnaireCantineTeledeclarationsListe",
+        component: GestionnaireCantineTeledeclarationsListe,
+        meta: {
+          title: "Toutes mes télédéclarations",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+          ],
+        },
+      },
+      {
         path: "archiver",
         name: "GestionnaireCantineArchiver",
         component: GestionnaireCantineArchiver,
@@ -253,18 +278,6 @@ const routes = [
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
-          ],
-        },
-      },
-      {
-        path: "cantines-groupe",
-        name: "GestionnaireCantineGroupe",
-        component: GestionnaireCantineGroupe,
-        meta: {
-          title: "Cantines du groupe",
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
           ],
         },
       },
