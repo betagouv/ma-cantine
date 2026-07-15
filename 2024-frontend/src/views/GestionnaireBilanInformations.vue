@@ -1,9 +1,21 @@
 <script setup>
-import LayoutSidebarBilan from '@/layouts/LayoutSidebarBilan.vue';
+import { useRouter } from 'vue-router'
+import LayoutSidebarBilan from '@/layouts/LayoutSidebarBilan.vue'
+
+/* Edit dynamic button */
+const router = useRouter()
+const goToEdit = (canteenIsGroupe) => {
+  const pageName = canteenIsGroupe ? 'GestionnaireCantineGroupeModifier' : 'GestionnaireCantineRestaurantModifier'
+  router.push({ name: pageName })
+}
 </script>
 
 <template>
-  <LayoutSidebarBilan>
-    <p>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cras mattis consectetur purus sit amet fermentum. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Maecenas sed diam eget risus varius blandit sit amet non magna. Maecenas sed diam eget risus varius blandit sit amet non magna. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>
+  <LayoutSidebarBilan v-slot="{ canteenIsGroupe }">
+    <div class="ma-cantine--flex-between ma-cantine--flex-gap-1">
+      <h2 class="fr-mb-0">{{ canteenIsGroupe ? 'Informations du groupe' : 'Mes informations' }}</h2>
+      <DsfrButton @click="goToEdit(canteenIsGroupe)" :label="canteenIsGroupe ? 'Modifier les informations du groupe' : 'Modifier mes informations'" icon="ri-pencil-line" />
+    </div>
+    <pre>{{ canteenInformation }}</pre>
   </LayoutSidebarBilan>
 </template>
