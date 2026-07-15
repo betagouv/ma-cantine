@@ -82,8 +82,8 @@ const menuItems = computed(() =>  {
       <div class="layout-sidebar-bilan__sidebar-container fr-col-12 fr-col-md-3 ma-cantine--sticky__top fr-background-default--grey">
         <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu"/>
       </div>
-      <section class="fr-col-12 fr-col-md-9 fr-pt-1w">
-        <slot></slot>
+      <section class="fr-col-12 fr-col-md-9">
+        <slot :canteenInformation="canteenInformation" :canteenIsGroupe="canteenIsGroupe"></slot>
       </section>
     </div>
   </div>
