@@ -29,7 +29,7 @@ const menuItems = computed(() =>  {
   const gestionnairesActive = currentRoute.value === "GestionnaireBilanGestionnaires"
   const pagePubliqueActive = currentRoute.value === "GestionnaireBilanPagePublique"
   const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireBilanToutesTeledeclarations"
-  const restaurantsActive = currentRoute.value === "GestionnaireBilanRestaurants"
+  const cantinesGroupeActive = currentRoute.value === "GestionnaireBilanCantinesGroupe"
 
   const informationPage = {
     text: canteenIsGroupe.value ? "Informations du groupe" : "Informations",
@@ -41,10 +41,10 @@ const menuItems = computed(() =>  {
     to: '/',
     active: gestionnairesActive
   }
-  const restaurantsPages = {
-    text: "Restaurants",
+  const cantinesGroupePage = {
+    text: "Cantines du groupe",
     to: '/',
-    active: restaurantsActive
+    active: cantinesGroupeActive
   }
   const pagePubliquePage = {
     text: "Page publique",
@@ -61,7 +61,7 @@ const menuItems = computed(() =>  {
   const pages = []
   pages.push(informationPage)
   pages.push(gestionnairesPage)
-  if (canteenIsGroupe.value) pages.push(restaurantsPages)
+  if (canteenIsGroupe.value) pages.push(cantinesGroupePage)
   if (!canteenIsGroupe.value) pages.push(pagePubliquePage)
   pages.push(teledeclarationsPage)
 
