@@ -62,12 +62,12 @@ const teledeclarations = computed(() => {
 </script>
 
 <template>
-  <ul class="teledeclarations-liste ma-cantine--unstyled-list">
-    <li v-for="teledeclaration in teledeclarations" :key="teledeclaration.year" class="teledeclarations-liste__item fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-pb-1w fr-my-1w">
+  <ul class="canteen-list-telesdeclarations ma-cantine--unstyled-list">
+    <li v-for="teledeclaration in teledeclarations" :key="teledeclaration.year" class="canteen-list-telesdeclarations__item fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-pb-1w fr-my-1w">
       <div class="fr-col-12 fr-col-md-3">
         <p class="fr-mb-0 fr-text--bold">Ma télédéclaration {{ teledeclaration.year }}</p>
       </div>
-      <div class="teledeclarations-liste__justificatif fr-col-12 fr-col-md-9">
+      <div class="canteen-list-telesdeclarations__justificatif fr-col-12 fr-col-md-9">
         <a v-if="teledeclaration.url" :href="teledeclaration.url" target="_self" download class="fr-text-title--blue-france">
           <span class="fr-icon-file-download-fill ma-cantine--icon-xs" aria-hidden="true"></span>
           Télécharger mon justificatif
@@ -79,7 +79,7 @@ const teledeclarations = computed(() => {
 </template>
 
 <style lang="scss">
-.teledeclarations-liste {
+.canteen-list-telesdeclarations {
   &__item {
     border-bottom: solid 1px var(--border-disabled-grey);
   }
