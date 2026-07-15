@@ -257,7 +257,7 @@ const routes = [
         },
       },
       {
-        path: "satellites",
+        path: "cantines-groupe",
         name: "GestionnaireCantineGroupeListe",
         component: GestionnaireCantineGroupeListe,
         meta: {
