@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { computedAsync } from "@vueuse/core"
-import { formatNumberWithSpaces } from '@/utils'
+import { formatSiretOrSiren } from '@/utils'
 import LayoutSidebarBilan from '@/layouts/LayoutSidebarBilan.vue'
 import AppFieldDisplay from '@/components/AppFieldDisplay.vue'
 import AppLinkRouter from '@/components/AppLinkRouter.vue'
@@ -57,8 +57,8 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <li class="fr-my-3w">
         <h3>Identification de l'établissement</h3>
         <AppFieldDisplay :label="cantines.id" :value="canteenInformation.id" tooltip="Identifiant unique de l'établissement, ce champ ne peut pas être modifié."/>
-        <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatNumberWithSpaces(canteenInformation.siret)" />
-        <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatNumberWithSpaces(canteenInformation.sirenUniteLegale)" />
+        <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatSiretOrSiren(canteenInformation.siret)" />
+        <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatSiretOrSiren(canteenInformation.sirenUniteLegale)" />
         <AppFieldDisplay :label="canteenIsGroupe ? cantines.nameGroupe : cantines.nameCantine" :value="canteenInformation.name" />
         <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount"
           tooltip="Donnez une moyenne globale sur les jours ouverts de vos établissements (pour évaluer la taille de votre établissement)"

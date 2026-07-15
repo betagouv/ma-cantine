@@ -60,7 +60,10 @@ export const formatDate = (
 
 
 // Format SIRET or SIREN number
-export const formatNumberWithSpaces = (number) => {
+export const formatSiretOrSiren = (number) => {
   if (number == null || number === '') return number
-  return String(number).replace(/\s/g, '').replace(/(\d{4})(?=\d)/g, '$1 ')
+  const digits = String(number).replace(/\s/g, '')
+  const formatted = digits.slice(0, 9).replace(/(\d{3})(?=\d)/g, '$1 ')
+  const rest = digits.slice(9)
+  return rest ? `${formatted} ${rest}` : formatted
 }
