@@ -239,7 +239,7 @@ const routes = [
   },
   {
     path: "/modifier-ma-cantine/:canteenUrlComponent",
-    name: "GestionnaireCantineGerer",
+    name: "GestionnaireCantineInformations",
     props: true,
     component: CanteenEditor,
     redirect: { name: "CanteenForm" },
@@ -414,12 +414,12 @@ const vue3Routes = [
     name: "GestionnaireAchatsModifier",
   },
   {
-    path: "/tableau-de-bord/cantines/:canteenUrlComponent/gerer",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/informations",
     name: "CanteenForm",
   },
   {
-    path: "/tableau-de-bord/cantines/:canteenUrlComponent/gerer",
-    name: "GestionnaireCantineGerer",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/informations",
+    name: "GestionnaireCantineInformations",
   },
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/modifier",
