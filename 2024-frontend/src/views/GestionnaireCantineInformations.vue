@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { computedAsync } from "@vueuse/core"
 import { formatSiretOrSiren } from '@/utils'
-import LayoutSidebarBilan from '@/layouts/LayoutSidebarBilan.vue'
+import LayoutSidebarCanteen from '@/layouts/LayoutSidebarCanteen.vue'
 import AppFieldDisplay from '@/components/AppFieldDisplay.vue'
 import AppLinkRouter from '@/components/AppLinkRouter.vue'
 import cantines from '@/data/cantines.json'
@@ -44,7 +44,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
 </script>
 
 <template>
-  <LayoutSidebarBilan v-slot="{ canteenIsGroupe, canteenInformation }">
+  <LayoutSidebarCanteen v-slot="{ canteenIsGroupe, canteenInformation }">
     <div class="ma-cantine--flex-between ma-cantine--flex-gap-1">
       <h2 class="fr-mb-0">{{ canteenIsGroupe ? 'Informations du groupe' : 'Mes informations' }}</h2>
       <DsfrButton @click="goToEdit(canteenIsGroupe)" :label="canteenIsGroupe ? 'Modifier les informations du groupe' : 'Modifier mes informations'" icon="ri-pencil-line" />
@@ -116,5 +116,5 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
         Vous pouvez l’archiver <AppLinkRouter :to="{ name: 'GestionnaireCantineArchiver', params: { canteenUrlComponent: canteenUrlComponent } }" title="en cliquant ici" />
       </p>
     </div>
-  </LayoutSidebarBilan>
+  </LayoutSidebarCanteen>
 </template>

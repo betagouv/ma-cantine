@@ -25,15 +25,15 @@ const canteenBadgeGroupe = computed(() => {
 
 /* Sidebar links */
 const menuItems = computed(() =>  {
-  const informationActive = currentRoute.value === "GestionnaireBilanInformations"
-  const gestionnairesActive = currentRoute.value === "GestionnaireBilanGestionnaires"
-  const pagePubliqueActive = currentRoute.value === "GestionnaireBilanPagePublique"
-  const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireBilanToutesTeledeclarations"
-  const cantinesGroupeActive = currentRoute.value === "GestionnaireBilanCantinesGroupe"
+  const informationActive = currentRoute.value === "GestionnaireCantineInformations"
+  const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
+  const pagePubliqueActive = currentRoute.value === "GestionnaireCantinePagePublique"
+  const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireCantineToutesTeledeclarations"
+  const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
 
   const informationPage = {
     text: canteenIsGroupe.value ? "Informations du groupe" : "Mes informations",
-    to: { name: "GestionnaireBilanInformations" },
+    to: { name: "GestionnaireCantineInformations" },
     active: informationActive
   }
   const gestionnairesPage = {
@@ -70,7 +70,7 @@ const menuItems = computed(() =>  {
 </script>
 
 <template>
-  <div class="layout-sidebar-bilan">
+  <div class="layout-sidebar-canteen">
     <h1>{{ canteenName }}</h1>
     <div class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-4w">
       <DsfrBadge v-if="canteenBadgeGroupe" type="info" :noIcon="true" :label="canteenBadgeGroupe" />
@@ -79,7 +79,7 @@ const menuItems = computed(() =>  {
       <DsfrBadge v-if="canteenBadgeSiren" type="neutral" :label="canteenBadgeSiren" />
     </div>
     <div class="fr-grid-row fr-grid-row--top ma-cantine--sticky__container">
-      <div class="layout-sidebar-bilan__sidebar-container fr-col-12 fr-col-md-3 ma-cantine--sticky__top fr-background-default--grey">
+      <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 ma-cantine--sticky__top fr-background-default--grey">
         <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu"/>
       </div>
       <section class="fr-col-12 fr-col-md-9">
@@ -90,7 +90,7 @@ const menuItems = computed(() =>  {
 </template>
 
 <style lang="scss">
-.layout-sidebar-bilan {
+.layout-sidebar-canteen {
   &__sidebar-container {
     .fr-sidemenu__title {
       display: none !important;
