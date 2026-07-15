@@ -2,6 +2,7 @@
 import { computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
+import { formatSiretOrSiren } from "@/utils"
 import diagnosticService from "@/services/diagnostics.js"
 import campaignService from "@/services/campaigns.js"
 import canteensService from "@/services/canteens"
@@ -55,7 +56,8 @@ const tableRows = computed(() => {
     ? []
     : props.satellites.map((sat) => {
         const name = canteensTableService.getSatelliteNameInfos(sat)
-        const siretSiren = canteensTableService.getSiretOrSirenInfos(sat)
+        const canteenSiretOrSiren = canteensTableService.getSiretOrSirenInfos(sat)
+        const siretSiren = formatSiretOrSiren(canteenSiretOrSiren)
         const city = canteensTableService.getCityInfos(sat)
         const yearlyMealCount = canteensTableService.getYearlyMealCountInfos(sat)
         const diagnostic = diagnosticService.getBadge(sat.action, campaign.value)
