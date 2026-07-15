@@ -226,7 +226,7 @@ const routes = [
         name: "GestionnaireBilanInformations",
         component: GestionnaireBilanInformations,
         meta: {
-          title: "Mes informations",
+          title: "Informations",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },
