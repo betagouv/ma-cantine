@@ -58,7 +58,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
           <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" />
           <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" />
           <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" />
-          <AppFieldDisplay v-if="canteenInformation.centralProducerSiret" :label="cantines.centralProducerSiret" :value="canteenInformation.centralProducerSiret" />
+          <AppFieldDisplay v-if="canteenInformation.centralProducerSiret" :label="cantines.centralProducerSiret" :value="formatSiretOrSiren(canteenInformation.centralProducerSiret)" />
         </li>
         <li class="fr-my-3w">
           <h3 class="fr-h5">Identification de l'établissement</h3>

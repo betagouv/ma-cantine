@@ -46,7 +46,7 @@ const saveGroup = (props) => {
 /* Page redirection */
 const goToCanteenPage = (canteen) => {
   const canteenPage = {
-    name: "GestionnaireCantineGerer",
+    name: "GestionnaireCantineInformations",
     params: { canteenUrlComponent: urlService.getCanteenUrl(canteen) },
   }
   const redirectPage = route.query['redirection']
