@@ -100,8 +100,8 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       </li>
       <li v-if="!canteenIsGroupe" class="fr-my-3w">
         <h3>Description</h3>
+        <p>{{ canteenInformation.publicationComments || 'Aucune description renseignée' }}</p>
       </li>
     </ol>
-    <pre>{{ canteenInformation }}</pre>
   </LayoutSidebarBilan>
 </template>
