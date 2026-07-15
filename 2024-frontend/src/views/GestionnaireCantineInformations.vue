@@ -44,12 +44,12 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
 </script>
 
 <template>
-  <LayoutSidebarCanteen >
-    <template #title="{ canteenIsGroupe }">
-      <div class="ma-cantine--flex-between ma-cantine--flex-gap-1">
-        <h2 class="fr-h3 fr-mb-0">{{ canteenIsGroupe ? 'Informations du groupe' : 'Mes informations' }}</h2>
-        <DsfrButton @click="goToEdit(canteenIsGroupe)" :label="canteenIsGroupe ? 'Modifier les informations du groupe' : 'Modifier mes informations'" icon="ri-pencil-line" />
-      </div>
+  <LayoutSidebarCanteen>
+    <template #titleName="{ canteenIsGroupe }">
+      {{ canteenIsGroupe ? 'Informations du groupe' : 'Mes informations' }}
+    </template>
+    <template #titleButton="{ canteenIsGroupe }">
+      <DsfrButton @click="goToEdit(canteenIsGroupe)" :label="canteenIsGroupe ? 'Modifier les informations du groupe' : 'Modifier mes informations'" icon="ri-pencil-line" />
     </template>
     <template #content="{ canteenIsGroupe, canteenInformation }">
       <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
