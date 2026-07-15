@@ -48,7 +48,7 @@ const getSatellitesPrettCount = (count) => {
 const getSatellitesPrettyType = (count) => {
   if (isSearching.value && count <= 1 ) return `trouvé pour la recherche « ${search.value} »`
   if (isSearching.value && count > 1 ) return `trouvés pour la recherche « ${search.value} »`
-  if (!isSearching.value && count <= 1) return "renseignés"
+  if (!isSearching.value && count <= 1) return "renseigné"
   if (!isSearching.value && count > 1) return "renseignés"
 }
 
