@@ -3,6 +3,7 @@ import { sectionId } from "@/constants/site-map.js"
 /* Components */
 import GestionnaireAchatsAjouter from "@/views/GestionnaireAchatsAjouter.vue"
 import GestionnaireAchatsModifier from "@/views/GestionnaireAchatsModifier.vue"
+import GestionnaireBilanInformations from "@/views/GestionnaireBilanInformations.vue"
 import GestionnaireCantineGerer from "@/views/GestionnaireCantineGerer.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
@@ -220,6 +221,18 @@ const routes = [
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/",
     children: [
+      {
+        path: "informations",
+        name: "GestionnaireBilanInformations",
+        component: GestionnaireBilanInformations,
+        meta: {
+          title: "Informations",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "DashboardManager" }, useCanteenName: true },
+          ],
+        },
+      },
       {
         path: "gerer",
         name: "GestionnaireCantineGerer",
