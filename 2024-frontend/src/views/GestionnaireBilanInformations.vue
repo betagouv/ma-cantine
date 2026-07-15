@@ -13,6 +13,7 @@ const goToEdit = (canteenIsGroupe) => {
 
 /* Value */
 const getPrettyValue = (name, field) => {
+  if (!name) return null
   return cantines[field].find(model => model.value === name).label
 }
 </script>
@@ -26,7 +27,7 @@ const getPrettyValue = (name, field) => {
     <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
       <li class="fr-my-3w">
         <h3>Caractéristiques</h3>
-        <AppFieldDisplay :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" />
+        <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" />
         <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" />
         <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" />
       </li>
