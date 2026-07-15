@@ -156,8 +156,19 @@ address {
     flex-wrap: wrap;
 }
 
+.ma-cantine--flex-between {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 .ma-cantine--flex-gap-1 {
     gap: 1rem;
+}
+
+.ma-cantine--flex-top {
+    align-items: flex-start;
 }
 
 /* BACKGROUND */
