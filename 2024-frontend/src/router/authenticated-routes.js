@@ -3,7 +3,7 @@ import { sectionId } from "@/constants/site-map.js"
 /* Components */
 import GestionnaireAchatsAjouter from "@/views/GestionnaireAchatsAjouter.vue"
 import GestionnaireAchatsModifier from "@/views/GestionnaireAchatsModifier.vue"
-import GestionnaireBilanInformations from "@/views/GestionnaireBilanInformations.vue"
+import GestionnaireCantineInformations from "@/views/GestionnaireCantineInformations.vue"
 import GestionnaireCantineGerer from "@/views/GestionnaireCantineGerer.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
@@ -223,8 +223,8 @@ const routes = [
     children: [
       {
         path: "informations",
-        name: "GestionnaireBilanInformations",
-        component: GestionnaireBilanInformations,
+        name: "GestionnaireCantineInformations",
+        component: GestionnaireCantineInformations,
         meta: {
           title: "Informations",
           breadcrumbs: [
