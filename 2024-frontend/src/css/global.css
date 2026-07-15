@@ -160,10 +160,6 @@ address {
     gap: 1rem;
 }
 
-.ma-cantine--flex-gap-2 {
-    gap: 1rem;
-}
-
 /* BACKGROUND */
 .ma-cantine--bg-blue {
     position: relative;
