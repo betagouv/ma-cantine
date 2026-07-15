@@ -53,7 +53,7 @@ const teledeclarations = computed(() => {
     const badge = getBadge(isTeledeclared, isTeledeclaredByGroupe, groupeDiagMode)
     teledeclarations.push({
       year,
-      url,
+      url: isTeledeclaredByGroupe && groupeDiagMode === "ALL" ? null : url,
       badge,
     })
   }
