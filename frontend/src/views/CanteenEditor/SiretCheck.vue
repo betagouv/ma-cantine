@@ -194,7 +194,7 @@ export default {
         .then((response) => {
           this.$router
             .push({
-              name: "GestionnaireCantineGerer",
+              name: "GestionnaireCantineInformations",
               params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(response) },
             })
             .then(() => {

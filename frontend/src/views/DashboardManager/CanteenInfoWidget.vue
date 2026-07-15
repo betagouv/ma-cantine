@@ -35,7 +35,7 @@
         <v-card-actions class="mx-2 mb-2">
           <v-btn
             :to="{
-              name: 'GestionnaireCantineGerer',
+              name: 'GestionnaireCantineInformations',
               params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
             }"
             color="primary"

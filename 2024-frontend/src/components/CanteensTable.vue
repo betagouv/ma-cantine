@@ -56,10 +56,11 @@ const rows = computed(() => {
 
 const getDropdownLinks = (canteen) => {
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
+  const canteenIsGroupe = canteen.productionType === "groupe"
   const links = [
     {
       label: "Modifier l'établissement",
-      to: { name: "GestionnaireCantineGerer", params: { canteenUrlComponent: canteenUrlComponent } },
+      to: { name: canteenIsGroupe ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier", params: { canteenUrlComponent: canteenUrlComponent } },
     },
     {
       label: "Ajouter des achats",
