@@ -14,7 +14,7 @@
       <p class="mb-0">Vous remarquez une erreur ?</p>
       <router-link
         :to="{
-          name: 'GestionnaireCantineGerer',
+          name: 'GestionnaireCantineInformations',
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
         }"
       >
