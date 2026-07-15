@@ -30,7 +30,7 @@ const menuItems = computed(() =>  {
   const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
   const pagePubliqueActive = currentRoute.value === "GestionnaireCantinePagePublique"
   const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireCantineToutesTeledeclarations"
-  const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
+  const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupeListe"
 
   const informationPage = {
     text: canteenIsGroupe.value ? "Informations du groupe" : "Mes informations",

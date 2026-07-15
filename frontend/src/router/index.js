@@ -443,7 +443,7 @@ const vue3Routes = [
   },
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/satellites",
-    name: "GestionnaireCantineGroupeSatellites",
+    name: "GestionnaireCantineGroupeListe",
   },
   {
     path: "/donnees-personnelles",

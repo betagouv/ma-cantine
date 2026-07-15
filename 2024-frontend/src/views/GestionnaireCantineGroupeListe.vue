@@ -73,7 +73,7 @@ const clickSearch = () => {
 }
 </script>
 <template>
-  <section class="gestionnaire-cantine-groupe-satellites">
+  <section class="gestionnaire-cantine-groupe-liste">
     <div class="fr-grid-row fr-grid-row--middle fr-mb-4w">
       <h1 class="fr-col-7 fr-mb-0">{{ route.meta.title }}<br/> de {{ canteen.name }}</h1>
       <div class="fr-col-md-5 fr-grid-row fr-grid-row--right">
@@ -119,7 +119,7 @@ const clickSearch = () => {
 </template>
 
 <style lang="scss">
-.gestionnaire-cantine-groupe-satellites {
+.gestionnaire-cantine-groupe-liste {
   &__table {
     .fr-select {
       width: 10rem !important;
