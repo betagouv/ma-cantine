@@ -80,8 +80,8 @@ const menuItems = computed(() =>  {
       <DsfrBadge v-if="canteenBadgeSiren" type="neutral" :label="canteenBadgeSiren" />
     </div>
     <div class="fr-grid-row ma-cantine--sticky__container">
-      <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 ma-cantine--sticky__top fr-background-default--grey">
-        <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu"/>
+      <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 fr-background-default--grey">
+        <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu" class="ma-cantine--sticky__top" />
       </div>
       <section class="fr-col-12 fr-col-md-9 fr-pb-2w">
         <div class="ma-cantine--flex-between ma-cantine--flex-gap-1">
