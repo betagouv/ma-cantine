@@ -6,7 +6,7 @@ import GestionnaireAchatsModifier from "@/views/GestionnaireAchatsModifier.vue"
 import GestionnaireCantineInformations from "@/views/GestionnaireCantineInformations.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
-import GestionnaireCantineGroupeSatellites from "@/views/GestionnaireCantineGroupeSatellites.vue"
+import GestionnaireCantineGroupe from "@/views/GestionnaireCantineGroupe.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
@@ -257,11 +257,11 @@ const routes = [
         },
       },
       {
-        path: "satellites",
-        name: "GestionnaireCantineGroupeSatellites",
-        component: GestionnaireCantineGroupeSatellites,
+        path: "cantines-groupe",
+        name: "GestionnaireCantineGroupe",
+        component: GestionnaireCantineGroupe,
         meta: {
-          title: "Gérer les restaurants satellites",
+          title: "Cantines du groupe",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "DashboardManager" }, useCanteenName: true },

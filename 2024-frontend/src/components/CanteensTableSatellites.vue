@@ -2,6 +2,7 @@
 import { computed } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
+import { formatSiretOrSiren } from "@/utils"
 import diagnosticService from "@/services/diagnostics.js"
 import campaignService from "@/services/campaigns.js"
 import canteensService from "@/services/canteens"
@@ -9,7 +10,6 @@ import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppRawHTML from "@/components/AppRawHTML.vue"
-import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
 
 /* Settings */
 const props = defineProps(["satellites", "groupe"])
@@ -42,7 +42,7 @@ const tableHeaders = [
   },
   {
     key: "diagnostic",
-    label: `Bilan ${lastYear}`,
+    label: `Télédéclaration </br>${lastYear}`,
   },
   {
     key: "actions",
@@ -55,7 +55,8 @@ const tableRows = computed(() => {
     ? []
     : props.satellites.map((sat) => {
         const name = canteensTableService.getSatelliteNameInfos(sat)
-        const siretSiren = canteensTableService.getSiretOrSirenInfos(sat)
+        const canteenSiretOrSiren = canteensTableService.getSiretOrSirenInfos(sat)
+        const siretSiren = formatSiretOrSiren(canteenSiretOrSiren)
         const city = canteensTableService.getCityInfos(sat)
         const yearlyMealCount = canteensTableService.getYearlyMealCountInfos(sat)
         const diagnostic = diagnosticService.getBadge(sat.action, campaign.value)
@@ -100,7 +101,7 @@ const getDropdownLinks = (sat) => {
   }
 
   actions.push({
-    label: "Retirer de mon groupe",
+    label: "Retirer du groupe",
     emitEvent: 'showModalRemoveSatellite',
   })
 
@@ -147,47 +148,61 @@ const claimCanteen = (canteen) => {
 </script>
 
 <template>
-  <LayoutBigTable>
-    <DsfrDataTable
-      title="Vos restaurants satellites"
-      no-caption
-      :headers-row="tableHeaders"
-      :rows="tableRows"
-      :sortable-rows="['name', 'diagnostic']"
-      :pagination="true"
-      :pagination-options="[50, 100, 200]"
-      :rows-per-page="50"
-      pagination-wrapper-class="fr-mt-4w"
-    >
-      <template #header="{ label }">
-        <AppRawHTML :html="label" />
+  <DsfrDataTable
+    title="Vos restaurants satellites"
+    no-caption
+    :headers-row="tableHeaders"
+    :rows="tableRows"
+    :sortable-rows="['name', 'diagnostic']"
+    :pagination="true"
+    :pagination-options="[50, 100, 200]"
+    :rows-per-page="50"
+    pagination-wrapper-class="canteens-table-satellites__pagination fr-mt-4w"
+    class="canteens-table-satellites"
+  >
+    <template #header="{ label }">
+      <AppRawHTML :html="label" />
+    </template>
+    <template #cell="{ colKey, cell }">
+      <template v-if="colKey === 'name'">
+        <p class="fr-text-title--blue-france fr-text--bold">
+          <router-link
+            v-if="cell.isManagedByUser"
+            :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+          >
+            {{ cell.canteen }}
+          </router-link>
+          <span v-else>
+            {{ cell.canteen }}
+          </span>
+        </p>
       </template>
-      <template #cell="{ colKey, cell }">
-        <template v-if="colKey === 'name'">
-          <p class="fr-text-title--blue-france fr-text--bold">
-            <router-link
-              v-if="cell.isManagedByUser"
-              :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
-            >
-              {{ cell.canteen }}
-            </router-link>
-            <span v-else>
-              {{ cell.canteen }}
-            </span>
-          </p>
-        </template>
-        <template v-else-if="colKey === 'diagnostic'">
-          <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
-        </template>
-        <template v-else-if="colKey === 'actions'">
-          <div class="fr-grid-row fr-grid-row--right">
-            <AppDropdownMenu label="Actions" :links="cell.links" size="small" @click="(event) => clickAction(event, cell.canteen)" />
-          </div>
-        </template>
-        <template v-else>
-          {{ cell }}
-        </template>
+      <template v-else-if="colKey === 'diagnostic'">
+        <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
       </template>
-    </DsfrDataTable>
-  </LayoutBigTable>
+      <template v-else-if="colKey === 'actions'">
+        <div class="fr-grid-row fr-grid-row--right">
+          <AppDropdownMenu label="Actions" :links="cell.links" size="small" @click="(event) => clickAction(event, cell.canteen)" />
+        </div>
+      </template>
+      <template v-else>
+        {{ cell }}
+      </template>
+    </template>
+  </DsfrDataTable>
 </template>
+
+<style lang="scss">
+.canteens-table-satellites {
+
+  &__pagination {
+    .fr-select {
+      max-width: 7rem !important;
+    }
+  }
+
+  .fr-table__container {
+    overflow: initial !important;
+  }
+}
+</style>
