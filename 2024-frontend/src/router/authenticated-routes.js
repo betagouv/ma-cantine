@@ -6,7 +6,7 @@ import GestionnaireAchatsModifier from "@/views/GestionnaireAchatsModifier.vue"
 import GestionnaireCantineInformations from "@/views/GestionnaireCantineInformations.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
-import GestionnaireCantineGroupeListe from "@/views/GestionnaireCantineGroupeListe.vue"
+import GestionnaireCantineGroupe from "@/views/GestionnaireCantineGroupe.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
@@ -258,8 +258,8 @@ const routes = [
       },
       {
         path: "cantines-groupe",
-        name: "GestionnaireCantineGroupeListe",
-        component: GestionnaireCantineGroupeListe,
+        name: "GestionnaireCantineGroupe",
+        component: GestionnaireCantineGroupe,
         meta: {
           title: "Cantines du groupe",
           breadcrumbs: [

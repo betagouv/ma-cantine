@@ -34,7 +34,7 @@
               télédéclarer.
               <router-link
                 :to="{
-                  name: 'GestionnaireCantineGroupeListe',
+                  name: 'GestionnaireCantineGroupe',
                   params: { canteenUrlComponent: canteenUrlComponent },
                 }"
               >
