@@ -9,7 +9,7 @@ defineProps(['label', 'value', 'tooltip'])
     </div>
     <div class="fr-col-12 fr-col-md-7">
       <p class="fr-mb-0">
-        {{ value }}
+        {{ value || 'Non renseigné' }}
         <DsfrTooltip v-if="tooltip" :content="tooltip" />
       </p>
     </div>
