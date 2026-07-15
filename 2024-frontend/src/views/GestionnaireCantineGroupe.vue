@@ -77,7 +77,7 @@ const clickSearch = () => {
   <LayoutSidebarCanteen class="gestionnaire-cantine-groupe" :title="route.meta.title">
     <template #titleName>{{ route.meta.title }}</template>
     <template #titleButton>
-      <DsfrButton primary label="Ajouter une cantine" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
+      <DsfrButton primary label="Ajouter une cantine au groupe" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
     </template>
     <template #content>
       <AppLoader v-if="loading" />

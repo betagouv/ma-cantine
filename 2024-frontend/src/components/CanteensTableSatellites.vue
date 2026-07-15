@@ -101,7 +101,7 @@ const getDropdownLinks = (sat) => {
   }
 
   actions.push({
-    label: "Retirer de mon groupe",
+    label: "Retirer du groupe",
     emitEvent: 'showModalRemoveSatellite',
   })
 
