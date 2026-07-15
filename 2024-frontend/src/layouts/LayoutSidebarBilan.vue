@@ -28,7 +28,7 @@ const menuItems = computed(() =>  {
   const informationActive = currentRoute.value === "GestionnaireBilanInformations"
   const gestionnairesActive = currentRoute.value === "GestionnaireBilanGestionnaires"
   const pagePubliqueActive = currentRoute.value === "GestionnaireBilanPagePublique"
-  const toutesDeclarationsActive = currentRoute.value === "GestionnaireBilanToutesDeclarations"
+  const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireBilanToutesTeledeclarations"
   const restaurantsActive = currentRoute.value === "GestionnaireBilanRestaurants"
 
   const informationPage = {
@@ -52,9 +52,9 @@ const menuItems = computed(() =>  {
     active: pagePubliqueActive
   }
   const teledeclarationsPage =  {
-    text: "Toutes mes déclarations",
+    text: "Toutes mes télédéclarations",
     to: { name: "" },
-    active: toutesDeclarationsActive
+    active: toutesTeledeclarationsActive
   }
 
   // Dynamic links
