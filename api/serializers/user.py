@@ -60,11 +60,13 @@ class CanteenManagerSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "is_staff",
         )
         read_only_fields = (
             "email",
             "first_name",
             "last_name",
+            "is_staff",
         )
 
 
