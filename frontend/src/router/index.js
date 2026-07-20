@@ -27,7 +27,6 @@ import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
 import CanteenEditor from "@/views/CanteenEditor"
-import CanteenManagers from "@/views/CanteenEditor/CanteenManagers"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
@@ -245,15 +244,6 @@ const routes = [
     redirect: { name: "CanteenForm" },
     children: [
       {
-        path: "gestionnaires",
-        name: "CanteenManagers",
-        component: CanteenManagers,
-        meta: {
-          authenticationRequired: true,
-          title: "Gérer mon équipe",
-        },
-      },
-      {
         path: "generer-mon-affiche",
         name: "CanteenGeneratePoster",
         component: CanteenGeneratePoster,
@@ -432,6 +422,10 @@ const vue3Routes = [
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/satellites",
     name: "GestionnaireCantineGroupe",
+  },
+  {
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/gestionnaires",
+    name: "GestionnaireCantineGestionnaires",
   },
   {
     path: "/donnees-personnelles",
