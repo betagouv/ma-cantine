@@ -314,7 +314,7 @@ export default {
       this.summary = null
       if (!this.vizCanteenId || !this.vizYear) return
       this.loading = true
-      fetch(`/api/v1/canteenPurchasesSummary/${this.vizCanteenId}?year=${this.vizYear}`)
+      fetch(`/api/v1/canteens/${this.vizCanteenId}/purchases/summary?year=${this.vizYear}`)
         .then((response) => (response.ok ? response.json() : {}))
         .then((response) => {
           this.summary = response
@@ -325,7 +325,7 @@ export default {
       this.yearlySummary = null
       if (!this.vizCanteenId) return
       this.loading = true
-      fetch(`/api/v1/canteenPurchasesSummary/${this.vizCanteenId}`)
+      fetch(`/api/v1/canteens/${this.vizCanteenId}/purchases/summary`)
         .then((response) => (response.ok ? response.json() : {}))
         .then((response) => {
           const results = response.results

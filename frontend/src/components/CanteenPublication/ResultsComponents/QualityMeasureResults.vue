@@ -299,7 +299,7 @@ export default {
     },
     getPurchasesSummary() {
       return fetch(
-        `/api/v1/canteenPurchasesPercentageSummary/${this.canteen.id}?year=${this.thisYear}&ignoreRedaction=${this.editable}`
+        `/api/v1/canteens/${this.canteen.id}/purchases/percentageSummary?year=${this.thisYear}&ignoreRedaction=${this.editable}`
       )
         .then((response) => (response.ok ? response.json() : undefined))
         .then((response) => {

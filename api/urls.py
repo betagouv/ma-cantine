@@ -123,6 +123,16 @@ urlpatterns = {
         name="purchase_facture",
     ),
     path(
+        "canteens/<int:canteen_pk>/purchases/summary",
+        CanteenPurchasesSummaryView.as_view(),
+        name="canteen_purchases_summary",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/purchases/percentageSummary",
+        CanteenPurchasesPercentageSummaryView.as_view(),
+        name="canteen_purchases_percentage_summary",
+    ),
+    path(
         "canteens/<int:canteen_pk>/diagnostics/",
         DiagnosticCreateView.as_view(),
         name="diagnostic_creation",
@@ -240,16 +250,6 @@ urlpatterns = {
         "purchases/restore/",
         PurchasesRestoreView.as_view(),
         name="restore_purchases",
-    ),
-    path(
-        "canteenPurchasesSummary/<int:canteen_pk>",
-        CanteenPurchasesSummaryView.as_view(),
-        name="canteen_purchases_summary",
-    ),
-    path(
-        "canteenPurchasesPercentageSummary/<int:canteen_pk>",
-        CanteenPurchasesPercentageSummaryView.as_view(),
-        name="canteen_purchases_percentage_summary",
     ),
     path(
         "createDiagnosticsFromPurchases/<int:year>",
