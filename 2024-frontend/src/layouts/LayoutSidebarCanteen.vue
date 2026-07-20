@@ -39,7 +39,7 @@ const menuItems = computed(() =>  {
   }
   const gestionnairesPage = {
     text: canteenIsGroupe.value ? "Gestionnaires" : "Mes gestionnaires",
-    to: '/',
+    to: { name: "GestionnaireCantineGestionnaires" },
     active: gestionnairesActive
   }
   const cantinesGroupePage = {

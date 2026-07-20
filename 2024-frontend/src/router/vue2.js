@@ -116,11 +116,7 @@ const vue2routes = [
       title: "Actions anti-gaspi",
       siteMap: action,
     },
-  },
-  {
-    path: "/modifier-ma-cantine/:canteenUrlComponent/gestionnaires",
-    name: "CanteenManagers",
-  },
+  }
 ]
 
 export default vue2routes
