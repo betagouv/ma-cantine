@@ -112,7 +112,7 @@ const goToAccount = () => {
         {{ cell }}
       </template>
       <template v-else-if="colKey === 'status'">
-        <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
+        <DsfrBadge small :label="cell.label" :type="cell.type" />
       </template>
       <template v-else-if="colKey === 'actions'">
         <DsfrButton
