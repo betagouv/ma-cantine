@@ -131,11 +131,11 @@ class BaseImportView(ABC, APIView):
 
             # Header validation
             user_file_header = validata_response["resource_data"][0]
-            # Custom validation
+            # Custom header validation
             if not self._validate_file_header_custom(user_file_header):
                 self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
                 return self._get_success_response()
-            # Generic validation
+            # Generic header validation
             import_expected_header = file_import.get_expected_header_from_schema(schema_config["path"])
             self.errors = validata.process_header_errors(user_file_header, import_expected_header)
             if len(self.errors):
