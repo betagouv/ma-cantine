@@ -10,7 +10,100 @@ from data.factories.managerinvitation import ManagerInvitationFactory
 from data.models import ManagerInvitation
 
 
-class TestManagerInvitationApi(APITestCase):
+class CanteenClaimApiTest(APITestCase):
+    @authenticate
+    def test_canteen_claim_request(self):
+        canteen = CanteenFactory()
+        canteen.managers.clear()
+
+        response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], canteen.id)
+        self.assertEqual(body["name"], canteen.name)
+        user = authenticate.user
+        self.assertEqual(canteen.managers.first().id, user.id)
+        self.assertEqual(canteen.managers.count(), 1)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.claimed_by, user)
+        self.assertTrue(canteen.has_been_claimed)
+
+    @authenticate
+    def test_canteen_not_filled_can_be_claimed(self):
+        canteen = CanteenFactory()
+        canteen.managers.clear()
+        canteen.siret = None
+        canteen.save(skip_validations=True)
+
+        self.assertIsNone(canteen.siret)
+        self.assertFalse(canteen.is_filled)
+
+        response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], canteen.id)
+        self.assertEqual(body["name"], canteen.name)
+        user = authenticate.user
+        self.assertEqual(canteen.managers.first().id, user.id)
+        self.assertEqual(canteen.managers.count(), 1)
+        canteen.refresh_from_db()
+        self.assertEqual(canteen.claimed_by, user)
+        self.assertTrue(canteen.has_been_claimed)
+
+    @authenticate
+    def test_canteen_claim_request_fails_when_already_claimed(self):
+        canteen = CanteenFactory()
+        self.assertGreater(canteen.managers.count(), 0)
+        user = authenticate.user
+        self.assertFalse(canteen.managers.filter(id=user.id).exists())
+
+        response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(canteen.managers.filter(id=user.id).exists())
+        canteen.refresh_from_db()
+        self.assertFalse(canteen.has_been_claimed)
+
+    @authenticate
+    def test_undo_claim_canteen(self):
+        canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
+
+        response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(canteen.managers.filter(id=authenticate.user.id).exists())
+        canteen.refresh_from_db()
+        self.assertIsNone(canteen.claimed_by)
+        self.assertFalse(canteen.has_been_claimed)
+
+    @authenticate
+    def test_undo_claim_for_canteen_not_filled(self):
+        canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
+        canteen.siret = None
+        canteen.save(skip_validations=True)
+
+        self.assertIsNone(canteen.siret)
+        self.assertFalse(canteen.is_filled)
+
+        response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(canteen.managers.filter(id=authenticate.user.id).exists())
+        canteen.refresh_from_db()
+        self.assertIsNone(canteen.claimed_by)
+        self.assertFalse(canteen.has_been_claimed)
+
+    @authenticate
+    def test_undo_claim_canteen_fails_if_not_original_claimer(self):
+        other_user = UserFactory()
+        canteen = CanteenFactory(claimed_by=other_user, has_been_claimed=True, managers=[authenticate.user])
+
+        response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(canteen.managers.filter(id=authenticate.user.id).exists())
+        canteen.refresh_from_db()
+        self.assertTrue(canteen.has_been_claimed)
+        self.assertEqual(canteen.claimed_by, other_user)
+
+
+class CanteenManagerInvitationApiTest(APITestCase):
     def test_unauthenticated_add_manager_call(self):
         """
         When calling this API unauthenticated we expect a 403
@@ -257,3 +350,78 @@ class TestManagerInvitationApi(APITestCase):
         UserFactory(email="new.user@example.com")
 
         self.assertTrue(canteen.managers.filter(email="new.user@example.com").exists())
+
+
+class CanteenTeamRequestEmailTest(APITestCase):
+    @authenticate
+    @override_settings(DEFAULT_FROM_EMAIL="no-reply@example.com")
+    @override_settings(CONTACT_EMAIL="contact@example.com")
+    @override_settings(HOSTNAME="mysite.com")
+    @override_settings(SECURE="True")
+    def test_send_message(self):
+        canteen = CanteenFactory(
+            siret="76494221950672",
+            name="Hugo",
+            managers=[
+                UserFactory(email="mgmt1@example.com"),
+                UserFactory(email="mgmt2@example.com"),
+            ],
+        )
+
+        payload = {
+            "email": "test@example.com",
+            "name": "My name",
+            "message": "Please add me to the team",
+        }
+        response = self.client.post(reverse("canteen_team_request", kwargs={"canteen_pk": canteen.id}), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+
+        self.assertEqual(len(email.to), 2)
+        self.assertIn("mgmt1@example.com", email.to)
+        self.assertIn("mgmt2@example.com", email.to)
+        self.assertIn("Please add me to the team", email.body)
+        self.assertIn("76494221950672", email.body)
+        self.assertIn("Hugo", email.body)
+        self.assertIn(
+            f"https://mysite.com/modifier-ma-cantine/{canteen.id}--\nHugo/gestionnaires?email=test@example.com",
+            email.body,
+        )
+        self.assertEqual(len(email.reply_to), 1)
+        self.assertEqual(email.reply_to[0], "test@example.com")
+        self.assertEqual(email.from_email, "no-reply@example.com")
+
+    @authenticate
+    @override_settings(DEFAULT_FROM_EMAIL="no-reply@example.com")
+    @override_settings(CONTACT_EMAIL="contact@example.com")
+    @override_settings(HOSTNAME="mysite.com")
+    @override_settings(SECURE="True")
+    def test_send_message_no_managers(self):
+        canteen = CanteenFactory(siret="76494221950672", name="Hugo")
+        canteen.managers.clear()
+
+        payload = {
+            "email": "test@example.com",
+            "name": "My name",
+            "message": "Please add me to the team",
+        }
+        response = self.client.post(reverse("canteen_team_request", kwargs={"canteen_pk": canteen.id}), payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+
+        self.assertEqual(len(email.to), 1)
+        self.assertIn("contact@example.com", email.to)
+        self.assertIn("Please add me to the team", email.body)
+        self.assertIn("76494221950672", email.body)
+        self.assertIn("Hugo", email.body)
+        self.assertIn(
+            f"https://mysite.com/modifier-ma-cantine/{canteen.id}--\nHugo/gestionnaires?email=test@example.com",
+            email.body,
+        )
+        self.assertEqual(len(email.reply_to), 1)
+        self.assertEqual(email.reply_to[0], "test@example.com")
+        self.assertEqual(email.from_email, "no-reply@example.com")

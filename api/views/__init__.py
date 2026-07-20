@@ -2,24 +2,26 @@ from .blog import BlogPostsView, BlogPostView  # noqa: F401
 from .canteen import (  # noqa: F401
     ActionableCanteenRetrieveView,
     ActionableCanteensListView,
-    AddManagerView,
     CanteenMinistriesView,
     CanteenStatusBySirenView,
     CanteenStatusBySiretView,
-    ClaimCanteenView,
     PublicCanteenPreviewView,
     PublishedCanteenSingleView,
     PublishedCanteensView,
-    RemoveManagerView,
     RetrieveUpdateUserCanteenView,
     SendCanteenNotFoundEmail,
-    TeamJoinRequestView,
     TerritoryCanteensListView,
-    UndoClaimCanteenView,
     UserCanteenActions,
     UserCanteenPreviews,
     UserCanteenSummaries,
     UserCanteensView,
+)
+from .canteen_managers import (  # noqa: F401
+    AddManagerView,
+    ClaimCanteenView,
+    RemoveManagerView,
+    TeamJoinRequestView,
+    UndoClaimCanteenView,
 )
 from .canteen_create_import import CanteensCreateImportView  # noqa: F401
 from .canteen_export import UserCanteenListExportView  # noqa: F401

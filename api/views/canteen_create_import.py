@@ -13,7 +13,7 @@ from data.models import Canteen, ImportType, Sector
 from data.models.creation_source import CreationSource
 from macantine.utils import is_in_teledeclaration_or_correction
 
-from .canteen import AddManagerView
+from .canteen_managers import AddManagerView
 from .utils import camelize
 
 

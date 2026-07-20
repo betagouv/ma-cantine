@@ -13,7 +13,7 @@ from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType, Sector
 from macantine.utils import is_in_teledeclaration_or_correction
 
-from .canteen import AddManagerView
+from .canteen_managers import AddManagerView
 from .utils import camelize
 
 
