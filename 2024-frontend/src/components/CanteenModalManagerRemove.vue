@@ -68,7 +68,7 @@ const confirmRemove = () => {
   <DsfrModal
     v-if="manager"
     :opened="opened"
-    :title="`Voulez-vous supprimer ${manager.email} des gestionnaires de « ${canteenName} » ?`"
+    :title="`Voulez-vous supprimer «&nbsp;${manager.email}&nbsp;» des gestionnaires de «&nbsp;${canteenName}&nbsp;» ?`"
     @close="closeModal"
     :actions="modalActions"
   >

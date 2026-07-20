@@ -61,7 +61,7 @@ const submit = async () => {
 <template>
   <DsfrModal
     :opened="opened"
-    :title="`Ajouter un gestionnaire à « ${canteenName} »`"
+    :title="`Ajouter un gestionnaire à «&nbsp;${canteenName}&nbsp;»`"
     @close="closeModal"
     :actions="[
       {
