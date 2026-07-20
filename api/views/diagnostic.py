@@ -64,7 +64,7 @@ class DiagnosticListCreateView(ListCreateAPIView):
 
     def get_queryset(self):
         canteen = self._get_canteen()
-        return Diagnostic.objects.filter(canteen=canteen)
+        return Diagnostic.all_objects.filter(canteen=canteen)
 
     def perform_create(self, serializer):
         try:

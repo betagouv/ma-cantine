@@ -68,14 +68,6 @@ class DiagnosticTeledeclarationCancelView(APIView):
         return HttpResponse(status=200)
 
 
-class DiagnosticTeledeclarationListView(ListAPIView):
-    serializer_class = DiagnosticTeledeclaredAnalysisSerializer
-    ordering_fields = ["year"]
-
-    def get_queryset(self):
-        return Diagnostic.objects.valid_td_all_years(CAMPAIGN_DATES.keys()).order_by("teledeclaration_date")
-
-
 @extend_schema_view(
     get=extend_schema(
         summary="Obtenir une représentation PDF de la télédéclaration.",
