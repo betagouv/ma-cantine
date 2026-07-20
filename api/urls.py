@@ -71,6 +71,7 @@ from api.views import (
     UpdateUserView,
     UserCanteenActions,
     UserCanteenListExportView,
+    UserCanteenValidationCheckView,
     UserCanteenPreviews,
     UserCanteenSummaries,
     UserCanteensView,
@@ -107,6 +108,11 @@ urlpatterns = {
         name="user_canteen_list_export",
     ),
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
+    path(
+        "canteens/<int:canteen_pk>/validation-check/",
+        UserCanteenValidationCheckView.as_view(),
+        name="canteen_validation_check",
+    ),
     path(
         "canteens/<int:canteen_pk>/purchases/",
         PurchaseCreateView.as_view(),

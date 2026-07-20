@@ -15,6 +15,7 @@ from .canteen import (  # noqa: F401
     UserCanteenPreviews,
     UserCanteenSummaries,
     UserCanteensView,
+    UserCanteenValidationCheckView,
 )
 from .canteen_managers import (  # noqa: F401
     AddManagerView,
