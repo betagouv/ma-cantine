@@ -66,10 +66,10 @@ class IsCanteenManagerUrlParam(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        canteen_pk = view.kwargs.get("canteen_pk", None)
-        if not canteen_pk:
+        canteen_id = view.kwargs.get("canteen_pk", None)
+        if not canteen_id:
             return False
-        canteen = get_object_or_404(Canteen.objects.only("managers"), pk=canteen_pk)
+        canteen = get_object_or_404(Canteen.objects.only("managers"), pk=canteen_id)
         return canteen.managers.filter(id=request.user.id).exists()
 
 

@@ -105,7 +105,7 @@ const claimCanteen = (id) => {
 }
 
 const teamJoinRequest = (id, userInfos) => {
-  return fetch(`/api/v1/teamJoinRequest/${id}/`, {
+  return fetch(`/api/v1/canteens/${id}/teamJoinRequest/`, {
     method: "POST",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",

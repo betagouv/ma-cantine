@@ -447,7 +447,7 @@ export default new Vuex.Store({
     },
 
     sendCanteenTeamRequest(context, { canteenId, payload }) {
-      return fetch(`/api/v1/teamJoinRequest/${canteenId}/`, {
+      return fetch(`/api/v1/canteens/${canteenId}/teamJoinRequest/`, {
         method: "POST",
         headers,
         body: JSON.stringify(payload),

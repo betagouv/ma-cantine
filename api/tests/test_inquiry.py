@@ -112,7 +112,7 @@ class TestEmail(APITestCase):
             "name": "My name",
             "message": "Please add me to the team",
         }
-        response = self.client.post(reverse("canteen_team_request", kwargs={"pk": canteen.id}), payload)
+        response = self.client.post(reverse("canteen_team_request", kwargs={"canteen_pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 1)
@@ -146,7 +146,7 @@ class TestEmail(APITestCase):
             "name": "My name",
             "message": "Please add me to the team",
         }
-        response = self.client.post(reverse("canteen_team_request", kwargs={"pk": canteen.id}), payload)
+        response = self.client.post(reverse("canteen_team_request", kwargs={"canteen_pk": canteen.id}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 1)
