@@ -32,7 +32,7 @@
     <v-card-actions>
       <v-btn
         :to="{
-          name: 'CanteenManagers',
+          name: 'GestionnaireCantineUtilisateurs',
           params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
         }"
         outlined
