@@ -55,6 +55,7 @@ class DiagnosticListCreateView(ListCreateAPIView):
     model = Diagnostic
     serializer_class = ManagerDiagnosticSerializer
     pagination_class = LongPagination
+    ordering_fields = ["year", "-year"]
     ordering = "-year"
 
     def _get_canteen(self):
@@ -158,6 +159,7 @@ class DiagnosticsToTeledeclareListView(ListAPIView):
     model = Diagnostic
     serializer_class = DiagnosticAndCanteenSerializer
     pagination_class = LongPagination
+    ordering_fields = ["modification_date"]
     ordering = "modification_date"
 
     def get_queryset(self):
