@@ -7,7 +7,7 @@ from django.db.models import Exists, OuterRef
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, get_object_or_404
+from rest_framework.generics import ListCreateAPIView, ListAPIView, UpdateAPIView, get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 
@@ -31,6 +31,17 @@ from macantine.utils import is_in_correction
 logger = logging.getLogger(__name__)
 
 
+class LongPagination(LimitOffsetPagination):
+    default_limit = 100
+    max_limit = 100
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Lister les diagnostics.",
+        tags=["Bilans"],
+    )
+)
 @extend_schema_view(
     post=extend_schema(
         summary="Créer un nouveau diagnostic.",
@@ -38,15 +49,21 @@ logger = logging.getLogger(__name__)
         tags=["Bilans"],
     )
 )
-class DiagnosticCreateView(CreateAPIView):
+class DiagnosticListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
     model = Diagnostic
     serializer_class = ManagerDiagnosticSerializer
+    pagination_class = LongPagination
+    ordering = "-year"
 
     def _get_canteen(self):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
         return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_queryset(self):
+        canteen = self._get_canteen()
+        return Diagnostic.objects.filter(canteen=canteen)
 
     def perform_create(self, serializer):
         try:
@@ -136,16 +153,11 @@ class EmailDiagnosticImportFileView(APIView):
         return HttpResponse()
 
 
-class DiagnosticsToTeledeclarePagination(LimitOffsetPagination):
-    default_limit = 100
-    max_limit = 100
-
-
 class DiagnosticsToTeledeclareListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     model = Diagnostic
     serializer_class = DiagnosticAndCanteenSerializer
-    pagination_class = DiagnosticsToTeledeclarePagination
+    pagination_class = LongPagination
     ordering = "modification_date"
 
     def get_queryset(self):
