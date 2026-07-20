@@ -263,7 +263,7 @@ const routes = [
         name: "GestionnaireCantineUtilisateurs",
         component: GestionnaireCantineUtilisateurs,
         meta: {
-          title: "Mes gestionnaires",
+          title: "Gestionnaires",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
