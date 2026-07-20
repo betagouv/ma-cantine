@@ -68,7 +68,7 @@ const getDropdownLinks = (canteen) => {
     },
     {
       label: "Gérer les gestionnaires",
-      to: { name: "GestionnaireCantineUtilisateurs", params: { canteenUrlComponent: canteenUrlComponent } },
+      to: { name: "GestionnaireCantineGestionnaires", params: { canteenUrlComponent: canteenUrlComponent } },
     },
   ]
 

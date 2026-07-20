@@ -11,7 +11,7 @@ import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRes
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
 import GestionnaireCantineTeledeclarationsListe from "@/views/GestionnaireCantineTeledeclarationsListe.vue"
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
-import GestionnaireCantineUtilisateurs from "@/views/GestionnaireCantineUtilisateurs.vue"
+import GestionnaireCantineGestionnaires from "@/views/GestionnaireCantineGestionnaires.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImportAchatsID from "@/views/GestionnaireImportAchatsID.vue"
@@ -260,8 +260,8 @@ const routes = [
       },
       {
         path: "gestionnaires",
-        name: "GestionnaireCantineUtilisateurs",
-        component: GestionnaireCantineUtilisateurs,
+        name: "GestionnaireCantineGestionnaires",
+        component: GestionnaireCantineGestionnaires,
         meta: {
           title: "Gestionnaires",
           breadcrumbs: [
