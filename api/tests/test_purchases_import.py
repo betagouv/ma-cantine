@@ -314,7 +314,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 11)
+        self.assertEqual(len(errors), 10)
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # siret
         self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # description
         self.assertEqual(
@@ -329,12 +329,7 @@ class PurchasesImportApiErrorTest(APITestCase):
             errors.pop(0)["message"],
             "La date doit être écrite sous la forme `aaaa-mm-jj`",
         )
-        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # price
-        self.assertTrue(
-            errors.pop(0)["message"].startswith(
-                "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal"
-            )
-        )
+        self.assertEqual(errors.pop(0)["message"], "La valeur est obligatoire et doit être renseignée")  # prix_ht
         self.assertTrue(
             errors.pop(0)["message"].startswith("NOPE ne respecte pas le motif imposé"),
         )
@@ -345,6 +340,27 @@ class PurchasesImportApiErrorTest(APITestCase):
             errors.pop(0)["message"],
             "La ligne n'a pas le même nombre de cellules que l'en-tête",
         )
+
+    @authenticate
+    def test_price_not_number_error(self):
+        """
+        A file should not be valid if the price is not a number
+        """
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_bad_one_error.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.PURCHASE, file_path)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 1)
+        self.assertTrue(errors.pop(0)["message"].endswith("doit être un nombre décimal."))
 
     @authenticate
     def test_canteen_not_found_with_siret(self):
@@ -417,6 +433,7 @@ class PurchasesImportApiErrorTest(APITestCase):
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
         body = response.json()
         self.assertEqual(body["count"], 0)
         self.assertTrue(len(body["errors"]) > 0)
@@ -530,14 +547,31 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertFalse(ImportFailure.objects.exists())
 
     @authenticate
-    def test_import_comma_separated_numbers(self):
-        """
-        Tests that can import a file with comma-separated numbers
-        """
+    def test_import_number_decimal_point(self):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_good_separator_comma.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(errors), 0, errors)
+
+        purchase = Purchase.objects.filter(description="Pommes, rouges").first()
+        self.assertEqual(purchase.prix_ht, Decimal("90.11"))
+
+    @authenticate
+    def test_import_number_decimal_comma(self):
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_decimal_comma.csv"
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
@@ -576,6 +610,26 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(purchase.prix_ht, Decimal("90.11"))
 
     @authenticate
+    def test_import_excel_file_number_decimal_comma(self):
+        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        self.assertEqual(Purchase.objects.count(), 0)
+
+        file_path = "./api/tests/files/achats/purchases_good_decimal_comma.xlsx"
+        with open(file_path, "rb") as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(errors), 0, errors)
+
+        purchase = Purchase.objects.filter(description="Pommes, rouges, local").first()
+        self.assertEqual(purchase.prix_ht, Decimal("90.11"))
+
+    @authenticate
     def test_import_different_separators(self):
         """
         Tests that can import a well formatted purchases file
@@ -583,13 +637,22 @@ class PurchasesImportApiSuccessTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
+        # comma
+        file_path = "./api/tests/files/achats/purchases_good_separator_comma.csv"
+        with open(file_path) as purchase_file:
+            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertFalse(ImportFailure.objects.exists())
+
         # tab
         file_path = "./api/tests/files/achats/purchases_good_separator_tab.tsv"
         with open(file_path) as purchase_file:
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(Purchase.objects.count(), 1 + 1)
         self.assertFalse(ImportFailure.objects.exists())
 
         # semicolon
@@ -598,7 +661,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 1 + 1)
+        self.assertEqual(Purchase.objects.count(), 2 + 1)
         self.assertFalse(ImportFailure.objects.exists())
 
     @authenticate

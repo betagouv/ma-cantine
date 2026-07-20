@@ -50,11 +50,12 @@
       "constraints": {
         "required": true
       },
-      "description": "Utiliser le point comme séparateur décimal",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "prix_ht",
       "title": "Prix HT de l'achat",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
