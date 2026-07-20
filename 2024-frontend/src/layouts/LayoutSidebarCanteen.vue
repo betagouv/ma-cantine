@@ -27,7 +27,7 @@ const canteenBadgeGroupe = computed(() => {
 /* Sidebar links */
 const menuItems = computed(() =>  {
   const informationActive = currentRoute.value === "GestionnaireCantineInformations"
-  const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
+  const gestionnairesActive = currentRoute.value === "GestionnaireCantineUtilisateurs"
   const pagePubliqueActive = currentRoute.value === "GestionnaireCantinePagePublique"
   const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireCantineTeledeclarationsListe"
   const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
