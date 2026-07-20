@@ -52,14 +52,14 @@ const closeRemoveModal = () => {
       <CanteenModalManagerAdd
         v-if="canteenInformation"
         :opened="addModalOpened"
-        :canteen-id="canteenInformation.id"
+        :canteen="canteenInformation"
         @close="addModalOpened = false"
         @updated="updateManagersList"
       />
       <CanteenModalManagerRemove
         v-if="canteenInformation"
         :opened="removeModalOpened"
-        :canteen-id="canteenInformation.id"
+        :canteen="canteenInformation"
         :manager="managerToRemove"
         @close="closeRemoveModal"
         @updated="updateManagersList"

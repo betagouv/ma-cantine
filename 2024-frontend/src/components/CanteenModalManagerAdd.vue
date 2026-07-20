@@ -1,15 +1,19 @@
 <script setup>
-import { ref, reactive } from "vue"
+import { ref, reactive, computed } from "vue"
 import { useVuelidate } from "@vuelidate/core"
 import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import { useRootStore } from "@/stores/root"
 import managersService from "@/services/managers.js"
 
-const props = defineProps(["opened", "canteenId"])
+const props = defineProps(["opened", "canteen"])
 const emit = defineEmits(["close", "updated"])
 const store = useRootStore()
 const loading = ref(false)
+
+/* Canteen informations */
+const canteenId = computed(() => props.canteen.id)
+const canteenName = computed(() => props.canteen.name)
 
 /* Validation */
 const form = reactive({email: ""})
@@ -32,7 +36,7 @@ const submit = async () => {
   loading.value = true
   const emailValue = form.email.trim()
   managersService
-    .addManager(props.canteenId, emailValue)
+    .addManager(canteenId.value, emailValue)
     .then((response) => {
       if (response.status === "error" || response instanceof Error) {
         store.notifyServerError(response)
@@ -57,7 +61,7 @@ const submit = async () => {
 <template>
   <DsfrModal
     :opened="opened"
-    title="Ajouter un gestionnaire à cet établissement"
+    :title="`Ajouter un gestionnaire à « ${canteenName} »`"
     @close="closeModal"
     :actions="[
       {
@@ -80,7 +84,7 @@ const submit = async () => {
       Pour ajouter un gestionnaire à cet établissement il vous suffit de renseignez son adresse e-mail.
     </p>
     <p>
-      Si l'adresse mail correspond à un compte utilisateur de <em>ma cantine</em>, il sera automatiquement ajouté aux gestionnaires de cet établissement, si non, une invitation pour créer son compte lui sera envoyée par e-mail.
+      Si l'adresse mail existe sur <em>ma cantine</em>, il sera automatiquement ajouté, si non une invitation pour créer son compte lui sera envoyée par e-mail.
     </p>
     <DsfrInputGroup
       v-model="form.email"

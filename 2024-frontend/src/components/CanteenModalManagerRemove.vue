@@ -3,11 +3,16 @@ import { ref, computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import managersService from "@/services/managers.js"
 
-const props = defineProps(["opened", "canteenId", "manager"])
+const props = defineProps(["opened", "canteen", "manager"])
 const emit = defineEmits(["close", "updated"])
 const store = useRootStore()
 const loading = ref(false)
 
+/* Canteen */
+const canteenId = computed(() => props.canteen.id)
+const canteenName = computed(() => props.canteen.name)
+
+/* Actions */
 const modalActions = computed(() => {
   return [
     {
@@ -37,7 +42,7 @@ const confirmRemove = () => {
   loading.value = true
   const email = props.manager.email.trim()
   managersService
-    .removeManager(props.canteenId, email)
+    .removeManager(canteenId.value, email)
     .then((response) => {
       if (response.status === "error" || response instanceof Error) {
         store.notifyServerError(response)
@@ -63,12 +68,12 @@ const confirmRemove = () => {
   <DsfrModal
     v-if="manager"
     :opened="opened"
-    :title="`Voulez-vous supprimer ${manager.email} de la liste des gestionnaires de cet établissement ?`"
+    :title="`Voulez-vous supprimer ${manager.email} des gestionnaires de « ${canteenName} » ?`"
     @close="closeModal"
     :actions="modalActions"
   >
     <p>
-      En le supprimant il ne sera plus en mesure de modifier l'établissement et de créer ou modifier ses télédéclarations.
+      En le supprimant il ne sera plus en mesure de le modifier et de créer ou modifier ses télédéclarations.
     </p>
   </DsfrModal>
 </template>
