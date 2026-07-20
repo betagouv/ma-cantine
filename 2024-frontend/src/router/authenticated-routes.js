@@ -11,6 +11,7 @@ import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRes
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
 import GestionnaireCantineTeledeclarationsListe from "@/views/GestionnaireCantineTeledeclarationsListe.vue"
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
+import GestionnaireCantineUtilisateurs from "@/views/GestionnaireCantineUtilisateurs.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImportAchatsID from "@/views/GestionnaireImportAchatsID.vue"
@@ -251,6 +252,18 @@ const routes = [
         component: GestionnaireCantineTeledeclarationsListe,
         meta: {
           title: "Toutes mes télédéclarations",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+          ],
+        },
+      },
+      {
+        path: "gestionnaires",
+        name: "GestionnaireCantineUtilisateurs",
+        component: GestionnaireCantineUtilisateurs,
+        meta: {
+          title: "Mes gestionnaires",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
