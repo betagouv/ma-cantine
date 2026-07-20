@@ -67,15 +67,15 @@ const getDropdownLinks = (canteen) => {
       to: { name: "PurchasesHome" },
     },
     {
-      label: "Gérer les collaborateurs",
-      to: { name: "CanteenManagers", params: { canteenUrlComponent: canteenUrlComponent } },
+      label: "Gérer les gestionnaires",
+      to: { name: "GestionnaireCantineGestionnaires", params: { canteenUrlComponent: canteenUrlComponent } },
     },
   ]
 
   if (canteen.productionType === "groupe") {
     links.push({
       to: { name: "GestionnaireCantineGroupe", params: { canteenUrlComponent: canteenUrlComponent } },
-      label: "Gérer les restaurants satellites",
+      label: "Gérer les cantines du groupe",
     })
   }
   return links
