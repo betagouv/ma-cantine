@@ -1,14 +1,22 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, useId } from "vue"
 
 const props = defineProps(["src", "alt", "disabled", "showAlt"])
 const emit = defineEmits(["delete", "saveFile", "saveAlt"])
 
 /* Input file */
+const fileInputId = useId()
+const fileInput = ref(null)
 const file = ref(null)
-const updateFile = (files) => {
-  file.value = files?.[0] || null
-  if (!props.alt) saveFile()
+
+const selectFile = () => {
+  fileInput.value?.click()
+}
+
+const onFileChange = (event) => {
+  file.value = event.target.files?.[0] || null
+  if (file.value) saveFile()
+  event.target.value = ""
 }
 
 /* Alt Input */
@@ -33,15 +41,8 @@ const deleteImage = () => {
 
 <template>
   <div class="app-form-image">
-    <div class="fr-card fr-p-1w">
-      <img v-if="src" class="app-form-image__image fr-background-alt--grey" :src="src" :alt="alt" />
-      <DsfrFileUpload
-        v-else
-        class="app-form-image__file-upload"
-        label="Télécharger une image"
-        accept="image/*"
-        @change="updateFile"
-      />
+    <div v-if="src" class="fr-card fr-p-1w">
+      <img class="app-form-image__image fr-background-alt--grey" :src="src" :alt="alt" />
       <div v-if="showAlt" class="fr-mt-2w">
         <DsfrInput
           v-model="altInput"
@@ -66,12 +67,30 @@ const deleteImage = () => {
         icon="fr-icon-delete-line"
         label="Supprimer"
         secondary
-        size="sm"
         :icon-only="true"
         :disabled="disabled"
         @click="deleteImage"
       />
     </div>
+    <DsfrButton
+      v-else
+      label="Ajouter une image"
+      secondary
+      icon="ri-image-add-line"
+      :disabled="disabled"
+      @click="selectFile"
+    />
+    <label :for="fileInputId" class="fr-hidden">
+      Ajouter une image
+      <input
+        :id="fileInputId"
+        ref="fileInput"
+        type="file"
+        hidden
+        accept="image/*"
+        @change="onFileChange"
+      />
+    </label>
   </div>
 </template>
 
