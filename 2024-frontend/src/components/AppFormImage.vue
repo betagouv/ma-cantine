@@ -1,7 +1,7 @@
 <script setup>
 import { ref, useId } from "vue"
 
-defineProps(["src", "alt", "disabled", "showEdit"])
+defineProps(["src", "alt", "disabled", "showEdit", "emptyMessage"])
 const emit = defineEmits(["delete", "change"])
 
 /* File */
@@ -40,7 +40,7 @@ const selectFile = () => {
     </div>
 
     <div v-else class="ma-cantine--flex-center ma-cantine--flex-column fr-p-3w">
-      <p>Aucune image enregistrée</p>
+      <p>{{ emptyMessage }}</p>
       <DsfrButton
         label="Ajouter"
         tertiary

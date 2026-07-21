@@ -59,6 +59,7 @@ const successLogo = (response) => {
       @change="onFileChange"
       :show-edit="true"
       alt="Logo de l'établissement"
+      empty-message="Vous n'avez pas encore de logo pour l'établissement."
     />
   </div>
 </template>
