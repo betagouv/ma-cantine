@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.40.2](https://github.com/betagouv/ma-cantine/compare/v2026.40.1...v2026.40.2) (2026-07-21)
+
+
+### Améliorations
+
+* **Imports:** Achats: permettre de passer un prix_ht avec séparateur virgule ([#6892](https://github.com/betagouv/ma-cantine/issues/6892)) ([2c112a4](https://github.com/betagouv/ma-cantine/commit/2c112a420eff48a7f56aba312310b97cc1bd37a8))
+
+
+### Technique
+
+* **Achats:** API: améliorer les urls pour les endpoint 'summary' & 'purchaseSummary' ([#6912](https://github.com/betagouv/ma-cantine/issues/6912)) ([6ba71d5](https://github.com/betagouv/ma-cantine/commit/6ba71d5a5b76932282cb2ee4aa4b2384d33c79d0))
+* **Cantines:** API: améliorer l'url pour l'endpoint teamJoin ([#6913](https://github.com/betagouv/ma-cantine/issues/6913)) ([bbc668c](https://github.com/betagouv/ma-cantine/commit/bbc668c8aea8ffb5dd912696bc2d238304cab9ed))
+* **Cantines:** API: bouger la logique dédiée aux gestionnaires dans un nouveau fichier `canteen_managers.py` ([#6915](https://github.com/betagouv/ma-cantine/issues/6915)) ([02d29cc](https://github.com/betagouv/ma-cantine/commit/02d29ccae513e05bf6fa5171bac8d58f1508b67c))
+
 ## [2026.40.1](https://github.com/betagouv/ma-cantine/compare/v2026.40.0...v2026.40.1) (2026-07-13)
 
 
