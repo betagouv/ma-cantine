@@ -29,6 +29,12 @@ const deleteImage = (imageToDelete) => {
   updateImages(nextImages)
 }
 
+const saveAlt = (imageToSave, altText) => {
+  const imageIndex = displayImages.value.findIndex((image) => image.image === imageToSave.image)
+  displayImages.value[imageIndex].altText = altText
+  updateImages(displayImages.value)
+}
+
 const updateImages = async (value) => {
   isSaving.value = true
   try {
@@ -60,9 +66,12 @@ const successImages = (response) => {
       v-for="image in displayImages"
       :key="image.image"
       :src="image.image"
+      :alt="image.altText"
       :disabled="isSaving"
+      :show-alt="true"
       class="fr-mb-2w"
       @delete="deleteImage(image)"
+      @save-alt="saveAlt(image, $event)"
     />
 
     <AppFormImage

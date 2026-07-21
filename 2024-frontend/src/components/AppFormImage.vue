@@ -1,21 +1,29 @@
 <script setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
 
-const props = defineProps(["src", "alt", "disabled"])
+const props = defineProps(["src", "alt", "disabled", "showAlt"])
 const emit = defineEmits(["delete", "save"])
+
+/* Input file */
 const fileInput = ref("")
 const file = ref(null)
-
 const updateFile = (files) => {
   file.value = files?.[0] || null
-  if (!props.alt) emit("save", file.value)
+  if (!props.alt) saveFile()
 }
 
-const save = () => {
-  if (!file.value) return
+/* Alt Input */
+const altInput = ref(props.alt || "")
+const altInitial = computed(() => props.alt || "")
+const altChanged = computed(() => altInitial.value !== altInput.value)
+
+/* Save */
+const saveFile = () => {
   emit("save", file.value)
-  file.value = null
-  fileInput.value = ""
+}
+
+const saveAlt = () => {
+  emit("saveAlt", altInput.value)
 }
 </script>
 
@@ -23,21 +31,30 @@ const save = () => {
   <div class="app-form-image fr-card fr-p-1w">
     <img v-if="src" class="app-form-image__image fr-background-alt--grey" :src="src" :alt="alt" />
     <DsfrFileUpload
-      v-if="!src"
+      v-else
       v-model="fileInput"
       label="Télécharger une image"
       accept="image/*"
       @change="updateFile"
     />
-    <DsfrButton
-      v-if="alt"
-      label="Enregistrer l'image"
-      class="fr-mt-2w"
-      secondary
-      icon="fr-icon-save-line"
-      :disabled="disabled || !file"
-      @click="save"
-    />
+    <div v-if="showAlt" class="fr-mt-2w">
+      <DsfrInput
+        v-model="altInput"
+        :isTextarea="true"
+        label="Description de l'image"
+        label-visible
+        hint="Optionnel - Cette description permet de fournir aux personnes malvoyantes une alternative textuelle à l'image. Si cette dernière contient du texte, pensez à le répéter ici."
+      />
+      <DsfrButton
+        v-if="altChanged"
+        label="Enregistrer la description"
+        class="fr-mt-1w"
+        secondary
+        icon="fr-icon-save-line"
+        :disabled="disabled"
+        @click="saveAlt"
+      />
+    </div>
     <DsfrButton
       v-if="src"
       class="app-form-image__delete fr-background-default--grey"
