@@ -671,14 +671,13 @@ class SendCanteenNotFoundEmail(APIView):
 class TeamJoinRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, canteen_pk, *args, **kwargs):
         try:
             email = request.data.get("email", "").strip()
             validate_email(email)
             name = request.data.get("name")
             message = request.data.get("message")
-            canteen_id = kwargs.get("pk")
-            canteen = Canteen.objects.get(pk=canteen_id)
+            canteen = Canteen.objects.get(pk=canteen_pk)
             canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
             url = f"{'https' if settings.SECURE else 'http'}://{settings.HOSTNAME}{canteen_path}/gestionnaires?email={email}"
 
