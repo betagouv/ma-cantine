@@ -62,22 +62,24 @@ const successImages = (response) => {
     <h4 class="fr-h6 fr-mb-1w">Images de l'établissement</h4>
     <p class="fr-text--sm fr-mb-2w">Vous pouvez ajouter jusqu'à 3 images.</p>
 
-    <AppFormImage
-      v-for="image in displayImages"
-      :key="image.image"
-      :src="image.image"
-      :alt="image.altText"
-      :disabled="isSaving"
-      :show-alt="true"
-      class="fr-mb-2w"
-      @delete="deleteImage(image)"
-      @save-alt="saveAlt(image, $event)"
-    />
-
-    <AppFormImage
-      v-if="canAddImage"
-      :disabled="isSaving"
-      @save-file="saveImage"
-    />
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <AppFormImage
+        v-for="image in displayImages"
+        :key="image.image"
+        :src="image.image"
+        :alt="image.altText"
+        :disabled="isSaving"
+        :show-alt="true"
+        @delete="deleteImage(image)"
+        @save-alt="saveAlt(image, $event)"
+        class="fr-col-12 fr-col-md-4"
+      />
+      <AppFormImage
+        v-if="canAddImage"
+        :disabled="isSaving"
+        class="fr-col-12 fr-col-md-4"
+        @save-file="saveImage"
+      />
+    </div>
   </div>
 </template>

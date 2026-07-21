@@ -28,44 +28,47 @@ const saveAlt = () => {
 </script>
 
 <template>
-  <div class="app-form-image fr-card fr-p-1w">
-    <img v-if="src" class="app-form-image__image fr-background-alt--grey" :src="src" :alt="alt" />
-    <DsfrFileUpload
-      v-else
-      v-model="fileInput"
-      label="Télécharger une image"
-      accept="image/*"
-      @change="updateFile"
-    />
-    <div v-if="showAlt" class="fr-mt-2w">
-      <DsfrInput
-        v-model="altInput"
-        :isTextarea="true"
-        label="Description de l'image"
-        label-visible
-        hint="Optionnel - Cette description permet de fournir aux personnes malvoyantes une alternative textuelle à l'image. Si cette dernière contient du texte, pensez à le répéter ici."
+  <div class="app-form-image">
+    <div class="fr-card fr-p-1w">
+      <img v-if="src" class="app-form-image__image fr-background-alt--grey" :src="src" :alt="alt" />
+      <DsfrFileUpload
+        v-else
+        class="app-form-image__file-upload"
+        v-model="fileInput"
+        label="Télécharger une image"
+        accept="image/*"
+        @change="updateFile"
       />
+      <div v-if="showAlt" class="fr-mt-2w">
+        <DsfrInput
+          v-model="altInput"
+          :isTextarea="true"
+          label="Description de l'image"
+          label-visible
+          hint="Optionnel - Cette description permet de fournir aux personnes malvoyantes une alternative textuelle à l'image. Si cette dernière contient du texte, pensez à le répéter ici."
+        />
+        <DsfrButton
+          v-if="altChanged"
+          label="Enregistrer la description"
+          class="fr-mt-1w"
+          secondary
+          icon="fr-icon-save-line"
+          :disabled="disabled"
+          @click="saveAlt"
+        />
+      </div>
       <DsfrButton
-        v-if="altChanged"
-        label="Enregistrer la description"
-        class="fr-mt-1w"
+        v-if="src"
+        class="app-form-image__delete fr-background-default--grey"
+        icon="fr-icon-delete-line"
+        label="Supprimer"
         secondary
-        icon="fr-icon-save-line"
+        size="sm"
+        :icon-only="true"
         :disabled="disabled"
-        @click="saveAlt"
+        @click="emit('delete')"
       />
     </div>
-    <DsfrButton
-      v-if="src"
-      class="app-form-image__delete fr-background-default--grey"
-      icon="fr-icon-delete-line"
-      label="Supprimer"
-      secondary
-      size="sm"
-      :icon-only="true"
-      :disabled="disabled"
-      @click="emit('delete')"
-    />
   </div>
 </template>
 
@@ -76,13 +79,13 @@ const saveAlt = () => {
   &__image {
     display: block;
     width: 100%;
-    max-height: 35vh;
+    height: 35vh;
     object-fit: contain;
   }
   &__delete {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: 0rem;
+    right: 0rem;
   }
 }
 </style>
