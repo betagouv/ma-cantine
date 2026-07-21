@@ -5,7 +5,6 @@ const props = defineProps(["src", "alt", "disabled", "showAlt"])
 const emit = defineEmits(["delete", "saveFile", "saveAlt"])
 
 /* Input file */
-const fileInput = ref("")
 const file = ref(null)
 const updateFile = (files) => {
   file.value = files?.[0] || null
@@ -25,6 +24,11 @@ const saveFile = () => {
 const saveAlt = () => {
   emit("saveAlt", altInput.value)
 }
+
+const deleteImage = () => {
+  file.value = null
+  emit("delete")
+}
 </script>
 
 <template>
@@ -34,7 +38,6 @@ const saveAlt = () => {
       <DsfrFileUpload
         v-else
         class="app-form-image__file-upload"
-        v-model="fileInput"
         label="Télécharger une image"
         accept="image/*"
         @change="updateFile"
@@ -66,7 +69,7 @@ const saveAlt = () => {
         size="sm"
         :icon-only="true"
         :disabled="disabled"
-        @click="emit('delete')"
+        @click="deleteImage"
       />
     </div>
   </div>
