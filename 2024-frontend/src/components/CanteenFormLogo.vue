@@ -15,18 +15,16 @@ watch( () => props.logo, (newLogo) => {
   displayLogo.value = newLogo || null
 })
 
-/* File input */
-const onFileChange = async (event) => {
-  const file = event.target.files?.[0]
-  event.target.value = ""
+/* Actions */
+const saveLogo = async (file) => {
   if (!file) return
   const base64 = await toBase64(file)
   await updateLogo(base64)
 }
 
-/* Actions */
 const deleteLogo = () => updateLogo(null)
 
+/* Update */
 const updateLogo = async (value) => {
   isSaving.value = true
   try {
@@ -56,10 +54,7 @@ const successLogo = (response) => {
       :src="displayLogo"
       :disabled="isSaving"
       @delete="deleteLogo"
-      @change="onFileChange"
-      :show-edit="true"
-      alt="Logo de l'établissement"
-      empty-message="Vous n'avez pas encore de logo pour l'établissement."
+      @save="saveLogo"
     />
   </div>
 </template>
