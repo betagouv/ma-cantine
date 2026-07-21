@@ -7,16 +7,20 @@ const props = defineProps(["canteenId", "description"])
 const store = useRootStore()
 const descriptionInput = ref(props.description)
 const descriptionInitial = ref(props.description)
+const isSaving = ref(false)
 const hasChanged = computed(() => descriptionInput.value !== descriptionInitial.value)
 
 /* Save */
 const saveDescription = () => {
   if (!descriptionInput.value) return
+  isSaving.value = true
   canteenService.updateCanteen({ publicationComments: descriptionInput.value }, props.canteenId).then((response) => {
     if (!response?.id) store.notifyServerError(response)
     else successDescription(response)
   }).catch((error) => {
     store.notifyServerError(error)
+  }).finally(() => {
+    isSaving.value = false
   })
 }
 
@@ -43,10 +47,11 @@ const successDescription = (response) => {
       class="fr-mb-2w"
     />
     <DsfrButton
+      v-if="hasChanged"
       label="Enregistrer la description de l'établissement"
       icon="ri-save-line"
       secondary
-      :disabled="!hasChanged"
+      :disabled="isSaving"
       @click="saveDescription"
     />
   </div>
