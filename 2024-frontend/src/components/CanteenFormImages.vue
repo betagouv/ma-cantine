@@ -17,16 +17,13 @@ watch(() => props.images, (newImages) => {
   displayImages.value = newImages || []
 })
 
-/* File input */
-const onFileChange = async (event) => {
-  const file = event.target.files?.[0]
-  event.target.value = ""
+/* Actions */
+const saveImage = async (file) => {
   if (!file || !canAddImage.value) return
   const base64 = await toBase64(file)
   await updateImages([...displayImages.value, { image: base64 }])
 }
 
-/* Actions */
 const deleteImage = (imageToDelete) => {
   const nextImages = displayImages.value.filter((image) => image.image !== imageToDelete.image)
   updateImages(nextImages)
@@ -63,7 +60,6 @@ const successImages = (response) => {
       v-for="image in displayImages"
       :key="image.image"
       :src="image.image"
-      alt="Image de l'établissement"
       :disabled="isSaving"
       class="fr-mb-2w"
       @delete="deleteImage(image)"
@@ -71,9 +67,8 @@ const successImages = (response) => {
 
     <AppFormImage
       v-if="canAddImage"
-      alt="Image de l'établissement"
       :disabled="isSaving"
-      @change="onFileChange"
+      @save="saveImage"
     />
   </div>
 </template>
