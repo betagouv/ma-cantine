@@ -1,7 +1,7 @@
 <script setup>
 import { ref, useId } from "vue"
 
-defineProps(["src", "alt", "disabled"])
+defineProps(["src", "alt", "disabled", "showEdit"])
 const emit = defineEmits(["delete", "change"])
 
 /* File */
@@ -19,8 +19,9 @@ const selectFile = () => {
         <img :src="src" :alt="alt" class="app-form-image__image" />
       </div>
 
-      <div v-if="src" class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle fr-grid-row--center">
+      <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle fr-grid-row--center">
         <DsfrButton
+          v-if="showEdit"
           label="Modifier"
           secondary
           icon="ri-pencil-line"

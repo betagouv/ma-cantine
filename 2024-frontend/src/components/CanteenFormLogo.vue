@@ -54,10 +54,11 @@ const successLogo = (response) => {
     <h4 class="fr-h6 fr-mb-2w">Logo de l'établissement</h4>
     <AppFormImage
       :src="displayLogo"
-      alt="Logo de l'établissement"
       :disabled="isSaving"
       @delete="deleteLogo"
       @change="onFileChange"
+      :show-edit="true"
+      alt="Logo de l'établissement"
     />
   </div>
 </template>
