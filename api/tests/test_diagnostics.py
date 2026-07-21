@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.core.management import call_command
 from django.core.exceptions import BadRequest
 from django.db import transaction
 from django.urls import reverse
@@ -9,7 +10,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Diagnostic
+from data.models import Diagnostic, Canteen, Sector
 from data.models.creation_source import CreationSource
 
 
@@ -17,8 +18,13 @@ class DiagnosticListApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen = CanteenFactory(managers=[cls.user])
-        cls.url = reverse("diagnostic_list_create", kwargs={"canteen_pk": cls.canteen.id})
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[cls.user])
+        cls.canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=cls.canteen_groupe,
+            managers=[cls.user],
+        )
+        cls.url = reverse("diagnostic_list_create", kwargs={"canteen_pk": cls.canteen_groupe.id})
 
     def test_cannot_list_diagnostics_if_unauthenticated(self):
         response = self.client.get(self.url)
@@ -39,9 +45,9 @@ class DiagnosticListApiTest(APITestCase):
 
     @authenticate
     def test_list_diagnostics(self):
-        self.canteen.managers.add(authenticate.user)
-        diagnostic_2020 = DiagnosticFactory(canteen=self.canteen, year=2020)
-        diagnostic_2021 = DiagnosticFactory(canteen=self.canteen, year=2021)
+        self.canteen_groupe.managers.add(authenticate.user)
+        diagnostic_2020 = DiagnosticFactory(canteen=self.canteen_groupe, year=2020)
+        diagnostic_2021 = DiagnosticFactory(canteen=self.canteen_groupe, year=2021)
         with freeze_time("2022-08-30"):  # during the 2021 campaign
             diagnostic_2021.teledeclare(applicant=authenticate.user)
 
@@ -52,6 +58,81 @@ class DiagnosticListApiTest(APITestCase):
         self.assertEqual(len(body["results"]), 2)
         self.assertEqual(body["results"][0]["id"], diagnostic_2021.id)  # order by year DESC
         self.assertEqual(body["results"][1]["id"], diagnostic_2020.id)
+
+    @authenticate
+    def test_list_diagnostics_of_canteen_satellite_does_not_return_groupe_diagnostic(self):
+        self.canteen_groupe.managers.add(authenticate.user)
+        self.canteen_satellite.managers.add(authenticate.user)
+        DiagnosticFactory(canteen=self.canteen_groupe, year=2021)
+        diagnostic_2020_satellite = DiagnosticFactory(canteen=self.canteen_satellite, year=2021)
+
+        url = reverse("diagnostic_list_create", kwargs={"canteen_pk": self.canteen_satellite.id})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["results"]), 1)
+        self.assertEqual(body["results"][0]["id"], diagnostic_2020_satellite.id)
+        self.assertEqual(body["results"][0]["status"], Diagnostic.DiagnosticStatus.DRAFT)
+
+    @authenticate
+    def test_list_diagnostics_1td1site(self):
+        self.canteen_groupe.managers.add(authenticate.user)
+        self.canteen_satellite.managers.add(authenticate.user)
+        diagnostic_2021_groupe = DiagnosticFactory(canteen=self.canteen_groupe, year=2021)
+        diagnostic_2021_satellite = DiagnosticFactory(canteen=self.canteen_satellite, year=2021)
+        with freeze_time("2022-08-30"):  # during the 2021 campaign
+            diagnostic_2021_groupe.teledeclare(applicant=authenticate.user)
+            diagnostic_2021_satellite.teledeclare(applicant=authenticate.user)
+
+        call_command("diagnostic_fill_invalid_warning_reason_list", year=2021, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2021, apply=True)
+
+        url = reverse("diagnostic_list_create", kwargs={"canteen_pk": self.canteen_groupe.id})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["results"]), 1)
+        self.assertEqual(body["results"][0]["id"], diagnostic_2021_groupe.id)
+        self.assertEqual(body["results"][0]["status"], Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertEqual(body["results"][0]["generatedFromGroupeDiagnostic"], False)
+        self.assertEqual(body["results"][0]["invalidReasonList"], None)
+        self.assertEqual(body["results"][0]["warningReasonList"], None)
+
+        url = reverse("diagnostic_list_create", kwargs={"canteen_pk": self.canteen_satellite.id})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["results"]), 2)
+        self.assertEqual(body["results"][0]["id"], diagnostic_2021_satellite.id)
+        self.assertEqual(body["results"][0]["status"], Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertEqual(body["results"][0]["generatedFromGroupeDiagnostic"], False)
+        self.assertEqual(body["results"][0]["invalidReasonList"], [Diagnostic.InvalidReason.DOUBLON_1TD1SITE])
+        self.assertEqual(body["results"][0]["warningReasonList"], None)
+        self.assertEqual(body["results"][0]["teledeclarationId"], diagnostic_2021_groupe.id)
+        self.assertEqual(body["results"][1]["status"], Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertEqual(body["results"][1]["generatedFromGroupeDiagnostic"], True)
+        self.assertEqual(body["results"][1]["invalidReasonList"], None)
+        self.assertEqual(body["results"][1]["warningReasonList"], None)
+
+    @authenticate
+    def test_list_diagnostics_of_canteen_armee_ok(self):
+        canteen_armee = CanteenFactory(
+            line_ministry=Canteen.Ministries.ARMEE,
+            sector_list=[Sector.ADMINISTRATION_PRISON],
+            economic_model=Canteen.EconomicModel.PUBLIC,
+            managers=[authenticate.user],
+        )
+        DiagnosticFactory(canteen=canteen_armee, year=2021)
+
+        url = reverse("diagnostic_list_create", kwargs={"canteen_pk": canteen_armee.id})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["results"]), 1)
 
 
 class DiagnosticCreateApiTest(APITestCase):
