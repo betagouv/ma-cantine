@@ -55,7 +55,7 @@ const deleteImage = () => {
           v-if="altChanged"
           label="Enregistrer la description"
           class="fr-mt-1w"
-          secondary
+          tertiary
           icon="fr-icon-save-line"
           :disabled="disabled"
           @click="saveAlt"

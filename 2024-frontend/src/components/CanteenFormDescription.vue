@@ -50,7 +50,7 @@ const successDescription = (response) => {
       v-if="hasChanged"
       label="Enregistrer la description de l'établissement"
       icon="ri-save-line"
-      secondary
+      tertiary
       :disabled="isSaving"
       @click="saveDescription"
     />
