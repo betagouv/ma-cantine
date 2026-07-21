@@ -70,26 +70,28 @@ const goToPrintPage = (canteen) => {
           collectivités et du territoire, dans un espace dédié aux initiatives durables et inspirantes.
         </p>
 
-        <CanteenFormLogo
-          v-if="canteenInformation"
-          :canteen-id="canteenInformation.id"
-          :logo="canteenInformation.logo"
-          class="fr-mb-3w"
-        />
+        <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
+          <CanteenFormLogo
+            v-if="canteenInformation"
+            :canteen-id="canteenInformation.id"
+            :logo="canteenInformation.logo"
+            class="fr-mb-3w"
+          />
 
-        <CanteenFormImages
-          v-if="canteenInformation"
-          :canteen-id="canteenInformation.id"
-          :images="canteenInformation.images"
-          class="fr-mb-3w"
-        />
+          <CanteenFormImages
+            v-if="canteenInformation"
+            :canteen-id="canteenInformation.id"
+            :images="canteenInformation.images"
+            class="fr-mb-3w"
+          />
 
-        <CanteenFormDescription
-          v-if="canteenInformation"
-          :canteen-id="canteenInformation.id"
-          :description="canteenInformation.publicationComments"
-          class="fr-mb-3w"
-        />
+          <CanteenFormDescription
+            v-if="canteenInformation"
+            :canteen-id="canteenInformation.id"
+            :description="canteenInformation.publicationComments"
+            class="fr-mb-3w"
+          />
+        </ol>
       </div>
     </template>
   </LayoutSidebarCanteen>

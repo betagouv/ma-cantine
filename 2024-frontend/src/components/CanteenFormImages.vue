@@ -58,7 +58,7 @@ const successImages = (response) => {
 </script>
 
 <template>
-  <div class="canteen-form-images">
+  <li class="canteen-form-images">
     <h4 class="fr-h6 fr-mb-1w">Images de l'établissement</h4>
     <p class="fr-text--sm fr-mb-2w">Vous pouvez ajouter jusqu'à 3 images.</p>
 
@@ -81,5 +81,5 @@ const successImages = (response) => {
         @save-file="saveImage"
       />
     </div>
-  </div>
+  </li>
 </template>

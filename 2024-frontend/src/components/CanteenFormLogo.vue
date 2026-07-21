@@ -48,7 +48,7 @@ const successLogo = (response) => {
 </script>
 
 <template>
-  <div class="canteen-form-logo">
+  <li class="canteen-form-logo">
     <h4 class="fr-h6 fr-mb-2w">Logo de l'établissement</h4>
     <AppFormImage
       :src="displayLogo"
@@ -56,5 +56,5 @@ const successLogo = (response) => {
       @delete="deleteLogo"
       @save-file="saveLogo"
     />
-  </div>
+  </li>
 </template>

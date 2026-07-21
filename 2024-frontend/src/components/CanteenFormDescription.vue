@@ -34,7 +34,7 @@ const successDescription = (response) => {
 </script>
 
 <template>
-  <div class="canteen-form-description">
+  <li class="canteen-form-description">
     <h4 class="fr-h6 fr-mb-1w">Description de l'établissement</h4>
     <p class="fr-text--sm fr-mb-2w">En plus de rendre visible vos données EGalim, la description de votre établissement est la première brique de votre page publique, pour valoriser vos engagements et les actions de la cantine en faveur d’une alimentation durable et de qualité.</p>
     <DsfrInput
@@ -54,5 +54,5 @@ const successDescription = (response) => {
       :disabled="isSaving"
       @click="saveDescription"
     />
-  </div>
+  </li>
 </template>
