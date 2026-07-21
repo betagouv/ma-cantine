@@ -1,8 +1,9 @@
 <script setup>
 import { useRouter } from "vue-router"
+import urlService from "@/services/urls.js"
 import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
-import urlService from "@/services/urls.js"
+import CanteenFormLogo from "@/components/CanteenFormLogo.vue"
 
 const router = useRouter()
 
@@ -49,6 +50,13 @@ const goToOnlinePage = (canteen) => {
           <strong>Personnalisez votre espace public</strong> et donnez de la visibilité à vos actions auprès des convives, des
           collectivités et du territoire, dans un espace dédié aux initiatives durables et inspirantes.
         </p>
+
+        <CanteenFormLogo
+          v-if="canteenInformation"
+          :canteen="canteenInformation"
+          class="fr-mb-3w"
+        />
+
         <DsfrButton
           label="Voir ma page en ligne"
           secondary
