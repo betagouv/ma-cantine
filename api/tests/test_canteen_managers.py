@@ -5,8 +5,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, UserFactory
-from data.factories.managerinvitation import ManagerInvitationFactory
+from data.factories import CanteenFactory, UserFactory, ManagerInvitationFactory
 from data.models import ManagerInvitation
 
 
@@ -62,6 +61,65 @@ class CanteenManagersListApiTest(APITestCase):
         self.assertEqual(body[0]["email"], user.email)
         self.assertEqual(body[0]["firstName"], user.first_name)
         self.assertEqual(body[0]["lastName"], user.last_name)
+
+
+class CanteenManagersInvitationsListApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory(managers=[])
+        cls.url = reverse("canteen_managers_invitations_list", kwargs={"canteen_pk": cls.canteen.id})
+
+    def test_cannot_get_canteen_managers_invitations_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_canteen_managers_invitations_if_canteen_does_not_exist(self):
+        url = reverse("canteen_managers_invitations_list", kwargs={"canteen_pk": 999})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_canteen_managers_invitations_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_canteen_managers_invitations_list(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+
+        # empty
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 0)
+
+        # add an invitation
+        ManagerInvitationFactory(canteen=self.canteen, email="new.USER@example.com")
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)
+        self.assertEqual(body[0]["email"], "new.USER@example.com")
+
+    def test_canteen_managers_invitations_list_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+        ManagerInvitationFactory(canteen=self.canteen, email="new.USER@example.com")
+        self.client.credentials(Authorization=f"Bearer {token}")
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)
+        self.assertEqual(body[0]["email"], "new.USER@example.com")
 
 
 class CanteenClaimApiTest(APITestCase):

@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 from api.serializers.utils import set_help_text_from_verbose_name
 from data.models import Canteen, CanteenImage
+from .canteen_managers import ManagerInvitationSerializer, CanteenManagerSerializer
 
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -15,9 +16,7 @@ from .diagnostic import (
     PublicApproDiagnosticSerializer,
     PublicDiagnosticSerializer,
 )
-from .managerinvitation import ManagerInvitationSerializer
 from .resourceaction import ResourceActionFullSerializer
-from .user import CanteenManagerSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -461,15 +460,6 @@ class CanteenPreviewSerializer(serializers.ModelSerializer):
             "name",
         )
         read_only_fields = fields
-
-
-class ManagingTeamSerializer(serializers.ModelSerializer):
-    managers = CanteenManagerSerializer(many=True, read_only=True)
-    manager_invitations = ManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
-
-    class Meta:
-        model = Canteen
-        fields = ("id", "managers", "manager_invitations")
 
 
 class CanteenActionsSerializer(serializers.ModelSerializer):

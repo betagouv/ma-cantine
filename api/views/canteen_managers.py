@@ -22,6 +22,7 @@ from api.serializers import (
     ManagingTeamSerializer,
     MinimalCanteenSerializer,
     CanteenManagerSerializer,
+    ManagerInvitationSerializer,
 )
 from common.utils import send_mail
 from data.models import Canteen, ManagerInvitation
@@ -48,6 +49,20 @@ class UserCanteenManagersView(ListAPIView):
     def get_queryset(self):
         canteen = self._get_canteen()
         return canteen.managers.all()
+
+
+class UserCanteenManagersInvitationsView(ListAPIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    model = ManagerInvitation
+    serializer_class = ManagerInvitationSerializer
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_queryset(self):
+        canteen = self._get_canteen()
+        return canteen.managerinvitation_set.all()
 
 
 class AddManagerView(APIView):

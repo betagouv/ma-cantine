@@ -53,21 +53,6 @@ class LoggedUserSerializer(serializers.ModelSerializer):
         )
 
 
-class CanteenManagerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = get_user_model()
-        fields = (
-            "email",
-            "first_name",
-            "last_name",
-        )
-        read_only_fields = (
-            "email",
-            "first_name",
-            "last_name",
-        )
-
-
 class BlogPostAuthor(serializers.ModelSerializer):
     avatar = Base64ImageField(required=False, allow_null=True)
 
