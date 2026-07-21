@@ -498,13 +498,15 @@ class CanteenDetailCheckApiTest(APITestCase):
     @authenticate
     def test_get_canteen_check_with_errors(self):
         canteen = CanteenFactory(managers=[authenticate.user])
-        Canteen.objects.filter(pk=canteen.id).update(siret="invalid_siret", sector_list=[])
+        canteen.siret = "invalid_siret"
+        canteen.sector_list = []
+        canteen.save(skip_validations=True)
 
         response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": canteen.id}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["isFilled"], False)
         self.assertNotEqual(body["errors"], {})
         self.assertEqual(body["errors"]["siret"], ["14 caractères numériques sont attendus"])
         self.assertEqual(body["errors"]["sectorList"], ["Le champ doit contenir entre 1 et 3 secteurs."])
