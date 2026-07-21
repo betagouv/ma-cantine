@@ -4,6 +4,7 @@ import urlService from "@/services/urls.js"
 import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import CanteenFormLogo from "@/components/CanteenFormLogo.vue"
+import CanteenFormImages from "@/components/CanteenFormImages.vue"
 
 const router = useRouter()
 
@@ -57,6 +58,10 @@ const goToOnlinePage = (canteen) => {
           class="fr-mb-3w"
         />
 
+        <CanteenFormImages
+          v-if="canteenInformation"
+          :canteen-id="canteenInformation.id"
+          :images="canteenInformation.images"
           class="fr-mb-3w"
         />
 
