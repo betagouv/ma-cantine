@@ -5,6 +5,7 @@ import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import CanteenFormLogo from "@/components/CanteenFormLogo.vue"
 import CanteenFormImages from "@/components/CanteenFormImages.vue"
+import CanteenFormDescription from "@/components/CanteenFormDescription.vue"
 
 const router = useRouter()
 
@@ -71,6 +72,13 @@ const goToPrintPage = (canteen) => {
           v-if="canteenInformation"
           :canteen-id="canteenInformation.id"
           :images="canteenInformation.images"
+          class="fr-mb-3w"
+        />
+
+        <CanteenFormDescription
+          v-if="canteenInformation"
+          :canteen-id="canteenInformation.id"
+          :description="canteenInformation.publicationComments"
           class="fr-mb-3w"
         />
 
