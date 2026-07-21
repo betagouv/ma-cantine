@@ -7,6 +7,7 @@ from .canteen import (  # noqa: F401
     PublicCanteenPreviewSerializer,
     FullCanteenSerializer,
     ManagingTeamSerializer,
+    CanteenManagerSerializer,
     CanteenPreviewSerializer,
     SatelliteCanteenSerializer,
     CanteenActionsSerializer,
