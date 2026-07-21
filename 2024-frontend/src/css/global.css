@@ -163,17 +163,6 @@ address {
     align-items: center;
 }
 
-.ma-cantine--flex-center {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.ma-cantine--flex-column {
-    flex-direction: column;
-}
-
 .ma-cantine--flex-gap-1 {
     gap: 1rem;
 }
