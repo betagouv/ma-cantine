@@ -5,14 +5,14 @@ import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
 import AppFormImage from "@/components/AppFormImage.vue"
 
-const props = defineProps(["canteen"])
+const props = defineProps(["canteenId", "logo"])
 const store = useRootStore()
-const logo = ref(props.canteen.logo || null)
+const displayLogo = ref(props.logo || null)
 const isSaving = ref(false)
 
-/* Canteen change */
-watch(props.canteen, (newCanteen) => {
-  logo.value = newCanteen.logo || null
+/* Logo change */
+watch( () => props.logo, (newLogo) => {
+  displayLogo.value = newLogo || null
 })
 
 /* File input */
@@ -30,7 +30,7 @@ const deleteLogo = () => updateLogo(null)
 const updateLogo = async (value) => {
   isSaving.value = true
   try {
-    const response = await canteenService.updateCanteen({ logo: value }, props.canteen.id)
+    const response = await canteenService.updateCanteen({ logo: value }, props.canteenId)
     if (!response?.id) store.notifyServerError(response)
     else successLogo(response)
   } catch (error) {
@@ -41,7 +41,7 @@ const updateLogo = async (value) => {
 }
 
 const successLogo = (response) => {
-  logo.value = response.logo
+  displayLogo.value = response.logo
   store.notify({
     title: "Le logo a été mis à jour",
     status: "success",
@@ -54,7 +54,7 @@ const successLogo = (response) => {
     <h4 class="fr-h6 fr-mb-2w">Logo de l'établissement</h4>
 
     <AppFormImage
-      :src="logo"
+      :src="displayLogo"
       alt="Logo de l'établissement"
       :disabled="isSaving"
       @delete="deleteLogo"
