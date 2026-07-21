@@ -2,7 +2,7 @@
 import { ref, computed } from "vue"
 
 const props = defineProps(["src", "alt", "disabled", "showAlt"])
-const emit = defineEmits(["delete", "save"])
+const emit = defineEmits(["delete", "saveFile", "saveAlt"])
 
 /* Input file */
 const fileInput = ref("")
@@ -19,7 +19,7 @@ const altChanged = computed(() => altInitial.value !== altInput.value)
 
 /* Save */
 const saveFile = () => {
-  emit("save", file.value)
+  emit("saveFile", file.value)
 }
 
 const saveAlt = () => {

@@ -77,7 +77,7 @@ const successImages = (response) => {
     <AppFormImage
       v-if="canAddImage"
       :disabled="isSaving"
-      @save="saveImage"
+      @save-file="saveImage"
     />
   </div>
 </template>

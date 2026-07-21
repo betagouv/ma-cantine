@@ -54,7 +54,7 @@ const successLogo = (response) => {
       :src="displayLogo"
       :disabled="isSaving"
       @delete="deleteLogo"
-      @save="saveLogo"
+      @save-file="saveLogo"
     />
   </div>
 </template>
