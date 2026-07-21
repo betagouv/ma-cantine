@@ -14,22 +14,12 @@ const selectFile = () => {
 
 <template>
   <div class="app-form-image fr-card fr-p-1w">
-    <div class="fr-grid-row fr-grid-row--gutters">
+    <div v-if="src" class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-6">
-        <div>
-          <img v-if="src" :src="src" :alt="alt" class="app-form-image__image" />
-          <DsfrButton
-            v-else
-            label="Ajouter"
-            tertiary
-            icon="ri-image-add-line"
-            :disabled="disabled"
-            @click="selectFile"
-          />
-        </div>
+        <img :src="src" :alt="alt" class="app-form-image__image" />
       </div>
 
-      <div v-if="src" class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle">
+      <div v-if="src" class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle fr-grid-row--center">
         <DsfrButton
           label="Modifier"
           secondary
@@ -46,6 +36,17 @@ const selectFile = () => {
           @click="emit('delete')"
         />
       </div>
+    </div>
+
+    <div v-else class="ma-cantine--flex-center ma-cantine--flex-column fr-p-3w">
+      <p>Aucune image enregistrée</p>
+      <DsfrButton
+        label="Ajouter"
+        tertiary
+        icon="ri-image-add-line"
+        :disabled="disabled"
+        @click="selectFile"
+      />
     </div>
 
     <label class="fr-hidden" :for="inputId">
@@ -65,7 +66,7 @@ const selectFile = () => {
 .app-form-image__image {
   display: block;
   width: 100%;
-  max-height: 35vh;
+  max-height: 50vh;
   object-fit: contain;
 }
 </style>
