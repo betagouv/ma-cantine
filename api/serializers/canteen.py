@@ -27,6 +27,13 @@ CREATE_ONLY_FIELDS = ("creation_source", *Canteen.MATOMO_FIELDS)
 # READ_ONLY_FIELDS: see serializers
 
 
+class CanteenCheckSerializer(serializers.Serializer):
+    is_filled = serializers.BooleanField(read_only=True)
+    # infos = serializers.DictField(read_only=True)
+    # warnings = serializers.DictField(read_only=True)
+    errors = serializers.DictField(read_only=True)
+
+
 class CanteenImageSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     id = serializers.IntegerField(required=False)

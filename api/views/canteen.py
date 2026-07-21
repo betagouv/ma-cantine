@@ -26,9 +26,11 @@ from api.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManager,
+    IsCanteenManagerUrlParam,
     IsElectedOfficial,
 )
 from api.serializers import (
+    CanteenCheckSerializer,
     CanteenActionsLightSerializer,
     CanteenActionsSerializer,
     CanteenAnalysisSerializer,
@@ -331,6 +333,35 @@ class UserCanteensView(ListCreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return super().create(request, *args, **kwargs)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Vérifier les erreurs de validation pour une cantine.",
+        description="Retourne toutes les erreurs de validation potentielles pour une cantine (champs manquants, valeurs invalides, etc.).",
+        tags=["Cantines"],
+        responses=CanteenCheckSerializer,
+    )
+)
+class UserCanteenCheckView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, canteen_pk):
+        canteen = self._get_canteen()
+
+        errors = {}
+        try:
+            canteen.full_clean()
+        except ValidationError as e:
+            errors = e.message_dict
+
+        response = {"is_filled": canteen.is_filled, "errors": errors}
+        return Response(CanteenCheckSerializer(response).data)
 
 
 @extend_schema_view(

@@ -2,6 +2,7 @@
 
 from .user import LoggedUserSerializer, UserInfoSerializer  # noqa: F401
 from .canteen import (  # noqa: F401
+    CanteenCheckSerializer,
     PublicCanteenSerializer,
     PublicCanteenPreviewSerializer,
     FullCanteenSerializer,
