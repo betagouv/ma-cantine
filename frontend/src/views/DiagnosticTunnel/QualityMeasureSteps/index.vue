@@ -188,7 +188,7 @@ export default {
       this.$emit("tunnel-autofill", e)
     },
     fetchPurchasesSummary() {
-      fetch(`/api/v1/canteenPurchasesSummary/${this.canteen.id}?year=${this.diagnostic.year}`)
+      fetch(`/api/v1/canteens/${this.canteen.id}/purchases/summary?year=${this.diagnostic.year}`)
         .then((response) => (response.ok ? response.json() : {}))
         .then((response) => {
           if (Object.values(response).some((x) => !!x)) {
