@@ -33,7 +33,14 @@ const goToPrintPage = (canteen) => {
     </template>
     <template #content="{ canteenInformation }">
       <div class="fr-mb-5w">
-        <h3 class="fr-h5">L’obligation d’informer vos convives</h3>
+        <div class="ma-cantine--flex-between fr-mb-4w">
+          <h3 class="fr-h5 fr-mb-0">L’obligation d’informer vos convives</h3>
+          <DsfrButton
+            label="Imprimer mon affiche"
+            icon="fr-icon-printer-line"
+            @click="goToPrintPage(canteenInformation)"
+          />
+        </div>
         <p>
           Conformément à l'article L.230-5-1 du Code rural et de la pêche maritime, <strong>les gestionnaires de restauration
           collective ont l'obligation d'informer les convives,</strong> au moins une fois par an, sur la part des produits
@@ -45,17 +52,19 @@ const goToPrintPage = (canteen) => {
           convives et des acteurs de votre territoire. Vous pouvez <strong>imprimer votre affiche</strong> directement à partir des
           informations de votre page publique, pour une communication visible et accessible sur place.
         </p>
-        <DsfrButton
-          label="Imprimer mon affiche"
-          icon="fr-icon-printer-line"
-          @click="goToPrintPage(canteenInformation)"
-        />
       </div>
 
       <AppSeparator class="fr-mt-3w fr-mb-5w" />
 
       <div>
-        <h3 class="fr-h5">Partagez votre page publique</h3>
+        <div class="ma-cantine--flex-between fr-mb-4w">
+          <h3 class="fr-h5 fr-mb-0">Partagez votre page publique</h3>
+          <DsfrButton
+            label="Voir ma page en ligne"
+            icon="ri-global-line"
+            @click="goToOnlinePage(canteenInformation)"
+          />
+        </div>
         <p>
           <strong>Personnalisez votre espace public</strong> et donnez de la visibilité à vos actions auprès des convives, des
           collectivités et du territoire, dans un espace dédié aux initiatives durables et inspirantes.
@@ -80,12 +89,6 @@ const goToPrintPage = (canteen) => {
           :canteen-id="canteenInformation.id"
           :description="canteenInformation.publicationComments"
           class="fr-mb-3w"
-        />
-
-        <DsfrButton
-          label="Voir ma page en ligne"
-          icon="ri-global-line"
-          @click="goToOnlinePage(canteenInformation)"
         />
       </div>
     </template>
