@@ -40,7 +40,7 @@ const selectFile = () => {
     </div>
 
     <div v-else class="ma-cantine--flex-center ma-cantine--flex-column fr-p-3w">
-      <p>{{ emptyMessage }}</p>
+      <p v-if="emptyMessage">{{ emptyMessage }}</p>
       <DsfrButton
         label="Ajouter"
         tertiary
