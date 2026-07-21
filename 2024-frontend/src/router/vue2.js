@@ -120,6 +120,10 @@ const vue2routes = [
   {
     path: '/nos-cantines/:canteenUrlComponent',
     name: 'CanteenPage',
+  },
+  {
+    path: '/modifier-ma-cantine/:canteenUrlComponent/generer-mon-affiche',
+    name: 'CanteenGeneratePoster',
   }
 ]
 

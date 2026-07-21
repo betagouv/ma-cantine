@@ -15,6 +15,14 @@ const goToOnlinePage = (canteen) => {
     params: { canteenUrlComponent: url },
   })
 }
+
+const goToPrintPage = (canteen) => {
+  const url = urlService.getCanteenUrl(canteen)
+  router.push({
+    name: 'CanteenGeneratePoster',
+    params: { canteenUrlComponent: url },
+  })
+}
 </script>
 
 <template>
@@ -39,6 +47,7 @@ const goToOnlinePage = (canteen) => {
         <DsfrButton
           label="Imprimer mon affiche"
           icon="fr-icon-printer-line"
+          @click="goToPrintPage(canteenInformation)"
         />
       </div>
 
