@@ -56,9 +56,9 @@ const successLogo = (response) => {
 
 <template>
   <div class="canteen-form-logo">
-    <h4 class="fr-h6">Logo de l'établissement</h4>
+    <h4 class="fr-h6 fr-mb-2w">Logo de l'établissement</h4>
 
-    <div v-if="hasLogo" class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+    <div v-if="hasLogo" class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
       <div class="fr-col-12 fr-col-md-6">
         <div class="fr-card fr-p-1w">
           <img :src="logo" alt="Logo de l'établissement" class="canteen-form-logo__image" />
