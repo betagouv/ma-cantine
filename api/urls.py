@@ -70,8 +70,8 @@ from api.views import (
     UndoClaimCanteenView,
     UpdateUserView,
     UserCanteenActions,
+    UserCanteenCheckView,
     UserCanteenListExportView,
-    UserCanteenValidationCheckView,
     UserCanteenPreviews,
     UserCanteenSummaries,
     UserCanteensView,
@@ -109,9 +109,9 @@ urlpatterns = {
     ),
     path("canteens/<int:pk>", RetrieveUpdateUserCanteenView.as_view(), name="single_canteen"),
     path(
-        "canteens/<int:canteen_pk>/validation-check/",
-        UserCanteenValidationCheckView.as_view(),
-        name="canteen_validation_check",
+        "canteens/<int:canteen_pk>/check",
+        UserCanteenCheckView.as_view(),
+        name="canteen_check",
     ),
     path(
         "canteens/<int:canteen_pk>/purchases/",

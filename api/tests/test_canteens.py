@@ -462,47 +462,49 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(body["badges"]["year"], 2022)
 
 
-class CanteenDetailValidationCheckApiTest(APITestCase):
-    def test_cannot_get_canteen_validation_check_if_unauthenticated(self):
+class CanteenDetailCheckApiTest(APITestCase):
+    def test_cannot_get_canteen_check_if_unauthenticated(self):
         canteen = CanteenFactory()
 
-        response = self.client.get(reverse("canteen_validation_check", kwargs={"canteen_pk": canteen.id}))
+        response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": canteen.id}))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_get_canteen_validation_check_if_canteen_does_not_exist(self):
-        response = self.client.get(reverse("canteen_validation_check", kwargs={"canteen_pk": 9999}))
+    def test_cannot_get_canteen_check_if_canteen_does_not_exist(self):
+        response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": 9999}))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_get_canteen_validation_check_if_not_manager(self):
+    def test_cannot_get_canteen_check_if_not_manager(self):
         canteen = CanteenFactory()
 
-        response = self.client.get(reverse("canteen_validation_check", kwargs={"canteen_pk": canteen.id}))
+        response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": canteen.id}))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_get_canteen_validation_check_without_errors(self):
+    def test_get_canteen_check_without_errors(self):
         canteen = CanteenFactory(managers=[authenticate.user])
 
-        response = self.client.get(reverse("canteen_validation_check", kwargs={"canteen_pk": canteen.id}))
+        response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": canteen.id}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["errors"], {})
 
     @authenticate
-    def test_get_canteen_validation_check_with_errors(self):
+    def test_get_canteen_check_with_errors(self):
         canteen = CanteenFactory(managers=[authenticate.user])
         Canteen.objects.filter(pk=canteen.id).update(siret="invalid_siret", sector_list=[])
 
-        response = self.client.get(reverse("canteen_validation_check", kwargs={"canteen_pk": canteen.id}))
+        response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": canteen.id}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(body["isFilled"], True)
         self.assertNotEqual(body["errors"], {})
         self.assertEqual(body["errors"]["siret"], ["14 caractères numériques sont attendus"])
         self.assertEqual(body["errors"]["sectorList"], ["Le champ doit contenir entre 1 et 3 secteurs."])
