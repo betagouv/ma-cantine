@@ -11,7 +11,7 @@ from api.views.base_import import BaseImportView
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType
 
-from .canteen import AddManagerView
+from .canteen_managers import AddManagerView
 from .utils import camelize
 
 
