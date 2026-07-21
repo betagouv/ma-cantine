@@ -52,7 +52,6 @@ const successLogo = (response) => {
 <template>
   <div class="canteen-form-logo">
     <h4 class="fr-h6 fr-mb-2w">Logo de l'établissement</h4>
-
     <AppFormImage
       :src="displayLogo"
       alt="Logo de l'établissement"
