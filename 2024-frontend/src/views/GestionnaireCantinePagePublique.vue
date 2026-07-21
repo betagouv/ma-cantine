@@ -37,7 +37,6 @@ const goToOnlinePage = (canteen) => {
         </p>
         <DsfrButton
           label="Imprimer mon affiche"
-          secondary
           icon="fr-icon-printer-line"
         />
       </div>
@@ -59,7 +58,7 @@ const goToOnlinePage = (canteen) => {
 
         <DsfrButton
           label="Voir ma page en ligne"
-          secondary
+          icon="ri-global-line"
           @click="goToOnlinePage(canteenInformation)"
         />
       </div>
