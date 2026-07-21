@@ -52,7 +52,11 @@ const goToOnlinePage = (canteen) => {
 
         <CanteenFormLogo
           v-if="canteenInformation"
-          :canteen="canteenInformation"
+          :canteen-id="canteenInformation.id"
+          :logo="canteenInformation.logo"
+          class="fr-mb-3w"
+        />
+
           class="fr-mb-3w"
         />
 
