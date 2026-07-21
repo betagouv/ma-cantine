@@ -116,6 +116,10 @@ const vue2routes = [
       title: "Actions anti-gaspi",
       siteMap: action,
     },
+  },
+  {
+    path: '/nos-cantines/:canteenUrlComponent',
+    name: 'CanteenPage',
   }
 ]
 
