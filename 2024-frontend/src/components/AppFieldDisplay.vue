@@ -2,13 +2,16 @@
 import { computed } from 'vue'
 import AppRawHtml from '@/components/AppRawHtml.vue'
 
-const props = defineProps(['label', 'value', 'tooltip'])
+const props = defineProps(['label', 'value', 'tooltip', 'error'])
 
 const valueFormatted = computed(() => {
   const isArray = Array.isArray(props.value)
   const value = isArray ? props.value?.join(' ; <br/>') : props.value
   return value !== null ? value : 'Non renseigné'
 })
+
+const hasError = computed(() => props.error && props.error.length > 0)
+const errorMessage = computed(() => hasError.value ? props.error?.join(', ') : "")
 </script>
 
 <template>
@@ -21,6 +24,7 @@ const valueFormatted = computed(() => {
         <AppRawHtml :html="valueFormatted" />
         <DsfrTooltip v-if="tooltip" :content="tooltip" />
       </div>
+      <p v-if="hasError" class="fr-message fr-message--error">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
