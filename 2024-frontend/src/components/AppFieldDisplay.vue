@@ -6,7 +6,8 @@ const props = defineProps(['label', 'value', 'tooltip'])
 
 const valueFormatted = computed(() => {
   const isArray = Array.isArray(props.value)
-  return isArray ? props.value?.join(' ; <br/>') : props.value
+  const value = isArray ? props.value?.join(' ; <br/>') : props.value
+  return value !== null ? value : 'Non renseigné'
 })
 </script>
 
@@ -15,9 +16,11 @@ const valueFormatted = computed(() => {
     <div class="fr-col-12 fr-col-md-5">
       <p class="fr-mb-0 fr-text--bold">{{ label }} :</p>
     </div>
-    <div class="fr-col-12 fr-col-md-7 ma-cantine--flex-start ma-cantine--flex-top">
-      <AppRawHtml :html="valueFormatted || 'Non renseigné'" />
-      <DsfrTooltip v-if="tooltip" :content="tooltip" />
+    <div class="fr-col-12 fr-col-md-7">
+      <div class="ma-cantine--flex-start ma-cantine--flex-top fr-mb-1w">
+        <AppRawHtml :html="valueFormatted" />
+        <DsfrTooltip v-if="tooltip" :content="tooltip" />
+      </div>
     </div>
   </div>
 </template>
