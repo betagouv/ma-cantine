@@ -23,23 +23,31 @@
       </p>
     </v-card-text>
     <v-spacer></v-spacer>
-    <v-card-actions class="flex-wrap flex-lg-nowrap">
+    <v-card-actions class="flex-wrap">
       <p v-if="isPublished" class="mx-2 mb-2">
         <v-btn
           :to="{
-            name: 'PublicationForm',
+            name: 'GestionnaireCantinePagePublique',
             params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
           }"
           color="primary"
           class="px-3"
           outlined
         >
-          Éditer mon affiche
+          Voir ma page publique
         </v-btn>
       </p>
       <p class="mx-2 mb-2">
-        <v-btn outlined color="primary" class="fr-btn--tertiary px-3" :to="{ name: 'CanteenGeneratePoster' }">
-          Générer mon affiche
+        <v-btn
+          outlined
+          color="primary"
+          class="fr-btn--tertiary px-3"
+          :to="{
+            name: 'GestionnaireCantinePagePublique',
+            params: { canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen) },
+          }"
+        >
+          Imprimer mon affiche
         </v-btn>
       </p>
     </v-card-actions>
