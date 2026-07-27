@@ -62,7 +62,7 @@ class UserCanteenLogoView(APIView):
         if not canteen.logo:
             raise NotFound()
 
-        canteen.logo.delete()
+        canteen.logo.delete(save=False)
         canteen.logo = None
         canteen.save(skip_validations=True)
 
