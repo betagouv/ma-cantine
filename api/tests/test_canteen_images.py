@@ -191,6 +191,29 @@ class CanteenLogoRetrieveApiTest(APITestCase):
         self.assertIn("logo", body)
 
 
+class CanteenLogoUpdateApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.url = reverse("canteen_logo", kwargs={"canteen_pk": cls.canteen.pk})
+
+    @authenticate
+    def test_cannot_update_canteen_logo_with_patch(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.patch(self.url, data={}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @authenticate
+    def test_cannot_update_canteen_logo_with_put(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.put(self.url, data={}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
 class CanteenLogoDeleteApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
