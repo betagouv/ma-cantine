@@ -10,6 +10,15 @@ import cantineService from '@/services/canteens'
 
 const props = defineProps(["canteenIsGroupe", "canteenInformation"])
 
+/* Dynamic fields */
+const showCentralProducerSiret = computed(() => {
+  const isFilled = props.canteenInformation.centralProducerSiret
+  const isGroupe = props.canteenIsGroupe
+  const isSatellite = props.canteenInformation.productionType === "siteCookedElsewhere"
+  return isFilled || isGroupe || isSatellite
+})
+const showGroupeInformations = computed(() => props.canteenInformation.groupe !== null)
+
 /* Value */
 const getPrettyValue = (name, field) => {
   if (!name) return null
@@ -45,7 +54,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" :error="canteenErrors?.economicModel" />
       <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" :error="canteenErrors?.managementType" />
       <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" :error="canteenErrors?.productionType" />
-      <AppFieldDisplay v-if="canteenInformation.centralProducerSiret" :label="cantines.centralProducerSiret" :value="formatSiretOrSiren(canteenInformation.centralProducerSiret)" :error="canteenErrors?.centralProducerSiret" />
+      <AppFieldDisplay v-if="showCentralProducerSiret" :label="cantines.centralProducerSiret" :value="formatSiretOrSiren(canteenInformation.centralProducerSiret)" :error="canteenErrors?.centralProducerSiret" />
     </li>
     <li class="fr-my-3w">
       <h3 class="fr-h5">Identification de l'établissement</h3>
@@ -83,7 +92,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay :label="cantines.sectorList" :value="getPrettySectors(canteenInformation.sectorList)" :error="canteenErrors?.sectorList" />
       <AppFieldDisplay v-if="showLineMinistry" :label="cantines.lineMinistry" :value="getPrettyLineMinistry(canteenInformation.lineMinistry)" :error="canteenErrors?.lineMinistry" />
     </li>
-    <li v-if="canteenInformation.groupe !== null" class="fr-my-3w">
+    <li v-if="showGroupeInformations" class="fr-my-3w">
       <h3 class="fr-h5">Informations de mon groupe</h3>
       <DsfrAlert title="Le gestionnaire du groupe de restaurants satellites a ajouté votre établissement" type="info" class="fr-mb-2w">
         Cela lui permet de réaliser une déclaration unique pour laquelle le montant total des achats du groupe est ensuite réparti automatiquement entre chaque restaurant satellite, au prorata de son nombre de couverts annuels.
