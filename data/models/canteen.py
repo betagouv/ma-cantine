@@ -1,5 +1,6 @@
 from urllib.parse import quote
 
+from django.conf import settings
 from dirtyfields import DirtyFieldsMixin
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
@@ -11,7 +12,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.functional import cached_property
-from oauth2_provider.models import Application as OAuth2Application
 from simple_history.models import HistoricalRecords
 from simple_history.utils import update_change_reason
 
@@ -669,7 +669,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         verbose_name="Source de création de la cantine",
     )
     creation_source_api_oauth2_application = models.ForeignKey(
-        OAuth2Application,
+        settings.OAUTH2_PROVIDER_APPLICATION_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

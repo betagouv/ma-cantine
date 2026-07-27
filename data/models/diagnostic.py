@@ -1,6 +1,7 @@
 import operator
 from functools import reduce
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
@@ -9,7 +10,6 @@ from django.db.models import DecimalField, F, Func, IntegerField, Q, Sum, Value
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from oauth2_provider.models import Application as OAuth2Application
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
@@ -1737,7 +1737,7 @@ class Diagnostic(models.Model):
         verbose_name="Source de création du diagnostic",
     )
     creation_source_api_oauth2_application = models.ForeignKey(
-        OAuth2Application,
+        settings.OAUTH2_PROVIDER_APPLICATION_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

@@ -1,12 +1,12 @@
 from datetime import date
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, ValidationError
 from django.db import models
 from django.db.models import Q, Sum
 from django.db.models.functions import ExtractYear
-from oauth2_provider.models import Application as OAuth2Application
 
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
@@ -261,7 +261,7 @@ class Purchase(SoftDeletionModel):
         verbose_name="Source de création de l'achat",
     )
     creation_source_api_oauth2_application = models.ForeignKey(
-        OAuth2Application,
+        settings.OAUTH2_PROVIDER_APPLICATION_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

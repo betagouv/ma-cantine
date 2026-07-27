@@ -1,7 +1,7 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
-from oauth2_provider.models import Application as OAuth2Application
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
@@ -88,7 +88,7 @@ class WasteMeasurement(models.Model):
         verbose_name="Source de création de l'évaluation du gaspillage alimentaire",
     )
     creation_source_api_oauth2_application = models.ForeignKey(
-        OAuth2Application,
+        settings.OAUTH2_PROVIDER_APPLICATION_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
