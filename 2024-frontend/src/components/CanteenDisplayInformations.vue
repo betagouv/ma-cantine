@@ -51,7 +51,9 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <h3 class="fr-h5">Identification de l'établissement</h3>
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.id" tooltip="Identifiant unique de l'établissement, ce champ ne peut pas être modifié."/>
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatSiretOrSiren(canteenInformation.siret)" :error="canteenErrors?.siret" />
-      <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatSiretOrSiren(canteenInformation.sirenUniteLegale)" :error="canteenErrors?.sirenUniteLegale" />
+      <AppFieldDisplay v-else-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatSiretOrSiren(canteenInformation.sirenUniteLegale)" :error="canteenErrors?.sirenUniteLegale" />
+      <AppFieldDisplay v-else-if="!canteenIsGroupe && !canteenInformation.sirenUniteLegale && !canteenInformation.siret" :label="`${cantines.siretName} ou ${cantines.sirenUniteLegaleName}`" :value="null" :error="canteenErrors?.siret" />
+      <AppFieldDisplay v-else-if="canteenIsGroupe && !canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="null" :error="canteenErrors?.sirenUniteLegale" />
       <AppFieldDisplay :label="canteenIsGroupe ? cantines.nameGroupe : cantines.nameCantine" :value="canteenInformation.name" :error="canteenErrors?.name" />
       <AppFieldDisplay :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount" :error="canteenErrors?.dailyMealCount"
         tooltip="Donnez une moyenne globale sur les jours ouverts de vos établissements (pour évaluer la taille de votre établissement)"
