@@ -105,7 +105,7 @@ class CanteenImagesCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_canteen_image_create(self):
+    def test_create_canteen_image(self):
         self.canteen.managers.add(authenticate.user)
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
         image_base_64 = None
@@ -124,7 +124,7 @@ class CanteenImagesCreateApiTest(APITestCase):
         self.assertIn("altText", body)
         self.assertIsNone(body["altText"])
 
-    def test_canteen_image_create_via_oauth2(self):
+    def test_create_canteen_image_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
         self.client.credentials(Authorization=f"Bearer {token}")
@@ -145,3 +145,27 @@ class CanteenImagesCreateApiTest(APITestCase):
         self.assertIn("image", body)
         self.assertIn("altText", body)
         self.assertEqual(body["altText"], "Test image 1")
+
+    @authenticate
+    def test_create_canteen_image_even_if_canteen_not_filled(self):
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.siret = None
+        self.canteen.save(skip_validations=True)
+        self.assertIsNone(self.canteen.siret)
+        self.assertFalse(self.canteen.is_filled)
+
+        image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
+        image_base_64 = None
+        with open(image_path, "rb") as image:
+            image_base_64 = base64.b64encode(image.read()).decode("utf-8")
+
+        payload = {
+            "image": "data:image/jpeg;base64," + image_base_64,
+        }
+        response = self.client.post(self.url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertIn("id", body)
+        self.assertIn("image", body)
+        self.assertIn("altText", body)
