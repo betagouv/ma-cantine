@@ -225,6 +225,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_sector_category_list(self):
         return annotate_with_sector_category_list(self)
 
+    def annotate_with_image_count(self):
+        return self.prefetch_related("images").annotate(image_count=Count("images", distinct=True))
+
     def has_siret(self):
         return self.exclude(has_charfield_missing_query("siret"))
 
@@ -1086,8 +1089,11 @@ class CanteenImage(models.Model):
     alt_text = models.TextField(
         null=True,
         blank=True,
-        verbose_name="texte alternatif pour les utilisateurs qui voient pas l'image",
+        verbose_name="texte alternatif (pour les utilisateurs qui ne peuvent pas voir l'image)",
     )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
 
     def save(self, **kwargs):
         self.image = optimize_image(self.image, self.image.name)

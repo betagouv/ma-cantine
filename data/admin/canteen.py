@@ -124,9 +124,10 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             },
         ),
         ("Informations groupe", {"fields": ("groupe", "satellites_display")}),
+        ("Images", {"fields": ("logo", "image_count")}),
         (
             "Informations supplémentaires",
-            {"fields": ("logo", "is_filled", "publication_status_display", "has_been_claimed")},
+            {"fields": ("is_filled", "publication_status_display", "has_been_claimed")},
         ),
         (
             "Télédéclaration",
@@ -150,6 +151,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     )
     readonly_fields = (
         "satellites_display",
+        "image_count",
         "is_filled",
         "publication_status_display",
         "has_been_claimed",
@@ -161,7 +163,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.select_related("groupe")
+        qs = qs.select_related("groupe").annotate_with_image_count()
         return qs
 
     def get_actions(self, request):
@@ -208,6 +210,10 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         return obj.declaration_donnees_2025
 
     télédéclarée.boolean = True
+
+    @admin.display(description="Nombre d'images")
+    def image_count(self, obj):
+        return obj.image_count
 
     @admin.display(description="Visible au public")
     def publication_status_display(self, obj):
