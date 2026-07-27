@@ -116,6 +116,14 @@ const vue2routes = [
       title: "Actions anti-gaspi",
       siteMap: action,
     },
+  },
+  {
+    path: '/nos-cantines/:canteenUrlComponent',
+    name: 'CanteenPage',
+  },
+  {
+    path: '/modifier-ma-cantine/:canteenUrlComponent/generer-mon-affiche',
+    name: 'CanteenGeneratePoster',
   }
 ]
 
