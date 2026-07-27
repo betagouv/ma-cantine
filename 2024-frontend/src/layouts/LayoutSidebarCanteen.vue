@@ -49,7 +49,7 @@ const menuItems = computed(() =>  {
   }
   const pagePubliquePage = {
     text: "Ma page publique",
-    to: '/',
+    to: { name: "GestionnaireCantinePagePublique" },
     active: pagePubliqueActive
   }
   const teledeclarationsPage =  {
