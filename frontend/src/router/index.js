@@ -29,7 +29,6 @@ import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
 import CanteenEditor from "@/views/CanteenEditor"
 import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
-import PublicationForm from "@/views/CanteenEditor/PublicationForm"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasesSummary from "@/views/PurchasesSummary"
@@ -264,15 +263,6 @@ const routes = [
           title: "Générer mon affiche",
         },
       },
-      {
-        path: "publier",
-        name: "PublicationForm",
-        component: PublicationForm,
-        meta: {
-          authenticationRequired: true,
-          title: "Éditer mon affiche",
-        },
-      },
     ],
   },
   {
@@ -438,6 +428,10 @@ const vue3Routes = [
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/gestionnaires",
     name: "GestionnaireCantineGestionnaires",
+  },
+  {
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent/page-publique",
+    name: "GestionnaireCantinePagePublique",
   },
   {
     path: "/donnees-personnelles",
