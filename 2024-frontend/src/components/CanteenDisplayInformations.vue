@@ -86,9 +86,5 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe?.id" />
       <AppFieldDisplay :label="`${cantines.sirenUniteLegaleName} du groupe`" :value="formatSiretOrSiren(canteenInformation.groupe?.sirenUniteLegale)" />
     </li>
-    <li v-if="!canteenIsGroupe" class="fr-my-3w">
-      <h3 class="fr-h5">Description</h3>
-      <p>{{ canteenInformation.publicationComments || 'Aucune description renseignée' }}</p>
-    </li>
   </ol>
 </template>
