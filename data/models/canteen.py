@@ -226,7 +226,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return annotate_with_sector_category_list(self)
 
     def annotate_with_image_count(self):
-        return self.select_related("images").annotate(image_count=Count("images", distinct=True))
+        return self.prefetch_related("images").annotate(image_count=Count("images", distinct=True))
 
     def has_siret(self):
         return self.exclude(has_charfield_missing_query("siret"))
