@@ -124,7 +124,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             },
         ),
         ("Informations groupe", {"fields": ("groupe", "satellites_display")}),
-        ("Images", {"fields": ("logo", "image_count")}),
+        ("Images", {"fields": ("logo", "logo_display", "image_count")}),
         (
             "Informations supplémentaires",
             {"fields": ("is_filled", "publication_status_display", "has_been_claimed")},
@@ -151,6 +151,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     )
     readonly_fields = (
         "satellites_display",
+        "logo_display",
         "image_count",
         "is_filled",
         "publication_status_display",
@@ -210,6 +211,14 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         return obj.declaration_donnees_2025
 
     télédéclarée.boolean = True
+
+    @admin.display(description="Logo")
+    def logo_display(self, obj):
+        print("logo", obj.logo)
+        print("logo_full_url", obj.logo_full_url)
+        if obj.logo:
+            return format_html(f'<img src="{obj.logo_full_url}" width="100" height="100" />')
+        return "-"
 
     @admin.display(description="Nombre d'images")
     def image_count(self, obj):

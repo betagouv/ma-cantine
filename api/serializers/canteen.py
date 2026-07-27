@@ -1,5 +1,4 @@
 import logging
-import os
 
 from drf_base64.fields import Base64ImageField
 from drf_spectacular.utils import extend_schema_serializer
@@ -787,12 +786,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
         return ",".join(obj.pat_lib_list)
 
     def get_logo(self, obj):
-        bucket_url = os.environ.get("CELLAR_HOST")
-        bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
-
-        if obj.logo:
-            return f"{bucket_url}/{bucket_name}/media/{obj.logo}"
-        return ""
+        return obj.logo_full_url
 
     def get_sector_list(self, obj):
         return ",".join(obj.sector_lib_list)
