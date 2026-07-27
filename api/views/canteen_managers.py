@@ -1,11 +1,13 @@
 import logging
 
+from rest_framework.generics import ListAPIView
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import BadRequest, ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -13,15 +15,39 @@ from rest_framework.views import APIView
 
 from api.permissions import (
     IsAuthenticated,
+    IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManagerUrlParam,
 )
 from api.serializers import (
     ManagingTeamSerializer,
     MinimalCanteenSerializer,
+    CanteenManagerSerializer,
 )
 from common.utils import send_mail
 from data.models import Canteen, ManagerInvitation
 
 logger = logging.getLogger(__name__)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Lister les gestionnaires d'une cantine.",
+        description="",
+        tags=["Cantines"],
+    )
+)
+class UserCanteenManagersView(ListAPIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    model = get_user_model()
+    serializer_class = CanteenManagerSerializer  # ManagingTeamSerializer
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_queryset(self):
+        canteen = self._get_canteen()
+        return canteen.managers.all()
 
 
 class AddManagerView(APIView):

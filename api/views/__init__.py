@@ -27,6 +27,7 @@ from .canteen_groupe import (  # noqa: F401
 from .canteen_managers import (  # noqa: F401
     AddManagerView,
     ClaimCanteenView,
+    UserCanteenManagersView,
     RemoveManagerView,
     TeamJoinRequestView,
     UndoClaimCanteenView,
