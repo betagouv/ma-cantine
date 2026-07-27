@@ -30,7 +30,7 @@ class CanteenImagesListApiTest(APITestCase):
                 canteen_image = CanteenImage(image=file)
                 canteen_image.canteen = cls.canteen
                 canteen_image.save()
-        cls.url = reverse("canteen_images_list", kwargs={"canteen_pk": cls.canteen.pk})
+        cls.url = reverse("canteen_images_list_create", kwargs={"canteen_pk": cls.canteen.pk})
 
     def test_cannot_get_canteen_images_if_unauthenticated(self):
         response = self.client.get(self.url)
@@ -39,7 +39,7 @@ class CanteenImagesListApiTest(APITestCase):
 
     @authenticate
     def test_cannot_get_canteen_images_if_canteen_does_not_exist(self):
-        url = reverse("canteen_images_list", kwargs={"canteen_pk": 9999})
+        url = reverse("canteen_images_list_create", kwargs={"canteen_pk": 9999})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -93,7 +93,7 @@ class CanteenImagesDetailApiTest(APITestCase):
             canteen_image.canteen = cls.canteen
             canteen_image.save()
         cls.url = reverse(
-            "canteen_images_detail",
+            "canteen_images_retrieve_update_destroy",
             kwargs={"canteen_pk": cls.canteen.pk, "pk": cls.canteen.images.first().pk},
         )
 
@@ -104,7 +104,7 @@ class CanteenImagesDetailApiTest(APITestCase):
 
     @authenticate
     def test_cannot_get_canteen_image_if_canteen_does_not_exist(self):
-        url = reverse("canteen_images_detail", kwargs={"canteen_pk": 9999, "pk": 1})
+        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": 1})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -145,7 +145,7 @@ class CanteenImagesCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
-        cls.url = reverse("canteen_images_list", kwargs={"canteen_pk": cls.canteen.pk})
+        cls.url = reverse("canteen_images_list_create", kwargs={"canteen_pk": cls.canteen.pk})
 
     def test_cannot_create_canteen_image_if_unauthenticated(self):
         response = self.client.post(self.url, data={})
@@ -154,7 +154,7 @@ class CanteenImagesCreateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_create_canteen_image_if_canteen_does_not_exist(self):
-        url = reverse("canteen_images_list", kwargs={"canteen_pk": 9999})
+        url = reverse("canteen_images_list_create", kwargs={"canteen_pk": 9999})
         response = self.client.post(url, data={})
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -245,7 +245,7 @@ class CanteenImagesUpdateApiTest(APITestCase):
             canteen_image.canteen = cls.canteen
             canteen_image.save()
         cls.url = reverse(
-            "canteen_images_detail",
+            "canteen_images_retrieve_update_destroy",
             kwargs={"canteen_pk": cls.canteen.pk, "pk": cls.canteen.images.first().pk},
         )
 
@@ -256,7 +256,7 @@ class CanteenImagesUpdateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_update_canteen_image_if_canteen_does_not_exist(self):
-        url = reverse("canteen_images_detail", kwargs={"canteen_pk": 9999, "pk": 1})
+        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": 1})
         response = self.client.patch(url, data={})
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -337,7 +337,7 @@ class CanteenImagesDeleteApiTest(APITestCase):
             canteen_image.canteen = cls.canteen
             canteen_image.save()
         cls.url = reverse(
-            "canteen_images_detail",
+            "canteen_images_retrieve_update_destroy",
             kwargs={"canteen_pk": cls.canteen.pk, "pk": cls.canteen.images.first().pk},
         )
 
@@ -348,7 +348,7 @@ class CanteenImagesDeleteApiTest(APITestCase):
 
     @authenticate
     def test_cannot_delete_canteen_image_if_canteen_does_not_exist(self):
-        url = reverse("canteen_images_detail", kwargs={"canteen_pk": 9999, "pk": 1})
+        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": 1})
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -361,7 +361,7 @@ class CanteenImagesDeleteApiTest(APITestCase):
 
     @authenticate
     def test_cannot_delete_canteen_image_if_image_does_not_exist(self):
-        url = reverse("canteen_images_detail", kwargs={"canteen_pk": self.canteen.pk, "pk": 9999})
+        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.pk, "pk": 9999})
         self.canteen.managers.add(authenticate.user)
         response = self.client.delete(url)
 

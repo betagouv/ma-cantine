@@ -120,12 +120,12 @@ urlpatterns = {
     path(
         "canteens/<int:canteen_pk>/images/",
         UserCanteenImagesListView.as_view(),
-        name="canteen_images_list",
+        name="canteen_images_list_create",
     ),
     path(
         "canteens/<int:canteen_pk>/images/<int:pk>",
         UserCanteenImagesRetrieveUpdateDestroyView.as_view(),
-        name="canteen_images_detail",
+        name="canteen_images_retrieve_update_destroy",
     ),
     path(
         "canteens/<int:canteen_pk>/purchases/",
