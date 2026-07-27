@@ -7,7 +7,8 @@ const props = defineProps(['label', 'value', 'tooltip', 'error'])
 const valueFormatted = computed(() => {
   const isArray = Array.isArray(props.value)
   const value = isArray ? props.value?.join(' ; <br/>') : props.value
-  return value !== null ? value : 'Non renseigné'
+  const valueIsEmpty = value === null || value === undefined || value === ''
+  return valueIsEmpty ? 'Non renseigné' : value
 })
 
 const hasError = computed(() => props.error && props.error.length > 0)
