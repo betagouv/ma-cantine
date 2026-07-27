@@ -91,7 +91,7 @@ dependencies = [
     "json5==0.9.25",
     "jsonschema==4.23.0",
     "jsonschema-specifications==2024.10.1",
-    "jwcrypto==1.5.6",
+    "jwcrypto==1.5.7",
     "kombu==5.4.2",
     "l18n==2021.3",
     "laces==0.1.1",
