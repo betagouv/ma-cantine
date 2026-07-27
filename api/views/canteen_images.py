@@ -1,4 +1,4 @@
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, DestroyAPIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
@@ -37,3 +37,25 @@ class UserCanteenImagesListView(ListCreateAPIView):
     def perform_create(self, serializer):
         canteen = self._get_canteen()
         serializer.save(canteen=canteen)
+
+
+@extend_schema_view(
+    delete=extend_schema(
+        summary="Supprimer une image.",
+        description="",
+        tags=["Cantines"],
+    ),
+)
+class UserCanteenImagesDestroyView(DestroyAPIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
+    model = CanteenImage
+    serializer_class = CanteenImageSerializer
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_queryset(self):
+        canteen = self._get_canteen()
+        return canteen.images.all()
