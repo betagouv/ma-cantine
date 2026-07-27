@@ -72,7 +72,7 @@ from api.views import (
     UserCanteenActions,
     UserCanteenCheckView,
     UserCanteenImagesListView,
-    UserCanteenImagesDestroyView,
+    UserCanteenImagesRetrieveUpdateDestroyView,
     UserCanteenListExportView,
     UserCanteenManagersInvitationsView,
     UserCanteenManagersView,
@@ -124,8 +124,8 @@ urlpatterns = {
     ),
     path(
         "canteens/<int:canteen_pk>/images/<int:pk>",
-        UserCanteenImagesDestroyView.as_view(),
-        name="canteen_images_destroy",
+        UserCanteenImagesRetrieveUpdateDestroyView.as_view(),
+        name="canteen_images_detail",
     ),
     path(
         "canteens/<int:canteen_pk>/purchases/",
