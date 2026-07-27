@@ -6,7 +6,7 @@ from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
 from api.serializers.utils import set_help_text_from_verbose_name
-from data.models import Canteen, CanteenImage
+from data.models import Canteen
 
 from .canteen_managers import CanteenManagerInvitationSerializer, CanteenManagerSerializer
 from .diagnostic import (
@@ -17,6 +17,7 @@ from .diagnostic import (
     PublicDiagnosticSerializer,
 )
 from .resourceaction import ResourceActionFullSerializer
+from .canteen_images import CanteenImageSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -31,19 +32,6 @@ class CanteenCheckSerializer(serializers.Serializer):
     # infos = serializers.DictField(read_only=True)
     # warnings = serializers.DictField(read_only=True)
     errors = serializers.DictField(read_only=True)
-
-
-class CanteenImageSerializer(serializers.ModelSerializer):
-    image = Base64ImageField()
-    id = serializers.IntegerField(required=False)
-
-    class Meta:
-        model = CanteenImage
-        fields = (
-            "id",
-            "image",
-            "alt_text",
-        )
 
 
 class MediaListSerializer(serializers.ListSerializer):
