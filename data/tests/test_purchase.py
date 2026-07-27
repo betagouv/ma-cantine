@@ -202,6 +202,13 @@ class PurchaseModelSaveTest(TransactionTestCase):
             with self.subTest(prix_ht=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, PurchaseFactory, prix_ht=VALUE_NOT_OK)
 
+    def test_purchase_skip_validations_on_save(self):
+        purchase = PurchaseFactory()
+        purchase.caracteristiques = [Purchase.Characteristic.EUROPE, Purchase.Characteristic.FRANCE]
+        # should not raise
+        purchase.save(skip_validations=True)
+        self.assertEqual(len(purchase.caracteristiques), 2)
+
 
 class PurchaseModelDeleteTest(TestCase):
     @classmethod
