@@ -205,7 +205,11 @@ class PurchaseModelSaveTest(TransactionTestCase):
     def test_purchase_skip_validations_on_save(self):
         purchase = PurchaseFactory()
         purchase.caracteristiques = [Purchase.Characteristic.EUROPE, Purchase.Characteristic.FRANCE]
-        # should not raise
+
+        # without skip_validations
+        self.assertRaises(ValidationError, purchase.save)
+
+        # with skip_validations
         purchase.save(skip_validations=True)
         self.assertEqual(len(purchase.caracteristiques), 2)
 
