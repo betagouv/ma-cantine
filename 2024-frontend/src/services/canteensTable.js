@@ -26,7 +26,7 @@ const getSatellitesCountSentence = (satellitesCount) => {
 }
 
 const getSiretOrSirenInfos = (canteen) => {
-  return canteen.siret || canteen.sirenUniteLegale
+  return canteen.siret || canteen.sirenUniteLegale || ""
 }
 
 const getCityInfos = (canteen) => {
