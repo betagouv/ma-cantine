@@ -12,7 +12,7 @@ const valueFormatted = computed(() => {
 })
 
 const hasError = computed(() => props.error && props.error.length > 0)
-const errorMessage = computed(() => hasError.value ? props.error?.join(', ') : "")
+const errorMessage = computed(() => hasError.value ? props.error?.join(' ') : "")
 </script>
 
 <template>
