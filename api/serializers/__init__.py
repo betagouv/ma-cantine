@@ -22,7 +22,7 @@ from .canteen import (  # noqa: F401
     CanteenMinistriesSerializer,
 )
 from .canteen_managers import (  # noqa: F401
-    ManagerInvitationSerializer,
+    CanteenManagerInvitationSerializer,
     CanteenManagerSerializer,
     ManagingTeamSerializer,
 )

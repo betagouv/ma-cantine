@@ -20,7 +20,7 @@ class CanteenManagerSerializer(serializers.ModelSerializer):
         )
 
 
-class ManagerInvitationSerializer(serializers.ModelSerializer):
+class CanteenManagerInvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ManagerInvitation
         fields = ("email",)
@@ -29,7 +29,7 @@ class ManagerInvitationSerializer(serializers.ModelSerializer):
 
 class ManagingTeamSerializer(serializers.ModelSerializer):
     managers = CanteenManagerSerializer(many=True, read_only=True)
-    manager_invitations = ManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
+    manager_invitations = CanteenManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
 
     class Meta:
         model = Canteen

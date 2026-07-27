@@ -1,6 +1,5 @@
 import logging
 
-from rest_framework.generics import ListAPIView
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import BadRequest, ValidationError
@@ -10,6 +9,7 @@ from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -19,10 +19,10 @@ from api.permissions import (
     IsCanteenManagerUrlParam,
 )
 from api.serializers import (
+    CanteenManagerInvitationSerializer,
+    CanteenManagerSerializer,
     ManagingTeamSerializer,
     MinimalCanteenSerializer,
-    CanteenManagerSerializer,
-    ManagerInvitationSerializer,
 )
 from common.utils import send_mail
 from data.models import Canteen, ManagerInvitation
@@ -54,7 +54,7 @@ class UserCanteenManagersView(ListAPIView):
 class UserCanteenManagersInvitationsView(ListAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     model = ManagerInvitation
-    serializer_class = ManagerInvitationSerializer
+    serializer_class = CanteenManagerInvitationSerializer
 
     def _get_canteen(self):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist

@@ -7,8 +7,8 @@ from rest_framework import serializers
 
 from api.serializers.utils import set_help_text_from_verbose_name
 from data.models import Canteen, CanteenImage
-from .canteen_managers import ManagerInvitationSerializer, CanteenManagerSerializer
 
+from .canteen_managers import CanteenManagerInvitationSerializer, CanteenManagerSerializer
 from .diagnostic import (
     ApproDiagnosticSerializer,
     CentralKitchenDiagnosticSerializer,
@@ -268,7 +268,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     managers = CanteenManagerSerializer(many=True, read_only=True)
-    manager_invitations = ManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
+    manager_invitations = CanteenManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
     groupe = MinimalCanteenSerializer(read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
