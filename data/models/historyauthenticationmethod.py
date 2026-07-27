@@ -1,8 +1,8 @@
 import logging
 
+from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
-from oauth2_provider.models import Application as OAuth2Application
 from simple_history.models import HistoricalRecords
 from simple_history.signals import pre_create_historical_record
 
@@ -28,7 +28,7 @@ class AuthenticationMethodHistoricalRecords(models.Model):
     )
 
     history_source_api_oauth2_application = models.ForeignKey(
-        OAuth2Application,
+        settings.OAUTH2_PROVIDER_APPLICATION_MODEL,
         verbose_name="Application OAuth2 (API) qui a fait la modification",
         null=True,
         blank=True,
