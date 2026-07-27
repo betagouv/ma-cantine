@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListCreateAPIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
@@ -13,13 +13,18 @@ from api.serializers.canteen_images import CanteenImageSerializer
         description="",
         tags=["Cantines"],
         responses=CanteenImageSerializer(many=True),
-    )
+    ),
+    post=extend_schema(
+        summary="Ajouter une image.",
+        description="",
+        tags=["Cantines"],
+    ),
 )
-class UserCanteenImagesListView(ListAPIView):
-    model = CanteenImage
-    serializer_class = CanteenImageSerializer
+class UserCanteenImagesListView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
+    model = CanteenImage
+    serializer_class = CanteenImageSerializer
 
     def _get_canteen(self):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
@@ -28,3 +33,7 @@ class UserCanteenImagesListView(ListAPIView):
     def get_queryset(self):
         canteen = self._get_canteen()
         return canteen.images.all()
+
+    def perform_create(self, serializer):
+        canteen = self._get_canteen()
+        serializer.save(canteen=canteen)

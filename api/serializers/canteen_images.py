@@ -5,7 +5,7 @@ from data.models import CanteenImage
 
 
 class CanteenImageSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
+    id = serializers.IntegerField(read_only=True)
     image = Base64ImageField()
 
     class Meta:
