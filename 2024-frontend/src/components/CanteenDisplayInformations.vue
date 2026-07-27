@@ -1,19 +1,24 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { computedAsync } from "@vueuse/core"
 import { formatSiretOrSiren } from '@/utils'
 import AppFieldDisplay from '@/components/AppFieldDisplay.vue'
 import AppLinkRouter from '@/components/AppLinkRouter.vue'
 import cantines from '@/data/cantines.json'
 import sectorsService from '@/services/sectors'
+import cantineService from '@/services/canteens'
 
-defineProps(["canteenIsGroupe", "canteenInformation"])
+const props = defineProps(["canteenIsGroupe", "canteenInformation"])
 
 /* Value */
 const getPrettyValue = (name, field) => {
   if (!name) return null
   return cantines[field].find(model => model.value === name).label
 }
+
+/* Errors */
+const canteenCheck = computedAsync(async () => await cantineService.checkCanteen(props.canteenInformation.id), [])
+const canteenErrors = computed(() => canteenCheck.value.isFilled ? [] : canteenCheck.value.errors)
 
 /* Sectors and line ministries */
 const sectorsList = computedAsync(async () => await sectorsService.getSectors(), [])
@@ -37,18 +42,18 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
   <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
     <li class="fr-my-3w">
       <h3 class="fr-h5">Caractéristiques</h3>
-      <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" />
-      <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" />
-      <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" />
+      <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" :error="canteenErrors?.economicModel" />
+      <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" :error="canteenErrors?.managementType" />
+      <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" :error="canteenErrors?.productionType" />
       <AppFieldDisplay v-if="canteenInformation.centralProducerSiret" :label="cantines.centralProducerSiret" :value="formatSiretOrSiren(canteenInformation.centralProducerSiret)" />
     </li>
     <li class="fr-my-3w">
       <h3 class="fr-h5">Identification de l'établissement</h3>
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.id" tooltip="Identifiant unique de l'établissement, ce champ ne peut pas être modifié."/>
-      <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatSiretOrSiren(canteenInformation.siret)" />
-      <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatSiretOrSiren(canteenInformation.sirenUniteLegale)" />
-      <AppFieldDisplay :label="canteenIsGroupe ? cantines.nameGroupe : cantines.nameCantine" :value="canteenInformation.name" />
-      <AppFieldDisplay :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount"
+      <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatSiretOrSiren(canteenInformation.siret)" :error="canteenErrors?.siret" />
+      <AppFieldDisplay v-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatSiretOrSiren(canteenInformation.sirenUniteLegale)" :error="canteenErrors?.sirenUniteLegale" />
+      <AppFieldDisplay :label="canteenIsGroupe ? cantines.nameGroupe : cantines.nameCantine" :value="canteenInformation.name" :error="canteenErrors?.name" />
+      <AppFieldDisplay :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount" :error="canteenErrors?.dailyMealCount"
         tooltip="Donnez une moyenne globale sur les jours ouverts de vos établissements (pour évaluer la taille de votre établissement)"
       />
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
@@ -73,8 +78,8 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
     </li>
     <li v-if="!canteenIsGroupe" class="fr-my-3w">
       <h3 class="fr-h5">Secteurs</h3>
-      <AppFieldDisplay :label="cantines.sectorList" :value="getPrettySectors(canteenInformation.sectorList)" />
-      <AppFieldDisplay v-if="showLineMinistry" :label="cantines.lineMinistry" :value="getPrettyLineMinistry(canteenInformation.lineMinistry)" />
+      <AppFieldDisplay :label="cantines.sectorList" :value="getPrettySectors(canteenInformation.sectorList)" :error="canteenErrors?.sectorList" />
+      <AppFieldDisplay v-if="showLineMinistry" :label="cantines.lineMinistry" :value="getPrettyLineMinistry(canteenInformation.lineMinistry)" :error="canteenErrors?.lineMinistry" />
     </li>
     <li v-if="canteenInformation.groupe !== null" class="fr-my-3w">
       <h3 class="fr-h5">Informations de mon groupe</h3>
