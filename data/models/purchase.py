@@ -299,6 +299,13 @@ class Purchase(SoftDeletionModel):
             self.full_clean()
         super().save(**kwargs)
 
+    def delete(self, skip_validations=False, **kwargs):
+        """
+        Override the SoftDeletionModel delete method
+        - add the skip_validations parameter to skip validations (USE WITH CAUTION)
+        """
+        super().delete(skip_validations=skip_validations, **kwargs)
+
     @property
     def categories_egalim(self) -> list[str]:
         return [c for c in (self.caracteristiques or []) if c in Purchase.CHARACTERISTIC_LABELS_EGALIM]
