@@ -6,8 +6,6 @@ from .canteen import (  # noqa: F401
     PublicCanteenSerializer,
     PublicCanteenPreviewSerializer,
     FullCanteenSerializer,
-    ManagingTeamSerializer,
-    CanteenManagerSerializer,
     CanteenPreviewSerializer,
     SatelliteCanteenSerializer,
     CanteenActionsSerializer,
@@ -22,6 +20,11 @@ from .canteen import (  # noqa: F401
     CanteenOpenDataSerializer,
     CanteenExportSerializer,
     CanteenMinistriesSerializer,
+)
+from .canteen_managers import (  # noqa: F401
+    CanteenManagerInvitationSerializer,
+    CanteenManagerSerializer,
+    ManagingTeamSerializer,
 )
 from .diagnostic import (  # noqa: F401
     ManagerDiagnosticSerializer,
@@ -47,7 +50,6 @@ from .sector import SectorM2MSerializer  # noqa: F401
 from .partnertype import PartnerTypeSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401
 from .password import PasswordSerializer  # noqa: F401
-from .managerinvitation import ManagerInvitationSerializer  # noqa: F401
 from .teledeclaration import (  # noqa: F401
     ShortTeledeclarationSerializer,
     CampaignDatesSerializer,
