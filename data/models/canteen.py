@@ -1086,8 +1086,11 @@ class CanteenImage(models.Model):
     alt_text = models.TextField(
         null=True,
         blank=True,
-        verbose_name="texte alternatif pour les utilisateurs qui voient pas l'image",
+        verbose_name="texte alternatif (pour les utilisateurs qui ne peuvent pas voir l'image)",
     )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
 
     def save(self, **kwargs):
         self.image = optimize_image(self.image, self.image.name)
