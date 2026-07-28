@@ -24,11 +24,12 @@ const tableHeaders = [
 ]
 
 const teamRows = computed(() => {
-  const managerRows = (managers.value || []).map((manager) => ({
+  const managerRows = managers.value.map((manager) => ({
     ...manager,
     isInvitation: false,
   }))
-  const invitationRows = (managerInvitations.value || []).map((invitation) => ({
+
+  const invitationRows = managerInvitations.value.map((invitation) => ({
     ...invitation,
     firstName: invitation.firstName || "",
     lastName: invitation.lastName || "",
@@ -36,12 +37,7 @@ const teamRows = computed(() => {
     isInvitation: true,
   }))
 
-  const meEmail = loggedUserEmail.value
-  return [...managerRows, ...invitationRows].sort((a, b) => {
-    if (a.email === meEmail) return -1
-    if (b.email === meEmail) return 1
-    return (a.email || "").localeCompare(b.email || "", "fr", { sensitivity: "base" })
-  })
+  return [...invitationRows, ...managerRows]
 })
 
 const tableRows = computed(() =>
