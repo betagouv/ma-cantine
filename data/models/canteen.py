@@ -892,6 +892,12 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
                 return True
         return False
 
+    @property
+    def logo_full_url(self):
+        if self.logo:
+            return self.logo.url
+        return None
+
     def _is_filled(self) -> bool:
         # basic rules
         is_filled = (
