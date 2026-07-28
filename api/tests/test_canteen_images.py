@@ -25,8 +25,8 @@ class CanteenLogoUploadApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_upload_canteen_logo_if_canteen_unknown(self):
-        url = reverse("canteen_logo", kwargs={"canteen_pk": 999})
+    def test_cannot_upload_canteen_logo_if_canteen_does_not_exist(self):
+        url = reverse("canteen_logo", kwargs={"canteen_pk": 9999})
         response = self.client.post(url, data={})
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -135,8 +135,8 @@ class CanteenLogoRetrieveApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_retrieve_canteen_logo_if_canteen_unknown(self):
-        url = reverse("canteen_logo", kwargs={"canteen_pk": 999})
+    def test_cannot_retrieve_canteen_logo_if_canteen_does_not_exist(self):
+        url = reverse("canteen_logo", kwargs={"canteen_pk": 9999})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -226,8 +226,8 @@ class CanteenLogoDeleteApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_delete_canteen_logo_if_canteen_unknown(self):
-        url = reverse("canteen_logo", kwargs={"canteen_pk": 999})
+    def test_cannot_delete_canteen_logo_if_canteen_does_not_exist(self):
+        url = reverse("canteen_logo", kwargs={"canteen_pk": 9999})
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
