@@ -288,9 +288,9 @@ class PurchaseFactureView(APIView):
         if not purchase.facture:
             raise NotFound()
 
-        purchase.facture.delete(skip_validations=True)
+        purchase.facture.delete(save=False)
         purchase.facture = None
-        purchase.save()
+        purchase.save(skip_validations=True)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
