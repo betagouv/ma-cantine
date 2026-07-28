@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
+from data.models import Purchase
 from data.factories import CanteenFactory, PurchaseFactory
 
 
@@ -80,6 +81,46 @@ class PurchaseFactureUploadTest(APITestCase):
     @authenticate
     def test_can_upload_facture(self):
         self.canteen.managers.add(authenticate.user)
+        file = SimpleUploadedFile("facture.pdf", b"pdf content")
+
+        response = self.client.post(self.url, {"facture": file}, format="multipart")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(data["id"], self.purchase.id)
+        self.assertIsNotNone(data["facture"])
+
+        # Verify file was saved
+        self.purchase.refresh_from_db()
+        self.assertTrue(self.purchase.facture)
+        self.assertIn("facture", self.purchase.facture.name)
+
+    @authenticate
+    def test_can_upload_facture_even_if_canteen_not_filled(self):
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.siret = None
+        self.canteen.save(skip_validations=True)
+        self.assertIsNone(self.canteen.siret)
+        self.assertFalse(self.canteen.is_filled)
+        file = SimpleUploadedFile("facture.pdf", b"pdf content")
+
+        response = self.client.post(self.url, {"facture": file}, format="multipart")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(data["id"], self.purchase.id)
+        self.assertIsNotNone(data["facture"])
+
+        # Verify file was saved
+        self.purchase.refresh_from_db()
+        self.assertTrue(self.purchase.facture)
+        self.assertIn("facture", self.purchase.facture.name)
+
+    @authenticate
+    def test_can_upload_even_if_purchase_not_filled(self):
+        self.canteen.managers.add(authenticate.user)
+        self.purchase.caracteristiques = [Purchase.Characteristic.EUROPE, Purchase.Characteristic.FRANCE]
+        self.purchase.save(skip_validations=True)
         file = SimpleUploadedFile("facture.pdf", b"pdf content")
 
         response = self.client.post(self.url, {"facture": file}, format="multipart")
@@ -280,6 +321,34 @@ class PurchaseFactureDeleteTest(APITestCase):
     @authenticate
     def test_can_delete_facture(self):
         self.canteen.managers.add(authenticate.user)
+        self.assertTrue(self.purchase.facture)
+
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.purchase.refresh_from_db()
+        self.assertFalse(self.purchase.facture)
+
+    @authenticate
+    def test_can_delete_facture_even_if_canteen_not_filled(self):
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.siret = None
+        self.canteen.save(skip_validations=True)
+        self.assertIsNone(self.canteen.siret)
+        self.assertFalse(self.canteen.is_filled)
+        self.assertTrue(self.purchase.facture)
+
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.purchase.refresh_from_db()
+        self.assertFalse(self.purchase.facture)
+
+    @authenticate
+    def test_can_delete_facture_even_if_purchase_not_filled(self):
+        self.canteen.managers.add(authenticate.user)
+        self.purchase.caracteristiques = [Purchase.Characteristic.EUROPE, Purchase.Characteristic.FRANCE]
+        self.purchase.save(skip_validations=True)
         self.assertTrue(self.purchase.facture)
 
         response = self.client.delete(self.url)
