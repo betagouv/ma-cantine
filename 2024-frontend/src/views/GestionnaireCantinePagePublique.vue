@@ -29,7 +29,7 @@ const goToPrintPage = () => {
     </template>
     <template #content="{ canteenInformation }">
       <div class="fr-mb-5w">
-        <div class="ma-cantine--flex-between fr-mb-4w">
+        <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mb-4w">
           <h3 class="fr-h5 fr-mb-0">L’obligation d’informer vos convives</h3>
           <DsfrButton
             label="Imprimer mon affiche"
@@ -53,7 +53,7 @@ const goToPrintPage = () => {
       <AppSeparator class="fr-mt-3w fr-mb-5w" />
 
       <div>
-        <div class="ma-cantine--flex-between fr-mb-4w">
+        <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mb-4w">
           <h3 class="fr-h5 fr-mb-0">Partagez votre page publique</h3>
           <DsfrButton
             label="Voir ma page en ligne"

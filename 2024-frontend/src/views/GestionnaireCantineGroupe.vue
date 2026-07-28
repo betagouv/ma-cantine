@@ -83,7 +83,7 @@ const clickSearch = () => {
       <AppLoader v-if="loading" />
       <div class="fr-grid-row fr-mb-2w fr-grid-row--middle">
         <div class="fr-col-12 fr-col-md-6">
-          <p class="fr-mb-0">{{ satellitesCountSentence }}</p>
+          <p class="fr-mb-md-0">{{ satellitesCountSentence }}</p>
         </div>
         <div class="fr-col-12 fr-col-md-6">
           <DsfrSearchBar
