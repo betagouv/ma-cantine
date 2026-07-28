@@ -6,7 +6,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import ValidationError
 from django.db import models
-from django.conf import settings
 from django.db.models import BooleanField, Case, Count, Exists, F, Func, OuterRef, Q, Subquery, Value, When
 from django.db.models.functions import Coalesce, Length
 from django.db.models.signals import post_save
@@ -896,7 +895,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     @property
     def logo_full_url(self):
         if self.logo:
-            return f"{settings.AWS_S3_ENDPOINT_URL}/{settings.AWS_STORAGE_BUCKET_NAME}/media/{self.logo}"
+            return self.logo.url
         return None
 
     def _is_filled(self) -> bool:

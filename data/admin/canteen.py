@@ -214,8 +214,6 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
     @admin.display(description="Logo")
     def logo_display(self, obj):
-        print("logo", obj.logo)
-        print("logo_full_url", obj.logo_full_url)
         if obj.logo:
             return format_html(f'<img src="{obj.logo_full_url}" width="100" height="100" />')
         return "-"
