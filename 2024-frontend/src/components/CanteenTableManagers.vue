@@ -80,44 +80,46 @@ const goToAccount = () => {
 </script>
 
 <template>
-  <DsfrDataTable
-    title="Gestionnaires de l'établissement"
-    no-caption
-    :headers-row="tableHeaders"
-    :rows="tableRows"
-    :pagination="showPagination"
-    :pagination-options="[minPagination, 20, 30]"
-    :rows-per-page="minPagination"
-    pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
-  >
-    <template #cell="{ colKey, cell }">
-      <template v-if="colKey === 'name'">
-        {{ cell }}
+  <LayoutBigTable>
+    <DsfrDataTable
+      title="Gestionnaires de l'établissement"
+      no-caption
+      :headers-row="tableHeaders"
+      :rows="tableRows"
+      :pagination="showPagination"
+      :pagination-options="[minPagination, 20, 30]"
+      :rows-per-page="minPagination"
+      pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
+    >
+      <template #cell="{ colKey, cell }">
+        <template v-if="colKey === 'name'">
+          {{ cell }}
+        </template>
+        <template v-else-if="colKey === 'email'">
+          {{ cell }}
+        </template>
+        <template v-else-if="colKey === 'status'">
+          <DsfrBadge small :label="cell.label" :type="cell.type" />
+        </template>
+        <template v-else-if="colKey === 'actions'">
+          <DsfrButton
+            v-if="cell.type === 'edit'"
+            secondary
+            size="small"
+            label="Modifier"
+            icon="ri-pencil-line"
+            @click="goToAccount"
+          />
+          <DsfrButton
+            v-else-if="cell.type === 'delete'"
+            tertiary
+            size="small"
+            label="Supprimer"
+            icon="fr-icon-delete-bin-line"
+            @click="emit('delete', cell.member)"
+          />
+        </template>
       </template>
-      <template v-else-if="colKey === 'email'">
-        {{ cell }}
-      </template>
-      <template v-else-if="colKey === 'status'">
-        <DsfrBadge small :label="cell.label" :type="cell.type" />
-      </template>
-      <template v-else-if="colKey === 'actions'">
-        <DsfrButton
-          v-if="cell.type === 'edit'"
-          secondary
-          size="small"
-          label="Modifier"
-          icon="ri-pencil-line"
-          @click="goToAccount"
-        />
-        <DsfrButton
-          v-else-if="cell.type === 'delete'"
-          tertiary
-          size="small"
-          label="Supprimer"
-          icon="fr-icon-delete-bin-line"
-          @click="emit('delete', cell.member)"
-        />
-      </template>
-    </template>
-  </DsfrDataTable>
+    </DsfrDataTable>
+  </LayoutBigTable>
 </template>
