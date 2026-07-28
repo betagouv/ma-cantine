@@ -84,7 +84,7 @@ const menuItems = computed(() =>  {
         <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu" class="ma-cantine--sticky__top" />
       </div>
       <section class="fr-col-12 fr-col-md-9 fr-pb-2w">
-        <div class="ma-cantine--flex-between ma-cantine--flex-gap-1">
+        <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mt-2w fr-mt-md-0 fr-mb-2w fr-mb-md-0">
           <h2 class="fr-h3 fr-mb-0">
             <slot name="titleName" :canteenIsGroupe="canteenIsGroupe"></slot>
           </h2>
