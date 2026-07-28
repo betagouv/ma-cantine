@@ -277,7 +277,7 @@ class PurchaseFactureView(APIView):
         serializer.is_valid(raise_exception=True)
 
         purchase.facture = serializer.validated_data["facture"]
-        purchase.save()
+        purchase.save(skip_validations=True)
 
         response_serializer = PurchaseFactureResponseSerializer(purchase, context={"request": request})
         return Response(response_serializer.data, status=status.HTTP_200_OK)
@@ -288,9 +288,10 @@ class PurchaseFactureView(APIView):
         if not purchase.facture:
             raise NotFound()
 
-        purchase.facture.delete()
+        purchase.facture.delete(skip_validations=True)
         purchase.facture = None
         purchase.save()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
