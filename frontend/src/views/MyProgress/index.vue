@@ -3,7 +3,10 @@
     <BreadcrumbsNav
       :links="[
         { to: { name: 'GestionnaireTableauDeBord' } },
-        { to: { name: 'DashboardManager' }, title: canteen ? canteen.name : 'Dashboard' },
+        {
+          to: { name: 'GestionnaireCantine', params: { canteenUrlComponent } },
+          title: canteen ? canteen.name : 'Dashboard',
+        },
       ]"
     />
     <v-row align="center">

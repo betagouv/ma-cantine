@@ -43,7 +43,7 @@ const saveCanteen = (props) => {
 /* Page redirection */
 const goToCanteenPage = (canteen) => {
   const canteenPage = {
-    name: "GestionnaireCantineInformations",
+    name: "GestionnaireCantine",
     params: { canteenUrlComponent: urlService.getCanteenUrl(canteen) },
   }
   const redirectPage = route.query['redirection']
@@ -65,7 +65,10 @@ const goToCanteenPage = (canteen) => {
     />
     <p v-else>
       Une erreur est survenue,
-      <AppLinkRouter :to="{ name: 'DashboardManager' }" title="revenir à la page précédente" />
+      <AppLinkRouter
+        :to="{ name: 'GestionnaireCantine', params: { canteenUrlComponent: route.params.canteenUrlComponent } }"
+        title="revenir à la page précédente"
+      />
     </p>
   </section>
 </template>
