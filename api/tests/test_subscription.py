@@ -7,17 +7,18 @@ from rest_framework.test import APITestCase
 
 
 @requests_mock.Mocker()
-class TestSubscription(APITestCase):
+class SubscriptionApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("subscribe_newsletter")
+
     @patch("api.views.subscription.create_newsletter_contact")
     def test_newsletter_subscription(self, _, create_newsletter_contact):
         """
         When subscribing to the newsletter the email should be sent to Brevo
         """
-        self.client.post(
-            reverse("subscribe_newsletter"),
-            {"email": "test@example.com"},
-            format="json",
-        )
+        payload = {"email": "test@example.com"}
+        self.client.post(self.url, payload, format="json")
 
         create_newsletter_contact.assert_called_once_with("test@example.com")
 
@@ -26,11 +27,8 @@ class TestSubscription(APITestCase):
         """
         When subscribing to the newsletter the email should be stripped before being sent to Brevo
         """
-        response = self.client.post(
-            reverse("subscribe_newsletter"),
-            {"email": "  test@example.com      "},
-            format="json",
-        )
+        payload = {"email": "  test@example.com      "}
+        response = self.client.post(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         create_newsletter_contact.assert_called_once_with("test@example.com")

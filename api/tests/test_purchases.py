@@ -337,9 +337,8 @@ class PurchaseCreateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_create_purchase_if_canteen_does_not_exist(self):
-        response = self.client.post(
-            reverse("canteen_purchase_create", kwargs={"canteen_pk": 999}), self.PURCHASE_PAYLOAD
-        )
+        url = reverse("canteen_purchase_create", kwargs={"canteen_pk": 9999})
+        response = self.client.post(url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -588,9 +587,8 @@ class PurchaseDetailApiTest(APITestCase):
 
     @authenticate
     def test_cannot_get_purchase_if_canteen_does_not_exist(self):
-        response = self.client.get(
-            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": self.purchase.id})
-        )
+        url = reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": self.purchase.id})
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -604,9 +602,8 @@ class PurchaseDetailApiTest(APITestCase):
     def test_cannot_get_purchase_if_purchase_does_not_exist(self):
         self.canteen.managers.add(authenticate.user)
 
-        response = self.client.get(
-            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": 9999})
-        )
+        url = reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": 9999})
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -616,24 +613,21 @@ class PurchaseDetailApiTest(APITestCase):
         purchase_other = PurchaseFactory(canteen=canteen_other)
         self.canteen.managers.add(authenticate.user)
 
-        response = self.client.get(
-            reverse(
-                "canteen_purchase_retrieve_update_destroy",
-                kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
-            )
+        url = reverse(
+            "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id}
         )
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # even if the user manages canteen_other
         canteen_other.managers.add(authenticate.user)
 
-        response = self.client.get(
-            reverse(
-                "canteen_purchase_retrieve_update_destroy",
-                kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
-            )
+        url = reverse(
+            "canteen_purchase_retrieve_update_destroy",
+            kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -716,10 +710,8 @@ class PurchaseUpdateApiTest(APITestCase):
             "prix_ht": 15.23,
         }
 
-        response = self.client.patch(
-            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": self.purchase.id}),
-            payload,
-        )
+        url = reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": self.purchase.id})
+        response = self.client.patch(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -741,10 +733,8 @@ class PurchaseUpdateApiTest(APITestCase):
             "prix_ht": 15.23,
         }
 
-        response = self.client.patch(
-            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": 9999}),
-            payload,
-        )
+        url = reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": 9999})
+        response = self.client.patch(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -757,26 +747,22 @@ class PurchaseUpdateApiTest(APITestCase):
             "prix_ht": 15.23,
         }
 
-        response = self.client.patch(
-            reverse(
-                "canteen_purchase_retrieve_update_destroy",
-                kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
-            ),
-            payload,
+        url = reverse(
+            "canteen_purchase_retrieve_update_destroy",
+            kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
+        response = self.client.patch(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # even if the user manages canteen_other
         canteen_other.managers.add(authenticate.user)
 
-        response = self.client.patch(
-            reverse(
-                "canteen_purchase_retrieve_update_destroy",
-                kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
-            ),
-            payload,
+        url = reverse(
+            "canteen_purchase_retrieve_update_destroy",
+            kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
+        response = self.client.patch(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -1116,9 +1102,9 @@ class PurchaseDeleteMultipleApiTest(APITestCase):
         cls.purchase_2 = PurchaseFactory(canteen=cls.canteen)
 
     def test_cannot_delete_multiple_if_unauthenticated(self):
-        response = self.client.post(
-            reverse("delete_purchases"), {"ids": [self.purchase_1.id, self.purchase_2.id]}, format="json"
-        )
+        url = reverse("delete_purchases")
+        payload = {"ids": [self.purchase_1.id, self.purchase_2.id]}
+        response = self.client.post(url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Purchase.objects.count(), 2)
@@ -1129,9 +1115,9 @@ class PurchaseDeleteMultipleApiTest(APITestCase):
         self.assertIsNone(self.purchase_2.deletion_date)
         self.canteen.managers.add(authenticate.user)
 
-        response = self.client.post(
-            reverse("delete_purchases"), {"ids": [self.purchase_1.id, self.purchase_2.id]}, format="json"
-        )
+        url = reverse("delete_purchases")
+        payload = {"ids": [self.purchase_1.id, self.purchase_2.id]}
+        response = self.client.post(url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -1156,7 +1142,9 @@ class PurchaseDeleteMultipleApiTest(APITestCase):
         not_mine = PurchaseFactory(deletion_date=None)
         ids = [purchase_should_delete.id, purchase_already_deleted.id, invalid_id, not_mine.id]
 
-        response = self.client.post(reverse("delete_purchases"), {"ids": ids}, format="json")
+        url = reverse("delete_purchases")
+        payload = {"ids": ids}
+        response = self.client.post(url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["count"], 1)
@@ -1182,9 +1170,9 @@ class PurchaseRestoreApiTest(APITestCase):
             purchase.canteen.managers.add(authenticate.user)
         not_my_purchase = PurchaseFactory(deletion_date=date)
 
-        response = self.client.post(
-            reverse("restore_purchases"), {"ids": [purchase_1.id, purchase_2.id, not_my_purchase.id]}, format="json"
-        )
+        url = reverse("restore_purchases")
+        payload = {"ids": [purchase_1.id, purchase_2.id, not_my_purchase.id]}
+        response = self.client.post(url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1204,9 +1192,9 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
     def test_cannot_get_purchase_canteen_summary_if_unauthenticated(self):
         canteen = CanteenFactory()
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
+        url = reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id})
+        payload = {"year": 2020}
+        response = self.client.get(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -1298,9 +1286,9 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             canteen=canteen, date="2019-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
+        url = reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id})
+        payload = {"year": 2020}
+        response = self.client.get(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1408,9 +1396,9 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             canteen=canteen, date="2019-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
+        url = reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id})
+        payload = {"year": 2020}
+        response = self.client.get(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1493,9 +1481,9 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             prix_ht=10,
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
+        url = reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id})
+        payload = {"year": 2020}
+        response = self.client.get(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1569,9 +1557,9 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
             prix_ht=10,
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
+        url = reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id})
+        payload = {"year": 2020}
+        response = self.client.get(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1595,7 +1583,8 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         other_canteen = CanteenFactory(managers=[authenticate.user])
         PurchaseFactory(canteen=other_canteen, prix_ht=999, date="2021-01-01")
 
-        response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}))
+        url = reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id})
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1609,8 +1598,12 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
 
 
 class PurchaseCanteenOptionsApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("purchase_options")
+
     def test_cannot_get_purchase_options_if_unauthenticated(self):
-        response = self.client.get(reverse("purchase_options"))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -1628,7 +1621,7 @@ class PurchaseCanteenOptionsApiTest(APITestCase):
 
         PurchaseFactory(description="secret product", fournisseur="secret fournisseur")
 
-        response = self.client.get(f"{reverse('purchase_options')}")
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1642,7 +1635,8 @@ class PurchaseCanteenOptionsApiTest(APITestCase):
 
 class DiagnosticsFromPurchasesApiTest(APITestCase):
     def test_cannot_create_diagnostics_from_purchases_if_unauthenticated(self):
-        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2020}), {})
+        url = reverse("diagnostics_from_purchases", kwargs={"year": 2020})
+        response = self.client.post(url, {})
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -1651,7 +1645,8 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         """
         If canteen ids are missing, throw a 400
         """
-        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2021}), {})
+        url = reverse("diagnostics_from_purchases", kwargs={"year": 2021})
+        response = self.client.post(url, {})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -1672,19 +1667,17 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         PurchaseFactory(canteen=canteen_with_diagnostic, date=f"{year}-01-01", prix_ht=666)
         PurchaseFactory(canteen=not_my_canteen, date=f"{year}-01-01", prix_ht=666)
 
-        response = self.client.post(
-            reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {
-                "canteenIds": [
-                    "666",
-                    not_my_canteen.id,
-                    canteen_with_diagnostic.id,
-                    canteen_without_purchases.id,
-                    canteen_ok.id,
-                ]
-            },
-            format="json",
-        )
+        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
+        payload = {
+            "canteenIds": [
+                "666",
+                not_my_canteen.id,
+                canteen_with_diagnostic.id,
+                canteen_without_purchases.id,
+                canteen_ok.id,
+            ]
+        }
+        response = self.client.post(url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -1733,11 +1726,9 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
 
         self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site, central_groupe]).count(), 0)
 
-        response = self.client.post(
-            reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {"canteenIds": [canteen_site.id, central_groupe.id]},
-            format="json",
-        )
+        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
+        payload = {"canteenIds": [canteen_site.id, central_groupe.id]}
+        response = self.client.post(url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -1789,11 +1780,9 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         year = 2025
         self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site.id]).count(), 0)
 
-        response = self.client.post(
-            reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {"canteenIds": [canteen_site.id]},
-            format="json",
-        )
+        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
+        payload = {"canteenIds": [canteen_site.id]}
+        response = self.client.post(url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -1837,11 +1826,9 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         year = 2024
         self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site.id]).count(), 0)
 
-        response = self.client.post(
-            reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {"canteenIds": [canteen_site.id]},
-            format="json",
-        )
+        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
+        payload = {"canteenIds": [canteen_site.id]}
+        response = self.client.post(url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -1931,7 +1918,8 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
             prix_ht=999999,
         )
 
-        response = self.client.get(self.url, {"year": self.year})
+        payload = {"year": self.year}
+        response = self.client.get(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1962,7 +1950,8 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
         self.canteen.save()
         PurchaseFactory(canteen=self.canteen, date="2024-01-01")
 
-        response = self.client.get(self.url, {"year": 2024})
+        payload = {"year": 2024}
+        response = self.client.get(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -1972,7 +1961,8 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
         """
         PurchaseFactory(canteen=self.canteen, date="2023-12-31")
 
-        response = self.client.get(self.url, {"year": 2024})
+        payload = {"year": 2024}
+        response = self.client.get(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -1988,7 +1978,8 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
         PurchaseFactory(canteen=self.canteen, date="2024-05-31")
         PurchaseFactory(canteen=self.canteen, date="2025-01-01")
 
-        response = self.client.get(self.url, {"year": 2024})
+        payload = {"year": 2024}
+        response = self.client.get(self.url, payload)
 
         body = response.json()
         self.assertEqual(body["lastPurchaseDate"], "2024-12-01")
@@ -2001,7 +1992,8 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
         """
         PurchaseFactory(canteen=self.canteen, date="2024-05-31")
 
-        response = self.client.get(self.url, {"year": 2024})
+        payload = {"year": 2024}
+        response = self.client.get(self.url, payload)
 
         body = response.json()
         self.assertNotIn("lastPurchaseDate", body)
@@ -2016,7 +2008,8 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
         self.canteen.save()
         PurchaseFactory(canteen=self.canteen, date="2024-01-01")
 
-        response = self.client.get(self.url, {"year": 2024, "ignoreRedaction": "true"})
+        payload = {"year": 2024, "ignoreRedaction": "true"}
+        response = self.client.get(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -2030,7 +2023,8 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
         self.canteen.save()
         PurchaseFactory(canteen=self.canteen, date="2024-01-01")
 
-        response = self.client.get(self.url, {"year": 2024, "ignoreRedaction": "false"})
+        payload = {"year": 2024, "ignoreRedaction": "false"}
+        response = self.client.get(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -2043,7 +2037,8 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
         self.canteen.save()
         PurchaseFactory(canteen=self.canteen, date="2024-01-01")
 
-        response = self.client.get(self.url, {"year": 2024, "ignoreRedaction": "true"})
+        payload = {"year": 2024, "ignoreRedaction": "true"}
+        response = self.client.get(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -2055,6 +2050,7 @@ class PublicPurchasePercentageSummaryApiTest(APITestCase):
         self.canteen.save()
         PurchaseFactory(canteen=self.canteen, date="2024-01-01")
 
-        response = self.client.get(self.url, {"year": 2024, "ignoreRedaction": "true"})
+        payload = {"year": 2024, "ignoreRedaction": "true"}
+        response = self.client.get(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

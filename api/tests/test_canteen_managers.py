@@ -22,7 +22,7 @@ class CanteenManagersListApiTest(APITestCase):
 
     @authenticate
     def test_cannot_get_canteen_managers_if_canteen_does_not_exist(self):
-        url = reverse("canteen_managers_list", kwargs={"canteen_pk": 999})
+        url = reverse("canteen_managers_list", kwargs={"canteen_pk": 9999})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -76,7 +76,7 @@ class CanteenManagersInvitationsListApiTest(APITestCase):
 
     @authenticate
     def test_cannot_get_canteen_managers_invitations_if_canteen_does_not_exist(self):
-        url = reverse("canteen_managers_invitations_list", kwargs={"canteen_pk": 999})
+        url = reverse("canteen_managers_invitations_list", kwargs={"canteen_pk": 9999})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

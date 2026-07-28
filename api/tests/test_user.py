@@ -8,19 +8,15 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import UserFactory
 
 
-class TestLoggedUserApi(APITestCase):
+class LoggedUserApiTest(APITestCase):
     def test_login_with_email_authenticates_session(self):
         user = UserFactory(email="user@example.com")
         user.set_password("testPw1234#!")
         user.save(update_fields=["password"])
 
-        login_response = self.client.post(
-            reverse("login"),
-            {
-                "username": "USER@example.com",
-                "password": "testPw1234#!",
-            },
-        )
+        url = reverse("login")
+        payload = {"username": "USER@example.com", "password": "testPw1234#!"}
+        login_response = self.client.post(url, payload)
 
         self.assertEqual(login_response.status_code, status.HTTP_302_FOUND)
         self.assertEqual(self.client.session.get("_auth_user_id"), str(user.id))
@@ -34,13 +30,9 @@ class TestLoggedUserApi(APITestCase):
         user.set_password("testPw1234#!")
         user.save(update_fields=["password"])
 
-        login_response = self.client.post(
-            reverse("login"),
-            {
-                "username": "TESTuser",
-                "password": "testPw1234#!",
-            },
-        )
+        url = reverse("login")
+        payload = {"username": "TESTuser", "password": "testPw1234#!"}
+        login_response = self.client.post(url, payload)
 
         self.assertEqual(login_response.status_code, status.HTTP_302_FOUND)
         self.assertEqual(self.client.session.get("_auth_user_id"), str(user.id))

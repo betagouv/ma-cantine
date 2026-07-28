@@ -516,19 +516,17 @@ class CanteenDetailCheckApiTest(APITestCase):
 class CanteenCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        pass
+        cls.url = reverse("user_canteens")
 
     def test_cannot_create_canteen_if_unauthenticated(self):
-        response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
+        response = self.client.post(self.url, CANTEEN_SITE_DEFAULT_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_create_canteen_central(self):
-        response = self.client.post(
-            reverse("user_canteens"),
-            {**CANTEEN_SITE_DEFAULT_PAYLOAD, "productionType": Canteen.ProductionType.CENTRAL},
-        )
+        payload = {**CANTEEN_SITE_DEFAULT_PAYLOAD, "productionType": Canteen.ProductionType.CENTRAL}
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -546,7 +544,7 @@ class CanteenCreateApiTest(APITestCase):
         mock_get_pat_dataset_resource(mock)
         mock_get_pat_csv(mock)
 
-        response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
+        response = self.client.post(self.url, CANTEEN_SITE_DEFAULT_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -573,7 +571,7 @@ class CanteenCreateApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:write")
 
         self.client.credentials(Authorization=f"Bearer {token}")
-        response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
+        response = self.client.post(self.url, CANTEEN_SITE_DEFAULT_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
@@ -600,7 +598,7 @@ class CanteenCreateApiTest(APITestCase):
 
         # from the APP
         payload = {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "APP"}
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertNotIn("creation_user", response.json())
         self.assertNotIn("creation_source", response.json())
@@ -616,7 +614,7 @@ class CanteenCreateApiTest(APITestCase):
         Canteen.objects.all().delete()
 
         # defaults to API
-        response = self.client.post(reverse("user_canteens"), CANTEEN_SITE_DEFAULT_PAYLOAD)
+        response = self.client.post(self.url, CANTEEN_SITE_DEFAULT_PAYLOAD)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertNotIn("creation_user", response.json())
         self.assertNotIn("creation_source", response.json())
@@ -633,7 +631,7 @@ class CanteenCreateApiTest(APITestCase):
 
         # returns a 404 if the creation_source is not valid
         payload = {**CANTEEN_SITE_DEFAULT_PAYLOAD, "creation_source": "UNKNOWN"}
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @requests_mock.Mocker()
@@ -653,7 +651,7 @@ class CanteenCreateApiTest(APITestCase):
         payload["creation_mtm_campaign"] = "mtm_campaign_value"
         payload["creation_mtm_medium"] = "mtm_medium_value"
 
-        response = self.client.post(reverse("user_canteens"), payload, format="json")
+        response = self.client.post(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertNotIn("creation_mtm_source", response.json())
@@ -670,7 +668,7 @@ class CanteenCreateApiTest(APITestCase):
         payload = CANTEEN_SITE_DEFAULT_PAYLOAD.copy()
         del payload["siret"]
 
-        response = self.client.post(reverse("user_canteens"), payload)
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -678,15 +676,14 @@ class CanteenCreateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_create_canteen_with_bad_siret(self):
-        response = self.client.post(reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "0123"})
+        response = self.client.post(self.url, {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "0123"})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
         self.assertEqual(body["siret"], ["14 caractères numériques sont attendus"])
 
-        response = self.client.post(
-            reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "01234567891011"}
-        )
+        payload = {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": "01234567891011"}
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -695,15 +692,13 @@ class CanteenCreateApiTest(APITestCase):
             "Le numéro SIRET est invalide et semble ne pas exister dans les registres officiels, vous pouvez vérifier sa validité depuis le site : https://annuaire-entreprises.data.gouv.fr",
         )
 
-        response = self.client.post(
-            reverse("user_canteens"),
-            {
-                **CANTEEN_SITE_DEFAULT_PAYLOAD,
-                "siret": "01234567891011",
-                "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
-                "centralProducerSiret": "01234567891011",
-            },
-        )
+        payload = {
+            **CANTEEN_SITE_DEFAULT_PAYLOAD,
+            "siret": "01234567891011",
+            "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
+            "centralProducerSiret": "01234567891011",
+        }
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -721,7 +716,8 @@ class CanteenCreateApiTest(APITestCase):
         siret = "26566234910966"
         canteen = CanteenFactory(siret=siret)
 
-        response = self.client.post(reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
+        payload = {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret}
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -733,7 +729,7 @@ class CanteenCreateApiTest(APITestCase):
         # make the user the manager of the canteen
         canteen.managers.add(authenticate.user)
 
-        response = self.client.post(reverse("user_canteens"), {**CANTEEN_SITE_DEFAULT_PAYLOAD, "siret": siret})
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         body = response.json()
@@ -765,8 +761,7 @@ class CanteenCreateApiTest(APITestCase):
                 "image": "data:image/jpeg;base64," + image_base_64,
             }
         ]
-
-        response = self.client.post(reverse("user_canteens"), payload, format="json")
+        response = self.client.post(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()

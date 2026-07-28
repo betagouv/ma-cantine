@@ -573,20 +573,25 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
 
     @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
-    def test_cannot_generate_pdf_if_unknown_canteen_or_diagnostic(self):
+    def test_cannot_generate_pdf_if_canteen_does_not_exist(self):
         diagnostic = DiagnosticFactory(year=2024)
         diagnostic.canteen.managers.add(authenticate.user)
         diagnostic.teledeclare(authenticate.user)
 
-        response = self.client.get(
-            reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": 9999, "pk": diagnostic.id})
-        )
+        url = reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": 9999, "pk": diagnostic.id})
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        response = self.client.get(
-            reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": 9999})
-        )
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @authenticate
+    def test_cannot_generate_pdf_if_diagnostic_does_not_exist(self):
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic.teledeclare(authenticate.user)
+
+        url = reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": 9999})
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 

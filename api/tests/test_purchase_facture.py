@@ -67,13 +67,13 @@ class PurchaseFactureUploadApiTest(APITestCase):
     def test_cannot_upload_facture_if_purchase_not_in_corresponding_canteen(self):
         canteen_other = CanteenFactory()
         purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+        file = SimpleUploadedFile("facture.pdf", b"pdf content")
+
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
-        self.canteen.managers.add(authenticate.user)
-        file = SimpleUploadedFile("facture.pdf", b"pdf content")
-
         response = self.client.post(url, {"facture": file}, format="multipart")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -199,12 +199,12 @@ class PurchaseFactureRetrieveApiTest(APITestCase):
     def test_cannot_retrieve_facture_if_purchase_not_in_corresponding_canteen(self):
         canteen_other = CanteenFactory()
         purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
-        self.canteen.managers.add(authenticate.user)
-
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -281,7 +281,6 @@ class PurchaseFactureDeleteApiTest(APITestCase):
             "purchase_facture",
             kwargs={"canteen_pk": 9999, "pk": self.purchase.id},
         )
-
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -295,11 +294,11 @@ class PurchaseFactureDeleteApiTest(APITestCase):
     @authenticate
     def test_cannot_delete_facture_if_purchase_does_not_exist(self):
         self.canteen.managers.add(authenticate.user)
+
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": self.canteen.id, "pk": 9999},
         )
-
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -308,12 +307,12 @@ class PurchaseFactureDeleteApiTest(APITestCase):
     def test_cannot_delete_facture_if_purchase_not_in_corresponding_canteen(self):
         canteen_other = CanteenFactory()
         purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
-        self.canteen.managers.add(authenticate.user)
-
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

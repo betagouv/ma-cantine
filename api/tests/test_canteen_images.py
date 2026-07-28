@@ -649,8 +649,9 @@ class CanteenImagesDeleteApiTest(APITestCase):
 
     @authenticate
     def test_cannot_delete_canteen_image_if_image_does_not_exist(self):
-        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.pk, "pk": 9999})
         self.canteen.managers.add(authenticate.user)
+
+        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.pk, "pk": 9999})
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

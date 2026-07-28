@@ -90,9 +90,8 @@ class DiagnosticCreateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_create_diagnostic_if_canteen_does_not_exist(self):
-        response = self.client.post(
-            reverse("diagnostic_list_create", kwargs={"canteen_pk": 9999}), self.DIAGNOSTIC_PAYLOAD
-        )
+        url = reverse("diagnostic_list_create", kwargs={"canteen_pk": 9999})
+        response = self.client.post(url, self.DIAGNOSTIC_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
