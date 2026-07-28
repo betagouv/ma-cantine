@@ -1,0 +1,36 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {% if original.deletion_date %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find the delete link and convert it to a restore button
+            const deleteLink = document.querySelector('a.deletelink');
+            if (deleteLink) {
+                // Get the form
+                const form = deleteLink.closest('form');
+
+                // Change the link to a button
+                deleteLink.removeAttribute('href');
+                deleteLink.setAttribute('type', 'submit');
+                deleteLink.style.cursor = 'pointer';
+
+                // Change the text
+                deleteLink.innerText = '🔄 Restaurer cette cantine';
+
+                // Add onclick handler to submit form with restore_action
+                deleteLink.onclick = function(e) {
+                    e.preventDefault();
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'restore_action';
+                    input.value = '1';
+                    form.appendChild(input);
+                    form.submit();
+                };
+            }
+        });
+    </script>
+    {% endif %}
+{% endblock %}

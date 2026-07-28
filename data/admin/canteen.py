@@ -142,7 +142,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         ),
         ("Metadonnées", {"fields": Canteen.CREATION_META_FIELDS}),
         (
-            "Archiver la cantine",
+            "Supprimer (archiver)",
             {
                 "description": "Une cantine archivée est une cantine 'supprimée' : elle ne sera plus visible sur la plateforme mais elle pourra être restaurée à tout moment.",
                 "fields": ("deletion_date",),
@@ -184,9 +184,6 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             obj.creation_user = request.user
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
-
-    def has_delete_permission(self, request, obj=None):
-        return obj is not None and not obj.deletion_date
 
     @admin.display(description="Siret (ou Siren)")
     def siret_or_siren_unite_legale_display(self, obj):

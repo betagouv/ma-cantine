@@ -1,8 +1,9 @@
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 from simple_history.admin import SimpleHistoryAdmin
 
 
-@admin.action(description="Restaurer les objets supprimés par l'utilisateur")
+@admin.action(description="Restaurer les objets supprimés")
 def restore_objects(modeladmin, request, queryset):
     queryset.update(deletion_date=None)
 
@@ -32,6 +33,23 @@ class SoftDeletionAdmin(admin.ModelAdmin):
     @admin.display(description="Statut de suppression")
     def deletion_status(self, obj):
         return "🗑️ Supprimée" if obj.deletion_date else "✔️ Active"
+
+    def response_change(self, request, obj):
+        """
+        Override the response_change method to handle the restore_action.
+        - the restore button replaces the deletion link
+        - see the change_form.html template
+        """
+        if "restore_action" in request.POST:
+            obj.deletion_date = None
+            try:
+                obj.save(skip_validations=True)
+            except TypeError:
+                obj.save()
+            self.message_user(request, "Objet restauré avec succès.")
+            # Redirect to the same page to show the updated object
+            return HttpResponseRedirect(request.path)
+        return super().response_change(request, obj)
 
 
 class SoftDeletionHistoryAdmin(SoftDeletionAdmin, SimpleHistoryAdmin):
