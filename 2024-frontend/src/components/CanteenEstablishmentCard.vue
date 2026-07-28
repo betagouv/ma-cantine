@@ -90,7 +90,7 @@ const linkedCanteensLabel = computed(() => {
       <p class="fr-mb-0 fr-text--xs">
         La cantine avec le numéro SIRET {{ siret }} existe déjà et fait déjà partie de vos cantines.
         <AppLinkRouter
-          :to="{ name: 'DashboardManager', params: { canteenUrlComponent: urlService.getCanteenUrl({ id, name }) } }"
+          :to="{ name: 'GestionnaireCantine', params: { canteenUrlComponent: urlService.getCanteenUrl({ id, name }) } }"
           title="Accéder à sa fiche"
         />
       </p>

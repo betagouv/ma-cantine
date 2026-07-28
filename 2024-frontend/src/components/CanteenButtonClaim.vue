@@ -19,7 +19,7 @@ const claimCanteen = () => {
       loading.value = false
       if (response.id) {
         router.push({
-          name: "DashboardManager",
+          name: "GestionnaireCantine",
           params: { canteenUrlComponent: urlService.getCanteenUrl(response) },
         })
       } else {

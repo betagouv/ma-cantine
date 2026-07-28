@@ -15,10 +15,6 @@ const vue2routes = [
     name: "MyProgress",
   },
   {
-    path: "/dashboard/:canteenUrlComponent",
-    name: "DashboardManager",
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     meta: {

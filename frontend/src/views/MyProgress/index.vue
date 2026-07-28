@@ -4,7 +4,7 @@
       :links="[
         { to: { name: 'GestionnaireTableauDeBord' } },
         {
-          to: { name: 'DashboardManager', params: { canteenUrlComponent } },
+          to: { name: 'GestionnaireCantine', params: { canteenUrlComponent } },
           title: canteen ? canteen.name : 'Dashboard',
         },
       ]"

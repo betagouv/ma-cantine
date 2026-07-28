@@ -33,7 +33,6 @@ import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
-import DashboardManager from "@/views/DashboardManager"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
 import MyProgress from "@/views/MyProgress"
@@ -324,16 +323,6 @@ const routes = [
 
 if (window.ENABLE_DASHBOARD) {
   routes.push({
-    path: "/dashboard/:canteenUrlComponent",
-    name: "DashboardManager",
-    component: DashboardManager,
-    props: true,
-    meta: {
-      title: "Tableau de bord",
-      authenticationRequired: true,
-    },
-  })
-  routes.push({
     path: "/ma-progression/:canteenUrlComponent/:year/:measure",
     name: "MyProgress",
     component: MyProgress,
@@ -406,11 +395,7 @@ const vue3Routes = [
     name: "GestionnaireAchatsModifier",
   },
   {
-    path: "/tableau-de-bord/cantines/:canteenUrlComponent/informations",
-    name: "CanteenForm",
-  },
-  {
-    path: "/tableau-de-bord/cantines/:canteenUrlComponent/informations",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent",
     name: "GestionnaireCantine",
   },
   {

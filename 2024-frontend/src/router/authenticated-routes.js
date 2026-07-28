@@ -53,7 +53,7 @@ const routes = [
       title: "Déchets alimentaires",
       breadcrumbs: [
         { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-        { to: { name: "DashboardManager" }, useCanteenName: true },
+        { to: { name: "GestionnaireCantine" }, useCanteenName: true },
       ],
     },
   },
@@ -325,7 +325,7 @@ const routes = [
           title: "Ajouter un achat",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
             { to: { name: "PurchasesHome" }, title: "Mes achats"},
           ],
         },
@@ -338,7 +338,7 @@ const routes = [
           title: "Modifier l'achat",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
             { to: { name: "PurchasesHome" }, title: "Mes achats" },
           ],
         },
