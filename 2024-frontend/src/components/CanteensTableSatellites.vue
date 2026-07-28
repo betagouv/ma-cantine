@@ -162,7 +162,6 @@ const claimCanteen = (canteen) => {
       :pagination-options="[minPagination, 100, 200]"
       :rows-per-page="minPagination"
       pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
-      class="canteens-table-satellites"
     >
       <template #header="{ label }">
         <AppRawHTML :html="label" />
@@ -196,11 +195,3 @@ const claimCanteen = (canteen) => {
     </DsfrDataTable>
   </LayoutBigTable>
 </template>
-
-<style lang="scss">
-.canteens-table-satellites {
-  .fr-table__container {
-    overflow: initial !important;
-  }
-}
-</style>
