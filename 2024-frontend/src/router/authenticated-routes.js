@@ -224,14 +224,12 @@ const routes = [
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/",
     children: [
       {
-        path: "informations",
+        path: "",
         name: "GestionnaireCantineInformations",
         component: GestionnaireCantineInformations,
         meta: {
-          title: "Informations",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
           ],
         },
       },
