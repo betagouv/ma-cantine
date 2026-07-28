@@ -1,34 +1,19 @@
 <script setup>
-import { ref, computed, watch } from "vue"
+import { computed } from "vue"
 import { useRouter } from "vue-router"
+import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
+import managersService from "@/services/managers.js"
 
-const props = defineProps(["canteenInformation"])
+const props = defineProps(["canteenId"])
 const emit = defineEmits(["delete"])
-
 const store = useRootStore()
 const router = useRouter()
 const loggedUserEmail = computed(() => store.loggedUser?.email)
 
-const managers = ref([])
-const managerInvitations = ref([])
-
-/* Update table */
-const update = (managementTeam) => {
-  managers.value = managementTeam.managers || []
-  managerInvitations.value = managementTeam.managerInvitations || []
-}
-
-watch(
-  () => props.canteenInformation,
-  (canteen) => {
-    if (!canteen?.id) return
-    update(canteen)
-  },
-  { immediate: true }
-)
-
-defineExpose({ update })
+/* Managers */
+const managers = computedAsync(async () => await managersService.fetchManagers(props.canteenId), [])
+const managerInvitations = computedAsync(async () => await managersService.fetchManagerInvitations(props.canteenId), [])
 
 /* Table */
 const tableHeaders = [

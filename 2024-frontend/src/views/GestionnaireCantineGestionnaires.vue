@@ -46,7 +46,7 @@ const closeRemoveModal = () => {
       <CanteenTableManagers
         v-if="canteenInformation"
         ref="managersTable"
-        :canteen-information="canteenInformation"
+        :canteen-id="canteenInformation.id"
         @delete="openRemoveModal"
       />
       <CanteenModalManagerAdd
