@@ -1,34 +1,19 @@
 <script setup>
-import { ref, computed, watch } from "vue"
+import { computed } from "vue"
 import { useRouter } from "vue-router"
+import { computedAsync } from "@vueuse/core"
 import { useRootStore } from "@/stores/root"
+import managersService from "@/services/managers.js"
 
-const props = defineProps(["canteenInformation"])
+const props = defineProps(["canteenId"])
 const emit = defineEmits(["delete"])
-
 const store = useRootStore()
 const router = useRouter()
 const loggedUserEmail = computed(() => store.loggedUser?.email)
 
-const managers = ref([])
-const managerInvitations = ref([])
-
-/* Update table */
-const update = (managementTeam) => {
-  managers.value = managementTeam.managers || []
-  managerInvitations.value = managementTeam.managerInvitations || []
-}
-
-watch(
-  () => props.canteenInformation,
-  (canteen) => {
-    if (!canteen?.id) return
-    update(canteen)
-  },
-  { immediate: true }
-)
-
-defineExpose({ update })
+/* Managers */
+const managers = computedAsync(async () => await managersService.fetchManagers(props.canteenId), [])
+const managerInvitations = computedAsync(async () => await managersService.fetchManagerInvitations(props.canteenId), [])
 
 /* Table */
 const tableHeaders = [
@@ -39,11 +24,13 @@ const tableHeaders = [
 ]
 
 const teamRows = computed(() => {
-  const managerRows = (managers.value || []).map((manager) => ({
+  const managerRows = managers.value.map((manager) => ({
     ...manager,
+    isMe: manager.email === loggedUserEmail.value,
     isInvitation: false,
   }))
-  const invitationRows = (managerInvitations.value || []).map((invitation) => ({
+
+  const invitationRows = managerInvitations.value.map((invitation) => ({
     ...invitation,
     firstName: invitation.firstName || "",
     lastName: invitation.lastName || "",
@@ -51,12 +38,7 @@ const teamRows = computed(() => {
     isInvitation: true,
   }))
 
-  const meEmail = loggedUserEmail.value
-  return [...managerRows, ...invitationRows].sort((a, b) => {
-    if (a.email === meEmail) return -1
-    if (b.email === meEmail) return 1
-    return (a.email || "").localeCompare(b.email || "", "fr", { sensitivity: "base" })
-  })
+  return [...invitationRows, ...managerRows]
 })
 
 const tableRows = computed(() =>
@@ -76,17 +58,13 @@ const getDisplayName = (member) => {
 }
 
 const getStatusBadge = (member) => {
-  if (member.isStaff) {
-    return { label: "Administrateur ma cantine", type: "info" }
-  }
-  if (member.isInvitation) {
-    return { label: "Invitation envoyée", type: "new" }
-  }
+  if (member.isStaff) return { label: "Administrateur ma cantine", type: "info" }
+  if (member.isInvitation) return { label: "Invitation envoyée", type: "new" }
   return { label: "Gestionnaire", type: "success" }
 }
 
 const getActions = (member) => {
-  if (member.email === loggedUserEmail.value) return { type: "edit" }
+  if (member.isMe) return { type: "edit" }
   if (member.isStaff) return { type: "none" }
   return { type: "delete", member }
 }

@@ -1,14 +1,36 @@
 import { verifyResponse } from "@/services/api.js"
 
-const headers = {
-  "X-CSRFToken": window.CSRF_TOKEN || "",
-  "Content-Type": "application/json",
+const fetchManagers = (canteenId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/managers`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const fetchManagerInvitations = (canteenId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/managers/invitations`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
 }
 
 const addManager = (canteenId, email) => {
   return fetch("/api/v1/addManager/", {
     method: "POST",
-    headers,
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ canteenId, email }),
   })
     .then(verifyResponse)
@@ -19,7 +41,10 @@ const addManager = (canteenId, email) => {
 const removeManager = (canteenId, email) => {
   return fetch("/api/v1/removeManager/", {
     method: "POST",
-    headers,
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ canteenId, email }),
   })
     .then(verifyResponse)
@@ -28,6 +53,8 @@ const removeManager = (canteenId, email) => {
 }
 
 export default {
+  fetchManagers,
+  fetchManagerInvitations,
   addManager,
   removeManager,
 }
