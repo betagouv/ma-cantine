@@ -26,13 +26,10 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import CanteenEditor from "@/views/CanteenEditor"
-import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
-import DashboardManager from "@/views/DashboardManager"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
 import MyProgress from "@/views/MyProgress"
@@ -236,24 +233,6 @@ const routes = [
     },
   },
   {
-    path: "/modifier-ma-cantine/:canteenUrlComponent",
-    name: "GestionnaireCantineInformations",
-    props: true,
-    component: CanteenEditor,
-    redirect: { name: "CanteenForm" },
-    children: [
-      {
-        path: "generer-mon-affiche",
-        name: "CanteenGeneratePoster",
-        component: CanteenGeneratePoster,
-        meta: {
-          authenticationRequired: true,
-          title: "Générer mon affiche",
-        },
-      },
-    ],
-  },
-  {
     path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
     name: "DiagnosticTunnel",
     component: DiagnosticTunnel,
@@ -311,16 +290,6 @@ const routes = [
 ]
 
 if (window.ENABLE_DASHBOARD) {
-  routes.push({
-    path: "/dashboard/:canteenUrlComponent",
-    name: "DashboardManager",
-    component: DashboardManager,
-    props: true,
-    meta: {
-      title: "Tableau de bord",
-      authenticationRequired: true,
-    },
-  })
   routes.push({
     path: "/ma-progression/:canteenUrlComponent/:year/:measure",
     name: "MyProgress",
@@ -394,12 +363,8 @@ const vue3Routes = [
     name: "GestionnaireAchatsModifier",
   },
   {
-    path: "/tableau-de-bord/cantines/:canteenUrlComponent/informations",
-    name: "CanteenForm",
-  },
-  {
-    path: "/tableau-de-bord/cantines/:canteenUrlComponent/informations",
-    name: "GestionnaireCantineInformations",
+    path: "/tableau-de-bord/cantines/:canteenUrlComponent",
+    name: "GestionnaireCantine",
   },
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/modifier",

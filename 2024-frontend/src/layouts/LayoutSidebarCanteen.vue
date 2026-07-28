@@ -26,16 +26,16 @@ const canteenBadgeGroupe = computed(() => {
 
 /* Sidebar links */
 const menuItems = computed(() =>  {
-  const informationActive = currentRoute.value === "GestionnaireCantineInformations"
+  const cantineActive = currentRoute.value === "GestionnaireCantine"
   const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
   const pagePubliqueActive = currentRoute.value === "GestionnaireCantinePagePublique"
   const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireCantineTeledeclarationsListe"
   const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
 
-  const informationPage = {
+  const cantinePage = {
     text: canteenIsGroupe.value ? "Informations du groupe" : "Mes informations",
-    to: { name: "GestionnaireCantineInformations" },
-    active: informationActive
+    to: { name: "GestionnaireCantine" },
+    active: cantineActive
   }
   const gestionnairesPage = {
     text: canteenIsGroupe.value ? "Gestionnaires" : "Mes gestionnaires",
@@ -60,7 +60,7 @@ const menuItems = computed(() =>  {
 
   // Dynamic links
   const pages = []
-  pages.push(informationPage)
+  pages.push(cantinePage)
   pages.push(gestionnairesPage)
   if (canteenIsGroupe.value) pages.push(cantinesGroupePage)
   if (!canteenIsGroupe.value) pages.push(pagePubliquePage)
