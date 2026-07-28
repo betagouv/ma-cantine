@@ -24,7 +24,7 @@ from .canteen_groupe import (  # noqa: F401
     CanteenGroupeSatellitesListView,
     CanteenGroupeSatelliteUnlinkView,
 )  # noqa: F401
-from .canteen_images import UserCanteenImagesListView, UserCanteenImagesRetrieveUpdateDestroyView  # noqa: F401
+from .canteen_images import UserCanteenLogoView, UserCanteenImagesListView, UserCanteenImagesRetrieveUpdateDestroyView  # noqa: F401
 from .canteen_managers import (  # noqa: F401
     AddManagerView,
     ClaimCanteenView,
