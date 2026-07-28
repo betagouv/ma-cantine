@@ -10,7 +10,7 @@ import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppRawHTML from "@/components/AppRawHTML.vue"
-import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
+import LayoutTable from "@/layouts/LayoutTable.vue"
 
 /* Settings */
 const minPagination = 50
@@ -151,7 +151,7 @@ const claimCanteen = (canteen) => {
 </script>
 
 <template>
-  <LayoutBigTable>
+  <LayoutTable>
     <DsfrDataTable
       title="Vos restaurants satellites"
       no-caption
@@ -161,7 +161,7 @@ const claimCanteen = (canteen) => {
       :pagination="showPagination"
       :pagination-options="[minPagination, 100, 200]"
       :rows-per-page="minPagination"
-      pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
+      pagination-wrapper-class="fr-mt-4w"
     >
       <template #header="{ label }">
         <AppRawHTML :html="label" />
@@ -193,5 +193,5 @@ const claimCanteen = (canteen) => {
         </template>
       </template>
     </DsfrDataTable>
-  </LayoutBigTable>
+  </LayoutTable>
 </template>

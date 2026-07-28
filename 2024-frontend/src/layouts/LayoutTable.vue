@@ -1,13 +1,13 @@
 <template>
-  <div class="layout-big-table">
-    <div class="layout-big-table__scrollable">
+  <div class="layout-table">
+    <div class="layout-table__scrollable">
       <slot />
     </div>
   </div>
 </template>
 
 <style lang="scss">
-.layout-big-table {
+.layout-table {
   overflow-x: hidden;
 
   &__scrollable {
@@ -30,6 +30,10 @@
   .fr-table {
     min-width: 55rem;
     width: 100%;
+  }
+
+  .fr-select {
+    max-width: 7rem !important;
   }
 }
 </style>

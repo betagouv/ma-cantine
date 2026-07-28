@@ -4,7 +4,7 @@ import urlService from "@/services/urls.js"
 import canteensTableService from "@/services/canteensTable.js"
 import AppRawHTML from "@/components/AppRawHTML.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
-import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
+import LayoutTable from "@/layouts/LayoutTable.vue"
 
 /* Settings */
 const props = defineProps(["canteens", "campaign"])
@@ -87,7 +87,7 @@ const getDropdownLinks = (canteen) => {
 }
 </script>
 <template>
-  <LayoutBigTable>
+  <LayoutTable>
     <DsfrDataTable
       title="Vos cantines"
       no-caption
@@ -96,7 +96,7 @@ const getDropdownLinks = (canteen) => {
       :pagination="showPagination"
       :pagination-options="[minPagination, 100, 200]"
       :rows-per-page="minPagination"
-      pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
+      pagination-wrapper-class="fr-mt-4w"
     >
       <template #header="{ label }">
         <AppRawHTML :html="label" />
@@ -152,5 +152,5 @@ const getDropdownLinks = (canteen) => {
         </template>
       </template>
     </DsfrDataTable>
-  </LayoutBigTable>
+  </LayoutTable>
 </template>

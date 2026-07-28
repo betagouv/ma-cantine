@@ -80,7 +80,7 @@ const goToAccount = () => {
 </script>
 
 <template>
-  <LayoutBigTable>
+  <LayoutTable>
     <DsfrDataTable
       title="Gestionnaires de l'établissement"
       no-caption
@@ -89,7 +89,7 @@ const goToAccount = () => {
       :pagination="showPagination"
       :pagination-options="[minPagination, 20, 30]"
       :rows-per-page="minPagination"
-      pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
+      pagination-wrapper-class="fr-mt-4w"
     >
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'name'">
@@ -121,5 +121,5 @@ const goToAccount = () => {
         </template>
       </template>
     </DsfrDataTable>
-  </LayoutBigTable>
+  </LayoutTable>
 </template>
