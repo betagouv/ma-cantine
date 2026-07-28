@@ -1,9 +1,10 @@
-from rest_framework.generics import ListCreateAPIView, DestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from django.http import JsonResponse
+from rest_framework import status
 
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
 from data.models import CanteenImage, Canteen
-
 from api.serializers.canteen_images import CanteenImageSerializer
 
 
@@ -46,7 +47,7 @@ class UserCanteenImagesListView(ListCreateAPIView):
         tags=["Cantines"],
     ),
 )
-class UserCanteenImagesDestroyView(DestroyAPIView):
+class UserCanteenImagesRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
     model = CanteenImage
@@ -59,3 +60,8 @@ class UserCanteenImagesDestroyView(DestroyAPIView):
     def get_queryset(self):
         canteen = self._get_canteen()
         return canteen.images.all()
+
+    def put(self, request, *args, **kwargs):
+        return JsonResponse(
+            {"error": "Only PATCH request supported in this resource"}, status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )

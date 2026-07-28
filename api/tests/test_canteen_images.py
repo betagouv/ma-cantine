@@ -1,13 +1,12 @@
 import base64
 import os
 
+from django.core.files import File
 from django.urls import reverse
-from django.urls.exceptions import NoReverseMatch
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.core.files import File
-from api.tests.utils import authenticate, get_oauth2_token
 
+from api.tests.utils import authenticate, get_oauth2_token
 from data.factories.canteen import CanteenFactory
 from data.models import CanteenImage
 
@@ -31,16 +30,16 @@ class CanteenImagesListApiTest(APITestCase):
                 canteen_image = CanteenImage(image=file)
                 canteen_image.canteen = cls.canteen
                 canteen_image.save()
-        cls.url = reverse("canteen_images_list", kwargs={"canteen_pk": cls.canteen.pk})
+        cls.url = reverse("canteen_images_list_create", kwargs={"canteen_pk": cls.canteen.pk})
 
-    def test_cannot_get_canteen_images_unauthenticated(self):
+    def test_cannot_get_canteen_images_if_unauthenticated(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_get_canteen_images_if_canteen_does_not_exist(self):
-        url = reverse("canteen_images_list", kwargs={"canteen_pk": 999})
+        url = reverse("canteen_images_list_create", kwargs={"canteen_pk": 9999})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -52,7 +51,7 @@ class CanteenImagesListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_canteen_images_list(self):
+    def test_get_canteen_images(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.get(self.url)
@@ -65,7 +64,7 @@ class CanteenImagesListApiTest(APITestCase):
             self.assertIn("image", item)
             self.assertIn("altText", item)
 
-    def test_canteen_images_list_via_oauth2(self):
+    def test_get_canteen_images_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
         self.client.credentials(Authorization=f"Bearer {token}")
@@ -93,34 +92,69 @@ class CanteenImagesDetailApiTest(APITestCase):
             canteen_image = CanteenImage(image=file)
             canteen_image.canteen = cls.canteen
             canteen_image.save()
+        cls.url = reverse(
+            "canteen_images_retrieve_update_destroy",
+            kwargs={"canteen_pk": cls.canteen.pk, "pk": cls.canteen.images.first().pk},
+        )
+
+    def test_cannot_get_canteen_image_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_get_canteen_image_detail(self):
+    def test_cannot_get_canteen_image_if_canteen_does_not_exist(self):
+        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": 1})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_canteen_image_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_canteen_image_detail(self):
         self.canteen.managers.add(authenticate.user)
 
-        with self.assertRaises(NoReverseMatch):
-            self.client.get(
-                reverse(
-                    "canteen_images_detail",
-                    kwargs={"canteen_pk": self.canteen.pk, "pk": self.canteen.images.first().pk},
-                )
-            )
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertIn("id", body)
+        self.assertIn("image", body)
+        self.assertIn("altText", body)
+
+    def test_get_canteen_image_detail_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+        self.client.credentials(Authorization=f"Bearer {token}")
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertIn("id", body)
+        self.assertIn("image", body)
+        self.assertIn("altText", body)
 
 
 class CanteenImagesCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
-        cls.url = reverse("canteen_images_list", kwargs={"canteen_pk": cls.canteen.pk})
+        cls.url = reverse("canteen_images_list_create", kwargs={"canteen_pk": cls.canteen.pk})
 
-    def test_cannot_create_canteen_image_unauthenticated(self):
+    def test_cannot_create_canteen_image_if_unauthenticated(self):
         response = self.client.post(self.url, data={})
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_create_canteen_image_if_canteen_does_not_exist(self):
-        url = reverse("canteen_images_list", kwargs={"canteen_pk": 999})
+        url = reverse("canteen_images_list_create", kwargs={"canteen_pk": 9999})
         response = self.client.post(url, data={})
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -210,19 +244,84 @@ class CanteenImagesUpdateApiTest(APITestCase):
             canteen_image = CanteenImage(image=file)
             canteen_image.canteen = cls.canteen
             canteen_image.save()
+        cls.url = reverse(
+            "canteen_images_retrieve_update_destroy",
+            kwargs={"canteen_pk": cls.canteen.pk, "pk": cls.canteen.images.first().pk},
+        )
+
+    def test_cannot_update_canteen_image_if_unauthenticated(self):
+        response = self.client.patch(self.url, data={})
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_update_canteen_image(self):
-        self.canteen.managers.add(authenticate.user)
+    def test_cannot_update_canteen_image_if_canteen_does_not_exist(self):
+        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": 1})
+        response = self.client.patch(url, data={})
 
-        with self.assertRaises(NoReverseMatch):
-            self.client.patch(
-                reverse(
-                    "canteen_images_detail",
-                    kwargs={"canteen_pk": self.canteen.pk, "pk": self.canteen.images.first().pk},
-                ),
-                data={},
-            )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_update_canteen_image_if_not_canteen_manager(self):
+        response = self.client.patch(self.url, data={})
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_update_canteen_image(self):
+        self.canteen.managers.add(authenticate.user)
+        self.assertEqual(self.canteen.images.first().alt_text, None)
+
+        payload = {
+            "altText": "Updated alt text",
+        }
+        response = self.client.patch(self.url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertIn("id", body)
+        self.assertIn("image", body)
+        self.assertIn("altText", body)
+        self.assertEqual(body["altText"], "Updated alt text")
+
+    def test_update_canteen_image_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.canteen.managers.add(user)
+        self.client.credentials(Authorization=f"Bearer {token}")
+        self.assertEqual(self.canteen.images.first().alt_text, None)
+
+        payload = {
+            "altText": "Updated alt text via OAuth2",
+        }
+        response = self.client.patch(self.url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertIn("id", body)
+        self.assertIn("image", body)
+        self.assertIn("altText", body)
+        self.assertEqual(body["altText"], "Updated alt text via OAuth2")
+
+    @authenticate
+    def test_update_canteen_image_even_if_canteen_not_filled(self):
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.siret = None
+        self.canteen.save(skip_validations=True)
+        self.assertIsNone(self.canteen.siret)
+        self.assertFalse(self.canteen.is_filled)
+        self.assertEqual(self.canteen.images.first().alt_text, None)
+
+        payload = {
+            "altText": "Updated alt text even if canteen not filled",
+        }
+        response = self.client.patch(self.url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertIn("id", body)
+        self.assertIn("image", body)
+        self.assertIn("altText", body)
+        self.assertEqual(body["altText"], "Updated alt text even if canteen not filled")
 
 
 class CanteenImagesDeleteApiTest(APITestCase):
@@ -238,18 +337,18 @@ class CanteenImagesDeleteApiTest(APITestCase):
             canteen_image.canteen = cls.canteen
             canteen_image.save()
         cls.url = reverse(
-            "canteen_images_destroy",
+            "canteen_images_retrieve_update_destroy",
             kwargs={"canteen_pk": cls.canteen.pk, "pk": cls.canteen.images.first().pk},
         )
 
-    def test_cannot_delete_canteen_image_unauthenticated(self):
+    def test_cannot_delete_canteen_image_if_unauthenticated(self):
         response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_delete_canteen_image_if_canteen_does_not_exist(self):
-        url = reverse("canteen_images_destroy", kwargs={"canteen_pk": 999, "pk": 1})
+        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": 1})
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -262,7 +361,7 @@ class CanteenImagesDeleteApiTest(APITestCase):
 
     @authenticate
     def test_cannot_delete_canteen_image_if_image_does_not_exist(self):
-        url = reverse("canteen_images_destroy", kwargs={"canteen_pk": self.canteen.pk, "pk": 999})
+        url = reverse("canteen_images_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.pk, "pk": 9999})
         self.canteen.managers.add(authenticate.user)
         response = self.client.delete(url)
 
