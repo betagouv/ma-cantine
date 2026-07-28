@@ -893,7 +893,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         return False
 
     @property
-    def logo_full_url(self):
+    def logo_full_url(self) -> str | None:
         if self.logo:
             return self.logo.url
         return None
