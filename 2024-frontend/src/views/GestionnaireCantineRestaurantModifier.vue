@@ -65,7 +65,10 @@ const goToCanteenPage = (canteen) => {
     />
     <p v-else>
       Une erreur est survenue,
-      <AppLinkRouter :to="{ name: 'DashboardManager' }" title="revenir à la page précédente" />
+      <AppLinkRouter
+        :to="{ name: 'DashboardManager', params: { canteenUrlComponent: route.params.canteenUrlComponent } }"
+        title="revenir à la page précédente"
+      />
     </p>
   </section>
 </template>

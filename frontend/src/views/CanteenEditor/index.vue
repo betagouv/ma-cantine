@@ -38,7 +38,13 @@ export default {
       if (this.isNewCanteen) return [{ to: { name: "GestionnaireTableauDeBord" } }]
       return [
         { to: { name: "GestionnaireTableauDeBord" } },
-        { to: { name: "DashboardManager" }, title: this.canteen.name },
+        {
+          to: {
+            name: "DashboardManager",
+            params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(this.canteen) },
+          },
+          title: this.canteen.name,
+        },
       ]
     },
   },
