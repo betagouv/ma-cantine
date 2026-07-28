@@ -3,7 +3,7 @@ import { sectionId } from "@/constants/site-map.js"
 /* Components */
 import GestionnaireAchatsAjouter from "@/views/GestionnaireAchatsAjouter.vue"
 import GestionnaireAchatsModifier from "@/views/GestionnaireAchatsModifier.vue"
-import GestionnaireCantineInformations from "@/views/GestionnaireCantineInformations.vue"
+import GestionnaireCantine from "@/views/GestionnaireCantine.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
 import GestionnaireCantineGroupe from "@/views/GestionnaireCantineGroupe.vue"
@@ -53,7 +53,7 @@ const routes = [
       title: "Déchets alimentaires",
       breadcrumbs: [
         { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-        { to: { name: "DashboardManager" }, useCanteenName: true },
+        { to: { name: "GestionnaireCantine" }, useCanteenName: true },
       ],
     },
   },
@@ -224,14 +224,12 @@ const routes = [
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/",
     children: [
       {
-        path: "informations",
-        name: "GestionnaireCantineInformations",
-        component: GestionnaireCantineInformations,
+        path: "",
+        name: "GestionnaireCantine",
+        component: GestionnaireCantine,
         meta: {
-          title: "Informations",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
           ],
         },
       },
@@ -243,7 +241,7 @@ const routes = [
           title: "Cantines du groupe",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
           ],
         },
       },
@@ -255,7 +253,7 @@ const routes = [
           title: "Toutes mes télédéclarations",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
           ],
         },
       },
@@ -267,7 +265,7 @@ const routes = [
           title: "Gestionnaires",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
           ],
         },
       },
@@ -279,7 +277,7 @@ const routes = [
           title: "Ma page publique",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
           ],
         },
       },
@@ -291,7 +289,7 @@ const routes = [
           title: "Archiver mon établissement",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
           ],
         },
       },
@@ -303,7 +301,7 @@ const routes = [
           title: "Modifier mon établissement",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
           ],
         },
       },
@@ -315,7 +313,7 @@ const routes = [
           title: "Modifier mon groupe de restaurants satellites",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantineInformations" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
           ],
         },
       },
@@ -327,7 +325,7 @@ const routes = [
           title: "Ajouter un achat",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
             { to: { name: "PurchasesHome" }, title: "Mes achats"},
           ],
         },
@@ -340,7 +338,7 @@ const routes = [
           title: "Modifier l'achat",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
             { to: { name: "PurchasesHome" }, title: "Mes achats" },
           ],
         },

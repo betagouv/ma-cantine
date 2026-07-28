@@ -14,16 +14,17 @@ breadcrumbRoutes.forEach((r) => {
   }
 })
 
-const pageTitle = computed(() => route.meta?.title)
 const canteenUrlComponent = computed(() => route.params?.canteenUrlComponent)
+const canteenName = computed(() => canteenUrlComponent.value ? urlService.getCanteenName(canteenUrlComponent.value) : null)
+const canteenDisplayName = computed(() => canteenName.value && canteenName.value !== "" ? urlService.getCanteenName(canteenUrlComponent.value) : "Mon établissement")
+const pageTitle = computed(() => route.meta?.title || canteenDisplayName.value)
 
 const breadcrumbLinks = computed(() => {
   const allLinks = [{ text: "Accueil", to: "/" }]
   if (route.meta?.breadcrumbs) {
     route.meta.breadcrumbs.forEach((link) => {
       if (link.useCanteenName && canteenUrlComponent.value) {
-        const title = urlService.getCanteenName(canteenUrlComponent.value) || "Mon établissement"
-        link.title = title.replace(/-/g, " ")
+        link.title = canteenDisplayName.value
       } else if (link.useCanteenName) {
         console.error(
           "BreadcrumbsNav: cannot identify canteen for breadcrumbs, canteenUrlComponent required in current route"
