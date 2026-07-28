@@ -168,7 +168,7 @@ const claimCanteen = (canteen) => {
         <p class="fr-text-title--blue-france fr-text--bold">
           <router-link
             v-if="cell.isManagedByUser"
-            :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+            :to="{ name: 'GestionnaireCantine', params: { canteenUrlComponent: cell.url } }"
           >
             {{ cell.canteen }}
           </router-link>

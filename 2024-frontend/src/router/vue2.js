@@ -15,10 +15,6 @@ const vue2routes = [
     name: "MyProgress",
   },
   {
-    path: "/dashboard/:canteenUrlComponent",
-    name: "DashboardManager",
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     meta: {
@@ -120,10 +116,6 @@ const vue2routes = [
   {
     path: '/nos-cantines/:canteenUrlComponent',
     name: 'CanteenPage',
-  },
-  {
-    path: '/modifier-ma-cantine/:canteenUrlComponent/generer-mon-affiche',
-    name: 'CanteenGeneratePoster',
   }
 ]
 
