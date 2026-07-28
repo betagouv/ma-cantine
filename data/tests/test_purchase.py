@@ -237,6 +237,17 @@ class PurchaseModelDeleteTest(TestCase):
         self.assertEqual(Purchase.objects.count(), 0)
         self.assertEqual(Purchase.all_objects.count(), 0)
 
+    def test_can_soft_delete_if_missing_data_using_skip_validations(self):
+        self.purchase.caracteristiques = [Purchase.Characteristic.EUROPE, Purchase.Characteristic.FRANCE]
+        self.purchase.save(skip_validations=True)
+
+        # without skip_validations
+        self.assertRaises(ValidationError, self.purchase.delete)
+
+        # with skip_validations
+        self.purchase.delete(skip_validations=True)
+        self.assertIsNotNone(self.purchase.deletion_date)
+
 
 class PurchaseQuerySetTest(TestCase):
     @classmethod
