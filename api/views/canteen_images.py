@@ -2,10 +2,71 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from django.http import JsonResponse
 from rest_framework import status
+from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
-from data.models import CanteenImage, Canteen
-from api.serializers.canteen_images import CanteenImageSerializer
+from api.serializers.canteen_images import CanteenImageSerializer, CanteenLogoSerializer
+from data.models import Canteen, CanteenImage
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Obtenir le logo d'une cantine.",
+        description="",
+        tags=["Cantines"],
+    ),
+    post=extend_schema(
+        summary="Ajouter le logo d'une cantine.",
+        description="",
+        tags=["Cantines"],
+    ),
+    delete=extend_schema(
+        summary="Supprimer le logo d'une cantine.",
+        description="",
+        tags=["Cantines"],
+    ),
+)
+class UserCanteenLogoView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    http_method_names = ["get", "post", "delete"]
+
+    def _get_canteen(self):
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, *args, **kwargs):
+        canteen = self._get_canteen()
+
+        if not canteen.logo:
+            raise NotFound()
+
+        serializer = CanteenLogoSerializer(canteen, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        canteen = self._get_canteen()
+
+        serializer = CanteenLogoSerializer(canteen, data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+
+        canteen.logo = serializer.validated_data["logo"]
+        canteen.save()
+
+        response_serializer = CanteenLogoSerializer(canteen, context={"request": request})
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        canteen = self._get_canteen()
+
+        if not canteen.logo:
+            raise NotFound()
+
+        canteen.logo.delete()
+        canteen.logo = None
+        canteen.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @extend_schema_view(
@@ -16,7 +77,7 @@ from api.serializers.canteen_images import CanteenImageSerializer
         responses=CanteenImageSerializer(many=True),
     ),
     post=extend_schema(
-        summary="Ajouter une image.",
+        summary="Ajouter une image d'une cantine.",
         description="",
         tags=["Cantines"],
     ),
@@ -42,7 +103,7 @@ class UserCanteenImagesListView(ListCreateAPIView):
 
 @extend_schema_view(
     delete=extend_schema(
-        summary="Supprimer une image.",
+        summary="Supprimer une image d'une cantine.",
         description="",
         tags=["Cantines"],
     ),
