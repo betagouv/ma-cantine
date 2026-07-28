@@ -10,7 +10,6 @@ import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppRawHTML from "@/components/AppRawHTML.vue"
-import LayoutTable from "@/layouts/LayoutTable.vue"
 
 /* Settings */
 const minPagination = 50
@@ -151,47 +150,45 @@ const claimCanteen = (canteen) => {
 </script>
 
 <template>
-  <LayoutTable>
-    <DsfrDataTable
-      title="Vos restaurants satellites"
-      no-caption
-      :headers-row="tableHeaders"
-      :rows="tableRows"
-      :sortable-rows="['name', 'diagnostic']"
-      :pagination="showPagination"
-      :pagination-options="[minPagination, 100, 200]"
-      :rows-per-page="minPagination"
-      pagination-wrapper-class="fr-mt-4w"
-    >
-      <template #header="{ label }">
-        <AppRawHTML :html="label" />
+  <DsfrDataTable
+    title="Vos restaurants satellites"
+    no-caption
+    :headers-row="tableHeaders"
+    :rows="tableRows"
+    :sortable-rows="['name', 'diagnostic']"
+    :pagination="showPagination"
+    :pagination-options="[minPagination, 100, 200]"
+    :rows-per-page="minPagination"
+    pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
+  >
+    <template #header="{ label }">
+      <AppRawHTML :html="label" />
+    </template>
+    <template #cell="{ colKey, cell }">
+      <template v-if="colKey === 'name'">
+        <p class="fr-text-title--blue-france fr-text--bold">
+          <router-link
+            v-if="cell.isManagedByUser"
+            :to="{ name: 'GestionnaireCantine', params: { canteenUrlComponent: cell.url } }"
+          >
+            {{ cell.canteen }}
+          </router-link>
+          <span v-else>
+            {{ cell.canteen }}
+          </span>
+        </p>
       </template>
-      <template #cell="{ colKey, cell }">
-        <template v-if="colKey === 'name'">
-          <p class="fr-text-title--blue-france fr-text--bold">
-            <router-link
-              v-if="cell.isManagedByUser"
-              :to="{ name: 'GestionnaireCantine', params: { canteenUrlComponent: cell.url } }"
-            >
-              {{ cell.canteen }}
-            </router-link>
-            <span v-else>
-              {{ cell.canteen }}
-            </span>
-          </p>
-        </template>
-        <template v-else-if="colKey === 'diagnostic'">
-          <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
-        </template>
-        <template v-else-if="colKey === 'actions'">
-          <div class="fr-grid-row fr-grid-row--right">
-            <AppDropdownMenu label="Actions" :links="cell.links" size="small" @click="(event) => clickAction(event, cell.canteen)" />
-          </div>
-        </template>
-        <template v-else>
-          {{ cell }}
-        </template>
+      <template v-else-if="colKey === 'diagnostic'">
+        <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
       </template>
-    </DsfrDataTable>
-  </LayoutTable>
+      <template v-else-if="colKey === 'actions'">
+        <div class="fr-grid-row fr-grid-row--right">
+          <AppDropdownMenu label="Actions" :links="cell.links" size="small" @click="(event) => clickAction(event, cell.canteen)" />
+        </div>
+      </template>
+      <template v-else>
+        {{ cell }}
+      </template>
+    </template>
+  </DsfrDataTable>
 </template>
