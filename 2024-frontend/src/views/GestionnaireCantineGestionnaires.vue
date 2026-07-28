@@ -8,11 +8,7 @@ import CanteenModalManagerRemove from "@/components/CanteenModalManagerRemove.vu
 const addModalOpened = ref(false)
 const removeModalOpened = ref(false)
 const managerToRemove = ref(null)
-const managersTable = ref(null)
-
-const updateManagersList = (managementTeam) => {
-  managersTable.value?.update(managementTeam)
-}
+const forceRerender = ref(0)
 
 const openRemoveModal = (member) => {
   managerToRemove.value = member
@@ -45,7 +41,7 @@ const closeRemoveModal = () => {
       </p>
       <CanteenTableManagers
         v-if="canteenInformation"
-        ref="managersTable"
+        :key="forceRerender"
         :canteen-id="canteenInformation.id"
         @delete="openRemoveModal"
       />
@@ -53,14 +49,14 @@ const closeRemoveModal = () => {
         :opened="addModalOpened"
         :canteen="canteenInformation"
         @close="addModalOpened = false"
-        @updated="updateManagersList"
+        @updated="forceRerender++"
       />
       <CanteenModalManagerRemove
         :opened="removeModalOpened"
         :canteen="canteenInformation"
         :manager="managerToRemove"
         @close="closeRemoveModal"
-        @updated="updateManagersList"
+        @updated="forceRerender++"
       />
     </template>
   </LayoutSidebarCanteen>
