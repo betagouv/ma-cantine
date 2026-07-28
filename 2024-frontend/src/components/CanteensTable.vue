@@ -89,6 +89,7 @@ const getDropdownLinks = (canteen) => {
   <DsfrDataTable
     title="Vos cantines"
     no-caption
+    class="canteens-table"
     :headers-row="header"
     :rows="rows"
     :pagination="showPagination"
@@ -151,3 +152,15 @@ const getDropdownLinks = (canteen) => {
     </template>
   </DsfrDataTable>
 </template>
+
+<style lang="scss">
+.canteens-table {
+  th:nth-child(1) {
+    width: 35% !important;
+  }
+  td:nth-child(1),
+  td:nth-child(4) {
+    white-space: pre-wrap !important;
+  }
+}
+</style>
