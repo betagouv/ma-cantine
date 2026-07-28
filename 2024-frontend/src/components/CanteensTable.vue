@@ -100,7 +100,7 @@ const getDropdownLinks = (canteen) => {
         <template v-if="colKey === 'name'">
           <p>
             <router-link
-              :to="{ name: 'DashboardManager', params: { canteenUrlComponent: cell.url } }"
+              :to="{ name: 'GestionnaireCantine', params: { canteenUrlComponent: cell.url } }"
               class="fr-text-title--blue-france fr-text--bold"
             >
               {{ cell.name }}

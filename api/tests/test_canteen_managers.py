@@ -386,7 +386,7 @@ class CanteenTeamRequestEmailTest(APITestCase):
         self.assertIn("76494221950672", email.body)
         self.assertIn("Hugo", email.body)
         self.assertIn(
-            f"https://mysite.com/modifier-ma-cantine/{canteen.id}--\nHugo/gestionnaires?email=test@example.com",
+            f"https://mysite.com/v2/tableau-de-bord/cantines/{canteen.id}--\nHugo/gestionnaires?email=test@example.com",
             email.body,
         )
         self.assertEqual(len(email.reply_to), 1)
@@ -419,7 +419,7 @@ class CanteenTeamRequestEmailTest(APITestCase):
         self.assertIn("76494221950672", email.body)
         self.assertIn("Hugo", email.body)
         self.assertIn(
-            f"https://mysite.com/modifier-ma-cantine/{canteen.id}--\nHugo/gestionnaires?email=test@example.com",
+            f"https://mysite.com/v2/tableau-de-bord/cantines/{canteen.id}--\nHugo/gestionnaires?email=test@example.com",
             email.body,
         )
         self.assertEqual(len(email.reply_to), 1)
