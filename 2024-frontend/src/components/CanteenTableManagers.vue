@@ -26,6 +26,7 @@ const tableHeaders = [
 const teamRows = computed(() => {
   const managerRows = managers.value.map((manager) => ({
     ...manager,
+    isMe: manager.email === loggedUserEmail.value,
     isInvitation: false,
   }))
 
@@ -57,17 +58,13 @@ const getDisplayName = (member) => {
 }
 
 const getStatusBadge = (member) => {
-  if (member.isStaff) {
-    return { label: "Administrateur ma cantine", type: "info" }
-  }
-  if (member.isInvitation) {
-    return { label: "Invitation envoyée", type: "new" }
-  }
+  if (member.isStaff) return { label: "Administrateur ma cantine", type: "info" }
+  if (member.isInvitation) return { label: "Invitation envoyée", type: "new" }
   return { label: "Gestionnaire", type: "success" }
 }
 
 const getActions = (member) => {
-  if (member.email === loggedUserEmail.value) return { type: "edit" }
+  if (member.isMe) return { type: "edit" }
   if (member.isStaff) return { type: "none" }
   return { type: "delete", member }
 }
