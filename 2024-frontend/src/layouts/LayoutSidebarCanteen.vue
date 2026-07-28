@@ -90,7 +90,7 @@ const menuItems = computed(() =>  {
           </h2>
           <slot name="titleButton" :canteenIsGroupe="canteenIsGroupe"></slot>
         </div>
-        <AppSeparator class="fr-mt-3w fr-mb-5w" />
+        <AppSeparator class="layout-sidebar-canteen__separator fr-mt-3w fr-mb-5w" />
         <slot name="content" :canteenInformation="canteenInformation" :canteenIsGroupe="canteenIsGroupe"></slot>
       </section>
     </div>
@@ -99,6 +99,13 @@ const menuItems = computed(() =>  {
 
 <style lang="scss">
 .layout-sidebar-canteen {
+  &__separator {
+    display: none;
+
+    @media (min-width: 768px) {
+      display: block;
+    }
+  }
   &__sidebar-container {
     .fr-sidemenu__title {
       display: none !important;
