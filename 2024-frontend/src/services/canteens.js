@@ -53,6 +53,17 @@ const updateCanteen = (payload, id) => {
     .catch((e) => e)
 }
 
+const checkCanteen = (canteenId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/check`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
 
 const fetchSatellites = (canteenId) => {
   return fetch(`/api/v1/canteens/${canteenId}/satellites/`, {
@@ -147,6 +158,7 @@ export default {
   canteenStatus,
   fetchCanteen,
   updateCanteen,
+  checkCanteen,
   claimCanteen,
   deleteCanteen,
   teamJoinRequest,
