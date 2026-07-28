@@ -72,7 +72,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
     </li>
     <li v-if="!canteenIsGroupe" class="fr-my-3w">
       <h3 class="fr-h5">Informations générées</h3>
-      <DsfrAlert title="Ces informations ne sont pas modifiables" type="info" class="fr-mb-2w">
+      <DsfrAlert title="Ces informations ne sont pas modifiables" type="info" class="fr-mb-2w" titleTag="h4">
         À partir des informations renseignées, nous avons généré des données avec d'autres référentiels :
         <a href="https://france-pat.fr" target="_blank">France PAT</a>
         et
@@ -94,7 +94,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
     </li>
     <li v-if="showGroupeInformations" class="fr-my-3w">
       <h3 class="fr-h5">Informations de mon groupe</h3>
-      <DsfrAlert title="Le gestionnaire du groupe de restaurants satellites a ajouté votre établissement" type="info" class="fr-mb-2w">
+      <DsfrAlert title="Le gestionnaire du groupe de restaurants satellites a ajouté votre établissement" type="info" class="fr-mb-2w" titleTag="h4">
         Cela lui permet de réaliser une déclaration unique pour laquelle le montant total des achats du groupe est ensuite réparti automatiquement entre chaque restaurant satellite, au prorata de son nombre de couverts annuels.
         Si vous remarquez une erreur ou souhaitez ne plus être associer au groupe, merci de <AppLinkRouter title="nous contacter" :to="{name: 'Contact'}" />.
       </DsfrAlert>
