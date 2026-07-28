@@ -59,8 +59,7 @@ from .purchase import (  # noqa: F401
     PurchaseSerializer,
     PurchaseOldSerializer,
     PurchaseSummarySerializer,
-    PurchaseFactureUploadSerializer,
-    PurchaseFactureResponseSerializer,
+    PurchaseFactureSerializer,
     PurchasePercentageSummarySerializer,
     PurchaseExportSerializer,
 )

@@ -16,14 +16,13 @@ from rest_framework.views import APIView
 from api.filters.utils import UnaccentSearchFilter
 from api.permissions import (
     IsAuthenticated,
-    IsCanteenManager,
     IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManager,
     IsCanteenManagerUrlParam,
     IsLinkedCanteenManager,
 )
 from api.serializers import (
-    PurchaseFactureResponseSerializer,
-    PurchaseFactureUploadSerializer,
+    PurchaseFactureSerializer,
     PurchaseOldSerializer,
     PurchasePercentageSummarySerializer,
     PurchaseSerializer,
@@ -267,19 +266,19 @@ class PurchaseFactureView(APIView):
         if not purchase.facture:
             raise NotFound()
 
-        serializer = PurchaseFactureResponseSerializer(purchase, context={"request": request})
+        serializer = PurchaseFactureSerializer(purchase, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         purchase = self.get_object()
 
-        serializer = PurchaseFactureUploadSerializer(data=request.data, context={"request": request})
+        serializer = PurchaseFactureSerializer(purchase, data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
 
         purchase.facture = serializer.validated_data["facture"]
         purchase.save(skip_validations=True)
 
-        response_serializer = PurchaseFactureResponseSerializer(purchase, context={"request": request})
+        response_serializer = PurchaseFactureSerializer(purchase, context={"request": request})
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):

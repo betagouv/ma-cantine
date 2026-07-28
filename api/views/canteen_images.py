@@ -16,11 +16,13 @@ from data.models import Canteen, CanteenImage
         summary="Obtenir le logo d'une cantine.",
         description="",
         tags=["Cantines"],
+        responses=CanteenLogoSerializer,
     ),
     post=extend_schema(
         summary="Ajouter le logo d'une cantine.",
         description="",
         tags=["Cantines"],
+        responses=CanteenLogoSerializer,
     ),
     delete=extend_schema(
         summary="Supprimer le logo d'une cantine.",

@@ -194,21 +194,13 @@ class PurchaseSerializer(serializers.ModelSerializer):
         return internal_value
 
 
-class PurchaseFactureUploadSerializer(serializers.Serializer):
-    facture = Base64FileField(required=True, allow_null=False)
+class PurchaseFactureSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    facture = Base64FileField()
 
     class Meta:
-        fields = ("facture",)
-
-
-class PurchaseFactureResponseSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    facture = serializers.SerializerMethodField()
-
-    def get_facture(self, obj):
-        if obj.facture:
-            return self.context["request"].build_absolute_uri(obj.facture.url)
-        return None
+        model = Purchase
+        fields = ("id", "facture")
 
 
 # NB: these names reflect the names in the diagnostic model
