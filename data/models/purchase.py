@@ -342,6 +342,12 @@ class Purchase(SoftDeletionModel):
                 pass
         return ", ".join(caracteristiques_display) if caracteristiques_display else ""
 
+    @property
+    def facture_full_url(self) -> str | None:
+        if self.facture:
+            return self.facture.url
+        return None
+
     @classmethod
     def canteen_summary_for_year(cls, canteen, year):
         purchases = cls.objects.filter_for_stats(canteen, year)
