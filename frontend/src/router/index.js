@@ -27,8 +27,6 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import CanteenEditor from "@/views/CanteenEditor"
-import CanteenGeneratePoster from "@/views/CanteenEditor/CanteenGeneratePoster"
 import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasesSummary from "@/views/PurchasesSummary"
@@ -245,24 +243,6 @@ const routes = [
     meta: {
       title: "Nouvel acteur de l'éco-système",
     },
-  },
-  {
-    path: "/modifier-ma-cantine/:canteenUrlComponent",
-    name: "GestionnaireCantine",
-    props: true,
-    component: CanteenEditor,
-    redirect: { name: "CanteenForm" },
-    children: [
-      {
-        path: "generer-mon-affiche",
-        name: "CanteenGeneratePoster",
-        component: CanteenGeneratePoster,
-        meta: {
-          authenticationRequired: true,
-          title: "Générer mon affiche",
-        },
-      },
-    ],
   },
   {
     path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
