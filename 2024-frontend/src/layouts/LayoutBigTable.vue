@@ -28,7 +28,8 @@
   }
 
   .fr-table {
-    min-width: 75rem;
+    min-width: 55rem;
+    width: 100%;
   }
 }
 </style>

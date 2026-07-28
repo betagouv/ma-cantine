@@ -84,13 +84,13 @@ const menuItems = computed(() =>  {
         <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu" class="ma-cantine--sticky__top" />
       </div>
       <section class="fr-col-12 fr-col-md-9 fr-pb-2w">
-        <div class="ma-cantine--flex-between ma-cantine--flex-gap-1">
+        <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mt-2w fr-mt-md-0 fr-mb-2w fr-mb-md-0">
           <h2 class="fr-h3 fr-mb-0">
             <slot name="titleName" :canteenIsGroupe="canteenIsGroupe"></slot>
           </h2>
           <slot name="titleButton" :canteenIsGroupe="canteenIsGroupe"></slot>
         </div>
-        <AppSeparator class="fr-mt-3w fr-mb-5w" />
+        <AppSeparator class="layout-sidebar-canteen__separator fr-mt-3w fr-mb-5w" />
         <slot name="content" :canteenInformation="canteenInformation" :canteenIsGroupe="canteenIsGroupe"></slot>
       </section>
     </div>
@@ -99,6 +99,13 @@ const menuItems = computed(() =>  {
 
 <style lang="scss">
 .layout-sidebar-canteen {
+  &__separator {
+    display: none;
+
+    @media (min-width: 768px) {
+      display: block;
+    }
+  }
   &__sidebar-container {
     .fr-sidemenu__title {
       display: none !important;
