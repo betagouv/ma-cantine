@@ -13,10 +13,12 @@ import AppRawHTML from "@/components/AppRawHTML.vue"
 import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
 
 /* Settings */
+const minPagination = 50
 const props = defineProps(["satellites", "groupe"])
 const emit = defineEmits(["showModalRemoveSatellite", "updateSatellites"])
 const lastYear = new Date().getFullYear() - 1
 const store = useRootStore()
+const showPagination = computed(() => props.satellites.length > minPagination)
 
 /* Campaign */
 const campaign = computedAsync(async () => {
@@ -156,10 +158,10 @@ const claimCanteen = (canteen) => {
       :headers-row="tableHeaders"
       :rows="tableRows"
       :sortable-rows="['name', 'diagnostic']"
-      :pagination="true"
-      :pagination-options="[50, 100, 200]"
-      :rows-per-page="50"
-      pagination-wrapper-class="canteens-table-satellites__pagination fr-mt-4w"
+      :pagination="showPagination"
+      :pagination-options="[minPagination, 100, 200]"
+      :rows-per-page="minPagination"
+      pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
       class="canteens-table-satellites"
     >
       <template #header="{ label }">
@@ -197,13 +199,6 @@ const claimCanteen = (canteen) => {
 
 <style lang="scss">
 .canteens-table-satellites {
-
-  &__pagination {
-    .fr-select {
-      max-width: 7rem !important;
-    }
-  }
-
   .fr-table__container {
     overflow: initial !important;
   }

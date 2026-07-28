@@ -6,8 +6,13 @@ import AppRawHTML from "@/components/AppRawHTML.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import LayoutBigTable from "@/layouts/LayoutBigTable.vue"
 
+/* Settings */
 const props = defineProps(["canteens", "campaign"])
 const lastYear = new Date().getFullYear() - 1
+const minPagination = 50
+
+/* Table */
+const showPagination = computed(() => props.canteens.length > minPagination)
 const header = [
   {
     key: "name",
@@ -88,10 +93,10 @@ const getDropdownLinks = (canteen) => {
       no-caption
       :headers-row="header"
       :rows="rows"
-      :pagination="true"
-      :pagination-options="[50, 100, 200]"
-      :rows-per-page="50"
-      pagination-wrapper-class="fr-mt-4w"
+      :pagination="showPagination"
+      :pagination-options="[minPagination, 100, 200]"
+      :rows-per-page="minPagination"
+      pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
     >
       <template #header="{ label }">
         <AppRawHTML :html="label" />
