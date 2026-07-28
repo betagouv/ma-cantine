@@ -562,7 +562,11 @@ class CanteenModelSaveTest(TransactionTestCase):
     def test_canteen_skip_validations_on_save(self):
         canteen = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
         canteen.siret = None
-        # should not raise
+
+        # without skip_validations
+        self.assertRaises(ValidationError, canteen.save)
+
+        # with skip_validations
         canteen.save(skip_validations=True)
         self.assertEqual(canteen.siret, None)
 

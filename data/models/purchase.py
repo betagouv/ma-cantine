@@ -290,11 +290,13 @@ class Purchase(SoftDeletionModel):
         if validation_errors:
             raise ValidationError(validation_errors)
 
-    def save(self, **kwargs):
+    def save(self, skip_validations=False, **kwargs):
         """
         - full_clean(): run validations (with extra validations in clean())
+            - this can be skipped with skip_validations=True (USE WITH CAUTION)
         """
-        self.full_clean()
+        if not skip_validations:
+            self.full_clean()
         super().save(**kwargs)
 
     @property
