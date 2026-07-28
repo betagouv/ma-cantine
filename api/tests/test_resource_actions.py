@@ -33,7 +33,7 @@ class TestResourceActionsApi(APITestCase):
         response = self.client.post(self.url, data={"is_done": True})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # user is authenticated and belongs to the canteen, but canteen_id is wrong
-        response = self.client.post(self.url, data={"canteen_id": 999, "is_done": True})
+        response = self.client.post(self.url, data={"canteen_id": 9999, "is_done": True})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_resource_action_success(self):

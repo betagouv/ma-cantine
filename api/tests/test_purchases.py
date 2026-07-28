@@ -587,9 +587,9 @@ class PurchaseDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_get_purchase_if_canteen_unknown(self):
+    def test_cannot_get_purchase_if_canteen_does_not_exist(self):
         response = self.client.get(
-            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 999, "pk": self.purchase.id})
+            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": self.purchase.id})
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -601,7 +601,7 @@ class PurchaseDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_get_purchase_if_purchase_unknown(self):
+    def test_cannot_get_purchase_if_purchase_does_not_exist(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.get(
@@ -711,13 +711,13 @@ class PurchaseUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_update_if_canteen_unknown(self):
+    def test_cannot_update_if_canteen_does_not_exist(self):
         payload = {
             "prix_ht": 15.23,
         }
 
         response = self.client.patch(
-            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 999, "pk": self.purchase.id}),
+            reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": self.purchase.id}),
             payload,
         )
 
@@ -735,7 +735,7 @@ class PurchaseUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_update_if_purchase_unknown(self):
+    def test_cannot_update_if_purchase_does_not_exist(self):
         self.canteen.managers.add(authenticate.user)
         payload = {
             "prix_ht": 15.23,
@@ -1152,7 +1152,7 @@ class PurchaseDeleteMultipleApiTest(APITestCase):
         purchase_already_deleted = PurchaseFactory(deletion_date=date)
         purchase_should_delete.canteen.managers.add(authenticate.user)
         purchase_already_deleted.canteen.managers.add(authenticate.user)
-        invalid_id = "999"
+        invalid_id = "9999"
         not_mine = PurchaseFactory(deletion_date=None)
         ids = [purchase_should_delete.id, purchase_already_deleted.id, invalid_id, not_mine.id]
 
@@ -1201,7 +1201,7 @@ class PurchaseRestoreApiTest(APITestCase):
 
 class PurchaseCanteenSummaryApiTest(APITestCase):
     @authenticate
-    def test_cannot_purchase_canteen_summary_if_unauthenticated(self):
+    def test_cannot_get_purchase_canteen_summary_if_unauthenticated(self):
         canteen = CanteenFactory()
 
         response = self.client.get(
@@ -1211,13 +1211,13 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_purchase_canteen_summary_if_canteen_unknown(self):
-        response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": 999999}), {"year": 2020})
+    def test_cannot_get_purchase_canteen_summary_if_canteen_does_not_exist(self):
+        response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": 9999}), {"year": 2020})
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_purchase_total_summary(self):
+    def test_get_purchase_total_summary(self):
         """
         Given a year, return spending by category
         Bio category is the sum of all products with either bio or bio en conversion labels

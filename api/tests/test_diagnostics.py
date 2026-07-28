@@ -89,7 +89,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_create_diagnostic_if_canteen_unknown(self):
+    def test_cannot_create_diagnostic_if_canteen_does_not_exist(self):
         response = self.client.post(
             reverse("diagnostic_list_create", kwargs={"canteen_pk": 9999}), self.DIAGNOSTIC_PAYLOAD
         )
@@ -583,7 +583,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.year, 2025)
 
     @authenticate
-    def test_cannot_update_diagnostic_if_canteen_unknown(self):
+    def test_cannot_update_diagnostic_if_canteen_does_not_exist(self):
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -607,7 +607,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.year, 2025)
 
     @authenticate
-    def test_cannot_update_diagnostic_if_diagnostic_unknown(self):
+    def test_cannot_update_diagnostic_if_diagnostic_does_not_exist(self):
         self.diagnostic.canteen.managers.add(authenticate.user)
 
         response = self.client.patch(

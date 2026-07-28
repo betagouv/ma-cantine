@@ -177,10 +177,6 @@ class CanteenListPreviewApiTest(APITestCase):
 
 class CanteenDetailApiTest(APITestCase):
     def test_cannot_get_single_user_canteen_unauthorized(self):
-        """
-        Users cannot access to the full representation of a single
-        canteen if they are not authenticated
-        """
         canteen = CanteenFactory()
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
@@ -188,21 +184,13 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_get_single_user_canteen_unknown(self):
-        """
-        Users cannot access the full representation of a single
-        canteen that does not exist.
-        """
+    def test_cannot_get_single_user_canteen_does_not_exist(self):
         response = self.client.get(reverse("single_canteen", kwargs={"pk": 9999}))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_get_single_user_canteen_if_not_canteen_manager(self):
-        """
-        Users cannot access the full representation of a single
-        canteen if they do not manage it.
-        """
         canteen = CanteenFactory()
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))

@@ -334,9 +334,9 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         self.assertEqual(ManagerInvitation.objects.filter(canteen=canteen).count(), 2)
 
     @authenticate
-    def test_import_for_canteen_not_filled(self):
+    def test_import_for_canteen_not_valid(self):
         """
-        Staff user can add managers to a canteen not filled
+        Staff user can add managers to a canteen not valid
         """
         user = authenticate.user
         user.is_staff = True

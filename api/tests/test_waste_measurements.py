@@ -23,7 +23,7 @@ class WasteMeasurementsListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_get_waste_measurements_if_canteen_unknown(self):
+    def test_cannot_get_waste_measurements_if_canteen_does_not_exist(self):
         response = self.client.get(reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": 9999}))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -159,7 +159,7 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_create_waste_measurement_if_canteen_unknown(self):
+    def test_cannot_create_waste_measurement_if_canteen_does_not_exist(self):
         payload = {**self.WM_PAYLOAD, "meal_count": 500}
 
         response = self.client.post(reverse("canteen_waste_measurements_list", kwargs={"canteen_pk": 9999}), payload)
@@ -464,7 +464,7 @@ class WasteMeasurementsDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_get_waste_measurement_if_canteen_unknown(self):
+    def test_cannot_get_waste_measurement_if_canteen_does_not_exist(self):
         response = self.client.get(
             reverse("canteen_waste_measurement_detail", kwargs={"pk": self.measurement.id, "canteen_pk": 9999})
         )
@@ -558,10 +558,10 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_update_waste_measurement_if_canteen_unknown(self):
+    def test_cannot_update_waste_measurement_if_canteen_does_not_exist(self):
         payload = {"mealCount": 200}
 
-        response = self.client.get(
+        response = self.client.patch(
             reverse("canteen_waste_measurement_detail", kwargs={"pk": self.measurement.id, "canteen_pk": 9999}),
             payload,
         )
@@ -569,11 +569,11 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_update_waste_measurement_if_measurement_unknown(self):
+    def test_cannot_update_waste_measurement_if_measurement_does_not_exist(self):
         self.canteen.managers.add(authenticate.user)
         payload = {"mealCount": 200}
 
-        response = self.client.get(
+        response = self.client.patch(
             reverse("canteen_waste_measurement_detail", kwargs={"pk": 9999, "canteen_pk": self.canteen.id}), payload
         )
 

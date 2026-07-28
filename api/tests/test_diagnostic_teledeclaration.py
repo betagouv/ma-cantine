@@ -182,7 +182,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_teledeclare_if_canteen_unknown(self):
+    def test_cannot_teledeclare_if_canteen_does_not_exist(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         self.canteen_site.managers.add(authenticate.user)
 
@@ -197,7 +197,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_teledeclare_if_diagnostic_unknown(self):
+    def test_cannot_teledeclare_if_diagnostic_does_not_exist(self):
         DiagnosticFactory(canteen=self.canteen_site, year=2024)
         self.canteen_site.managers.add(authenticate.user)
 
@@ -397,7 +397,7 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_cancel_teledeclaration_if_canteen_unknown(self):
+    def test_cannot_cancel_teledeclaration_if_canteen_does_not_exist(self):
         self.canteen_site.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         diagnostic.teledeclare(authenticate.user)
@@ -413,7 +413,7 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_cancel_teledeclaration_if_diagnostic_unknown(self):
+    def test_cannot_cancel_teledeclaration_if_diagnostic_does_not_exist(self):
         self.canteen_site.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         diagnostic.teledeclare(authenticate.user)
