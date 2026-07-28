@@ -106,7 +106,7 @@ class AddManagerView(APIView):
         try:
             protocol = settings.PROTOCOL
             domain = settings.HOSTNAME
-            canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
+            canteen_path = f"/v2/tableau-de-bord/cantines/{canteen.url_slug}"
             context = {
                 "canteen": canteen.name,
                 "canteen_url": f"{protocol}://{domain}{canteen_path}",
@@ -171,7 +171,7 @@ class TeamJoinRequestView(APIView):
             name = request.data.get("name")
             message = request.data.get("message")
             canteen = Canteen.objects.get(pk=canteen_pk)
-            canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
+            canteen_path = f"/v2/tableau-de-bord/cantines/{canteen.url_slug}"
             url = f"{'https' if settings.SECURE else 'http'}://{settings.HOSTNAME}{canteen_path}/gestionnaires?email={email}"
 
             context = {
