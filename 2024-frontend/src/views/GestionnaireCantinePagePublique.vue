@@ -70,7 +70,6 @@ const goToPrintPage = () => {
           <CanteenFormLogo
             v-if="canteenInformation"
             :canteen-id="canteenInformation.id"
-            :logo="canteenInformation.logo"
             class="fr-mb-3w"
           />
 
