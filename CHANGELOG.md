@@ -6,6 +6,36 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.41.0](https://github.com/betagouv/ma-cantine/compare/v2026.40.2...v2026.41.0) (2026-07-29)
+
+
+### Nouveautés
+
+* **Cantines:** API: endpoint dédié à la récupération, l'upload et la suppression de logo ([#6933](https://github.com/betagouv/ma-cantine/issues/6933)) ([283c05e](https://github.com/betagouv/ma-cantine/commit/283c05ecf0b10bbfa6e85c2e8183497bfc4567ba))
+* **Cantines:** API: nouvel endpoint /check qui renvoi des infos (is_filled, errors) ([#6914](https://github.com/betagouv/ma-cantine/issues/6914)) ([7bf5256](https://github.com/betagouv/ma-cantine/commit/7bf525692285d0f748f71fd49dd18addab23143a))
+* **Cantines:** API: nouvel endpoint pour ajouter 1 image ([#6929](https://github.com/betagouv/ma-cantine/issues/6929)) ([e6910e3](https://github.com/betagouv/ma-cantine/commit/e6910e334abac79552a36379fe929172c609f820))
+* **Cantines:** API: nouvel endpoint pour récupérer (seulement) la liste des demandes d'ajouts de gestionnaires ([#6919](https://github.com/betagouv/ma-cantine/issues/6919)) ([4f33fa3](https://github.com/betagouv/ma-cantine/commit/4f33fa39ea5f7e8b0fd732aa3adffa8903f2e272))
+* **Cantines:** API: nouvel endpoint pour récupérer (seulement) la liste des gestionnaires ([#6918](https://github.com/betagouv/ma-cantine/issues/6918)) ([e06b1e8](https://github.com/betagouv/ma-cantine/commit/e06b1e8101678ee30456429b36503a4bb10bce49))
+* **Cantines:** API: nouvel endpoint pour récupérer (seulement) la liste des images ([#6920](https://github.com/betagouv/ma-cantine/issues/6920)) ([df6ce9a](https://github.com/betagouv/ma-cantine/commit/df6ce9ab213f0aed7b8ca0a6c3542b67da665303))
+* **Cantines:** API: nouvel endpoint pour récupérer & modifier 1 image ([#6935](https://github.com/betagouv/ma-cantine/issues/6935)) ([34be285](https://github.com/betagouv/ma-cantine/commit/34be28580f90b9185534e942dec5289d8ddb2bd7))
+* **Cantines:** API: nouvel endpoint pour supprimer 1 image ([#6930](https://github.com/betagouv/ma-cantine/issues/6930)) ([d6e2040](https://github.com/betagouv/ma-cantine/commit/d6e20406a9a3b6f249c9b2abd0fb5857c76ecd64))
+
+
+### Améliorations
+
+* **Cantines:** Images: ajout d'un champ pour tracker les dates de création & modification ([#6931](https://github.com/betagouv/ma-cantine/issues/6931)) ([62c4a96](https://github.com/betagouv/ma-cantine/commit/62c4a9601a06ade3ea2043e8848139233ac1a81c))
+
+
+### Technique
+
+* **Achats:** API: permettre de sauvegarder ou supprimer une facture sur un achat 'non valide' ([#6945](https://github.com/betagouv/ma-cantine/issues/6945)) ([11bdb09](https://github.com/betagouv/ma-cantine/commit/11bdb09f8880608379ca3debc60100bff1233948))
+* **Achats:** Facture: simplifier les serializer ([#6949](https://github.com/betagouv/ma-cantine/issues/6949)) ([e9a9606](https://github.com/betagouv/ma-cantine/commit/e9a9606958a5535fe076152535b6faa35d624807))
+* **Achats:** permettre d'ignorer les validations on delete grâce à skip_validations ([#6937](https://github.com/betagouv/ma-cantine/issues/6937)) ([06ab83a](https://github.com/betagouv/ma-cantine/commit/06ab83af0e452a7b4e6278b9f67291e9471cd004))
+* **Achats:** permettre d'ignorer les validations on save grâce à skip_validations ([#6936](https://github.com/betagouv/ma-cantine/issues/6936)) ([6dab803](https://github.com/betagouv/ma-cantine/commit/6dab803ff80dc49ca3312caeb6da2f55eccb595e))
+* **API:** pointer vers l'app OAuth2 définie dans les settings ([#6928](https://github.com/betagouv/ma-cantine/issues/6928)) ([4b5103d](https://github.com/betagouv/ma-cantine/commit/4b5103d7b9f696f43e7c5273b2992d5a86db789b))
+* **Cantines:** Logo: nouvelle property + affichage dans l'admin ([#6932](https://github.com/betagouv/ma-cantine/issues/6932)) ([74b8b24](https://github.com/betagouv/ma-cantine/commit/74b8b242680d08fdd7dcec1717261e4b73983173))
+* **TD:** nouveau queryset 'has_invalid_reason' pour facilement exclure les TD non valides [1TD1Site] ([#6957](https://github.com/betagouv/ma-cantine/issues/6957)) ([4bcc172](https://github.com/betagouv/ma-cantine/commit/4bcc17202ffc0200f145e28af75e7bf88b97a5f8))
+
 ## [2026.40.2](https://github.com/betagouv/ma-cantine/compare/v2026.40.1...v2026.40.2) (2026-07-21)
 
 
