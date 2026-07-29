@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
-import AppSeparator from "@/components/AppSeparator.vue"
+import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import CanteenTableManagers from "@/components/CanteenTableManagers.vue"
 import CanteenModalManagerAdd from "@/components/CanteenModalManagerAdd.vue"
 import CanteenModalManagerRemove from "@/components/CanteenModalManagerRemove.vue"
@@ -26,18 +26,14 @@ const closeRemoveModal = () => {
 </script>
 
 <template>
-  <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mt-2w fr-mt-md-0 fr-mb-2w fr-mb-md-0">
-    <h2 class="fr-h3 fr-mb-0">
-      {{ canteenInformations.isGroupe ? "Gestionnaires" : "Mes gestionnaires" }}
-    </h2>
+  <CanteenSidebarTitle :title="canteenInformations.isGroupe ? 'Gestionnaires' : 'Mes gestionnaires'">
     <DsfrButton
       primary
       label="Ajouter un gestionnaire"
       icon="fr-icon-add-circle-fill"
       @click="addModalOpened = true"
     />
-  </div>
-  <AppSeparator class="layout-sidebar-canteen__separator fr-mt-3w fr-mb-5w" />
+  </CanteenSidebarTitle>
   <p>
     Tous les gestionnaires peuvent modifier et supprimer une cantine, ainsi qu'ajouter et enlever des autres
     gestionnaires.

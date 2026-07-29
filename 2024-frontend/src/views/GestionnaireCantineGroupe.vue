@@ -5,7 +5,7 @@ import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
 import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
-import AppSeparator from "@/components/AppSeparator.vue"
+import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import CanteensTableSatellites from "@/components/CanteensTableSatellites.vue"
 import CanteenModalSatelliteAdd from "@/components/CanteenModalSatelliteAdd.vue"
 import CanteenModalSatelliteRemove from "@/components/CanteenModalSatelliteRemove.vue"
@@ -71,11 +71,9 @@ const clickSearch = () => {
 </script>
 <template>
   <div class="gestionnaire-cantine-groupe">
-    <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mt-2w fr-mt-md-0 fr-mb-2w fr-mb-md-0">
-      <h2 class="fr-h3 fr-mb-0">{{ route.meta.title }}</h2>
+    <CanteenSidebarTitle :title="route.meta.title">
       <DsfrButton primary label="Ajouter une cantine au groupe" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
-    </div>
-    <AppSeparator class="layout-sidebar-canteen__separator fr-mt-3w fr-mb-5w" />
+    </CanteenSidebarTitle>
     <div class="fr-grid-row fr-mb-2w fr-grid-row--middle">
       <div class="fr-col-12 fr-col-md-6">
         <p class="fr-mb-md-0">{{ satellitesCountSentence }}</p>

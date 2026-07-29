@@ -97,13 +97,6 @@ const menuItems = computed(() =>  {
 
 <style lang="scss">
 .layout-sidebar-canteen {
-  &__separator {
-    display: none;
-
-    @media (min-width: 768px) {
-      display: block;
-    }
-  }
   &__sidebar-container {
     .fr-sidemenu__title {
       display: none !important;

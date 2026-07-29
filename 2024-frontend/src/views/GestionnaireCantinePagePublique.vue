@@ -3,6 +3,7 @@ import { useRouter } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import urlService from "@/services/urls.js"
+import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import CanteenFormLogo from "@/components/CanteenFormLogo.vue"
 import CanteenFormImages from "@/components/CanteenFormImages.vue"
@@ -25,10 +26,7 @@ const goToPrintPage = () => {
 </script>
 
 <template>
-  <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mt-2w fr-mt-md-0 fr-mb-2w fr-mb-md-0">
-    <h2 class="fr-h3 fr-mb-0">Ma page publique et mon affiche à imprimer</h2>
-  </div>
-  <AppSeparator class="layout-sidebar-canteen__separator fr-mt-3w fr-mb-5w" />
+  <CanteenSidebarTitle title="Ma page publique et mon affiche à imprimer" />
 
   <div class="fr-mb-5w">
     <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mb-4w">

@@ -3,7 +3,7 @@ import { useRouter, useRoute } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import AppSeparator from "@/components/AppSeparator.vue"
+import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import CanteenDisplayInformations from "@/components/CanteenDisplayInformations.vue"
 
 const route = useRoute()
@@ -18,17 +18,13 @@ const goToEdit = () => {
 </script>
 
 <template>
-  <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mt-2w fr-mt-md-0 fr-mb-2w fr-mb-md-0">
-    <h2 class="fr-h3 fr-mb-0">
-      {{ canteenInformations.isGroupe ? "Informations du groupe" : "Mes informations" }}
-    </h2>
+  <CanteenSidebarTitle :title="canteenInformations.isGroupe ? 'Informations du groupe' : 'Mes informations'">
     <DsfrButton
       @click="goToEdit"
       :label="canteenInformations.isGroupe ? 'Modifier les informations du groupe' : 'Modifier mes informations'"
       icon="ri-pencil-line"
     />
-  </div>
-  <AppSeparator class="layout-sidebar-canteen__separator fr-mt-3w fr-mb-5w" />
+  </CanteenSidebarTitle>
   <CanteenDisplayInformations
     :canteen-is-groupe="canteenInformations.isGroupe"
     :canteen-information="canteenInformations"
