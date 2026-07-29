@@ -16,32 +16,32 @@ watch( () => props.logo, (newLogo) => {
 })
 
 /* Actions */
-const saveLogo = async (file) => {
+const addLogo = async (file) => {
   if (!file) return
   const base64 = await toBase64(file)
-  await updateLogo(base64)
-}
-
-const deleteLogo = () => updateLogo(null)
-
-/* Update */
-const updateLogo = async (value) => {
   isSaving.value = true
-  try {
-    const response = await canteenService.updateCanteen({ logo: value }, props.canteenId)
-    if (!response?.id) store.notifyServerError(response)
-    else successLogo(response)
-  } catch (error) {
-    store.notifyServerError(error)
-  } finally {
-    isSaving.value = false
-  }
+  canteenService.addCanteenLogo(props.canteenId, base64)
+    .then(response => {
+      if (!response?.id) store.notifyServerError(response)
+      else successLogo(response.logo)
+    })
+    .catch(error => store.notifyServerError(error))
+    .finally(() => { isSaving.value = false })
 }
 
-const successLogo = (response) => {
-  displayLogo.value = response.logo
+const deleteLogo = async () => {
+  isSaving.value = true
+  canteenService.deleteCanteenLogo(props.canteenId)
+    .then(() => successLogo(null))
+    .catch(error => store.notifyServerError(error))
+    .finally(() => { isSaving.value = false })
+}
+
+const successLogo = (logo) => {
+  displayLogo.value = logo
+  const message = logo ? "Le logo a été mis à jour" : "Le logo a été supprimé"
   store.notify({
-    title: "Le logo a été mis à jour",
+    title: message,
     status: "success",
   })
 }
@@ -54,7 +54,7 @@ const successLogo = (response) => {
       :src="displayLogo"
       :disabled="isSaving"
       @delete="deleteLogo"
-      @save-file="saveLogo"
+      @save-file="addLogo"
     />
   </li>
 </template>
