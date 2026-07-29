@@ -98,8 +98,8 @@ class DiagnosticTeledeclarationPdfView(APIView):
         if not diagnostic.is_teledeclared:
             raise ValidationError("Le diagnostic n'a pas été télédéclaré.")
 
-        if diagnostic.has_invalid_reason:
-            raise ValidationError(f"Le diagnostic est télédéclaré mais invalide : {diagnostic.invalid_reason_list}")
+        # if diagnostic.has_invalid_reason:
+        #     raise ValidationError(f"Le diagnostic est télédéclaré mais invalide : {diagnostic.invalid_reason_list}")
 
         template = (
             get_template("teledeclaration_campaign_2024/index.html")

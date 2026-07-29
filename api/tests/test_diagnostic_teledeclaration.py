@@ -683,19 +683,17 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # satellite should not be able to generate pdf
-        # diagnostic not valid: DOUBLON_1TD1SITE
+        # satellite should be able to generate pdf of initial diagnostic
+        # (even if the diagnostic is not valid: DOUBLON_1TD1SITE)
         url = reverse(
             "diagnostic_teledeclaration_pdf",
             kwargs={"canteen_pk": canteen_satellite.id, "pk": diagnostic_satellite.id},
         )
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        body = response.json()
-        self.assertIn("DOUBLON_1TD1SITE", body[0])
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # satellite should be able to generate pdf of diagnostic generated
+        # satellite should be able to generate pdf of generated diagnostic
         diagnostic_satellite_generated = Diagnostic.all_objects.get(
             canteen=canteen_satellite, year=2025, generated_from_groupe_diagnostic=True
         )
