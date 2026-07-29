@@ -70,7 +70,7 @@ const successImages = (message) => {
         :src="image.image"
         :alt="image.altText"
         :disabled="isSaving"
-        :show-alt="true"
+        :can-edit-alt="true"
         @delete="deleteImage(image.id)"
         @save-alt="updateAltImage(image.id, $event)"
         class="fr-col-12 fr-col-md-4"

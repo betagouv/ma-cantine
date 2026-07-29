@@ -2,6 +2,7 @@
 import { useRoute } from "vue-router"
 import { computedAsync } from "@vueuse/core"
 import { computed } from "vue"
+import { formatSiretOrSiren } from "@/utils"
 import urlService from "@/services/urls.js"
 import canteenService from "@/services/canteens.js"
 import AppSeparator from "@/components/AppSeparator.vue"
@@ -16,8 +17,8 @@ const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 const canteenInformation = computedAsync(async () => await canteenService.fetchCanteen(canteenId), false)
 const canteenIsGroupe = computed(() => canteenInformation.value?.productionType === "groupe")
 const canteenBadgeId = computed(() => canteenId ? `ID : ${canteenId}` : null)
-const canteenBadgeSiret = computed(() => canteenInformation.value?.siret ? `SIRET : ${canteenInformation.value.siret}` : null)
-const canteenBadgeSiren = computed(() => canteenInformation.value?.sirenUniteLegale ? `SIREN : ${canteenInformation.value.sirenUniteLegale}` : null)
+const canteenBadgeSiret = computed(() => canteenInformation.value?.siret ? `SIRET : ${formatSiretOrSiren(canteenInformation.value.siret)}` : null)
+const canteenBadgeSiren = computed(() => canteenInformation.value?.sirenUniteLegale ? `SIREN : ${formatSiretOrSiren(canteenInformation.value.sirenUniteLegale)}` : null)
 const canteenBadgeGroupe = computed(() => {
   if (!canteenIsGroupe.value) return null
   const nbRestaurants = canteenInformation.value?.satellitesCount
@@ -29,7 +30,7 @@ const menuItems = computed(() =>  {
   const cantineActive = currentRoute.value === "GestionnaireCantine"
   const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
   const pagePubliqueActive = currentRoute.value === "GestionnaireCantinePagePublique"
-  const toutesTeledeclarationsActive = currentRoute.value === "GestionnaireCantineTeledeclarationsListe"
+  const teledeclarationsActive = currentRoute.value === "GestionnaireCantineTeledeclarations"
   const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
 
   const cantinePage = {
@@ -54,8 +55,8 @@ const menuItems = computed(() =>  {
   }
   const teledeclarationsPage =  {
     text: "Toutes mes télédéclarations",
-    to: { name: "GestionnaireCantineTeledeclarationsListe" },
-    active: toutesTeledeclarationsActive
+    to: { name: "GestionnaireCantineTeledeclarations" },
+    active: teledeclarationsActive
   }
 
   // Dynamic links
