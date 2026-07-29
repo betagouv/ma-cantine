@@ -10,13 +10,13 @@ const store = useRootStore()
 const isSaving = ref(false)
 const logoUrl = ref(null)
 
-/* Update logo */
-const updateLogo = async () => {
+/* Display logo */
+const setLogoUrl = async () => {
   canteenService.fetchCanteenLogo(props.canteenId)
     .then(response => logoUrl.value = response.logo)
     .catch(error => store.notifyServerError(error))
 }
-onMounted(updateLogo)
+onMounted(setLogoUrl)
 
 /* Actions */
 const addLogo = async (file) => {
@@ -26,7 +26,7 @@ const addLogo = async (file) => {
   canteenService.addCanteenLogo(props.canteenId, base64)
     .then(response => {
       if (!response?.id) store.notifyServerError(response)
-      else successLogo(response.logo)
+      else successLogo("Le logo a été mis à jour")
     })
     .catch(error => store.notifyServerError(error))
     .finally(() => { isSaving.value = false })
@@ -35,15 +35,14 @@ const addLogo = async (file) => {
 const deleteLogo = async () => {
   isSaving.value = true
   canteenService.deleteCanteenLogo(props.canteenId)
-    .then(() => successLogo(null))
+    .then(() => successLogo("Le logo a été supprimé"))
     .catch(error => store.notifyServerError(error))
     .finally(() => { isSaving.value = false })
 }
 
 /* Success */
-const successLogo = (logo) => {
-  updateLogo()
-  const message = logo ? "Le logo a été mis à jour" : "Le logo a été supprimé"
+const successLogo = (message) => {
+  setLogoUrl()
   store.notify({
     title: message,
     status: "success",
