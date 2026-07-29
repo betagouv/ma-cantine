@@ -48,10 +48,6 @@ const getSatellitesPrettyType = (count) => {
   if (!isSearching.value && count > 1) return "renseignés"
 }
 
-const removeSatellite = (id) => {
-  satellites.value = satellites.value.filter((sat) => sat.id !== id)
-}
-
 const showModalRemoveSatellite = (satellite) => {
   satelliteToRemove.value = satellite
   modalRemoveSatelliteOpened.value = true
@@ -106,7 +102,7 @@ const clickSearch = () => {
       :groupe="canteenInformations"
       :satellite="satelliteToRemove"
       @close="modalRemoveSatelliteOpened = false"
-      @satelliteRemoved="removeSatellite(satelliteToRemove.id)"
+      @satelliteRemoved="updateSatellites()"
     />
   </div>
 </template>
