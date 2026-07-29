@@ -28,6 +28,7 @@ from macantine.utils import (
     CAMPAIGN_DATES,
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
+    YEARS_WITH_1TD1SITE,
     is_in_correction,
     is_in_teledeclaration_or_correction,
     objectifs_egalim_atteints,
@@ -184,6 +185,10 @@ def commerce_equitable_sup_bio_query():
     )
 
 
+def has_invalid_reason_list_query():
+    return ~has_arrayfield_missing_query("invalid_reason_list")
+
+
 def is_teledeclared_query():
     return Q(status=Diagnostic.DiagnosticStatus.SUBMITTED)
 
@@ -197,6 +202,9 @@ class DiagnosticQuerySet(models.QuerySet):
 
     def teledeclared(self):
         return self.filter(is_teledeclared_query())
+
+    def has_invalid_reason(self):
+        return self.filter(has_invalid_reason_list_query())
 
     def in_year(self, year):
         return self.filter(year=int(year))
@@ -301,10 +309,8 @@ class DiagnosticQuerySet(models.QuerySet):
     def valid_td_site_by_year(self, year):
         year = int(year)
         if year in CAMPAIGN_DATES.keys():
-            if year in [2024, 2025]:
-                return self.teledeclared_site_for_year(year).filter(
-                    has_arrayfield_missing_query("invalid_reason_list")
-                )
+            if year in YEARS_WITH_1TD1SITE:
+                return self.teledeclared_site_for_year(year).exclude(has_invalid_reason_list_query())
             else:
                 return self.valid_td_by_year(year)
         else:
@@ -1993,6 +1999,10 @@ class Diagnostic(models.Model):
     @property
     def is_filled(self):
         return self.is_filled_simple or self.is_filled_complete
+
+    @property
+    def has_invalid_reason(self):
+        return self.invalid_reason_list and len(self.invalid_reason_list) > 0
 
     @property
     def is_teledeclared(self):
