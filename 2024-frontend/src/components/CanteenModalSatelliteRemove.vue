@@ -17,7 +17,7 @@ const unlinkSatellite = () => {
       else {
         store.notify({
           title: "Retrait de la cantine effectué",
-          message: `La cantine ${props.satellite.name} ne fait plus partie de vos restaurants satellites.`,
+          message: `La cantine « ${props.satellite.name} » ne fait plus partie de vos restaurants satellites.`,
         })
         emit("satelliteRemoved")
       }
