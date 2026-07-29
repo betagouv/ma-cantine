@@ -5,7 +5,7 @@ import { useRootStore } from "@/stores/root"
 import { formatSiretOrSiren } from "@/utils"
 import diagnosticService from "@/services/diagnostics.js"
 import campaignService from "@/services/campaigns.js"
-import canteensService from "@/services/canteens"
+import managersService from "@/services/managers.js"
 import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
@@ -120,7 +120,7 @@ const joinCanteen = (canteen) => {
     email: store.loggedUser.email,
     name: `${store.loggedUser.firstName} ${store.loggedUser.lastName}`,
   }
-  canteensService
+  managersService
     .teamJoinRequest(canteen.id, userInfos)
     .then(() => {
       store.notify({
@@ -133,7 +133,7 @@ const joinCanteen = (canteen) => {
 
 /* Claim a canteen */
 const claimCanteen = (canteen) => {
-  canteensService
+  managersService
     .claimCanteen(canteen.id)
     .then((response) => {
       if (response.id) {
