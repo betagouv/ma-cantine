@@ -52,6 +52,7 @@ const updateAltImage = (imageId, altText) => {
 
 const successImages = (message) => {
   setImages()
+  store.removeNotifications()
   store.notify({
     title: message,
     status: "success",
