@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue"
+import { ref, watch } from "vue"
 import { toBase64 } from "@/utils.js"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
@@ -9,8 +9,6 @@ const props = defineProps(["canteenId", "images"])
 const store = useRootStore()
 const displayImages = ref(props.images || [])
 const isSaving = ref(false)
-const maxImages = 3
-const canAddImage = computed(() => displayImages.value.length < maxImages)
 
 /* Images change */
 watch(() => props.images, (newImages) => {
@@ -19,7 +17,7 @@ watch(() => props.images, (newImages) => {
 
 /* Actions */
 const saveImage = async (file) => {
-  if (!file || !canAddImage.value) return
+  if (!file) return
   const base64 = await toBase64(file)
   await updateImages([...displayImages.value, { image: base64 }])
 }
@@ -75,7 +73,6 @@ const successImages = (response) => {
         class="fr-col-12 fr-col-md-4"
       />
       <AppFormImage
-        v-if="canAddImage"
         :disabled="isSaving"
         class="fr-col-12 fr-col-md-4"
         @save-file="saveImage"
