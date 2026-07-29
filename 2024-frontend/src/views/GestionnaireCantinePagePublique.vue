@@ -76,7 +76,6 @@ const goToPrintPage = () => {
           <CanteenFormImages
             v-if="canteenInformation"
             :canteen-id="canteenInformation.id"
-            :images="canteenInformation.images"
             class="fr-mb-3w"
           />
 
