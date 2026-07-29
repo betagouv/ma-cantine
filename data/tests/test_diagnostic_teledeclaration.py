@@ -47,6 +47,33 @@ class DiagnosticTeledeclaredQuerySetAndPropertyTest(TestCase):
         self.assertFalse(self.diagnostic_filled_cancelled.is_teledeclared)
 
 
+@freeze_time(date_in_last_teledeclaration_campaign)
+class DiagnosticInvalidReasonListQuerySetAndPropertyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.diagnostic_invalid_reason_none = DiagnosticFactory(
+            year=year_data, canteen=CanteenFactory(), valeur_totale=1000, invalid_reason_list=None
+        )
+        cls.diagnostic_invalid_reason_empty = DiagnosticFactory(
+            year=year_data, canteen=CanteenFactory(), valeur_totale=1000, invalid_reason_list=[]
+        )
+        cls.diagnostic_invalid_reason_not_empty = DiagnosticFactory(
+            year=year_data,
+            canteen=CanteenFactory(),
+            valeur_totale=1000,
+            invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE],
+        )
+
+    def test_has_invalid_reason_queryset(self):
+        self.assertEqual(Diagnostic.objects.all().count(), 3)
+        self.assertEqual(Diagnostic.objects.has_invalid_reason().count(), 1)
+
+    def test_has_invalid_reason_property(self):
+        self.assertFalse(self.diagnostic_invalid_reason_none.has_invalid_reason)
+        self.assertFalse(self.diagnostic_invalid_reason_empty.has_invalid_reason)
+        self.assertTrue(self.diagnostic_invalid_reason_not_empty.has_invalid_reason)
+
+
 class DiagnosticModelTeledeclareMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
