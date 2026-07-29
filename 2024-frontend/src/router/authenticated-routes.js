@@ -9,7 +9,7 @@ import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupe
 import GestionnaireCantineGroupe from "@/views/GestionnaireCantineGroupe.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
-import GestionnaireCantineTeledeclarationsListe from "@/views/GestionnaireCantineTeledeclarationsListe.vue"
+import GestionnaireCantineTeledeclarations from "@/views/GestionnaireCantineTeledeclarations.vue"
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
 import GestionnaireCantineGestionnaires from "@/views/GestionnaireCantineGestionnaires.vue"
 import GestionnaireCantinePagePublique from "@/views/GestionnaireCantinePagePublique.vue"
@@ -247,8 +247,8 @@ const routes = [
       },
       {
         path: "teledeclarations",
-        name: "GestionnaireCantineTeledeclarationsListe",
-        component: GestionnaireCantineTeledeclarationsListe,
+        name: "GestionnaireCantineTeledeclarations",
+        component: GestionnaireCantineTeledeclarations,
         meta: {
           title: "Toutes mes télédéclarations",
           breadcrumbs: [

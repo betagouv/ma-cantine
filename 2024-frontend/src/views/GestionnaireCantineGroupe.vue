@@ -5,7 +5,6 @@ import { useRoute } from "vue-router"
 import canteenService from "@/services/canteens.js"
 import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
-import AppLoader from "@/components/AppLoader.vue"
 import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import CanteensTableSatellites from "@/components/CanteensTableSatellites.vue"
 import CanteenModalSatelliteAdd from "@/components/CanteenModalSatelliteAdd.vue"
@@ -15,7 +14,6 @@ import CanteenModalSatelliteRemove from "@/components/CanteenModalSatelliteRemov
 const route = useRoute()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteen = computedAsync(async () => await canteenService.fetchCanteen(canteenId), {})
-const loading = ref(true)
 const modalAddSatelliteOpened = ref(false)
 const modalRemoveSatelliteOpened = ref(false)
 const satelliteToRemove = ref()
@@ -25,9 +23,7 @@ const satellites = ref([])
 const satellitesDisplayed = computed(() => isSearching.value ? canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, satellites.value) : satellites.value)
 
 const updateSatellites = () => {
-  loading.value = true
   canteenService.fetchSatellites(canteenId).then((response) => {
-    loading.value = false
     satellites.value = response
   })
 }
@@ -80,7 +76,6 @@ const clickSearch = () => {
       <DsfrButton primary label="Ajouter une cantine au groupe" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
     </template>
     <template #content>
-      <AppLoader v-if="loading" />
       <div class="fr-grid-row fr-mb-2w fr-grid-row--middle">
         <div class="fr-col-12 fr-col-md-6">
           <p class="fr-mb-md-0">{{ satellitesCountSentence }}</p>

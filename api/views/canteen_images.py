@@ -96,7 +96,7 @@ class UserCanteenImagesListView(ListCreateAPIView):
 
     def get_queryset(self):
         canteen = self._get_canteen()
-        return canteen.images.all().order_by("id")
+        return canteen.images.all()
 
     def perform_create(self, serializer):
         canteen = self._get_canteen()
