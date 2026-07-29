@@ -58,8 +58,6 @@ const successImages = (response) => {
 <template>
   <li class="canteen-form-images">
     <h4 class="fr-h6 fr-mb-1w">Images de l'établissement</h4>
-    <p class="fr-text--sm fr-mb-2w">Vous pouvez ajouter jusqu'à 3 images.</p>
-
     <div class="fr-grid-row fr-grid-row--gutters">
       <AppFormImage
         v-for="image in displayImages"
