@@ -11,7 +11,7 @@ const isSaving = ref(false)
 const logoUrl = ref(null)
 
 /* Display logo */
-const setLogoUrl = async () => {
+const setLogoUrl = () => {
   canteenService.fetchCanteenLogo(props.canteenId)
     .then(response => logoUrl.value = response.logo)
     .catch(error => store.notifyServerError(error))
@@ -32,7 +32,7 @@ const addLogo = async (file) => {
     .finally(() => { isSaving.value = false })
 }
 
-const deleteLogo = async () => {
+const deleteLogo = () => {
   isSaving.value = true
   canteenService.deleteCanteenLogo(props.canteenId)
     .then(() => successLogo("Le logo a été supprimé"))
