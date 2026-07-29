@@ -191,6 +191,72 @@ const deleteCanteenLogo = (canteenId) => {
     .catch((e) => e)
 }
 
+const fetchCanteenImages = (canteenId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/images/`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const addCanteenImage = (canteenId, image, altText) => {
+  const payload = { image }
+  if (altText !== undefined) payload.altText = altText
+  return fetch(`/api/v1/canteens/${canteenId}/images/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const fetchCanteenImage = (canteenId, imageId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/images/${imageId}`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const updateCanteenImage = (canteenId, imageId, payload) => {
+  return fetch(`/api/v1/canteens/${canteenId}/images/${imageId}`, {
+    method: "PATCH",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const deleteCanteenImage = (canteenId, imageId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/images/${imageId}`, {
+    method: "DELETE",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 export default {
   createCanteen,
   canteenStatus,
@@ -207,4 +273,9 @@ export default {
   fetchCanteenLogo,
   addCanteenLogo,
   deleteCanteenLogo,
+  fetchCanteenImages,
+  addCanteenImage,
+  fetchCanteenImage,
+  updateCanteenImage,
+  deleteCanteenImage,
 }
