@@ -43,6 +43,7 @@ const deleteLogo = async () => {
 /* Success */
 const successLogo = (message) => {
   setLogoUrl()
+  store.removeNotifications()
   store.notify({
     title: message,
     status: "success",
