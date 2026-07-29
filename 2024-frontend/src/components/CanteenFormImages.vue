@@ -31,9 +31,12 @@ const addImage = async (file) => {
     .finally(() => { isSaving.value = false })
 }
 
-const deleteImage = (imageToDelete) => {
-  const nextImages = canteenImages.value.filter((image) => image.image !== imageToDelete.image)
-  updateImages(nextImages)
+const deleteImage = (imageId) => {
+  isSaving.value = true
+  canteenService.deleteCanteenImage(props.canteenId, imageId)
+    .then(() => successImages("L'image a été supprimée"))
+    .catch((error) => store.notifyServerError(error))
+    .finally(() => { isSaving.value = false })
 }
 
 const saveAlt = (imageToSave, altText) => {
@@ -75,7 +78,7 @@ const successImages = (message) => {
         :alt="image.altText"
         :disabled="isSaving"
         :show-alt="true"
-        @delete="deleteImage(image)"
+        @delete="deleteImage(image.id)"
         @save-alt="saveAlt(image, $event)"
         class="fr-col-12 fr-col-md-4"
       />
