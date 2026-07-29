@@ -39,23 +39,15 @@ const deleteImage = (imageId) => {
     .finally(() => { isSaving.value = false })
 }
 
-const saveAlt = (imageToSave, altText) => {
-  const imageIndex = canteenImages.value.findIndex((image) => image.image === imageToSave.image)
-  canteenImages.value[imageIndex].altText = altText
-  updateImages(canteenImages.value)
-}
-
-const updateImages = async (value) => {
+const updateAltImage = (imageId, altText) => {
   isSaving.value = true
-  try {
-    const response = await canteenService.updateCanteen({ images: value }, props.canteenId)
-    if (!response?.id) store.notifyServerError(response)
-    else successImages(response)
-  } catch (error) {
-    store.notifyServerError(error)
-  } finally {
-    isSaving.value = false
-  }
+  canteenService.updateCanteenImage(props.canteenId, imageId, { altText })
+    .then((response) => {
+      if (!response?.id) store.notifyServerError(response)
+      else successImages("La description de l'image a été mise à jour")
+    })
+    .catch((error) => store.notifyServerError(error))
+    .finally(() => { isSaving.value = false })
 }
 
 const successImages = (message) => {
@@ -79,7 +71,7 @@ const successImages = (message) => {
         :disabled="isSaving"
         :show-alt="true"
         @delete="deleteImage(image.id)"
-        @save-alt="saveAlt(image, $event)"
+        @save-alt="updateAltImage(image.id, $event)"
         class="fr-col-12 fr-col-md-4"
       />
       <AppFormImage
