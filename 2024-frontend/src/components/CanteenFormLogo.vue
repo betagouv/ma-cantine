@@ -1,47 +1,51 @@
 <script setup>
-import { ref, watch } from "vue"
+import { ref, onMounted } from "vue"
 import { toBase64 } from "@/utils.js"
 import { useRootStore } from "@/stores/root"
 import canteenService from "@/services/canteens.js"
 import AppFormImage from "@/components/AppFormImage.vue"
 
-const props = defineProps(["canteenId", "logo"])
+const props = defineProps(["canteenId"])
 const store = useRootStore()
-const displayLogo = ref(props.logo || null)
 const isSaving = ref(false)
+const logoUrl = ref(null)
 
-/* Logo change */
-watch( () => props.logo, (newLogo) => {
-  displayLogo.value = newLogo || null
-})
+/* Display logo */
+const setLogoUrl = () => {
+  canteenService.fetchCanteenLogo(props.canteenId)
+    .then(response => logoUrl.value = response.logo)
+    .catch(error => store.notifyServerError(error))
+}
+onMounted(setLogoUrl)
 
 /* Actions */
-const saveLogo = async (file) => {
+const addLogo = async (file) => {
   if (!file) return
   const base64 = await toBase64(file)
-  await updateLogo(base64)
-}
-
-const deleteLogo = () => updateLogo(null)
-
-/* Update */
-const updateLogo = async (value) => {
   isSaving.value = true
-  try {
-    const response = await canteenService.updateCanteen({ logo: value }, props.canteenId)
-    if (!response?.id) store.notifyServerError(response)
-    else successLogo(response)
-  } catch (error) {
-    store.notifyServerError(error)
-  } finally {
-    isSaving.value = false
-  }
+  canteenService.addCanteenLogo(props.canteenId, base64)
+    .then(response => {
+      if (!response?.id) store.notifyServerError(response)
+      else successLogo("Le logo a été mis à jour")
+    })
+    .catch(error => store.notifyServerError(error))
+    .finally(() => { isSaving.value = false })
 }
 
-const successLogo = (response) => {
-  displayLogo.value = response.logo
+const deleteLogo = () => {
+  isSaving.value = true
+  canteenService.deleteCanteenLogo(props.canteenId)
+    .then(() => successLogo("Le logo a été supprimé"))
+    .catch(error => store.notifyServerError(error))
+    .finally(() => { isSaving.value = false })
+}
+
+/* Success */
+const successLogo = (message) => {
+  setLogoUrl()
+  store.removeNotifications()
   store.notify({
-    title: "Le logo a été mis à jour",
+    title: message,
     status: "success",
   })
 }
@@ -51,10 +55,10 @@ const successLogo = (response) => {
   <li class="canteen-form-logo">
     <h4 class="fr-h6 fr-mb-2w">Logo de l'établissement</h4>
     <AppFormImage
-      :src="displayLogo"
+      :src="logoUrl"
       :disabled="isSaving"
       @delete="deleteLogo"
-      @save-file="saveLogo"
+      @save-file="addLogo"
     />
   </li>
 </template>
