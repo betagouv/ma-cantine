@@ -78,6 +78,7 @@ class DiagnosticTeledeclarationCancelView(APIView):
 class DiagnosticTeledeclarationPdfView(APIView):
     """
     This view returns a PDF for proof of teledeclaration
+    Also works with diagnostics generated (1TD1Site)
     """
 
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
@@ -89,13 +90,16 @@ class DiagnosticTeledeclarationPdfView(APIView):
 
     def get_object(self):
         canteen = self._get_canteen()
-        return get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
+        return get_object_or_404(Diagnostic.all_objects, pk=self.kwargs["pk"], canteen=canteen)
 
     def get(self, request, *args, **kwargs):
         diagnostic = self.get_object()
 
         if not diagnostic.is_teledeclared:
             raise ValidationError("Le diagnostic n'a pas été télédéclaré.")
+
+        if diagnostic.has_invalid_reason:
+            raise ValidationError(f"Le diagnostic est télédéclaré mais invalide : {diagnostic.invalid_reason_list}")
 
         template = (
             get_template("teledeclaration_campaign_2024/index.html")
