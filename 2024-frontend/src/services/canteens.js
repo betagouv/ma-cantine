@@ -153,6 +153,32 @@ const deleteCanteen = (canteenId) => {
     .catch((e) => e)
 }
 
+const addCanteenLogo = (canteenId, logo) => {
+  return fetch(`/api/v1/canteens/${canteenId}/logo`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ logo }),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const deleteCanteenLogo = (canteenId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/logo`, {
+    method: "DELETE",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 export default {
   createCanteen,
   canteenStatus,
@@ -166,4 +192,6 @@ export default {
   linkSatellite,
   unlinkSatellite,
   fetchCanteensActions,
+  addCanteenLogo,
+  deleteCanteenLogo,
 }
