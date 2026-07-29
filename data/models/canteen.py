@@ -1101,6 +1101,9 @@ class CanteenImage(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     modification_date = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ["id"]
+
     def save(self, **kwargs):
         self.image = optimize_image(self.image, self.image.name)
         super().save(**kwargs)

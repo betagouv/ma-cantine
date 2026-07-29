@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue"
 import { useRootStore } from "@/stores/root"
-import canteensService from "@/services/canteens"
+import managersService from "@/services/managers.js"
 
 const props = defineProps(["id", "name"])
 const loading = ref(false)
@@ -15,7 +15,7 @@ const joinCanteen = () => {
     email: store.loggedUser.email,
     name: `${store.loggedUser.firstName} ${store.loggedUser.lastName}`,
   }
-  canteensService
+  managersService
     .teamJoinRequest(props.id, userInfos)
     .then(() => {
       store.notify({
