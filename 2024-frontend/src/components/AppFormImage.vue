@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, useId } from "vue"
 
-const props = defineProps(["src", "alt", "disabled", "showAlt"])
+const props = defineProps(["src", "alt", "disabled", "canEditAlt"])
 const emit = defineEmits(["delete", "saveFile", "saveAlt"])
 
 /* Input file */
@@ -43,7 +43,7 @@ const deleteImage = () => {
   <div class="app-form-image">
     <div v-if="src" class="fr-card fr-p-1w">
       <img class="app-form-image__image fr-background-alt--grey" :src="src" :alt="alt" />
-      <div v-if="showAlt" class="fr-mt-2w">
+      <div v-if="canEditAlt" class="fr-mt-2w">
         <DsfrInput
           v-model="altInput"
           :isTextarea="true"
