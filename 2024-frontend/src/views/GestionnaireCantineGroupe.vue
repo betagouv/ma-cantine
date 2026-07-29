@@ -1,19 +1,19 @@
 <script setup>
-import { computed, ref } from "vue"
-import { computedAsync } from "@vueuse/core"
+import { computed, ref, onMounted } from "vue"
 import { useRoute } from "vue-router"
+import { storeToRefs } from "pinia"
+import { useStoreCanteen } from "@/stores/canteen.js"
 import canteenService from "@/services/canteens.js"
 import canteensTableService from "@/services/canteensTable.js"
-import urlService from "@/services/urls.js"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import CanteensTableSatellites from "@/components/CanteensTableSatellites.vue"
 import CanteenModalSatelliteAdd from "@/components/CanteenModalSatelliteAdd.vue"
 import CanteenModalSatelliteRemove from "@/components/CanteenModalSatelliteRemove.vue"
 
-/* Data */
+/* Store */
 const route = useRoute()
-const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
-const canteen = computedAsync(async () => await canteenService.fetchCanteen(canteenId), {})
+const canteenStore = useStoreCanteen()
+const { canteenInformations } = storeToRefs(canteenStore)
 const modalAddSatelliteOpened = ref(false)
 const modalRemoveSatelliteOpened = ref(false)
 const satelliteToRemove = ref()
@@ -23,11 +23,11 @@ const satellites = ref([])
 const satellitesDisplayed = computed(() => isSearching.value ? canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, satellites.value) : satellites.value)
 
 const updateSatellites = () => {
-  canteenService.fetchSatellites(canteenId).then((response) => {
+  canteenService.fetchSatellites(canteenInformations.value.id).then((response) => {
     satellites.value = response
   })
 }
-updateSatellites()
+onMounted(() => updateSatellites())
 
 const satellitesCountSentence = computed(() => {
   const number = getSatellitesPrettCount(satellitesDisplayed.value.length)
@@ -92,18 +92,18 @@ const clickSearch = () => {
     <CanteensTableSatellites
       v-if="satellitesDisplayed.length > 0"
       :satellites="satellitesDisplayed"
-      :groupe="canteen"
+      :groupe="canteenInformations"
       @updateSatellites="updateSatellites"
       @showModalRemoveSatellite="showModalRemoveSatellite" />
     <CanteenModalSatelliteAdd
       :open="modalAddSatelliteOpened"
-      :groupId="canteenId"
+      :groupId="canteenInformations.id"
       @close="modalAddSatelliteOpened = false"
       @updateSatellites="updateSatellites()" />
     <CanteenModalSatelliteRemove
       v-if="satelliteToRemove"
       :opened="modalRemoveSatelliteOpened"
-      :groupe="canteen"
+      :groupe="canteenInformations"
       :satellite="satelliteToRemove"
       @close="modalRemoveSatelliteOpened = false"
       @satelliteRemoved="removeSatellite(satelliteToRemove.id)"
