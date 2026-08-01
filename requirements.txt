@@ -312,7 +312,7 @@ iniconfig==2.0.0
     # via
     #   ma-cantine
     #   pytest
-ipython==9.5.0
+ipython==9.15.0
     # via ma-cantine
 ipython-pygments-lexers==1.1.1
     # via ipython
