@@ -537,7 +537,7 @@ qrcode==7.4.2
     #   pyhanko
 redis==5.2.0
     # via ma-cantine
-referencing==0.35.1
+referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
