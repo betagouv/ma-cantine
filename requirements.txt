@@ -446,7 +446,7 @@ polars==1.27.1
     # via datacompy
 pre-commit==4.0.1
     # via ma-cantine
-prompt-toolkit==3.0.47
+prompt-toolkit==3.0.53
     # via
     #   click-repl
     #   ipython
