@@ -24,7 +24,11 @@ from .canteen_groupe import (  # noqa: F401
     CanteenGroupeSatellitesListView,
     CanteenGroupeSatelliteUnlinkView,
 )  # noqa: F401
-from .canteen_images import UserCanteenLogoView, UserCanteenImagesListView, UserCanteenImagesRetrieveUpdateDestroyView  # noqa: F401
+from .canteen_images import (  # noqa: F401
+    UserCanteenImagesListView,
+    UserCanteenImagesRetrieveUpdateDestroyView,
+    UserCanteenLogoView,
+)
 from .canteen_managers import (  # noqa: F401
     AddManagerView,
     ClaimCanteenView,
@@ -38,7 +42,7 @@ from .canteen_managers_import import CanteensManagersImportView  # noqa: F401
 from .canteen_update_import import CanteensUpdateImportView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
-    DiagnosticCreateView,
+    DiagnosticListCreateView,
     DiagnosticsToTeledeclareListView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
