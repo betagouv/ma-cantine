@@ -865,3 +865,68 @@ class DiagnosticDeleteApiTest(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class DiagnosticListRecapApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.diagnostic_2022_cancelled = DiagnosticFactory(canteen=cls.canteen, year=2022)
+        with freeze_time("2023-03-30"):  # during the 2022 campaign
+            cls.diagnostic_2022_cancelled.teledeclare(applicant=cls.user)
+            cls.diagnostic_2022_cancelled.cancel()
+        cls.diagnostic_2021_teledeclared = DiagnosticFactory(canteen=cls.canteen, year=2021)
+        with freeze_time("2022-08-30"):  # during the 2021 campaign
+            cls.diagnostic_2021_teledeclared.teledeclare(applicant=cls.user)
+        cls.diagnostic_2020 = DiagnosticFactory(canteen=cls.canteen, year=2020)
+        cls.url = reverse("diagnostic_list_recap", kwargs={"canteen_pk": cls.canteen.id})
+
+    def test_cannot_list_recap_diagnostics_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_list_recap_diagnostics_if_canteen_unknown(self):
+        response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": 9999}))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_list_recap_diagnostics_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_list_recap_diagnostics(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 5)
+        # ordered by year ascending
+        self.assertEqual(body[0]["year"], 2021)
+        self.assertEqual(body[0]["isTeledeclared"], True)
+        self.assertEqual(body[0]["declarationDonnees2021"], True)
+        self.assertEqual(body[0]["canteenDiagnosticId"], self.diagnostic_2021_teledeclared.id)
+        self.assertEqual(body[0]["groupeDiagnosticId"], None)
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticId"], None)
+        self.assertEqual(body[1]["year"], 2022)
+        self.assertEqual(body[1]["isTeledeclared"], False)
+        self.assertEqual(body[1]["declarationDonnees2022"], False)
+        self.assertEqual(body[1]["canteenDiagnosticId"], self.diagnostic_2022_cancelled.id)
+        self.assertEqual(body[1]["groupeDiagnosticId"], None)
+        self.assertEqual(body[1]["generatedFromGroupeDiagnosticId"], None)
+
+    def test_cannot_list_recap_diagnostics_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

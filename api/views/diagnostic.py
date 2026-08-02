@@ -10,6 +10,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListCreateAPIView, ListAPIView, UpdateAPIView, get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from api.exceptions import DuplicateException
 from api.permissions import (
@@ -26,7 +27,7 @@ from common.utils import file_import, send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.diagnostic import Diagnostic
-from macantine.utils import is_in_correction
+from macantine.utils import is_in_correction, CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
 
@@ -102,6 +103,50 @@ class DiagnosticUpdateView(UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         diagnostic = serializer.save()
         update_change_reason_with_auth(self, diagnostic)
+
+
+class DiagnosticListRecapView(APIView):
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, canteen_pk):
+        canteen = self._get_canteen()
+        canteen_diagnostics = Diagnostic.all_objects.filter(canteen=canteen)
+        result = []
+        for year in CAMPAIGN_DATES.keys():
+            # skip years where the canteen was not yet created
+            if canteen.creation_date < CAMPAIGN_DATES[year]["teledeclaration_start_date"]:
+                continue
+            # is_teledeclared: at least 1 diagnostic is SUBMITTED
+            is_teledeclared = any(d.year == year and d.is_teledeclared for d in canteen_diagnostics)
+            canteen_diagnostic_id = next(
+                (d.id for d in canteen_diagnostics if d.year == year and not d.generated_from_groupe_diagnostic), None
+            )
+            groupe_diagnostic_id = next(
+                (
+                    d.teledeclaration_id
+                    for d in canteen_diagnostics
+                    if d.year == year and d.generated_from_groupe_diagnostic
+                ),
+                None,
+            )
+            generated_from_groupe_diagnostic_id = next(
+                (d.id for d in canteen_diagnostics if d.year == year and d.generated_from_groupe_diagnostic), None
+            )
+            result.append(
+                {
+                    "year": year,
+                    "is_teledeclared": is_teledeclared,
+                    f"declaration_donnees_{year}": getattr(canteen, f"declaration_donnees_{year}", None),
+                    "canteen_diagnostic_id": canteen_diagnostic_id,
+                    "groupe_diagnostic_id": groupe_diagnostic_id,
+                    "generated_from_groupe_diagnostic_id": generated_from_groupe_diagnostic_id,
+                }
+            )
+        return Response(result)
 
 
 class EmailDiagnosticImportFileView(APIView):
