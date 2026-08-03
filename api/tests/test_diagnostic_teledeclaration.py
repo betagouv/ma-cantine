@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from django.core.management import call_command
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -641,8 +642,10 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
     @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
     def test_can_generate_pdf_central(self):
-        canteen = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+        canteen_central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(
+            canteen=canteen_central, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         diagnostic.teledeclare(applicant=authenticate.user)
 
         response = self.client.get(
@@ -650,5 +653,55 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
                 "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
             )
         )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_can_generate_pdf_groupe_satellite(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[authenticate.user]
+        )
+        diagnostic_satellite = DiagnosticFactory(
+            canteen=canteen_satellite, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic_satellite.teledeclare(applicant=authenticate.user)
+        diagnostic_groupe = DiagnosticFactory(
+            canteen=canteen_groupe, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic_groupe.teledeclare(applicant=authenticate.user)
+
+        call_command("diagnostic_fill_invalid_warning_reason_list", year=2025, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
+
+        # groupe should be able to generate pdf
+        url = reverse(
+            "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": canteen_groupe.id, "pk": diagnostic_groupe.id}
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # satellite should be able to generate pdf of initial diagnostic
+        # (even if the diagnostic is not valid: DOUBLON_1TD1SITE)
+        url = reverse(
+            "diagnostic_teledeclaration_pdf",
+            kwargs={"canteen_pk": canteen_satellite.id, "pk": diagnostic_satellite.id},
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # satellite should be able to generate pdf of generated diagnostic
+        diagnostic_satellite_generated = Diagnostic.all_objects.get(
+            canteen=canteen_satellite, year=2025, generated_from_groupe_diagnostic=True
+        )
+
+        url = reverse(
+            "diagnostic_teledeclaration_pdf",
+            kwargs={"canteen_pk": canteen_satellite.id, "pk": diagnostic_satellite_generated.id},
+        )
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
