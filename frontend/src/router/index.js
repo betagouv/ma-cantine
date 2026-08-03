@@ -4,7 +4,6 @@ import store from "@/store/index"
 import LandingPage from "@/views/LandingPage"
 import ManagerLanding from "@/views/ManagerLanding"
 import DiagnosticPage from "@/views/DiagnosticPage"
-import KeyMeasuresPage from "@/views/KeyMeasuresPage"
 import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
 import CanteensPage from "@/views/CanteensPage"
@@ -118,28 +117,17 @@ const routes = [
   },
   {
     path: "/mesures-phares",
-    name: "KeyMeasuresPage",
-    component: KeyMeasuresPage,
-    redirect: { name: "KeyMeasuresHome" },
-    children: [
-      {
-        path: "",
-        name: "KeyMeasuresHome",
-        component: KeyMeasuresHome,
-        meta: {
-          title: "Tableau de bord",
-        },
-        beforeEnter: (route, _, next) => {
-          store.state.loggedUser
-            ? next({
-                name: "ComprendreMesObligations",
-              })
-            : next()
-        },
-      },
-    ],
+    name: "KeyMeasuresHome",
+    component: KeyMeasuresHome,
     meta: {
-      title: "Les mesures phares",
+      title: "Tableau de bord",
+    },
+    beforeEnter: (route, _, next) => {
+      store.state.loggedUser
+        ? next({
+            name: "ComprendreMesObligations",
+          })
+        : next()
     },
   },
   {
@@ -523,6 +511,11 @@ routes.push({
 routes.push({
   path: "/cgu",
   redirect: { name: "ConditionsGeneralesUtilisation" },
+})
+
+routes.push({
+  path: "/mesures-phares",
+  redirect: { name: "ComprendreMesObligations" },
 })
 
 routes.push({
