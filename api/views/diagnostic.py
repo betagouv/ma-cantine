@@ -7,7 +7,7 @@ from django.db.models import Exists, OuterRef
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, get_object_or_404
+from rest_framework.generics import ListCreateAPIView, ListAPIView, UpdateAPIView, get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
         tags=["Bilans"],
     )
 )
-class DiagnosticCreateView(CreateAPIView):
+class DiagnosticListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
     model = Diagnostic
@@ -47,6 +47,10 @@ class DiagnosticCreateView(CreateAPIView):
     def _get_canteen(self):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
         return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_queryset(self):
+        canteen = self._get_canteen()
+        return canteen.diagnostics.all().order_by("year")
 
     def perform_create(self, serializer):
         try:

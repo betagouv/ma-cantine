@@ -13,12 +13,70 @@ from data.models import Diagnostic
 from data.models.creation_source import CreationSource
 
 
+class DiagnosticListApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.diagnostic_2022_cancelled = DiagnosticFactory(canteen=cls.canteen, year=2022)
+        with freeze_time("2023-03-30"):  # during the 2022 campaign
+            cls.diagnostic_2022_cancelled.teledeclare(applicant=cls.user)
+            cls.diagnostic_2022_cancelled.cancel()
+        cls.diagnostic_2021_teledeclared = DiagnosticFactory(canteen=cls.canteen, year=2021)
+        with freeze_time("2022-08-30"):  # during the 2021 campaign
+            cls.diagnostic_2021_teledeclared.teledeclare(applicant=cls.user)
+        cls.diagnostic_2020 = DiagnosticFactory(canteen=cls.canteen, year=2020)
+        cls.url = reverse("diagnostic_list_create", kwargs={"canteen_pk": cls.canteen.id})
+
+    def test_cannot_list_diagnostics_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_list_diagnostics_if_canteen_unknown(self):
+        response = self.client.get(reverse("diagnostic_list_create", kwargs={"canteen_pk": 9999}))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_list_diagnostics_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_list_diagnostics(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 3)
+        # ordered by year ascending
+        self.assertEqual(body[0]["id"], self.diagnostic_2020.id)
+        self.assertEqual(body[1]["id"], self.diagnostic_2021_teledeclared.id)
+        self.assertEqual(body[2]["id"], self.diagnostic_2022_cancelled.id)
+
+    def test_list_diagnostics_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 3)
+
+
 class DiagnosticCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
         cls.canteen = CanteenFactory(managers=[cls.user])
-        cls.url = reverse("diagnostic_creation", kwargs={"canteen_pk": cls.canteen.id})
+        cls.url = reverse("diagnostic_list_create", kwargs={"canteen_pk": cls.canteen.id})
         cls.DIAGNOSTIC_PAYLOAD = {"year": 2020}
 
     def test_cannot_create_diagnostic_if_unauthenticated(self):
@@ -29,7 +87,7 @@ class DiagnosticCreateApiTest(APITestCase):
     @authenticate
     def test_cannot_create_diagnostic_if_canteen_unknown(self):
         response = self.client.post(
-            reverse("diagnostic_creation", kwargs={"canteen_pk": 9999}), self.DIAGNOSTIC_PAYLOAD
+            reverse("diagnostic_list_create", kwargs={"canteen_pk": 9999}), self.DIAGNOSTIC_PAYLOAD
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -725,10 +783,9 @@ class DiagnosticUpdateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_update_diagnostic_teledeclared(self):
-        date_in_2022_teledeclaration_campaign = "2022-08-30"
         diagnostic = DiagnosticFactory(year=2021)
         diagnostic.canteen.managers.add(authenticate.user)
-        with freeze_time(date_in_2022_teledeclaration_campaign):
+        with freeze_time("2022-08-30"):  # during the 2021 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
         payload = {"year": 2020}
 
@@ -746,10 +803,9 @@ class DiagnosticUpdateApiTest(APITestCase):
 
     @authenticate
     def test_update_diagnostic_cancelled(self):
-        date_in_2022_teledeclaration_campaign = "2022-08-30"
         diagnostic = DiagnosticFactory(year=2021)
         diagnostic.canteen.managers.add(authenticate.user)
-        with freeze_time(date_in_2022_teledeclaration_campaign):
+        with freeze_time("2022-08-30"):  # during the 2021 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
             diagnostic.cancel()
         payload = {"year": 2020}
