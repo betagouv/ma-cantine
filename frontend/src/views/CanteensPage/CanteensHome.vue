@@ -11,7 +11,7 @@
               hide-details="auto"
               ref="search"
               v-model="searchTerm"
-              placeholder="Recherche par nom ou SIRET"
+              placeholder="Recherche par nom ou SIRET ou SIREN"
               @search="search"
               clearable
               @clear="clearSearch"
