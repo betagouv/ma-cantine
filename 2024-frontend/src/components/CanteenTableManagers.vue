@@ -69,6 +69,10 @@ const getActions = (member) => {
   return { type: "delete", member }
 }
 
+/* Pagination */
+const minPagination = 10
+const showPagination = computed(() => teamRows.value.length > minPagination)
+
 /* Edit account */
 const goToAccount = () => {
   router.push({ name: "AccountSummaryPage" })
@@ -81,6 +85,10 @@ const goToAccount = () => {
     no-caption
     :headers-row="tableHeaders"
     :rows="tableRows"
+    :pagination="showPagination"
+    :pagination-options="[minPagination, 20, 30]"
+    :rows-per-page="minPagination"
+    pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
   >
     <template #cell="{ colKey, cell }">
       <template v-if="colKey === 'name'">
