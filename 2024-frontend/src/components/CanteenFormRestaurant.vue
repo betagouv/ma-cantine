@@ -163,6 +163,7 @@ const resetFields = () => {
   form.city = null
   form.cityInseeCode = null
   form.department = null
+  form.publicationComments = null
   form.noSiret = null
 }
 
@@ -183,6 +184,7 @@ const prefillFields = () => {
   form.city = props.establishmentData.city
   form.cityInseeCode = props.establishmentData.cityInseeCode
   form.department = props.establishmentData.department
+  form.publicationComments = props.establishmentData.publicationComments
   getCitiesOptions(() => {
     form.citySelector = citiesOptions.value.findIndex(
       (option) => option.cityInseeCode === props.establishmentData.cityInseeCode
@@ -417,8 +419,23 @@ if (props.establishmentData) {
           </div>
         </div>
       </fieldset>
+      <fieldset class="fr-mb-4w">
+        <legend class="fr-h5 fr-mb-2w">6. Description</legend>
+        <p class="fr-text--sm fr-mb-2w">
+          En plus de rendre visible vos données EGalim, la description de votre établissement est la première brique de
+          votre page publique, pour valoriser vos engagements et les actions de la cantine en faveur d’une alimentation
+          durable et de qualité.
+        </p>
+        <DsfrInput
+          v-model="form.publicationComments"
+          :isTextarea="true"
+          :label-visible="true"
+          rows="4"
+          hint="Optionnel"
+        />
+      </fieldset>
       <fieldset v-if="showCheckboxNoSiret" class="fr-py-0 fr-my-3w fr-mb-md-3w">
-        <legend class="fr-h5 fr-mb-2w">6. Confirmation</legend>
+        <legend class="fr-h5 fr-mb-2w">7. Confirmation</legend>
         <p class="fr-mb-1v">
           Votre cantine n’a pas de numéro de SIRET et vous êtes sur le point de la rattacher à une unité légale
           existante. Avant de confirmer :
