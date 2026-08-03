@@ -1,18 +1,20 @@
 <script setup>
 import { useRoute } from "vue-router"
-import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
+import { storeToRefs } from "pinia"
+import { useStoreCanteen } from "@/stores/canteen.js"
+import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import CanteenListTeledeclarations from "@/components/CanteenListTeledeclarations.vue"
 
 const route = useRoute()
+const { canteenInformations } = storeToRefs(useStoreCanteen())
 </script>
 
 <template>
-  <LayoutSidebarCanteen>
-    <template #titleName>
-      <h2 class="fr-h3 fr-mb-0">{{ route.meta.title }}</h2>
-    </template>
-    <template #content="{ canteenInformation }">
-      <CanteenListTeledeclarations class="fr-mt-md-n4w" :diagnostics="canteenInformation?.diagnostics" :groupeDiagnostics="canteenInformation?.centralKitchenDiagnostics" :canteenId="canteenInformation?.id" />
-    </template>
-  </LayoutSidebarCanteen>
+  <CanteenSidebarTitle :title="route.meta.title" />
+  <CanteenListTeledeclarations
+    class="fr-mt-md-n4w"
+    :diagnostics="canteenInformations.diagnostics"
+    :groupeDiagnostics="canteenInformations.centralKitchenDiagnostics"
+    :canteenId="canteenInformations.id"
+  />
 </template>
