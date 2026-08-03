@@ -41,7 +41,7 @@
             <img
               v-for="badge in orderedBadges"
               :key="badge.key"
-              :src="`/static/images/badges/${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
+              :src="`/static/images/badges/badge-${badge.key}${badgeIsEarned(badge) ? '' : '-disabled'}.svg`"
               :width="dense ? '35px' : '50px'"
               :height="dense ? '35px' : '50px'"
               :class="dense ? 'mr-2' : 'mr-4'"
