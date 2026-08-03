@@ -1133,6 +1133,18 @@ class PublishedCanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 1)
 
+    def test_search_by_siren(self):
+        siren = "110070018"
+        canteen_siret = CanteenFactory(siret="11007001800012")
+        canteen_siren = CanteenFactory(siren_unite_legale=siren, siret=None)
+        response = self.client.get(f"{reverse('published_canteens')}?search={siren}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        results = body.get("results")
+        self.assertEqual(body.get("count"), 2)
+        self.assertEqual(results[0]["id"], canteen_siren.id)
+        self.assertEqual(results[1]["id"], canteen_siret.id)
+
 
 class CanteenPreviewDetailApiTest(APITestCase):
     def test_get_single_public_canteen_preview(self):
