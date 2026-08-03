@@ -6,6 +6,32 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.42.0](https://github.com/betagouv/ma-cantine/compare/v2026.41.0...v2026.42.0) (2026-08-03)
+
+
+### Nouveautés
+
+* **Bilans:** API: nouvel endpoint pour récupérer la liste 'recap' des bilans ([#6975](https://github.com/betagouv/ma-cantine/issues/6975)) ([2002b76](https://github.com/betagouv/ma-cantine/commit/2002b764999410c49bf66012f15d72a5ce6b568a))
+
+
+### Améliorations
+
+* **Achats:** Admin: fieldset & nouveau bouton "Restaurer" (si l'achat est archivé) ([#6979](https://github.com/betagouv/ma-cantine/issues/6979)) ([91d19e6](https://github.com/betagouv/ma-cantine/commit/91d19e69e2c30e953cf01effa24db15d4e5c237a))
+* **Badges:** remplace par les nouveaux coloris ([#6982](https://github.com/betagouv/ma-cantine/issues/6982)) ([942b031](https://github.com/betagouv/ma-cantine/commit/942b0318e9430da38054e2a1e9d28f6f1da5bf33))
+* **Bilans:** API: nouvel endpoint pour récupérer la liste de ses bilans ([#6974](https://github.com/betagouv/ma-cantine/issues/6974)) ([5c8bf8a](https://github.com/betagouv/ma-cantine/commit/5c8bf8adac2e1d268f78590486be2b97f2e4274b))
+* **Cantines:** Admin: remettre le bouton 'Supprimer' (cela va l'archiver) + nouveau bouton "Restaurer" (si la cantine est archivée) ([#6952](https://github.com/betagouv/ma-cantine/issues/6952)) ([d3daefd](https://github.com/betagouv/ma-cantine/commit/d3daefd1b0cc475ccf6a49f08e6a0f93ff9595e0))
+* **TD:** PDF: ouvrir les justificatifs aux TD générées à partir de celle du groupe [1TD1Site] ([#6958](https://github.com/betagouv/ma-cantine/issues/6958)) ([e9c1d2d](https://github.com/betagouv/ma-cantine/commit/e9c1d2dc0eb9cdbcfbb6a977fac3221d7227d57d))
+
+
+### Corrections (bugs, typos...)
+
+* **Trouver une cantine:** corrige la recherche par commune et siren ([#6976](https://github.com/betagouv/ma-cantine/issues/6976)) ([879a5b7](https://github.com/betagouv/ma-cantine/commit/879a5b72f0cc3c057752c1b830af43d317d3e07d))
+
+
+### Technique
+
+* **Bilans:** API: renvoyer des champs supplémentaire + ajouter de la pagination sur le nouvel endpoint 'liste' ([#6981](https://github.com/betagouv/ma-cantine/issues/6981)) ([242110f](https://github.com/betagouv/ma-cantine/commit/242110f30885391ed964bb6322a24df3fb2f6ec5))
+
 ## [2026.41.0](https://github.com/betagouv/ma-cantine/compare/v2026.40.2...v2026.41.0) (2026-07-29)
 
 
