@@ -129,18 +129,12 @@ class DiagnosticListRecapView(APIView):
                 (d for d in canteen_diagnostics if d.year == year and not d.generated_from_groupe_diagnostic), None
             )
             canteen_diagnostic_id = canteen_diagnostic.id if canteen_diagnostic else None
-            canteen_diagnostic_teledeclaration_mode = (
-                canteen_diagnostic.teledeclaration_mode if canteen_diagnostic else None
-            )
             # generated_from_groupe_diagnostic: the canteen's generated diagnostic (from its groupe) (if it exists)
             generated_from_groupe_diagnostic = next(
                 (d for d in canteen_diagnostics if d.year == year and d.generated_from_groupe_diagnostic), None
             )
             generated_from_groupe_diagnostic_id = (
                 generated_from_groupe_diagnostic.id if generated_from_groupe_diagnostic else None
-            )
-            generated_from_groupe_diagnostic_teledeclaration_id = (
-                generated_from_groupe_diagnostic.teledeclaration_id if generated_from_groupe_diagnostic else None
             )
             generated_from_groupe_diagnostic_mode = (
                 generated_from_groupe_diagnostic.central_kitchen_diagnostic_mode
@@ -153,9 +147,7 @@ class DiagnosticListRecapView(APIView):
                     "is_teledeclared": is_teledeclared,
                     "declaration_donnees": declaration_donnees,
                     "canteen_diagnostic_id": canteen_diagnostic_id,
-                    "canteen_diagnostic_teledeclaration_mode": canteen_diagnostic_teledeclaration_mode,
                     "generated_from_groupe_diagnostic_id": generated_from_groupe_diagnostic_id,
-                    "generated_from_groupe_diagnostic_teledeclaration_id": generated_from_groupe_diagnostic_teledeclaration_id,
                     "generated_from_groupe_diagnostic_mode": generated_from_groupe_diagnostic_mode,
                 }
             )
