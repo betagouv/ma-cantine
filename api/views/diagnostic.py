@@ -32,18 +32,29 @@ from macantine.utils import is_in_correction, CAMPAIGN_DATES
 logger = logging.getLogger(__name__)
 
 
+class LongPagination(LimitOffsetPagination):
+    default_limit = 100
+    max_limit = 100
+
+
 @extend_schema_view(
+    get=extend_schema(
+        summary="Lister les diagnostics d'une cantine.",
+        description="Retourne la liste des diagnostics d'une cantine.",
+        tags=["Bilans"],
+    ),
     post=extend_schema(
         summary="Créer un nouveau diagnostic.",
         description="Un diagnostic doit être rattaché à une cantine.",
         tags=["Bilans"],
-    )
+    ),
 )
 class DiagnosticListCreateView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
     model = Diagnostic
     serializer_class = ManagerDiagnosticSerializer
+    pagination_class = LongPagination
 
     def _get_canteen(self):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
@@ -190,16 +201,11 @@ class EmailDiagnosticImportFileView(APIView):
         return HttpResponse()
 
 
-class DiagnosticsToTeledeclarePagination(LimitOffsetPagination):
-    default_limit = 100
-    max_limit = 100
-
-
 class DiagnosticsToTeledeclareListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     model = Diagnostic
     serializer_class = DiagnosticAndCanteenSerializer
-    pagination_class = DiagnosticsToTeledeclarePagination
+    pagination_class = LongPagination
     ordering = "modification_date"
 
     def get_queryset(self):

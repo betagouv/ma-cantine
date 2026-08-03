@@ -188,8 +188,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             "Metadonnées",
             {
                 "fields": (
-                    "invalid_reason_list",
-                    "warning_reason_list",
+                    *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
                     *Diagnostic.CREATION_META_FIELDS,
                 )
             },
@@ -208,8 +207,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "satellites_snapshot_pretty",
         "applicant_snapshot_pretty",
         "groupe_snapshot_pretty",
-        "invalid_reason_list",
-        "warning_reason_list",
+        *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
         *Diagnostic.CREATION_META_FIELDS,
     )
 

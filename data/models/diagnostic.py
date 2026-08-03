@@ -914,6 +914,10 @@ class Diagnostic(models.Model):
         "generated_from_groupe_diagnostic",
         "groupe_snapshot",
     ]
+    TELEDECLARATION_DATA_QUALITY_FIELDS = [
+        "invalid_reason_list",
+        "warning_reason_list",
+    ]
 
     APPRO_PERCENTAGE_PROPERTY_FIELDS = [
         "percentage_valeur_totale",

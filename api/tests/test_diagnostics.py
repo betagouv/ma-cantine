@@ -55,11 +55,12 @@ class DiagnosticListApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 3)
+        results = body["results"]
+        self.assertEqual(len(results), 3)
         # ordered by year ascending
-        self.assertEqual(body[0]["id"], self.diagnostic_2020.id)
-        self.assertEqual(body[1]["id"], self.diagnostic_2021_teledeclared.id)
-        self.assertEqual(body[2]["id"], self.diagnostic_2022_cancelled.id)
+        self.assertEqual(results[0]["id"], self.diagnostic_2020.id)
+        self.assertEqual(results[1]["id"], self.diagnostic_2021_teledeclared.id)
+        self.assertEqual(results[2]["id"], self.diagnostic_2022_cancelled.id)
 
     def test_list_diagnostics_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
@@ -70,7 +71,8 @@ class DiagnosticListApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 3)
+        results = body["results"]
+        self.assertEqual(len(results), 3)
 
 
 class DiagnosticCreateApiTest(APITestCase):
