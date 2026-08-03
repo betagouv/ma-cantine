@@ -1,20 +1,35 @@
 <script setup>
 import { useRoute } from "vue-router"
 import { storeToRefs } from "pinia"
+import { computedAsync } from "@vueuse/core"
 import { useStoreCanteen } from "@/stores/canteen.js"
+import diagnosticService from "@/services/diagnostics.js"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
-import CanteenListTeledeclarations from "@/components/CanteenListTeledeclarations.vue"
+import CanteenTeledeclarationPdf from "@/components/CanteenTeledeclarationPdf.vue"
 
 const route = useRoute()
-const { canteenInformations } = storeToRefs(useStoreCanteen())
+const canteenStore = useStoreCanteen()
+const { canteenInformations } = storeToRefs(canteenStore)
+const diagnostics = computedAsync(async () => await diagnosticService.fetchDiagnosticsRecap(canteenInformations.value.id),[])
 </script>
 
 <template>
   <CanteenSidebarTitle :title="route.meta.title" />
-  <CanteenListTeledeclarations
-    class="fr-mt-md-n4w"
-    :diagnostics="canteenInformations.diagnostics"
-    :groupeDiagnostics="canteenInformations.centralKitchenDiagnostics"
-    :canteenId="canteenInformations.id"
-  />
+  <ul class="gestionnaire-cantine-teledeclarations ma-cantine--unstyled-list">
+    <CanteenTeledeclarationPdf
+      v-for="diagnostic in diagnostics"
+      :key="diagnostic"
+      :diagnostic="diagnostic"
+      :canteen-id="canteenInformations.id"
+      class="gestionnaire-cantine-teledeclarations__item fr-mt-md-n4w"
+    />
+  </ul>
 </template>
+
+<style lang="scss">
+.gestionnaire-cantine-teledeclarations {
+  &__item {
+    border-bottom: solid 1px var(--border-disabled-grey);
+  }
+}
+</style>
