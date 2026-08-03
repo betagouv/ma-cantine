@@ -20,7 +20,7 @@ class SoftDeletionAdmin(admin.ModelAdmin):
 
     def delete_model(self, request, obj):
         # Note: it used to call obj.hard_delete()
-        obj.delete()
+        obj.delete(skip_validations=True)
 
     def delete_queryset(self, request, queryset):
         # Note: it used to return queryset.hard_delete()
