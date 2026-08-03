@@ -47,7 +47,7 @@ const generatedFromGroupeLink = computed(() => {
       </div>
       <div class="canteen-teledeclaration-pdf__right fr-col-12 fr-col-md-9">
         <DsfrBadge :label="badge.label" :type="badge.type" />
-        <div class="canteen-teledeclaration-pdf__links">
+        <div class="ma-cantine--flex-start ma-cantine--flex-gap-1">
           <a v-if="canteenLink" :href="canteenLink" target="_self" download class="fr-text-title--blue-france">
             <span class="fr-icon-file-download-fill ma-cantine--icon-xs" aria-hidden="true"></span>
             Télécharger mon justificatif
@@ -69,13 +69,6 @@ const generatedFromGroupeLink = computed(() => {
     flex-direction: column;
     align-items: flex-start;
     row-gap: 0.5rem;
-  }
-
-  &__links {
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    column-gap: 1rem;
   }
 }
 </style>
