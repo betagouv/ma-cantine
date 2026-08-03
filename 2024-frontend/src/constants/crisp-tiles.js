@@ -3,35 +3,35 @@ import documentation from "@/data/documentation.json"
 const tiles = [
   {
     title: "Qualité et durabilité des produits",
-    imgSrc: "/static/images/badges/appro.svg",
+    imgSrc: "/static/images/badges/badge-appro.svg",
     details:
       "Retrouvez la liste des labels éligibles aux 50% de produits de qualité, aux 20% de produits bio et aux 60% de produits de qualité et durables pour les familles cumulées viandes-volailles-poissons.",
     to: documentation.qualiteDurabiliteProduits,
   },
   {
     title: "Lutte contre le gaspillage alimentaire",
-    imgSrc: "/static/images/badges/waste.svg",
+    imgSrc: "/static/images/badges/badge-gaspillage.svg",
     details:
       "La lutte contre le gaspillage alimentaire est un pilier de la transition écologique en restauration collective. Les lois EGalim (2018) et AGEC (2020) imposent des obligations concrètes aux établissements pour limiter les pertes, valoriser les excédents et améliorer la gestion des repas.",
     to: documentation.lutteGaspillageAlimentaire,
   },
   {
     title: "Diversification des sources de protéines et menu végétarien",
-    imgSrc: "/static/images/badges/diversification.svg",
+    imgSrc: "/static/images/badges/badge-vege.svg",
     details:
       "La loi EGalim a introduit des évolutions majeures en matière de restauration collective, dont l’obligation de proposer régulièrement des menus végétariens.",
     to: documentation.diversificationSourcesProteines,
   },
   {
     title: "Interdiction du plastique",
-    imgSrc: "/static/images/badges/plastic.svg",
+    imgSrc: "/static/images/badges/badge-plastique.svg",
     details:
       "Dans le cadre de la loi EGalim, la réduction du plastique en restauration collective nécessite une adaptation dans les comportements existants.",
     to: documentation.interdictionPlastique,
   },
   {
     title: "Informations des convives",
-    imgSrc: "/static/images/badges/info.svg",
+    imgSrc: "/static/images/badges/badge-convives.svg",
     details:
       "Vous souhaitez valoriser vos actions auprès des convives ? Zoom sur les obligations en matière de communication.",
     to: documentation.informationsConvives,
