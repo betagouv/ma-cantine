@@ -1172,28 +1172,32 @@ dependencies = [
     { name = "drf-excel" },
     { name = "drf-spectacular" },
     { name = "drf-spectacular-sidecar" },
-    { name = "factory-boy" },
-    { name = "faker" },
-    { name = "freezegun" },
     { name = "html2text" },
-    { name = "ipython" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "pillow" },
-    { name = "pre-commit" },
     { name = "psycopg2-binary" },
-    { name = "pytest" },
-    { name = "pytest-django" },
     { name = "python-dotenv" },
     { name = "redis" },
     { name = "requests" },
-    { name = "requests-mock" },
-    { name = "ruff" },
     { name = "sentry-sdk" },
     { name = "sib-api-v3-sdk" },
     { name = "sqlalchemy" },
     { name = "wagtail" },
     { name = "xhtml2pdf" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "factory-boy" },
+    { name = "faker" },
+    { name = "freezegun" },
+    { name = "ipython" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-django" },
+    { name = "requests-mock" },
+    { name = "ruff" },
 ]
 
 [package.metadata]
@@ -1224,28 +1228,32 @@ requires-dist = [
     { name = "drf-excel", specifier = "==2.4.1" },
     { name = "drf-spectacular", specifier = "==0.29.0" },
     { name = "drf-spectacular-sidecar", specifier = "==2026.1.1" },
-    { name = "factory-boy", specifier = "==3.3.3" },
-    { name = "faker", specifier = "==27.0.0" },
-    { name = "freezegun", specifier = "==1.5.2" },
     { name = "html2text", specifier = "==2024.2.26" },
-    { name = "ipython", specifier = ">=9.5.0" },
     { name = "numpy", specifier = "==2.4.1" },
     { name = "pandas", specifier = "==3.0.0" },
     { name = "pillow", specifier = "==10.4.0" },
-    { name = "pre-commit", specifier = "==4.0.1" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
-    { name = "pytest", specifier = "==8.0.0" },
-    { name = "pytest-django", specifier = "==4.8.0" },
     { name = "python-dotenv", specifier = "==1.0.1" },
     { name = "redis", specifier = "==5.2.0" },
     { name = "requests", specifier = "==2.32.4" },
-    { name = "requests-mock", specifier = "==1.12.1" },
-    { name = "ruff", specifier = ">=0.14.2" },
     { name = "sentry-sdk", specifier = "==2.10.0" },
     { name = "sib-api-v3-sdk", specifier = "==7.6.0" },
     { name = "sqlalchemy", specifier = "==2.0.36" },
     { name = "wagtail", specifier = "==7.0.7" },
     { name = "xhtml2pdf", specifier = "==0.2.16" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "factory-boy", specifier = "==3.3.3" },
+    { name = "faker", specifier = "==27.0.0" },
+    { name = "freezegun", specifier = "==1.5.2" },
+    { name = "ipython", specifier = ">=9.5.0" },
+    { name = "pre-commit", specifier = "==4.0.1" },
+    { name = "pytest", specifier = "==8.0.0" },
+    { name = "pytest-django", specifier = "==4.8.0" },
+    { name = "requests-mock", specifier = "==1.12.1" },
+    { name = "ruff", specifier = ">=0.14.2" },
 ]
 
 [[package]]
