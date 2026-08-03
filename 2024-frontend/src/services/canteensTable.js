@@ -1,5 +1,5 @@
 import urlService from "@/services/urls.js"
-import diagnosticService from "@/services/diagnostics.js"
+import diagnosticService from "@/services/diagnosticsBadge.js"
 import cantines from "@/data/cantines.json"
 import stringService from "@/services/strings.js"
 
