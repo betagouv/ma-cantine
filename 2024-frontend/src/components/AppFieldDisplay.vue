@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import AppRawHtml from '@/components/AppRawHtml.vue'
+import AppRawHTML from '@/components/AppRawHTML.vue'
 
 const props = defineProps(['label', 'value', 'tooltip', 'error'])
 
@@ -22,7 +22,7 @@ const errorMessage = computed(() => hasError.value ? props.error?.join(' ') : ""
     </div>
     <div class="fr-col-12 fr-col-md-7">
       <div class="ma-cantine--flex-start ma-cantine--flex-top fr-mb-1w">
-        <AppRawHtml :html="valueFormatted" />
+        <AppRawHTML :html="valueFormatted" />
         <DsfrTooltip v-if="tooltip" :content="tooltip" class="app-field-display__tooltip fr-ml-1w" on-hover="true" title="Infobulle">
           <VIcon name="ri-information-line" />
         </DsfrTooltip>
