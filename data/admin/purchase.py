@@ -34,20 +34,33 @@ class PurchaseAdmin(SoftDeletionAdmin):
     )
     search_help_text = f"Cherche sur les champs : Cantine (SIRET), {Purchase._meta.get_field('description').verbose_name.capitalize()}, {Purchase._meta.get_field('import_source').verbose_name.capitalize()}"
 
-    fields = (
-        "date",
-        "canteen",
-        "description",
-        "fournisseur",
-        "famille_produits",
-        "category",
-        "caracteristiques",
-        "prix_ht",
-        "definition_local",
-        "definition_local_km",
-        "facture",
-        *Purchase.CREATION_META_FIELDS,
-        "deletion_date",
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "date",
+                    "canteen",
+                    "description",
+                    "fournisseur",
+                    "famille_produits",
+                    "category",
+                    "caracteristiques",
+                    "prix_ht",
+                    "definition_local",
+                    "definition_local_km",
+                )
+            },
+        ),
+        ("Facture", {"fields": ("facture",)}),
+        ("Metadonnées", {"fields": (*Purchase.CREATION_META_FIELDS,)}),
+        (
+            "Supprimer (archiver)",
+            {
+                "description": "Un achat supprimé est un achat 'archivé' : il ne sera plus visible sur la plateforme mais il pourra être restauré à tout moment.",
+                "fields": ("deletion_date",),
+            },
+        ),
     )
 
     def get_queryset(self, request):
@@ -55,10 +68,10 @@ class PurchaseAdmin(SoftDeletionAdmin):
         qs = qs.prefetch_related("canteen")
         return qs
 
-    def get_readonly_fields(self, request, obj=None):
-        return [field for field in self.fields if field not in ("deletion_date",)]
-
     def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
         return False
 
     def save_model(self, request, obj, form, change):
