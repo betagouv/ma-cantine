@@ -13,6 +13,7 @@ import GestionnaireCantineTeledeclarations from "@/views/GestionnaireCantineTele
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
 import GestionnaireCantineGestionnaires from "@/views/GestionnaireCantineGestionnaires.vue"
 import GestionnaireCantinePagePublique from "@/views/GestionnaireCantinePagePublique.vue"
+import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImportAchatsID from "@/views/GestionnaireImportAchatsID.vue"
@@ -225,61 +226,67 @@ const routes = [
     children: [
       {
         path: "",
-        name: "GestionnaireCantine",
-        component: GestionnaireCantine,
-        meta: {
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-          ],
-        },
-      },
-      {
-        path: "cantines-groupe",
-        name: "GestionnaireCantineGroupe",
-        component: GestionnaireCantineGroupe,
-        meta: {
-          title: "Cantines du groupe",
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-          ],
-        },
-      },
-      {
-        path: "teledeclarations",
-        name: "GestionnaireCantineTeledeclarations",
-        component: GestionnaireCantineTeledeclarations,
-        meta: {
-          title: "Toutes mes télédéclarations",
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-          ],
-        },
-      },
-      {
-        path: "gestionnaires",
-        name: "GestionnaireCantineGestionnaires",
-        component: GestionnaireCantineGestionnaires,
-        meta: {
-          title: "Gestionnaires",
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-          ],
-        },
-      },
-      {
-        path: "page-publique",
-        name: "GestionnaireCantinePagePublique",
-        component: GestionnaireCantinePagePublique,
-        meta: {
-          title: "Ma page publique",
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-          ],
-        },
+        component: LayoutSidebarCanteen,
+        children: [
+          {
+            path: "",
+            name: "GestionnaireCantine",
+            component: GestionnaireCantine,
+            meta: {
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+              ],
+            },
+          },
+          {
+            path: "cantines-groupe",
+            name: "GestionnaireCantineGroupe",
+            component: GestionnaireCantineGroupe,
+            meta: {
+              title: "Cantines du groupe",
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+              ],
+            },
+          },
+          {
+            path: "teledeclarations",
+            name: "GestionnaireCantineTeledeclarations",
+            component: GestionnaireCantineTeledeclarations,
+            meta: {
+              title: "Toutes mes télédéclarations",
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+              ],
+            },
+          },
+          {
+            path: "gestionnaires",
+            name: "GestionnaireCantineGestionnaires",
+            component: GestionnaireCantineGestionnaires,
+            meta: {
+              title: "Gestionnaires",
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+              ],
+            },
+          },
+          {
+            path: "page-publique",
+            name: "GestionnaireCantinePagePublique",
+            component: GestionnaireCantinePagePublique,
+            meta: {
+              title: "Ma page publique",
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+              ],
+            },
+          },
+        ],
       },
       {
         path: "archiver",
