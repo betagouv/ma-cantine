@@ -430,8 +430,9 @@ if (props.establishmentData) {
           v-model="form.publicationComments"
           :isTextarea="true"
           :label-visible="true"
-          rows="4"
+          rows="6"
           hint="Optionnel"
+          class="ma-cantine--textarea"
         />
       </fieldset>
       <fieldset v-if="showCheckboxNoSiret" class="fr-py-0 fr-my-3w fr-mb-md-3w">
