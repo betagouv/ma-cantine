@@ -25,6 +25,7 @@ from api.views import (
     ClaimCanteenView,
     CommunityEventsView,
     DiagnosticListCreateView,
+    DiagnosticListRecapView,
     DiagnosticsCompleteImportView,
     DiagnosticsFromPurchasesView,
     DiagnosticsSimpleImportView,
@@ -167,6 +168,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>",
         DiagnosticUpdateView.as_view(),
         name="diagnostic_update",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/diagnostics/recap",
+        DiagnosticListRecapView.as_view(),
+        name="diagnostic_list_recap",
     ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/create",

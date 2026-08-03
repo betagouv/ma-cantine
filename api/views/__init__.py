@@ -43,6 +43,7 @@ from .canteen_update_import import CanteensUpdateImportView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticListCreateView,
+    DiagnosticListRecapView,
     DiagnosticsToTeledeclareListView,
     DiagnosticUpdateView,
     EmailDiagnosticImportFileView,

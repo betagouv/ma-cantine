@@ -1,15 +1,17 @@
 from decimal import Decimal
 
+from django.core.management import call_command
 from django.core.exceptions import BadRequest
 from django.db import transaction
 from django.urls import reverse
 from freezegun import freeze_time
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Diagnostic
+from data.models import Diagnostic, Canteen
 from data.models.creation_source import CreationSource
 
 
@@ -865,3 +867,232 @@ class DiagnosticDeleteApiTest(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class DiagnosticListRecapApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
+        cls.url = reverse("diagnostic_list_recap", kwargs={"canteen_pk": cls.canteen.id})
+
+    def test_cannot_list_recap_diagnostics_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_list_recap_diagnostics_if_canteen_unknown(self):
+        response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": 9999}))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_list_recap_diagnostics_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_list_recap_diagnostics(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_cannot_list_recap_diagnostics_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_list_recap_diagnostics_only_return_years_after_canteen_creation(self):
+        self.canteen.managers.add(authenticate.user)
+        with freeze_time("2026-03-15"):  # during the 2025 campaign
+            self.canteen.creation_date = timezone.now()
+            self.canteen.save(skip_validations=True)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
+        self.assertEqual(body[0]["year"], 2025)
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_list_recap_diagnostics_site(self):
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.creation_date = timezone.now()
+        self.canteen.save(skip_validations=True)
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic.teledeclare(applicant=authenticate.user)
+
+        response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": self.canteen.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
+        self.assertEqual(body[0]["year"], 2025)
+        self.assertEqual(body[0]["isTeledeclared"], True)
+        self.assertEqual(body[0]["declarationDonnees"], True)
+        self.assertEqual(body[0]["canteenDiagnosticId"], diagnostic.id)
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticId"], None)
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], None)
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_list_recap_diagnostics_groupe_appro_only_with_satellite(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
+        canteen_satellite_1_before = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[authenticate.user]
+        )
+        canteen_satellite_2_after = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[authenticate.user]
+        )
+        diagnostic_satellite_1_before = DiagnosticFactory(
+            canteen=canteen_satellite_1_before, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic_satellite_1_before.teledeclare(applicant=authenticate.user)
+        diagnostic_groupe = DiagnosticFactory(
+            canteen=canteen_groupe,
+            year=2025,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+        diagnostic_groupe.teledeclare(applicant=authenticate.user)
+        diagnostic_satellite_2_after = DiagnosticFactory(
+            canteen=canteen_satellite_2_after, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic_satellite_2_after.teledeclare(applicant=authenticate.user)
+
+        call_command("diagnostic_fill_invalid_warning_reason_list", year=2025, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
+
+        # groupe
+        self.assertEqual(diagnostic_groupe.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_APPRO)
+
+        response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen_groupe.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
+        self.assertEqual(body[0]["year"], 2025)
+        self.assertEqual(body[0]["isTeledeclared"], True)
+        self.assertEqual(body[0]["declarationDonnees"], True)
+        self.assertEqual(body[0]["canteenDiagnosticId"], diagnostic_groupe.id)
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticId"], None)
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], None)
+
+        # satellite_1_before (teledeclared before the groupe)
+        self.assertEqual(diagnostic_satellite_1_before.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
+
+        response = self.client.get(
+            reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen_satellite_1_before.id})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
+        self.assertEqual(body[0]["year"], 2025)
+        self.assertEqual(body[0]["isTeledeclared"], True)
+        self.assertEqual(body[0]["declarationDonnees"], True)
+        self.assertEqual(body[0]["canteenDiagnosticId"], diagnostic_satellite_1_before.id)
+        self.assertIsNotNone(body[0]["generatedFromGroupeDiagnosticId"])
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.APPRO)
+
+        # satellite_2_after (teledeclared after the groupe)
+        self.assertEqual(
+            diagnostic_satellite_2_after.teledeclaration_mode, Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO
+        )
+
+        response = self.client.get(
+            reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen_satellite_2_after.id})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
+        self.assertEqual(body[0]["year"], 2025)
+        self.assertEqual(body[0]["isTeledeclared"], True)
+        self.assertEqual(body[0]["declarationDonnees"], True)
+        self.assertEqual(body[0]["canteenDiagnosticId"], diagnostic_satellite_2_after.id)
+        self.assertIsNotNone(body[0]["generatedFromGroupeDiagnosticId"])
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.APPRO)
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_list_recap_diagnostics_groupe_all_with_satellite(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
+        canteen_satellite_1_before = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[authenticate.user]
+        )
+        canteen_satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[authenticate.user]
+        )
+        diagnostic_satellite_1_before = DiagnosticFactory(
+            canteen=canteen_satellite_1_before, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic_satellite_1_before.teledeclare(applicant=authenticate.user)
+        diagnostic_groupe = DiagnosticFactory(
+            canteen=canteen_groupe,
+            year=2025,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+        )
+        diagnostic_groupe.teledeclare(applicant=authenticate.user)
+
+        call_command("diagnostic_fill_invalid_warning_reason_list", year=2025, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
+
+        # groupe
+        self.assertEqual(diagnostic_groupe.teledeclaration_mode, Diagnostic.TeledeclarationMode.CENTRAL_ALL)
+
+        response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen_groupe.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
+        self.assertEqual(body[0]["year"], 2025)
+        self.assertEqual(body[0]["isTeledeclared"], True)
+        self.assertEqual(body[0]["declarationDonnees"], True)
+        self.assertEqual(body[0]["canteenDiagnosticId"], diagnostic_groupe.id)
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticId"], None)
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], None)
+
+        # satellite_1_before (teledeclared before the groupe)
+        self.assertEqual(diagnostic_satellite_1_before.teledeclaration_mode, Diagnostic.TeledeclarationMode.SITE)
+
+        response = self.client.get(
+            reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen_satellite_1_before.id})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
+        self.assertEqual(body[0]["year"], 2025)
+        self.assertEqual(body[0]["isTeledeclared"], True)
+        self.assertEqual(body[0]["declarationDonnees"], True)
+        self.assertEqual(body[0]["canteenDiagnosticId"], diagnostic_satellite_1_before.id)
+        self.assertIsNotNone(body[0]["generatedFromGroupeDiagnosticId"])
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.ALL)
+
+        # satellite_2 (did not teledeclare)
+        response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen_satellite_2.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
+        self.assertEqual(body[0]["year"], 2025)
+        self.assertEqual(body[0]["isTeledeclared"], True)
+        self.assertEqual(body[0]["declarationDonnees"], True)
+        self.assertEqual(body[0]["canteenDiagnosticId"], None)
+        self.assertIsNotNone(body[0]["generatedFromGroupeDiagnosticId"])
+        self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.ALL)
