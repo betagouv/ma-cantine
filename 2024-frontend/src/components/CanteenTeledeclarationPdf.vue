@@ -12,7 +12,7 @@ const badge = computed(() => {
     case isTeledeclared.value && isInvalid.value:
       return {
         type: "warning",
-        label: "Télédéclaré (erreurs détectées)"
+        label: "Télédéclaré - erreur(s) détectée(s)"
       }
     case isTeledeclared.value && !isInvalid.value:
       return {
