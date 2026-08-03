@@ -1,19 +1,19 @@
 <script setup>
-import { computed, ref } from "vue"
-import { computedAsync } from "@vueuse/core"
+import { computed, ref, onMounted } from "vue"
 import { useRoute } from "vue-router"
+import { storeToRefs } from "pinia"
+import { useStoreCanteen } from "@/stores/canteen.js"
 import canteenService from "@/services/canteens.js"
 import canteensTableService from "@/services/canteensTable.js"
-import urlService from "@/services/urls.js"
-import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
+import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import CanteensTableSatellites from "@/components/CanteensTableSatellites.vue"
 import CanteenModalSatelliteAdd from "@/components/CanteenModalSatelliteAdd.vue"
 import CanteenModalSatelliteRemove from "@/components/CanteenModalSatelliteRemove.vue"
 
-/* Data */
+/* Store */
 const route = useRoute()
-const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
-const canteen = computedAsync(async () => await canteenService.fetchCanteen(canteenId), {})
+const canteenStore = useStoreCanteen()
+const { canteenInformations } = storeToRefs(canteenStore)
 const modalAddSatelliteOpened = ref(false)
 const modalRemoveSatelliteOpened = ref(false)
 const satelliteToRemove = ref()
@@ -23,11 +23,11 @@ const satellites = ref([])
 const satellitesDisplayed = computed(() => isSearching.value ? canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, satellites.value) : satellites.value)
 
 const updateSatellites = () => {
-  canteenService.fetchSatellites(canteenId).then((response) => {
+  canteenService.fetchSatellites(canteenInformations.value.id).then((response) => {
     satellites.value = response
   })
 }
-updateSatellites()
+onMounted(() => updateSatellites())
 
 const satellitesCountSentence = computed(() => {
   const number = getSatellitesPrettCount(satellitesDisplayed.value.length)
@@ -48,10 +48,6 @@ const getSatellitesPrettyType = (count) => {
   if (!isSearching.value && count > 1) return "renseignés"
 }
 
-const removeSatellite = (id) => {
-  satellites.value = satellites.value.filter((sat) => sat.id !== id)
-}
-
 const showModalRemoveSatellite = (satellite) => {
   satelliteToRemove.value = satellite
   modalRemoveSatelliteOpened.value = true
@@ -70,49 +66,45 @@ const clickSearch = () => {
 }
 </script>
 <template>
-  <LayoutSidebarCanteen class="gestionnaire-cantine-groupe" :title="route.meta.title">
-    <template #titleName>{{ route.meta.title }}</template>
-    <template #titleButton>
+  <div class="gestionnaire-cantine-groupe">
+    <CanteenSidebarTitle :title="route.meta.title">
       <DsfrButton primary label="Ajouter une cantine au groupe" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
-    </template>
-    <template #content>
-      <div class="fr-grid-row fr-mb-2w fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-6">
-          <p class="fr-mb-md-0">{{ satellitesCountSentence }}</p>
-        </div>
-        <div class="fr-col-12 fr-col-md-6">
-          <DsfrSearchBar
-            v-model="search"
-            label="Rechercher"
-            button-text="Rechercher"
-            placeholder="Rechercher par le nom, siret ou siren de l'établissement"
-            @update:modelValue="updateSearch"
-            @search="clickSearch"
-          />
-        </div>
+    </CanteenSidebarTitle>
+    <div class="fr-grid-row fr-mb-2w fr-grid-row--middle">
+      <div class="fr-col-12 fr-col-md-6">
+        <p class="fr-mb-md-0">{{ satellitesCountSentence }}</p>
       </div>
-      <CanteensTableSatellites
-        v-if="satellitesDisplayed.length > 0"
-        :satellites="satellitesDisplayed"
-        :groupe="canteen"
-        @updateSatellites="updateSatellites"
-        @showModalRemoveSatellite="showModalRemoveSatellite" />
-      <CanteenModalSatelliteAdd
-        :open="modalAddSatelliteOpened"
-        :groupId="canteenId"
-        @close="modalAddSatelliteOpened = false"
-        @updateSatellites="updateSatellites()" />
-      <CanteenModalSatelliteRemove
-        v-if="satelliteToRemove"
-        :opened="modalRemoveSatelliteOpened"
-        :groupe="canteen"
-        :satellite="satelliteToRemove"
-        @close="modalRemoveSatelliteOpened = false"
-        @satelliteRemoved="removeSatellite(satelliteToRemove.id)"
-      />
-    </template>
-  </LayoutSidebarCanteen>
-
+      <div class="fr-col-12 fr-col-md-6">
+        <DsfrSearchBar
+          v-model="search"
+          label="Rechercher"
+          button-text="Rechercher"
+          placeholder="Rechercher par le nom, siret ou siren de l'établissement"
+          @update:modelValue="updateSearch"
+          @search="clickSearch"
+        />
+      </div>
+    </div>
+    <CanteensTableSatellites
+      v-if="satellitesDisplayed.length > 0"
+      :satellites="satellitesDisplayed"
+      :groupe="canteenInformations"
+      @updateSatellites="updateSatellites"
+      @showModalRemoveSatellite="showModalRemoveSatellite" />
+    <CanteenModalSatelliteAdd
+      :open="modalAddSatelliteOpened"
+      :groupId="canteenInformations.id"
+      @close="modalAddSatelliteOpened = false"
+      @updateSatellites="updateSatellites()" />
+    <CanteenModalSatelliteRemove
+      v-if="satelliteToRemove"
+      :opened="modalRemoveSatelliteOpened"
+      :groupe="canteenInformations"
+      :satellite="satelliteToRemove"
+      @close="modalRemoveSatelliteOpened = false"
+      @satelliteRemoved="updateSatellites()"
+    />
+  </div>
 </template>
 
 <style lang="scss">
