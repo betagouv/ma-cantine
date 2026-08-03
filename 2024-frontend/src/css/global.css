@@ -206,3 +206,8 @@ address {
 .ma-cantine--white-space-nowrap {
     white-space: nowrap;
 }
+
+/* FORM */
+.ma-cantine--textarea {
+    resize: vertical !important;
+}
