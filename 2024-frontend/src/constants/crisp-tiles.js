@@ -10,28 +10,28 @@ const tiles = [
   },
   {
     title: "Lutte contre le gaspillage alimentaire",
-    imgSrc: "/static/images/badges/badge-gaspillage.svg",
+    imgSrc: "/static/images/badges/badge-waste.svg",
     details:
       "La lutte contre le gaspillage alimentaire est un pilier de la transition écologique en restauration collective. Les lois EGalim (2018) et AGEC (2020) imposent des obligations concrètes aux établissements pour limiter les pertes, valoriser les excédents et améliorer la gestion des repas.",
     to: documentation.lutteGaspillageAlimentaire,
   },
   {
     title: "Diversification des sources de protéines et menu végétarien",
-    imgSrc: "/static/images/badges/badge-vege.svg",
+    imgSrc: "/static/images/badges/badge-diversification.svg",
     details:
       "La loi EGalim a introduit des évolutions majeures en matière de restauration collective, dont l’obligation de proposer régulièrement des menus végétariens.",
     to: documentation.diversificationSourcesProteines,
   },
   {
     title: "Interdiction du plastique",
-    imgSrc: "/static/images/badges/badge-plastique.svg",
+    imgSrc: "/static/images/badges/badge-plastic.svg",
     details:
       "Dans le cadre de la loi EGalim, la réduction du plastique en restauration collective nécessite une adaptation dans les comportements existants.",
     to: documentation.interdictionPlastique,
   },
   {
     title: "Informations des convives",
-    imgSrc: "/static/images/badges/badge-convives.svg",
+    imgSrc: "/static/images/badges/badge-info.svg",
     details:
       "Vous souhaitez valoriser vos actions auprès des convives ? Zoom sur les obligations en matière de communication.",
     to: documentation.informationsConvives,
