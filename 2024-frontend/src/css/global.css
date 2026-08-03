@@ -124,6 +124,9 @@ address {
     background-size: 100% 2px !important
 }
 
+.ma-cantine--table-pagination .fr-select {
+    max-width: 5rem !important;
+}
 
 /* ICON */
 .ma-cantine--icon-xs::before {
