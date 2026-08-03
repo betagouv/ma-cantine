@@ -2,35 +2,37 @@
 
 {% block extrahead %}
     {{ block.super }}
-    {% if original.deletion_date %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Find the delete link and convert it to a restore button
             const deleteLink = document.querySelector('a.deletelink');
             if (deleteLink) {
-                // Get the form
-                const form = deleteLink.closest('form');
+                // If canteen is deleted (has deletion_date), convert to restore button
+                {% if original.deletion_date %}
+                    const form = deleteLink.closest('form');
 
-                // Change the link to a button
-                deleteLink.removeAttribute('href');
-                deleteLink.setAttribute('type', 'submit');
-                deleteLink.style.cursor = 'pointer';
+                    // Change the link to a button
+                    deleteLink.removeAttribute('href');
+                    deleteLink.setAttribute('type', 'submit');
+                    deleteLink.style.cursor = 'pointer';
 
-                // Change the text
-                deleteLink.innerText = '🔄 Restaurer cette cantine';
+                    // Change the text
+                    deleteLink.innerText = '🔄 Restaurer';
 
-                // Add onclick handler to submit form with restore_action
-                deleteLink.onclick = function(e) {
-                    e.preventDefault();
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'restore_action';
-                    input.value = '1';
-                    form.appendChild(input);
-                    form.submit();
-                };
+                    // Add onclick handler to submit form with restore_action
+                    deleteLink.onclick = function(e) {
+                        e.preventDefault();
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'restore_action';
+                        input.value = '1';
+                        form.appendChild(input);
+                        form.submit();
+                    };
+                {% else %}
+                    // If canteen is active, just rename the Delete button
+                    deleteLink.innerText = '🗑️ Supprimer (archiver)';
+                {% endif %}
             }
         });
     </script>
-    {% endif %}
 {% endblock %}
