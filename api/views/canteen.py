@@ -246,7 +246,7 @@ class PublishedCanteensView(ListAPIView):
         MaCantineOrderingFilter,
     ]
     # TODO: maybe add city/region/department name?
-    search_fields = ["name", "siret"]
+    search_fields = ["name", "siret", "siren_unite_legale"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
 

@@ -538,6 +538,7 @@ CSP_CONNECT_SRC = (
     "plateforme.adresse.data.gouv.fr",
     "raw.githubusercontent.com/betagouv/ma-cantine/",  # data/schemas/imports/
     "api.iconify.design",  # dsfr icon
+    "api-adresse.data.gouv.fr",  # search "Trouver une cantine"
 )
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
