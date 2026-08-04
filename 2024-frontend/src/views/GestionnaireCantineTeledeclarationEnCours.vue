@@ -46,4 +46,24 @@ const gotToAppro = () => {
     </div>
   </div>
 
+  <div>
+    <h3 class="fr-h5 fr-mb-4w">Avant de débuter</h3>
+    <ol v-if="!canteenInformations.isGroupe" class="ma-cantine--ordered-list ma-cantine--unstyled-list">
+      <li class="fr-mb-2w">
+        <p class="fr-mb-0">
+          Consolidez vos données d’achats : consultez la <a :href="documentation.teledeclarationMatrice" target="_blank">matrice de télédéclaration</a> et l’<a :href="documentation.teledeclarationAntiseche" target="_blank">antisèche</a>
+        </p>
+      </li>
+      <li class="fr-mb-2w">
+        <p class="fr-mb-0">
+          Si vous êtes en gestion concédée, coordonnez-vous avec votre prestataire pour l’obtention des données et/ou délégation de la télédéclaration : <a :href="documentation.gestionConcedee" target="_blank">voir Gestion concédée | Documentation</a>
+        </p>
+      </li>
+      <li>
+        <p class="fr-mb-0">
+          Anticipez le mode de déclaration des approvisionnements simplifiés ou détaillés : <a :href="documentation.teledeclarationType" target="_blank">consulter la documentation</a>
+        </p>
+      </li>
+    </ol>
+  </div>
 </template>
