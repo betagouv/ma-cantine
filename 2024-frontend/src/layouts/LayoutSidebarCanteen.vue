@@ -79,7 +79,7 @@ const menuItems = computed(() =>  {
   <div v-else-if="canteenInformations" class="layout-sidebar-canteen">
     <h1>{{ canteenInformations.name }}</h1>
     <div class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-4w">
-      <DsfrBadge v-if="canteenInformations.isGroupe" type="info" :noIcon="true" :label="`Groupe : ${canteenInformations.satellitesCount}`" />
+      <DsfrBadge v-if="canteenInformations.isGroupe" type="info" :noIcon="true" label="Groupe" />
       <DsfrBadge v-if="canteenInformations.id" type="neutral" :label="`ID : ${canteenInformations.id}`" />
       <DsfrBadge v-if="canteenInformations.siret" type="neutral" :label="`SIRET : ${formatSiretOrSiren(canteenInformations.siret)}`" />
       <DsfrBadge v-if="canteenInformations.sirenUniteLegale" type="neutral" :label="`SIREN : ${formatSiretOrSiren(canteenInformations.sirenUniteLegale)}`" />
