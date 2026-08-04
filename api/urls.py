@@ -26,6 +26,7 @@ from api.views import (
     CommunityEventsView,
     DiagnosticListCreateView,
     DiagnosticListRecapView,
+    DiagnosticRetrieveUpdateView,
     DiagnosticsCompleteImportView,
     DiagnosticsFromPurchasesView,
     DiagnosticsSimpleImportView,
@@ -33,7 +34,6 @@ from api.views import (
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
     DiagnosticTeledeclarationPdfView,
-    DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
     InitialDataView,
     InquiryView,
@@ -166,8 +166,8 @@ urlpatterns = {
     ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>",
-        DiagnosticUpdateView.as_view(),
-        name="diagnostic_update",
+        DiagnosticRetrieveUpdateView.as_view(),
+        name="diagnostic_retrieve_update",
     ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/recap",

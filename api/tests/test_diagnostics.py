@@ -486,17 +486,69 @@ class DiagnosticDetailApiTest(APITestCase):
         cls.canteen = CanteenFactory(managers=[cls.user])
         cls.diagnostic = DiagnosticFactory(year=2019, canteen=cls.canteen)
         cls.url = reverse(
-            "diagnostic_update",
+            "diagnostic_retrieve_update",
             kwargs={"canteen_pk": cls.diagnostic.canteen.id, "pk": cls.diagnostic.id},
         )
 
+    def test_cannot_retrieve_diagnostic_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     @authenticate
-    def test_cannot_get_diagnostic(self):
-        self.canteen.managers.add(authenticate.user)
+    def test_cannot_retrieve_diagnostic_if_canteen_unknown(self):
+        response = self.client.get(
+            reverse(
+                "diagnostic_retrieve_update",
+                kwargs={"canteen_pk": 9999, "pk": self.diagnostic.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_retrieve_diagnostic_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_retrieve_diagnostic_if_diagnostic_unknown(self):
+        self.diagnostic.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(
+            reverse(
+                "diagnostic_retrieve_update",
+                kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": 9999},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_retrieve_diagnostic(self):
+        self.diagnostic.canteen.managers.add(authenticate.user)
 
         response = self.client.get(self.url)
 
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.diagnostic.id)
+        self.assertEqual(body["year"], 2019)
+        self.assertEqual(body["canteenId"], self.canteen.id)
+
+    def test_retrieve_diagnostic_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.diagnostic.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.diagnostic.id)
+        self.assertEqual(body["year"], 2019)
+        self.assertEqual(body["canteenId"], self.canteen.id)
 
 
 class DiagnosticUpdateApiTest(APITestCase):
@@ -508,7 +560,7 @@ class DiagnosticUpdateApiTest(APITestCase):
             year=2019, canteen=cls.canteen, creation_user=cls.user, creation_source=CreationSource.APP
         )
         cls.url = reverse(
-            "diagnostic_update",
+            "diagnostic_retrieve_update",
             kwargs={"canteen_pk": cls.diagnostic.canteen.id, "pk": cls.diagnostic.id},
         )
 
@@ -534,7 +586,7 @@ class DiagnosticUpdateApiTest(APITestCase):
     def test_cannot_update_diagnostic_if_canteen_unknown(self):
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": 9999, "pk": self.diagnostic.id},
             ),
             {"year": 2020},
@@ -560,7 +612,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": 9999},
             ),
             {"year": 2020},
@@ -578,7 +630,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": diagnostic_other.id},
             ),
             {"year": 2020},
@@ -591,7 +643,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": diagnostic_other.id},
             ),
             {"year": 2020},
@@ -681,7 +733,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -704,7 +756,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -728,7 +780,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -752,7 +804,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -773,7 +825,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -795,7 +847,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -816,7 +868,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         response = self.client.patch(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             ),
             payload,
@@ -844,7 +896,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
             response = self.client.patch(
                 reverse(
-                    "diagnostic_update",
+                    "diagnostic_retrieve_update",
                     kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
                 ),
                 payload,
@@ -863,7 +915,7 @@ class DiagnosticDeleteApiTest(APITestCase):
 
         response = self.client.delete(
             reverse(
-                "diagnostic_update",
+                "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )

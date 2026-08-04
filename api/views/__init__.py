@@ -44,8 +44,8 @@ from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticListCreateView,
     DiagnosticListRecapView,
+    DiagnosticRetrieveUpdateView,
     DiagnosticsToTeledeclareListView,
-    DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
 )
 from .diagnostic_import import DiagnosticsCompleteImportView, DiagnosticsSimpleImportView  # noqa: F401
