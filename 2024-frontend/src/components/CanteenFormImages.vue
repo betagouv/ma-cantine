@@ -62,7 +62,7 @@ const successImages = (message) => {
 
 <template>
   <li class="canteen-form-images">
-    <h4 class="fr-h6 fr-mb-1w">Images de l'établissement</h4>
+    <h4 class="fr-h6 fr-mb-2w">Images de l'établissement</h4>
     <div class="fr-grid-row fr-grid-row--gutters">
       <AppFormImage
         v-for="image in canteenImages"
