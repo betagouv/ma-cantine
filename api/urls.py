@@ -165,14 +165,14 @@ urlpatterns = {
         name="diagnostic_list_create",
     ),
     path(
-        "canteens/<int:canteen_pk>/diagnostics/<int:pk>",
-        DiagnosticRetrieveUpdateView.as_view(),
-        name="diagnostic_retrieve_update",
-    ),
-    path(
         "canteens/<int:canteen_pk>/diagnostics/recap",
         DiagnosticListRecapView.as_view(),
         name="diagnostic_list_recap",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/diagnostics/<int:pk>",
+        DiagnosticRetrieveUpdateView.as_view(),
+        name="diagnostic_retrieve_update",
     ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/create",
