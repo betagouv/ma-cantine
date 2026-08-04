@@ -7,7 +7,6 @@ import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import CanteenFormLogo from "@/components/CanteenFormLogo.vue"
 import CanteenFormImages from "@/components/CanteenFormImages.vue"
-import CanteenFormDescription from "@/components/CanteenFormDescription.vue"
 
 const router = useRouter()
 const { canteenInformations } = storeToRefs(useStoreCanteen())
@@ -72,17 +71,9 @@ const goToPrintPage = () => {
         :canteen-id="canteenInformations.id"
         class="fr-mb-3w"
       />
-
       <CanteenFormImages
         v-if="canteenInformations.id"
         :canteen-id="canteenInformations.id"
-        class="fr-mb-3w"
-      />
-
-      <CanteenFormDescription
-        v-if="canteenInformations.id"
-        :canteen-id="canteenInformations.id"
-        :description="canteenInformations.publicationComments"
         class="fr-mb-3w"
       />
     </ol>
