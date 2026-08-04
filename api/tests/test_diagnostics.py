@@ -1150,3 +1150,73 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertEqual(body[0]["canteenDiagnosticId"], None)
         self.assertIsNotNone(body[0]["generatedFromGroupeDiagnosticId"])
         self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.ALL)
+
+
+class DiagnosticDetailCheckApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.diagnostic = DiagnosticFactory(year=2019, canteen=cls.canteen)
+        cls.url = reverse(
+            "diagnostic_check",
+            kwargs={"canteen_pk": cls.canteen.id, "pk": cls.diagnostic.id},
+        )
+
+    def test_cannot_get_diagnostic_check_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_diagnostic_check_if_canteen_does_not_exist(self):
+        response = self.client.get(
+            reverse(
+                "diagnostic_check",
+                kwargs={"canteen_pk": 9999, "pk": self.diagnostic.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_diagnostic_check_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_diagnostic_check_if_diagnostic_does_not_exist(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(
+            reverse(
+                "diagnostic_check",
+                kwargs={"canteen_pk": self.canteen.id, "pk": 9999},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_can_get_diagnostic_check(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["errors"], {})
+
+    def test_can_get_diagnostic_check_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["errors"], {})

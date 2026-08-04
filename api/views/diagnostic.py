@@ -21,6 +21,7 @@ from api.permissions import (
 from api.serializers import (
     DiagnosticAndCanteenSerializer,
     ManagerDiagnosticSerializer,
+    DiagnosticCheckSerializer,
 )
 from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.utils import file_import, send_mail
@@ -168,6 +169,28 @@ class DiagnosticListRecapView(APIView):
                 }
             )
         return Response(result)
+
+
+class DiagnosticCheckView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, canteen_pk, pk):
+        canteen = self._get_canteen()
+        diagnostic = get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
+
+        errors = {}
+        try:
+            diagnostic.full_clean()
+        except ValidationError as e:
+            errors = e.message_dict
+
+        response = {"is_filled": diagnostic.is_filled, "errors": errors}
+        return Response(DiagnosticCheckSerializer(response).data)
 
 
 class EmailDiagnosticImportFileView(APIView):
