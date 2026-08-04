@@ -92,6 +92,10 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay :label="cantines.sectorList" :value="getPrettySectors(canteenInformation.sectorList)" :error="canteenErrors?.sectorList" />
       <AppFieldDisplay v-if="showLineMinistry" :label="cantines.lineMinistry" :value="getPrettyLineMinistry(canteenInformation.lineMinistry)" :error="canteenErrors?.lineMinistry" />
     </li>
+    <li v-if="!canteenIsGroupe" class="fr-my-3w">
+      <h3 class="fr-h5">Description</h3>
+      <p>{{ canteenInformation.publicationComments || 'Aucune description enregistrée'}}</p>
+    </li>
     <li v-if="showGroupeInformations" class="fr-my-3w">
       <h3 class="fr-h5">Informations de mon groupe</h3>
       <DsfrAlert title="Le gestionnaire du groupe de restaurants satellites a ajouté votre établissement" type="info" class="fr-mb-2w" titleTag="h4">
