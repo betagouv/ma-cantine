@@ -301,14 +301,14 @@ pyhanko-certvalidator==0.26.3
     # via
     #   pyhanko
     #   xhtml2pdf
-pypdf==6.15.0
+pypdf==5.1.0
     # via xhtml2pdf
 pypng==0.20220715.0
     # via qrcode
 pytest==8.0.0
     # via pytest-django
 pytest-django==4.8.0
-python-bidi==0.4.2
+python-bidi==0.6.11
     # via xhtml2pdf
 python-dateutil==2.9.0.post0
     # via
@@ -352,7 +352,6 @@ rpds-py==0.21.0
     #   jsonschema
     #   referencing
 ruff==0.14.2
-    # via ma-cantine
 s3transfer==0.19.2
     # via boto3
 sentry-sdk==2.10.0
@@ -362,7 +361,6 @@ sib-api-v3-sdk==7.6.0
 six==1.17.0
     # via
     #   html5lib
-    #   python-bidi
     #   python-dateutil
     #   sib-api-v3-sdk
 soupsieve==2.5
@@ -433,5 +431,5 @@ webencodings==0.5.1
     #   tinycss2
 willow==1.11.0
     # via wagtail
-xhtml2pdf==0.2.16
+xhtml2pdf==0.2.17
     # via ma-cantine
