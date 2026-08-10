@@ -658,7 +658,6 @@ SHELL_PLUS_POST_IMPORTS = [
 # ma cantine: teledeclaration campaign dates override
 # ------------------------------------------------------------------------------
 
-ENABLE_TELEDECLARATION = os.getenv("ENABLE_TELEDECLARATION") == "True"
 TELEDECLARATION_START_DATE_OVERRIDE = os.getenv("TELEDECLARATION_START_DATE_OVERRIDE", "")
 TELEDECLARATION_END_DATE_OVERRIDE = os.getenv("TELEDECLARATION_END_DATE_OVERRIDE", "")
 CORRECTION_START_DATE_OVERRIDE = os.getenv("CORRECTION_START_DATE_OVERRIDE", "")
