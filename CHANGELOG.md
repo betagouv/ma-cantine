@@ -6,6 +6,21 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.43.0](https://github.com/betagouv/ma-cantine/compare/v2026.42.0...v2026.43.0) (2026-08-10)
+
+
+### Nouveautés
+
+* **Diagnostics:** API: nouvel endpoint pour récupérer 1 de ses bilans ([#6990](https://github.com/betagouv/ma-cantine/issues/6990)) ([1dc85eb](https://github.com/betagouv/ma-cantine/commit/1dc85eb776d487c8efc2214064346b02f026d7e4))
+
+
+### Technique
+
+* **deps:** bump django from 5.2.14 to 5.2.16 ([#6997](https://github.com/betagouv/ma-cantine/issues/6997)) ([ae560f6](https://github.com/betagouv/ma-cantine/commit/ae560f65b21f98bf9de36109036ff9c2539cfc1b))
+* **deps:** bump xhtml2pdf from 0.2.16 to 0.2.17 ([#6996](https://github.com/betagouv/ma-cantine/issues/6996)) ([6c99757](https://github.com/betagouv/ma-cantine/commit/6c99757fc31e9bf523de76a2217bbfae7838b3e1))
+* **deps:** faire le ménage dans notre pyproject : enlever les dépendances transitives ([#6791](https://github.com/betagouv/ma-cantine/issues/6791)) ([6773383](https://github.com/betagouv/ma-cantine/commit/67733831580959386e819601ea65ef43c82c3759))
+* **deps:** faire le ménage dans notre pyproject : mettre les dev dependencies dans un groupe séparé ([#6985](https://github.com/betagouv/ma-cantine/issues/6985)) ([fd757a2](https://github.com/betagouv/ma-cantine/commit/fd757a2b7c042e3d1f5d64f5cf4657d6bc2de8aa))
+
 ## [2026.42.0](https://github.com/betagouv/ma-cantine/compare/v2026.41.0...v2026.42.0) (2026-08-03)
 
 
