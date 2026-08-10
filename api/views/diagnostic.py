@@ -7,10 +7,10 @@ from django.db.models import Exists, OuterRef
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import ListCreateAPIView, ListAPIView, UpdateAPIView, get_object_or_404
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.exceptions import DuplicateException
 from api.permissions import (
@@ -27,7 +27,7 @@ from common.utils import file_import, send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.diagnostic import Diagnostic
-from macantine.utils import is_in_correction, CAMPAIGN_DATES
+from macantine.utils import CAMPAIGN_DATES, is_in_correction
 
 logger = logging.getLogger(__name__)
 
@@ -86,16 +86,21 @@ class DiagnosticListCreateView(ListCreateAPIView):
 
 
 @extend_schema_view(
+    get=extend_schema(
+        summary="Récupérer un diagnostic existant.",
+        description="",
+        tags=["Bilans"],
+    ),
     patch=extend_schema(
         summary="Modifier un diagnostic existant.",
         description="À noter qu'un diagnostic ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
         tags=["Bilans"],
     ),
 )
-class DiagnosticUpdateView(UpdateAPIView):
+class DiagnosticRetrieveUpdateView(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
-    http_method_names = ["patch"]  # disable "put"
+    http_method_names = ["get", "patch"]  # disable "put"
     model = Diagnostic
     serializer_class = ManagerDiagnosticSerializer
 
