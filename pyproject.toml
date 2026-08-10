@@ -22,7 +22,7 @@ dependencies = [
     "django-oauth-toolkit==3.0.1",
     "django-otp==1.5.2",
     "django-simple-history==3.7.0",
-    "django-storages==1.14.4",
+    "django-storages[s3]==1.14.4",
     "django-vite-plugin==4.1.2",
     "django-webpack-loader==3.1.0",
     "djangorestframework==3.16.1",

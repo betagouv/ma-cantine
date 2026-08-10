@@ -421,3 +421,10 @@ Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
 - supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
 - supprimer la partie "by @username in https://..."
 - faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
+
+### Autres commandes utiles
+
+#### Installer un package
+
+- Backend : `uv add <package>`
+- Frontend : `npm install <package>`
