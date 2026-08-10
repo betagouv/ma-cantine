@@ -185,17 +185,13 @@ et-xmlfile==1.1.0
 executing==2.2.1
     # via stack-data
 factory-boy==3.3.3
-    # via ma-cantine
 faker==27.0.0
-    # via
-    #   factory-boy
-    #   ma-cantine
+    # via factory-boy
 filelock==3.15.4
     # via virtualenv
 filetype==1.2.0
     # via willow
 freezegun==1.5.2
-    # via ma-cantine
 greenlet==3.2.2 ; (python_full_version < '3.13' and platform_machine == 'AMD64') or (python_full_version < '3.13' and platform_machine == 'WIN32') or (python_full_version < '3.13' and platform_machine == 'aarch64') or (python_full_version < '3.13' and platform_machine == 'amd64') or (python_full_version < '3.13' and platform_machine == 'ppc64le') or (python_full_version < '3.13' and platform_machine == 'win32') or (python_full_version < '3.13' and platform_machine == 'x86_64')
     # via sqlalchemy
 html2text==2024.2.26
@@ -211,7 +207,6 @@ inflection==0.5.1
 iniconfig==2.0.0
     # via pytest
 ipython==9.5.0
-    # via ma-cantine
 ipython-pygments-lexers==1.1.1
     # via ipython
 jedi==0.19.2
@@ -282,7 +277,6 @@ pluggy==1.5.0
 polars==1.27.1
     # via datacompy
 pre-commit==4.0.1
-    # via ma-cantine
 prompt-toolkit==3.0.47
     # via
     #   click-repl
@@ -312,11 +306,8 @@ pypdf==5.1.0
 pypng==0.20220715.0
     # via qrcode
 pytest==8.0.0
-    # via
-    #   ma-cantine
-    #   pytest-django
+    # via pytest-django
 pytest-django==4.8.0
-    # via ma-cantine
 python-bidi==0.4.2
     # via xhtml2pdf
 python-dateutil==2.9.0.post0
@@ -356,7 +347,6 @@ requests==2.32.4
     #   requests-mock
     #   wagtail
 requests-mock==1.12.1
-    # via ma-cantine
 rpds-py==0.21.0
     # via
     #   jsonschema

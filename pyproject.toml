@@ -31,28 +31,32 @@ dependencies = [
     "drf-excel==2.4.1",
     "drf-spectacular==0.29.0",
     "drf-spectacular-sidecar==2026.1.1",
-    "factory-boy==3.3.3",
-    "faker==27.0.0",
-    "freezegun==1.5.2",
     "html2text==2024.2.26",
-    "ipython>=9.5.0",
     "numpy==2.4.1",
     "pandas==3.0.0",
     "pillow==10.4.0",
-    "pre-commit==4.0.1",
     "psycopg2-binary>=2.9.10",
-    "pytest==8.0.0",
-    "pytest-django==4.8.0",
     "python-dotenv==1.0.1",
     "redis==5.2.0",
     "requests==2.32.4",
-    "requests-mock==1.12.1",
-    "ruff>=0.14.2",
     "sentry-sdk==2.10.0",
     "sib-api-v3-sdk==7.6.0",
     "sqlalchemy==2.0.36",
     "wagtail==7.0.7",
     "xhtml2pdf==0.2.16",
+]
+
+[dependency-groups]
+dev = [
+    "factory-boy==3.3.3",
+    "faker==27.0.0",
+    "freezegun==1.5.2",
+    "ipython>=9.5.0",
+    "pre-commit==4.0.1",
+    "pytest==8.0.0",
+    "pytest-django==4.8.0",
+    "requests-mock==1.12.1",
+    "ruff>=0.14.2",
 ]
 
 [tool.uv.sources]
