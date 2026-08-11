@@ -40,13 +40,13 @@ class LongPagination(LimitOffsetPagination):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Lister les diagnostics d'une cantine.",
-        description="Retourne la liste des diagnostics d'une cantine.",
+        summary="Lister les bilans d'une cantine.",
+        description="Retourne la liste des bilans d'une cantine.",
         tags=["Bilans"],
     ),
     post=extend_schema(
-        summary="Créer un nouveau diagnostic.",
-        description="Un diagnostic doit être rattaché à une cantine.",
+        summary="Créer un nouveau bilan.",
+        description="Un bilan doit être rattaché à une cantine.",
         tags=["Bilans"],
     ),
 )
@@ -88,13 +88,13 @@ class DiagnosticListCreateView(ListCreateAPIView):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Récupérer un diagnostic existant.",
+        summary="Récupérer un bilan existant.",
         description="",
         tags=["Bilans"],
     ),
     patch=extend_schema(
-        summary="Modifier un diagnostic existant.",
-        description="À noter qu'un diagnostic ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
+        summary="Modifier un bilan existant.",
+        description="À noter qu'un bilan ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
         tags=["Bilans"],
     ),
 )
@@ -171,6 +171,14 @@ class DiagnosticListRecapView(APIView):
         return Response(result)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Vérifier les erreurs de validation pour un bilan.",
+        description="Retourne toutes les erreurs de validation potentielles pour un bilan (champs manquants, valeurs invalides, etc.).",
+        tags=["Bilans"],
+        responses=DiagnosticCheckSerializer,
+    )
+)
 class DiagnosticCheckView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]

@@ -484,7 +484,7 @@ class DiagnosticDetailApiTest(APITestCase):
     def setUpTestData(cls):
         cls.user = UserFactory()
         cls.canteen = CanteenFactory(managers=[cls.user])
-        cls.diagnostic = DiagnosticFactory(year=2019, canteen=cls.canteen)
+        cls.diagnostic = DiagnosticFactory(year=2025, canteen=cls.canteen)
         cls.url = reverse(
             "diagnostic_retrieve_update",
             kwargs={"canteen_pk": cls.diagnostic.canteen.id, "pk": cls.diagnostic.id},
@@ -534,7 +534,7 @@ class DiagnosticDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], self.diagnostic.id)
-        self.assertEqual(body["year"], 2019)
+        self.assertEqual(body["year"], 2025)
         self.assertEqual(body["canteenId"], self.canteen.id)
 
     def test_retrieve_diagnostic_via_oauth2(self):
@@ -547,7 +547,7 @@ class DiagnosticDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], self.diagnostic.id)
-        self.assertEqual(body["year"], 2019)
+        self.assertEqual(body["year"], 2025)
         self.assertEqual(body["canteenId"], self.canteen.id)
 
 
@@ -557,7 +557,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         cls.user = UserFactory()
         cls.canteen = CanteenFactory(managers=[cls.user])
         cls.diagnostic = DiagnosticFactory(
-            year=2019, canteen=cls.canteen, creation_user=cls.user, creation_source=CreationSource.APP
+            year=2025, canteen=cls.canteen, creation_user=cls.user, creation_source=CreationSource.APP
         )
         cls.url = reverse(
             "diagnostic_retrieve_update",
@@ -580,7 +580,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.diagnostic.refresh_from_db()
-        self.assertEqual(self.diagnostic.year, 2019)
+        self.assertEqual(self.diagnostic.year, 2025)
 
     @authenticate
     def test_cannot_update_diagnostic_if_canteen_unknown(self):
@@ -594,7 +594,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.diagnostic.refresh_from_db()
-        self.assertEqual(self.diagnostic.year, 2019)
+        self.assertEqual(self.diagnostic.year, 2025)
 
     @authenticate
     def test_cannot_update_diagnostic_if_not_canteen_manager(self):
@@ -604,7 +604,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.diagnostic.refresh_from_db()
-        self.assertEqual(self.diagnostic.year, 2019)
+        self.assertEqual(self.diagnostic.year, 2025)
 
     @authenticate
     def test_cannot_update_diagnostic_if_diagnostic_unknown(self):
@@ -620,7 +620,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.diagnostic.refresh_from_db()
-        self.assertEqual(self.diagnostic.year, 2019)
+        self.assertEqual(self.diagnostic.year, 2025)
 
     @authenticate
     def test_cannot_update_diagnostic_if_not_corresponding_canteen(self):
@@ -727,7 +727,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         """
         Do not save edits to a diagnostic which make the sum of the values > total
         """
-        diagnostic = DiagnosticFactory(year=2019, valeur_totale=10, valeur_bio=5, valeur_siqo=2)
+        diagnostic = DiagnosticFactory(year=2025, valeur_totale=10, valeur_bio=5, valeur_siqo=2)
         diagnostic.canteen.managers.add(authenticate.user)
         payload = {"valeur_siqo": 999}
 
@@ -910,7 +910,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 class DiagnosticDeleteApiTest(APITestCase):
     @authenticate
     def test_cannot_delete_diagnostic(self):
-        diagnostic = DiagnosticFactory(year=2019)
+        diagnostic = DiagnosticFactory(year=2025)
         diagnostic.canteen.managers.add(authenticate.user)
 
         response = self.client.delete(
@@ -1152,12 +1152,23 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.ALL)
 
 
+@freeze_time("2026-03-30")  # during the 2025 campaign
 class DiagnosticDetailCheckApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
         cls.canteen = CanteenFactory(managers=[cls.user])
-        cls.diagnostic = DiagnosticFactory(year=2019, canteen=cls.canteen)
+        cls.diagnostic = DiagnosticFactory(
+            year=2025,
+            canteen=cls.canteen,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_egalim_autres=100,
+            valeur_viandes_volailles=100,
+            valeur_viandes_volailles_egalim=0,
+        )
         cls.url = reverse(
             "diagnostic_check",
             kwargs={"canteen_pk": cls.canteen.id, "pk": cls.diagnostic.id},
@@ -1220,3 +1231,19 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["errors"], {})
+
+    @authenticate
+    def test_can_get_diagnostic_check_with_errors(self):
+        self.canteen.managers.add(authenticate.user)
+        self.diagnostic.valeur_totale = None
+        self.diagnostic.valeur_bio = None
+        self.diagnostic.save()
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isFilled"], False)
+        self.assertNotEqual(body["errors"], {})
+        self.assertEqual(body["errors"]["valeurTotale"], ["Ce champ est obligatoire pour l'année 2025."])
+        self.assertEqual(body["errors"]["valeurBio"], ["Ce champ est obligatoire pour l'année 2025."])
