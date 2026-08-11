@@ -463,10 +463,13 @@ class CanteenDetailApiTest(APITestCase):
 
 
 class CanteenDetailCheckApiTest(APITestCase):
-    def test_cannot_get_canteen_check_if_unauthenticated(self):
-        canteen = CanteenFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.url = reverse("canteen_check", kwargs={"canteen_pk": cls.canteen.id})
 
-        response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": canteen.id}))
+    def test_cannot_get_canteen_check_if_unauthenticated(self):
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -478,17 +481,27 @@ class CanteenDetailCheckApiTest(APITestCase):
 
     @authenticate
     def test_cannot_get_canteen_check_if_not_manager(self):
-        canteen = CanteenFactory()
-
-        response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": canteen.id}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_get_canteen_check_without_errors(self):
-        canteen = CanteenFactory(managers=[authenticate.user])
+    def test_get_canteen_check(self):
+        self.canteen.managers.add(authenticate.user)
 
-        response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": canteen.id}))
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["errors"], {})
+
+    def test_can_get_canteen_check_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -497,12 +510,12 @@ class CanteenDetailCheckApiTest(APITestCase):
 
     @authenticate
     def test_get_canteen_check_with_errors(self):
-        canteen = CanteenFactory(managers=[authenticate.user])
-        canteen.siret = "invalid_siret"
-        canteen.sector_list = []
-        canteen.save(skip_validations=True)
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.siret = "invalid_siret"
+        self.canteen.sector_list = []
+        self.canteen.save(skip_validations=True)
 
-        response = self.client.get(reverse("canteen_check", kwargs={"canteen_pk": canteen.id}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()

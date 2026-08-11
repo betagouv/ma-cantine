@@ -21,6 +21,7 @@ from api.permissions import (
 from api.serializers import (
     DiagnosticAndCanteenSerializer,
     ManagerDiagnosticSerializer,
+    DiagnosticCheckSerializer,
 )
 from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.utils import file_import, send_mail
@@ -39,13 +40,13 @@ class LongPagination(LimitOffsetPagination):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Lister les diagnostics d'une cantine.",
-        description="Retourne la liste des diagnostics d'une cantine.",
+        summary="Lister les bilans d'une cantine.",
+        description="Retourne la liste des bilans d'une cantine.",
         tags=["Bilans"],
     ),
     post=extend_schema(
-        summary="Créer un nouveau diagnostic.",
-        description="Un diagnostic doit être rattaché à une cantine.",
+        summary="Créer un nouveau bilan.",
+        description="Un bilan doit être rattaché à une cantine.",
         tags=["Bilans"],
     ),
 )
@@ -87,13 +88,13 @@ class DiagnosticListCreateView(ListCreateAPIView):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Récupérer un diagnostic existant.",
+        summary="Récupérer un bilan existant.",
         description="",
         tags=["Bilans"],
     ),
     patch=extend_schema(
-        summary="Modifier un diagnostic existant.",
-        description="À noter qu'un diagnostic ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
+        summary="Modifier un bilan existant.",
+        description="À noter qu'un bilan ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
         tags=["Bilans"],
     ),
 )
@@ -168,6 +169,36 @@ class DiagnosticListRecapView(APIView):
                 }
             )
         return Response(result)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Vérifier les erreurs de validation pour un bilan.",
+        description="Retourne toutes les erreurs de validation potentielles pour un bilan (champs manquants, valeurs invalides, etc.).",
+        tags=["Bilans"],
+        responses=DiagnosticCheckSerializer,
+    )
+)
+class DiagnosticCheckView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, canteen_pk, pk):
+        canteen = self._get_canteen()
+        diagnostic = get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
+
+        errors = {}
+        try:
+            diagnostic.full_clean()
+        except ValidationError as e:
+            errors = e.message_dict
+
+        response = {"is_filled": diagnostic.is_filled, "errors": errors}
+        return Response(DiagnosticCheckSerializer(response).data)
 
 
 class EmailDiagnosticImportFileView(APIView):

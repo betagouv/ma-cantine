@@ -68,6 +68,13 @@ class DiagnosticSerializer(serializers.ModelSerializer):
         return validated_data
 
 
+class DiagnosticCheckSerializer(serializers.Serializer):
+    is_filled = serializers.BooleanField(read_only=True)
+    # infos = serializers.DictField(read_only=True)
+    # warnings = serializers.DictField(read_only=True)
+    errors = serializers.DictField(read_only=True)
+
+
 class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
     """
     This serializer masks financial data and gives the basic information on appro as percentages
