@@ -164,25 +164,25 @@ class CanteenDetailApiTest(APITestCase):
         cls.canteen = CanteenFactory()
         cls.url = reverse("single_canteen", kwargs={"pk": cls.canteen.id})
 
-    def test_cannot_get_single_user_canteen_if_unauthorized(self):
+    def test_cannot_get_canteen_if_unauthorized(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_get_single_user_canteen_if_canteen_does_not_exist(self):
+    def test_cannot_get_canteen_if_canteen_does_not_exist(self):
         response = self.client.get(reverse("single_canteen", kwargs={"pk": 9999}))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_get_single_user_canteen_if_not_canteen_manager(self):
+    def test_cannot_get_canteen_if_not_canteen_manager(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_can_get_single_user_canteen(self):
+    def test_can_get_canteen(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.get(self.url)
@@ -195,7 +195,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertNotIn("creationSource", body)
 
     @authenticate
-    def test_can_get_single_user_canteen_groupe(self):
+    def test_can_get_canteen_groupe(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         user_canteen = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[authenticate.user]

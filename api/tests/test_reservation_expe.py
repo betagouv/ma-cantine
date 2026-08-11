@@ -100,20 +100,16 @@ class ReservationExpeCreateApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["leaderEmail"], "test@example.com")
         self.assertEqual(body["satisfaction"], 5)
-        self.assertEqual(ReservationExpe.objects.get(canteen=self.canteen).leader_email, "test@example.com")
-        self.assertEqual(ReservationExpe.objects.get(canteen=self.canteen).satisfaction, 5)
+        reservation_expe = ReservationExpe.objects.get(canteen=self.canteen)
+        self.assertEqual(reservation_expe.leader_email, "test@example.com")
+        self.assertEqual(reservation_expe.satisfaction, 5)
 
     @authenticate
-    def test_cannot_create_duplicate_reservation_expe(self):
-        """
-        Shouldn't be able to create more than one reservation expe for a canteen
-        """
+    def test_cannot_create_reservation_expe_if_already_exists(self):
         self.canteen.managers.add(authenticate.user)
         reservation_expe = ReservationExpeFactory(canteen=self.canteen, satisfaction=5)
 
-        payload = {
-            "satisfaction": 0,
-        }
+        payload = {"satisfaction": 0}
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -151,8 +147,8 @@ class ReservationExpeUpdateApiTest(APITestCase):
     def test_cannot_update_reservation_expe_if_not_canteen_manager(self):
         payload = {"leader_email": "bad@example.com"}
         response = self.client.patch(self.url, payload)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.reservation_expe.refresh_from_db()
         self.assertEqual(self.reservation_expe.leader_email, "good@example.com")
 

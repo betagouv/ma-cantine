@@ -125,9 +125,9 @@ class CanteenResourceActionGetApiTest(APITestCase):
         ResourceActionFactory(resource=cls.waste_action_2, canteen=cls.canteen_with_resource_action, is_favorite=True)
 
     @authenticate
-    def test_get_single_user_canteen_with_resource_actions(self):
+    def test_get_canteen_with_resource_actions(self):
         self.canteen_with_resource_action.managers.add(authenticate.user)
-        # canteen with resource_actions
+
         url = reverse("single_canteen", kwargs={"pk": self.canteen_with_resource_action.id})
         response = self.client.get(url)
 

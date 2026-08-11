@@ -51,7 +51,7 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_create_empty_purchase_error(self):
+    def test_cannot_create_empty_purchase(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.post(self.url, {})
@@ -59,7 +59,7 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_create_minimal_purchase(self):
+    def test_can_create_minimal_purchase(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
@@ -87,7 +87,7 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(purchase.creation_source_api_oauth2_application, token.application)
 
     @authenticate
-    def test_create_purchase_creation_user_and_source(self):
+    def test_can_create_purchase_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
 
         # from the APP
@@ -119,7 +119,7 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(purchase.creation_source_api_oauth2_application, None)
 
     @authenticate
-    def test_create_purchase_required_fields(self):
+    def test_cannot_create_purchase_without_required_fields(self):
         self.canteen.managers.add(authenticate.user)
 
         for field in ["description", "date", "prix_ht", "famille_produits"]:
@@ -130,7 +130,7 @@ class PurchaseCreateApiTest(APITestCase):
                 self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_create_purchase_optional_fields(self):
+    def test_can_create_purchase_with_optional_fields(self):
         self.canteen.managers.add(authenticate.user)
 
         # fournisseur is optional
@@ -406,7 +406,7 @@ class PurchaseUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_update_if_canteen_does_not_exist(self):
+    def test_cannot_update_purchase_if_canteen_does_not_exist(self):
         payload = {
             "prix_ht": 15.23,
         }
@@ -416,7 +416,7 @@ class PurchaseUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_update_if_not_canteen_manager(self):
+    def test_cannot_update_purchase_if_not_canteen_manager(self):
         payload = {
             "description": "Saumon",
             "prix_ht": 15.23,
@@ -426,7 +426,7 @@ class PurchaseUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_update_if_purchase_does_not_exist(self):
+    def test_cannot_update_purchase_if_purchase_does_not_exist(self):
         self.canteen.managers.add(authenticate.user)
 
         payload = {
@@ -525,21 +525,21 @@ class PurchaseDeleteApiTest(APITestCase):
             "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id}
         )
 
-    def test_cannot_delete_if_unauthenticated(self):
+    def test_cannot_delete_purchase_if_unauthenticated(self):
         response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Purchase.objects.count(), 1)
 
     @authenticate
-    def test_cannot_delete_if_not_canteen_manager(self):
+    def test_cannot_delete_purchase_if_not_canteen_manager(self):
         response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Purchase.objects.count(), 1)
 
     @authenticate
-    def test_delete_purchase(self):
+    def test_can_delete_purchase(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.delete(self.url)
@@ -578,7 +578,7 @@ class PurchaseDeleteMultipleApiTest(APITestCase):
         cls.purchase_1 = PurchaseFactory(canteen=cls.canteen)
         cls.purchase_2 = PurchaseFactory(canteen=cls.canteen)
 
-    def test_cannot_delete_multiple_if_unauthenticated(self):
+    def test_cannot_delete_multiple_purchases_if_unauthenticated(self):
         url = reverse("delete_purchases")
         payload = {"ids": [self.purchase_1.id, self.purchase_2.id]}
         response = self.client.post(url, payload, format="json")
@@ -635,7 +635,7 @@ class PurchaseDeleteMultipleApiTest(APITestCase):
 
 class PurchaseRestoreApiTest(APITestCase):
     @authenticate
-    def test_restore_purchases(self):
+    def test_can_restore_purchases(self):
         """
         This endpoint restores the given IDs of deleted purchases
         """

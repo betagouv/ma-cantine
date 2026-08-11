@@ -103,10 +103,7 @@ class VegetarianExpeCreateApiTest(APITestCase):
         self.assertEqual(VegetarianExpe.objects.get(canteen=self.canteen).satisfaction_guests_t0, 5)
 
     @authenticate
-    def test_cannot_create_duplicate_vegetarian_expe(self):
-        """
-        Shouldn't be able to create more than one vegetarian expe for a canteen
-        """
+    def test_cannot_create_vegetarian_expe_if_already_exists(self):
         self.canteen.managers.add(authenticate.user)
         vegetarian_expe = VegetarianExpeFactory(canteen=self.canteen, satisfaction_guests_t0=5)
 
@@ -206,14 +203,14 @@ class VegetarianExpeUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.vegetarian_expe.refresh_from_db()
-        self.assertEqual(self.vegetarian_expe.satisfaction_guests_t0, 1)
+        self.assertEqual(self.vegetarian_expe.satisfaction_guests_t0, 1)  # no change
 
         payload = {"waste_vegetarian_not_served_t0": -90}
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.vegetarian_expe.refresh_from_db()
-        self.assertEqual(self.vegetarian_expe.waste_vegetarian_not_served_t0, 50)
+        self.assertEqual(self.vegetarian_expe.waste_vegetarian_not_served_t0, 50)  # no change
 
 
 class VegetarianExpeDeleteApiTest(APITestCase):

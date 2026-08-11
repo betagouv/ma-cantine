@@ -213,10 +213,7 @@ class PartnersListApiFilterTest(APITestCase):
 
 
 class PartnerCreateApiTest(APITestCase):
-    def test_can_create_partner_if_unauthenticated(self):
-        """
-        Test that unauthenticated users can create draft partners
-        """
+    def test_can_create_partner_unauthenticated(self):
         sector_cateory = SectorM2M.Categories.ADMINISTRATION
         partner_type = PartnerTypeFactory()
         self.assertEqual(Partner.objects.count(), 0)

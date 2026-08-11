@@ -228,7 +228,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         cls.url = reverse("canteens_managers_import")
 
     @authenticate
-    def test_admin_import_managers_success(self):
+    def test_can_import_managers(self):
         """
         Staff user should successfully add managers to existing canteens without sending invitation emails
         """
@@ -264,7 +264,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         self.assertEqual(canteen.import_source, "test_import")
 
     @authenticate
-    def test_admin_import_managers_existing_manager(self):
+    def test_can_import_managers_existing_manager(self):
         """
         If manager is already on the canteen, should not fail (IntegrityError caught)
         """
@@ -291,7 +291,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         self.assertIn(existing_manager, canteen.managers.all())
 
     @authenticate
-    def test_admin_import_multiple_canteens(self):
+    def test_can_import_multiple_canteens(self):
         """
         Staff user can import managers for multiple canteens at once
         """
@@ -320,10 +320,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         self.assertEqual(ManagerInvitation.objects.filter(canteen=canteen2).count(), 1)
 
     @authenticate
-    def test_import_excel_file(self):
-        """
-        Staff user can import Excel (.xlsx) files
-        """
+    def test_can_import_excel_file(self):
         user = authenticate.user
         user.is_staff = True
         user.save()
@@ -346,10 +343,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         self.assertEqual(ManagerInvitation.objects.filter(canteen=canteen).count(), 2)
 
     @authenticate
-    def test_import_for_canteen_not_valid(self):
-        """
-        Staff user can add managers to a canteen not valid
-        """
+    def test_can_import_even_if_canteen_not_valid(self):
         user = authenticate.user
         user.is_staff = True
         user.save()

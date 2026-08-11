@@ -102,11 +102,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_create_empty_diagnostic_error(self):
-        """
-        When calling this API on a canteen that the user manages
-        we need to provide the required field(s)
-        """
+    def test_cannot_create_empty_diagnostic(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.post(self.url, {})
@@ -114,12 +110,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_create_minimal_diagnostic(self):
-        """
-        When calling this API on a canteen that the user manages
-        we expect a diagnostic to be created
-        (minimal required fields)
-        """
+    def test_can_create_minimal_diagnostic(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
@@ -129,7 +120,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.canteen, self.canteen)
         self.assertEqual(diagnostic.year, 2020)
 
-    def test_create_minimal_diagnostic_via_oauth2(self):
+    def test_can_create_minimal_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
@@ -148,7 +139,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic_history.history_source_api_oauth2_application, token.application)
 
     @authenticate
-    def test_create_diagnostic_creation_user_and_source(self):
+    def test_can_create_diagnostic_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
 
         # from the APP
@@ -194,7 +185,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_create_diagnostic_with_tracking_info(self):
+    def test_can_create_diagnostic_with_tracking_info(self):
         self.canteen.managers.add(authenticate.user)
 
         payload = {
@@ -216,7 +207,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.creation_mtm_medium, "mtm_medium_value")
 
     @authenticate
-    def test_create_full_diagnostic(self):
+    def test_can_create_full_diagnostic(self):
         """
         When calling this API on a canteen that the user manages
         we expect a diagnostic to be created
@@ -436,7 +427,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
     @authenticate
-    def test_cannot_create_duplicate_diagnostic(self):
+    def test_cannot_create_diagnostic_if_already_exists(self):
         """
         Shouldn't be able to add a diagnostic with the same canteen, year and value for generated_from_groupe_diagnostic"
         as an existing diagnostic
