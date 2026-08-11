@@ -4,12 +4,13 @@ from rest_framework.test import APITestCase
 
 
 class SectorApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("sectors_list")
+
     def test_sector_list(self):
-        """
-        The API should return all sectors
-        """
-        response = self.client.get(reverse("sectors_list"))
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
         self.assertEqual(len(body), 26)

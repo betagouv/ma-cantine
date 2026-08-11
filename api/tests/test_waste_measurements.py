@@ -171,7 +171,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
     @authenticate
     def test_cannot_create_waste_measurement_if_not_canteen_manager(self):
         payload = {**self.WM_PAYLOAD, "meal_count": 500}
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -195,7 +194,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
             "unserved_inedible_mass": "",
             "leftovers_total_mass": 30.3,
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -295,8 +293,8 @@ class WasteMeasurementsCreateApiTest(APITestCase):
 
         # returns a 404 if the creation_source is not valid
         payload = {**self.WM_PAYLOAD, "creation_source": "UNKNOWN"}
-
         response = self.client.post(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
@@ -310,7 +308,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
             "period_start_date": "2024-08-01",
             "period_end_date": "2024-08-01",
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -323,7 +320,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.canteen.managers.add(authenticate.user)
 
         payload = {}
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -343,7 +339,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
             "period_start_date": "2024-08-01",
             "period_end_date": "2024-08-20",
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -360,7 +355,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
             "period_start_date": "2024-08-10",
             "period_end_date": "2024-08-01",
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -385,7 +379,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
             "period_start_date": "2024-07-03",
             "period_end_date": "2024-08-01",
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -399,7 +392,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
             "period_start_date": "2024-06-10",
             "period_end_date": "2024-07-03",
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -418,7 +410,6 @@ class WasteMeasurementsCreateApiTest(APITestCase):
             "period_start_date": "2024-06-30",
             "period_end_date": "2024-07-16",
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -549,7 +540,6 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
     @authenticate
     def test_cannot_update_waste_measurement_if_unauthenticated(self):
         payload = {"mealCount": 200}
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -576,7 +566,6 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
     @authenticate
     def test_cannot_update_waste_measurement_if_not_canteen_manager(self):
         payload = {"mealCount": 200}
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -590,8 +579,8 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
             period_end_date=datetime.date(2023, 1, 5),
         )
         self.canteen.managers.add(authenticate.user)
-        payload = {"mealCount": 200}
 
+        payload = {"mealCount": 200}
         response = self.client.patch(
             reverse(
                 "canteen_waste_measurement_detail",
@@ -618,8 +607,8 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
     @authenticate
     def test_can_update_waste_measurement(self):
         self.canteen.managers.add(authenticate.user)
-        payload = {"mealCount": 200}
 
+        payload = {"mealCount": 200}
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -13,11 +13,15 @@ from data.models import ImportFailure, ImportType, ManagerInvitation
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteensManagersImportApiNonAdminErrorTest(APITestCase):
-    def test_unauthenticated(self):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("canteens_managers_import")
+
+    def test_cannot_import_if_unauthenticated(self):
         """
         Anonymous users should receive 403 Forbidden
         """
-        response = self.client.post(reverse("canteens_managers_import"))
+        response = self.client.post(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -30,7 +34,7 @@ class CanteensManagersImportApiNonAdminErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -45,6 +49,10 @@ class CanteensManagersImportApiNonAdminErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteensManagersImportApiErrorTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("canteens_managers_import")
+
     @authenticate
     def test_validata_missing_header_error(self):
         """
@@ -58,7 +66,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         # TODO: remove this hack add fix it in other imports
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_no_header.csv"
         with open(file_path, "rb") as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, file_path)
@@ -79,7 +87,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_wrong_header.csv"
         with open(file_path, "rb") as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, file_path)
@@ -101,7 +109,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_extra_header.csv"
         with open(file_path, "rb") as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, file_path)
@@ -122,7 +130,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_empty_rows.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, file_path)
@@ -142,7 +150,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_siret_not_found.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, file_path)
@@ -164,7 +172,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_invalid_email.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, file_path)
@@ -184,7 +192,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_one_error.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -203,7 +211,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, file_path)
@@ -215,6 +223,10 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteensManagersImportApiSuccessTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("canteens_managers_import")
+
     @authenticate
     def test_admin_import_managers_success(self):
         """
@@ -231,7 +243,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(ImportFailure.objects.exists())
@@ -265,7 +277,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(ImportFailure.objects.exists())
@@ -293,7 +305,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good_multiple.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(ImportFailure.objects.exists())
@@ -320,7 +332,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.xlsx"
         with open(file_path, "rb") as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(ImportFailure.objects.exists())
@@ -352,7 +364,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
-            response = self.client.post(reverse("canteens_managers_import"), {"file": managers_file})
+            response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(ImportFailure.objects.exists())

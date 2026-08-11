@@ -1,7 +1,5 @@
-import json
 from unittest import skipIf
 
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.conf import settings
@@ -10,28 +8,14 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.diagnostic_import import DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource
 
 
-class DiagnosticsCompleteSchemaTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.schema = json.load(open(DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH))
-
-    def get_pattern(self, schema, field_name):
-        field_index = next((i for i, f in enumerate(schema["fields"]) if f["name"] == field_name), None)
-        pattern = schema["fields"][field_index]["constraints"]["pattern"]
-        return pattern
-
-    # no regex patterns to test
-
-
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsCompleteImportApiErrorTest(APITestCase):
-    def test_unauthenticated(self):
+    def test_cannot_import_if_unauthenticated(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         response = self.client.post(reverse("diagnostics_complete_import"))

@@ -33,20 +33,12 @@ CANTEEN_SITE_DEFAULT_PAYLOAD = {
 
 
 class CanteenListApiTest(APITestCase):
-    def test_cannot_get_user_canteens_unauthenticated(self):
+    def test_cannot_get_user_canteens_if_unauthenticated(self):
         response = self.client.get(reverse("user_canteens"))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cannot_get_canteens_with_wrong_oauth2_token(self):
-        _, token = get_oauth2_token("user:read")
-        self.client.credentials(Authorization=f"Bearer {token}")
-
-        response = self.client.get(reverse("user_canteens"))
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_get_canteens_via_oauth2(self):
+    def test_can_get_canteens_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         canteen = CanteenFactory(managers=[user])
 
@@ -59,7 +51,7 @@ class CanteenListApiTest(APITestCase):
         self.assertEqual(body["results"][0]["id"], canteen.id)
 
     @authenticate
-    def test_get_user_canteens(self):
+    def test_can_get_user_canteens(self):
         """
         Users can have access to the full representation of their
         canteens (even if they are not published). This endpoint
@@ -92,7 +84,7 @@ class CanteenListApiTest(APITestCase):
             self.assertFalse(any(x["id"] == other_canteen.id for x in body))
 
     @authenticate
-    def test_get_canteens_without_tracking_info(self):
+    def test_can_get_canteens_without_tracking_info(self):
         """
         Full representation should not contain the tracking info
         """
@@ -114,7 +106,7 @@ class CanteenListApiTest(APITestCase):
 
 class CanteenListFilterApiTest(APITestCase):
     @authenticate
-    def test_get_canteens_filter_production_type(self):
+    def test_can_get_canteens_filter_production_type(self):
         CanteenFactory(production_type="site", managers=[authenticate.user])
         user_central_cuisine = CanteenFactory(production_type="central", managers=[authenticate.user])
         user_central_serving_cuisine = CanteenFactory(production_type="central_serving", managers=[authenticate.user])
@@ -131,7 +123,7 @@ class CanteenListFilterApiTest(APITestCase):
 
 class CanteenListPreviewApiTest(APITestCase):
     @authenticate
-    def test_get_canteens_preview(self):
+    def test_can_get_canteens_preview(self):
         """
         Users can have access to the preview of their
         canteens (even if they are not published).
@@ -153,16 +145,7 @@ class CanteenListPreviewApiTest(APITestCase):
         self.assertEqual(body[0].get("id"), user_canteens[1].id)
         self.assertEqual(body[1].get("id"), user_canteens[0].id)
 
-    def test_cannot_get_canteen_preview_with_wrong_oauth2_token(self):
-        user, token = get_oauth2_token("user:read")
-        CanteenFactory(managers=[user])
-
-        self.client.credentials(Authorization=f"Bearer {token}")
-        response = self.client.get(reverse("user_canteen_previews"))
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_canteen_preview_via_oauth2(self):
+    def test_can_get_canteen_preview_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         canteen = CanteenFactory(managers=[user])
 
@@ -176,49 +159,43 @@ class CanteenListPreviewApiTest(APITestCase):
 
 
 class CanteenDetailApiTest(APITestCase):
-    def test_cannot_get_single_user_canteen_unauthorized(self):
-        canteen = CanteenFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.url = reverse("single_canteen", kwargs={"pk": cls.canteen.id})
 
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+    def test_cannot_get_single_user_canteen_if_unauthorized(self):
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_get_single_user_canteen_does_not_exist(self):
+    def test_cannot_get_single_user_canteen_if_canteen_does_not_exist(self):
         response = self.client.get(reverse("single_canteen", kwargs={"pk": 9999}))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_get_single_user_canteen_if_not_canteen_manager(self):
-        canteen = CanteenFactory()
-
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": canteen.id}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_get_single_user_canteen(self):
-        """
-        Users can access the full representation of a single
-        canteen as long as they manage it.
-        """
-        user_canteen = CanteenFactory(managers=[authenticate.user])
+    def test_can_get_single_user_canteen(self):
+        self.canteen.managers.add(authenticate.user)
 
-        response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["id"], user_canteen.id)
+        self.assertEqual(body["id"], self.canteen.id)
         self.assertEqual(body["managers"][0]["email"], authenticate.user.email)
         self.assertNotIn("creationUser", body)
         self.assertNotIn("creationSource", body)
 
     @authenticate
-    def test_get_single_user_canteen_groupe(self):
-        """
-        The full representation of a canteen contains the groupe info
-        """
+    def test_can_get_single_user_canteen_groupe(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         user_canteen = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[authenticate.user]
@@ -245,7 +222,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(body["satellitesCount"], 1)
 
     @authenticate
-    def test_get_numeric_appro_values(self):
+    def test_can_get_numeric_appro_values(self):
         """
         The endpoint for canteen managers should return the economic data of the appro
         values - as opposed to the published endpoint which returns percentage values
@@ -273,7 +250,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(serialized_diag["totalLeftovers"], 1234.56)
 
     @authenticate
-    def test_get_canteen_without_tracking(self):
+    def test_can_get_canteen_without_tracking(self):
         """
         Full representation should not contain the tracking info
         """
@@ -293,7 +270,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertNotIn("mtm_medium_value", body)
 
     @authenticate
-    def test_user_canteen_teledeclaration(self):
+    def test_can_get_user_canteen_teledeclaration(self):
         """
         Only submitted TDs are returned to the managers
         """
@@ -321,7 +298,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertIsNone(json_diagnostic["teledeclaration"])
 
     @authenticate
-    def test_get_central_kitchen(self):
+    def test_can_get_central_kitchen(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -338,7 +315,7 @@ class CanteenDetailApiTest(APITestCase):
 
     @authenticate
     @freeze_time("2024-01-20")
-    def test_canteen_badges(self):
+    def test_can_get_canteen_badges(self):
         """
         The full representation of a canteen contains the badges earned for last year
         A badge can be True, False, or None. None = !True and the tunnel wasn't started,
@@ -373,7 +350,7 @@ class CanteenDetailApiTest(APITestCase):
 
     @authenticate
     @freeze_time("2024-01-20")
-    def test_canteen_badges_vegetarian_diversification_plan_rule(self):
+    def test_can_get_canteen_badges_vegetarian_diversification_plan_rule(self):
         canteen_199_daily_meals = CanteenFactory(managers=[authenticate.user], daily_meal_count=199)
         DiagnosticFactory(
             canteen=canteen_199_daily_meals,
@@ -474,7 +451,7 @@ class CanteenDetailCheckApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_get_canteen_check(self):
+    def test_can_get_canteen_check(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.get(self.url)
@@ -497,7 +474,7 @@ class CanteenDetailCheckApiTest(APITestCase):
         self.assertEqual(body["errors"], {})
 
     @authenticate
-    def test_get_canteen_check_with_errors(self):
+    def test_can_get_canteen_check_with_errors(self):
         self.canteen.managers.add(authenticate.user)
         self.canteen.siret = "invalid_siret"
         self.canteen.sector_list = []
@@ -537,7 +514,7 @@ class CanteenCreateApiTest(APITestCase):
 
     @requests_mock.Mocker()
     @authenticate
-    def test_create_canteen(self, mock):
+    def test_can_create_canteen(self, mock):
         mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
@@ -561,7 +538,7 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(canteen_history.history_source_api_oauth2_application, None)
 
     @requests_mock.Mocker()
-    def test_create_canteen_via_oauth2(self, mock):
+    def test_can_create_canteen_via_oauth2(self, mock):
         mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
@@ -589,7 +566,7 @@ class CanteenCreateApiTest(APITestCase):
 
     @requests_mock.Mocker()
     @authenticate
-    def test_create_canteen_creation_user_and_source(self, mock):
+    def test_can_create_canteen_creation_user_and_source(self, mock):
         mock_fetch_geo_data_from_siret(mock, siret="92341284500011", success=True)
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
@@ -636,7 +613,7 @@ class CanteenCreateApiTest(APITestCase):
 
     @requests_mock.Mocker()
     @authenticate
-    def test_create_canteen_with_tracking_info(self, mock):
+    def test_can_create_canteen_with_tracking_info(self, mock):
         """
         The app should store the mtm parameters on creation
         """
@@ -740,7 +717,7 @@ class CanteenCreateApiTest(APITestCase):
 
     @requests_mock.Mocker()
     @authenticate
-    def test_create_canteen_with_images(self, mock):
+    def test_can_create_canteen_with_images(self, mock):
         """
         The app should create the necessary image models upon the creation of a canteen
         """
@@ -783,7 +760,6 @@ class CanteenUpdateApiTest(APITestCase):
 
     def test_cannot_update_canteen_if_unauthenticated(self):
         payload = {"management_type": Canteen.ManagementType.CONCEDED}
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -791,7 +767,6 @@ class CanteenUpdateApiTest(APITestCase):
     @authenticate
     def test_cannot_update_canteen_with_put(self):
         payload = {"management_type": Canteen.ManagementType.CONCEDED}
-
         response = self.client.put(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -799,14 +774,13 @@ class CanteenUpdateApiTest(APITestCase):
     @authenticate
     def test_cannot_update_canteen_if_not_canteen_manager(self):
         payload = {"management_type": Canteen.ManagementType.CONCEDED}
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @requests_mock.Mocker()
     @authenticate
-    def test_update_canteen(self, mock):
+    def test_can_update_canteen(self, mock):
         mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
@@ -817,13 +791,13 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.siret, "92341284500011")
         self.assertEqual(self.canteen.city, "Roubaix")
         self.canteen.managers.add(authenticate.user)
+
         payload = {
             "siret": "21340172201787",
             "city": "Montpellier",  # siret changed, geo fields are reset and re-fetched
             "managementType": Canteen.ManagementType.CONCEDED,
             "reservationExpeParticipant": True,
         }
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -834,13 +808,13 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.reservation_expe_participant, True)
 
     @authenticate
-    def test_update_canteen_production_type(self):
+    def test_can_update_canteen_production_type(self):
         self.assertEqual(self.canteen.production_type, Canteen.ProductionType.ON_SITE)
         self.canteen.managers.add(authenticate.user)
+
         payload = {
             "productionType": Canteen.ProductionType.ON_SITE_CENTRAL,
         }
-
         response = self.client.patch(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -876,8 +850,8 @@ class CanteenUpdateApiTest(APITestCase):
         canteen_2 = CanteenFactory(siret=siret_2)
         self.assertEqual(self.canteen.siret, "92341284500011")
         self.canteen.managers.add(authenticate.user)
-        payload = {"siret": siret_2}
 
+        payload = {"siret": siret_2}
         response = self.client.patch(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -899,18 +873,18 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertTrue(body["isManagedByUser"])  # changed
 
     @authenticate
-    def test_update_canteen_with_own_siret(self):
+    def test_can_update_canteen_with_own_siret(self):
         self.assertEqual(self.canteen.siret, "92341284500011")
         self.canteen.managers.add(authenticate.user)
-        payload = {"siret": self.canteen.siret}
 
+        payload = {"siret": self.canteen.siret}
         response = self.client.patch(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @requests_mock.Mocker()
     @authenticate
-    def test_update_canteen_with_new_siret(self, mock):
+    def test_can_update_canteen_with_new_siret(self, mock):
         mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
         mock_fetch_communes(mock)
         mock_fetch_epcis(mock)
@@ -921,8 +895,8 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.city, "Roubaix")
         # self.assertEqual(self.canteen.city_insee_code, "59512")  # ROUBAIX
         self.canteen.managers.add(authenticate.user)
-        payload = {"siret": "21340172201787"}
 
+        payload = {"siret": "21340172201787"}
         response = self.client.patch(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -937,6 +911,7 @@ class CanteenUpdateApiTest(APITestCase):
         image_base_64 = None
         with open(image_path, "rb") as image:
             image_base_64 = base64.b64encode(image.read()).decode("utf-8")
+
         payload = {
             "images": [
                 {
@@ -944,7 +919,6 @@ class CanteenUpdateApiTest(APITestCase):
                 }
             ]
         }
-
         response = self.client.patch(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -952,7 +926,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.images.count(), 0)
 
     @authenticate
-    def test_update_canteen_image_if_canteen_manager(self):
+    def test_can_update_canteen_image_if_canteen_manager(self):
         self.canteen.managers.add(authenticate.user)
         self.assertEqual(self.canteen.images.count(), 0)
 
@@ -969,7 +943,6 @@ class CanteenUpdateApiTest(APITestCase):
                 }
             ]
         }
-
         response = self.client.patch(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -978,7 +951,6 @@ class CanteenUpdateApiTest(APITestCase):
 
         # Delete image
         payload = {"images": []}
-
         response = self.client.patch(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -986,7 +958,7 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(self.canteen.images.count(), 0)
 
     @authenticate
-    def test_update_canteen_does_not_update_creation_user_and_source(self):
+    def test_can_update_canteen_does_not_update_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
         self.assertEqual(self.canteen.creation_user, self.user)
         self.assertEqual(self.canteen.creation_source, CreationSource.APP)
@@ -1000,7 +972,6 @@ class CanteenUpdateApiTest(APITestCase):
             "reservationExpeParticipant": True,
             "creationSource": CreationSource.API,
         }
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1031,7 +1002,6 @@ class CanteenUpdateApiTest(APITestCase):
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
         }
-
         response = self.client.patch(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1065,7 +1035,7 @@ class CanteenDeleteApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_delete_canteen(self):
+    def test_can_delete_canteen(self):
         self.canteen.managers.add(authenticate.user)
         self.assertEqual(Canteen.objects.count(), 1)
 

@@ -22,6 +22,7 @@ class ReservationExpeListApiTest(APITestCase):
     @authenticate
     def test_cannot_get_reservation_expe_if_canteen_does_not_exist(self):
         url = reverse("canteen_reservation_expe", kwargs={"canteen_pk": 9999})
+
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)  # TODO: should be 404
@@ -42,7 +43,7 @@ class ReservationExpeListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)  # TODO: should be 404
 
     @authenticate
-    def test_can_get_reservation_expe(self):
+    def test_can_list_reservation_expe(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.get(self.url)

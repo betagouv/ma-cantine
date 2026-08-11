@@ -62,7 +62,6 @@ class VegetarianExpeCreateApiTest(APITestCase):
         payload = {
             "satisfaction_guests_t0": 5,
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -72,7 +71,6 @@ class VegetarianExpeCreateApiTest(APITestCase):
         payload = {
             "satisfaction_guests_t0": 5,
         }
-
         response = self.client.post(reverse("canteen_vegetarian_expe", kwargs={"canteen_pk": 9999}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -82,7 +80,6 @@ class VegetarianExpeCreateApiTest(APITestCase):
         payload = {
             "satisfaction_guests_t0": 5,
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -95,7 +92,6 @@ class VegetarianExpeCreateApiTest(APITestCase):
             "vegetarian_menu_percentage_t0": 0.32,
             "satisfaction_guests_t0": 5,
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

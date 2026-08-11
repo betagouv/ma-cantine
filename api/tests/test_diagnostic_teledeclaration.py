@@ -12,13 +12,14 @@ from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
 
 class DiagnosticToTeledeclareApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.year = 2021
+        cls.url = reverse("diagnostics_to_teledeclare", kwargs={"year": 2021})
+
     @freeze_time("2022-08-30")  # during the 2021 campaign  # but this endpoint doesn't seem to check
     @authenticate
-    def test_get_diagnostics_to_td(self):
-        """
-        Check that the endpoint includes a list of diagnostics that could be teledeclared
-        """
-        last_year = 2021
+    def test_can_get_diagnostics_to_td(self):
         CanteenFactory(  # without diag
             siret="21590350100017",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -35,7 +36,7 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        DiagnosticFactory(canteen=canteen_with_incomplete_diag, year=last_year, valeur_totale=None)
+        DiagnosticFactory(canteen=canteen_with_incomplete_diag, year=self.year, valeur_totale=None)
         canteen_with_complete_diag = CanteenFactory(
             siret="21010034300016",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -44,7 +45,7 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        complete_diag = DiagnosticFactory(canteen=canteen_with_complete_diag, year=last_year, valeur_totale=10000)
+        complete_diag = DiagnosticFactory(canteen=canteen_with_complete_diag, year=self.year, valeur_totale=10000)
 
         # siret needs to be filled for the diag to be teledeclarable
         canteen_with_missing_data = CanteenFactory(
@@ -58,7 +59,7 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
         canteen_with_missing_data.siret = None
         canteen_with_missing_data.save(skip_validations=True)
         canteen_with_missing_data.refresh_from_db()
-        DiagnosticFactory(canteen=canteen_with_missing_data, year=last_year, valeur_totale=10000)
+        DiagnosticFactory(canteen=canteen_with_missing_data, year=self.year, valeur_totale=10000)
 
         canteen_without_line_ministry = CanteenFactory(
             siret="31285246765507",
@@ -73,10 +74,10 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
         canteen_without_line_ministry.line_ministry = None
         canteen_without_line_ministry.save(skip_validations=True)
         canteen_without_line_ministry.refresh_from_db()
-        DiagnosticFactory(canteen=canteen_without_line_ministry, year=last_year, valeur_totale=10000)
+        DiagnosticFactory(canteen=canteen_without_line_ministry, year=self.year, valeur_totale=10000)
 
         # to verify we are returning the correct diag for the canteen, create another diag for a different year
-        DiagnosticFactory(canteen=canteen_with_complete_diag, year=last_year - 1, valeur_totale=10000)
+        DiagnosticFactory(canteen=canteen_with_complete_diag, year=self.year - 1, valeur_totale=10000)
         canteen_with_td = CanteenFactory(
             siret="55476895458384",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -85,14 +86,15 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        td_diag = DiagnosticFactory(canteen=canteen_with_td, year=last_year, valeur_totale=2000)
+        td_diag = DiagnosticFactory(canteen=canteen_with_td, year=self.year, valeur_totale=2000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
-        response = self.client.get(reverse("diagnostics_to_teledeclare", kwargs={"year": last_year}))
-        diagnostics = response.json().get("results")
+        response = self.client.get(self.url)
 
-        self.assertEqual(len(diagnostics), 1)
-        self.assertEqual(diagnostics[0]["id"], complete_diag.id)
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["id"], complete_diag.id)
 
     @authenticate
     def test_get_diagnostics_to_td_none(self):
@@ -100,12 +102,11 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
         Check that the actions endpoint includes an empty list of diagnostics that could be teledeclared
         if there are no diags to TD
         """
-        last_year = 2021
+        response = self.client.get(self.url)
 
-        response = self.client.get(reverse("diagnostics_to_teledeclare", kwargs={"year": last_year}))
-        body = response.json().get("results")
-
-        self.assertEqual(body, [])
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(results, [])
 
     @authenticate
     def test_get_diagnostics_to_td_in_correction_campaign(self):

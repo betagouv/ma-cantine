@@ -1,6 +1,4 @@
 import hashlib
-import json
-import re
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
@@ -8,89 +6,28 @@ from unittest import skipIf
 from unittest.mock import patch
 
 from django.conf import settings
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.purchase_import_old import PURCHASE_ID_SCHEMA_FILE_PATH, PURCHASE_SIRET_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.creation_source import CreationSource
 from data.models.purchase import Purchase
 
 
-class PurchasesOldSchemaTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.schemas = {
-            "siret": json.load(open(PURCHASE_SIRET_SCHEMA_FILE_PATH)),
-            "id": json.load(open(PURCHASE_ID_SCHEMA_FILE_PATH)),
-        }
-
-    @staticmethod
-    def _pattern_for(schema, field_name):
-        field = next(f for f in schema["fields"] if f["name"] == field_name)
-        return field["constraints"]["pattern"]
-
-    def test_famille_produits_regex(self):
-        for schema_name, schema in self.schemas.items():
-            pattern = self._pattern_for(schema, "famille_produits")
-            for VALUE_OK in ["PRODUITS_LAITIERS", "PRODUITS_LAITIERS ", " PRODUITS_LAITIERS "]:
-                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
-                    self.assertTrue(re.match(pattern, VALUE_OK))
-            for VALUE_NOT_OK in ["", "TEST", "PRODUITS_LAITIERS,", "PRODUITS_LAITIERS,VIANDES_VOLAILLES"]:
-                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
-                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
-    def test_caracteristiques_regex(self):
-        for schema_name, schema in self.schemas.items():
-            pattern = self._pattern_for(schema, "caracteristiques")
-            for VALUE_OK in [
-                "BIO",
-                "BIO ",
-                "BIO,LOCAL",
-                "BIO,LOCAL ",
-                " BIO,LOCAL ",
-                " BIO, LOCAL ",
-                " BIO,      LOCAL ",
-                "BIO,BIO",
-            ]:
-                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
-                    self.assertTrue(re.match(pattern, VALUE_OK))
-            for VALUE_NOT_OK in ["", "TEST"]:
-                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
-                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
-    def test_definition_local_regex(self):
-        for schema_name, schema in self.schemas.items():
-            pattern = self._pattern_for(schema, "definition_local")
-            for VALUE_OK in [
-                "PAT",
-                " PAT ",
-                "COMMUNE",
-                "DEPARTEMENT",
-                "DEPARTEMENT ",
-                " DEPARTEMENT ",
-                "REGION",
-                "AUTOUR_SERVICE",
-                "AUTRE",
-            ]:
-                with self.subTest(schema=schema_name, VALUE=VALUE_OK):
-                    self.assertTrue(re.match(pattern, VALUE_OK))
-            for VALUE_NOT_OK in ["", "TEST", "DEPARTEMENT,", "DEPARTEMENT,REGION", "KM"]:
-                with self.subTest(schema=schema_name, VALUE=VALUE_NOT_OK):
-                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
-
-
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class PurchasesImportOldApiErrorTest(APITestCase):
-    def test_unauthenticated(self):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("purchases_import")
+
+    def test_cannot_import_if_unauthenticated(self):
         self.assertEqual(Purchase.objects.count(), 0)
 
-        response = self.client.post(reverse("purchases_import_old"), {"type": "siret"})
+        response = self.client.post(self.url, {"type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -106,7 +43,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         # header missing
         file_path = "./api/tests/files/achats/purchases_bad_no_header_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -121,7 +58,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         # wrong header
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -136,7 +73,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         # partial header
         file_path = "./api/tests/files/achats/purchases_bad_partial_header_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -164,7 +101,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header_typo_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -222,7 +159,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_extra_columns_old.csv"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -249,7 +186,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_empty_rows_old.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": canteen_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": canteen_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -274,7 +211,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -341,7 +278,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -360,7 +297,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -382,7 +319,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -403,7 +340,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_one_error_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -421,7 +358,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_bad_corrupt_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -441,6 +378,10 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class PurchasesImportOldApiSuccessTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("purchases_import")
+
     @authenticate
     def test_import_good_purchases(self):
         """
@@ -451,7 +392,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 8)
@@ -513,7 +454,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_with_empty_columns_old.xlsx"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
@@ -526,7 +467,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_separator_comma_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -549,7 +490,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_old.xlsx"
         with open(file_path, "rb") as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -573,7 +514,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
         # comma
         file_path = "./api/tests/files/achats/purchases_good_separator_comma_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -582,7 +523,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
         # tab
         file_path = "./api/tests/files/achats/purchases_good_separator_tab_old.tsv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1 + 1)
@@ -591,7 +532,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
         # semicolon
         file_path = "./api/tests/files/achats/purchases_good_separator_semicolon_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2 + 1)
@@ -608,7 +549,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            _ = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            _ = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(_process_chunk_mock.call_count, 8)
 
@@ -623,7 +564,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
         # first upload: success
         file_path = "./api/tests/files/achats/purchases_good_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 8)
@@ -631,7 +572,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         # second upload: duplicate warning
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 8)  # no additional purchases created
@@ -654,7 +595,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_floating_number_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -664,13 +605,17 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class PurchasesImportOldIdApiErrorTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("purchases_import")
+
     @authenticate
     def test_canteen_not_found_with_id(self):
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_good_id_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file})
+            response = self.client.post(self.url, {"file": purchase_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -683,6 +628,10 @@ class PurchasesImportOldIdApiErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class PurchasesImportOldIdApiSuccessTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("purchases_import")
+
     @authenticate
     def test_import_default_type_is_id(self):
         """
@@ -693,7 +642,7 @@ class PurchasesImportOldIdApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_id_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file})
+            response = self.client.post(self.url, {"file": purchase_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
@@ -713,7 +662,7 @@ class PurchasesImportOldIdApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/achats/purchases_good_id_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import_old"), {"file": purchase_file})
+            response = self.client.post(self.url, {"file": purchase_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)

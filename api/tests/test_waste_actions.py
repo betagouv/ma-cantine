@@ -13,7 +13,7 @@ class WasteActionsListApiTest(APITestCase):
         cls.waste_action = WasteActionFactory()
         cls.url = reverse("waste_actions_list")
 
-    def test_get_waste_actions_list(self):
+    def test_can_get_waste_actions_list(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -87,7 +87,7 @@ class WasteActionsDetailApiTest(APITestCase):
         self.assertTrue("canteenActions" not in body)
 
     @authenticate
-    def test_get_waste_action_detail(self):
+    def test_can_get_waste_action_detail(self):
         # logged in user (without canteen)
         response = self.client.get(self.url)
 
