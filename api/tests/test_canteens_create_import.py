@@ -36,7 +36,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         # header missing
         file_path = "./api/tests/files/canteens/canteens_bad_no_header.csv"
-        with open(file_path, "rb") as canteen_file:
+        with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -61,7 +61,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
         # wrong header
         file_path = "./api/tests/files/canteens/canteens_bad_wrong_header.csv"
-        with open(file_path, "rb") as canteen_file:
+        with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -82,7 +82,7 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 0)
 
         file_path = "./api/tests/files/canteens/canteens_bad_extra_header.csv"
-        with open(file_path, "rb") as canteen_file:
+        with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

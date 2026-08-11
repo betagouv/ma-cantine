@@ -33,7 +33,7 @@ CANTEEN_SITE_DEFAULT_PAYLOAD = {
 
 
 class CanteenListApiTest(APITestCase):
-    def test_cannot_get_user_canteens_if_unauthenticated(self):
+    def test_cannot_get_canteens_if_unauthenticated(self):
         response = self.client.get(reverse("user_canteens"))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -51,7 +51,7 @@ class CanteenListApiTest(APITestCase):
         self.assertEqual(body["results"][0]["id"], canteen.id)
 
     @authenticate
-    def test_can_get_user_canteens(self):
+    def test_can_get_canteens(self):
         """
         Users can have access to the full representation of their
         canteens (even if they are not published). This endpoint
@@ -161,7 +161,7 @@ class CanteenListPreviewApiTest(APITestCase):
 class CanteenDetailApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen = CanteenFactory()
+        cls.canteen = CanteenFactory(managers=[])
         cls.url = reverse("single_canteen", kwargs={"pk": cls.canteen.id})
 
     def test_cannot_get_canteen_if_unauthorized(self):
@@ -270,7 +270,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertNotIn("mtm_medium_value", body)
 
     @authenticate
-    def test_can_get_user_canteen_teledeclaration(self):
+    def test_can_get_canteen_teledeclaration(self):
         """
         Only submitted TDs are returned to the managers
         """

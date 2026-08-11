@@ -31,7 +31,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         canteen.managers.add(authenticate.user)
 
         file_path = "./api/tests/files/canteens/canteens_update_bad_no_header.csv"
-        with open(file_path, "rb") as canteen_file:
+        with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

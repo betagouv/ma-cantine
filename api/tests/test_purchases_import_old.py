@@ -22,7 +22,7 @@ from data.models.purchase import Purchase
 class PurchasesImportOldApiErrorTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.url = reverse("purchases_import")
+        cls.url = reverse("purchases_import_old")
 
     def test_cannot_import_if_unauthenticated(self):
         self.assertEqual(Purchase.objects.count(), 0)
@@ -42,7 +42,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         # header missing
         file_path = "./api/tests/files/achats/purchases_bad_no_header_old.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -57,7 +57,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         # wrong header
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header_old.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -72,7 +72,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 
         # partial header
         file_path = "./api/tests/files/achats/purchases_bad_partial_header_old.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -100,7 +100,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header_typo_old.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -158,7 +158,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_bad_extra_columns_old.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -185,8 +185,8 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_bad_empty_rows_old.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(self.url, {"file": canteen_file, "type": "siret"})
+        with open(file_path) as purchase_file:
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -259,9 +259,9 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
-        file_path = "./api/tests/files/achats/purchases_bad_one_error.csv"
+        file_path = "./api/tests/files/achats/purchases_bad_one_error_old.csv"
         with open(file_path) as purchase_file:
-            response = self.client.post(reverse("purchases_import"), {"file": purchase_file, "type": "siret"})
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
@@ -270,7 +270,12 @@ class PurchasesImportOldApiErrorTest(APITestCase):
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
         self.assertEqual(len(errors), 1)
-        self.assertTrue(errors.pop(0)["message"].endswith("doit être un nombre décimal."))
+        # self.assertTrue(errors.pop(0)["message"].endswith("doit être un nombre décimal."))
+        self.assertTrue(
+            errors.pop(0)["message"].endswith(
+                "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal"
+            )
+        )
 
     @authenticate
     def test_canteen_not_found_with_siret(self):
@@ -380,7 +385,7 @@ class PurchasesImportOldApiErrorTest(APITestCase):
 class PurchasesImportOldApiSuccessTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.url = reverse("purchases_import")
+        cls.url = reverse("purchases_import_old")
 
     @authenticate
     def test_import_good_purchases(self):
@@ -607,7 +612,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 class PurchasesImportOldIdApiErrorTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.url = reverse("purchases_import")
+        cls.url = reverse("purchases_import_old")
 
     @authenticate
     def test_canteen_not_found_with_id(self):
@@ -630,7 +635,7 @@ class PurchasesImportOldIdApiErrorTest(APITestCase):
 class PurchasesImportOldIdApiSuccessTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.url = reverse("purchases_import")
+        cls.url = reverse("purchases_import_old")
 
     @authenticate
     def test_import_default_type_is_id(self):

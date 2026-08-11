@@ -65,7 +65,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         # Hack : this test works because file has no header and has less columns than the expected header
         # TODO: remove this hack add fix it in other imports
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_no_header.csv"
-        with open(file_path, "rb") as managers_file:
+        with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -86,7 +86,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.save()
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_wrong_header.csv"
-        with open(file_path, "rb") as managers_file:
+        with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -108,7 +108,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.save()
 
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_extra_header.csv"
-        with open(file_path, "rb") as managers_file:
+        with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

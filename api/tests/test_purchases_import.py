@@ -42,7 +42,7 @@ class PurchasesImportApiErrorTest(APITestCase):
 
         # header missing
         file_path = "./api/tests/files/achats/purchases_bad_no_header.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -57,7 +57,7 @@ class PurchasesImportApiErrorTest(APITestCase):
 
         # wrong header
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -72,7 +72,7 @@ class PurchasesImportApiErrorTest(APITestCase):
 
         # partial header
         file_path = "./api/tests/files/achats/purchases_bad_partial_header.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -100,7 +100,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_bad_wrong_header_typo.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -176,7 +176,7 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_bad_extra_columns.csv"
-        with open(file_path, "rb") as purchase_file:
+        with open(file_path) as purchase_file:
             response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -203,8 +203,8 @@ class PurchasesImportApiErrorTest(APITestCase):
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_bad_empty_rows.csv"
-        with open(file_path) as canteen_file:
-            response = self.client.post(self.url, {"file": canteen_file, "type": "siret"})
+        with open(file_path) as purchase_file:
+            response = self.client.post(self.url, {"file": purchase_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 0)
