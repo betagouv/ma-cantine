@@ -7,7 +7,21 @@ from data.factories import CanteenFactory, DiagnosticFactory, ReviewFactory
 from data.models import Review
 
 
-class TestReviews(APITestCase):
+class ReviewCreateApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("create_review")
+
+    def test_cannot_create_review_if_unauthenticated(self):
+        payload = {
+            "page": "CanteensHome",
+            "rating": 3,
+            "suggestion": "Make it read my mind",
+        }
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     @authenticate
     def test_create_review(self):
         """
@@ -15,12 +29,14 @@ class TestReviews(APITestCase):
         having a canteen/diagnostic is saved automatically.
         """
         CanteenFactory(managers=[authenticate.user])
+
         payload = {
             "page": "CanteensHome",
             "rating": 5,
             "suggestion": "Make it read my mind",
         }
-        response = self.client.post(reverse("create_review"), payload)
+        response = self.client.post(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         review = Review.objects.get(user=authenticate.user)
         self.assertEqual(review.hasCanteen, True)
@@ -41,53 +57,40 @@ class TestReviews(APITestCase):
             "rating": 1,
             "suggestion": "Make it read my mind",
         }
-        response = self.client.post(reverse("create_review"), payload)
+        response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         review = Review.objects.get(user=authenticate.user, page="DiagnosticsHome")
         self.assertEqual(review.hasCanteen, True)
         self.assertEqual(review.hasDiagnostic, True)
 
-    def test_fail_create_review_unauthenticated(self):
-        """
-        Test that unauthenticated user cannot submit a review
-        """
+    @authenticate
+    def test_cannot_create_review_without_rating(self):
         payload = {
             "page": "CanteensHome",
-            "rating": 3,
+            # "rating": 1,
             "suggestion": "Make it read my mind",
         }
-        response = self.client.post(reverse("create_review"), payload)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.post(self.url, payload)
 
-    @authenticate
-    def test_fail_no_rating(self):
-        """
-        Test that user cannot submit a review without the required fields
-        """
-        payload = {
-            "page": "CanteensHome",
-            "suggestion": "Make it read my mind",
-        }  # no rating
-        response = self.client.post(reverse("create_review"), payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         payload = {"rating": 5}  # no page
-        response = self.client.post(reverse("create_review"), payload)
+        response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_fail_too_high_rating(self):
-        """
-        Test that user cannot submit a review without the required fields
-        """
+    def test_cannot_create_review_with_too_high_rating(self):
         payload = {
             "page": "CanteensHome",
             "rating": 6,
             "suggestion": "Make it read my mind",
         }
-        response = self.client.post(reverse("create_review"), payload)
+        response = self.client.post(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+
+class ReviewInUserFetchApiTest(APITestCase):
     @authenticate
     def test_reviews_in_user_fetch(self):
         """
@@ -95,7 +98,9 @@ class TestReviews(APITestCase):
         """
         ReviewFactory(user=authenticate.user, hasCanteen=True, hasDiagnostic=False)
         ReviewFactory(hasCanteen=False, hasDiagnostic=True)  # should not be fetched
+
         response = self.client.get(reverse("logged_user"))
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(len(body["reviews"]), 1)

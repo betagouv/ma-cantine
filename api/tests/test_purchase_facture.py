@@ -8,7 +8,7 @@ from data.models import Purchase
 from data.factories import CanteenFactory, PurchaseFactory
 
 
-class PurchaseFactureUploadTest(APITestCase):
+class PurchaseFactureUploadApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
@@ -18,14 +18,14 @@ class PurchaseFactureUploadTest(APITestCase):
             kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id},
         )
 
-    def test_cannot_upload_if_unauthenticated(self):
+    def test_cannot_upload_facture_if_unauthenticated(self):
         file = SimpleUploadedFile("facture.pdf", b"pdf content")
         response = self.client.post(self.url, {"facture": file}, format="multipart")
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_upload_if_canteen_unknown(self):
+    def test_cannot_upload_facture_if_canteen_does_not_exist(self):
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": 9999, "pk": self.purchase.id},
@@ -36,14 +36,14 @@ class PurchaseFactureUploadTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_upload_if_not_canteen_manager(self):
+    def test_cannot_upload_facture_if_not_canteen_manager(self):
         file = SimpleUploadedFile("facture.pdf", b"pdf content")
         response = self.client.post(self.url, {"facture": file}, format="multipart")
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_upload_if_purchase_unknown(self):
+    def test_cannot_upload_facture_if_purchase_does_not_exist(self):
         self.canteen.managers.add(authenticate.user)
         url = reverse(
             "purchase_facture",
@@ -56,7 +56,7 @@ class PurchaseFactureUploadTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_upload_if_file_missing(self):
+    def test_cannot_upload_facture_if_file_missing(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.post(self.url, {}, format="multipart")
@@ -64,16 +64,16 @@ class PurchaseFactureUploadTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_cannot_upload_if_purchase_not_in_corresponding_canteen(self):
+    def test_cannot_upload_facture_if_purchase_not_in_corresponding_canteen(self):
         canteen_other = CanteenFactory()
         purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+        file = SimpleUploadedFile("facture.pdf", b"pdf content")
+
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
-        self.canteen.managers.add(authenticate.user)
-        file = SimpleUploadedFile("facture.pdf", b"pdf content")
-
         response = self.client.post(url, {"facture": file}, format="multipart")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -96,7 +96,7 @@ class PurchaseFactureUploadTest(APITestCase):
         self.assertIn("facture", self.purchase.facture.name)
 
     @authenticate
-    def test_can_upload_facture_even_if_canteen_not_filled(self):
+    def test_can_upload_facture_even_if_canteen_not_valid(self):
         self.canteen.managers.add(authenticate.user)
         self.canteen.siret = None
         self.canteen.save(skip_validations=True)
@@ -117,7 +117,7 @@ class PurchaseFactureUploadTest(APITestCase):
         self.assertIn("facture", self.purchase.facture.name)
 
     @authenticate
-    def test_can_upload_even_if_purchase_not_filled(self):
+    def test_can_upload_facture_even_if_purchase_not_valid(self):
         self.canteen.managers.add(authenticate.user)
         self.purchase.caracteristiques = [Purchase.Characteristic.EUROPE, Purchase.Characteristic.FRANCE]
         self.purchase.save(skip_validations=True)
@@ -151,7 +151,7 @@ class PurchaseFactureUploadTest(APITestCase):
         self.assertNotEqual(self.purchase.facture.name, old_file_name)
 
 
-class PurchaseFactureRetrieveTest(APITestCase):
+class PurchaseFactureRetrieveApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
@@ -161,13 +161,13 @@ class PurchaseFactureRetrieveTest(APITestCase):
             kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id},
         )
 
-    def test_cannot_retrieve_if_unauthenticated(self):
+    def test_cannot_retrieve_facture_if_unauthenticated(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_retrieve_if_canteen_unknown(self):
+    def test_cannot_retrieve_facture_if_canteen_does_not_exist(self):
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": 9999, "pk": self.purchase.id},
@@ -178,13 +178,13 @@ class PurchaseFactureRetrieveTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_retrieve_if_not_canteen_manager(self):
+    def test_cannot_retrieve_facture_if_not_canteen_manager(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_retrieve_if_purchase_unknown(self):
+    def test_cannot_retrieve_facture_if_purchase_does_not_exist(self):
         self.canteen.managers.add(authenticate.user)
         url = reverse(
             "purchase_facture",
@@ -196,15 +196,15 @@ class PurchaseFactureRetrieveTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_retrieve_if_purchase_not_in_corresponding_canteen(self):
+    def test_cannot_retrieve_facture_if_purchase_not_in_corresponding_canteen(self):
         canteen_other = CanteenFactory()
         purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
-        self.canteen.managers.add(authenticate.user)
-
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -221,7 +221,7 @@ class PurchaseFactureRetrieveTest(APITestCase):
         self.assertIsNotNone(data["facture"])
 
     @authenticate
-    def test_returns_404_if_purchase_has_no_facture(self):
+    def test_return_404_if_purchase_has_no_facture(self):
         self.canteen.managers.add(authenticate.user)
         self.purchase.facture = None
         self.purchase.save()
@@ -231,7 +231,7 @@ class PurchaseFactureRetrieveTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-class PurchaseFactureUpdateTest(APITestCase):
+class PurchaseFactureUpdateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
@@ -260,7 +260,7 @@ class PurchaseFactureUpdateTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class PurchaseFactureDeleteTest(APITestCase):
+class PurchaseFactureDeleteApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
@@ -270,50 +270,49 @@ class PurchaseFactureDeleteTest(APITestCase):
             kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id},
         )
 
-    def test_cannot_delete_if_unauthenticated(self):
+    def test_cannot_delete_facture_if_unauthenticated(self):
         response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_delete_if_canteen_unknown(self):
+    def test_cannot_delete_facture_if_canteen_does_not_exist(self):
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": 9999, "pk": self.purchase.id},
         )
-
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_delete_if_not_canteen_manager(self):
+    def test_cannot_delete_facture_if_not_canteen_manager(self):
         response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_delete_if_purchase_unknown(self):
+    def test_cannot_delete_facture_if_purchase_does_not_exist(self):
         self.canteen.managers.add(authenticate.user)
+
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": self.canteen.id, "pk": 9999},
         )
-
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_delete_if_purchase_not_in_corresponding_canteen(self):
+    def test_cannot_delete_facture_if_purchase_not_in_corresponding_canteen(self):
         canteen_other = CanteenFactory()
         purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+
         url = reverse(
             "purchase_facture",
             kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
-        self.canteen.managers.add(authenticate.user)
-
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -330,7 +329,7 @@ class PurchaseFactureDeleteTest(APITestCase):
         self.assertFalse(self.purchase.facture)
 
     @authenticate
-    def test_can_delete_facture_even_if_canteen_not_filled(self):
+    def test_can_delete_facture_even_if_canteen_not_valid(self):
         self.canteen.managers.add(authenticate.user)
         self.canteen.siret = None
         self.canteen.save(skip_validations=True)
@@ -345,7 +344,7 @@ class PurchaseFactureDeleteTest(APITestCase):
         self.assertFalse(self.purchase.facture)
 
     @authenticate
-    def test_can_delete_facture_even_if_purchase_not_filled(self):
+    def test_can_delete_facture_even_if_purchase_not_valid(self):
         self.canteen.managers.add(authenticate.user)
         self.purchase.caracteristiques = [Purchase.Characteristic.EUROPE, Purchase.Characteristic.FRANCE]
         self.purchase.save(skip_validations=True)
@@ -358,7 +357,7 @@ class PurchaseFactureDeleteTest(APITestCase):
         self.assertFalse(self.purchase.facture)
 
     @authenticate
-    def test_returns_404_if_purchase_has_no_facture(self):
+    def test_return_404_if_purchase_has_no_facture(self):
         self.canteen.managers.add(authenticate.user)
         self.purchase.facture = None
         self.purchase.save()

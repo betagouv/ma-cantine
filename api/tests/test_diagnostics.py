@@ -89,10 +89,9 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_create_diagnostic_if_canteen_unknown(self):
-        response = self.client.post(
-            reverse("diagnostic_list_create", kwargs={"canteen_pk": 9999}), self.DIAGNOSTIC_PAYLOAD
-        )
+    def test_cannot_create_diagnostic_if_canteen_does_not_exist(self):
+        url = reverse("diagnostic_list_create", kwargs={"canteen_pk": 9999})
+        response = self.client.post(url, self.DIAGNOSTIC_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -103,11 +102,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_create_empty_diagnostic_error(self):
-        """
-        When calling this API on a canteen that the user manages
-        we need to provide the required field(s)
-        """
+    def test_cannot_create_empty_diagnostic(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.post(self.url, {})
@@ -115,12 +110,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_create_minimal_diagnostic(self):
-        """
-        When calling this API on a canteen that the user manages
-        we expect a diagnostic to be created
-        (minimal required fields)
-        """
+    def test_can_create_minimal_diagnostic(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
@@ -130,7 +120,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.canteen, self.canteen)
         self.assertEqual(diagnostic.year, 2020)
 
-    def test_create_minimal_diagnostic_via_oauth2(self):
+    def test_can_create_minimal_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
@@ -149,7 +139,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic_history.history_source_api_oauth2_application, token.application)
 
     @authenticate
-    def test_create_diagnostic_creation_user_and_source(self):
+    def test_can_create_diagnostic_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
 
         # from the APP
@@ -195,7 +185,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_create_diagnostic_with_tracking_info(self):
+    def test_can_create_diagnostic_with_tracking_info(self):
         self.canteen.managers.add(authenticate.user)
 
         payload = {
@@ -204,7 +194,6 @@ class DiagnosticCreateApiTest(APITestCase):
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -218,7 +207,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.creation_mtm_medium, "mtm_medium_value")
 
     @authenticate
-    def test_create_full_diagnostic(self):
+    def test_can_create_full_diagnostic(self):
         """
         When calling this API on a canteen that the user manages
         we expect a diagnostic to be created
@@ -377,7 +366,6 @@ class DiagnosticCreateApiTest(APITestCase):
             "valeur_autres_local": 10,
             # end of detailed value fields
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -427,11 +415,11 @@ class DiagnosticCreateApiTest(APITestCase):
         On CREATE, total_leftovers should be converted from kg to ton
         """
         self.canteen.managers.add(authenticate.user)
+
         payload = {
             **self.DIAGNOSTIC_PAYLOAD,
             "total_leftovers": 1234.56,
         }
-
         response = self.client.post(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -439,14 +427,14 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
     @authenticate
-    def test_cannot_create_duplicate_diagnostic(self):
+    def test_cannot_create_diagnostic_if_already_exists(self):
         """
         Shouldn't be able to add a diagnostic with the same canteen, year and value for generated_from_groupe_diagnostic"
         as an existing diagnostic
         """
         self.canteen.managers.add(authenticate.user)
-        payload = {**self.DIAGNOSTIC_PAYLOAD, "generated_from_groupe_diagnostic": False, "valeur_bio": 10}
 
+        payload = {**self.DIAGNOSTIC_PAYLOAD, "generated_from_groupe_diagnostic": False, "valeur_bio": 10}
         self.client.post(self.url, payload)
 
         try:
@@ -466,6 +454,7 @@ class DiagnosticCreateApiTest(APITestCase):
         Do not create a diagnostic where the sum of the values is > total
         """
         self.canteen.managers.add(authenticate.user)
+
         payload = {
             **self.DIAGNOSTIC_PAYLOAD,
             "valeur_bio": 1000,
@@ -473,7 +462,6 @@ class DiagnosticCreateApiTest(APITestCase):
             "valeur_egalim_autres": 1000,
             "valeur_totale": 2000,
         }
-
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -567,15 +555,14 @@ class DiagnosticUpdateApiTest(APITestCase):
     @authenticate
     def test_cannot_update_diagnostic_with_put(self):
         self.diagnostic.canteen.managers.add(authenticate.user)
-        payload = {"year": 2020}
 
+        payload = {"year": 2020}
         response = self.client.put(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_cannot_update_diagnostic_if_unauthenticated(self):
         payload = {"year": 2020}
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -583,13 +570,14 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.year, 2025)
 
     @authenticate
-    def test_cannot_update_diagnostic_if_canteen_unknown(self):
+    def test_cannot_update_diagnostic_if_canteen_does_not_exist(self):
+        payload = {"year": 2020}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": 9999, "pk": self.diagnostic.id},
             ),
-            {"year": 2020},
+            payload,
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -599,7 +587,6 @@ class DiagnosticUpdateApiTest(APITestCase):
     @authenticate
     def test_cannot_update_diagnostic_if_not_canteen_manager(self):
         payload = {"year": 2020}
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -607,15 +594,16 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.year, 2025)
 
     @authenticate
-    def test_cannot_update_diagnostic_if_diagnostic_unknown(self):
+    def test_cannot_update_diagnostic_if_diagnostic_does_not_exist(self):
         self.diagnostic.canteen.managers.add(authenticate.user)
 
+        payload = {"year": 2020}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": 9999},
             ),
-            {"year": 2020},
+            payload,
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -628,12 +616,13 @@ class DiagnosticUpdateApiTest(APITestCase):
         diagnostic_other = DiagnosticFactory(canteen=canteen_other)
         self.canteen.managers.add(authenticate.user)
 
+        payload = {"year": 2020}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": diagnostic_other.id},
             ),
-            {"year": 2020},
+            payload,
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -641,39 +630,40 @@ class DiagnosticUpdateApiTest(APITestCase):
         # even if the user manages canteen_other
         canteen_other.managers.add(authenticate.user)
 
+        payload = {"year": 2020}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
                 kwargs={"canteen_pk": self.diagnostic.canteen.id, "pk": diagnostic_other.id},
             ),
-            {"year": 2020},
+            payload,
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_update_diagnostic(self):
+    def test_can_update_diagnostic(self):
         self.diagnostic.canteen.managers.add(authenticate.user)
-        payload = {"year": 2020}
 
+        payload = {"year": 2020}
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.year, 2020)
 
-    def test_update_diagnostic_via_oauth2(self):
+    def test_can_update_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.diagnostic.canteen.managers.add(user)
-        payload = {"year": 2020}
 
+        payload = {"year": 2020}
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
-    def test_update_diagnostic_does_not_update_creation_user_and_source(self):
+    def test_can_update_diagnostic_does_not_update_creation_user_and_source(self):
         self.diagnostic.canteen.managers.add(authenticate.user)
         self.assertEqual(self.diagnostic.creation_user, self.user)
         self.assertEqual(self.diagnostic.creation_source, CreationSource.APP)
@@ -683,7 +673,6 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(diagnostic_history.history_source_api_oauth2_application, None)
 
         payload = {"year": 2020, "creationSource": CreationSource.API}
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -708,7 +697,6 @@ class DiagnosticUpdateApiTest(APITestCase):
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
         }
-
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -729,8 +717,8 @@ class DiagnosticUpdateApiTest(APITestCase):
         """
         diagnostic = DiagnosticFactory(year=2025, valeur_totale=10, valeur_bio=5, valeur_siqo=2)
         diagnostic.canteen.managers.add(authenticate.user)
-        payload = {"valeur_siqo": 999}
 
+        payload = {"valeur_siqo": 999}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -750,10 +738,8 @@ class DiagnosticUpdateApiTest(APITestCase):
         """
         canteen = CanteenFactory(managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
-        payload = {
-            "total_leftovers": 6666.66,
-        }
 
+        payload = {"total_leftovers": 6666.66}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -774,10 +760,8 @@ class DiagnosticUpdateApiTest(APITestCase):
         """
         canteen = CanteenFactory(managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
-        payload = {
-            "bread_leftovers": 100,
-        }
 
+        payload = {"bread_leftovers": 100}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -798,10 +782,8 @@ class DiagnosticUpdateApiTest(APITestCase):
         """
         canteen = CanteenFactory(managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, total_leftovers=Decimal("1.23456"))
-        payload = {
-            "total_leftovers": 6666.666,
-        }
 
+        payload = {"total_leftovers": 6666.666}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -819,10 +801,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
 
-        payload = {
-            "total_leftovers": "this shouldn't be a string",
-        }
-
+        payload = {"total_leftovers": "this shouldn't be a string"}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -843,8 +822,8 @@ class DiagnosticUpdateApiTest(APITestCase):
         diagnostic.canteen.managers.add(authenticate.user)
         with freeze_time("2022-08-30"):  # during the 2021 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
-        payload = {"year": 2020}
 
+        payload = {"year": 2020}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -858,14 +837,14 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(diagnostic.year, 2021)
 
     @authenticate
-    def test_update_diagnostic_cancelled(self):
+    def test_can_update_diagnostic_cancelled(self):
         diagnostic = DiagnosticFactory(year=2021)
         diagnostic.canteen.managers.add(authenticate.user)
         with freeze_time("2022-08-30"):  # during the 2021 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
             diagnostic.cancel()
-        payload = {"year": 2020}
 
+        payload = {"year": 2020}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -879,7 +858,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(diagnostic.year, 2020)
 
     @authenticate
-    def test_update_cancelled_diagnostic_during_correction_campaign(self):
+    def test_can_update_cancelled_diagnostic_during_correction_campaign(self):
         """
         A diagnostic can be edited during the correction campaign if its teledeclaration has been cancelled
         """
@@ -893,7 +872,6 @@ class DiagnosticUpdateApiTest(APITestCase):
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
             payload = {"service_type": Diagnostic.ServiceType.MULTIPLE_SELF}
-
             response = self.client.patch(
                 reverse(
                     "diagnostic_retrieve_update",

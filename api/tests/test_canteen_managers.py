@@ -15,14 +15,14 @@ class CanteenManagersListApiTest(APITestCase):
         cls.canteen = CanteenFactory(managers=[])
         cls.url = reverse("canteen_managers_list", kwargs={"canteen_pk": cls.canteen.id})
 
-    def test_cannot_get_canteen_managers_unauthenticated(self):
+    def test_cannot_get_canteen_managers_if_unauthenticated(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_get_canteen_managers_if_canteen_does_not_exist(self):
-        url = reverse("canteen_managers_list", kwargs={"canteen_pk": 999})
+        url = reverse("canteen_managers_list", kwargs={"canteen_pk": 9999})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -69,14 +69,14 @@ class CanteenManagersInvitationsListApiTest(APITestCase):
         cls.canteen = CanteenFactory(managers=[])
         cls.url = reverse("canteen_managers_invitations_list", kwargs={"canteen_pk": cls.canteen.id})
 
-    def test_cannot_get_canteen_managers_invitations_unauthenticated(self):
+    def test_cannot_get_canteen_managers_invitations_if_unauthenticated(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_get_canteen_managers_invitations_if_canteen_does_not_exist(self):
-        url = reverse("canteen_managers_invitations_list", kwargs={"canteen_pk": 999})
+        url = reverse("canteen_managers_invitations_list", kwargs={"canteen_pk": 9999})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -88,7 +88,7 @@ class CanteenManagersInvitationsListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_canteen_managers_invitations_list(self):
+    def test_can_get_canteen_managers_invitations(self):
         self.canteen.managers.add(authenticate.user)
 
         response = self.client.get(self.url)
@@ -108,7 +108,7 @@ class CanteenManagersInvitationsListApiTest(APITestCase):
         self.assertEqual(len(body), 1)
         self.assertEqual(body[0]["email"], "new.USER@example.com")
 
-    def test_canteen_managers_invitations_list_via_oauth2(self):
+    def test_can_get_canteen_managers_invitations_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
         ManagerInvitationFactory(canteen=self.canteen, email="new.USER@example.com")
@@ -124,11 +124,12 @@ class CanteenManagersInvitationsListApiTest(APITestCase):
 
 class CanteenClaimApiTest(APITestCase):
     @authenticate
-    def test_canteen_claim_request(self):
+    def test_can_claim_canteen(self):
         canteen = CanteenFactory()
         canteen.managers.clear()
 
         response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], canteen.id)
@@ -141,16 +142,16 @@ class CanteenClaimApiTest(APITestCase):
         self.assertTrue(canteen.has_been_claimed)
 
     @authenticate
-    def test_canteen_not_filled_can_be_claimed(self):
+    def test_can_claim_canteen_not_valid(self):
         canteen = CanteenFactory()
         canteen.managers.clear()
         canteen.siret = None
         canteen.save(skip_validations=True)
-
         self.assertIsNone(canteen.siret)
         self.assertFalse(canteen.is_filled)
 
         response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], canteen.id)
@@ -163,7 +164,7 @@ class CanteenClaimApiTest(APITestCase):
         self.assertTrue(canteen.has_been_claimed)
 
     @authenticate
-    def test_canteen_claim_request_fails_when_already_claimed(self):
+    def test_cannot_claim_canteen_already_claimed(self):
         canteen = CanteenFactory()
         self.assertGreater(canteen.managers.count(), 0)
         user = authenticate.user
@@ -176,7 +177,7 @@ class CanteenClaimApiTest(APITestCase):
         self.assertFalse(canteen.has_been_claimed)
 
     @authenticate
-    def test_undo_claim_canteen(self):
+    def test_can_undo_claim_canteen(self):
         canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
 
         response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
@@ -187,7 +188,7 @@ class CanteenClaimApiTest(APITestCase):
         self.assertFalse(canteen.has_been_claimed)
 
     @authenticate
-    def test_undo_claim_for_canteen_not_filled(self):
+    def test_can_undo_claim_for_canteen_not_valid(self):
         canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
         canteen.siret = None
         canteen.save(skip_validations=True)
@@ -203,7 +204,7 @@ class CanteenClaimApiTest(APITestCase):
         self.assertFalse(canteen.has_been_claimed)
 
     @authenticate
-    def test_undo_claim_canteen_fails_if_not_original_claimer(self):
+    def test_cannot_undo_claim_canteen_if_not_original_claimer(self):
         other_user = UserFactory()
         canteen = CanteenFactory(claimed_by=other_user, has_been_claimed=True, managers=[authenticate.user])
 
@@ -216,46 +217,30 @@ class CanteenClaimApiTest(APITestCase):
 
 
 class CanteenManagerInvitationApiTest(APITestCase):
-    def test_unauthenticated_add_manager_call(self):
-        """
-        When calling this API unauthenticated we expect a 403
-        """
+    def test_cannot_add_manager_if_unauthenticated(self):
         response = self.client.post(reverse("add_manager"), {"canteenId": 999})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_unauthenticated_remove_manager_call(self):
-        """
-        When calling this API unauthenticated we expect a 403
-        """
+    def test_cannot_remove_manager_if_unauthenticated(self):
         response = self.client.post(reverse("remove_manager"), {"canteenId": 999})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_add_manager_missing_canteen(self):
-        """
-        When calling this API on a nonexistent canteen we expect a 404
-        """
-        payload = {"canteenId": 999, "email": "test@example.com"}
+    def test_cannot_add_manager_if_canteen_does_not_exist(self):
+        payload = {"canteenId": 9999, "email": "test@example.com"}
         response = self.client.post(reverse("add_manager"), payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         with self.assertRaises(ManagerInvitation.DoesNotExist):
-            ManagerInvitation.objects.get(canteen__id=999)
+            ManagerInvitation.objects.get(canteen__id=9999)
 
     @authenticate
-    def test_remove_manager_missing_canteen(self):
-        """
-        When calling this API on a nonexistent canteen we expect a 404
-        """
-        payload = {"canteenId": 999, "email": "test@example.com"}
+    def test_cannot_remove_manager_if_canteen_does_not_exist(self):
+        payload = {"canteenId": 9999, "email": "test@example.com"}
         response = self.client.post(reverse("remove_manager"), payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_add_manager_forbidden_canteen(self):
-        """
-        When calling this API on a canteen that the user doesn't manage,
-        we expect a 404
-        """
+    def test_cannot_add_manager_if_not_canteen_manager(self):
         canteen = CanteenFactory()
         payload = {"canteenId": canteen.id, "email": "test@example.com"}
         response = self.client.post(reverse("add_manager"), payload)
@@ -264,11 +249,7 @@ class CanteenManagerInvitationApiTest(APITestCase):
             ManagerInvitation.objects.get(canteen__id=canteen.id)
 
     @authenticate
-    def test_remove_manager_forbidden_canteen(self):
-        """
-        When calling this API on a canteen that the user doesn't manage,
-        we expect a 404
-        """
+    def test_cannot_remove_manager_if_not_canteen_manager(self):
         canteen = CanteenFactory()
         payload = {"canteenId": canteen.id, "email": "test@example.com"}
         response = self.client.post(reverse("remove_manager"), payload)
@@ -276,7 +257,7 @@ class CanteenManagerInvitationApiTest(APITestCase):
 
     @authenticate
     @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
-    def test_authenticated_create_manager_invitation(self):
+    def test_can_create_manager_invitation(self):
         """
         When calling this API authenticated we expect to save the
         an unassociated email in the invitations table with the canteen id
@@ -300,7 +281,7 @@ class CanteenManagerInvitationApiTest(APITestCase):
         self.assertEqual(body["managerInvitations"][0]["email"], "test@example.com")
 
     @authenticate
-    def test_authenticated_create_duplicate_manager_invitation(self):
+    def test_can_create_duplicate_manager_invitation(self):
         """
         If API called twice with the same data, only save once,
         and only send one email
@@ -318,7 +299,7 @@ class CanteenManagerInvitationApiTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     @authenticate
-    def test_authenticated_create_multiple_manager_invitation(self):
+    def test_can_create_multiple_manager_invitation(self):
         """
         One email can be associated to more than one canteen,
         one canteen can be associated to more than one email
@@ -348,18 +329,18 @@ class CanteenManagerInvitationApiTest(APITestCase):
 
     @authenticate
     @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
-    def test_authenticated_add_manager_existing_user(self):
+    def test_can_add_manager_existing_user(self):
         """
         If the email matches an existing user, add the user to the canteen managers
         without going through invitations table. No email sent for now
         """
         canteen = CanteenFactory(managers=[authenticate.user])
         other_user = UserFactory(email="test@example.com")
+
         payload = {"canteenId": canteen.id, "email": other_user.email}
-
         response = self.client.post(reverse("add_manager"), payload)
-        body = response.json()
 
+        body = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(canteen.managers.all().get(id=other_user.id).id, other_user.id)
         with self.assertRaises(ManagerInvitation.DoesNotExist):
@@ -373,7 +354,7 @@ class CanteenManagerInvitationApiTest(APITestCase):
         self.assertEqual(len(body["managerInvitations"]), canteen.managerinvitation_set.all().count())
 
     @authenticate
-    def test_authenticated_remove_manager(self):
+    def test_can_remove_manager(self):
         """
         It should be possible to remove a given manager from a canteen
         """
@@ -390,7 +371,7 @@ class CanteenManagerInvitationApiTest(APITestCase):
         self.assertEqual(len(body["managers"]), canteen.managers.all().count())
 
     @authenticate
-    def test_authenticated_remove_nonexistent_manager(self):
+    def test_can_remove_nonexistent_manager(self):
         """
         When trying to remove a manager that does not manage a canteen, we will
         respond 200 OK.
@@ -408,7 +389,7 @@ class CanteenManagerInvitationApiTest(APITestCase):
 
     @authenticate
     @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
-    def test_authenticated_delete_invitation(self):
+    def test_can_delete_invitation(self):
         """
         We should be able to remove a pending invitation
         """
@@ -427,7 +408,7 @@ class CanteenManagerInvitationApiTest(APITestCase):
 
     @authenticate
     @override_settings(DEFAULT_FROM_EMAIL="test-from@example.com")
-    def test_authenticated_add_manager_email_insensitive(self):
+    def test_can_add_manager_email_insensitive(self):
         """
         If the email does not match an existing user, we try with a case insensitive query
         """
@@ -470,7 +451,7 @@ class CanteenTeamRequestEmailTest(APITestCase):
     @override_settings(CONTACT_EMAIL="contact@example.com")
     @override_settings(HOSTNAME="mysite.com")
     @override_settings(SECURE="True")
-    def test_send_message(self):
+    def test_can_send_message(self):
         canteen = CanteenFactory(
             siret="76494221950672",
             name="Hugo",

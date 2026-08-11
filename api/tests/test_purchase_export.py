@@ -12,13 +12,13 @@ class PurchaseListExportApiTest(APITestCase):
     def setUpTestData(cls):
         cls.url = reverse("purchase_list_export")
 
-    def test_excel_export_unauthenticated(self):
+    def test_cannot_export_if_unauthenticated(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_excel_export(self):
+    def test_can_export(self):
         canteen = CanteenFactory(managers=[authenticate.user])
         PurchaseFactory(description="avoine", canteen=canteen)
         PurchaseFactory(description="tomates", canteen=canteen)
@@ -30,7 +30,7 @@ class PurchaseListExportApiTest(APITestCase):
         self.assertEqual(len(response.data), 3)
 
     @authenticate
-    def test_excel_export_search(self):
+    def test_can_export_search(self):
         canteen = CanteenFactory(managers=[authenticate.user])
         PurchaseFactory(description="avoine", canteen=canteen)
         PurchaseFactory(description="tomates", canteen=canteen)
@@ -43,7 +43,7 @@ class PurchaseListExportApiTest(APITestCase):
         self.assertEqual(len(response.data), 1)
 
     @authenticate
-    def test_excel_export_filter(self):
+    def test_can_export_filter(self):
         canteen = CanteenFactory(managers=[authenticate.user])
         PurchaseFactory(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER, description="avoine", canteen=canteen)
         PurchaseFactory(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER, description="tomates", canteen=canteen)

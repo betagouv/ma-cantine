@@ -5,7 +5,7 @@ from api.views.canteen_create_import import CANTEEN_SCHEMA_FILE_PATH
 from api.views.canteen_update_import import CANTEEN_UPDATE_SCHEMA_FILE_PATH
 
 
-class CanteensSchemaTest(TestCase):
+class CanteensImportSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.schema_create = json.load(open(CANTEEN_SCHEMA_FILE_PATH))
