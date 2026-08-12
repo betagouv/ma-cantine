@@ -760,7 +760,10 @@ class Diagnostic(models.Model):
         "valeur_autres_fermier",
     ]
 
-    COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS
+    COMPLETE_APPRO_FIELDS = (
+        ["valeur_totale"] + ["valeur_viandes_volailles", "valeur_produits_de_la_mer"] + APPRO_FIELDS
+    )
+    # COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS  # TODO when updating the imports
 
     COMPLETE_APPRO_FIELDS_REQUIRED_2025 = [
         # removed APPRO_FIELDS_NON_APPLICABLE
