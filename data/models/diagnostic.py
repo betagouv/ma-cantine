@@ -605,6 +605,18 @@ class Diagnostic(models.Model):
         "valeur_egalim_agg",
     ]
 
+    APPRO_FAMILY_FIELDS = [
+        "valeur_viandes_volailles",
+        "valeur_produits_de_la_mer",
+        # new in 2026
+        "valeur_fruits_et_legumes",
+        "valeur_charcuterie",
+        "valeur_produits_laitiers",
+        "valeur_boulangerie",
+        "valeur_boissons",
+        "valeur_autres",
+    ]
+
     APPRO_FIELDS = [
         "valeur_viandes_volailles_bio",
         "valeur_viandes_volailles_bio_dont_commerce_equitable",
@@ -748,7 +760,10 @@ class Diagnostic(models.Model):
         "valeur_autres_fermier",
     ]
 
-    COMPLETE_APPRO_FIELDS = ["valeur_totale", "valeur_viandes_volailles", "valeur_produits_de_la_mer"] + APPRO_FIELDS
+    COMPLETE_APPRO_FIELDS = (
+        ["valeur_totale"] + ["valeur_viandes_volailles", "valeur_produits_de_la_mer"] + APPRO_FIELDS
+    )
+    # COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS  # TODO when updating the imports
 
     COMPLETE_APPRO_FIELDS_REQUIRED_2025 = [
         # removed APPRO_FIELDS_NON_APPLICABLE
@@ -1027,30 +1042,14 @@ class Diagnostic(models.Model):
     valeur_egalim_autres_dont_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
     )
-    valeur_viandes_volailles = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
-    )
     valeur_viandes_volailles_egalim = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim",
     )
     valeur_viandes_volailles_france = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France",
     )
-    valeur_produits_de_la_mer = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) poissons et produits aquatiques",
-    )
     valeur_produits_de_la_mer_egalim = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) poissons et produits aquatiques, EGalim",
-    )
-
-    valeur_label_rouge = make_optional_positive_decimal_field(
-        verbose_name="Valeur label rouge",
-    )
-    valeur_label_aoc_igp = make_optional_positive_decimal_field(
-        verbose_name="Valeur label AOC/AOP/IGP",
-    )
-    valeur_label_hve = make_optional_positive_decimal_field(
-        verbose_name="Valeur label HVE",
     )
 
     # Food waste
@@ -1264,6 +1263,32 @@ class Diagnostic(models.Model):
     )
     valeur_egalim_agg = make_optional_positive_decimal_field(
         verbose_name="EGalim (Bio + Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
+
+    # per family
+    valeur_viandes_volailles = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
+    )
+    valeur_produits_de_la_mer = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) poissons et produits aquatiques",
+    )
+    valeur_fruits_et_legumes = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) fruits et légumes frais ou surgelés",
+    )
+    valeur_charcuterie = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) charcuterie",
+    )
+    valeur_produits_laitiers = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) BOF (Produits laitiers, beurre et œufs)",
+    )
+    valeur_boulangerie = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) boulangerie / pâtisserie fraîches",
+    )
+    valeur_boissons = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) boissons",
+    )
+    valeur_autres = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) autres produits frais, surgelés et d'épicerie",
     )
 
     # detailed values
@@ -1626,6 +1651,17 @@ class Diagnostic(models.Model):
     )
     valeur_autres_local = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d'épicerie, Origine France (dont local)",
+    )
+
+    # deprecated
+    valeur_label_rouge = make_optional_positive_decimal_field(
+        verbose_name="Valeur label rouge",
+    )
+    valeur_label_aoc_igp = make_optional_positive_decimal_field(
+        verbose_name="Valeur label AOC/AOP/IGP",
+    )
+    valeur_label_hve = make_optional_positive_decimal_field(
+        verbose_name="Valeur label HVE",
     )
 
     # Télédéclaration
