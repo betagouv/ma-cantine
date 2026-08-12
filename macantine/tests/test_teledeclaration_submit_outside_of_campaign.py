@@ -5,11 +5,14 @@ from django.db.models.signals import post_save
 
 from data.models.canteen import Canteen, fill_geo_fields_from_siret
 from data.models import Diagnostic
-from api.tests.utils import authenticate
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 
 
 class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
     def setUp(self):
         post_save.disconnect(fill_geo_fields_from_siret, sender=Canteen)
         return super().setUp()
@@ -18,9 +21,8 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
         post_save.connect(fill_geo_fields_from_siret, sender=Canteen)
         return super().tearDown()
 
-    @authenticate
     def test_submit_single_diagnostic_after_campaign(self):
-        canteen = CanteenFactory(name="First name", city_insee_code="38185")
+        canteen = CanteenFactory(name="First name", city_insee_code="38185", managers=[self.user])
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(
@@ -39,20 +41,19 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=str(diagnostic.id),
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
             # After running the script
             diagnostic.refresh_from_db()
             self.assertTrue(diagnostic.is_teledeclared)
-            self.assertEqual(diagnostic.applicant, authenticate.user)
+            self.assertEqual(diagnostic.applicant, self.user)
 
-    @authenticate
     def test_submit_multiple_diagnostics_after_campaign(self):
-        canteen_1 = CanteenFactory()
-        canteen_2 = CanteenFactory()
-        canteen_3 = CanteenFactory()
+        canteen_1 = CanteenFactory(managers=[self.user])
+        canteen_2 = CanteenFactory(managers=[self.user])
+        canteen_3 = CanteenFactory(managers=[self.user])
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic_1 = DiagnosticFactory(canteen=canteen_1, year=2024, valeur_totale=10000, valeur_bio=2000)
@@ -69,7 +70,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=diagnostic_ids,
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
@@ -82,9 +83,8 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             self.assertTrue(diagnostic_2.is_teledeclared)
             self.assertTrue(diagnostic_3.is_teledeclared)
 
-    @authenticate
     def test_skip_diagnostic_from_different_year(self):
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(managers=[self.user])
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
 
@@ -101,7 +101,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=str(diagnostic_2025.id),
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
@@ -109,16 +109,15 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             diagnostic_2025.refresh_from_db()
             self.assertFalse(diagnostic_2025.is_teledeclared)
 
-    @authenticate
     def test_skip_diagnostic_teledeclared(self):
-        canteen_1 = CanteenFactory()
-        canteen_2 = CanteenFactory()
+        canteen_1 = CanteenFactory(managers=[self.user])
+        canteen_2 = CanteenFactory(managers=[self.user])
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic_teledeclared = DiagnosticFactory(
                 canteen=canteen_1, year=2024, valeur_totale=10000, valeur_bio=2000
             )
-            diagnostic_teledeclared.teledeclare(applicant=authenticate.user)
+            diagnostic_teledeclared.teledeclare(applicant=self.user)
             diagnostic_not_teledeclared = DiagnosticFactory(
                 canteen=canteen_2, year=2024, valeur_totale=10000, valeur_bio=2000
             )
@@ -134,7 +133,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=diagnostic_ids,
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
@@ -145,9 +144,8 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             self.assertTrue(diagnostic_teledeclared.is_teledeclared)
             self.assertTrue(diagnostic_not_teledeclared.is_teledeclared)
 
-    @authenticate
     def test_skip_diagnostic_not_found(self):
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(managers=[self.user])
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
@@ -163,7 +161,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=diagnostic_ids,
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
@@ -171,9 +169,8 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             diagnostic.refresh_from_db()
             self.assertTrue(diagnostic.is_teledeclared)
 
-    @authenticate
     def test_skip_diagnostic_if_before_campaign(self):
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(managers=[self.user])
 
         with freeze_time("2025-01-01"):  # before the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
@@ -186,7 +183,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=str(diagnostic.id),
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
@@ -194,9 +191,8 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             diagnostic.refresh_from_db()
             self.assertFalse(diagnostic.is_teledeclared)
 
-    @authenticate
     def test_skip_diagnostic_draft_if_during_campaign(self):
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(managers=[self.user])
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
@@ -209,7 +205,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=str(diagnostic.id),
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
@@ -217,13 +213,12 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             diagnostic.refresh_from_db()
             self.assertFalse(diagnostic.is_teledeclared)
 
-    @authenticate
     def test_skip_diagnostic_correction_if_during_correction_campaign(self):
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(managers=[self.user])
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
-            diagnostic.teledeclare(applicant=authenticate.user)
+            diagnostic.teledeclare(applicant=self.user)
 
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
@@ -237,7 +232,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=str(diagnostic.id),
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
@@ -245,9 +240,8 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             diagnostic.refresh_from_db()
             self.assertFalse(diagnostic.is_teledeclared)
 
-    @authenticate
     def test_submit_diagnostic_even_if_diagnostic_validation_error(self):
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(managers=[self.user])
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
@@ -266,7 +260,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=str(diagnostic.id),
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
@@ -274,13 +268,12 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             diagnostic.refresh_from_db()
             self.assertTrue(diagnostic.is_teledeclared)
 
-    @authenticate
     def test_submit_diagnostic_even_if_canteen_validation_error(self):
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(managers=[self.user])
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
-            diagnostic.teledeclare(applicant=authenticate.user)
+            diagnostic.teledeclare(applicant=self.user)
 
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
@@ -296,7 +289,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=str(diagnostic.id),
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 
@@ -304,9 +297,8 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             diagnostic.refresh_from_db()
             self.assertTrue(diagnostic.is_teledeclared)
 
-    @authenticate
     def test_submit_diagnostic_even_if_satellite_validation_error(self):
-        groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[self.user])
         satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
@@ -326,7 +318,7 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
                 "teledeclaration_submit_outside_of_campaign",
                 year=2024,
                 diagnostic_id_list=str(diagnostic.id),
-                applicant_id=authenticate.user.id,
+                applicant_id=self.user.id,
                 apply=True,
             )
 

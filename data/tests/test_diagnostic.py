@@ -107,7 +107,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         # CORRECTION diagnostic can be edited during the campaign & correction but not after correction
         with freeze_time("2025-01-20"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
-            diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+            diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
         with freeze_time("2025-04-18"):  # during the 2024 correction campaign
             diagnostic.cancel()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
@@ -119,7 +119,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         # SUBMITTED diagnostic can be edited during the campaign & correction but not after campaign
         with freeze_time("2025-01-20"):  # during the 2024 campaign
             diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
-            diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+            diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
             diagnostic.full_clean()  # should not raise
         with freeze_time("2025-04-18"):  # during the 2024 correction campaign
@@ -413,7 +413,7 @@ class DiagnosticQuerySetTest(TestCase):
                 valeur_egalim_autres=100.00,
             )
             with freeze_time(date_in_teledeclaration_campaign):
-                diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+                diagnostic.teledeclare(applicant=canteen.managers.first(), skip_validations=True)
             diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data - 1,
@@ -423,7 +423,7 @@ class DiagnosticQuerySetTest(TestCase):
                 valeur_bio=200.00,
             )
             with freeze_time(date_in_last_teledeclaration_campaign):
-                diagnostic_last_year.teledeclare(applicant=UserFactory(), skip_validations=True)
+                diagnostic_last_year.teledeclare(applicant=canteen.managers.first(), skip_validations=True)
             setattr(cls, f"diagnostic_canteen_valid_{index + 1}", diagnostic)
             setattr(cls, f"diagnostic_last_year_canteen_valid_{index + 1}", diagnostic_last_year)
 
@@ -437,7 +437,9 @@ class DiagnosticQuerySetTest(TestCase):
             invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SANS_SIRET_OU_SIREN],
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory(), skip_validations=True)
+            cls.diagnostic_canteen_missing_siret.teledeclare(
+                applicant=cls.canteen_missing_siret.managers.first(), skip_validations=True
+            )
 
         cls.diagnostic_canteen_cout_repas_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -449,7 +451,9 @@ class DiagnosticQuerySetTest(TestCase):
             invalid_reason_list=[],  # not aberrant
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_cout_repas_aberrant.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_cout_repas_aberrant.teledeclare(
+                applicant=cls.canteen_cout_repas_aberrant.managers.first(), skip_validations=True
+            )
 
         cls.diagnostic_canteen_valeur_totale_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -461,7 +465,9 @@ class DiagnosticQuerySetTest(TestCase):
             invalid_reason_list=[],
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_valeur_totale_aberrant.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_valeur_totale_aberrant.teledeclare(
+                applicant=cls.canteen_valeur_totale_aberrant.managers.first(), skip_validations=True
+            )
 
         cls.diagnostic_canteen_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -473,7 +479,9 @@ class DiagnosticQuerySetTest(TestCase):
             invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_aberrant.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_aberrant.teledeclare(
+                applicant=cls.canteen_aberrant.managers.first(), skip_validations=True
+            )
 
         cls.diagnostic_canteen_aberrant_2025 = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -485,7 +493,9 @@ class DiagnosticQuerySetTest(TestCase):
             invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
         )
         with freeze_time("2026-03-15"):  # during the 2025 campaign
-            cls.diagnostic_canteen_aberrant_2025.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_aberrant_2025.teledeclare(
+                applicant=cls.canteen_aberrant.managers.first(), skip_validations=True
+            )
 
         cls.diagnostic_canteen_deleted = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -497,7 +507,9 @@ class DiagnosticQuerySetTest(TestCase):
             invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE],
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_deleted.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_deleted.teledeclare(
+                applicant=cls.canteen_deleted.managers.first(), skip_validations=True
+            )
 
     def test_count(self):
         self.assertEqual(Diagnostic.objects.count(), 18)
@@ -900,11 +912,13 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
                 valeur_totale=Decimal("100000.50"),
                 valeur_bio=2000,
             )
-            cls.diagnostic_groupe_teledeclared.teledeclare(applicant=UserFactory())
+            cls.diagnostic_groupe_teledeclared.teledeclare(applicant=cls.canteen_groupe_teledeclared.managers.first())
             cls.diagnostic_satellite_teledeclared = DiagnosticFactory(
                 canteen=cls.canteen_satellite_teledeclared, year=year_data, valeur_totale=None
             )
-            cls.diagnostic_satellite_teledeclared.teledeclare(applicant=UserFactory())
+            cls.diagnostic_satellite_teledeclared.teledeclare(
+                applicant=cls.canteen_satellite_teledeclared.managers.first()
+            )
             cls.diagnostic_satellite_draft = DiagnosticFactory(
                 canteen=cls.canteen_satellite_draft, year=year_data, valeur_totale=None
             )
@@ -1023,7 +1037,7 @@ class DiagnosticModelDeleteTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
         cls.diagnostic = DiagnosticFactory(
             canteen=cls.canteen_site,
             year=year_data,

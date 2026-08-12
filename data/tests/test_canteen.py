@@ -813,6 +813,7 @@ class CanteenNotDeletedBeforeQuerySetTest(TestCase):
 class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user = UserFactory()
         cls.canteen_groupe_with_satellite = CanteenFactory(
             siren_unite_legale="756656218", production_type=Canteen.ProductionType.GROUPE, economic_model=None
         )
@@ -902,8 +903,9 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_already_teledeclared_count, 0)
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_count, 1)
         # create a diagnostic for the autonomous satellite and teledeclare it
+        self.canteen_satellite_4.managers.add(self.user)
         diagnostic_satellite_4 = DiagnosticFactory(canteen=self.canteen_satellite_4, year=2025)
-        diagnostic_satellite_4.teledeclare(applicant=UserFactory())
+        diagnostic_satellite_4.teledeclare(applicant=self.user)
         self.assertEqual(diagnostic_satellite_4.is_teledeclared, True)
         # link satellite to groupe
         self.canteen_satellite_4.groupe = self.canteen_groupe_with_satellite
@@ -982,9 +984,10 @@ class CanteenPurchaseQuerySetTest(TestCase):
 class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        user = UserFactory()
         CanteenFactory()
-        canteen_with_diagnostic_teledeclared = CanteenFactory()
-        canteen_with_diagnostic_cancelled = CanteenFactory()
+        canteen_with_diagnostic_teledeclared = CanteenFactory(managers=[user])
+        canteen_with_diagnostic_cancelled = CanteenFactory(managers=[user])
         cls.diagnostic_filled_teledeclared = DiagnosticFactory(
             canteen=canteen_with_diagnostic_teledeclared,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -1004,8 +1007,8 @@ class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
             valeur_totale=None,
         )  # missing data
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            cls.diagnostic_filled_teledeclared.teledeclare(applicant=UserFactory())
-            cls.diagnostic_filled_cancelled.teledeclare(applicant=UserFactory())
+            cls.diagnostic_filled_teledeclared.teledeclare(applicant=user)
+            cls.diagnostic_filled_cancelled.teledeclare(applicant=user)
             cls.diagnostic_filled_cancelled.cancel()
 
     def test_annotate_with_diagnostic_for_year(self):

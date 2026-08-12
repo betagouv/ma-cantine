@@ -18,11 +18,13 @@ date_in_last_teledeclaration_campaign = "2024-02-01"
 class DiagnosticFillInvalidWarningReasonListTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user = UserFactory()
         cls.canteen_deleted = CanteenFactory(
             siret="21730065600014",
             deletion_date=timezone.make_aware(
                 datetime.strptime(date_in_teledeclaration_campaign, "%Y-%m-%d")
             ),  # soft deleted
+            managers=[cls.user],
         )
         cls.diagnostic_canteen_deleted = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -33,7 +35,7 @@ class DiagnosticFillInvalidWarningReasonListTest(TestCase):
             valeur_bio=200.00,
         )
         with freeze_time(date_in_teledeclaration_campaign):  # during the 2024 campaign
-            cls.diagnostic_canteen_deleted.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_deleted.teledeclare(applicant=cls.user)
 
     def test_command_should_not_add_if_other_year(self):
         self.diagnostic_canteen_deleted.refresh_from_db()
