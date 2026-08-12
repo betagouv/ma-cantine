@@ -9,8 +9,9 @@ from data.models import Canteen, Diagnostic
 class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user = UserFactory()
         cls.canteen_site_with_diagnostic_not_teledeclared = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE
+            production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user]
         )
         cls.canteen_site_diagnostic_not_teledeclared = DiagnosticFactory(
             canteen=cls.canteen_site_with_diagnostic_not_teledeclared,
@@ -19,7 +20,7 @@ class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
             valeur_totale=1000,
         )  # filled (2024)
         cls.canteen_satellite_with_diagnostic_teledeclared = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, managers=[cls.user]
         )
         cls.canteen_satellite_diagnostic_teledeclared = DiagnosticFactory(
             canteen=cls.canteen_satellite_with_diagnostic_teledeclared,
@@ -27,10 +28,13 @@ class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
             year=2024,
             valeur_totale=1000,
         )  # filled (2024)
-        cls.canteen_groupe_with_diagnostic_teledeclared = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_groupe_with_diagnostic_teledeclared = CanteenFactory(
+            production_type=Canteen.ProductionType.GROUPE, managers=[cls.user]
+        )
         cls.canteen_satellite_with_groupe_diagnostic_teledeclared = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=cls.canteen_groupe_with_diagnostic_teledeclared,
+            managers=[cls.user],
         )
         cls.canteen_groupe_diagnostic_teledeclared = DiagnosticFactory(
             canteen=cls.canteen_groupe_with_diagnostic_teledeclared,
@@ -39,8 +43,8 @@ class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
             valeur_totale=1000,
         )  # filled (2024)
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            cls.canteen_satellite_diagnostic_teledeclared.teledeclare(applicant=UserFactory())
-            cls.canteen_groupe_diagnostic_teledeclared.teledeclare(applicant=UserFactory())
+            cls.canteen_satellite_diagnostic_teledeclared.teledeclare(applicant=cls.user)
+            cls.canteen_groupe_diagnostic_teledeclared.teledeclare(applicant=cls.user)
 
     def test_command(self):
         # Note: since the addition of Diagnositc post_save signal, the declaration_donnees_YEAR field is automatically filled

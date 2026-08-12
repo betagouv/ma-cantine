@@ -426,9 +426,7 @@ class CanteenActionTestCase(TestCase):
         )
 
         # groupe with satellites and satellite has diagnostic teledeclared
-        canteen_satellite_11_diagnostic_2024.teledeclare(
-            applicant=self.canteen_groupe_1_with_satellites.managers.first()
-        )
+        canteen_satellite_11_diagnostic_2024.teledeclare(applicant=self.canteen_satellite_11.managers.first())
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 

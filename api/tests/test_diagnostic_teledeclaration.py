@@ -434,9 +434,9 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
         user = UserFactory()
         self.canteen_site.managers.add(user)
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
-        # authenticate.user is not a manager of the canteen_site
-        diagnostic.teledeclare(authenticate.user)
+        diagnostic.teledeclare(user)
 
+        # teledeclared by user, but authenticate.user is not a manager
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_cancel",
@@ -599,10 +599,12 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
     @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
     def test_cannot_generate_pdf_if_not_canteen_manager(self):
+        user = UserFactory()
         diagnostic = DiagnosticFactory(year=2024)
-        # authenticate.user is not a manager of the canteen
-        diagnostic.teledeclare(authenticate.user)
+        diagnostic.canteen.managers.add(user)
+        diagnostic.teledeclare(user)
 
+        # teledeclared by user, but authenticate.user is not a manager
         response = self.client.get(
             reverse(
                 "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}

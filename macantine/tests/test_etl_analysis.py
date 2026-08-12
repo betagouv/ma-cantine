@@ -7,7 +7,7 @@ from django.test import TestCase
 from freezegun import freeze_time
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic, Sector
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
@@ -258,7 +258,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                     valeur_externalites_performance=tc["data"]["valeur_externalites_performance_agg"],
                     valeur_egalim_autres=tc["data"]["valeur_egalim_autres_agg"],
                 )
-                diagnostic.teledeclare(applicant=UserFactory())
+                diagnostic.teledeclare(applicant=canteen.managers.first())
 
                 self.serializer_data = {
                     "valeur_totale": tc["data"]["valeur_totale"],
@@ -322,7 +322,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_ok = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
             diagnostic = DiagnosticFactory(canteen=canteen_ok, year=2022, valeur_totale=1000)
-            diagnostic.teledeclare(applicant=UserFactory())
+            diagnostic.teledeclare(applicant=canteen_ok.managers.first())
 
             self.serializer_data = {
                 "yearly_meal_count": canteen_ok.yearly_meal_count,
@@ -341,7 +341,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
             canteen_invalid_yearly_meal_count.save(skip_validations=True)
             canteen_invalid_yearly_meal_count.refresh_from_db()
             diagnostic = DiagnosticFactory(canteen=canteen_invalid_yearly_meal_count, year=2021, valeur_totale=1000)
-            diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+            diagnostic.teledeclare(applicant=canteen_invalid_yearly_meal_count.managers.first(), skip_validations=True)
 
             self.serializer_data = {
                 "yearly_meal_count": canteen_invalid_yearly_meal_count.yearly_meal_count,
@@ -370,7 +370,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 epci_lib="Grenoble-Alpes-Métropole",
             )
             diagnostic = DiagnosticFactory(canteen=canteen_with_geo_data, year=2022)
-            diagnostic.teledeclare(applicant=UserFactory())
+            diagnostic.teledeclare(applicant=canteen_with_geo_data.managers.first())
 
         self.serializer = DiagnosticTeledeclaredAnalysisSerializer(instance=Diagnostic.objects.get(id=diagnostic.id))
         data = self.serializer.data
@@ -394,7 +394,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 region_lib=None,
             )
             diagnostic_half_geo = DiagnosticFactory(canteen=canteen_half_geo_data, year=2022)
-            diagnostic_half_geo.teledeclare(applicant=UserFactory())
+            diagnostic_half_geo.teledeclare(applicant=canteen_half_geo_data.managers.first())
 
         self.serializer_half_geo = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.get(id=diagnostic_half_geo.id)
@@ -420,7 +420,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 region_lib=None,
             )
             diagnostic_without_geo = DiagnosticFactory(canteen=canteen_without_geo_data, year=2022)
-            diagnostic_without_geo.teledeclare(applicant=UserFactory())
+            diagnostic_without_geo.teledeclare(applicant=canteen_without_geo_data.managers.first())
 
         self.serializer_without_geo = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.get(id=diagnostic_without_geo.id)
@@ -442,7 +442,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 economic_model=Canteen.EconomicModel.PUBLIC,
             )
             diagnostic = DiagnosticFactory(canteen=canteen_with_line_ministry, year=2022)
-            diagnostic.teledeclare(applicant=UserFactory())
+            diagnostic.teledeclare(applicant=canteen_with_line_ministry.managers.first())
 
         self.serializer = DiagnosticTeledeclaredAnalysisSerializer(instance=Diagnostic.objects.get(id=diagnostic.id))
         data = self.serializer.data
@@ -453,7 +453,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_without_line_ministry = CanteenFactory(line_ministry=None)
             diagnostic_without_line_ministry = DiagnosticFactory(canteen=canteen_without_line_ministry, year=2022)
-            diagnostic_without_line_ministry.teledeclare(applicant=UserFactory())
+            diagnostic_without_line_ministry.teledeclare(applicant=canteen_without_line_ministry.managers.first())
 
         self.serializer_without_line_ministry = DiagnosticTeledeclaredAnalysisSerializer(
             instance=Diagnostic.objects.get(id=diagnostic_without_line_ministry.id)

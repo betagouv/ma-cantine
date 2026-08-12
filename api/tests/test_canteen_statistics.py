@@ -18,6 +18,7 @@ STATS_ENDPOINT_QUERY_COUNT = 7
 class CanteenStatsApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
+        user = UserFactory()
         with freeze_time(date_in_2023_teledeclaration_campaign):
             cls.canteen_1 = CanteenFactory(
                 siret="21010034300016",
@@ -30,6 +31,7 @@ class CanteenStatsApiTest(APITestCase):
                 management_type=Canteen.ManagementType.DIRECT,
                 production_type=Canteen.ProductionType.CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
+                managers=[user],
             )
             canteen_diagnostic_1 = DiagnosticFactory(
                 canteen=cls.canteen_1,
@@ -46,7 +48,7 @@ class CanteenStatsApiTest(APITestCase):
                 plastic_tableware_substituted=False,
                 communicates_on_food_quality=False,
             )
-            canteen_diagnostic_1.teledeclare(applicant=UserFactory())
+            canteen_diagnostic_1.teledeclare(applicant=user)
             cls.canteen_2 = CanteenFactory(
                 siret="40419443300078",
                 city_insee_code="69123",
@@ -58,6 +60,7 @@ class CanteenStatsApiTest(APITestCase):
                 management_type=Canteen.ManagementType.DIRECT,
                 production_type=Canteen.ProductionType.CENTRAL_SERVING,
                 economic_model=Canteen.EconomicModel.PUBLIC,
+                managers=[user],
             )
             canteen_diagnostic_2 = DiagnosticFactory(
                 canteen=cls.canteen_2,
@@ -78,7 +81,7 @@ class CanteenStatsApiTest(APITestCase):
                 plastic_tableware_substituted=True,
                 communicates_on_food_quality=True,
             )
-            canteen_diagnostic_2.teledeclare(applicant=UserFactory())
+            canteen_diagnostic_2.teledeclare(applicant=user)
             cls.canteen_3 = CanteenFactory(
                 siret="21380185500015",
                 city_insee_code="38185",
@@ -90,6 +93,7 @@ class CanteenStatsApiTest(APITestCase):
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE,
                 economic_model=Canteen.EconomicModel.PRIVATE,
+                managers=[user],
             )
             canteen_diagnostic_3 = DiagnosticFactory(
                 canteen=cls.canteen_3,
@@ -106,7 +110,7 @@ class CanteenStatsApiTest(APITestCase):
                 plastic_tableware_substituted=True,
                 communicates_on_food_quality=True,
             )
-            canteen_diagnostic_3.teledeclare(applicant=UserFactory())
+            canteen_diagnostic_3.teledeclare(applicant=user)
             cls.canteen_4 = CanteenFactory(
                 siret="21590350100017",
                 city_insee_code="59350",
@@ -232,7 +236,8 @@ class CanteenStatsApiTest(APITestCase):
         date_in_2022_teledeclaration_campaign = "2022-08-30"
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
-            canteen = CanteenFactory(siret="11007001800012")
+            user = UserFactory()
+            canteen = CanteenFactory(siret="11007001800012", managers=[user])
             # Diagnostic that should display 20% Bio and 45% other EGalim
             canteen_diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -250,7 +255,7 @@ class CanteenStatsApiTest(APITestCase):
                 valeur_produits_de_la_mer=10,
                 valeur_produits_de_la_mer_egalim=8,
             )
-            canteen_diagnostic.teledeclare(applicant=UserFactory())
+            canteen_diagnostic.teledeclare(applicant=user)
 
         response = self.client.get(self.url, {"year": past_year})
 
@@ -275,7 +280,8 @@ class CanteenStatsApiTest(APITestCase):
         date_in_2022_teledeclaration_campaign = "2022-08-30"
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
-            canteen = CanteenFactory(siret="11007001800012")
+            user = UserFactory()
+            canteen = CanteenFactory(siret="11007001800012", managers=[user])
             # Diagnostic that should display 20% Bio and 45% other EGalim
             canteen_diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
@@ -293,7 +299,7 @@ class CanteenStatsApiTest(APITestCase):
                 valeur_produits_de_la_mer=10,
                 valeur_produits_de_la_mer_egalim=8,
             )
-            canteen_diagnostic.teledeclare(applicant=UserFactory())
+            canteen_diagnostic.teledeclare(applicant=user)
 
         response = self.client.get(self.url, {"year": past_year})
 
