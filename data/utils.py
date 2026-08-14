@@ -135,6 +135,18 @@ def get_diagnostic_upper_limit_year():
     return datetime.datetime.now().date().year + 1
 
 
+def make_optional_positive_integer_field(**kwargs):
+    """
+    IntegerField with
+    - min: 0
+    - max: 999999999
+    - examples: None, 0, 10, 999999999
+    """
+    return models.IntegerField(
+        blank=True, null=True, validators=[MinValueValidator(0), MaxValueValidator(999999999)], **kwargs
+    )
+
+
 def make_optional_positive_decimal_field(**kwargs):
     """
     DecimalField with

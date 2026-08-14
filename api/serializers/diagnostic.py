@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 FIELDS = (
     Diagnostic.META_FIELDS
+    + Diagnostic.CANTEEN_FIELDS
     + Diagnostic.SIMPLE_APPRO_FIELDS
     + Diagnostic.COMPLETE_APPRO_FIELDS
     + Diagnostic.NON_APPRO_FIELDS
