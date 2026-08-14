@@ -118,6 +118,7 @@ CAMPAIGN_DATES = {
         ),
         "correction_start_date": None,
         "correction_end_date": None,
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2022-09-29",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2022.pdf",
     },
     2022: {
@@ -127,6 +128,7 @@ CAMPAIGN_DATES = {
         ),
         "correction_start_date": None,
         "correction_end_date": None,
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2022-09-29",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2023.pdf",
     },
     2023: {
@@ -136,6 +138,7 @@ CAMPAIGN_DATES = {
         ),
         "correction_start_date": datetime(2024, 6, 3, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "correction_end_date": datetime(2024, 6, 12, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2024-04-13",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2024.pdf",
     },
     2024: {
@@ -143,6 +146,7 @@ CAMPAIGN_DATES = {
         "teledeclaration_end_date": datetime(2025, 4, 6, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "correction_start_date": datetime(2025, 4, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "correction_end_date": datetime(2025, 4, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2024-04-13",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2025.pdf",
     },
     2025: {
@@ -162,6 +166,7 @@ CAMPAIGN_DATES = {
             convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end")
             or datetime(2026, 4, 29, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2025-12-04",
         "rapport_parlement_url": None,
     },
     # Note: au moment d'ajouter une nouvelle année :
