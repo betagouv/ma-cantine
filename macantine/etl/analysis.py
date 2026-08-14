@@ -11,7 +11,7 @@ from data.models import Canteen, Diagnostic, Purchase, User, WasteMeasurement
 from data.models.sector import get_category_lib_list_from_canteen_snapshot, get_sector_lib_list_from_canteen_snapshot
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
-from macantine.utils import CAMPAIGN_DATES
+from macantine.utils import CAMPAIGN_DATES_VALID
 from data.models.geo import Department, Region
 
 logger = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ class ETL_ANALYSIS_TELEDECLARATIONS(etl.EXTRACTOR, ANALYSIS):
     def __init__(self):
         super().__init__()
         self.warehouse = DataWareHouse()
-        self.years = CAMPAIGN_DATES.keys()
+        self.years = CAMPAIGN_DATES_VALID.keys()
         self.dataset_name = "teledeclarations"
         self.schema = json.load(open("data/schemas/export_analysis/schema_teledeclarations.json"))
         self.columns = [field["name"] for field in self.schema["fields"]]

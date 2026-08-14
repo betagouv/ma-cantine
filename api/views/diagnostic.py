@@ -29,7 +29,7 @@ from common.utils import file_import, send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.diagnostic import Diagnostic
-from macantine.utils import CAMPAIGN_DATES, is_in_correction
+from macantine.utils import CAMPAIGN_DATES_VALID, is_in_correction
 
 logger = logging.getLogger(__name__)
 
@@ -142,9 +142,9 @@ class DiagnosticListRecapView(APIView):
         canteen = self._get_canteen()
         canteen_diagnostics = Diagnostic.all_objects.filter(canteen=canteen)
         result = []
-        for year in CAMPAIGN_DATES.keys():
+        for year in CAMPAIGN_DATES_VALID.keys():
             # skip years where the canteen was not yet created
-            if canteen.creation_date > CAMPAIGN_DATES[year]["teledeclaration_end_date"]:
+            if canteen.creation_date > CAMPAIGN_DATES_VALID[year]["teledeclaration_end_date"]:
                 continue
             # is_teledeclared: if at least 1 of the canteen's diagnostics is SUBMITTED
             is_teledeclared = any(d.year == year and d.is_teledeclared for d in canteen_diagnostics)

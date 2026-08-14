@@ -6,7 +6,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from data.models import Canteen, SectorCategory
-from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES, get_year_campaign_end_date_or_today_date
+from macantine.utils import CAMPAIGN_DATES_VALID, EGALIM_OBJECTIVES, get_year_campaign_end_date_or_today_date
 
 logger = logging.getLogger(__name__)
 
@@ -174,7 +174,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
         Hide data if the report for the given year is not published yet.
         """
         year = int(year)
-        if year not in CAMPAIGN_DATES.keys():
+        if year not in CAMPAIGN_DATES_VALID.keys():
             for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_CAMPAIGN_NOT_FOUND:
                 data[field] = None
             # TODO: ajouter le cas où la campagne de TD n'a pas commencé mais dont on connait les dates
@@ -186,7 +186,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
                 data["notes"]["campaign_info"] = (
                     f"Aucune campagne de télédéclaration trouvée pour l'année {year}. Veuillez vérifier l'année saisie."
                 )
-        elif not CAMPAIGN_DATES[year].get("rapport_parlement_url"):
+        elif not CAMPAIGN_DATES_VALID[year].get("rapport_parlement_url"):
             for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED:
                 data[field] = None
             data["notes"]["campaign_info"] = (

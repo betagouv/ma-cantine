@@ -21,7 +21,7 @@ from api.permissions import (
 )
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer, DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
-from macantine.utils import CAMPAIGN_DATES
+from macantine.utils import CAMPAIGN_DATES_VALID
 
 logger = logging.getLogger(__name__)
 
@@ -330,7 +330,7 @@ class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
     ordering_fields = ["creation_date"]
 
     def get_queryset(self):
-        return Diagnostic.objects.valid_td_all_years(CAMPAIGN_DATES.keys()).order_by("teledeclaration_date")
+        return Diagnostic.objects.valid_td_all_years(CAMPAIGN_DATES_VALID.keys()).order_by("teledeclaration_date")
 
 
 class DiagnosticTeledeclaredOpenDataListView(ListAPIView):

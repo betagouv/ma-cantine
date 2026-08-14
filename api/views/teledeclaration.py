@@ -5,7 +5,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from api.serializers import CampaignDatesSerializer, CampaignDatesFullSerializer
 from macantine.utils import (
-    CAMPAIGN_DATES,
+    CAMPAIGN_DATES_VALID,
     is_in_correction,
     is_in_teledeclaration,
 )
@@ -23,8 +23,8 @@ class TeledeclarationCampaignDatesListView(ListAPIView):
 
     def get(self, request, format=None):
         campaign_dates = []
-        for year in CAMPAIGN_DATES.keys():
-            campaign_dates.append({"year": year, **CAMPAIGN_DATES[year]})
+        for year in CAMPAIGN_DATES_VALID.keys():
+            campaign_dates.append({"year": year, **CAMPAIGN_DATES_VALID[year]})
         return Response(self.get_serializer(campaign_dates, many=True).data)
 
 
@@ -39,11 +39,11 @@ class TeledeclarationCampaignDatesRetrieveView(RetrieveAPIView):
     serializer_class = CampaignDatesFullSerializer
 
     def get(self, request, year, format=None):
-        if not CAMPAIGN_DATES.get(year):
+        if not CAMPAIGN_DATES_VALID.get(year):
             return Response(status=status.HTTP_404_NOT_FOUND)
         campaign_dates_for_year = {
             "year": year,
-            **CAMPAIGN_DATES[year],
+            **CAMPAIGN_DATES_VALID[year],
             "in_teledeclaration": is_in_teledeclaration(),
             "in_correction": is_in_correction(),
         }

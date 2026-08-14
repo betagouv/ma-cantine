@@ -175,6 +175,10 @@ CAMPAIGN_DATES = {
 }
 
 
+# keep only years with legifrance_url (arrêté publié)
+CAMPAIGN_DATES_VALID = {year: dates for year, dates in CAMPAIGN_DATES.items() if dates.get("legifrance_url")}
+
+
 def is_in_teledeclaration(year=None):
     """
     Check if the current date is within a teledeclaration period.
