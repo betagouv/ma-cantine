@@ -546,7 +546,7 @@ class Diagnostic(models.Model):
     APPRO_LABELS_NON_EGALIM = [
         "non_egalim",
     ]
-    APPRO_LABELS_ORIGINE = ["france"]  # TODO: add "europe" before
+    APPRO_LABELS_ORIGINE = ["europe", "france"]
     APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
     APPRO_LABELS_ALL = (
         APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_ORIGINE + ["circuit_court", "local"]
@@ -714,6 +714,15 @@ class Diagnostic(models.Model):
         "valeur_boulangerie_non_egalim",
         "valeur_boissons_non_egalim",
         "valeur_autres_non_egalim",
+        # new in 2026
+        # "valeur_viandes_volailles_europe",
+        # "valeur_produits_de_la_mer_europe",
+        # "valeur_fruits_et_legumes_europe",
+        # "valeur_charcuterie_europe",
+        # "valeur_produits_laitiers_europe",
+        # "valeur_boulangerie_europe",
+        # "valeur_boissons_europe",
+        # "valeur_autres_europe",
         "valeur_viandes_volailles_france",
         "valeur_produits_de_la_mer_france",
         "valeur_fruits_et_legumes_france",
@@ -1579,6 +1588,30 @@ class Diagnostic(models.Model):
     )
     valeur_autres_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d'épicerie, non-EGalim",
+    )
+    valeur_viandes_volailles_europe = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, Origine UE (hors France)",
+    )
+    valeur_produits_de_la_mer_europe = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Origine UE (hors France)",
+    )
+    valeur_fruits_et_legumes_europe = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, Origine UE (hors France)",
+    )
+    valeur_charcuterie_europe = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, Origine UE (hors France)",
+    )
+    valeur_produits_laitiers_europe = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Origine UE (hors France)",
+    )
+    valeur_boulangerie_europe = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, Origine UE (hors France)",
+    )
+    valeur_boissons_europe = make_optional_positive_decimal_field(
+        verbose_name="Boissons, Origine UE (hors France)",
+    )
+    valeur_autres_europe = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Origine UE (hors France)",
     )
     valeur_viandes_volailles_france = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Origine France",
