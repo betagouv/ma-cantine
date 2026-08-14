@@ -80,11 +80,12 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
     <li v-if="!canteenIsGroupe" class="fr-my-3w">
       <h3 class="fr-h5">Informations générées</h3>
       <DsfrAlert title="Ces informations ne sont pas modifiables" type="info" class="fr-mb-2w" titleTag="h4">
-        À partir des informations renseignées, nous avons généré des données avec d'autres référentiels :
-        <a href="https://france-pat.fr" target="_blank">France PAT</a>
+        Informations générées à partir à partir du SIRET ou du SIREN de la cantine, via les référentiels
+        <a href="https://annuaire-entreprises.data.gouv.fr" target="_blank">l'annuaire des entreprises</a>
         et
-        <a href="https://annuaire-entreprises.data.gouv.fr" target="_blank">l'annuaire des entreprises</a>.
-        Si vous remarquez une erreur, merci de <AppLinkRouter title="nous contacter" :to="{name: 'Contact'}" />.
+        <a href="https://france-pat.fr" target="_blank">France PAT</a>.
+        Si vous remarquez une erreur sur les données géographiques, rendez-vous sur <a href="https://www.insee.fr/fr/information/1401387" target="_blank">Immatriculation, cessation ou modification des données au répertoire Sirene | Insee</a>.<br/>
+        Concernant les Projets alimentaires territoriaux, la base est actualisée deux fois par ans, à partir des données actualisées sur France PAT.
       </DsfrAlert>
       <AppFieldDisplay v-if="!canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
       <AppFieldDisplay v-if="!canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
