@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter, useRoute } from "vue-router"
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
@@ -10,6 +11,7 @@ const route = useRoute()
 const router = useRouter()
 const canteenUrlComponent = route.params.canteenUrlComponent
 const { canteenInformations } = storeToRefs(useStoreCanteen())
+const title = computed(() => canteenInformations.value?.isGroupe ? 'Informations du groupe' : 'Informations de la cantine')
 
 const goToEdit = () => {
   const pageName = canteenInformations.value.isGroupe ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier"
@@ -18,7 +20,7 @@ const goToEdit = () => {
 </script>
 
 <template>
-  <CanteenSidebarTitle :title="canteenInformations.isGroupe ? 'Informations du groupe' : 'Mes informations'">
+  <CanteenSidebarTitle :title="title">
     <DsfrButton
       @click="goToEdit"
       :label="canteenInformations.isGroupe ? 'Modifier les informations du groupe' : 'Modifier mes informations'"

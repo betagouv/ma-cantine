@@ -1,5 +1,5 @@
 <script setup>
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import urlService from "@/services/urls.js"
@@ -9,6 +9,7 @@ import CanteenFormLogo from "@/components/CanteenFormLogo.vue"
 import CanteenFormImages from "@/components/CanteenFormImages.vue"
 
 const router = useRouter()
+const route = useRoute()
 const { canteenInformations } = storeToRefs(useStoreCanteen())
 
 const goToOnlinePage = (canteen) => {
@@ -25,7 +26,7 @@ const goToPrintPage = () => {
 </script>
 
 <template>
-  <CanteenSidebarTitle title="Ma page publique et mon affiche à imprimer" />
+  <CanteenSidebarTitle :title="route.meta.title" />
 
   <div class="fr-mb-5w">
     <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mb-4w">

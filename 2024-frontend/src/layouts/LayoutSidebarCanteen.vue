@@ -37,12 +37,12 @@ const menuItems = computed(() =>  {
   const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
 
   const cantinePage = {
-    text: isGroupe ? "Informations du groupe" : "Mes informations",
+    text: isGroupe ? "Informations du groupe" : "Informations de la cantine",
     to: { name: "GestionnaireCantine" },
     active: cantineActive
   }
   const gestionnairesPage = {
-    text: isGroupe ? "Gestionnaires" : "Mes gestionnaires",
+    text: isGroupe ? "Gestionnaires du groupe" : "Gestionnaires de la cantine",
     to: { name: "GestionnaireCantineGestionnaires" },
     active: gestionnairesActive
   }
@@ -52,12 +52,12 @@ const menuItems = computed(() =>  {
     active: cantinesGroupeActive
   }
   const pagePubliquePage = {
-    text: "Ma page publique",
+    text: "Page publique et affiche",
     to: { name: "GestionnaireCantinePagePublique" },
     active: pagePubliqueActive
   }
   const teledeclarationsPage =  {
-    text: "Toutes mes télédéclarations",
+    text: "Toutes les télédéclarations",
     to: { name: "GestionnaireCantineTeledeclarations" },
     active: teledeclarationsActive
   }

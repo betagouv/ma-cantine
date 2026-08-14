@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
@@ -13,6 +13,7 @@ const addModalOpened = ref(false)
 const removeModalOpened = ref(false)
 const managerToRemove = ref(null)
 const forceRerender = ref(0)
+const title = computed(() => canteenInformations.value?.isGroupe ? 'Gestionnaires du groupe' : 'Gestionnaires de la cantine')
 
 const openRemoveModal = (member) => {
   managerToRemove.value = member
@@ -26,7 +27,7 @@ const closeRemoveModal = () => {
 </script>
 
 <template>
-  <CanteenSidebarTitle :title="canteenInformations.isGroupe ? 'Gestionnaires' : 'Mes gestionnaires'">
+  <CanteenSidebarTitle :title="title">
     <DsfrButton
       primary
       label="Ajouter un gestionnaire"

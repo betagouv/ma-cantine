@@ -255,7 +255,7 @@ const routes = [
             name: "GestionnaireCantineTeledeclarations",
             component: GestionnaireCantineTeledeclarations,
             meta: {
-              title: "Toutes mes télédéclarations",
+              title: "Toutes les télédéclarations",
               breadcrumbs: [
                 { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
                 { to: { name: "GestionnaireCantine" }, useCanteenName: true },
@@ -279,7 +279,7 @@ const routes = [
             name: "GestionnaireCantinePagePublique",
             component: GestionnaireCantinePagePublique,
             meta: {
-              title: "Ma page publique",
+              title: "Page publique et affiche à imprimer",
               breadcrumbs: [
                 { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
                 { to: { name: "GestionnaireCantine" }, useCanteenName: true },
