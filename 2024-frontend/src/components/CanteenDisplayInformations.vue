@@ -19,6 +19,13 @@ const showCentralProducerSiret = computed(() => {
 })
 const showGroupeInformations = computed(() => props.canteenInformation.groupe !== null)
 
+/* Tooltips */
+const tooltips = computed(() => {
+  return {
+    economicModel: cantines.economicModel.find(option => option.value === props.canteenInformation?.economicModel)?.hint
+  }
+})
+
 /* Value */
 const getPrettyValue = (name, field) => {
   if (!name) return null
@@ -51,7 +58,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
   <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
     <li class="fr-my-3w">
       <h3 class="fr-h5">Caractéristiques</h3>
-      <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" :error="canteenErrors?.economicModel" />
+      <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" :error="canteenErrors?.economicModel" :tooltip="tooltips.economicModel"/>
       <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" :error="canteenErrors?.managementType" />
       <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" :error="canteenErrors?.productionType" />
       <AppFieldDisplay v-if="showCentralProducerSiret" :label="cantines.centralProducerSiret" :value="formatSiretOrSiren(canteenInformation.centralProducerSiret)" :error="canteenErrors?.centralProducerSiret" />
