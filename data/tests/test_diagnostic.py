@@ -253,6 +253,48 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
     @freeze_time("2026-01-30")  # during the 2025 campaign
+    def test_diagnostic_valeur_famille(self):
+        VALID_DIAGNOSTIC_COMPLETE_2025 = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        # default: ok
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertEqual(diagnostic.family_sum("viandes_volailles"), 0)  # only APPRO_LABELS
+        diagnostic.full_clean()  # should not raise
+        # 1 valeur_famille_label cannot be > valeur_famille
+        diagnostic.valeur_viandes_volailles_bio = 200
+        diagnostic.valeur_viandes_volailles_fermier = 50
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # even for non-egalim labels
+        diagnostic.valeur_viandes_volailles_bio = 10
+        diagnostic.valeur_viandes_volailles_fermier = 10
+        diagnostic.valeur_viandes_volailles_europe = 200
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # sum of valeur_famille_label cannot be > valeur_famille
+        diagnostic.valeur_viandes_volailles_bio = 10
+        diagnostic.valeur_viandes_volailles_label_rouge = 10
+        diagnostic.valeur_viandes_volailles_aocaop_igp_stg = 10
+        diagnostic.valeur_viandes_volailles_hve = 10
+        diagnostic.valeur_viandes_volailles_peche_durable = 10
+        diagnostic.valeur_viandes_volailles_rup = 10
+        diagnostic.valeur_viandes_volailles_commerce_equitable = 10
+        diagnostic.valeur_viandes_volailles_fermier = 10
+        diagnostic.valeur_viandes_volailles_externalites = 10
+        diagnostic.valeur_viandes_volailles_performance = 10
+        diagnostic.valeur_viandes_volailles_non_egalim = 10
+        diagnostic.valeur_viandes_volailles_europe = 10
+        diagnostic.valeur_viandes_volailles_france = 10
+        diagnostic.valeur_viandes_volailles_circuit_court = 10
+        diagnostic.valeur_viandes_volailles_local = 10
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertEqual(diagnostic.family_sum("viandes_volailles"), 110)  # only APPRO_LABELS
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_viandes_volailles_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
