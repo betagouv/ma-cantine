@@ -190,6 +190,30 @@ def validate_valeur_famille(instance):
     return errors
 
 
+def validate_valeur_famille_bio(instance):
+    """
+    - extra validation:
+        - valeur_famille_bio must be >= valeur_famille_bio_dont_commerce_equitable
+    """
+    errors = {}
+    for family in instance.APPRO_FAMILIES:
+        field_name = f"valeur_{family}_bio"
+        field_value = getattr(instance, field_name)
+        if field_value is not None:
+            bio_dont_commerce_equitable_field_name = f"{field_name}_dont_commerce_equitable"
+            bio_dont_commerce_equitable_field_value = getattr(instance, bio_dont_commerce_equitable_field_name)
+            if (
+                bio_dont_commerce_equitable_field_value is not None
+                and bio_dont_commerce_equitable_field_value > field_value
+            ):
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    f"La valeur (HT) bio dont commerce équitable, {bio_dont_commerce_equitable_field_value}, est plus que la valeur totale (HT) bio, {field_value}",
+                )
+    return errors
+
+
 def validate_valeur_bio(instance):
     """
     - extra validation:

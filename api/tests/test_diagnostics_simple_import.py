@@ -186,7 +186,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 21)
+        self.assertEqual(len(errors), 22)
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
