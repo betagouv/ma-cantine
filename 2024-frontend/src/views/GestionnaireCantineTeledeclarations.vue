@@ -15,13 +15,13 @@ const diagnostics = computedAsync(async () => await diagnosticService.fetchDiagn
 
 <template>
   <CanteenSidebarTitle :title="route.meta.title" />
-  <ul class="gestionnaire-cantine-teledeclarations ma-cantine--unstyled-list">
+  <ul class="gestionnaire-cantine-teledeclarations ma-cantine--unstyled-list fr-mt-md-n4w">
     <CanteenTeledeclarationPdf
       v-for="diagnostic in diagnostics"
       :key="diagnostic"
       :diagnostic="diagnostic"
       :canteen-id="canteenInformations.id"
-      class="gestionnaire-cantine-teledeclarations__item fr-mt-md-n4w"
+      class="gestionnaire-cantine-teledeclarations__item"
     />
   </ul>
 </template>
