@@ -40,7 +40,7 @@ const generatedFromGroupeLink = computed(() => {
 </script>
 
 <template>
-  <li class="canteen-teledeclaration-pdf fr-pb-2w fr-my-1w">
+  <li class="canteen-teledeclaration-pdf fr-py-2w fr-my-1w">
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
       <div class="fr-col-12 fr-col-md-3">
         <p class="fr-mb-0 fr-text--bold">Ma télédéclaration {{ diagnostic.year }}</p>
