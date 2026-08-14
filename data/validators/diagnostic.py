@@ -71,11 +71,30 @@ def validate_diagnostic_type(instance):
     return errors
 
 
+def validate_canteen_fields_required(instance):
+    """
+    - clean_fields() (called by full_clean()) already does some checks
+    - extra validation: depending on the year of the diagnostic
+        - in 2026 and after, nombre_repas_an is required
+    """
+    errors = {}
+    if instance.year:
+        if int(instance.year) >= 2026:
+            required_fields = instance.CANTEEN_FIELDS
+            for field in required_fields:
+                if getattr(instance, field) is None:
+                    utils_utils.add_validation_error(
+                        errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
+                    )
+    return errors
+
+
 def validate_appro_fields_required(instance):
     """
     - clean_fields() (called by full_clean()) already does some checks
       BUT most of the model fields are optional...
     - extra validation: depending on the year & diagnostic_type of the diagnostic
+        - before 2025, only valeur_totale is required
     """
     errors = {}
     if instance.year:

@@ -1861,6 +1861,7 @@ class Diagnostic(models.Model):
         validation_errors = utils_utils.merge_validation_errors(
             diagnostic_validators.validate_year_and_can_edit(self),
             diagnostic_validators.validate_diagnostic_type(self),
+            diagnostic_validators.validate_canteen_fields_required(self),
             diagnostic_validators.validate_appro_fields_required(self),
             diagnostic_validators.validate_valeur_totale(self),
             diagnostic_validators.validate_valeur_famille(self),
