@@ -35,11 +35,18 @@ const goToEdit = () => {
   <div class="fr-container fr-background-alt--red-marianne fr-p-4w fr-mt-3w">
     <h3 class="fr-h6 fr-text-default--error fr-mb-2w">
       <span class="mdi mdi-archive"></span>
-      Archiver cet établissement
+      Archiver {{ canteenInformations.isGroupe ? "ce groupe" : "cette cantine" }}
     </h3>
-    <p class="fr-mb-0">
-      Vous ne souhaitez plus faire apparaître cet établissement sur la plateforme <em>ma cantine</em> ? <br />
-      Vous pouvez l’archiver <AppLinkRouter :to="{ name: 'GestionnaireCantineArchiver', params: { canteenUrlComponent: canteenUrlComponent } }" title="en cliquant ici" />
-    </p>
+    <div>
+      <p>
+        <span v-if="canteenInformations.isGroupe">La gestion groupée des cantines du groupe n’est plus pertinente ?</span>
+        <span v-else>Vous ne souhaitez plus faire apparaître cette cantine sur la plateforme <em>ma cantine</em> ?</span>
+        <br />
+        Vous pouvez l’archiver <AppLinkRouter :to="{ name: 'GestionnaireCantineArchiver', params: { canteenUrlComponent: canteenUrlComponent } }" title="en cliquant ici" />
+      </p>
+      <p v-if="canteenInformations.isGroupe" class="fr-mb-0">
+        Attention : si vous archivez un groupe, les cantines seront uniquement dissociées du groupe, mais ne seront pas archivées.
+      </p>
+    </div>
   </div>
 </template>
