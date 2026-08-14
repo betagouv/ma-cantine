@@ -78,7 +78,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
     </li>
     <li v-if="!canteenIsGroupe" class="fr-my-3w">
       <h3 class="fr-h5">Informations générées</h3>
-      <DsfrAlert title="Ces informations ne sont pas modifiables" type="info" class="fr-mb-2w" titleTag="h4">
+      <DsfrAlert :small="true" type="info" class="fr-mb-2w" titleTag="h4">
         Informations générées à partir à partir du SIRET ou du SIREN de la cantine, via les référentiels
         <a href="https://annuaire-entreprises.data.gouv.fr" target="_blank">l'annuaire des entreprises</a>
         et
@@ -105,9 +105,13 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
     </li>
     <li v-if="showGroupeInformations" class="fr-my-3w">
       <h3 class="fr-h5">Informations de mon groupe</h3>
-      <DsfrAlert title="Le gestionnaire du groupe de restaurants satellites a ajouté votre établissement" type="info" class="fr-mb-2w" titleTag="h4">
-        Cela lui permet de réaliser une déclaration unique pour laquelle le montant total des achats du groupe est ensuite réparti automatiquement entre chaque restaurant satellite, au prorata de son nombre de couverts annuels.
-        Si vous remarquez une erreur ou souhaitez ne plus être associer au groupe, merci de <AppLinkRouter title="nous contacter" :to="{name: 'Contact'}" />.
+      <DsfrAlert :small="true" type="info" class="fr-mb-2w" titleTag="h4">
+        Le gestionnaire du groupe peut réaliser la télédéclaration de la cantine, de manière groupée (avec l’ensemble
+        des cantines du groupe). Le montant total des achats est réparti automatiquement au prorata du nombre de
+        couverts annuels de chaque cantine (le nombre de couvert annuel est une donnée renseignée par le gestionnaire du
+        groupe lors de la télédéclaration). Attention : seul le gestionnaire du groupe peut ajouter ou retirer une
+        cantine du groupe. Si vous remarquez une erreur ou souhaitez ne plus être associer au groupe, merci de
+        <AppLinkRouter title="nous contacter" :to="{ name: 'Contact' }" />.
       </DsfrAlert>
       <AppFieldDisplay :label="cantines.nameGroupe" :value="canteenInformation.groupe?.name" />
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe?.id" />
