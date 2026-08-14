@@ -12,6 +12,7 @@ const router = useRouter()
 const canteenUrlComponent = route.params.canteenUrlComponent
 const { canteenInformations } = storeToRefs(useStoreCanteen())
 const title = computed(() => canteenInformations.value?.isGroupe ? 'Informations du groupe' : 'Informations de la cantine')
+const editButtonLabel = computed(() => canteenInformations.value?.isGroupe ? 'Modifier les informations du groupe' : 'Modifier les informations de la cantine')
 
 const goToEdit = () => {
   const pageName = canteenInformations.value.isGroupe ? "GestionnaireCantineGroupeModifier" : "GestionnaireCantineRestaurantModifier"
@@ -23,7 +24,7 @@ const goToEdit = () => {
   <CanteenSidebarTitle :title="title">
     <DsfrButton
       @click="goToEdit"
-      :label="canteenInformations.isGroupe ? 'Modifier les informations du groupe' : 'Modifier mes informations'"
+      :label="editButtonLabel"
       icon="ri-pencil-line"
     />
   </CanteenSidebarTitle>
