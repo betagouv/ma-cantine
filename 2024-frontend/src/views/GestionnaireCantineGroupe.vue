@@ -75,7 +75,7 @@ const clickSearch = () => {
         En tant que gestionnaire du groupe, vous pouvez visualiser, ajouter et retirer des cantines déjà inscrites sur ma cantine.
       </p>
       <DsfrAlert title-tag="p" :small="true" class="fr-mb-2w">
-        Attention, vous pouvez modifier des cantines uniquement si vous êtes gestionnaire de ces cantines
+        Attention, vous pouvez modifier des cantines uniquement si vous êtes gestionnaire de ces cantines.
         Si ce n’est pas le cas : contactez le (ou les) gestionnaire(s) de la cantine concernée afin qu’il(s) vous invite(nt). Les cantines dont vous êtes gestionnaire sont soulignées et clicables.
       </DsfrAlert>
     </div>
