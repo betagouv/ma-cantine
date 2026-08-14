@@ -159,7 +159,7 @@ def validate_valeur_famille(instance):
                     utils_utils.add_validation_error(
                         errors,
                         field_name,
-                        f"La valeur (HT) {family}, {field_value}, est moins que la valeur (HT) {family_label_field_name}, {family_label_field_value}",
+                        f"La valeur (HT) {family}, {field_value}, est moins que la valeur (HT) {family}_{label}, {family_label_field_value}",
                     )
             family_sum = instance.family_sum(family)
             if family_sum and family_sum > field_value:
