@@ -139,6 +139,38 @@ def validate_valeur_totale(instance):
     return errors
 
 
+def validate_valeur_famille(instance):
+    """
+    - clean_fields() (called by full_clean()) already does some checks
+    - extra validation:
+        - for each family field:
+            - valeur_famille must be >= each of the valeur_famille_label fields
+            - valeur_famille must be >= sum of each label for that family
+    """
+    errors = {}
+    for family in instance.APPRO_FAMILIES:
+        field_name = f"valeur_{family}"
+        field_value = getattr(instance, field_name)
+        if field_value is not None:
+            for label in instance.APPRO_LABELS_ALL:
+                family_label_field_name = f"valeur_{family}_{label}"
+                family_label_field_value = getattr(instance, family_label_field_name)
+                if family_label_field_value and family_label_field_value > field_value:
+                    utils_utils.add_validation_error(
+                        errors,
+                        field_name,
+                        f"La valeur (HT) {family}, {field_value}, est moins que la valeur (HT) {family_label_field_name}, {family_label_field_value}",
+                    )
+            family_sum = instance.family_sum(family)
+            if family_sum and family_sum > field_value:
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    f"La valeur (HT) {family}, {field_value}, est moins que la somme des valeurs d'approvisionnement de tous les labels, {family_sum}",
+                )
+    return errors
+
+
 def validate_valeur_bio(instance):
     """
     - extra validation:
