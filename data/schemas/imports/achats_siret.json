@@ -112,7 +112,7 @@
         "pattern": "^ *(EUROPE|FRANCE) *$",
         "required": false
       },
-      "description": "Une seule origine peut être renseignée, EUROPE (hors France) ou FRANCE",
+      "description": "Une seule origine peut être renseignée, EUROPE (UE hors France) ou FRANCE",
       "doc_enum": [
         "EUROPE",
         "FRANCE"

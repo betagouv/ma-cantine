@@ -143,7 +143,7 @@ export default Object.freeze({
       longText:
         "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
     },
-    EUROPE: { text: "Origine Europe" },
+    EUROPE: { text: "Origine UE (hors France)" },
     FRANCE: { text: "Origine France" },
     CIRCUIT_COURT: { text: "Circuit court" },
     LOCAL: { text: "Local" },
@@ -202,7 +202,7 @@ export default Object.freeze({
       color: "pink",
     },
     NON_EGALIM: { text: "Non-EGalim", color: "blue-grey lighten-2" },
-    // EUROPE: { text: "Origine Europe", additional: true },
+    // EUROPE: { text: "Origine UE (hors France)", additional: true },
     FRANCE: { text: "Origine France", additional: true },
     CIRCUIT_COURT: { text: "Origine France : dont circuit-court", additional: true },
     LOCAL: { text: "Origine France : dont local", additional: true },

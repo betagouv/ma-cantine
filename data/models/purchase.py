@@ -144,7 +144,7 @@ class Purchase(SoftDeletionModel):
         EQUIVALENTS = "EQUIVALENTS", "Produits équivalents"  # not used anymore
         EUROPE = (
             "EUROPE",
-            "Origine Europe (hors France)",
+            "Origine UE (hors France)",
         )  # Espace Économique Européen qui inclut l'Union Européenne, l'Islande, le Liechtenstein et la Norvège
         FRANCE = "FRANCE", "Origine France"
         CIRCUIT_COURT = "CIRCUIT_COURT", "Circuit-court"
