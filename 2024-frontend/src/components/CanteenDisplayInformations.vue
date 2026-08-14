@@ -22,7 +22,8 @@ const showGroupeInformations = computed(() => props.canteenInformation.groupe !=
 /* Tooltips */
 const tooltips = computed(() => {
   return {
-    economicModel: cantines.economicModel.find(option => option.value === props.canteenInformation?.economicModel)?.hint
+    economicModel: cantines.economicModel.find(option => option.value === props.canteenInformation?.economicModel)?.hint,
+    dailyMealCount: props.canteenIsGroupe ? "Estimation du nombre de couverts / jour sur l’ensemble des cantines du groupe." : "Estimation du nombre de couverts / jour moyen. Permet d’informer sur la taille de la cantine."
   }
 })
 
@@ -71,9 +72,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay v-else-if="!canteenIsGroupe && !canteenInformation.sirenUniteLegale && !canteenInformation.siret" :label="`${cantines.siretName} ou ${cantines.sirenUniteLegaleName}`" :value="null" :error="canteenErrors?.siret" />
       <AppFieldDisplay v-else-if="canteenIsGroupe && !canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="null" :error="canteenErrors?.sirenUniteLegale" />
       <AppFieldDisplay :label="canteenIsGroupe ? cantines.nameGroupe : cantines.nameCantine" :value="canteenInformation.name" :error="canteenErrors?.name" />
-      <AppFieldDisplay :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount" :error="canteenErrors?.dailyMealCount"
-        tooltip="Donnez une moyenne globale sur les jours ouverts de vos établissements (pour évaluer la taille de votre établissement)"
-      />
+      <AppFieldDisplay :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount" :error="canteenErrors?.dailyMealCount" :tooltip="tooltips.dailyMealCount" />
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
     </li>
