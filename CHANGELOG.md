@@ -6,6 +6,45 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.45.0](https://github.com/betagouv/ma-cantine/compare/v2026.44.0...v2026.45.0) (2026-08-14)
+
+
+### Nouveautés
+
+* **Établissement:** ajoute de la page "Toutes mes télédéclarations" ([#6907](https://github.com/betagouv/ma-cantine/issues/6907)) ([8f69034](https://github.com/betagouv/ma-cantine/commit/8f6903404b311a27eec00a4efac568ba385222f8))
+* **Établissement:** ajoute la page "Cantine du groupe" ([#6906](https://github.com/betagouv/ma-cantine/issues/6906)) ([3542588](https://github.com/betagouv/ma-cantine/commit/35425889a3e7a1cae5658db5db820e96db7da234))
+* **Établissement:** ajoute la page "Ma page publique" ([#6921](https://github.com/betagouv/ma-cantine/issues/6921)) ([d621334](https://github.com/betagouv/ma-cantine/commit/d6213348df473e904215580ebe8d932f65c3b450))
+* **Établissement:** ajoute la page "Mes informations" ([#6902](https://github.com/betagouv/ma-cantine/issues/6902)) ([3594afe](https://github.com/betagouv/ma-cantine/commit/3594afe36fbe544be5b202a9d5688247ba87a577))
+* **Établissement:** utilise le nouvel endpoint api pour récupérer les justificatifs de TD ([#6983](https://github.com/betagouv/ma-cantine/issues/6983)) ([14df6ba](https://github.com/betagouv/ma-cantine/commit/14df6baf338818f96c17ccfaf98a3dc8ef0c75f9))
+* **Gestionnaires:** ajoute la page "Mes gestionnaires" ([#6909](https://github.com/betagouv/ma-cantine/issues/6909)) ([f8b929c](https://github.com/betagouv/ma-cantine/commit/f8b929ca4e65e49ffbbd9da3815499473dcee35e))
+* **Mes bilans:** création de la structure de page ([#6900](https://github.com/betagouv/ma-cantine/issues/6900)) ([5a0146d](https://github.com/betagouv/ma-cantine/commit/5a0146d360aac8107a6b9283c6992ab3e11d486a))
+
+
+### Améliorations
+
+* **Établissement:** accessibilité ([#6948](https://github.com/betagouv/ma-cantine/issues/6948)) ([ea7a405](https://github.com/betagouv/ma-cantine/commit/ea7a405f546bfed6812e3f65d96a2f1f7a0703f1))
+* **Établissement:** affiche les champs en erreur ([#6934](https://github.com/betagouv/ma-cantine/issues/6934)) ([c7d0aa3](https://github.com/betagouv/ma-cantine/commit/c7d0aa3b0beed36be7919db94b5f8b65ffe25bf2))
+* **Établissement:** création d'un store et du router pour gérer le layout ([#6959](https://github.com/betagouv/ma-cantine/issues/6959)) ([836d937](https://github.com/betagouv/ma-cantine/commit/836d9373f4be2615485da1f1a52640eee44a3bb3))
+* **Établissement:** déplace le champ "publicationComment" de "Ma page publique" à "Mes informations" ([#6987](https://github.com/betagouv/ma-cantine/issues/6987)) ([890c336](https://github.com/betagouv/ma-cantine/commit/890c336ab50c4c3c120098c56fc5c92ebb8be9f5))
+* **Établissement:** remplace la page "Gérer mon établissement" pour la nouvelle page "Informations" ([#6905](https://github.com/betagouv/ma-cantine/issues/6905)) ([dd51426](https://github.com/betagouv/ma-cantine/commit/dd51426d1586f93b06a685267d17ecaf2ba3f004))
+* **Etablissement:** renomme les composants et personnalise la sidebar pour suivre les maquettes ([#6903](https://github.com/betagouv/ma-cantine/issues/6903)) ([c347ecc](https://github.com/betagouv/ma-cantine/commit/c347ecc671f1a44f02acb9bf19b107bdbd7fc64d))
+* **Établissement:** responsive ([#6947](https://github.com/betagouv/ma-cantine/issues/6947)) ([8f5cb57](https://github.com/betagouv/ma-cantine/commit/8f5cb570c4983b0fb583aa28921ddf709818da94))
+* **Établissement:** supprime l'ancienne page et tout le code lié ([#6946](https://github.com/betagouv/ma-cantine/issues/6946)) ([68b3093](https://github.com/betagouv/ma-cantine/commit/68b3093fe6f1b4f75162b71b9027896261fad1ce))
+* **Établissement:** utilise le nouvel endpoint pour récupérer les gestionnaires et les invitations de la cantine ([#6951](https://github.com/betagouv/ma-cantine/issues/6951)) ([21ffb4e](https://github.com/betagouv/ma-cantine/commit/21ffb4e84040a2ee64743ae80edc2ce4309e90f2))
+* **Établissement:** utilise les endpoints API dédiés pour mettre à jour le logo ([#6953](https://github.com/betagouv/ma-cantine/issues/6953)) ([96d5a47](https://github.com/betagouv/ma-cantine/commit/96d5a47ab7d0e7983cf3be7def16cfb8a2d6f778))
+* **Établissement:** utilise les enpoints dédiés pour mettre à jour les images de la cantine ([#6954](https://github.com/betagouv/ma-cantine/issues/6954)) ([4d354f2](https://github.com/betagouv/ma-cantine/commit/4d354f22b48b26c629f83e54cffc55d9884fba6e))
+* **Tableau:** rend l'affichage de la pagination dynamique ([#6950](https://github.com/betagouv/ma-cantine/issues/6950)) ([cb8c15e](https://github.com/betagouv/ma-cantine/commit/cb8c15ef443cb1d72432ee4c07c63df51b283d48))
+
+
+### Corrections (bugs, typos...)
+
+* **Établissement:** corrige le nom du composant pour respecter la case ([#6984](https://github.com/betagouv/ma-cantine/issues/6984)) ([73bc1c0](https://github.com/betagouv/ma-cantine/commit/73bc1c070734c9957fa2f96a1f72a54178870e0e))
+* **Établissement:** corrige le tag "groupe" ([#6988](https://github.com/betagouv/ma-cantine/issues/6988)) ([f673f25](https://github.com/betagouv/ma-cantine/commit/f673f25127951ec03dfdb7ebbc6f35273a8ff58d))
+* **Établissement:** différents correctifs et améliorations ([#6955](https://github.com/betagouv/ma-cantine/issues/6955)) ([1fae136](https://github.com/betagouv/ma-cantine/commit/1fae136f8669e92b885c36398db42caa117ec5f0))
+* **Établissements:** petite correction de typo et style ([#7016](https://github.com/betagouv/ma-cantine/issues/7016)) ([a18f084](https://github.com/betagouv/ma-cantine/commit/a18f0849747ba2c13f7a33b54cf71286ce2b8f1c))
+* **Pages Établissements:** diverses corrections et améliorations suite au recettage de l'équipe déploiement ([#7013](https://github.com/betagouv/ma-cantine/issues/7013)) ([5e9304f](https://github.com/betagouv/ma-cantine/commit/5e9304fee6dc4ba1c0aa32ecdef025e021d34faf))
+* **Toutes les télédéclarations:** corrige décalage alignement ([#7017](https://github.com/betagouv/ma-cantine/issues/7017)) ([0ae0f3b](https://github.com/betagouv/ma-cantine/commit/0ae0f3b25fa00fa768c8eb69ed8cabd877cfb05b))
+
 ## [2026.44.0](https://github.com/betagouv/ma-cantine/compare/v2026.43.0...v2026.44.0) (2026-08-14)
 
 
