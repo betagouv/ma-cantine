@@ -27,6 +27,22 @@ onMounted(() => loadStore())
 onUnmounted(() => canteenStore.deleteStore())
 watch(canteenUrlId, () => loadStore())
 
+/* Badges */
+const badgeEstablishment = computed(() => {
+  const isGroupe = canteenInformations.value?.isGroupe
+  const isSatWithGroupe = canteenInformations.value?.groupe !== null && canteenInformations.value?.isSatellite
+  if (isGroupe) return { type: "info", label: "Groupe" }
+  else if (isSatWithGroupe) return { type: "new", label: "Cantine en gestion groupée" }
+  return { type: "success", label: "Cantine" }
+})
+const badgeSiretOrSiren = computed(() => {
+  const hasSiret = canteenInformations.value?.siret
+  const name = hasSiret ? "SIRET" : "SIREN"
+  const valueToFormat = hasSiret ? canteenInformations.value.siret : canteenInformations.value.sirenUniteLegale
+  return `${name} : ${formatSiretOrSiren(valueToFormat)}`
+})
+
+
 /* Sidebar links */
 const menuItems = computed(() =>  {
   const isGroupe = canteenInformations.value?.isGroupe
@@ -37,12 +53,12 @@ const menuItems = computed(() =>  {
   const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
 
   const cantinePage = {
-    text: isGroupe ? "Informations du groupe" : "Mes informations",
+    text: isGroupe ? "Informations du groupe" : "Informations de la cantine",
     to: { name: "GestionnaireCantine" },
     active: cantineActive
   }
   const gestionnairesPage = {
-    text: isGroupe ? "Gestionnaires" : "Mes gestionnaires",
+    text: isGroupe ? "Gestionnaires du groupe" : "Gestionnaires de la cantine",
     to: { name: "GestionnaireCantineGestionnaires" },
     active: gestionnairesActive
   }
@@ -52,12 +68,12 @@ const menuItems = computed(() =>  {
     active: cantinesGroupeActive
   }
   const pagePubliquePage = {
-    text: "Ma page publique",
+    text: "Page publique et affiche",
     to: { name: "GestionnaireCantinePagePublique" },
     active: pagePubliqueActive
   }
   const teledeclarationsPage =  {
-    text: "Toutes mes télédéclarations",
+    text: "Toutes les télédéclarations",
     to: { name: "GestionnaireCantineTeledeclarations" },
     active: teledeclarationsActive
   }
@@ -79,10 +95,9 @@ const menuItems = computed(() =>  {
   <div v-else-if="canteenInformations" class="layout-sidebar-canteen">
     <h1>{{ canteenInformations.name }}</h1>
     <div class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-4w">
-      <DsfrBadge v-if="canteenInformations.isGroupe" type="info" :noIcon="true" label="Groupe" />
-      <DsfrBadge v-if="canteenInformations.id" type="neutral" :label="`ID : ${canteenInformations.id}`" />
-      <DsfrBadge v-if="canteenInformations.siret" type="neutral" :label="`SIRET : ${formatSiretOrSiren(canteenInformations.siret)}`" />
-      <DsfrBadge v-if="canteenInformations.sirenUniteLegale" type="neutral" :label="`SIREN : ${formatSiretOrSiren(canteenInformations.sirenUniteLegale)}`" />
+      <DsfrBadge :label="badgeEstablishment.label" :type="badgeEstablishment.type" :noIcon="true" />
+      <DsfrBadge :label="`ID : ${canteenInformations.id}`" type="neutral" />
+      <DsfrBadge :label="badgeSiretOrSiren" type="neutral" />
     </div>
     <div class="fr-grid-row ma-cantine--sticky__container">
       <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 fr-background-default--grey">

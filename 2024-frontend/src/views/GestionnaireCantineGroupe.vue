@@ -70,6 +70,15 @@ const clickSearch = () => {
     <CanteenSidebarTitle :title="route.meta.title">
       <DsfrButton primary label="Ajouter une cantine au groupe" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
     </CanteenSidebarTitle>
+    <div>
+      <p>
+        En tant que gestionnaire du groupe, vous pouvez visualiser, ajouter et retirer des cantines déjà inscrites sur ma cantine.
+      </p>
+      <DsfrAlert title-tag="p" :small="true" class="fr-mb-2w">
+        Attention, vous pouvez modifier des cantines uniquement si vous êtes gestionnaire de ces cantines
+        Si ce n’est pas le cas : contactez le (ou les) gestionnaire(s) de la cantine concernée afin qu’il(s) vous invite(nt). Les cantines dont vous êtes gestionnaire sont soulignées et clicables.
+      </DsfrAlert>
+    </div>
     <div class="fr-grid-row fr-mb-2w fr-grid-row--middle">
       <div class="fr-col-12 fr-col-md-6">
         <p class="fr-mb-md-0">{{ satellitesCountSentence }}</p>

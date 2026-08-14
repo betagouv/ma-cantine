@@ -19,6 +19,14 @@ const showCentralProducerSiret = computed(() => {
 })
 const showGroupeInformations = computed(() => props.canteenInformation.groupe !== null)
 
+/* Tooltips */
+const tooltips = computed(() => {
+  return {
+    economicModel: cantines.economicModel.find(option => option.value === props.canteenInformation?.economicModel)?.hint,
+    dailyMealCount: props.canteenIsGroupe ? "Estimation du nombre de couverts / jour sur l’ensemble des cantines du groupe." : "Estimation du nombre de couverts / jour moyen. Permet d’informer sur la taille de la cantine."
+  }
+})
+
 /* Value */
 const getPrettyValue = (name, field) => {
   if (!name) return null
@@ -49,35 +57,48 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
 
 <template>
   <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
+    <li v-if="showGroupeInformations" class="fr-my-3w">
+      <h3 class="fr-h5">Informations de mon groupe</h3>
+      <DsfrAlert :small="true" type="info" class="fr-mb-2w" titleTag="h4">
+        Le gestionnaire du groupe peut réaliser la télédéclaration de la cantine, de manière groupée (avec l’ensemble
+        des cantines du groupe). Le montant total des achats est réparti automatiquement au prorata du nombre de
+        couverts annuels de chaque cantine (le nombre de couvert annuel est une donnée renseignée par le gestionnaire du
+        groupe lors de la télédéclaration). Attention : seul le gestionnaire du groupe peut ajouter ou retirer une
+        cantine du groupe. Si vous remarquez une erreur ou souhaitez ne plus être associer au groupe, merci de
+        <AppLinkRouter title="nous contacter" :to="{ name: 'Contact' }" />.
+      </DsfrAlert>
+      <AppFieldDisplay :label="cantines.nameGroupe" :value="canteenInformation.groupe?.name" />
+      <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe?.id" />
+      <AppFieldDisplay :label="`${cantines.sirenUniteLegaleName} du groupe`" :value="formatSiretOrSiren(canteenInformation.groupe?.sirenUniteLegale)" />
+    </li>
     <li class="fr-my-3w">
       <h3 class="fr-h5">Caractéristiques</h3>
-      <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" :error="canteenErrors?.economicModel" />
+      <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" :error="canteenErrors?.economicModel" :tooltip="tooltips.economicModel"/>
       <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" :error="canteenErrors?.managementType" />
       <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" :error="canteenErrors?.productionType" />
       <AppFieldDisplay v-if="showCentralProducerSiret" :label="cantines.centralProducerSiret" :value="formatSiretOrSiren(canteenInformation.centralProducerSiret)" :error="canteenErrors?.centralProducerSiret" />
     </li>
     <li class="fr-my-3w">
-      <h3 class="fr-h5">Identification de l'établissement</h3>
+      <h3 class="fr-h5">Identification {{ canteenIsGroupe ? 'du groupe' : 'de la cantine' }}</h3>
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.id" tooltip="Identifiant unique de l'établissement, ce champ ne peut pas être modifié."/>
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatSiretOrSiren(canteenInformation.siret)" :error="canteenErrors?.siret" />
       <AppFieldDisplay v-else-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatSiretOrSiren(canteenInformation.sirenUniteLegale)" :error="canteenErrors?.sirenUniteLegale" />
       <AppFieldDisplay v-else-if="!canteenIsGroupe && !canteenInformation.sirenUniteLegale && !canteenInformation.siret" :label="`${cantines.siretName} ou ${cantines.sirenUniteLegaleName}`" :value="null" :error="canteenErrors?.siret" />
       <AppFieldDisplay v-else-if="canteenIsGroupe && !canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="null" :error="canteenErrors?.sirenUniteLegale" />
       <AppFieldDisplay :label="canteenIsGroupe ? cantines.nameGroupe : cantines.nameCantine" :value="canteenInformation.name" :error="canteenErrors?.name" />
-      <AppFieldDisplay :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount" :error="canteenErrors?.dailyMealCount"
-        tooltip="Donnez une moyenne globale sur les jours ouverts de vos établissements (pour évaluer la taille de votre établissement)"
-      />
+      <AppFieldDisplay :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount" :error="canteenErrors?.dailyMealCount" :tooltip="tooltips.dailyMealCount" />
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
     </li>
     <li v-if="!canteenIsGroupe" class="fr-my-3w">
       <h3 class="fr-h5">Informations générées</h3>
-      <DsfrAlert title="Ces informations ne sont pas modifiables" type="info" class="fr-mb-2w" titleTag="h4">
-        À partir des informations renseignées, nous avons généré des données avec d'autres référentiels :
-        <a href="https://france-pat.fr" target="_blank">France PAT</a>
+      <DsfrAlert :small="true" type="info" class="fr-mb-2w" titleTag="h4">
+        Informations générées à partir à partir du SIRET ou du SIREN de la cantine, via les référentiels
+        <a href="https://annuaire-entreprises.data.gouv.fr" target="_blank">l'annuaire des entreprises</a>
         et
-        <a href="https://annuaire-entreprises.data.gouv.fr" target="_blank">l'annuaire des entreprises</a>.
-        Si vous remarquez une erreur, merci de <AppLinkRouter title="nous contacter" :to="{name: 'Contact'}" />.
+        <a href="https://france-pat.fr" target="_blank">France PAT</a>.
+        Si vous remarquez une erreur sur les données géographiques, rendez-vous sur <a href="https://www.insee.fr/fr/information/1401387" target="_blank">Immatriculation, cessation ou modification des données au répertoire Sirene | Insee</a>.<br/>
+        Concernant les Projets alimentaires territoriaux, la base est actualisée deux fois par ans, à partir des données actualisées sur France PAT.
       </DsfrAlert>
       <AppFieldDisplay v-if="!canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
       <AppFieldDisplay v-if="!canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
@@ -95,16 +116,6 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
     <li v-if="!canteenIsGroupe" class="fr-my-3w">
       <h3 class="fr-h5">Description</h3>
       <p>{{ canteenInformation.publicationComments || 'Aucune description enregistrée'}}</p>
-    </li>
-    <li v-if="showGroupeInformations" class="fr-my-3w">
-      <h3 class="fr-h5">Informations de mon groupe</h3>
-      <DsfrAlert title="Le gestionnaire du groupe de restaurants satellites a ajouté votre établissement" type="info" class="fr-mb-2w" titleTag="h4">
-        Cela lui permet de réaliser une déclaration unique pour laquelle le montant total des achats du groupe est ensuite réparti automatiquement entre chaque restaurant satellite, au prorata de son nombre de couverts annuels.
-        Si vous remarquez une erreur ou souhaitez ne plus être associer au groupe, merci de <AppLinkRouter title="nous contacter" :to="{name: 'Contact'}" />.
-      </DsfrAlert>
-      <AppFieldDisplay :label="cantines.nameGroupe" :value="canteenInformation.groupe?.name" />
-      <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe?.id" />
-      <AppFieldDisplay :label="`${cantines.sirenUniteLegaleName} du groupe`" :value="formatSiretOrSiren(canteenInformation.groupe?.sirenUniteLegale)" />
     </li>
   </ol>
 </template>
