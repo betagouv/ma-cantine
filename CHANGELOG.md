@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.44.0](https://github.com/betagouv/ma-cantine/compare/v2026.43.0...v2026.44.0) (2026-08-14)
+
+
+### Nouveautés
+
+* **Diagnostic:** nouveaux champs valeur_*famille* ([#7005](https://github.com/betagouv/ma-cantine/issues/7005)) ([b317916](https://github.com/betagouv/ma-cantine/commit/b31791670cb6d20544f9a8407abf443408c94346))
+* **Diagnostics:** API: nouvel endpoint /check qui renvoi des infos (is_filled, errors) ([#6991](https://github.com/betagouv/ma-cantine/issues/6991)) ([64a8b31](https://github.com/betagouv/ma-cantine/commit/64a8b3138ffd6db791578c83598ae2627e9fa0ef))
+* **Diagnostics:** nouveau champ `nombre_repas_an` (obligatoire à partir de 2026) ([#7010](https://github.com/betagouv/ma-cantine/issues/7010)) ([22dccdb](https://github.com/betagouv/ma-cantine/commit/22dccdb6a730fc023551f5b3b87ca8c1a9238c73))
+* **Diagnostics:** nouveaux champs valeur_*famille*_europe ([#7006](https://github.com/betagouv/ma-cantine/issues/7006)) ([3a5bc64](https://github.com/betagouv/ma-cantine/commit/3a5bc6487e5202f143213957c6cc71173d4b7988))
+
+
+### Améliorations
+
+* **Diagnostics:** Règle métier: s'assurer que le télédéclarant fait partie des gestionnaires ([#7004](https://github.com/betagouv/ma-cantine/issues/7004)) ([0df1585](https://github.com/betagouv/ma-cantine/commit/0df158516a94c3633acacb8667ac6690c661855e))
+* **Diagnostics:** Règles métiers: s'assurer que valeur_famille est toujours supérieur à chaque valeur_famille_label & à la somme des valeur_famille_label ([#7007](https://github.com/betagouv/ma-cantine/issues/7007)) ([3ea6261](https://github.com/betagouv/ma-cantine/commit/3ea62619f9e920f3bb342489da0cd347caa4e164))
+* **Diagnostics:** Règles métiers: s'assurer que valeur_famille_bio est toujours supérieur ou égale à valeur_famille_bio_dont_commerce_equitable ([#7012](https://github.com/betagouv/ma-cantine/issues/7012)) ([bd98cfa](https://github.com/betagouv/ma-cantine/commit/bd98cfab2ee5a1f9c2848e233a358e76e658b70a))
+
+
+### Technique
+
+* **Achats:** EUROPE: renomme le label à 'Origine UE (hors France)' ([#7009](https://github.com/betagouv/ma-cantine/issues/7009)) ([d890662](https://github.com/betagouv/ma-cantine/commit/d890662c7eac4ff07f1729bbb117395de0b32d81))
+* **Tests:** API: homogénéiser les tests suite à beaucoup de changements ([#6944](https://github.com/betagouv/ma-cantine/issues/6944)) ([014349c](https://github.com/betagouv/ma-cantine/commit/014349c6c7024225647ba1382d127534dc205b6d))
+
 ## [2026.43.0](https://github.com/betagouv/ma-cantine/compare/v2026.42.0...v2026.43.0) (2026-08-10)
 
 
