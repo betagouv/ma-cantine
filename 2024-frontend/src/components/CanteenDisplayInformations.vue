@@ -57,7 +57,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay v-if="showCentralProducerSiret" :label="cantines.centralProducerSiret" :value="formatSiretOrSiren(canteenInformation.centralProducerSiret)" :error="canteenErrors?.centralProducerSiret" />
     </li>
     <li class="fr-my-3w">
-      <h3 class="fr-h5">Identification de l'établissement</h3>
+      <h3 class="fr-h5">Identification {{ canteenIsGroupe ? 'du groupe' : 'de la cantine' }}</h3>
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.id" tooltip="Identifiant unique de l'établissement, ce champ ne peut pas être modifié."/>
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatSiretOrSiren(canteenInformation.siret)" :error="canteenErrors?.siret" />
       <AppFieldDisplay v-else-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatSiretOrSiren(canteenInformation.sirenUniteLegale)" :error="canteenErrors?.sirenUniteLegale" />
