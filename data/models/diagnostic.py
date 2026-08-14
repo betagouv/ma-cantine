@@ -19,6 +19,7 @@ from data.models.creation_source import CreationSource
 from data.utils import (
     CustomJSONEncoder,
     has_arrayfield_missing_query,
+    make_optional_positive_integer_field,
     make_optional_positive_decimal_field,
     make_optional_positive_percentage_decimal_field,
     sum_int_with_potential_null,
@@ -890,6 +891,11 @@ class Diagnostic(models.Model):
         "cout_repas",
     ]
 
+    CANTEEN_FIELDS = [
+        # new in 2026
+        "nombre_repas_an",
+    ]
+
     META_FIELDS = [
         "id",
         "canteen_id",
@@ -1022,6 +1028,9 @@ class Diagnostic(models.Model):
         blank=True,
         verbose_name="Progrès tunnel information convives",
     )
+
+    # Canteen info
+    nombre_repas_an = make_optional_positive_integer_field(verbose_name="Nombre de repas par an")
 
     # Product origin
     valeur_totale = make_optional_positive_decimal_field(
