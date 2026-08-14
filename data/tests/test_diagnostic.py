@@ -53,11 +53,27 @@ VALID_DIAGNOSTIC_SIMPLE_2025 = {
     "valeur_produits_de_la_mer_egalim": 40,
 }
 
+VALID_DIAGNOSTIC_SIMPLE_2026 = {
+    "year": 2026,
+    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
+    "nombre_repas_an": 1000,
+    "valeur_totale": 1000,
+    "valeur_bio": 200,
+    "valeur_siqo": 100,
+    "valeur_externalites_performance": 100,
+    "valeur_egalim_autres": 100,
+    "valeur_viandes_volailles": 100,
+    "valeur_viandes_volailles_egalim": 50,
+    "valeur_viandes_volailles_france": 20,
+    "valeur_produits_de_la_mer": 80,
+    "valeur_produits_de_la_mer_egalim": 40,
+}
+
 
 class DiagnosticModelSaveTest(TransactionTestCase):
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time("2026-01-30")  # during the 2025 campaign  # TODO: change to 2026
     def test_year_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
         VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
         # on save
         for VALUE_OK_ON_SAVE in [None, -2000, 0, 1991, 2024, "2023"]:
