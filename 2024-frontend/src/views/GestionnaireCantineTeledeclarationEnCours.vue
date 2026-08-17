@@ -16,6 +16,8 @@ const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédé
 const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
 const hasPuchase = true
 const purchaseAmount = "XXXX €"
+const hasSatellite = canteenInformations.value.isGroupe
+const satellitesCount = canteenInformations.value.satellitesCount
 
 const gotToAppro = () => {
   console.log("gotToAppro")
@@ -68,6 +70,21 @@ const gotToAppro = () => {
         </p>
       </li>
     </ol>
+
+    <AppBlueCard
+      v-if="hasSatellite"
+      class="fr-mt-4w"
+      title="Souhaitez-vous mettre à jour la liste de restaurants de votre groupe ?"
+      alert="Optionnel : cette étape n’est pas obligatoire pour déclarer vos approvisionnements."
+      :button="{
+        label: 'Mettre à jour mes cantines',
+        to: 'GestionnaireCantineGroupe',
+      }"
+    >
+      <p>
+        Vous avez <strong>{{ satellitesCount }} {{ satellitesCount > 1 ? 'restaurants liés' : 'restaurant lié' }}</strong> à vos approvisionnements groupés
+      </p>
+    </AppBlueCard>
 
     <AppBlueCard
       v-if="hasPuchase"
