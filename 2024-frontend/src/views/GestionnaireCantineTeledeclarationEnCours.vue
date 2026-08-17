@@ -75,15 +75,21 @@ const gotToAppro = () => {
     <AppBlueCard
       v-if="hasSatellite"
       class="fr-mt-4w"
-      title="Souhaitez-vous mettre à jour la liste de restaurants de votre groupe ?"
-      alert="Optionnel : cette étape n’est pas obligatoire pour déclarer vos approvisionnements."
+      title="Souhaitez-vous mettre à jour la liste de cantines de votre groupe ?"
+      :alert="{
+        description: emptySatellitesCount ? 'Obligatoire : vous devez lier au moins une cantine à vos approvisionnements groupés' : 'Optionnel : cette étape n’est pas obligatoire pour déclarer vos approvisionnements.',
+        type: emptySatellitesCount ? 'error' : 'info',
+      }"
       :button="{
         label: 'Mettre à jour mes cantines',
         to: 'GestionnaireCantineGroupe',
       }"
     >
-      <p>
-        Vous avez <strong>{{ satellitesCount }} {{ satellitesCount > 1 ? 'restaurants liés' : 'restaurant lié' }}</strong> à vos approvisionnements groupés
+      <p v-if="emptySatellitesCount">
+        Vous n’avez aucune cantine lié à vos approvisionnements groupés.
+      </p>
+      <p v-else>
+        Vous avez <strong>{{ satellitesCount }} {{ satellitesCount > 1 ? 'cantines liées' : 'cantine liée' }}</strong> à vos approvisionnements groupés
       </p>
     </AppBlueCard>
 
@@ -91,7 +97,9 @@ const gotToAppro = () => {
       v-if="hasPuchase"
       class="fr-mt-4w"
       title="Souhaitez-vous pré-remplir votre déclaration à partir de votre suivi d’achats ?"
-      alert="Optionnel : cette étape n’est pas obligatoire pour déclarer vos approvisionnements."
+      :alert="{
+        description: 'Optionnel : cette étape n’est pas obligatoire pour déclarer vos approvisionnements.',
+      }"
       :button="{
         label: 'Mettre à jour mes achats',
         to: 'PurchasesHome',

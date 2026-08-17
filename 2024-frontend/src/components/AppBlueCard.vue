@@ -11,7 +11,7 @@ const goTo = (to) => {
 <template>
   <div class="app-blue-card fr-background-alt--blue-france fr-p-4w">
     <p class="fr-h6">{{ title }}</p>
-    <DsfrAlert :description="alert" small class="fr-mb-2w" />
+    <DsfrAlert :description="alert.description" :type="alert.type || 'info'" small class="fr-mb-2w" />
     <slot />
     <DsfrButton :label="button.label" @click="goTo(button.to)" secondary />
   </div>
