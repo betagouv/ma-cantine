@@ -16,8 +16,9 @@ const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédé
 const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
 const hasPuchase = true
 const purchaseAmount = "XXXX €"
-const hasSatellite = canteenInformations.value.isGroupe
-const satellitesCount = canteenInformations.value.satellitesCount
+const hasSatellite = computed(() => canteenInformations.value.isGroupe)
+const satellitesCount = computed(() => canteenInformations.value.satellitesCount)
+const emptySatellitesCount = computed(() => hasSatellite.value && satellitesCount.value == 0)
 
 const gotToAppro = () => {
   console.log("gotToAppro")
