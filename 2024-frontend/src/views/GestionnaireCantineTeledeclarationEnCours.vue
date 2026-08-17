@@ -50,7 +50,7 @@ const gotToAppro = () => {
   </div>
 
   <div>
-    <h3 class="fr-h5 fr-mb-4w">Avant de débuter</h3>
+    <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
     <ol v-if="!canteenInformations.isGroupe" class="ma-cantine--ordered-list ma-cantine--unstyled-list">
       <li class="fr-mb-2w">
         <p class="fr-mb-0">
