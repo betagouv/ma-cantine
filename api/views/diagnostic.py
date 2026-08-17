@@ -22,6 +22,7 @@ from api.serializers import (
     DiagnosticAndCanteenSerializer,
     ManagerDiagnosticSerializer,
     DiagnosticCheckSerializer,
+    DiagnosticRecapSerializer,
 )
 from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.utils import file_import, send_mail
@@ -122,6 +123,14 @@ class DiagnosticRetrieveUpdateView(RetrieveUpdateAPIView):
         update_change_reason_with_auth(self, diagnostic)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Récupérer le récapitulatif par année des bilans d'une cantine.",
+        description="",
+        tags=["Bilans"],
+        responses=DiagnosticRecapSerializer(many=True),
+    ),
+)
 class DiagnosticListRecapView(APIView):
     permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
 
@@ -168,7 +177,7 @@ class DiagnosticListRecapView(APIView):
                     "generated_from_groupe_diagnostic_mode": generated_from_groupe_diagnostic_mode,
                 }
             )
-        return Response(result)
+        return Response(DiagnosticRecapSerializer(result, many=True).data)
 
 
 @extend_schema_view(
