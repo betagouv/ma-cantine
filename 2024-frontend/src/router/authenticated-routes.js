@@ -29,6 +29,7 @@ import GestionnaireImportCantinesModifier from "@/views/GestionnaireImportCantin
 import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportCantinesGestionnaires.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 import GestionnaireTunnelInformations from "@/views/GestionnaireTunnelInformations.vue"
+import GestionnaireTunnelCouvertsAnnuelsCantine from "@/views/GestionnaireTunnelCouvertsAnnuelsCantine.vue"
 
 import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import LayoutTunnelTeledeclaration from "@/layouts/LayoutTunnelTeledeclaration.vue"
@@ -380,7 +381,7 @@ const routes = [
             meta: {
               categoryLinks: [
                 { to: { name: "GestionnaireTunnelInformations" }, title: "Informations" },
-                { to: { name: "GestionnaireTunnelCouvertsCantine" }, title: "Couverts annuels" },
+                { to: { name: "GestionnaireTunnelCouvertsAnnuelsCantine" }, title: "Couverts annuels" },
                 { to: { name: "GestionnaireTunnelSimplifieEgalim" }, title: "EGalim" },
                 { to: { name: "GestionnaireTunnelSimplifieOrigine" }, title: "Origine France et UE" },
                 { to: { name: "GestionnaireTunnelSimplifieLocalCircuitCourt" }, title: "« Local » et circuit court" },
@@ -393,7 +394,17 @@ const routes = [
                 name: "GestionnaireTunnelInformations",
                 component: GestionnaireTunnelInformations,
                 meta: {
-                  title: "Étape informations télédéclaration",
+                  title: "Étape informations - télédéclaration",
+                  next: "GestionnaireTunnelCouvertsAnnuelsCantine",
+                },
+              },
+              {
+                path: "couverts-annuels-cantine",
+                name: "GestionnaireTunnelCouvertsAnnuelsCantine",
+                component: GestionnaireTunnelCouvertsAnnuelsCantine,
+                meta: {
+                  title: "Étape couverts annuels cantine - télédéclaration",
+                  previous: "GestionnaireTunnelInformations",
                 },
               }
             ]
