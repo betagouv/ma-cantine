@@ -22,7 +22,7 @@ const exit = () => { router.push({ name: "GestionnaireCantineTeledeclarationEnCo
       />
       <div>
         <DsfrButton
-          tertiary
+          secondary
           icon="fr-icon-arrow-left-s-first-line"
           label="Etape précédente"
           @click="goPrev"
