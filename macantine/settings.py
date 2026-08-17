@@ -19,6 +19,7 @@ import dotenv  # noqa
 import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
+from botocore.config import Config as BotoConfig
 
 from macantine.sentry import before_send
 
@@ -204,9 +205,21 @@ default_file_storage = os.getenv("DEFAULT_FILE_STORAGE")
 STORAGES = {
     "default": {
         "BACKEND": default_file_storage,
+        # see https://github.com/jschneier/django-storages/issues/1482
+        "OPTIONS": {
+            "client_config": BotoConfig(
+                request_checksum_calculation="when_required", response_checksum_validation="when_required"
+            )
+        },
     },
     "staticfiles": {
         "BACKEND": os.getenv("STATICFILES_STORAGE"),
+        # see https://github.com/jschneier/django-storages/issues/1482
+        "OPTIONS": {
+            "client_config": BotoConfig(
+                request_checksum_calculation="when_required", response_checksum_validation="when_required"
+            )
+        },
     },
 }
 
