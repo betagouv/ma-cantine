@@ -5,6 +5,7 @@ import { useStoreCanteen } from "@/stores/canteen.js"
 import documentation from "@/data/documentation.json"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
+import AppBlueCard from "@/components/AppBlueCard.vue"
 
 const canteenStore = useStoreCanteen()
 const currentYear = new Date().getFullYear()
@@ -13,6 +14,8 @@ const { canteenInformations } = storeToRefs(canteenStore)
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
+const hasPuchase = true
+const purchaseAmount = "XXXX €"
 
 const gotToAppro = () => {
   console.log("gotToAppro")
@@ -65,5 +68,22 @@ const gotToAppro = () => {
         </p>
       </li>
     </ol>
+
+    <AppBlueCard
+      v-if="hasPuchase"
+      class="fr-mt-4w"
+      title="Souhaitez-vous pré-remplir votre déclaration à partir de votre suivi d’achats ?"
+      alert="Optionnel : cette étape n’est pas obligatoire pour déclarer vos approvisionnements."
+      :button="{
+        label: 'Mettre à jour mes achats',
+        to: 'PurchasesHome',
+      }"
+    >
+      <p>
+        Vous avez <strong>{{ purchaseAmount }}</strong> d’achats détectés dans votre suivi des achats. <br />
+        Si vous utilisez l’Outil de Suivi des Achats (Mes achats), pour pré-remplir votre télédéclaration, assurez-vous d’avoir complété l’ensemble de vos achats de l’année précédente.
+      </p>
+    </AppBlueCard>
+
   </div>
 </template>
