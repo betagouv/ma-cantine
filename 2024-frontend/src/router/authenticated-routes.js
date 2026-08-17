@@ -235,6 +235,7 @@ const routes = [
             name: "GestionnaireCantine",
             component: GestionnaireCantine,
             meta: {
+              title: "Informations",
               breadcrumbs: [
                 { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
               ],
