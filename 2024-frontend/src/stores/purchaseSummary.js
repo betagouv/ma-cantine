@@ -19,7 +19,7 @@ const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
 
   /* Empty store */
   function deleteStore() {
-    purchaseSummary.value = null
+    purchaseSummary.value = {}
   }
 
   /* Check if has purchase */
