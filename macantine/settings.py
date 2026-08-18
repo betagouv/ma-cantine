@@ -54,7 +54,16 @@ ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 INTERNAL_IPS = []
 
-# Application definition
+DJANGO_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
+    "django.contrib.postgres",
+]
 WAGTAIL_INSTALLED_APPS = [
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -72,34 +81,23 @@ WAGTAIL_INSTALLED_APPS = [
     "taggit",
     "cms",
 ]
-INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django.contrib.sitemaps",
-    "django.contrib.postgres",
+THIRD_PARTY_APPS = [
     "django_vite_plugin",
     "webpack_loader",
     "rest_framework",
     "oauth2_provider",
     "ckeditor",
     "ckeditor_uploader",
-    "macantine",
-    "data",
-    "api",
-    "web",
     "magicauth",
     "django_extensions",
     "django_filters",
     "django_celery_results",
-    "common",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "simple_history",
 ]
+LOCAL_APPS = ["macantine", "data", "api", "web", "common"]
+INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
