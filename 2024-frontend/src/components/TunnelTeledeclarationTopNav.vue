@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue"
 import { useRouter, useRoute } from "vue-router"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 const router = useRouter()
 const route = useRoute()
@@ -9,51 +10,41 @@ const nextStep = computed(() => route.meta.next)
 
 const goPrev = () => { router.push({ name: previousStep.value }) }
 const goNext = () => { router.push({ name: nextStep.value }) }
-const exit = () => { router.push({ name: "GestionnaireCantineTeledeclarationEnCours" })}
 </script>
 
 <template>
   <nav class="tunnel-teledeclaration-top-nav fr-background-default--grey fr-py-2w">
-    <div class="ma-cantine--z-index-1 ma-cantine--flex-between ma-cantine--flex-gap-1">
-      <DsfrButton
-        tertiary
-        icon="fr-icon-logout-box-r-line"
-        label="Sauvegarder et quitter"
-        @click="exit"
-      />
-      <div>
-        <DsfrButton
-          secondary
-          icon="fr-icon-arrow-left-s-first-line"
-          label="Etape précédente"
-          @click="goPrev"
-          :disabled="!previousStep"
-          class="fr-mr-2w"
-        />
-        <DsfrButton
-          secondary
-          icon="fr-icon-arrow-right-s-last-line"
-          label="Etape suivante"
-          @click="goNext"
-          :disabled="!nextStep"
-        />
-      </div>
-    </div>
+    <AppLinkRouter
+      :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }"
+      title="Enregistrer et finir plus tard"
+      :hide-arrow-icon="true"
+      icon="fr-icon-save-line"
+      class="fr-mr-2w"
+    />
+    <DsfrButton
+      secondary
+      icon="fr-icon-arrow-left-s-first-line"
+      label="Étape précédente"
+      @click="goPrev"
+      :disabled="!previousStep"
+      class="fr-mr-2w"
+    />
+    <DsfrButton
+      secondary
+      icon="fr-icon-arrow-right-s-last-line"
+      label="Étape suivante"
+      @click="goNext"
+      :disabled="!nextStep"
+      :icon-right="true"
+    />
   </nav>
 </template>
 
 <style lang="scss" scoped>
 .tunnel-teledeclaration-top-nav {
-  &:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 100vw;
-    height: 100%;
-    background-color: inherit;
-    transform: translateX(-50%);
-    z-index: 0;
-  }
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
 }
 </style>
