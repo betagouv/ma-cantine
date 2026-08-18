@@ -572,7 +572,7 @@ class Diagnostic(models.Model):
     APPRO_LABELS_ALL = (
         APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_ORIGINE + ["circuit_court", "local"]
     )
-    APPRO_LABELS_GROUPS_MAPPING_BEFORE_2O26 = {
+    APPRO_LABELS_GROUPS_MAPPING_BEFORE_2026 = {
         "bio": ["bio"],
         "siqo": ["label_rouge", "aocaop_igp_stg", "aocaop", "igp", "stg"],
         "externalites_performance": ["externalites", "performance"],
