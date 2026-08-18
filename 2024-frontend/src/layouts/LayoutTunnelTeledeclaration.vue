@@ -5,16 +5,19 @@ import { useRouter, useRoute } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
+import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
+import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
+import AppSeparator from "@/components/AppSeparator.vue"
 
 /* Router */
 const router = useRouter()
 const route = useRoute()
 const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
-const canteenUrlId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
-const isLoading = ref(false)
 
 /* Store */
+const canteenUrlId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
+const isLoading = ref(false)
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const loadStore = async () => {
@@ -34,7 +37,7 @@ const goNext = () => { router.push({ name: nextStep.value }) }
 const exit = () => { router.push({ name: "GestionnaireCantineTeledeclarationEnCours" })}
 </script>
 <template>
-  <AppLoader v-if="isLoading" />
+  <AppLoader v-if="isLoading || !canteenInformations" />
   <div v-else class="layout-tunnel-teledeclaration ma-cantine--sticky__container ma-cantine--stick-to-footer">
     <nav class="layout-tunnel-teledeclaration__top-bar ma-cantine--sticky__top fr-background-default--grey fr-py-2w">
       <div class="ma-cantine--z-index-1 ma-cantine--flex-between ma-cantine--flex-gap-1 ">
@@ -66,9 +69,14 @@ const exit = () => { router.push({ name: "GestionnaireCantineTeledeclarationEnCo
     <div class="layout-tunnel-teledeclaration__content fr-grid-row">
       <div class="layout-tunnel-teledeclaration__sidebar fr-background-alt--blue-france fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
         <div class="ma-cantine--z-index-1 fr-pt-4w">
-          <div>
-            <pre>{{ canteenInformations?.name }}</pre>
+          <div class="fr-mb-4w">
+            <h2 class="fr-h4 fr-mb-1w">{{ canteenInformations?.name }}</h2>
+            <div>
+              <AppBadgeCanteen :canteen="canteenInformations" class="fr-mr-1w" />
+              <AppBadgeSiretSiren :canteen="canteenInformations" />
+            </div>
           </div>
+          <AppSeparator />
         </div>
       </div>
       <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-2w">
