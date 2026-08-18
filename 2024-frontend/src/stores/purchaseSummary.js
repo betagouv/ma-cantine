@@ -3,13 +3,18 @@ import { ref } from "vue"
 import purchaseService from "@/services/purchases.js"
 
 const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
-  const purchaseSummary = ref(null)
+  const purchaseSummary = ref({})
 
   /* Init store with purchases summary */
   async function initStore(canteenId, year) {
     const summary = await purchaseService.fetchPurchasesSummary(canteenId, year)
-    purchaseSummary.value = year ? { year: summary } : summary
-    return purchaseSummary.value
+    if (year) purchaseSummary.value[year] = summary
+    else {
+      for (let i = 0; i < summary["results"].length; i++) {
+        const resultYear = summary["results"][i].year
+        purchaseSummary.value[resultYear] = summary["results"][i]
+      }
+    }
   }
 
   /* Empty store */
