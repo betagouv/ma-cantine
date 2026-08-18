@@ -71,8 +71,6 @@ const gotToAppro = () => {
     </ol>
 
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
-
     <DiagnosticPurchasesLinked class="fr-mt-4w" :canteen-id="canteenInformations.id" />
-
   </div>
 </template>
