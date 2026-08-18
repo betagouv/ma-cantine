@@ -24,6 +24,10 @@ address {
     text-align: right;
 }
 
+.ma-cantine--text-uppercase {
+    text-transform: uppercase;
+}
+
 /* PARAGRAPHES */
 .ma-cantine--no-mb-p p {
     margin-bottom: 0 !important;
@@ -213,4 +217,10 @@ address {
 /* FORM */
 .ma-cantine--textarea {
     resize: vertical !important;
+}
+
+/* DISPLAY */
+.ma-cantine--z-index-1 {
+    position: relative;
+    z-index: 1;
 }

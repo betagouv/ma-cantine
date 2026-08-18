@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue"
 import { storeToRefs } from "pinia"
+import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import documentation from "@/data/documentation.json"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
@@ -8,6 +9,7 @@ import AppHelpCard from "@/components/AppHelpCard.vue"
 import AppBlueCard from "@/components/AppBlueCard.vue"
 
 const canteenStore = useStoreCanteen()
+const router = useRouter()
 const currentYear = new Date().getFullYear()
 const { canteenInformations } = storeToRefs(canteenStore)
 
@@ -21,7 +23,7 @@ const satellitesCount = computed(() => canteenInformations.value.satellitesCount
 const emptySatellitesCount = computed(() => hasSatellite.value && satellitesCount.value == 0)
 
 const gotToAppro = () => {
-  console.log("gotToAppro")
+  router.push({ name: "GestionnaireTunnelInformations" })
 }
 </script>
 
