@@ -38,8 +38,13 @@ const exit = () => { router.push({ name: "GestionnaireCantineTeledeclarationEnCo
         />
       </div>
     </nav>
-    <div>
-      <RouterView />
+    <div class="layout-tunnel-teledeclaration__content fr-grid-row fr-grid-row--gutters">
+      <div class="layout-tunnel-teledeclaration__sidebar fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
+        <p>Sidebar Tunnel</p>
+      </div>
+      <div class="fr-col-12 fr-col-md-9">
+        <RouterView />
+      </div>
     </div>
   </div>
 </template>
