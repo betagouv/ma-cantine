@@ -9,6 +9,7 @@ import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupe
 import GestionnaireCantineGroupe from "@/views/GestionnaireCantineGroupe.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
+import GestionnaireCantineTeledeclarationEnCours from "@/views/GestionnaireCantineTeledeclarationEnCours.vue"
 import GestionnaireCantineTeledeclarations from "@/views/GestionnaireCantineTeledeclarations.vue"
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
 import GestionnaireCantineGestionnaires from "@/views/GestionnaireCantineGestionnaires.vue"
@@ -33,6 +34,7 @@ import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 const { diag, action } = sectionId
 
 /* Routes */
+const currentYear = new Date().getFullYear()
 const routes = [
   // TODO: refactor "GaspillageAlimentaire" path
   {
@@ -251,7 +253,19 @@ const routes = [
             },
           },
           {
-            path: "teledeclarations",
+            path: "teledeclaration",
+            name: "GestionnaireCantineTeledeclarationEnCours",
+            component: GestionnaireCantineTeledeclarationEnCours,
+            meta: {
+              title: `Ma télédéclaration ${currentYear}`,
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+              ],
+            },
+          },
+          {
+            path: "toutes-teledeclarations",
             name: "GestionnaireCantineTeledeclarations",
             component: GestionnaireCantineTeledeclarations,
             meta: {

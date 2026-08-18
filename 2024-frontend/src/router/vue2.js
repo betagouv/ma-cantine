@@ -11,10 +11,6 @@ const vue2routes = [
     name: "LandingPage",
   },
   {
-    path: "/ma-progression/:canteenUrlComponent/:year/:measureId",
-    name: "MyProgress",
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     meta: {
