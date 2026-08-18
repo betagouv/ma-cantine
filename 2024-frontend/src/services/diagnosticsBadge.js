@@ -57,7 +57,7 @@ const getTeledeclareButton = (action) => {
 
   return {
     label: "Télédéclarer",
-    name: "MyProgress",
+    name: "GestionnaireCantineTeledeclarationEnCours",
     type: "primary",
     icon: "fr-icon-send-plane-line",
     measure: "etablissement",
@@ -69,7 +69,7 @@ const getCompleteButton = (action) => {
 
   return {
     label: "À compléter",
-    name: "MyProgress",
+    name: "GestionnaireCantineTeledeclarationEnCours",
     type: "tertiary",
     noIcon: true,
     measure: "etablissement",
