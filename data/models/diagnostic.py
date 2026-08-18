@@ -621,6 +621,22 @@ class Diagnostic(models.Model):
         "valeur_autres",
     ]
 
+    APPRO_LABEL_FIELDS = [
+        "valeur_bio",
+        "valeur_bio_dont_commerce_equitable",
+        "valeur_europe",
+        "valeur_france",
+        "valeur_circuit_court",
+        "valeur_local",
+    ]
+
+    APPRO_LABEL_GROUPE_FIELDS = [
+        "valeur_bio",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
+    ]
+
     APPRO_FIELDS = [
         "valeur_viandes_volailles_bio",
         "valeur_viandes_volailles_bio_dont_commerce_equitable",
@@ -1958,8 +1974,7 @@ class Diagnostic(models.Model):
             diagnostic_validators.validate_valeur_totale(self),
             diagnostic_validators.validate_valeur_famille(self),
             diagnostic_validators.validate_valeur_famille_bio(self),
-            diagnostic_validators.validate_valeur_bio(self),
-            diagnostic_validators.validate_valeur_egalim_autres(self),
+            diagnostic_validators.validate_valeur_label(self),
             diagnostic_validators.validate_viandes_volailles_total(self),
             diagnostic_validators.validate_produits_de_la_mer_total(self),
             diagnostic_validators.validate_viandes_volailles_produits_de_la_mer_egalim(self),
