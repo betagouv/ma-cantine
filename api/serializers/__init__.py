@@ -39,6 +39,7 @@ from .diagnostic import (  # noqa: F401
     PublicApproDiagnosticSerializer,
     PublicServiceDiagnosticSerializer,
     DiagnosticCheckSerializer,
+    DiagnosticRecapSerializer,
 )
 from .diagnostic_teledeclaration import (  # noqa: F401
     DiagnosticTeledeclaredAnalysisSerializer,

@@ -246,3 +246,12 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         from .canteen import FullCanteenSerializer
 
         return FullCanteenSerializer(obj.canteen).data
+
+
+class DiagnosticRecapSerializer(serializers.Serializer):
+    year = serializers.IntegerField(read_only=True)
+    is_teledeclared = serializers.BooleanField(read_only=True)
+    declaration_donnees = serializers.JSONField(read_only=True)
+    canteen_diagnostic_id = serializers.IntegerField(read_only=True)
+    generated_from_groupe_diagnostic_id = serializers.IntegerField(read_only=True)
+    generated_from_groupe_diagnostic_mode = serializers.CharField(read_only=True)
