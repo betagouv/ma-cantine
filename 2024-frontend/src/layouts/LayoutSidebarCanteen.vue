@@ -46,11 +46,13 @@ const badgeSiretOrSiren = computed(() => {
 
 
 /* Sidebar links */
+const currentYear = new Date().getFullYear()
 const menuItems = computed(() =>  {
   const isGroupe = canteenInformations.value?.isGroupe
   const cantineActive = currentRoute.value === "GestionnaireCantine"
   const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
   const pagePubliqueActive = currentRoute.value === "GestionnaireCantinePagePublique"
+  const teledeclarationEnCoursActive = currentRoute.value === "GestionnaireCantineTeledeclarationEnCours"
   const teledeclarationsActive = currentRoute.value === "GestionnaireCantineTeledeclarations"
   const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
 
@@ -74,6 +76,11 @@ const menuItems = computed(() =>  {
     to: { name: "GestionnaireCantinePagePublique" },
     active: pagePubliqueActive
   }
+  const teledeclarationEnCoursPage = {
+    text: isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`,
+    to: { name: "GestionnaireCantineTeledeclarationEnCours" },
+    active: teledeclarationEnCoursActive
+  }
   const teledeclarationsPage =  {
     text: "Toutes les télédéclarations",
     to: { name: "GestionnaireCantineTeledeclarations" },
@@ -86,6 +93,7 @@ const menuItems = computed(() =>  {
   pages.push(gestionnairesPage)
   if (isGroupe) pages.push(cantinesGroupePage)
   else pages.push(pagePubliquePage)
+  pages.push(teledeclarationEnCoursPage)
   pages.push(teledeclarationsPage)
 
   return pages
