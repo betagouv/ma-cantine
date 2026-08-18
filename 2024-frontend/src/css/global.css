@@ -24,6 +24,10 @@ address {
     text-align: right;
 }
 
+.ma-cantine--text-uppercase {
+    text-transform: uppercase;
+}
+
 /* PARAGRAPHES */
 .ma-cantine--no-mb-p p {
     margin-bottom: 0 !important;
