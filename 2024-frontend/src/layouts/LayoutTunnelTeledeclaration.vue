@@ -28,9 +28,9 @@ watch(canteenUrlId, () => loadStore())
 </script>
 <template>
   <AppLoader v-if="isLoading || !canteenInformations" />
-  <div v-else class="layout-tunnel-teledeclaration ma-cantine--sticky__container ma-cantine--stick-to-footer">
+  <div v-else class="ma-cantine--sticky__container ma-cantine--stick-to-footer">
     <TunnelTopNav class="ma-cantine--sticky__top" />
-    <div class="layout-tunnel-teledeclaration__content fr-grid-row">
+    <div class="fr-grid-row">
       <TunnelSidebar :canteen="canteenInformations" />
       <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-2w">
         <RouterView />
