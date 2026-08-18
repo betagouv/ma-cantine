@@ -15,5 +15,5 @@ const { canteenInformations } = storeToRefs(canteenStore)
     <span v-else>C’est le moment de vérifier les informations de votre cantine (nom, gestionnaire, effectifs, mode de gestion, etc.).</span>
     Si vous remarquez des erreurs, corriger-les avant de passer à l'étape suivante <AppLinkRouter title="en cliquant ici" :to="{name: canteenInformations.isGroupe ? 'GestionnaireCantineGroupeModifier' : 'GestionnaireCantineRestaurantModifier', query: { redirection: route.fullPath }}" />
   </p>
-  <CanteenDisplayInformations :canteen-information="canteenInformations" />
+  <CanteenDisplayInformations :canteen-information="canteenInformations" :canteen-is-groupe="canteenInformations.isGroupe" />
 </template>
