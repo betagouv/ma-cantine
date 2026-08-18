@@ -295,29 +295,25 @@ class PurchaseFactureView(APIView):
 
 
 class CanteenPurchasesSummaryView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCanteenManagerUrlParam]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
 
     def get(self, request, *args, **kwargs):
-        canteen_id = kwargs.get("canteen_pk")
-        canteen = self._get_canteen(canteen_id, self.request)
+        canteen = self._get_canteen()
         year = request.query_params.get("year")
         data = Purchase.canteen_summary_for_year(canteen, year) if year else Purchase.canteen_summary(canteen)
         return Response(PurchaseSummarySerializer(data).data if year else data)
 
-    def _get_canteen(self, canteen_id, request):
-        try:
-            canteen = Canteen.objects.get(pk=canteen_id)
-            if not IsCanteenManager().has_object_permission(request, self, canteen):
-                raise PermissionDenied()
-            return canteen
-        except Canteen.DoesNotExist as e:
-            raise NotFound() from e
-
 
 class CanteenPurchasesPercentageSummaryView(APIView):
+    def get_object(self):
+        return get_object_or_404(Canteen, pk=self.kwargs.get("canteen_pk"))
+
     def get(self, request, *args, **kwargs):
-        canteen_id = kwargs.get("canteen_pk")
-        canteen = self._get_canteen(canteen_id, self.request)
+        canteen = self.get_object()
         year = request.query_params.get("year")
         try:
             year = int(year)
@@ -343,13 +339,6 @@ class CanteenPurchasesPercentageSummaryView(APIView):
             )
 
         return Response(PurchasePercentageSummarySerializer(data).data)
-
-    def _get_canteen(self, canteen_id, request):
-        try:
-            canteen = Canteen.objects.get(pk=canteen_id)
-            return canteen
-        except Canteen.DoesNotExist as e:
-            raise NotFound() from e
 
 
 class DiagnosticsFromPurchasesView(APIView):
