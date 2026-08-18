@@ -326,7 +326,9 @@ pyyaml==6.0.2
     #   pre-commit
     #   pyhanko
 qrcode==7.4.2
-    # via pyhanko
+    # via
+    #   ma-cantine
+    #   pyhanko
 redis==5.2.0
     # via ma-cantine
 referencing==0.35.1

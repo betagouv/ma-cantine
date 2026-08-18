@@ -1,14 +1,16 @@
 from django.contrib import admin
-from django.contrib.admin import AdminSite
+from django_otp.admin import OTPAdminSite
 from django.urls import path, reverse
 
 from data.admin.sector import sector_textchoices_admin_view
 from data.admin.textchoices import CANTEEN_TEXTCHOICES_PAGES, canteen_textchoices_admin_view
 
 
-class MaCantineAdminSite(AdminSite):
+class MaCantineAdminSite(OTPAdminSite):
     """
-    Custom AdminSite to inject synthetic, read-only entries in the app list
+    Custom AdminSite
+    - to use OTPAdminSite (require 2FA for admin login)
+    - to inject synthetic, read-only entries in the app list
     """
 
     def get_urls(self):

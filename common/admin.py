@@ -1,3 +1,10 @@
+"""
+Admin configuration for the common app
+- make CacheAdmin discoverable by Django
+- custom GroupAdmin (to manage users directly)
+- CommandLogAdmin (read-only)
+"""
+
 import json
 
 from django import forms

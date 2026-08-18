@@ -96,6 +96,9 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "simple_history",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
 ]
 LOCAL_APPS = ["macantine", "data", "api", "web", "common"]
 INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -112,8 +115,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "csp.middleware.CSPMiddleware",
+    # django-simple-history
     "simple_history.middleware.HistoryRequestMiddleware",
+    # wagtail
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    # django_otp
+    "django_otp.middleware.OTPMiddleware",
 ]
 CSRF_COOKIE_NAME = "csrftoken"
 ROOT_URLCONF = "macantine.urls"
@@ -240,6 +247,13 @@ LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/s-identifier"
 
 HOSTNAME = os.getenv("HOSTNAME")
+
+
+# django-otp (2FA)
+# https://django-otp-official.readthedocs.io/en/stable/index.html
+# ------------------------------------------------------------------------------
+
+OTP_TOTP_ISSUER = f"ma-cantine-{ENVIRONMENT}"
 
 
 # Github repo
