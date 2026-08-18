@@ -19,6 +19,7 @@ import dotenv  # noqa
 import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
+from botocore.config import Config as BotoConfig
 
 from macantine.sentry import before_send
 
@@ -217,6 +218,12 @@ if default_file_storage == "storages.backends.s3.S3Storage":
     AWS_STORAGE_BUCKET_NAME = os.getenv("CELLAR_BUCKET_NAME")
     AWS_LOCATION = "media"
     AWS_QUERYSTRING_AUTH = False
+    # see https://github.com/jschneier/django-storages/issues/1482
+    client_config = BotoConfig(
+        request_checksum_calculation="when_required", response_checksum_validation="when_required"
+    )
+    STORAGES["default"]["OPTIONS"] = {"client_config": client_config}
+    STORAGES["staticfiles"]["OPTIONS"] = {"client_config": client_config}
 
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 MEDIA_URL = "/media/"
