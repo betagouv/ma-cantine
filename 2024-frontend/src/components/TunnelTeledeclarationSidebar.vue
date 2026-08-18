@@ -1,11 +1,36 @@
 <script setup>
+import { computed } from "vue"
+import { useRouter } from "vue-router"
 import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import documentation from "@/data/documentation.json"
 
-defineProps(["canteen"])
+const props = defineProps(["canteen", "nav", "active"])
+const router = useRouter()
+
+/* Navigation */
+const generateNav = (name) => {
+  const list = props.nav[name]
+  const activeIndex = list.findIndex(item => item.to.name === props.active)
+  const links = []
+
+  for (let i = 0; i < list.length; i++) {
+    const isCurrent = i === activeIndex
+    links.push({
+      disabled: activeIndex === -1,
+      type: isCurrent ? 'secondary' : 'tertiary',
+      label: list[i].title,
+      to: list[i].to,
+    })
+  }
+  return links
+}
+const approvisementsNav = computed(() => generateNav('approvisionnements'))
+const thematiquesNav = computed(() => generateNav('thematiques'))
+
+const goTo = (to) => router.push(to)
 </script>
 
 <template>
@@ -24,37 +49,14 @@ defineProps(["canteen"])
           <h3 class="fr-text--sm ma-cantine--text-uppercase fr-mb-1w">Approvisionnements</h3>
           <nav class="tunnel-teledeclaration-sidebar__nav">
             <DsfrButton
-              tertiary
-              icon="fr-icon-checkbox-fill"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              label="Informations"
-            />
-            <DsfrButton
-              secondary
+              v-for="link in approvisementsNav"
+              :key="link.to.name"
+              :[link.type]="true"
               icon="fr-icon-checkbox-circle-line"
               class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              label="Couverts annuels"
-            />
-            <DsfrButton
-              tertiary
-              icon="fr-icon-checkbox-circle-line"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              label="EGalim (obligatoire)"
-              disabled
-            />
-            <DsfrButton
-              tertiary
-              icon="fr-icon-checkbox-circle-line"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              label="Origine France et UE"
-              disabled
-            />
-            <DsfrButton
-              tertiary
-              icon="fr-icon-checkbox-circle-line"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              label="« Local » et circuit court"
-              disabled
+              :label="link.label"
+              :disabled="link.disabled"
+              @click="goTo(link.to)"
             />
           </nav>
         </div>
@@ -65,32 +67,14 @@ defineProps(["canteen"])
           </h3>
           <nav class="tunnel-teledeclaration-sidebar__nav">
             <DsfrButton
-              tertiary
+              v-for="link in thematiquesNav"
+              :key="link.to.name"
+              :[link.type]="true"
               icon="fr-icon-checkbox-circle-line"
               class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              label="Infos convives"
-              disabled
-            />
-            <DsfrButton
-              tertiary
-              icon="fr-icon-checkbox-circle-line"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              label="Gaspillage"
-              disabled
-            />
-            <DsfrButton
-              tertiary
-              icon="fr-icon-checkbox-circle-line"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              label="Menus végétariens"
-              disabled
-            />
-            <DsfrButton
-              tertiary
-              icon="fr-icon-checkbox-circle-line"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              label="Subsitutions plastiques"
-              disabled
+              :label="link.label"
+              :disabled="link.disabled"
+              @click="goTo(link.to)"
             />
           </nav>
         </div>
@@ -100,7 +84,7 @@ defineProps(["canteen"])
           icon="fr-icon-flag-fill"
           label="Récapitulatif"
           disabled
-          class="tunnel-teledeclaration-sidebar__link"
+          class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
         />
         <div class="fr-mt-2w ma-cantine--sticky__bottom">
           <AppHelpCard title="Centre d’aide" content="Votre télédéclaration pas à pas" class="tunnel-teledeclaration-sidebar__help-card">

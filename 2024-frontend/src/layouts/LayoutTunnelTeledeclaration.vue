@@ -9,6 +9,7 @@ import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNa
 import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
 
 const route = useRoute()
+const currentRoute = computed(() => route.name)
 
 /* Store */
 const canteenUrlId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
@@ -31,7 +32,7 @@ watch(canteenUrlId, () => loadStore())
   <div v-else class="ma-cantine--sticky__container ma-cantine--stick-to-footer">
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
-        <TunnelTeledeclarationSidebar :canteen="canteenInformations" />
+        <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" />
       </div>
       <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-2w">
         <TunnelTeledeclarationTopNav class="ma-cantine--sticky__top" />
