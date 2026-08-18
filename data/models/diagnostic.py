@@ -535,7 +535,10 @@ class Diagnostic(models.Model):
         "bio",
         # "bio_dont_commerce_equitable",
         "label_rouge",
-        "aocaop_igp_stg",
+        "aocaop_igp_stg",  # before 2026
+        "aocaop",
+        "igp",
+        "stg",
         "hve",
         "peche_durable",
         "rup",
@@ -554,7 +557,7 @@ class Diagnostic(models.Model):
     )
     APPRO_LABELS_GROUPS_MAPPING = {
         "bio": ["bio"],
-        "siqo": ["label_rouge", "aocaop_igp_stg"],
+        "siqo": ["label_rouge", "aocaop_igp_stg", "aocaop", "igp", "stg"],
         "externalites_performance": ["externalites", "performance"],
         "egalim_autres": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
     }
@@ -1280,7 +1283,7 @@ class Diagnostic(models.Model):
     valeur_bio = make_optional_positive_decimal_field(
         verbose_name="Bio - Valeur annuelle HT",
     )
-    # TODO: label_rouge, aocaop_igp_stg, hve, peche_durable, rup, commerce_equitable, fermier, externalites, performance ?
+    # TODO: label_rouge, aocaop, igp, stg, hve, peche_durable, rup, commerce_equitable, fermier, externalites, performance ?
     valeur_europe = make_optional_positive_decimal_field(
         verbose_name="Origine UE (hors France) - Valeur annuelle HT",
     )
@@ -1393,29 +1396,77 @@ class Diagnostic(models.Model):
     valeur_autres_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d'épicerie, Label rouge",
     )
-    valeur_viandes_volailles_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
+    valeur_viandes_volailles_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP",
     )
-    valeur_produits_de_la_mer_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Poissons, produits de la mer et de l'aquaculture, AOC / AOP / IGP / STG",
+    valeur_produits_de_la_mer_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, AOC / AOP",
     )
-    valeur_fruits_et_legumes_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
+    valeur_fruits_et_legumes_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, AOC / AOP",
     )
-    valeur_charcuterie_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Charcuterie, AOC / AOP / IGP / STG",
+    valeur_charcuterie_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, AOC / AOP",
     )
-    valeur_produits_laitiers_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG",
+    valeur_produits_laitiers_aocaop = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), AOC / AOP",
     )
-    valeur_boulangerie_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie / Pâtisserie fraîches, AOC / AOP / IGP / STG",
+    valeur_boulangerie_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, AOC / AOP",
     )
-    valeur_boissons_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Boissons, AOC / AOP / IGP / STG",
+    valeur_boissons_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Boissons, AOC / AOP",
     )
-    valeur_autres_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d'épicerie, AOC / AOP / IGP / STG",
+    valeur_autres_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, AOC / AOP",
+    )
+    valeur_viandes_volailles_igp = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, IGP",
+    )
+    valeur_produits_de_la_mer_igp = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, IGP",
+    )
+    valeur_fruits_et_legumes_igp = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, IGP",
+    )
+    valeur_charcuterie_igp = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, IGP",
+    )
+    valeur_produits_laitiers_igp = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), IGP",
+    )
+    valeur_boulangerie_igp = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, IGP",
+    )
+    valeur_boissons_igp = make_optional_positive_decimal_field(
+        verbose_name="Boissons, IGP",
+    )
+    valeur_autres_igp = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, IGP",
+    )
+    valeur_viandes_volailles_stg = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, STG",
+    )
+    valeur_produits_de_la_mer_stg = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, STG",
+    )
+    valeur_fruits_et_legumes_stg = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, STG",
+    )
+    valeur_charcuterie_stg = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, STG",
+    )
+    valeur_produits_laitiers_stg = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), STG",
+    )
+    valeur_boulangerie_stg = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, STG",
+    )
+    valeur_boissons_stg = make_optional_positive_decimal_field(
+        verbose_name="Boissons, STG",
+    )
+    valeur_autres_stg = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, STG",
     )
     valeur_viandes_volailles_hve = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Haute valeur environnementale",
@@ -1721,6 +1772,30 @@ class Diagnostic(models.Model):
     )
     valeur_pat = make_optional_positive_decimal_field(  # legacy
         verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
+    )
+    valeur_viandes_volailles_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
+    )
+    valeur_produits_de_la_mer_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, AOC / AOP / IGP / STG",
+    )
+    valeur_fruits_et_legumes_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
+    )
+    valeur_charcuterie_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, AOC / AOP / IGP / STG",
+    )
+    valeur_produits_laitiers_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG",
+    )
+    valeur_boulangerie_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, AOC / AOP / IGP / STG",
+    )
+    valeur_boissons_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Boissons, AOC / AOP / IGP / STG",
+    )
+    valeur_autres_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, AOC / AOP / IGP / STG",
     )
 
     # Télédéclaration
