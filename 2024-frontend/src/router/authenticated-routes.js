@@ -30,6 +30,14 @@ import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportC
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 import GestionnaireTunnelInformations from "@/views/GestionnaireTunnelInformations.vue"
 import GestionnaireTunnelCouvertsAnnuelsCantine from "@/views/GestionnaireTunnelCouvertsAnnuelsCantine.vue"
+import GestionnaireTunnelSimplifieEgalim from "@/views/GestionnaireTunnelSimplifieEgalim.vue"
+import GestionnaireTunnelSimplifieOrigine from "@/views/GestionnaireTunnelSimplifieOrigine.vue"
+import GestionnaireTunnelSimplifieLocalCircuitCourt from "@/views/GestionnaireTunnelSimplifieLocalCircuitCourt.vue"
+import GestionnaireTunnelConvives from "@/views/GestionnaireTunnelConvives.vue"
+import GestionnaireTunnelGaspillage from "@/views/GestionnaireTunnelGaspillage.vue"
+import GestionnaireTunnelVegetarien from "@/views/GestionnaireTunnelVegetarien.vue"
+import GestionnaireTunnelPlastique from "@/views/GestionnaireTunnelPlastique.vue"
+import GestionnaireTunnelRecapitulatif from "@/views/GestionnaireTunnelRecapitulatif.vue"
 
 import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import LayoutTunnelTeledeclaration from "@/layouts/LayoutTunnelTeledeclaration.vue"
@@ -384,7 +392,7 @@ const routes = [
             ],
             thematiques: [
               { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
-              { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gapillage" },
+              { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gaspillage" },
               { to: { name: "GestionnaireTunnelVegetarien" }, title: "Menus végétariens" },
               { to: { name: "GestionnaireTunnelPlastique" }, title: "Substitutions plastiques" },
             ]
@@ -392,7 +400,7 @@ const routes = [
         },
         children: [
           {
-            path: "",
+            path: "approvisionnements",
             children: [
               {
                 path: "informations",
@@ -411,9 +419,97 @@ const routes = [
                 meta: {
                   title: "Couverts annuels",
                   previous: "GestionnaireTunnelInformations",
+                  next: "GestionnaireTunnelSimplifieEgalim",
                   stepper: "approvisionnements",
                 },
-              }
+              },
+              {
+                path: "simplifie/egalim",
+                name: "GestionnaireTunnelSimplifieEgalim",
+                component: GestionnaireTunnelSimplifieEgalim,
+                meta: {
+                  title: "EGalim",
+                  previous: "GestionnaireTunnelCouvertsAnnuelsCantine",
+                  next: "GestionnaireTunnelSimplifieOrigine",
+                  stepper: "approvisionnements",
+                },
+              },
+              {
+                path: "simplifie/origine",
+                name: "GestionnaireTunnelSimplifieOrigine",
+                component: GestionnaireTunnelSimplifieOrigine,
+                meta: {
+                  title: "Origine France et UE",
+                  previous: "GestionnaireTunnelSimplifieEgalim",
+                  next: "GestionnaireTunnelSimplifieLocalCircuitCourt",
+                  stepper: "approvisionnements",
+                },
+              },
+              {
+                path: "simplifie/local-circuit-court",
+                name: "GestionnaireTunnelSimplifieLocalCircuitCourt",
+                component: GestionnaireTunnelSimplifieLocalCircuitCourt,
+                meta: {
+                  title: "« Local » et circuit court",
+                  previous: "GestionnaireTunnelSimplifieOrigine",
+                  next: "GestionnaireTunnelRecapitulatif",
+                  stepper: "approvisionnements",
+                },
+              },
+            ]
+          },
+          {
+            path: "recapitulatif",
+            name: "GestionnaireTunnelRecapitulatif",
+            component: GestionnaireTunnelRecapitulatif,
+            meta: {
+              title: "Recapitulatif",
+              previous: "GestionnaireTunnelSimplifieLocalCircuitCourt",
+              hideTopBar: true,
+            },
+          },
+          {
+            path: "volets-thematiques",
+            children: [
+              {
+                path: "informations-convives",
+                name: "GestionnaireTunnelConvives",
+                component: GestionnaireTunnelConvives,
+                meta: {
+                  title: "Infos convives",
+                  next: "GestionnaireTunnelGaspillage",
+                },
+              },
+              {
+                path: "gaspillage",
+                name: "GestionnaireTunnelGaspillage",
+                component: GestionnaireTunnelGaspillage,
+                meta: {
+                  title: "Gaspillage",
+                  previous: "GestionnaireTunnelConvives",
+                  next: "GestionnaireTunnelVegetarien",
+                },
+              },
+              {
+                path: "menus-vegetariens",
+                name: "GestionnaireTunnelVegetarien",
+                component: GestionnaireTunnelVegetarien,
+                meta: {
+                  title: "Menus végétariens",
+                  previous: "GestionnaireTunnelGaspillage",
+                  next: "GestionnaireTunnelPlastique",
+                },
+              },
+              {
+                path: "substitutions-plastiques",
+                name: "GestionnaireTunnelPlastique",
+                component: GestionnaireTunnelPlastique,
+                meta: {
+                  title: "Substitutions plastiques",
+                  previous: "GestionnaireTunnelVegetarien",
+                  next: "GestionnaireTunnelRecapitulatif",
+                },
+              },
             ]
           },
         ],

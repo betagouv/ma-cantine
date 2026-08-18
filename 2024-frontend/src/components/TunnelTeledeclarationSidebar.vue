@@ -10,6 +10,9 @@ import documentation from "@/data/documentation.json"
 const props = defineProps(["canteen", "nav", "active"])
 const router = useRouter()
 
+/* Récapitulatif */
+const disabledRecapitulatif = computed(() => props.active !== 'GestionnaireTunnelRecapitulatif')
+
 /* Navigation */
 const generateNav = (name) => {
   const list = props.nav[name]
@@ -83,7 +86,7 @@ const goTo = (to) => router.push(to)
           secondary
           icon="fr-icon-flag-fill"
           label="Récapitulatif"
-          disabled
+          :disabled="disabledRecapitulatif"
           class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
         />
         <div class="fr-mt-2w ma-cantine--sticky__bottom">
