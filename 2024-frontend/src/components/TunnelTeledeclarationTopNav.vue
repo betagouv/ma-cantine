@@ -13,7 +13,7 @@ const exit = () => { router.push({ name: "GestionnaireCantineTeledeclarationEnCo
 </script>
 
 <template>
-  <nav class="tunnel-top-nav fr-background-default--grey fr-py-2w">
+  <nav class="tunnel-teledeclaration-top-nav fr-background-default--grey fr-py-2w">
     <div class="ma-cantine--z-index-1 ma-cantine--flex-between ma-cantine--flex-gap-1">
       <DsfrButton
         tertiary
@@ -43,7 +43,7 @@ const exit = () => { router.push({ name: "GestionnaireCantineTeledeclarationEnCo
 </template>
 
 <style lang="scss" scoped>
-.tunnel-top-nav {
+.tunnel-teledeclaration-top-nav {
   &:before {
     content: "";
     position: absolute;

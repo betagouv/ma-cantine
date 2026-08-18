@@ -5,8 +5,8 @@ import { useRoute } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
-import TunnelTopNav from "@/components/TunnelTopNav.vue"
-import TunnelSidebar from "@/components/TunnelSidebar.vue"
+import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
+import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
 
 const route = useRoute()
 
@@ -29,9 +29,9 @@ watch(canteenUrlId, () => loadStore())
 <template>
   <AppLoader v-if="isLoading || !canteenInformations" />
   <div v-else class="ma-cantine--sticky__container ma-cantine--stick-to-footer">
-    <TunnelTopNav class="ma-cantine--sticky__top" />
+    <TunnelTeledeclarationTopNav class="ma-cantine--sticky__top" />
     <div class="fr-grid-row">
-      <TunnelSidebar :canteen="canteenInformations" />
+      <TunnelTeledeclarationSidebar :canteen="canteenInformations" />
       <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-2w">
         <RouterView />
       </div>
