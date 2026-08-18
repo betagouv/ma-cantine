@@ -374,20 +374,25 @@ const routes = [
         component: LayoutTunnelTeledeclaration,
         meta: {
           isTunnel: true,
+          nav: {
+            approvisionnements: [
+              { to: { name: "GestionnaireTunnelInformations" }, title: "Informations" },
+              { to: { name: "GestionnaireTunnelCouvertsAnnuelsCantine" }, title: "Couverts annuels" },
+              { to: { name: "GestionnaireTunnelSimplifieEgalim" }, title: "EGalim" },
+              { to: { name: "GestionnaireTunnelSimplifieOrigine" }, title: "Origine France et UE" },
+              { to: { name: "GestionnaireTunnelSimplifieLocalCircuitCourt" }, title: "« Local » et circuit court" },
+            ],
+            thematiques: [
+              { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
+              { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gapillage" },
+              { to: { name: "GestionnaireTunnelVegetarien" }, title: "Menus végétariens" },
+              { to: { name: "GestionnaireTunnelPlastique" }, title: "Substitutions plastiques" },
+            ]
+          }
         },
         children: [
           {
-            path: "approvisionnements",
-            meta: {
-              categoryLinks: [
-                { to: { name: "GestionnaireTunnelInformations" }, title: "Informations" },
-                { to: { name: "GestionnaireTunnelCouvertsAnnuelsCantine" }, title: "Couverts annuels" },
-                { to: { name: "GestionnaireTunnelSimplifieEgalim" }, title: "EGalim" },
-                { to: { name: "GestionnaireTunnelSimplifieOrigine" }, title: "Origine France et UE" },
-                { to: { name: "GestionnaireTunnelSimplifieLocalCircuitCourt" }, title: "« Local » et circuit court" },
-              ],
-              teledeclareLink: { to: { name: "GestionnaireTunnelTeledeclare" }, title: "Récapitulatif" },
-            },
+            path: "",
             children: [
               {
                 path: "informations",
