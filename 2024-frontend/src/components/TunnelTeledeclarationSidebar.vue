@@ -67,14 +67,14 @@ const goTo = (to) => router.push(to)
           </h3>
           <nav class="tunnel-teledeclaration-sidebar__nav">
             <DsfrButton
-              v-for="link in thematiquesNav"
-              :key="link.to.name"
-              :[link.type]="true"
-              icon="fr-icon-checkbox-circle-line"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              :label="link.label"
-              :disabled="link.disabled"
-              @click="goTo(link.to)"
+            v-for="link in thematiquesNav"
+            :key="link.to.name"
+            :[link.type]="true"
+            icon="fr-icon-checkbox-circle-line"
+            class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
+            :label="link.label"
+            :disabled="link.disabled"
+            @click="goTo(link.to)"
             />
           </nav>
         </div>

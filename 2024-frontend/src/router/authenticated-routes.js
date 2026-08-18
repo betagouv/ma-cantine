@@ -399,8 +399,9 @@ const routes = [
                 name: "GestionnaireTunnelInformations",
                 component: GestionnaireTunnelInformations,
                 meta: {
-                  title: "Étape informations - télédéclaration",
+                  title: "Informations",
                   next: "GestionnaireTunnelCouvertsAnnuelsCantine",
+                  stepper: "approvisionnements",
                 },
               },
               {
@@ -408,8 +409,9 @@ const routes = [
                 name: "GestionnaireTunnelCouvertsAnnuelsCantine",
                 component: GestionnaireTunnelCouvertsAnnuelsCantine,
                 meta: {
-                  title: "Étape couverts annuels cantine - télédéclaration",
+                  title: "Couverts annuels",
                   previous: "GestionnaireTunnelInformations",
+                  stepper: "approvisionnements",
                 },
               }
             ]
