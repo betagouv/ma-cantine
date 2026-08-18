@@ -1,18 +1,41 @@
 <script setup>
-import { computed } from "vue"
+import { ref, computed, onMounted, onUnmounted, watch } from "vue"
+import { storeToRefs } from "pinia"
 import { useRouter, useRoute } from "vue-router"
+import { useStoreCanteen } from "@/stores/canteen.js"
+import urlService from "@/services/urls.js"
+import AppLoader from "@/components/AppLoader.vue"
 
+/* Router */
 const router = useRouter()
 const route = useRoute()
 const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
+const canteenUrlId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
+const isLoading = ref(false)
 
+/* Store */
+const canteenStore = useStoreCanteen()
+const { canteenInformations } = storeToRefs(canteenStore)
+const loadStore = async () => {
+  if (!canteenInformations.value || canteenInformations.value.id != canteenUrlId.value) {
+    isLoading.value = true
+    await canteenStore.initStore(canteenUrlId.value)
+    isLoading.value = false
+  }
+}
+onMounted(() => loadStore())
+onUnmounted(() => canteenStore.deleteStore())
+watch(canteenUrlId, () => loadStore())
+
+/* Navigation */
 const goPrev = () => { router.push({ name: previousStep.value }) }
 const goNext = () => { router.push({ name: nextStep.value }) }
 const exit = () => { router.push({ name: "GestionnaireCantineTeledeclarationEnCours" })}
 </script>
 <template>
-  <div class="layout-tunnel-teledeclaration ma-cantine--sticky__container ma-cantine--stick-to-footer">
+  <AppLoader v-if="isLoading" />
+  <div v-else class="layout-tunnel-teledeclaration ma-cantine--sticky__container ma-cantine--stick-to-footer">
     <nav class="layout-tunnel-teledeclaration__top-bar ma-cantine--sticky__top fr-background-default--grey fr-py-2w">
       <div class="ma-cantine--z-index-1 ma-cantine--flex-between ma-cantine--flex-gap-1 ">
         <DsfrButton
@@ -42,8 +65,10 @@ const exit = () => { router.push({ name: "GestionnaireCantineTeledeclarationEnCo
     </nav>
     <div class="layout-tunnel-teledeclaration__content fr-grid-row">
       <div class="layout-tunnel-teledeclaration__sidebar fr-background-alt--blue-france fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
-        <div class="ma-cantine--z-index-1">
-          <p>Sidebar Tunnel</p>
+        <div class="ma-cantine--z-index-1 fr-pt-4w">
+          <div>
+            <pre>{{ canteenInformations?.name }}</pre>
+          </div>
         </div>
       </div>
       <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-2w">
