@@ -21,6 +21,7 @@ class CampaignDatesSerializer(serializers.Serializer):
     teledeclaration_end_date = serializers.DateTimeField()
     correction_start_date = serializers.DateTimeField(allow_null=True)
     correction_end_date = serializers.DateTimeField(allow_null=True)
+    legifrance_url = serializers.URLField(allow_null=True)
     rapport_parlement_url = serializers.URLField(allow_null=True)
 
 
