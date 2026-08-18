@@ -14,7 +14,6 @@ import GestionnaireCantineTeledeclarations from "@/views/GestionnaireCantineTele
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
 import GestionnaireCantineGestionnaires from "@/views/GestionnaireCantineGestionnaires.vue"
 import GestionnaireCantinePagePublique from "@/views/GestionnaireCantinePagePublique.vue"
-import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImportAchatsID from "@/views/GestionnaireImportAchatsID.vue"
@@ -29,6 +28,19 @@ import GestionnaireImportCantinesCreer from "@/views/GestionnaireImportCantinesC
 import GestionnaireImportCantinesModifier from "@/views/GestionnaireImportCantinesModifier.vue"
 import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportCantinesGestionnaires.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
+import GestionnaireTunnelInformations from "@/views/GestionnaireTunnelInformations.vue"
+import GestionnaireTunnelCouvertsAnnuelsCantine from "@/views/GestionnaireTunnelCouvertsAnnuelsCantine.vue"
+import GestionnaireTunnelSimplifieEgalim from "@/views/GestionnaireTunnelSimplifieEgalim.vue"
+import GestionnaireTunnelSimplifieOrigine from "@/views/GestionnaireTunnelSimplifieOrigine.vue"
+import GestionnaireTunnelSimplifieLocalCircuitCourt from "@/views/GestionnaireTunnelSimplifieLocalCircuitCourt.vue"
+import GestionnaireTunnelConvives from "@/views/GestionnaireTunnelConvives.vue"
+import GestionnaireTunnelGaspillage from "@/views/GestionnaireTunnelGaspillage.vue"
+import GestionnaireTunnelVegetarien from "@/views/GestionnaireTunnelVegetarien.vue"
+import GestionnaireTunnelPlastique from "@/views/GestionnaireTunnelPlastique.vue"
+import GestionnaireTunnelRecapitulatif from "@/views/GestionnaireTunnelRecapitulatif.vue"
+
+import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
+import LayoutTunnelTeledeclaration from "@/layouts/LayoutTunnelTeledeclaration.vue"
 
 /* Sitemap section id */
 const { diag, action } = sectionId
@@ -235,6 +247,7 @@ const routes = [
             name: "GestionnaireCantine",
             component: GestionnaireCantine,
             meta: {
+              title: "Informations",
               breadcrumbs: [
                 { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
               ],
@@ -363,6 +376,143 @@ const routes = [
             { to: { name: "PurchasesHome" }, title: "Mes achats" },
           ],
         },
+      },
+      {
+        path: "teledeclaration",
+        component: LayoutTunnelTeledeclaration,
+        meta: {
+          isTunnel: true,
+          nav: {
+            approvisionnements: [
+              { to: { name: "GestionnaireTunnelInformations" }, title: "Informations" },
+              { to: { name: "GestionnaireTunnelCouvertsAnnuelsCantine" }, title: "Couverts annuels" },
+              { to: { name: "GestionnaireTunnelSimplifieEgalim" }, title: "EGalim" },
+              { to: { name: "GestionnaireTunnelSimplifieOrigine" }, title: "Origine France et UE" },
+              { to: { name: "GestionnaireTunnelSimplifieLocalCircuitCourt" }, title: "« Local » et circuit court" },
+            ],
+            thematiques: [
+              { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
+              { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gaspillage" },
+              { to: { name: "GestionnaireTunnelVegetarien" }, title: "Menus végétariens" },
+              { to: { name: "GestionnaireTunnelPlastique" }, title: "Substitutions plastiques" },
+            ]
+          }
+        },
+        children: [
+          {
+            path: "approvisionnements",
+            children: [
+              {
+                path: "informations",
+                name: "GestionnaireTunnelInformations",
+                component: GestionnaireTunnelInformations,
+                meta: {
+                  title: "Informations",
+                  next: "GestionnaireTunnelCouvertsAnnuelsCantine",
+                  stepper: "approvisionnements",
+                },
+              },
+              {
+                path: "couverts-annuels-cantine",
+                name: "GestionnaireTunnelCouvertsAnnuelsCantine",
+                component: GestionnaireTunnelCouvertsAnnuelsCantine,
+                meta: {
+                  title: "Couverts annuels",
+                  previous: "GestionnaireTunnelInformations",
+                  next: "GestionnaireTunnelSimplifieEgalim",
+                  stepper: "approvisionnements",
+                },
+              },
+              {
+                path: "simplifie/egalim",
+                name: "GestionnaireTunnelSimplifieEgalim",
+                component: GestionnaireTunnelSimplifieEgalim,
+                meta: {
+                  title: "EGalim",
+                  previous: "GestionnaireTunnelCouvertsAnnuelsCantine",
+                  next: "GestionnaireTunnelSimplifieOrigine",
+                  stepper: "approvisionnements",
+                },
+              },
+              {
+                path: "simplifie/origine",
+                name: "GestionnaireTunnelSimplifieOrigine",
+                component: GestionnaireTunnelSimplifieOrigine,
+                meta: {
+                  title: "Origine France et UE",
+                  previous: "GestionnaireTunnelSimplifieEgalim",
+                  next: "GestionnaireTunnelSimplifieLocalCircuitCourt",
+                  stepper: "approvisionnements",
+                },
+              },
+              {
+                path: "simplifie/local-circuit-court",
+                name: "GestionnaireTunnelSimplifieLocalCircuitCourt",
+                component: GestionnaireTunnelSimplifieLocalCircuitCourt,
+                meta: {
+                  title: "« Local » et circuit court",
+                  previous: "GestionnaireTunnelSimplifieOrigine",
+                  next: "GestionnaireTunnelRecapitulatif",
+                  stepper: "approvisionnements",
+                },
+              },
+            ]
+          },
+          {
+            path: "recapitulatif",
+            name: "GestionnaireTunnelRecapitulatif",
+            component: GestionnaireTunnelRecapitulatif,
+            meta: {
+              title: "Recapitulatif",
+              previous: "GestionnaireTunnelSimplifieLocalCircuitCourt",
+              hideTopBar: true,
+            },
+          },
+          {
+            path: "volets-thematiques",
+            children: [
+              {
+                path: "informations-convives",
+                name: "GestionnaireTunnelConvives",
+                component: GestionnaireTunnelConvives,
+                meta: {
+                  title: "Infos convives",
+                  next: "GestionnaireTunnelGaspillage",
+                },
+              },
+              {
+                path: "gaspillage",
+                name: "GestionnaireTunnelGaspillage",
+                component: GestionnaireTunnelGaspillage,
+                meta: {
+                  title: "Gaspillage",
+                  previous: "GestionnaireTunnelConvives",
+                  next: "GestionnaireTunnelVegetarien",
+                },
+              },
+              {
+                path: "menus-vegetariens",
+                name: "GestionnaireTunnelVegetarien",
+                component: GestionnaireTunnelVegetarien,
+                meta: {
+                  title: "Menus végétariens",
+                  previous: "GestionnaireTunnelGaspillage",
+                  next: "GestionnaireTunnelPlastique",
+                },
+              },
+              {
+                path: "substitutions-plastiques",
+                name: "GestionnaireTunnelPlastique",
+                component: GestionnaireTunnelPlastique,
+                meta: {
+                  title: "Substitutions plastiques",
+                  previous: "GestionnaireTunnelVegetarien",
+                  next: "GestionnaireTunnelRecapitulatif",
+                },
+              },
+            ]
+          },
+        ],
       },
     ],
   },
