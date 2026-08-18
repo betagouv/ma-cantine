@@ -7,7 +7,7 @@ defineProps(["canteen"])
 </script>
 
 <template>
-  <div class="tunnel-sidebar fr-background-alt--blue-france fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
+  <div class="tunnel-teledeclaration-sidebar fr-background-alt--blue-france fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
     <div class="ma-cantine--z-index-1 fr-pt-4w">
       <div class="fr-mb-4w">
         <h2 class="fr-h4 fr-mb-1w">{{ canteen?.name }}</h2>
@@ -22,7 +22,7 @@ defineProps(["canteen"])
 </template>
 
 <style lang="scss" scoped>
-.tunnel-sidebar {
+.tunnel-teledeclaration-sidebar {
   position: relative;
 
   &:before {
