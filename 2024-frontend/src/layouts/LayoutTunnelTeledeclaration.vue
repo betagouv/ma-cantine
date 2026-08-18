@@ -11,6 +11,13 @@ import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSide
 const route = useRoute()
 const currentRoute = computed(() => route.name)
 
+/* Content */
+const routeTitle = computed(() => route.meta.title)
+const hasStepper = computed(() => route.meta.stepper && route.meta.stepper !== "" && route.meta.stepper !== undefined)
+const routerSteps = computed(() => hasStepper.value ? route.meta.nav[route.meta.stepper] : [] )
+const steps = computed(() => routerSteps.value.map((step) => step.title))
+const stepIndex = computed(() => routerSteps.value.findIndex((step) => step.to.name === currentRoute.value) + 1)
+
 /* Store */
 const canteenUrlId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
 const isLoading = ref(false)
@@ -34,9 +41,13 @@ watch(canteenUrlId, () => loadStore())
       <div class="fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
         <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" />
       </div>
-      <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-2w">
+      <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-4w">
         <TunnelTeledeclarationTopNav class="ma-cantine--sticky__top" />
-        <RouterView />
+        <div class="fr-mt-2w">
+          <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
+          <h1 v-else>{{ routeTitle }}</h1>
+          <RouterView />
+        </div>
       </div>
     </div>
   </div>
