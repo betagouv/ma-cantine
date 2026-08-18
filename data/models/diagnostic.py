@@ -1036,39 +1036,6 @@ class Diagnostic(models.Model):
     valeur_totale = make_optional_positive_decimal_field(
         verbose_name="Valeur totale annuelle HT",
     )
-    valeur_bio = make_optional_positive_decimal_field(
-        verbose_name="Bio - Valeur annuelle HT",
-    )
-    valeur_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Bio dont commerce équitable - Valeur annuelle HT",
-    )
-    valeur_fair_trade = make_optional_positive_decimal_field(  # legacy
-        verbose_name="Commerce équitable - Valeur annuelle HT",
-    )
-    valeur_siqo = make_optional_positive_decimal_field(
-        verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT",
-    )
-    valeur_pat = make_optional_positive_decimal_field(  # legacy
-        verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
-    )
-    valeur_externalites_performance = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
-    )
-    valeur_egalim_autres = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) des autres achats EGalim",
-    )
-    valeur_egalim_autres_dont_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
-    )
-    valeur_viandes_volailles_egalim = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim",
-    )
-    valeur_viandes_volailles_france = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France",
-    )
-    valeur_produits_de_la_mer_egalim = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) poissons et produits aquatiques, EGalim",
-    )
 
     # Food waste
     has_waste_diagnostic = models.BooleanField(
@@ -1307,6 +1274,50 @@ class Diagnostic(models.Model):
     )
     valeur_autres = make_optional_positive_decimal_field(
         verbose_name="Valeur totale (HT) autres produits frais, surgelés et d'épicerie",
+    )
+
+    # per label
+    valeur_bio = make_optional_positive_decimal_field(
+        verbose_name="Bio - Valeur annuelle HT",
+    )
+    # TODO: label_rouge, aocaop_igp_stg, hve, peche_durable, rup, commerce_equitable, fermier, externalites, performance ?
+    valeur_europe = make_optional_positive_decimal_field(
+        verbose_name="Origine UE (hors France) - Valeur annuelle HT",
+    )
+    valeur_france = make_optional_positive_decimal_field(
+        verbose_name="Origine France - Valeur annuelle HT",
+    )
+    valeur_circuit_court = make_optional_positive_decimal_field(
+        verbose_name="Circuit court - Valeur annuelle HT",
+    )
+    valeur_local = make_optional_positive_decimal_field(
+        verbose_name="Local - Valeur annuelle HT",
+    )
+
+    # per label group
+    # valeur_bio: voir au-dessus
+    valeur_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Bio dont commerce équitable - Valeur annuelle HT",
+    )
+    valeur_siqo = make_optional_positive_decimal_field(
+        verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT",
+    )
+    valeur_externalites_performance = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
+    )
+    valeur_egalim_autres = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) des autres achats EGalim",
+    )
+    valeur_egalim_autres_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
+    )
+
+    # other
+    valeur_viandes_volailles_egalim = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim",
+    )
+    valeur_produits_de_la_mer_egalim = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) poissons et produits aquatiques, EGalim",
     )
 
     # detailed values
@@ -1704,6 +1715,12 @@ class Diagnostic(models.Model):
     )
     valeur_label_hve = make_optional_positive_decimal_field(
         verbose_name="Valeur label HVE",
+    )
+    valeur_fair_trade = make_optional_positive_decimal_field(  # legacy
+        verbose_name="Commerce équitable - Valeur annuelle HT",
+    )
+    valeur_pat = make_optional_positive_decimal_field(  # legacy
+        verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
     )
 
     # Télédéclaration
