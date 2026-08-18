@@ -3,8 +3,8 @@ import { computed } from "vue"
 import { useRootStore } from "@/stores/root"
 import documentation from "@/data/documentation.json"
 
+defineProps(["showNav"])
 const store = useRootStore()
-
 const logoText = ["République", "française"]
 
 const quickLinks = computed(() => {
@@ -133,7 +133,7 @@ const navItemsForUser = computed(() => {
     :quickLinks
   >
     <template #mainnav>
-      <DsfrNavigation :nav-items="navItemsForUser" />
+      <DsfrNavigation v-if="showNav" :nav-items="navItemsForUser" />
     </template>
   </DsfrHeader>
 </template>
