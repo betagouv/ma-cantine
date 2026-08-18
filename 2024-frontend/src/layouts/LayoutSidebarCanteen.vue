@@ -3,11 +3,12 @@ import { ref, computed, watch, onMounted, onUnmounted } from "vue"
 import { useRoute, RouterView } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
-import { formatSiretOrSiren } from "@/utils"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
 import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
+import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
 
 /* Route */
 const route = useRoute()
@@ -28,22 +29,6 @@ const loadStore = async () => {
 onMounted(() => loadStore())
 onUnmounted(() => canteenStore.deleteStore())
 watch(canteenUrlId, () => loadStore())
-
-/* Badges */
-const badgeEstablishment = computed(() => {
-  const isGroupe = canteenInformations.value?.isGroupe
-  const isSatWithGroupe = canteenInformations.value?.groupe !== null && canteenInformations.value?.isSatellite
-  if (isGroupe) return { type: "info", label: "Groupe" }
-  else if (isSatWithGroupe) return { type: "new", label: "Cantine en gestion groupée" }
-  return { type: "success", label: "Cantine" }
-})
-const badgeSiretOrSiren = computed(() => {
-  const hasSiret = canteenInformations.value?.siret
-  const name = hasSiret ? "SIRET" : "SIREN"
-  const valueToFormat = hasSiret ? canteenInformations.value.siret : canteenInformations.value.sirenUniteLegale
-  return `${name} : ${formatSiretOrSiren(valueToFormat)}`
-})
-
 
 /* Sidebar links */
 const currentYear = new Date().getFullYear()
@@ -115,9 +100,9 @@ const menuItems = computed(() =>  {
     </DsfrAlert>
     <h1>{{ canteenInformations.name }}</h1>
     <div class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-4w">
-      <DsfrBadge :label="badgeEstablishment.label" :type="badgeEstablishment.type" :noIcon="true" />
+      <AppBadgeCanteen :canteen="canteenInformations" />
       <DsfrBadge :label="`ID : ${canteenInformations.id}`" type="neutral" />
-      <DsfrBadge :label="badgeSiretOrSiren" type="neutral" />
+      <AppBadgeSiretSiren :canteen="canteenInformations" />
     </div>
     <div class="fr-grid-row ma-cantine--sticky__container">
       <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 fr-background-default--grey">
