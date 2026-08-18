@@ -214,3 +214,9 @@ address {
 .ma-cantine--textarea {
     resize: vertical !important;
 }
+
+/* DISPLAY */
+.ma-cantine--z-index-1 {
+    position: relative;
+    z-index: 1;
+}
