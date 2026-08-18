@@ -1,8 +1,10 @@
 <script setup>
-import { computed } from "vue"
+import { computed, onMounted, onUnmounted } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
+import { formatNumber } from "@/utils.js"
 import documentation from "@/data/documentation.json"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
@@ -11,13 +13,20 @@ import AppBlueCard from "@/components/AppBlueCard.vue"
 const canteenStore = useStoreCanteen()
 const router = useRouter()
 const currentYear = new Date().getFullYear()
+const lastYear = currentYear - 1
 const { canteenInformations } = storeToRefs(canteenStore)
+
+/* Store */
+const purchaseSummaryStore = useStorePurchaseSummary()
+const { purchaseSummary } = storeToRefs(purchaseSummaryStore)
+onMounted(() => purchaseSummaryStore.initStore(canteenInformations.value.id, lastYear))
+onUnmounted(() => purchaseSummaryStore.deleteStore())
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
-const hasPuchase = true
-const purchaseAmount = "XXXX €"
+const hasPurchase = computed(() => purchaseSummaryStore.hasPurchaseTotal(lastYear))
+const purchaseAmount = computed(() => `${formatNumber(purchaseSummary.value[lastYear]?.valeurTotale)} €`)
 const hasSatellite = computed(() => canteenInformations.value.isGroupe)
 const satellitesCount = computed(() => canteenInformations.value.satellitesCount)
 const emptySatellitesCount = computed(() => hasSatellite.value && satellitesCount.value == 0)
@@ -96,7 +105,7 @@ const gotToAppro = () => {
     </AppBlueCard>
 
     <AppBlueCard
-      v-if="hasPuchase"
+      v-if="hasPurchase"
       class="fr-mt-4w"
       title="Souhaitez-vous pré-remplir votre déclaration à partir de votre suivi d’achats ?"
       :alert="{

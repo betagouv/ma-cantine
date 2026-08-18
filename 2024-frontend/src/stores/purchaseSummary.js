@@ -22,10 +22,16 @@ const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
     purchaseSummary.value = null
   }
 
+  /* Check if has purchase */
+  function hasPurchaseTotal(year) {
+    return purchaseSummary.value[year]?.valeurTotale && purchaseSummary.value[year]?.valeurTotale > 0
+  }
+
   return {
     purchaseSummary,
     initStore,
     deleteStore,
+    hasPurchaseTotal,
   }
 })
 
