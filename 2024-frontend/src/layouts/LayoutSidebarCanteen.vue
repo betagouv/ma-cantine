@@ -6,6 +6,7 @@ import { useStoreCanteen } from "@/stores/canteen.js"
 import { formatSiretOrSiren } from "@/utils"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
+import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
 
 /* Route */
 const route = useRoute()
@@ -28,13 +29,6 @@ onUnmounted(() => canteenStore.deleteStore())
 watch(canteenUrlId, () => loadStore())
 
 /* Badges */
-const badgeEstablishment = computed(() => {
-  const isGroupe = canteenInformations.value?.isGroupe
-  const isSatWithGroupe = canteenInformations.value?.groupe !== null && canteenInformations.value?.isSatellite
-  if (isGroupe) return { type: "info", label: "Groupe" }
-  else if (isSatWithGroupe) return { type: "new", label: "Cantine en gestion groupée" }
-  return { type: "success", label: "Cantine" }
-})
 const badgeSiretOrSiren = computed(() => {
   const hasSiret = canteenInformations.value?.siret
   const name = hasSiret ? "SIRET" : "SIREN"
@@ -103,7 +97,7 @@ const menuItems = computed(() =>  {
   <div v-else-if="canteenInformations" class="layout-sidebar-canteen">
     <h1>{{ canteenInformations.name }}</h1>
     <div class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-4w">
-      <DsfrBadge :label="badgeEstablishment.label" :type="badgeEstablishment.type" :noIcon="true" />
+      <AppBadgeCanteen :canteen="canteenInformations" />
       <DsfrBadge :label="`ID : ${canteenInformations.id}`" type="neutral" />
       <DsfrBadge :label="badgeSiretOrSiren" type="neutral" />
     </div>
