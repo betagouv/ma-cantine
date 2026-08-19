@@ -52,6 +52,18 @@ const fetchPurchasesOptions = () => {
     .then((response) => response)
 }
 
+const fetchPurchasesSummary = (canteenId, year) => {
+  const query = year ? `?year=${year}` : ""
+  return fetch(`/api/v1/canteens/${canteenId}/purchases/summary${query}`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+}
+
 const deletePurchase = (id) => {
   return fetch(`/api/v1/purchases/${id}`, {
     method: "DELETE",
@@ -116,6 +128,7 @@ export default {
   createPurchase,
   fetchPurchase,
   fetchPurchasesOptions,
+  fetchPurchasesSummary,
   updatePurchase,
   deletePurchase,
   restorePurchases,
