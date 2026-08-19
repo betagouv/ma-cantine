@@ -18,6 +18,11 @@ const useStoreDiagnostic = defineStore("diagnostic", () => {
     }
   }
 
+  /* Update diagnostic of the current campaign */
+  function updateDiagnosticCurrentCampaign(diagnostic) {
+    diagnostics.value[lastYear] = diagnostic
+  }
+
   /* Empty store */
   function deleteStore() {
     diagnostics.value = {}
@@ -34,6 +39,7 @@ const useStoreDiagnostic = defineStore("diagnostic", () => {
     initStore,
     deleteStore,
     hasDiagnosticCurrentCampaign,
+    updateDiagnosticCurrentCampaign,
   }
 })
 
