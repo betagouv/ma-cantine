@@ -5,8 +5,6 @@ import diagnosticService from "@/services/diagnostics.js"
 const useStoreDiagnostic = defineStore("diagnostic", () => {
   const diagnostics = ref({})
   const lastYear = new Date().getFullYear() - 1
-
-  /* Diagnostic of the current campaign */
   const diagnosticCurrentCampaign = computed(() => diagnostics.value[lastYear])
 
   /* Init store with diagnostics of all the years */
@@ -18,9 +16,23 @@ const useStoreDiagnostic = defineStore("diagnostic", () => {
     }
   }
 
+  /* Save diagnostic of the current campaign */
+  async function saveDiagnosticCurrentCampaign() {
+    const diagnostic = diagnosticCurrentCampaign.value
+    if (!diagnostic) return
+    const response = await diagnosticService.updateDiagnostic(diagnostic.canteenId, diagnostic.id, diagnostic)
+    if (response.status !== "error") updateDiagnosticCurrentCampaign(response)
+    return response
+  }
+
   /* Update diagnostic of the current campaign */
   function updateDiagnosticCurrentCampaign(diagnostic) {
     diagnostics.value[lastYear] = diagnostic
+  }
+
+  /* Set value for diagnostic of the current campaign */
+  function setDiagnosticCurrentCampaign(field, value) {
+    diagnostics.value[lastYear][field] = value
   }
 
   /* Empty store */
@@ -40,6 +52,8 @@ const useStoreDiagnostic = defineStore("diagnostic", () => {
     deleteStore,
     hasDiagnosticCurrentCampaign,
     updateDiagnosticCurrentCampaign,
+    setDiagnosticCurrentCampaign,
+    saveDiagnosticCurrentCampaign,
   }
 })
 
