@@ -63,6 +63,7 @@ from .partnertype import PartnerTypeListView  # noqa: F401
 from .purchase import (  # noqa: F401
     CanteenPurchasesPercentageSummaryView,
     CanteenPurchasesSummaryView,
+    CanteenPurchasesSummaryForYearView,
     DiagnosticsFromPurchasesView,
     PurchaseCreateView,
     PurchaseFactureView,

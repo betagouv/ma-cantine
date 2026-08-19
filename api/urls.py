@@ -13,6 +13,7 @@ from api.views import (
     CanteenMinistriesView,
     CanteenPurchasesPercentageSummaryView,
     CanteenPurchasesSummaryView,
+    CanteenPurchasesSummaryForYearView,
     CanteensCreateImportView,
     CanteensManagersImportView,
     CanteenStatisticsView,
@@ -154,6 +155,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/purchases/summary",
         CanteenPurchasesSummaryView.as_view(),
         name="canteen_purchases_summary",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/purchases/summary/<int:year>",
+        CanteenPurchasesSummaryForYearView.as_view(),
+        name="canteen_purchases_summary_for_year",
     ),
     path(
         "canteens/<int:canteen_pk>/purchases/percentageSummary",
