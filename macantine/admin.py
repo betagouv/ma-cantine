@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django_otp.admin import OTPAdminAuthenticationForm, OTPAdminSite
 from django.urls import path, reverse
+from django_otp.admin import OTPAdminAuthenticationForm, OTPAdminSite
 
 from data.admin.sector import sector_textchoices_admin_view
 from data.admin.textchoices import CANTEEN_TEXTCHOICES_PAGES, canteen_textchoices_admin_view

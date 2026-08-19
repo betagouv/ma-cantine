@@ -1,15 +1,20 @@
 from dirtyfields import DirtyFieldsMixin
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import ValidationError
 from django.db import models
 from django.db.models import Count, F, Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models.geo import Department
 from data.utils import optimize_image
+from data.validators import user as user_validators
 from macantine import brevo
 
 
@@ -271,12 +276,22 @@ class User(DirtyFieldsMixin, AbstractUser):
             if "email" in self.get_dirty_fields():
                 self.reset_brevo_fields(with_save=False)
 
-    def save(self, **kwargs):
+    def save(self, skip_validations=False, **kwargs):
         self.normalize_fields()
         self.lowercase_fields()
         self.optimize_avatar()
         self.reset_brevo_fields_if_email_changed()
+        if not skip_validations:
+            self.full_clean(exclude=["password"])
         super().save(**kwargs)
+
+    def clean(self, *args, **kwargs):
+        validation_errors = utils_utils.merge_validation_errors(
+            user_validators.validate_user_non_staff(self),
+            user_validators.validate_user_superuser(self),
+        )
+        if validation_errors:
+            raise ValidationError(validation_errors)
 
     @property
     def has_mtm_data(self):
@@ -335,3 +350,9 @@ class User(DirtyFieldsMixin, AbstractUser):
             **data_canteen_fields_dict,
             **data_canteen_diagnostic_fields_dict,
         }
+
+
+@receiver(pre_save, sender=TOTPDevice)
+def validate_totp_device_user_is_staff(sender, instance, **kwargs):
+    if instance.user and not instance.user.is_staff:
+        raise ValidationError("Seul les utilisateurs staff sont autorisés à configurer un appareil 2FA (OTP).")
