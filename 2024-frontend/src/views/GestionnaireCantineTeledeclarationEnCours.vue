@@ -1,8 +1,9 @@
 <script setup>
-import { computed } from "vue"
+import { computed, onUnmounted, watch } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
+import { useStoreDiagnostic } from "@/stores/diagnostic.js"
 import documentation from "@/data/documentation.json"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
@@ -14,21 +15,41 @@ const router = useRouter()
 const currentYear = new Date().getFullYear()
 const { canteenInformations } = storeToRefs(canteenStore)
 
+/* Diagnostic */
+const diagnosticStore = useStoreDiagnostic()
+const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
+const hasDiagnosticCurrentCampaign = computed(() => diagnosticStore.hasDiagnosticCurrentCampaign())
+onUnmounted(() => diagnosticStore.deleteStore())
+watch(
+  () => canteenInformations.value.id,
+  (canteenId) => { if (canteenId) diagnosticStore.initStore(canteenInformations.value.id) },
+  { immediate: true }
+)
+
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
+const buttonTop = computed(() => {
+  if (!diagnosticCurrentCampaign.value) return null
+  const hasDiag = hasDiagnosticCurrentCampaign.value
+  const label = hasDiag ? 'Reprendre ma télédéclaration' : 'Faire ma télédéclaration'
+  const type = hasDiag ? 'secondary' : 'primary'
+  const icon = hasDiag ? '' : 'ri-send-plane-line'
+  return { label, type, icon }
+})
 
-const gotToAppro = () => {
-  router.push({ name: "GestionnaireTunnelInformations" })
-}
+/* Navigation */
+const openTunnel = () => { router.push({ name: "GestionnaireTunnelInformations" }) }
 </script>
 
 <template>
   <CanteenSidebarTitle :title="pageTitle">
     <DsfrButton
-      @click="gotToAppro"
-      label="Faire ma télédéclaration"
-      icon="ri-send-plane-line"
+      v-if="buttonTop"
+      @click="openTunnel"
+      :label="buttonTop.label"
+      :[buttonTop.type]="true"
+      :icon="buttonTop.icon"
     />
   </CanteenSidebarTitle>
 
