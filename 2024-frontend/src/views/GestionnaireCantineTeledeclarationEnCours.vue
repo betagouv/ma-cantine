@@ -6,7 +6,8 @@ import { useStoreCanteen } from "@/stores/canteen.js"
 import documentation from "@/data/documentation.json"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
-import AppBlueCard from "@/components/AppBlueCard.vue"
+import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.vue"
+import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
 
 const canteenStore = useStoreCanteen()
 const router = useRouter()
@@ -16,11 +17,6 @@ const { canteenInformations } = storeToRefs(canteenStore)
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
-const hasPuchase = true
-const purchaseAmount = "XXXX €"
-const hasSatellite = computed(() => canteenInformations.value.isGroupe)
-const satellitesCount = computed(() => canteenInformations.value.satellitesCount)
-const emptySatellitesCount = computed(() => hasSatellite.value && satellitesCount.value == 0)
 
 const gotToAppro = () => {
   router.push({ name: "GestionnaireTunnelInformations" })
@@ -74,44 +70,7 @@ const gotToAppro = () => {
       </li>
     </ol>
 
-    <AppBlueCard
-      v-if="hasSatellite"
-      class="fr-mt-4w"
-      title="Souhaitez-vous mettre à jour la liste de cantines de votre groupe ?"
-      :alert="{
-        description: emptySatellitesCount ? 'Obligatoire : vous devez lier au moins une cantine à vos approvisionnements groupés' : 'Optionnel : cette étape n’est pas obligatoire pour déclarer vos approvisionnements.',
-        type: emptySatellitesCount ? 'error' : 'info',
-      }"
-      :button="{
-        label: 'Mettre à jour mes cantines',
-        to: 'GestionnaireCantineGroupe',
-      }"
-    >
-      <p v-if="emptySatellitesCount">
-        Vous n’avez aucune cantine lié à vos approvisionnements groupés.
-      </p>
-      <p v-else>
-        Vous avez <strong>{{ satellitesCount }} {{ satellitesCount > 1 ? 'cantines liées' : 'cantine liée' }}</strong> à vos approvisionnements groupés
-      </p>
-    </AppBlueCard>
-
-    <AppBlueCard
-      v-if="hasPuchase"
-      class="fr-mt-4w"
-      title="Souhaitez-vous pré-remplir votre déclaration à partir de votre suivi d’achats ?"
-      :alert="{
-        description: 'Optionnel : cette étape n’est pas obligatoire pour déclarer vos approvisionnements.',
-      }"
-      :button="{
-        label: 'Mettre à jour mes achats',
-        to: 'PurchasesHome',
-      }"
-    >
-      <p>
-        Vous avez <strong>{{ purchaseAmount }}</strong> d’achats détectés dans votre suivi des achats. <br />
-        Si vous utilisez l’Outil de Suivi des Achats (Mes achats), pour pré-remplir votre télédéclaration, assurez-vous d’avoir complété l’ensemble de vos achats de l’année précédente.
-      </p>
-    </AppBlueCard>
-
+    <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
+    <DiagnosticPurchasesLinked class="fr-mt-4w" :canteen-id="canteenInformations.id" />
   </div>
 </template>
