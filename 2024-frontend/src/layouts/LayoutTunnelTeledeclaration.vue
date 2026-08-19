@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from "vue"
 import { storeToRefs } from "pinia"
 import { useRoute } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
+import { useStoreDiagnostic } from "@/stores/diagnostic.js"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
 import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
@@ -23,17 +24,24 @@ const hideTopBar = computed(() => route.meta.hideTopBar)
 const canteenUrlId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
 const isLoading = ref(false)
 const canteenStore = useStoreCanteen()
+const diagnosticStore = useStoreDiagnostic()
 const { canteenInformations } = storeToRefs(canteenStore)
-const loadStore = async () => {
+const loadStores = async () => {
   if (!canteenInformations.value || canteenInformations.value.id != canteenUrlId.value) {
     isLoading.value = true
-    await canteenStore.initStore(canteenUrlId.value)
+    await Promise.all([
+      canteenStore.initStore(canteenUrlId.value),
+      diagnosticStore.initStore(canteenUrlId.value),
+    ])
     isLoading.value = false
   }
 }
-onMounted(() => loadStore())
-onUnmounted(() => canteenStore.deleteStore())
-watch(canteenUrlId, () => loadStore())
+onMounted(() => {loadStores()})
+onUnmounted(() => {
+  canteenStore.deleteStore()
+  diagnosticStore.deleteStore()
+})
+watch(canteenUrlId, () => loadStores())
 </script>
 <template>
   <AppLoader v-if="isLoading || !canteenInformations" />
