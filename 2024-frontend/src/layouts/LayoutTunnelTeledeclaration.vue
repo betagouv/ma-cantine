@@ -36,7 +36,7 @@ const loadStores = async () => {
     isLoading.value = false
   }
 }
-onMounted(() => {loadStores()})
+onMounted(() => loadStores())
 onUnmounted(() => {
   canteenStore.deleteStore()
   diagnosticStore.deleteStore()
