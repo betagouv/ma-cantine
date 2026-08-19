@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.46.0](https://github.com/betagouv/ma-cantine/compare/v2026.45.0...v2026.46.0) (2026-08-19)
+
+
+### Nouveautés
+
+* **Diagnostics:** nouveaux champs valeur_*famille*_aocaop, valeur_*famille*_igp & valeur_*famille*_stg ([#7021](https://github.com/betagouv/ma-cantine/issues/7021)) ([39738e7](https://github.com/betagouv/ma-cantine/commit/39738e7d5eea63e2918ea175496c71afff929cfb))
+* **Diagnostics:** nouveaux champs valeur_france, valeur_europe, valeur_circuit_court & valeur_local ([#7019](https://github.com/betagouv/ma-cantine/issues/7019)) ([31c5616](https://github.com/betagouv/ma-cantine/commit/31c561636454978db1f2264e53d0cefd70090320))
+
+
+### Corrections (bugs, typos...)
+
+* **Stockage:** répare la config S3 suite à la mise à jour de boto3 ([#7028](https://github.com/betagouv/ma-cantine/issues/7028)) ([f7a09d8](https://github.com/betagouv/ma-cantine/commit/f7a09d80a6535c173f0cba720f10ec70f9ce24ed))
+* **Stockage:** répare la config S3 suite à la mise à jour de boto3 (v2) ([#7039](https://github.com/betagouv/ma-cantine/issues/7039)) ([0a56f39](https://github.com/betagouv/ma-cantine/commit/0a56f3912643e31eb389c85a0fd6d13498444c52))
+
+
+### Technique
+
+* **Achats:** API: petit ménage sur l'endpoint `/summary` ([#7024](https://github.com/betagouv/ma-cantine/issues/7024)) ([835d2b7](https://github.com/betagouv/ma-cantine/commit/835d2b77aa620072428a17348f88264402ec8166))
+* **Achats:** API: spliter l'endpoint `/summary` en 2 (avec et sans year) ([#7042](https://github.com/betagouv/ma-cantine/issues/7042)) ([2997988](https://github.com/betagouv/ma-cantine/commit/2997988bbc6cb00531c0bc6b6f6c1d637c932afa))
+* **Diagnostics:** API: ajouter un serializer à l'endpoint `/recap` (et mieux documenter) ([#7023](https://github.com/betagouv/ma-cantine/issues/7023)) ([04aa3d9](https://github.com/betagouv/ma-cantine/commit/04aa3d9692665cabdbbe5730dc4aeee0a6219965))
+* **Settings:** séparer les INSTALLED_APPS en 3 : django, third party & local ([#7033](https://github.com/betagouv/ma-cantine/issues/7033)) ([2f4012d](https://github.com/betagouv/ma-cantine/commit/2f4012d2715520b1304cac20a2b736a84bd2cbd2))
+* **Télédéclaration:** CAMPAIGN_DATES: pour chaque année, ajouter un `legifrance_url` (lien vers l'arrêté correspondant) ([#7014](https://github.com/betagouv/ma-cantine/issues/7014)) ([dc5c07d](https://github.com/betagouv/ma-cantine/commit/dc5c07d5703b4634256a583bf2aa2caf653aa7b0))
+
 ## [2026.45.0](https://github.com/betagouv/ma-cantine/compare/v2026.44.0...v2026.45.0) (2026-08-14)
 
 
