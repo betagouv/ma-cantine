@@ -303,9 +303,22 @@ class CanteenPurchasesSummaryView(APIView):
 
     def get(self, request, *args, **kwargs):
         canteen = self._get_canteen()
-        year = request.query_params.get("year")
-        data = Purchase.canteen_summary_for_year(canteen, year) if year else Purchase.canteen_summary(canteen)
-        return Response(PurchaseSummarySerializer(data).data if year else data)
+        data = Purchase.canteen_summary(canteen)
+        return Response(data)
+
+
+class CanteenPurchasesSummaryForYearView(APIView):
+    permission_classes = [IsCanteenManagerUrlParam]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, *args, **kwargs):
+        canteen = self._get_canteen()
+        year = self.kwargs["year"]
+        data = Purchase.canteen_summary_for_year(canteen, year)
+        return Response(PurchaseSummarySerializer(data).data)
 
 
 class CanteenPurchasesPercentageSummaryView(APIView):

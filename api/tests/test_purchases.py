@@ -691,6 +691,58 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
+    def test_can_get_canteen_purchases_summary(self):
+        self.canteen.managers.add(authenticate.user)
+
+        PurchaseFactory(canteen=self.canteen, prix_ht=100, date="2020-01-01")
+        PurchaseFactory(canteen=self.canteen, prix_ht=50, date="2020-12-31")
+        PurchaseFactory(canteen=self.canteen, prix_ht=300, date="2021-01-01")
+        PurchaseFactory(canteen=self.canteen, prix_ht=150, date="2021-12-31")
+        other_canteen = CanteenFactory(managers=[authenticate.user])
+        PurchaseFactory(canteen=other_canteen, prix_ht=999, date="2021-01-01")
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertIn("results", body)
+        self.assertEqual(len(body["results"]), 2)  # multi year
+        self.assertEqual(body["results"][0]["year"], 2020)
+        self.assertEqual(body["results"][0]["valeurTotale"], 150)
+        self.assertIn("valeurBio", body["results"][0])
+        self.assertEqual(body["results"][1]["year"], 2021)
+        self.assertEqual(body["results"][1]["valeurTotale"], 450)
+
+
+class CanteenPurchasesSummaryForYearApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.year = 2020
+        cls.url = reverse(
+            "canteen_purchases_summary_for_year", kwargs={"canteen_pk": cls.canteen.id, "year": cls.year}
+        )
+
+    def test_cannot_get_canteen_purchases_summary_for_year_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_canteen_purchases_summary_for_year_if_canteen_does_not_exist(self):
+        response = self.client.get(
+            reverse("canteen_purchases_summary_for_year", kwargs={"canteen_pk": 9999, "year": self.year})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_canteen_purchases_summary_for_year_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
     def test_can_get_purchase_total_summary(self):
         """
         Given a year, return spending by category
@@ -781,8 +833,7 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
             canteen=self.canteen, date="2019-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
         )
 
-        payload = {"year": 2020}
-        response = self.client.get(self.url, payload)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -890,8 +941,7 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
             canteen=self.canteen, date="2019-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
         )
 
-        payload = {"year": 2020}
-        response = self.client.get(self.url, payload)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -971,8 +1021,7 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
             prix_ht=10,
         )
 
-        payload = {"year": 2020}
-        response = self.client.get(self.url, payload)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1043,8 +1092,7 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
             prix_ht=10,
         )
 
-        payload = {"year": 2020}
-        response = self.client.get(self.url, payload)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -1052,29 +1100,6 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
         self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 55 + 40 + 30)
         self.assertEqual(body["valeurProduitsDeLaMerFrance"], 55 + 15)
         self.assertEqual(body["valeurProduitsDeLaMerLocal"], 0)
-
-    @authenticate
-    def test_can_get_multi_year_purchase_statistics(self):
-        self.canteen.managers.add(authenticate.user)
-
-        PurchaseFactory(canteen=self.canteen, prix_ht=100, date="2020-01-01")
-        PurchaseFactory(canteen=self.canteen, prix_ht=50, date="2020-12-31")
-        PurchaseFactory(canteen=self.canteen, prix_ht=300, date="2021-01-01")
-        PurchaseFactory(canteen=self.canteen, prix_ht=150, date="2021-12-31")
-        other_canteen = CanteenFactory(managers=[authenticate.user])
-        PurchaseFactory(canteen=other_canteen, prix_ht=999, date="2021-01-01")
-
-        response = self.client.get(self.url)  # no payload
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertIn("results", body)
-        self.assertEqual(len(body["results"]), 2)
-        self.assertEqual(body["results"][0]["year"], 2020)
-        self.assertEqual(body["results"][0]["valeurTotale"], 150)
-        self.assertIn("valeurBio", body["results"][0])
-        self.assertEqual(body["results"][1]["year"], 2021)
-        self.assertEqual(body["results"][1]["valeurTotale"], 450)
 
 
 class PurchaseOptionsApiTest(APITestCase):

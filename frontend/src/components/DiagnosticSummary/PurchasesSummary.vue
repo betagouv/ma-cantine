@@ -83,7 +83,7 @@ export default {
       this.purchasesSummary = null
       this.purchasesFetchingError = false
       if (this.canteen?.id) {
-        return fetch(`/api/v1/canteens/${this.canteen.id}/purchases/summary?year=${this.year}`)
+        return fetch(`/api/v1/canteens/${this.canteen.id}/purchases/summary/${this.year}`)
           .then((response) => (response.ok ? response.json() : {}))
           .then((response) => (this.purchasesSummary = response))
           .catch(() => {
