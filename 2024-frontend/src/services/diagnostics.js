@@ -15,6 +15,19 @@ const createDiagnostic = (canteenId, payload) => {
     .catch((e) => e)
 }
 
+const fetchDiagnostics = (canteenId, limit) => {
+  const query = limit ? `?limit=${limit}` : ""
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${query}`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 const fetchDiagnosticsRecap = (canteenId) => {
   return fetch(`/api/v1/canteens/${canteenId}/diagnostics/recap`, {
     method: "GET",
@@ -27,4 +40,4 @@ const fetchDiagnosticsRecap = (canteenId) => {
     .catch((e) => e)
 }
 
-export default { createDiagnostic, fetchDiagnosticsRecap }
+export default { createDiagnostic, fetchDiagnostics, fetchDiagnosticsRecap }
