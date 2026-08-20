@@ -1239,7 +1239,7 @@ requires-dist = [
     { name = "sentry-sdk", specifier = "==2.10.0" },
     { name = "sib-api-v3-sdk", specifier = "==7.6.0" },
     { name = "sqlalchemy", specifier = "==2.0.36" },
-    { name = "wagtail", specifier = "==7.0.7" },
+    { name = "wagtail", specifier = "==7.0.9" },
     { name = "xhtml2pdf", specifier = "==0.2.17" },
 ]
 
@@ -1555,7 +1555,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "ptyprocess" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
@@ -2441,7 +2441,7 @@ wheels = [
 
 [[package]]
 name = "wagtail"
-version = "7.0.7"
+version = "7.0.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyascii" },
@@ -2462,9 +2462,9 @@ dependencies = [
     { name = "telepath" },
     { name = "willow", extra = ["heif"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/28/2f/ccc30da7f8d229f33dd819394bcdb85d4f59cbf37e0b8c213dd941d3d24a/wagtail-7.0.7.tar.gz", hash = "sha256:11bda16fc6bc532daa341a9c9f55f5e06990483c6f592b73a0b1bf202d255065", size = 6680030, upload-time = "2026-05-05T14:16:51.466Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8f/ab/f90655e0388c7929bfb88cf3b862ad45e4671adc64e7bfd8d06dfa66f28e/wagtail-7.0.9.tar.gz", hash = "sha256:1f72a023c2aa47c2995188955e3bd3134dfeb019b3abbdacdd9d6c96be7d3d49", size = 6707807, upload-time = "2026-08-20T15:27:27.342Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bc/5a/404d8164619b2654e2eb19840c61770702ca85504c20bb66fee53c9314a1/wagtail-7.0.7-py3-none-any.whl", hash = "sha256:3131c7e991a12a5266d26853b26b3e3958d7ea634dd1b3da71632cbe14b7e912", size = 9153804, upload-time = "2026-05-05T14:16:45.127Z" },
+    { url = "https://files.pythonhosted.org/packages/9d/72/c02458f495fa6a3146a315aaede526befbdf19348db3810f51fdce934301/wagtail-7.0.9-py3-none-any.whl", hash = "sha256:93c41a52f4f440de5016a53af857a42f05e742608692087e39363a4da9b36c36", size = 9157867, upload-time = "2026-08-20T15:27:21.873Z" },
 ]
 
 [[package]]
