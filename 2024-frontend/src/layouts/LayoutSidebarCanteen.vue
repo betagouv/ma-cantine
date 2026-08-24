@@ -101,7 +101,7 @@ const menuItems = computed(() =>  {
       </p>
       <p>
         IMPORTANT : l’environnement propre aux bilans (ex. « Mon bilan annuel ») sera intégré dans une seconde version courant l’automne. <br/>
-        En attendant, retrouvez vos données via les justificatifs de télédéclaration, page <AppLinkRouter :to="{ name: 'GestionnaireCantineTeledeclarations' }" title="Toutes les télédéclarations" />.
+        En attendant, retrouvez vos données via les justificatifs de télédéclaration, page <AppLinkRouter :to="{ name: 'GestionnaireCantineTeledeclarations', hash: '#sidebar-canteen-content' }" title="Toutes les télédéclarations" />.
       </p>
       <p>Pour toute remarque ou question : <AppLinkMailto /></p>
     </DsfrAlert>
@@ -115,7 +115,7 @@ const menuItems = computed(() =>  {
       <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 fr-background-default--grey">
         <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu" class="ma-cantine--sticky__top" titleTag="p" />
       </div>
-      <section class="fr-col-12 fr-col-md-9 fr-pb-2w">
+      <section id="sidebar-canteen-content" class="fr-col-12 fr-col-md-9 fr-pb-2w">
         <RouterView />
       </section>
     </div>
