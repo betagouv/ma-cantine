@@ -1,0 +1,15 @@
+{
+  "year": 2026,
+  "fields": {
+    "nombreRepasAn": {
+      "label": "Nombre de couverts par an",
+      "type": "number",
+      "required": true
+    }
+  },
+  "pages": {
+    "GestionnaireTunnelCouvertsAnnuelsCantine": {
+      "fields": ["nombreRepasAn"]
+    }
+  }
+}
