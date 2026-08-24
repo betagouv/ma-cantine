@@ -1,15 +1,22 @@
 <script setup>
 import { computed } from "vue"
 import { useRouter, useRoute } from "vue-router"
+import { useStoreDiagnostic } from "@/stores/diagnostic.js"
+import { useRootStore } from "@/stores/root.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 const router = useRouter()
 const route = useRoute()
+const rootStore = useRootStore()
+const diagnosticStore = useStoreDiagnostic()
 const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 
-const goPrev = () => { router.push({ name: previousStep.value }) }
-const goNext = () => { router.push({ name: nextStep.value }) }
+const goTo = async (page) => {
+  const response = await diagnosticStore.saveDiagnosticCurrentCampaign()
+  if (response.status !== "error") router.push({ name: page })
+  else rootStore.notifyServerError(response.message)
+}
 </script>
 
 <template>
@@ -25,7 +32,7 @@ const goNext = () => { router.push({ name: nextStep.value }) }
       secondary
       icon="fr-icon-arrow-left-s-first-line"
       label="Étape précédente"
-      @click="goPrev"
+      @click="goTo(previousStep)"
       :disabled="!previousStep"
       class="fr-mr-2w"
     />
@@ -33,7 +40,7 @@ const goNext = () => { router.push({ name: nextStep.value }) }
       secondary
       icon="fr-icon-arrow-right-s-last-line"
       label="Étape suivante"
-      @click="goNext"
+      @click="goTo(nextStep)"
       :disabled="!nextStep"
       :icon-right="true"
     />

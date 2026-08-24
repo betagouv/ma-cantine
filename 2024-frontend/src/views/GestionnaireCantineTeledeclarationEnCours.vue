@@ -1,34 +1,74 @@
 <script setup>
-import { computed } from "vue"
+import { computed, onUnmounted, watch } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
+import { useStoreDiagnostic } from "@/stores/diagnostic.js"
+import { useRootStore } from "@/stores/root.js"
+import diagnosticService from "@/services/diagnostics.js"
 import documentation from "@/data/documentation.json"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.vue"
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
 
+const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
 const router = useRouter()
 const currentYear = new Date().getFullYear()
+const lastYear = currentYear - 1
 const { canteenInformations } = storeToRefs(canteenStore)
+
+/* Diagnostic */
+const diagnosticStore = useStoreDiagnostic()
+const hasDiagnosticCurrentCampaign = computed(() => diagnosticStore.hasDiagnosticCurrentCampaign())
+onUnmounted(() => diagnosticStore.deleteStore())
+watch(
+  () => canteenInformations.value.id,
+  (canteenId) => { if (canteenId) diagnosticStore.initStore(canteenInformations.value.id) },
+  { immediate: true }
+)
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
+const buttonTop = computed(() => {
+  const hasDiag = hasDiagnosticCurrentCampaign.value
+  const label = hasDiag ? 'Reprendre ma télédéclaration' : 'Faire ma télédéclaration'
+  const type = hasDiag ? 'secondary' : 'primary'
+  const icon = hasDiag ? '' : 'ri-send-plane-line'
+  return { label, type, icon }
+})
 
-const gotToAppro = () => {
-  router.push({ name: "GestionnaireTunnelInformations" })
+/* Navigation */
+const openTunnel = () => {
+  if (!hasDiagnosticCurrentCampaign.value) createDiagnostic()
+  else goToTunnel()
 }
+
+const createDiagnostic = () => {
+  diagnosticService.createDiagnostic(canteenInformations.value.id, { year: lastYear })
+    .then((response) => {
+      if(response.status === "error") showError(response.message)
+      else {
+        diagnosticStore.updateDiagnosticCurrentCampaign(response)
+        goToTunnel()
+      }
+    })
+    .catch((error) => showError(error.message))
+}
+const goToTunnel = () => router.push({ name: "GestionnaireTunnelInformations" })
+const showError = (message) => rootStore.notifyServerError(message)
 </script>
 
 <template>
   <CanteenSidebarTitle :title="pageTitle">
     <DsfrButton
-      @click="gotToAppro"
-      label="Faire ma télédéclaration"
-      icon="ri-send-plane-line"
+      v-if="buttonTop"
+      @click="openTunnel"
+      :label="buttonTop.label"
+      :[buttonTop.type]="true"
+      :icon="buttonTop.icon"
     />
   </CanteenSidebarTitle>
 
