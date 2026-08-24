@@ -6,6 +6,8 @@ import { useStoreCanteen } from "@/stores/canteen.js"
 import { formatSiretOrSiren } from "@/utils"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
+import AppLinkMailto from "@/components/AppLinkMailto.vue"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 /* Route */
 const route = useRoute()
@@ -93,6 +95,16 @@ const menuItems = computed(() =>  {
 <template>
   <AppLoader v-if="isLoading" />
   <div v-else-if="canteenInformations" class="layout-sidebar-canteen">
+    <DsfrAlert title="La page établissement a évolué" type="info" class="fr-mb-4w">
+      <p>
+        Cette nouvelle version a été construite à partir de vos retours dans un souci de simplicité, de performance et de sécurité. <br/>
+      </p>
+      <p>
+        IMPORTANT : l’environnement propre aux bilans (ex. « Mon bilan annuel ») sera intégré dans une seconde version courant l’automne. <br/>
+        En attendant, retrouvez vos données via les justificatifs de télédéclaration, page <AppLinkRouter :to="{ name: 'GestionnaireCantineTeledeclarations', hash: '#sidebar-canteen-content' }" title="Toutes les télédéclarations" />.
+      </p>
+      <p>Pour toute remarque ou question : <AppLinkMailto /></p>
+    </DsfrAlert>
     <h1>{{ canteenInformations.name }}</h1>
     <div class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-4w">
       <DsfrBadge :label="badgeEstablishment.label" :type="badgeEstablishment.type" :noIcon="true" />
@@ -103,7 +115,7 @@ const menuItems = computed(() =>  {
       <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 fr-background-default--grey">
         <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu" class="ma-cantine--sticky__top" titleTag="p" />
       </div>
-      <section class="fr-col-12 fr-col-md-9 fr-pb-2w">
+      <section id="sidebar-canteen-content" class="fr-col-12 fr-col-md-9 fr-pb-2w">
         <RouterView />
       </section>
     </div>
