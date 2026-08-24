@@ -442,7 +442,7 @@ const routes = [
                 component: GestionnaireTunnelSimplifieEgalim,
                 meta: {
                   title: "EGalim",
-                  previous: "GestionnaireTunnelCouvertsAnnuelsCantine",
+                  previous: "GestionnaireTunnelModeSaisie",
                   next: "GestionnaireTunnelSimplifieOrigine",
                   stepper: "approvisionnements",
                 },
