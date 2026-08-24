@@ -1,17 +1,28 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, onMounted } from "vue"
+import { useStoreDiagnostic } from "@/stores/diagnostic"
 import diagnosticsFieldsService from "@/services/diagnosticsFields"
 
 const props = defineProps(["name"])
+const storeDiagnostic = useStoreDiagnostic()
 const data = computed(() => diagnosticsFieldsService.getField(props.name))
+const field = ref()
 
-/* Field */
-const field = ref(null)
+/* Informations */
 const isNumber = computed(() => data.value.type === "number")
 const isRequired = computed(() => data.value.required)
 const label = computed(() => data.value.label)
+
+/* Actions */
+const fieldChange = () => {
+  storeDiagnostic.setDiagnosticCurrentCampaign(props.name, field.value)
+}
+const prefillField = () => {
+  field.value = storeDiagnostic.diagnosticCurrentCampaign[props.name]
+}
+onMounted(prefillField)
 </script>
 <template>
-  <DsfrInputGroup v-if="isNumber" :modelValue="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="updateField" />
+  <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" />
   <pre v-else>{{ field }}</pre>
 </template>
