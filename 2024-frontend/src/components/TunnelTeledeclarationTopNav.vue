@@ -39,7 +39,6 @@ const checkErrors = () => {
       title="Enregistrer et finir plus tard"
       :hide-arrow-icon="true"
       icon="fr-icon-save-line"
-      class="fr-mr-2w"
     />
     <DsfrButton
       secondary
@@ -47,7 +46,6 @@ const checkErrors = () => {
       label="Étape précédente"
       @click="goTo(previousStep)"
       :disabled="!previousStep"
-      class="fr-mr-2w"
     />
     <DsfrButton
       secondary
