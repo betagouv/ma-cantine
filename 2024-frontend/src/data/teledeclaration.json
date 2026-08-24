@@ -12,17 +12,17 @@
       "required": true,
       "options": [
         {
-          "label": "Saisie simplifiée : montants d'achats totaux toutes familles confondues + zoom sur les familles « Viandes Volailles » et « Produits de la mer et aquaculture »",
+          "label": "Saisie simplifiée",
           "value": "SIMPLE",
           "img": "/static/images/picto-dsfr/saisie-simplifiee.svg"
         },
         {
-          "label": "Saisie détaillée : compléter les montants totaux par familles de produits pour chacune des catégorie EGalim.",
+          "label": "Saisie détaillée",
           "value": "COMPLETE",
           "img": "/static/images/picto-dsfr/search.svg"
         },
         {
-          "label": "Saisie automatique : par l'Outil de Suivi des Achats",
+          "label": "Saisie automatique",
           "value": "AUTO",
           "img": "/static/images/picto-dsfr/saisie-automatique.svg",
           "disabled": true

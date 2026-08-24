@@ -11,7 +11,7 @@ const pageName = route.name
 const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
 </script>
 <template>
-  <div class="fr-grid-row fr-grid-row--gutters">
+  <div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <h2>Choisissez votre mode de saisie</h2>
       <p>Deux formats existent pour les modes de saisie des données d’approvisionnements EGalim. Un troisième est disponible si vous utilisez l'Outil de Suivi des Achats <em>ma cantine</em>.</p>
@@ -21,6 +21,54 @@ const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
         <a target="_blank" :href="documentation.teledeclarationType">Consultez la documentation</a>
       </AppHelpCard>
     </div>
-    <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" />
+  </div>
+  <div>
+    <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
+      <li class="fr-col-12 fr-col-md-4">
+        <DsfrBadge
+          :no-icon="true"
+          label="Saisie simplifiée"
+          type="info"
+          class="fr-mb-1w"
+        />
+        <p>
+          Vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.)
+        </p>
+        <p>Montants d'achats totaux toutes familles confondues + zoom sur les familles « Viandes Volailles » et « Produits de la mer et aquaculture » </p>
+        <p class="fr-hint-text">11 champs dont 6 obligatoires</p>
+      </li>
+      <li class="fr-col-12 fr-col-md-4">
+        <DsfrBadge
+          :no-icon="true"
+          label="Saisie détaillée"
+          type="info"
+          class="fr-mb-1w"
+        />
+        <p>Vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Roug, IGP, Commerce équitable, etc.)</p>
+        <p>Compléter les montants totaux par familles de produits pour chacune des catégorie EGalim.</p>
+        <p class="fr-hint-text">100 champs, dont 75 obligatoires</p>
+      </li>
+      <li class="fr-col-12 fr-col-md-4">
+        <DsfrBadge
+          :no-icon="true"
+          label="Saisie automatique"
+          type="info"
+          class="fr-mb-1w"
+        />
+        <p>Par l'Outil de Suivi des Achats <em>ma cantine</em></p>
+      </li>
+    </ul>
+    <div class="gestionnaire-tunnel-mode-saisie__fields-container"></div>
+    <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" class="gestionnaire-tunnel-mode-saisie__fields-container" />
   </div>
 </template>
+
+<style lang="scss">
+.gestionnaire-tunnel-mode-saisie {
+  &__fields-container {
+    .fr-fieldset__element {
+      max-width: 33.33333% !important;
+    }
+  }
+}
+</style>
