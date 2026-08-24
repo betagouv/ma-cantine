@@ -1,6 +1,14 @@
 <script setup>
-import AppHelpCard from "@/components/AppHelpCard.vue"
+import { computed } from "vue"
+import { useRoute } from "vue-router"
+import diagnosticsFieldsService from "@/services/diagnosticsFields.js"
 import documentation from "@/data/documentation.json"
+import AppHelpCard from "@/components/AppHelpCard.vue"
+import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
+
+const route = useRoute()
+const pageName = route.name
+const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
 </script>
 <template>
   <div class="fr-grid-row fr-grid-row--gutters">
@@ -13,5 +21,6 @@ import documentation from "@/data/documentation.json"
         <a target="_blank" :href="documentation.teledeclarationType">Consultez la documentation</a>
       </AppHelpCard>
     </div>
+    <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" />
   </div>
 </template>
