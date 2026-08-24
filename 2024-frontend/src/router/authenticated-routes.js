@@ -30,6 +30,7 @@ import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportC
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 import GestionnaireTunnelInformations from "@/views/GestionnaireTunnelInformations.vue"
 import GestionnaireTunnelCouvertsAnnuelsCantine from "@/views/GestionnaireTunnelCouvertsAnnuelsCantine.vue"
+import GestionnaireTunnelModeSaisie from "@/views/GestionnaireTunnelModeSaisie.vue"
 import GestionnaireTunnelSimplifieEgalim from "@/views/GestionnaireTunnelSimplifieEgalim.vue"
 import GestionnaireTunnelSimplifieOrigine from "@/views/GestionnaireTunnelSimplifieOrigine.vue"
 import GestionnaireTunnelSimplifieLocalCircuitCourt from "@/views/GestionnaireTunnelSimplifieLocalCircuitCourt.vue"
@@ -386,6 +387,7 @@ const routes = [
             approvisionnements: [
               { to: { name: "GestionnaireTunnelInformations" }, title: "Informations" },
               { to: { name: "GestionnaireTunnelCouvertsAnnuelsCantine" }, title: "Couverts annuels" },
+              { to: { name: "GestionnaireTunnelModeSaisie" }, title: "Mode de saisie" },
               { to: { name: "GestionnaireTunnelSimplifieEgalim" }, title: "EGalim" },
               { to: { name: "GestionnaireTunnelSimplifieOrigine" }, title: "Origine France et UE" },
               { to: { name: "GestionnaireTunnelSimplifieLocalCircuitCourt" }, title: "« Local » et circuit court" },
@@ -419,6 +421,17 @@ const routes = [
                 meta: {
                   title: "Couverts annuels",
                   previous: "GestionnaireTunnelInformations",
+                  next: "GestionnaireTunnelModeSaisie",
+                  stepper: "approvisionnements",
+                },
+              },
+              {
+                path: "mode-saisie",
+                name: "GestionnaireTunnelModeSaisie",
+                component: GestionnaireTunnelModeSaisie,
+                meta: {
+                  title: "Mes approvisionnements : mode de saisie",
+                  previous: "GestionnaireTunnelCouvertsAnnuelsCantine",
                   next: "GestionnaireTunnelSimplifieEgalim",
                   stepper: "approvisionnements",
                 },
