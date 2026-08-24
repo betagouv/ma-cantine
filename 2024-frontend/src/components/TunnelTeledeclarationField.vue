@@ -12,6 +12,7 @@ const field = ref()
 const isNumber = computed(() => data.value.type === "number")
 const isRequired = computed(() => data.value.required)
 const label = computed(() => data.value.label)
+const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeDiagnostic.diagnosticCurrentCampaignErrors))
 
 /* Actions */
 const fieldChange = () => {
@@ -23,6 +24,6 @@ const prefillField = () => {
 onMounted(prefillField)
 </script>
 <template>
-  <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" />
+  <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" />
   <pre v-else>{{ field }}</pre>
 </template>

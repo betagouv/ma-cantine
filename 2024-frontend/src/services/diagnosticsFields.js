@@ -8,4 +8,9 @@ const getField = (fieldName) => {
   return teledeclaration.fields[fieldName]
 }
 
-export default { getPageFields, getField }
+const getFieldError = (fieldName, errors) => {
+  const hasError = errors.find(error => error.field === fieldName)
+  return hasError ? hasError.message : null
+}
+
+export default { getPageFields, getField, getFieldError }

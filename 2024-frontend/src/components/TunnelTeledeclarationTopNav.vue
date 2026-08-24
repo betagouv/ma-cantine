@@ -13,9 +13,22 @@ const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 
 const goTo = async (page) => {
+  removeErrors()
   const response = await diagnosticStore.saveDiagnosticCurrentCampaign()
   if (response.status !== "error") router.push({ name: page })
-  else rootStore.notifyServerError(response.message)
+  else checkErrors()
+}
+
+/* Errors */
+const removeErrors = () => {
+  rootStore.removeNotifications()
+  diagnosticStore.clearDiagnosticCurrentCampaignErrors()
+}
+
+const checkErrors = () => {
+  const hasFieldsError = diagnosticStore.diagnosticCurrentCampaignErrors.length > 0
+  if (hasFieldsError) rootStore.notifyServerError({ message: "Veuillez corriger le ou les champs incorrects ci-dessous avant de continuer."})
+  else rootStore.notifyServerError()
 }
 </script>
 
