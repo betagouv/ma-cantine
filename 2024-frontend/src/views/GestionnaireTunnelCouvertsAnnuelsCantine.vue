@@ -1,6 +1,14 @@
 <script setup>
-import AppHelpCard from "@/components/AppHelpCard.vue"
+import { computed } from "vue"
+import { useRoute } from "vue-router"
+import diagnosticsFieldsService from "@/services/diagnosticsFields"
 import documentation from "@/data/documentation.json"
+import AppHelpCard from "@/components/AppHelpCard.vue"
+import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
+
+const route = useRoute()
+const pageName = route.name
+const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
 </script>
 
 <template>
@@ -14,5 +22,8 @@ import documentation from "@/data/documentation.json"
         <a target="_blank" :href="documentation.calculerNombreCouverts">Consultez notre article dédié</a>
       </AppHelpCard>
     </div>
+  </div>
+  <div class="fr-col-12 fr-col-md-7">
+    <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" />
   </div>
 </template>
