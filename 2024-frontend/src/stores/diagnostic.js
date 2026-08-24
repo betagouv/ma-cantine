@@ -6,6 +6,7 @@ const useStoreDiagnostic = defineStore("diagnostic", () => {
   const diagnostics = ref({})
   const lastYear = new Date().getFullYear() - 1
   const diagnosticCurrentCampaign = computed(() => diagnostics.value[lastYear])
+  const diagnosticCurrentCampaignErrors = ref([])
 
   /* Init store with diagnostics of all the years */
   async function initStore(canteenId) {
@@ -21,7 +22,11 @@ const useStoreDiagnostic = defineStore("diagnostic", () => {
     const diagnostic = diagnosticCurrentCampaign.value
     if (!diagnostic) return
     const response = await diagnosticService.updateDiagnostic(diagnostic.canteenId, diagnostic.id, diagnostic)
+    const errors = response?.list || []
+    const hasErrors = errors.length > 0
+    const isFieldError = errors.every(error => error.field !== null)
     if (response.status !== "error") updateDiagnosticCurrentCampaign(response)
+    else if (hasErrors && isFieldError) saveDiagnosticCurrentCampaignErrors(response.list)
     return response
   }
 
@@ -45,15 +50,28 @@ const useStoreDiagnostic = defineStore("diagnostic", () => {
     return diagnosticCurrentCampaign.value !== undefined
   }
 
+  /* Save diagnostic errors for the current campaign */
+  function saveDiagnosticCurrentCampaignErrors(errors) {
+    diagnosticCurrentCampaignErrors.value = errors
+  }
+
+  /* Clear diagnostic errors for the current campaign */
+  const clearDiagnosticCurrentCampaignErrors = () => {
+    diagnosticCurrentCampaignErrors.value = []
+  }
+
   return {
     diagnostics,
     diagnosticCurrentCampaign,
+    diagnosticCurrentCampaignErrors,
     initStore,
     deleteStore,
     hasDiagnosticCurrentCampaign,
     updateDiagnosticCurrentCampaign,
     setDiagnosticCurrentCampaign,
     saveDiagnosticCurrentCampaign,
+    saveDiagnosticCurrentCampaignErrors,
+    clearDiagnosticCurrentCampaignErrors,
   }
 })
 

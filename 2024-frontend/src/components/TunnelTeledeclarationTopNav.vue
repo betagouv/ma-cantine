@@ -13,9 +13,22 @@ const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 
 const goTo = async (page) => {
+  removeErrors()
   const response = await diagnosticStore.saveDiagnosticCurrentCampaign()
   if (response.status !== "error") router.push({ name: page })
-  else rootStore.notifyServerError(response.message)
+  else checkErrors()
+}
+
+/* Errors */
+const removeErrors = () => {
+  rootStore.removeNotifications()
+  diagnosticStore.clearDiagnosticCurrentCampaignErrors()
+}
+
+const checkErrors = () => {
+  const hasFieldsError = diagnosticStore.diagnosticCurrentCampaignErrors.length > 0
+  if (hasFieldsError) rootStore.notifyServerError({ message: "Veuillez corriger le ou les champs incorrects ci-dessous avant de continuer."})
+  else rootStore.notifyServerError()
 }
 </script>
 
@@ -26,7 +39,6 @@ const goTo = async (page) => {
       title="Enregistrer et finir plus tard"
       :hide-arrow-icon="true"
       icon="fr-icon-save-line"
-      class="fr-mr-2w"
     />
     <DsfrButton
       secondary
@@ -34,7 +46,6 @@ const goTo = async (page) => {
       label="Étape précédente"
       @click="goTo(previousStep)"
       :disabled="!previousStep"
-      class="fr-mr-2w"
     />
     <DsfrButton
       secondary
