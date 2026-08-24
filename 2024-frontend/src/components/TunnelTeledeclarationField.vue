@@ -15,15 +15,31 @@ const label = computed(() => data.value.label)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeDiagnostic.diagnosticCurrentCampaignErrors))
 
 /* Actions */
-const fieldChange = () => {
-  storeDiagnostic.setDiagnosticCurrentCampaign(props.name, field.value)
-}
-const prefillField = () => {
-  field.value = storeDiagnostic.diagnosticCurrentCampaign[props.name]
-}
+const fieldChange = () => { storeDiagnostic.setDiagnosticCurrentCampaign(props.name, field.value) }
+const prefillField = () => { field.value = storeDiagnostic.diagnosticCurrentCampaign[props.name] }
 onMounted(prefillField)
 </script>
 <template>
-  <DsfrInputGroup v-if="type === 'number'" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" />
+  <DsfrInputGroup
+    v-if="type === 'number'"
+    type="number"
+    v-model="field"
+    :label="label"
+    :label-visible="true"
+    :name="props.name"
+    :required="isRequired"
+    @change="fieldChange"
+    :error-message="errorMessage"
+  />
+  <DsfrRadioButtonSet
+    v-else-if="type === 'radioRiche'"
+    v-model="field"
+    :small="true"
+    :required="isRequired"
+    :name="label"
+    :options="data.options"
+    @change="fieldChange"
+    :error-message="errorMessage"
+  />
   <pre v-else>{{ data }}</pre>
 </template>

@@ -8,12 +8,25 @@
     },
     "diagnosticType": {
       "label": "Type de mode de saisie",
-      "type": "select",
+      "type": "radioRiche",
       "required": true,
       "options": [
-        { "label": "Saisie simplifiée : montants d'achats totaux toutes familles confondues + zoom sur les familles « Viandes Volailles » et « Produits de la mer et aquaculture »", "value": "SIMPLE" },
-        { "label": "Saisie détaillée : compléter les montants totaux par familles de produits pour chacune des catégorie EGalim.", "value": "COMPLETE" },
-        { "label": "Saisie automatique : par l'Outil de Suivi des Achats", "value": "AUTO", "disabled": true }
+        {
+          "label": "Saisie simplifiée : montants d'achats totaux toutes familles confondues + zoom sur les familles « Viandes Volailles » et « Produits de la mer et aquaculture »",
+          "value": "SIMPLE",
+          "img": "/static/images/picto-dsfr/saisie-simplifiee.svg"
+        },
+        {
+          "label": "Saisie détaillée : compléter les montants totaux par familles de produits pour chacune des catégorie EGalim.",
+          "value": "COMPLETE",
+          "img": "/static/images/picto-dsfr/search.svg"
+        },
+        {
+          "label": "Saisie automatique : par l'Outil de Suivi des Achats",
+          "value": "AUTO",
+          "img": "/static/images/picto-dsfr/saisie-automatique.svg",
+          "disabled": true
+        }
       ]
     }
   },
