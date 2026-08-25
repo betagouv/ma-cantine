@@ -328,6 +328,40 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
     @freeze_time("2026-01-30")  # during the 2025 campaign
+    def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        # default (None): ok
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.valeur_bio_dont_commerce_equitable, None)
+        diagnostic.full_clean()  # should not raise
+        # filled: ok
+        diagnostic.valeur_bio = 50
+        diagnostic.valeur_bio_dont_commerce_equitable = 10
+        diagnostic.save()
+        diagnostic.full_clean()  # should not raise
+        # bio_dont_commerce_equitable cannot be > bio
+        diagnostic.valeur_bio_dont_commerce_equitable = 60
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-01-30")  # during the 2025 campaign
+    def test_diagnostic_valeur_egalim_autres_dont_commerce_equitable(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        # default (None): ok
+        self.assertEqual(diagnostic.valeur_egalim_autres, 100)
+        self.assertEqual(diagnostic.valeur_egalim_autres_dont_commerce_equitable, None)
+        diagnostic.full_clean()  # should not raise
+        # filled: ok
+        diagnostic.valeur_egalim_autres = 50
+        diagnostic.valeur_egalim_autres_dont_commerce_equitable = 10
+        diagnostic.save()
+        diagnostic.full_clean()  # should not raise
+        # egalim_autres_dont_commerce_equitable cannot be > egalim_autres
+        diagnostic.valeur_egalim_autres_dont_commerce_equitable = 60
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_viandes_volailles_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
