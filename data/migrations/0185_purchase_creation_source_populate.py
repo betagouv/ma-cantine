@@ -7,7 +7,7 @@ from django.db.models.functions import Length
 
 def populate_purchase_creation_source(apps, schema_editor):
     """
-    Update only the Purchases with an empty creation_source
+    Note: moved to macantine/management/commands/purchase_fill_creation_user_and_source.py
     """
     Purchase = apps.get_model("data", "Purchase")
     purchase_qs = Purchase.objects.filter(Q(creation_source="") | Q(creation_source__isnull=True))
@@ -33,5 +33,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_purchase_creation_source, undo_populate_purchase_creation_source)
+        # migrations.RunPython(populate_purchase_creation_source, undo_populate_purchase_creation_source)
     ]

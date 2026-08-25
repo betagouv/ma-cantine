@@ -93,7 +93,7 @@ def fill_creation_source(apply):
     logger.info(Counter(Diagnostic.objects.values_list("creation_source", flat=True)))
 
     if apply:
-        # first set of rules:
+        # first set of rules: based on creation_mtm_source
         diagnostic_qs.annotate(creation_mtm_source_length=Length("creation_mtm_source")).annotate(
             creation_source_annotated=Case(
                 When(Q(creation_mtm_source_length__gt=0), then=Value("APP")),

@@ -90,7 +90,7 @@ def fill_creation_source(apply):
     logger.info(Counter(Canteen.all_objects.values_list("creation_source", flat=True)))
 
     if apply:
-        # first set of rules:
+        # first set of rules: based on import_source
         canteen_qs.annotate(import_source_length=Length("import_source")).annotate(
             creation_source_annotated=Case(
                 When(Q(import_source__startswith="Cuisine centrale : "), then=Value("APP")),
