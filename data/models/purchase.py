@@ -421,7 +421,7 @@ class Purchase(SoftDeletionModel):
         """
         Summary for detailed teledeclaration totals, by family and label.
         """
-        cls._complete_diag_data_appro_labels(purchases, data)
+        cls._complete_diag_data_appro_labels(purchases, data, year)
         cls._complete_diag_data_appro_label_bio_dont_commerce_equitable(purchases, data)
         if int(year) < 2025:
             cls._complete_diag_appro_labels_origine_circuit_court_local_before_2025(purchases, data)
@@ -432,7 +432,7 @@ class Purchase(SoftDeletionModel):
         cls._complete_diag_appro_labels_non_egalim(purchases, data)
 
     @classmethod
-    def _complete_diag_data_appro_labels(cls, purchases, data):
+    def _complete_diag_data_appro_labels(cls, purchases, data, year):
         """
         How we manage APPRO_LABELS_EGALIM:
         - order of APPRO_LABELS_EGALIM is significant
@@ -443,7 +443,10 @@ class Purchase(SoftDeletionModel):
 
         for family in Diagnostic.APPRO_FAMILIES:
             purchase_family = purchases.filter(famille_produits=family.upper())
-            for label in Diagnostic.APPRO_LABELS_EGALIM:
+            APPRO_LABELS_EGALIM_FOR_YEAR = (
+                Diagnostic.APPRO_LABELS_EGALIM_BEFORE_2026 if (year < 2026) else Diagnostic.APPRO_LABELS_EGALIM
+            )
+            for label in APPRO_LABELS_EGALIM_FOR_YEAR:
                 if label.upper() == "AOCAOP_IGP_STG":
                     purchase_family_label = purchase_family.filter(
                         caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG

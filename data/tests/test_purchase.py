@@ -344,6 +344,53 @@ class PurchaseModelPropertiesTest(TestCase):
         )
 
 
+class PurchaseSummaryAOCAOPIGPSTGTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        PurchaseFactory(
+            canteen=cls.canteen,
+            date="2026-01-01",
+            caracteristiques=[Purchase.Characteristic.AOCAOP],
+            famille_produits=Purchase.Family.BOULANGERIE,
+            prix_ht=10,
+        )
+        PurchaseFactory(
+            canteen=cls.canteen,
+            date="2026-01-01",
+            caracteristiques=[Purchase.Characteristic.IGP],
+            famille_produits=Purchase.Family.BOULANGERIE,
+            prix_ht=10,
+        )
+        PurchaseFactory(
+            canteen=cls.canteen,
+            date="2026-01-01",
+            caracteristiques=[Purchase.Characteristic.STG],
+            famille_produits=Purchase.Family.BOULANGERIE,
+            prix_ht=10,
+        )
+
+    def test_canteen_summary_for_year_aocaop_igp_stg_2025(self):
+        # before 2026, aocaop, igp & stg were grouped together
+        Purchase.objects.filter(canteen=self.canteen).update(date="2025-01-01")
+
+        result = Purchase.canteen_summary_for_year(self.canteen, 2025)
+
+        self.assertEqual(result["valeur_boulangerie_aocaop_igp_stg"], 30)
+        self.assertNotIn("valeur_boulangerie_aocaop", result)
+        self.assertNotIn("valeur_boulangerie_igp", result)
+        self.assertNotIn("valeur_boulangerie_stg", result)
+
+    def test_canteen_summary_for_year_aocaop_igp_stg_2026(self):
+        # before 2026, aocaop, igp & stg are now seperated
+        result = Purchase.canteen_summary_for_year(self.canteen, 2026)
+
+        self.assertNotIn("valeur_boulangerie_aocaop_igp_stg", result)
+        self.assertEqual(result["valeur_boulangerie_aocaop"], 10)
+        self.assertEqual(result["valeur_boulangerie_igp"], 10)
+        self.assertEqual(result["valeur_boulangerie_stg"], 10)
+
+
 class PurchaseSummaryFranceTest(TestCase):
     @classmethod
     def setUpTestData(cls):
