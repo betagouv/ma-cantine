@@ -169,6 +169,17 @@ CAMPAIGN_DATES = {
         "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2025-12-04",
         "rapport_parlement_url": None,
     },
+    # NOTE: dates approximates ! on en a besoin pour les tests.
+    2026: {
+        "teledeclaration_start_date": datetime(2027, 1, 1, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_end_date": datetime(
+            2027, 3, 31, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
+        ),
+        "correction_start_date": None,
+        "correction_end_date": None,
+        "legifrance_url": None,
+        "rapport_parlement_url": None,
+    },
     # Note: au moment d'ajouter une nouvelle année :
     # - penser à y ajouter les settings (pour override dans les environnements non-prod)
     # - et enlever les settings de l'année précédente
