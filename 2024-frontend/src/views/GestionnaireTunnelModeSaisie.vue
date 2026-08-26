@@ -1,6 +1,5 @@
 <script setup>
-import { computed } from "vue"
-import { useRoute } from "vue-router"
+import { ref, computed, onMounted } from "vue"
 import { storeToRefs } from "pinia"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import { useStoreDiagnostic } from "@/stores/diagnostic.js"
@@ -9,30 +8,40 @@ import diagnosticsFieldsService from "@/services/diagnosticsFields.js"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 
 /* Stores */
-const route = useRoute()
 const storePurchaseSummary = useStorePurchaseSummary()
 const storeDiagnostic = useStoreDiagnostic()
 
-/* Fields */
-const pageName = route.name
-const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
-
-/* Customize select option */
+/* Select */
+const select = ref()
+const fieldName = "diagnosticType"
+const field = computed(() => diagnosticsFieldsService.getField(fieldName))
+const isRequired = computed(() => field.value.required)
+const label = computed(() => field.value.label)
+const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(fieldName, storeDiagnostic.diagnosticCurrentCampaignErrors))
 const options = computed(() => {
-  const defaultOptions = diagnosticsFieldsService.getField(fields.value[0]).options || []
-  const autoIndex = defaultOptions.findIndex(field => field.value === "AUTO")
-  defaultOptions[autoIndex].disabled = !hasPurchaseSummary.value
-  defaultOptions[autoIndex].hint = !hasPurchaseSummary.value ? "Aucun achat détecté" : `${formatNumber(purchaseSummary.value[diagYear].valeurTotale)}€ d'achats détectés dans votre suivi des achats`
-  return defaultOptions
+  const newOptions = field.value.options || []
+  const autoIndex = newOptions.findIndex(field => field.value === "AUTO")
+  newOptions[autoIndex].disabled = !hasPurchaseSummary.value
+  newOptions[autoIndex].hint = !hasPurchaseSummary.value ? "Aucun achat détecté" : `${formatNumber(purchaseSummary.value[diagYear].valeurTotale)}€ d'achats détectés dans votre suivi des achats`
+  return newOptions
 })
 
-/* Saisie automatique */
+/* OSA */
 const diagYear = storeDiagnostic.diagnosticCurrentCampaign.year
 const { purchaseSummary } = storeToRefs(storePurchaseSummary)
 const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(diagYear))
+
+/* Prefill */
+const prefillSelect = () => { select.value = storeDiagnostic.diagnosticCurrentCampaign[fieldName] || "SIMPLE" } // By defaut to SIMPLE to avoid error because it's not required in backend
+onMounted(prefillSelect)
+
+/* Change */
+const selectRadio = () => {
+  if (select.value === "AUTO") alert('TODO: Saisie auto')
+  else storeDiagnostic.setDiagnosticCurrentCampaign(fieldName, select.value)
+}
 </script>
 <template>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
@@ -46,5 +55,13 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
       </AppHelpCard>
     </div>
   </div>
-  <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" :custom-select-options="options" />
+  <DsfrRadioButtonSet
+    v-model="select"
+    :small="true"
+    :required="isRequired"
+    :legend="label"
+    :options="options"
+    @change="selectRadio"
+    :error-message="errorMessage"
+  />
 </template>
