@@ -37,14 +37,14 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
       </AppHelpCard>
     </div>
   </div>
-  <div>
+  <div class="gestionnaire-tunnel-mode-saisie__columns">
     <ul class="ma-cantine--unstyled-list fr-grid-row fr-grid-row--gutters">
       <li class="fr-col-12 fr-col-md-4">
         <DsfrBadge
           :no-icon="true"
           label="Saisie simplifiée"
           type="info"
-          class="fr-mb-1w"
+          class="fr-mb-1w fr-mt-2w"
         />
         <p>
           Vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.).
@@ -57,7 +57,7 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
           :no-icon="true"
           label="Saisie détaillée"
           type="info"
-          class="fr-mb-1w"
+          class="fr-mb-1w fr-mt-2w"
         />
         <p>Vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Roug, IGP, Commerce équitable, etc.).</p>
         <p>Compléter les montants totaux par familles de produits pour chacune des catégorie EGalim.</p>
@@ -68,7 +68,7 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
           :no-icon="true"
           label="Saisie automatique"
           type="info"
-          class="fr-mb-1w"
+          class="fr-mb-1w fr-mt-2w"
         />
         <div v-if="hasPurchaseSummary">
           <p>Vous utilisez l'Outil de Suivi des Achats <em>ma cantine</em>.</p>
@@ -83,10 +83,45 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
 
 <style lang="scss">
 .gestionnaire-tunnel-mode-saisie {
+
+  // Customs style to add some borders between columns text and radio
+  &__columns {
+    overflow: hidden;
+    li:nth-child(1), li:nth-child(2) {
+      position: relative;
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 1px;
+        height: 100vw;
+        background-color: var(--border-default-grey);
+      }
+    }
+
+    li:nth-child(2) {
+      &::after {
+        right: 0px;
+      }
+    }
+
+    li:nth-child(1) {
+      &::after {
+        right: -1px;
+      }
+    }
+  }
+
   &__fields-container {
+    .fr-fieldset {
+      margin-bottom: 0 !important;
+    }
+
     .fr-fieldset__element {
       max-width: 33.33333% !important;
+      margin-bottom: 0 !important;
     }
+
     &.hide-auto {
       .fr-fieldset__element:last-child {
         display: none !important;
