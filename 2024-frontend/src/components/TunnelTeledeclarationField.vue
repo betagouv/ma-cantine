@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from "vue"
 import { useStoreDiagnostic } from "@/stores/diagnostic"
 import diagnosticsFieldsService from "@/services/diagnosticsFields"
 
-const props = defineProps(["name"])
+const props = defineProps(["name", "customSelectOptions"])
 const storeDiagnostic = useStoreDiagnostic()
 const data = computed(() => diagnosticsFieldsService.getField(props.name))
 const field = ref()
@@ -12,6 +12,7 @@ const field = ref()
 const type = computed(() => data.value.type)
 const isRequired = computed(() => data.value.required)
 const label = computed(() => data.value.label)
+const options = computed(() => props.customSelectOptions || data.value.options)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeDiagnostic.diagnosticCurrentCampaignErrors))
 
 /* Actions */
@@ -36,8 +37,8 @@ onMounted(prefillField)
     v-model="field"
     :small="true"
     :required="isRequired"
-    :name="label"
-    :options="data.options"
+    :legend="label"
+    :options="options"
     @change="fieldChange"
     :error-message="errorMessage"
   />
