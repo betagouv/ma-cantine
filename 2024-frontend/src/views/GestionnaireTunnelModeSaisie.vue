@@ -70,9 +70,11 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
           type="info"
           class="fr-mb-1w"
         />
-        <p>Vous utilisez l'Outil de Suivi des Achats <em>ma cantine</em>.</p>
-        <p v-if="hasPurchaseSummary"><span class="fr-text--bold">{{ formatNumber(purchaseSummary[diagYear].valeurTotale) }}€</span> d’achats détectés dans <AppLinkRouter :to="{ name: 'PurchasesHome' }" title="votre suivi des achats" target="_blank"/>.</p>
-        <p v-else>Vous n'avez pas de suivi des achats détectés dans votre suivi des achats.</p>
+        <div v-if="hasPurchaseSummary">
+          <p>Vous utilisez l'Outil de Suivi des Achats <em>ma cantine</em>.</p>
+          <p><span class="fr-text--bold">{{ formatNumber(purchaseSummary[diagYear].valeurTotale) }}€</span> d’achats détectés dans <AppLinkRouter :to="{ name: 'PurchasesHome' }" title="votre suivi des achats" target="_blank"/>.</p>
+        </div>
+        <p v-else>Vous n'utilisez pas l'Outil de Suivi des Achats <em>ma cantine</em>.</p>
       </li>
     </ul>
     <div class="gestionnaire-tunnel-mode-saisie__fields-container"></div>
