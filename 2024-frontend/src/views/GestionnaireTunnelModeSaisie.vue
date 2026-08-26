@@ -46,9 +46,9 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
           class="fr-mb-1w"
         />
         <p>
-          Vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.)
+          Vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.).
         </p>
-        <p>Montants d'achats totaux toutes familles confondues + zoom sur les familles « Viandes Volailles » et « Produits de la mer et aquaculture » </p>
+        <p>Montants d'achats totaux toutes familles confondues + zoom sur les familles « Viandes Volailles » et « Produits de la mer et aquaculture ».</p>
         <p class="fr-hint-text">11 champs dont 6 obligatoires</p>
       </li>
       <li class="fr-col-12 fr-col-md-4">
@@ -58,7 +58,7 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
           type="info"
           class="fr-mb-1w"
         />
-        <p>Vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Roug, IGP, Commerce équitable, etc.)</p>
+        <p>Vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Roug, IGP, Commerce équitable, etc.).</p>
         <p>Compléter les montants totaux par familles de produits pour chacune des catégorie EGalim.</p>
         <p class="fr-hint-text">100 champs, dont 75 obligatoires</p>
       </li>
@@ -69,7 +69,7 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
           type="info"
           class="fr-mb-1w"
         />
-        <p>Par l'Outil de Suivi des Achats <em>ma cantine</em></p>
+        <p>Vous utilisez l'Outil de Suivi des Achats <em>ma cantine</em>.</p>
         <p v-if="hasPurchaseSummary">Vous avez <span class="fr-text--bold">{{ formatNumber(purchaseSummary[diagYear].valeurTotale) }}€</span> d’achats détectés dans votre suivi des achats.</p>
         <p v-else>Vous n'avez pas de suivi des achats détectés dans votre suivi des achats.</p>
       </li>
