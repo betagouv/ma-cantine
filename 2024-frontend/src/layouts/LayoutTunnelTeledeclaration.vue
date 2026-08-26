@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia"
 import { useRoute } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreDiagnostic } from "@/stores/diagnostic.js"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import urlService from "@/services/urls.js"
 import AppLoader from "@/components/AppLoader.vue"
 import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
@@ -25,13 +26,17 @@ const canteenUrlId = computed(() => urlService.getCanteenId(route.params.canteen
 const isLoading = ref(false)
 const canteenStore = useStoreCanteen()
 const diagnosticStore = useStoreDiagnostic()
+const purchaseSummaryStore = useStorePurchaseSummary()
 const { canteenInformations } = storeToRefs(canteenStore)
+
+/* Init and Delete stores */
 const loadStores = async () => {
   if (!canteenInformations.value || canteenInformations.value.id != canteenUrlId.value) {
     isLoading.value = true
     await Promise.all([
       canteenStore.initStore(canteenUrlId.value),
       diagnosticStore.initStore(canteenUrlId.value),
+      purchaseSummaryStore.initStore(canteenUrlId.value),
     ])
     isLoading.value = false
   }
@@ -40,6 +45,7 @@ onMounted(() => loadStores())
 onUnmounted(() => {
   canteenStore.deleteStore()
   diagnosticStore.deleteStore()
+  purchaseSummaryStore.deleteStore()
 })
 watch(canteenUrlId, () => loadStores())
 </script>

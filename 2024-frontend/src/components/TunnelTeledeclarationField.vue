@@ -15,12 +15,8 @@ const label = computed(() => data.value.label)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeDiagnostic.diagnosticCurrentCampaignErrors))
 
 /* Actions */
-const fieldChange = () => {
-  storeDiagnostic.setDiagnosticCurrentCampaign(props.name, field.value)
-}
-const prefillField = () => {
-  field.value = storeDiagnostic.diagnosticCurrentCampaign[props.name]
-}
+const fieldChange = () =>  storeDiagnostic.setDiagnosticCurrentCampaign(props.name, field.value)
+const prefillField = () => field.value = storeDiagnostic.diagnosticCurrentCampaign[props.name]
 onMounted(prefillField)
 </script>
 <template>
