@@ -24,8 +24,7 @@
         {
           "label": "Saisie automatique",
           "value": "AUTO",
-          "img": "/static/images/picto-dsfr/saisie-automatique.svg",
-          "disabled": true
+          "img": "/static/images/picto-dsfr/saisie-automatique.svg"
         }
       ]
     }

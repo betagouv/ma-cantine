@@ -1,14 +1,28 @@
 <script setup>
 import { computed } from "vue"
 import { useRoute } from "vue-router"
+import { storeToRefs } from "pinia"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
+import { useStoreDiagnostic } from "@/stores/diagnostic.js"
+import { formatNumber } from "@/utils.js"
 import diagnosticsFieldsService from "@/services/diagnosticsFields.js"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 
+/* Stores */
 const route = useRoute()
+const storePurchaseSummary = useStorePurchaseSummary()
+const storeDiagnostic = useStoreDiagnostic()
+
+/* Fields */
 const pageName = route.name
 const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
+
+/* Saisie automatique */
+const diagYear = storeDiagnostic.diagnosticCurrentCampaign.year
+const { purchaseSummary } = storeToRefs(storePurchaseSummary)
+const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(diagYear))
 </script>
 <template>
   <div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
@@ -56,10 +70,12 @@ const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
           class="fr-mb-1w"
         />
         <p>Par l'Outil de Suivi des Achats <em>ma cantine</em></p>
+        <p v-if="hasPurchaseSummary">Vous avez <span class="fr-text--bold">{{ formatNumber(purchaseSummary[diagYear].valeurTotale) }}€</span> d’achats détectés dans votre suivi des achats.</p>
+        <p v-else>Vous n'avez pas de suivi des achats détectés dans votre suivi des achats.</p>
       </li>
     </ul>
     <div class="gestionnaire-tunnel-mode-saisie__fields-container"></div>
-    <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" class="gestionnaire-tunnel-mode-saisie__fields-container" />
+    <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" class="gestionnaire-tunnel-mode-saisie__fields-container" :class="{ 'hide-auto': !hasPurchaseSummary }" />
   </div>
 </template>
 
@@ -68,6 +84,11 @@ const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
   &__fields-container {
     .fr-fieldset__element {
       max-width: 33.33333% !important;
+    }
+    &.hide-auto {
+      .fr-fieldset__element:last-child {
+        display: none !important;
+      }
     }
   }
 }
