@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, login, tokens
 from django.contrib.auth import views as auth_views
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -13,7 +14,6 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import FormView, TemplateView, View
-from django.utils.http import url_has_allowed_host_and_scheme
 
 from common.utils import send_mail
 from web.forms import LoginUserForm, RegisterUserForm
@@ -61,6 +61,28 @@ class Vue3AppDisplayView(TemplateView):
 class LoginUserView(auth_views.LoginView):
     form_class = LoginUserForm
 
+    def form_invalid(self, form):
+        # Check if error is due to unconfirmed email
+        error_msg = str(form.errors)
+        if "email n'a pas encore été confirmée" in error_msg:
+            username = form.cleaned_data.get("username", "")
+
+            try:
+                # Send activation email without logging in
+                _send_activation_email(username, self.request)
+
+                # Add message and redirect to registration_done page with username
+                messages.info(
+                    self.request,
+                    "Votre adresse email n'a pas été confirmée. Un nouvel email de confirmation a été envoyé.",
+                )
+                return redirect("registration_email_sent", username=username, from_registration=False)
+            except Exception:
+                # If email sending fails, fall through to default handling
+                pass
+
+        return super().form_invalid(form)
+
 
 class RegisterUserView(FormView):
     """
@@ -84,19 +106,10 @@ class RegisterUserView(FormView):
         form.save()
         username = form.cleaned_data["username"]
         try:
-            _login_and_send_activation_email(username, self.request)
+            # Send activation email (redirects to registration_done page with username)
+            return redirect("registration_email_sent", username=username, from_registration=True)
         except Exception:
             self.success_url = reverse_lazy("registration_email_sent_error", kwargs={"username": username})
-            return super().form_valid(form)
-        else:
-            next_url = self.request.GET.get("next")
-            if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts=None):
-                self.success_url = next_url
-            elif self.request.user.is_dev:
-                self.success_url = "/v2/developpement-et-apis"
-            else:
-                has_canteens = not self.request.user.is_anonymous and self.request.user.canteens.count() > 0
-                self.success_url = reverse_lazy("app") if has_canteens else "/v2/tableau-de-bord"
             return super().form_valid(form)
 
 
@@ -111,7 +124,9 @@ class ActivationTokenView(View):
     def post(self, request, *args, **kwargs):
         username = request.POST.get("username")
         try:
-            return _login_and_send_activation_email(username, self.request)
+            # Send activation email
+            _send_activation_email(username, self.request)
+            return redirect(reverse_lazy("registration_done"))
         except Exception:
             return redirect(reverse_lazy("registration_email_sent_error", kwargs={"username": username}))
 
@@ -123,6 +138,12 @@ class RegisterDoneView(TemplateView):
     """
 
     template_name = "auth/register_done.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["username"] = kwargs.get("username", "")
+        context["from_registration"] = kwargs.get("from_registration", False)
+        return context
 
 
 class RegisterSendMailFailedView(TemplateView):
@@ -178,13 +199,28 @@ class AccountActivationView(View):
             return redirect(reverse_lazy("invalid_token"))
 
 
-def _login_and_send_activation_email(username, request):
+def _send_activation_email(username, request):
+    """
+    Send activation email to a user with unconfirmed email.
+
+    Args:
+        username: Username or email of the user
+        request: Django request object
+
+    Returns:
+        HttpResponseRedirect: Redirect to registration_done page
+
+    Raises:
+        Exception: If email cannot be sent or user not found
+    """
     if not username:
         return redirect(reverse_lazy("app"))
-    try:
-        user = get_user_model().objects.get(username=username, email_confirmed=False)
-        login(request, user)
 
+    try:
+        # Support both username and email lookup
+        user = get_user_model().objects.get(Q(username=username) | Q(email=username), email_confirmed=False)
+
+        # Generate and send activation email
         token = tokens.default_token_generator.make_token(user)
         context = {
             "token": token,
@@ -198,9 +234,14 @@ def _login_and_send_activation_email(username, request):
             context=context,
             to=[user.email],
         )
-        return redirect(reverse_lazy("app"))
-    except Exception:
-        raise Exception("Error occurred : the mail could not be sent.")
+
+        # Always redirect to registration_done page
+        return redirect(reverse_lazy("registration_done"))
+
+    except get_user_model().DoesNotExist:
+        raise Exception("User not found or already confirmed.")
+    except Exception as e:
+        raise Exception(f"Error occurred: {str(e)}")
 
 
 class OIDCLoginView(View):
