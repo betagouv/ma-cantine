@@ -8,6 +8,7 @@ import { formatNumber } from "@/utils.js"
 import diagnosticsFieldsService from "@/services/diagnosticsFields.js"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 
 /* Stores */
@@ -70,7 +71,7 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
           class="fr-mb-1w"
         />
         <p>Vous utilisez l'Outil de Suivi des Achats <em>ma cantine</em>.</p>
-        <p v-if="hasPurchaseSummary">Vous avez <span class="fr-text--bold">{{ formatNumber(purchaseSummary[diagYear].valeurTotale) }}€</span> d’achats détectés dans votre suivi des achats.</p>
+        <p v-if="hasPurchaseSummary"><span class="fr-text--bold">{{ formatNumber(purchaseSummary[diagYear].valeurTotale) }}€</span> d’achats détectés dans <AppLinkRouter :to="{ name: 'PurchasesHome' }" title="votre suivi des achats" target="_blank"/>.</p>
         <p v-else>Vous n'avez pas de suivi des achats détectés dans votre suivi des achats.</p>
       </li>
     </ul>
