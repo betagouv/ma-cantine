@@ -49,7 +49,7 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
         <p>
           Vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.).
         </p>
-        <p>Montants d'achats totaux toutes familles confondues + zoom sur les familles « Viandes Volailles » et « Produits de la mer et aquaculture ».</p>
+        <p>Montants d'achats totaux toutes familles confondues + zoom sur les familles «&nbsp;Viandes Volailles&nbsp;» et «&nbsp;Produits de la mer et aquaculture&nbsp;».</p>
         <p class="fr-hint-text">11 champs dont 6 obligatoires</p>
       </li>
       <li class="fr-col-12 fr-col-md-4">
