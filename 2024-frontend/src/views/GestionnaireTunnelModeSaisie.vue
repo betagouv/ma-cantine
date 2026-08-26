@@ -77,7 +77,6 @@ const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(
         <p v-else>Vous n'utilisez pas l'Outil de Suivi des Achats <em>ma cantine</em>.</p>
       </li>
     </ul>
-    <div class="gestionnaire-tunnel-mode-saisie__fields-container"></div>
     <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" class="gestionnaire-tunnel-mode-saisie__fields-container" :class="{ 'hide-auto': !hasPurchaseSummary }" />
   </div>
 </template>
