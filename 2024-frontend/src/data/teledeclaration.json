@@ -34,7 +34,8 @@
       "label": "Valeurs totales des achats alimentaires",
       "placeholder": "Valeur totale € HT",
       "type": "number",
-      "required": true
+      "required": true,
+      "enablePurchaseSummary": true
     }
   },
   "pages": {
