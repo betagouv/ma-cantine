@@ -3,24 +3,29 @@ import { ref, computed, onMounted } from "vue"
 import { useStoreDiagnostic } from "@/stores/diagnostic"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary"
 import { storeToRefs } from "pinia"
+import { formatNumber } from "@/utils.js"
 import diagnosticsFieldsService from "@/services/diagnosticsFields"
 
+
+/* Stores */
 const props = defineProps(["name"])
 const storeDiagnostic = useStoreDiagnostic()
 const storePurchaseSummary = useStorePurchaseSummary()
 const { diagnosticCurrentCampaign } = storeToRefs(storeDiagnostic)
 const { purchaseSummary } = storeToRefs(storePurchaseSummary)
-const data = computed(() => diagnosticsFieldsService.getField(props.name))
-const field = ref()
 
 /* Informations */
+const field = ref()
+const data = computed(() => diagnosticsFieldsService.getField(props.name))
 const isNumber = computed(() => data.value.type === "number")
 const isRequired = computed(() => data.value.required)
 const label = computed(() => data.value.label)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeDiagnostic.diagnosticCurrentCampaignErrors))
 const hint = computed(() => {
   const enablePurchaseSummary = data.value.enablePurchaseSummary
-  return enablePurchaseSummary ? `Vous avez ${purchaseSummary.value[diagnosticCurrentCampaign.value.year][props.name]}€ renseignés dans l'Outil de Suivi des Achats` : data.value.hint
+  const hasPurchaseSummary = storePurchaseSummary.hasPurchaseTotal(diagnosticCurrentCampaign.value.year)
+  const fieldValue = hasPurchaseSummary ? purchaseSummary.value[diagnosticCurrentCampaign.value.year][props.name] : 0
+  return enablePurchaseSummary && hasPurchaseSummary ? `Vous avez ${formatNumber(fieldValue)}€ renseignés dans l'Outil de Suivi des Achats` : data.value.hint
 })
 
 /* Actions */
