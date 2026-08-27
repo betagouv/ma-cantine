@@ -29,6 +29,12 @@
           "img": "/static/images/picto-dsfr/saisie-automatique.svg"
         }
       ]
+    },
+    "valeurTotale": {
+      "label": "Valeurs totales des achats alimentaires",
+      "placeholder": "Valeur totale € HT",
+      "type": "number",
+      "required": true
     }
   },
   "pages": {
