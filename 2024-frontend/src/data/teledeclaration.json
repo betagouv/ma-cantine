@@ -31,10 +31,124 @@
       ]
     },
     "valeurTotale": {
-      "label": "Valeurs totales des achats alimentaires",
+      "label": "Total des achats alimentaires toutes familles de produits confondues",
       "placeholder": "Valeur totale € HT",
       "type": "number",
       "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurBio": {
+      "label": "Total des achats Bio ou en conversion Bio",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurBioDontCommerceEquitable": {
+      "label": "Dont total des achats bio issus du commerce équitable.",
+      "isRelated": "Achats à comptabiliser également dans le champ Total des achats Bio ou en conversion Bio",
+      "placeholder": "Valeur totale € HT",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurSiqo": {
+      "label": "Total des achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurEgalimAutres": {
+      "label": "Total des autres achats EGalim",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurEgalimAutresDontCommerceEquitable": {
+      "label": "Dont total des achats issus du commerce équitable non bio",
+      "isRelated": "Achats à comptabiliser également dans le champ Total des autres achats EGalim",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurExternalitesPerformance": {
+      "label": "Critères d'achat : total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurViandesVolailles": {
+      "label": "Zoom sur la famille viandes et volailles : total des achats en viandes et volailles fraiches ou surgelées",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurViandesVolaillesEgalim": {
+      "label": "Zoom sur la famille viandes et volailles : total des achats EGalim en viandes et volailles fraiches ou surgelées",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMer": {
+      "label": "Zoom sur la famille Poissons, produits de la mer et de l’aquaculture frais et surgelés : total des achats en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMerEgalim": {
+      "label": "Zoom sur la famille Poissons, produits de la mer et de l’aquaculture frais et surgelés : total des achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurCharcuterie": {
+      "label": "Total des achats pour la famille Charcuteries",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurFruitsEtLegumes": {
+      "label": "Total des achats pour la famille Fruits et légumes frais et surgelés",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsLaitiers": {
+      "label": "Total des achats pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoulangerie": {
+      "label": "Total des achats pour la famille Boulangerie/Pâtisseries fraîches",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurAutres": {
+      "label": "Total des achats pour la famille Autres produits frais, surgelés et d'épicerie",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoissons": {
+      "label": "Total des achats pour la famille Boissons",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
       "enablePurchaseSummary": true
     }
   },
