@@ -24,9 +24,15 @@ const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props
 const hint = computed(() => {
   const enablePurchaseSummary = data.value.enablePurchaseSummary
   const hasPurchaseSummary = storePurchaseSummary.hasPurchaseTotal(diagnosticCurrentCampaign.value.year)
-  const fieldValue = hasPurchaseSummary ? purchaseSummary.value[diagnosticCurrentCampaign.value.year][props.name] : 0
-  return enablePurchaseSummary && hasPurchaseSummary ? `Vous avez ${formatNumber(fieldValue)}€ renseignés dans l'Outil de Suivi des Achats` : data.value.hint
+  return enablePurchaseSummary && hasPurchaseSummary ? getPurchaseSummaryHint(props.name) : data.value.hint
 })
+
+const getPurchaseSummaryHint = (fieldName) => {
+  const fieldValue = purchaseSummary.value[diagnosticCurrentCampaign.value.year][fieldName]
+  if (!fieldValue) return "0€ dans l'Outil de Suivi des Achats"
+  else if (fieldValue === 1) return "1€ renseigné dans l'Outil de Suivi des Achats"
+  else return `${formatNumber(fieldValue)}€ sont renseignés dans l'Outil de Suivi des Achats`
+}
 
 /* Actions */
 const fieldChange = () =>  storeDiagnostic.setDiagnosticCurrentCampaign(props.name, field.value)
