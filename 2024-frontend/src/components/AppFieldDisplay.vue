@@ -23,19 +23,9 @@ const errorMessage = computed(() => hasError.value ? props.error?.join(' ') : ""
     <div class="fr-col-12 fr-col-md-7">
       <div class="ma-cantine--flex-start ma-cantine--flex-top fr-mb-1w">
         <AppRawHTML :html="valueFormatted" />
-        <DsfrTooltip v-if="tooltip" :content="tooltip" class="app-field-display__tooltip fr-ml-1w" :on-hover="true" title="Infobulle">
-          <VIcon name="ri-information-line" />
-        </DsfrTooltip>
+        <DsfrTooltip v-if="tooltip" :content="tooltip" class="fr-ml-1w" title="Infobulle" />
       </div>
       <p v-if="hasError" class="fr-message fr-message--error">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
-
-<style lang="scss">
-.app-field-display {
-  &__tooltip {
-    background-image: none !important;
-  }
-}
-</style>
