@@ -15,7 +15,7 @@ const diagIsSimple = computed(() => diagnosticCurrentCampaign.value.diagnosticTy
   <h2 class="fr-h6">1. Total des approvisionnements toutes familles de produits confondus :</h2>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
-      <TunnelTeledeclarationField name="valeurTotale" />
+      <TunnelTeledeclarationField name="valeurTotale" size="big" />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="Comment comptabiliser les produits ayant plusieurs labels ?">
