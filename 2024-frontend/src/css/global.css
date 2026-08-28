@@ -224,3 +224,8 @@ address {
     position: relative;
     z-index: 1;
 }
+
+.ma-cantine--modal-iframe {
+    width: 100%;
+    height: 60vh;
+}
