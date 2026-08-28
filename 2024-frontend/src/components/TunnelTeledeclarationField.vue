@@ -28,6 +28,8 @@ const hint = computed(() => {
   const hasPurchaseSummary = storePurchaseSummary.hasPurchaseTotal(diagnosticCurrentCampaign.value.year)
   return enablePurchaseSummary && hasPurchaseSummary ? getPurchaseSummaryHint(props.name) : data.value.hint
 })
+const img = computed(() => data.value.img)
+const imgAlt = computed(() => data.value.imgAlt)
 
 const getPurchaseSummaryHint = (fieldName) => {
   const fieldValue = purchaseSummary.value[diagnosticCurrentCampaign.value.year][fieldName]
@@ -46,15 +48,21 @@ const prefillField = () => field.value = storeDiagnostic.diagnosticCurrentCampai
 onMounted(prefillField)
 </script>
 <template>
-  <div class="fr-grid-row fr-grid-row--bottom fr-mb-2w">
+  <div class="fr-grid-row fr-mb-2w">
     <div class="fr-grid-row" :class="{ 'fr-col-12': oneColumn, 'fr-col-7': twoColumns }">
       <div v-if="isRelated" class="tunnel-teledeclaration-field__related fr-col-1"></div>
       <div class="tunnel-teledeclaration-field__input" :class="{ 'fr-col-11': isRelated, 'fr-col-12': !isRelated }">
         <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
       </div>
     </div>
-    <div v-if="twoColumns" class="fr-col-5 fr-pl-1w fr-pb-1v">
-      <DsfrTooltip v-if="tooltip" :content="tooltip" title="Infobulle" />
+    <div v-if="twoColumns" class="fr-col-5 fr-pl-1v fr-grid-row fr-grid-row--bottom">
+      <div class="fr-col-1 fr-pb-1v">
+        <DsfrTooltip v-if="tooltip" :content="tooltip" title="Infobulle" />
+      </div>
+      <div class="fr-col-1"></div>
+      <div class="fr-col-10">
+        <img v-if="img" :src="img" :alt="imgAlt" class="tunnel-teledeclaration-field__img" />
+      </div>
     </div>
   </div>
 </template>
@@ -85,6 +93,13 @@ onMounted(prefillField)
       width: 80%;
       background-color: var(--border-plain-grey);
     }
+  }
+
+  &__img {
+    width: auto;
+    height: 3rem;
+    object-fit: contain;
+    object-position: center left;
   }
 }
 </style>

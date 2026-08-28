@@ -42,30 +42,38 @@
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": true,
-      "enablePurchaseSummary": true
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/egalim-bio.jpg",
+      "imgAlt": "Label bio"
     },
     "valeurBioDontCommerceEquitable": {
-      "label": "Dont total des achats bio issus du commerce équitable.",
+      "label": "Dont total des achats bio issus du commerce équitable",
       "isRelatedField": true,
       "tooltip": "Achats à comptabiliser également dans le champ Total des achats Bio ou en conversion Bio",
       "placeholder": "Valeur totale € HT",
       "type": "number",
       "required": false,
-      "enablePurchaseSummary": true
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
+      "imgAlt": "Label bio issu du commerce équitable"
     },
     "valeurSiqo": {
       "label": "Total des achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": true,
-      "enablePurchaseSummary": true
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/egalim-siqo.jpg",
+      "imgAlt": "Labels SIQO : lable rouge, AOC, AOP, IGP, STG."
     },
     "valeurEgalimAutres": {
       "label": "Total des autres achats EGalim",
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": true,
-      "enablePurchaseSummary": true
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/egalim-autres.jpg",
+      "imgAlt": "Labels HVE, Pêche durable, RUP, Fermier, Commerce équitable."
     },
     "valeurEgalimAutresDontCommerceEquitable": {
       "label": "Dont total des achats issus du commerce équitable non bio",
@@ -74,38 +82,42 @@
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": false,
-      "enablePurchaseSummary": true
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/commerce-equitable.jpg",
+      "imgAlt": "Label commerce équitable"
     },
     "valeurExternalitesPerformance": {
       "label": "Critères d'achat : total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": false,
-      "enablePurchaseSummary": true
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/environnement.jpg",
+      "imgAlt": "Labels coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs"
     },
     "valeurViandesVolailles": {
-      "label": "Zoom sur la famille viandes et volailles : total des achats en viandes et volailles fraiches ou surgelées",
+      "label": "Total des achats en viandes et volailles fraiches ou surgelées",
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": true,
       "enablePurchaseSummary": true
     },
     "valeurViandesVolaillesEgalim": {
-      "label": "Zoom sur la famille viandes et volailles : total des achats EGalim en viandes et volailles fraiches ou surgelées",
+      "label": "Total des achats EGalim en viandes et volailles fraiches ou surgelées",
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": true,
       "enablePurchaseSummary": true
     },
     "valeurProduitsDeLaMer": {
-      "label": "Zoom sur la famille Poissons, produits de la mer et de l’aquaculture frais et surgelés : total des achats en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "label": "Total des achats en poissons, produits de la mer et de l’aquaculture frais et surgelés",
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurProduitsDeLaMerEgalim": {
-      "label": "Zoom sur la famille Poissons, produits de la mer et de l’aquaculture frais et surgelés : total des achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "label": "Total des achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": false,
