@@ -19,7 +19,7 @@ const diagIsSimple = computed(() => diagnosticCurrentCampaign.value.diagnosticTy
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="Comment comptabiliser les produits ayant plusieurs labels ?">
-        <a :href="documentation.qualiteDurabiliteProduits" target="_blank">Je consulte l'aide</a>
+        <a :href="documentation.qualiteDurabiliteProduits" target="_blank">Consultez la documentation</a>
       </AppHelpCard>
     </div>
   </div>
