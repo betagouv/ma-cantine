@@ -18,11 +18,11 @@ const autresFamillesFields = ["valeurCharcuterie", "valeurFruitsEtLegumes", "val
     <TunnelTeledeclarationField v-for="field in autresEgalimFields" :key="field" :name="field" />
   </div>
   <div class="fr-mb-4w">
-    <h2 class="fr-h6">4. Zoom sur la famille «&nbsp;viandes et volailles&nbsp;»</h2>
+    <h2 class="fr-h6">4. Zoom sur la famille viandes et volailles</h2>
     <TunnelTeledeclarationField v-for="field in viandeFamilleFields" :key="field" :name="field" />
   </div>
   <div class="fr-mb-4w">
-    <h2 class="fr-h6">5. Zoom sur la famille «&nbsp;poissons, produits de la mer et de l’aquaculture&nbsp;»</h2>
+    <h2 class="fr-h6">5. Zoom sur la famille poissons, produits de la mer et de l’aquaculture</h2>
     <TunnelTeledeclarationField v-for="field in poissonFamilleFields" :key="field" :name="field" />
   </div>
   <div class="fr-mb-4w">
