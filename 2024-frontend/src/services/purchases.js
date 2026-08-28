@@ -53,8 +53,9 @@ const fetchPurchasesOptions = () => {
 }
 
 const fetchPurchasesSummary = (canteenId, year) => {
-  const query = year ? `?year=${year}` : ""
-  return fetch(`/api/v1/canteens/${canteenId}/purchases/summary${query}`, {
+  let url = `/api/v1/canteens/${canteenId}/purchases/summary`
+  if (year) url += `/${year}`
+  return fetch(url, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
