@@ -47,7 +47,7 @@ const closeModal = () => {
         <iframe
           :title="modal.title"
           :src="`${modal.to}/reader/compact/`"
-          class="comprendre-mes-obligations__iframe"
+          class="ma-cantine--modal-iframe"
           frameborder="0"
         ></iframe>
       </template>
@@ -60,12 +60,3 @@ const closeModal = () => {
     </p>
   </AppNeedHelp>
 </template>
-
-<style lang="scss">
-.comprendre-mes-obligations {
-  &__iframe {
-    width: 100%;
-    height: 60vh;
-  }
-}
-</style>
