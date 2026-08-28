@@ -31,7 +31,7 @@ import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 import GestionnaireTunnelInformations from "@/views/GestionnaireTunnelInformations.vue"
 import GestionnaireTunnelCouvertsAnnuelsCantine from "@/views/GestionnaireTunnelCouvertsAnnuelsCantine.vue"
 import GestionnaireTunnelModeSaisie from "@/views/GestionnaireTunnelModeSaisie.vue"
-import GestionnaireTunnelSimplifieEgalim from "@/views/GestionnaireTunnelSimplifieEgalim.vue"
+import GestionnaireTunnelEgalim from "@/views/GestionnaireTunnelEgalim.vue"
 import GestionnaireTunnelSimplifieOrigine from "@/views/GestionnaireTunnelSimplifieOrigine.vue"
 import GestionnaireTunnelSimplifieLocalCircuitCourt from "@/views/GestionnaireTunnelSimplifieLocalCircuitCourt.vue"
 import GestionnaireTunnelConvives from "@/views/GestionnaireTunnelConvives.vue"
@@ -388,7 +388,7 @@ const routes = [
               { to: { name: "GestionnaireTunnelInformations" }, title: "Informations" },
               { to: { name: "GestionnaireTunnelCouvertsAnnuelsCantine" }, title: "Couverts annuels" },
               { to: { name: "GestionnaireTunnelModeSaisie" }, title: "Mode de saisie" },
-              { to: { name: "GestionnaireTunnelSimplifieEgalim" }, title: "EGalim" },
+              { to: { name: "GestionnaireTunnelEgalim" }, title: "EGalim" },
               { to: { name: "GestionnaireTunnelSimplifieOrigine" }, title: "Origine France et UE" },
               { to: { name: "GestionnaireTunnelSimplifieLocalCircuitCourt" }, title: "« Local » et circuit court" },
             ],
@@ -432,14 +432,14 @@ const routes = [
                 meta: {
                   title: "Mes approvisionnements : mode de saisie",
                   previous: "GestionnaireTunnelCouvertsAnnuelsCantine",
-                  next: "GestionnaireTunnelSimplifieEgalim",
+                  next: "GestionnaireTunnelEgalim",
                   stepper: "approvisionnements",
                 },
               },
               {
                 path: "simplifie/egalim",
-                name: "GestionnaireTunnelSimplifieEgalim",
-                component: GestionnaireTunnelSimplifieEgalim,
+                name: "GestionnaireTunnelEgalim",
+                component: GestionnaireTunnelEgalim,
                 meta: {
                   title: "EGalim",
                   previous: "GestionnaireTunnelModeSaisie",
@@ -453,7 +453,7 @@ const routes = [
                 component: GestionnaireTunnelSimplifieOrigine,
                 meta: {
                   title: "Origine France et UE",
-                  previous: "GestionnaireTunnelSimplifieEgalim",
+                  previous: "GestionnaireTunnelEgalim",
                   next: "GestionnaireTunnelSimplifieLocalCircuitCourt",
                   stepper: "approvisionnements",
                 },
