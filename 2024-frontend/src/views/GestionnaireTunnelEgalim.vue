@@ -24,5 +24,4 @@ const diagIsSimple = computed(() => diagnosticCurrentCampaign.value.diagnosticTy
     </div>
   </div>
   <DiagnosticEgalimSimple v-if="diagIsSimple" />
-  <pre>{{ diagnosticCurrentCampaign }}</pre>
 </template>
