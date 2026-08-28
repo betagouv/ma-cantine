@@ -92,6 +92,7 @@
       "placeholder": "Valeur totale € HT",
       "required": false,
       "enablePurchaseSummary": true,
+      "modaleDocLink": "criteresSelection",
       "img": "/static/images/quality-labels/environnement.jpg",
       "imgAlt": "Labels coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs"
     },

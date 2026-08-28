@@ -5,7 +5,7 @@ import { useStorePurchaseSummary } from "@/stores/purchaseSummary"
 import { storeToRefs } from "pinia"
 import { formatNumber } from "@/utils.js"
 import diagnosticsFieldsService from "@/services/diagnosticsFields"
-
+import documentation from "@/data/documentation.json"
 
 /* Stores */
 const props = defineProps(["name", "size"])
@@ -30,6 +30,8 @@ const hint = computed(() => {
 })
 const img = computed(() => data.value.img)
 const imgAlt = computed(() => data.value.imgAlt)
+const modale = computed(() => data.value.modaleDocLink )
+const opened = ref(false)
 
 const getPurchaseSummaryHint = (fieldName) => {
   const fieldValue = purchaseSummary.value[diagnosticCurrentCampaign.value.year][fieldName]
@@ -58,6 +60,9 @@ onMounted(prefillField)
     <div v-if="twoColumns" class="fr-col-5 fr-pl-1v fr-grid-row fr-grid-row--bottom">
       <div class="fr-col-1 fr-pb-1v">
         <DsfrTooltip v-if="tooltip" :content="tooltip" title="Infobulle" />
+        <button v-else-if="modale" class="fr-btn--tooltip" @click="opened = true" title="En savoir plus">
+          <VIcon name="ri-question-line" />
+        </button>
       </div>
       <div class="fr-col-1"></div>
       <div class="fr-col-10">
@@ -65,6 +70,16 @@ onMounted(prefillField)
       </div>
     </div>
   </div>
+  <DsfrModal :opened="opened" class="fr-modal--opened" @close="opened = false" size="xl">
+    <template #default>
+      <iframe
+        title="En savoir plus"
+        :src="`${documentation[data.modaleDocLink]}/reader/compact/`"
+        class="ma-cantine--modal-iframe"
+        frameborder="0"
+      ></iframe>
+    </template>
+  </DsfrModal>
 </template>
 
 <style scoped lang="scss">
