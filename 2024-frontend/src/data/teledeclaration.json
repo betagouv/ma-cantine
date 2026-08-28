@@ -46,7 +46,8 @@
     },
     "valeurBioDontCommerceEquitable": {
       "label": "Dont total des achats bio issus du commerce équitable.",
-      "isRelated": "Achats à comptabiliser également dans le champ Total des achats Bio ou en conversion Bio",
+      "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Total des achats Bio ou en conversion Bio",
       "placeholder": "Valeur totale € HT",
       "type": "number",
       "required": false,
@@ -68,7 +69,8 @@
     },
     "valeurEgalimAutresDontCommerceEquitable": {
       "label": "Dont total des achats issus du commerce équitable non bio",
-      "isRelated": "Achats à comptabiliser également dans le champ Total des autres achats EGalim",
+      "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Total des autres achats EGalim",
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": false,
