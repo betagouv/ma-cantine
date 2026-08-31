@@ -420,10 +420,10 @@
     }
   },
   "pages": {
-    "GestionnaireTunnelApproCouvertsAnnuelsCantine": {
+    "GestionnaireTunnelApproCouverts": {
       "fields": ["nombreRepasAn"]
     },
-    "GestionnaireTunnelApproModeSaisie": {
+    "GestionnaireTunnelApproSaisie": {
       "fields": ["diagnosticType"]
     }
   }
