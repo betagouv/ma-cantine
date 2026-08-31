@@ -57,7 +57,7 @@ const createDiagnostic = () => {
     })
     .catch((error) => showError(error.message))
 }
-const goToTunnel = () => router.push({ name: "GestionnaireTunnelInformations" })
+const goToTunnel = () => router.push({ name: "GestionnaireTunnelApproInformations" })
 const showError = (message) => rootStore.notifyServerError(message)
 </script>
 

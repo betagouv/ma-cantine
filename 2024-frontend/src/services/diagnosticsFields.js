@@ -1,11 +1,7 @@
 import teledeclaration from "@/data/teledeclaration.json"
 
-const getPageFields = (pageName) => {
-  return teledeclaration.pages[pageName].fields
-}
-
 const getField = (fieldName) => {
-  return teledeclaration.fields[fieldName]
+  return teledeclaration[fieldName]
 }
 
 const getFieldError = (fieldName, errors) => {
@@ -13,4 +9,4 @@ const getFieldError = (fieldName, errors) => {
   return hasError ? hasError.message : null
 }
 
-export default { getPageFields, getField, getFieldError }
+export default { getField, getFieldError }
