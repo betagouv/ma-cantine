@@ -1,17 +1,39 @@
 from django.contrib import admin
-from django_otp.admin import OTPAdminSite
+from django_otp.admin import OTPAdminAuthenticationForm, OTPAdminSite
 from django.urls import path, reverse
 
 from data.admin.sector import sector_textchoices_admin_view
 from data.admin.textchoices import CANTEEN_TEXTCHOICES_PAGES, canteen_textchoices_admin_view
 
 
+class MaCantineOTPAdminAuthenticationForm(OTPAdminAuthenticationForm):
+    def clean(self):
+        # Skip OTPAdminAuthenticationForm.clean (which always calls clean_otp)
+        self.cleaned_data = super(OTPAdminAuthenticationForm, self).clean()
+        user = self.get_user()
+        if user is not None and user.is_superuser:
+            self.clean_otp(user)
+        return self.cleaned_data
+
+
 class MaCantineAdminSite(OTPAdminSite):
     """
     Custom AdminSite
-    - to use OTPAdminSite (require 2FA for admin login)
+    - to use OTPAdminSite (require 2FA for admin login, superusers only)
     - to inject synthetic, read-only entries in the app list
     """
+
+    login_form = MaCantineOTPAdminAuthenticationForm
+
+    def has_permission(self, request):
+        # Skip OTPAdminSite.has_permission, which requires is_verified() for all staff
+        if not admin.AdminSite.has_permission(self, request):
+            return False
+
+        if not request.user.is_superuser:
+            return True
+
+        return request.user.is_verified()
 
     def get_urls(self):
         custom_urls = [
