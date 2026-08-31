@@ -18,11 +18,11 @@ const fieldsEU = ["valeurEurope", "valeurViandesVolaillesEurope", "valeurProduit
       </AppHelpCard>
     </div>
   </div>
-  <h3 class="fr-h6">1. Origine France</h3>
+  <h3 class="fr-h6">1. Valeurs totales des achats origine France</h3>
   <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
     <TunnelTeledeclarationField v-for="field in fieldsFR" :key="field" :name="field" size="inline" />
   </div>
-  <h3 class="fr-h6">2. Origine UE (hors France)</h3>
+  <h3 class="fr-h6">2. Valeurs totales des achats origine UE (hors France)</h3>
   <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
     <TunnelTeledeclarationField v-for="field in fieldsEU" :key="field" :name="field" size="inline" />
   </div>
