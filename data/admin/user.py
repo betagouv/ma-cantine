@@ -24,6 +24,21 @@ class UserForm(UserChangeForm):
         }
 
 
+class HasTOTPDeviceFilter(admin.SimpleListFilter):
+    title = _("TOTP Device ?")
+    parameter_name = "has_totp_device"
+
+    def lookups(self, request, model_admin):
+        return (("yes", "Oui"), ("no", "Non"))
+
+    def queryset(self, request, queryset):
+        annotated = queryset.annotate_with_totp_device()
+        if self.value() == "yes":
+            return annotated.filter(has_totp_device=True)
+        if self.value() == "no":
+            return annotated.filter(has_totp_device=False)
+
+
 @admin.register(User)
 class MaCanteenUserAdmin(UserAdmin):
     list_display = (
@@ -39,6 +54,7 @@ class MaCanteenUserAdmin(UserAdmin):
         "is_elected_official",
         "is_dev",
         "is_staff",
+        HasTOTPDeviceFilter,
     )
     search_fields = (
         "id",
@@ -137,7 +153,7 @@ class MaCanteenUserAdmin(UserAdmin):
         qs = qs.annotate_with_totp_device()
         return qs
 
-    @admin.display(description="TOTP ?")
+    @admin.display(description="TOTP Device ?")
     def has_totp_device(self, obj):
         return obj.has_totp_device
 
