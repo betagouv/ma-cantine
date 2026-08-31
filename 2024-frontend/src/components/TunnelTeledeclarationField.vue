@@ -17,11 +17,11 @@ const { purchaseSummary } = storeToRefs(storePurchaseSummary)
 /* Informations */
 const field = ref()
 const data = computed(() => diagnosticsFieldsService.getField(props.name))
-const isNumber = computed(() => data.value.type === "number")
+const isNumber = computed(() => data.value?.type === "number")
 const isRequired = computed(() => data.value.required)
 const label = computed(() => data.value.label)
 const tooltip = computed(() => data.value.tooltip)
-const isRelated = computed(() => data.value.isRelatedField)
+const isRelated = computed(() => data.value?.isRelatedField)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeDiagnostic.diagnosticCurrentCampaignErrors))
 const hint = computed(() => {
   const enablePurchaseSummary = data.value.enablePurchaseSummary
