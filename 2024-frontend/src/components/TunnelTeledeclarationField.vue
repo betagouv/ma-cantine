@@ -43,6 +43,7 @@ const getPurchaseSummaryHint = (fieldName) => {
 /* Style */
 const displayHalf = computed(() => props.size === "half")
 const displayFull = computed(() => !props.size || props.size === "full")
+const displayInline = computed(() => props.size === "inline")
 
 /* Actions */
 const fieldChange = () =>  storeDiagnostic.setDiagnosticCurrentCampaign(props.name, field.value)
@@ -50,7 +51,7 @@ const prefillField = () => field.value = storeDiagnostic.diagnosticCurrentCampai
 onMounted(prefillField)
 </script>
 <template>
-  <div class="fr-grid-row fr-mb-2w">
+  <div class="fr-grid-row fr-mb-2w" :class="{ 'fr-col-6' : displayInline }">
     <div class="fr-grid-row" :class="{ 'fr-col-12': displayFull, 'fr-col-7': displayHalf }">
       <div v-if="isRelated" class="tunnel-teledeclaration-field__related fr-col-1"></div>
       <div class="tunnel-teledeclaration-field__input" :class="{ 'fr-col-11': isRelated, 'fr-col-12': !isRelated }">

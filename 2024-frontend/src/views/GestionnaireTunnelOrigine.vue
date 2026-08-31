@@ -18,12 +18,12 @@ const fieldsEU = ["valeurEurope", "valeurViandesVolaillesEurope", "valeurProduit
       </AppHelpCard>
     </div>
   </div>
-  <div class="fr-mb-4w">
-    <h3 class="fr-h6">1. Origine France</h3>
-    <TunnelTeledeclarationField v-for="field in fieldsFR" :key="field" :name="field" size="full" />
+  <h3 class="fr-h6">1. Origine France</h3>
+  <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
+    <TunnelTeledeclarationField v-for="field in fieldsFR" :key="field" :name="field" size="inline" />
   </div>
-  <div class="fr-mb-8w">
-    <h3 class="fr-h6">2. Origine UE (hors France)</h3>
-    <TunnelTeledeclarationField v-for="field in fieldsEU" :key="field" :name="field" size="full" />
+  <h3 class="fr-h6">2. Origine UE (hors France)</h3>
+  <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
+    <TunnelTeledeclarationField v-for="field in fieldsEU" :key="field" :name="field" size="inline" />
   </div>
 </template>
