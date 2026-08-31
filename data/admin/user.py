@@ -82,9 +82,10 @@ class MaCanteenUserAdmin(UserAdmin):
             {
                 "fields": (
                     "is_active",
+                    "email_confirmed",
                     "is_staff",
                     "is_superuser",
-                    "email_confirmed",
+                    "has_totp_device",
                 ),
             },
         ),
@@ -130,6 +131,17 @@ class MaCanteenUserAdmin(UserAdmin):
             },
         ),
     )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate_with_totp_device()
+        return qs
+
+    @admin.display(description="TOTP ?")
+    def has_totp_device(self, obj):
+        return obj.has_totp_device
+
+    has_totp_device.boolean = True
 
     def data_pretty(self, obj):
         data = json.dumps(obj.data, indent=2)
