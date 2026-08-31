@@ -1,7 +1,9 @@
 <script setup>
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import documentation from '@/data/documentation.json'
+import TunnelTeledeclarationField from '@/components/TunnelTeledeclarationField.vue'
 
+const fields = ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurFruitsEtLegumesFrance", "valeurCharcuterieFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance"]
 </script>
 <template>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
@@ -14,5 +16,8 @@ import documentation from '@/data/documentation.json'
         <a :href="documentation.origineFrance" target="_blank">Consultez la documentation</a>
       </AppHelpCard>
     </div>
+  </div>
+  <div class="fr-mb-8w">
+    <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" size="big" />
   </div>
 </template>
