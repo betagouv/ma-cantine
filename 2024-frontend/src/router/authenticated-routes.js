@@ -33,7 +33,7 @@ import GestionnaireTunnelCouvertsAnnuelsCantine from "@/views/GestionnaireTunnel
 import GestionnaireTunnelModeSaisie from "@/views/GestionnaireTunnelModeSaisie.vue"
 import GestionnaireTunnelEgalim from "@/views/GestionnaireTunnelEgalim.vue"
 import GestionnaireTunnelOrigine from "@/views/GestionnaireTunnelOrigine.vue"
-import GestionnaireTunnelSimplifieLocalCircuitCourt from "@/views/GestionnaireTunnelSimplifieLocalCircuitCourt.vue"
+import GestionnaireTunnelLocalCircuitCourt from "@/views/GestionnaireTunnelLocalCircuitCourt.vue"
 import GestionnaireTunnelConvives from "@/views/GestionnaireTunnelConvives.vue"
 import GestionnaireTunnelGaspillage from "@/views/GestionnaireTunnelGaspillage.vue"
 import GestionnaireTunnelVegetarien from "@/views/GestionnaireTunnelVegetarien.vue"
@@ -390,7 +390,7 @@ const routes = [
               { to: { name: "GestionnaireTunnelModeSaisie" }, title: "Mode de saisie" },
               { to: { name: "GestionnaireTunnelEgalim" }, title: "EGalim" },
               { to: { name: "GestionnaireTunnelOrigine" }, title: "Origine France et UE" },
-              { to: { name: "GestionnaireTunnelSimplifieLocalCircuitCourt" }, title: "« Local » et circuit court" },
+              { to: { name: "GestionnaireTunnelLocalCircuitCourt" }, title: "« Local » et circuit court" },
             ],
             thematiques: [
               { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
@@ -437,7 +437,7 @@ const routes = [
                 },
               },
               {
-                path: "simplifie/egalim",
+                path: "egalim",
                 name: "GestionnaireTunnelEgalim",
                 component: GestionnaireTunnelEgalim,
                 meta: {
@@ -448,20 +448,20 @@ const routes = [
                 },
               },
               {
-                path: "simplifie/origine",
+                path: "origine",
                 name: "GestionnaireTunnelOrigine",
                 component: GestionnaireTunnelOrigine,
                 meta: {
                   title: "Origine France et UE",
                   previous: "GestionnaireTunnelEgalim",
-                  next: "GestionnaireTunnelSimplifieLocalCircuitCourt",
+                  next: "GestionnaireTunnelLocalCircuitCourt",
                   stepper: "approvisionnements",
                 },
               },
               {
-                path: "simplifie/local-circuit-court",
-                name: "GestionnaireTunnelSimplifieLocalCircuitCourt",
-                component: GestionnaireTunnelSimplifieLocalCircuitCourt,
+                path: "local-circuit-court",
+                name: "GestionnaireTunnelLocalCircuitCourt",
+                component: GestionnaireTunnelLocalCircuitCourt,
                 meta: {
                   title: "« Local » et circuit court",
                   previous: "GestionnaireTunnelOrigine",
@@ -477,7 +477,7 @@ const routes = [
             component: GestionnaireTunnelRecapitulatif,
             meta: {
               title: "Recapitulatif",
-              previous: "GestionnaireTunnelSimplifieLocalCircuitCourt",
+              previous: "GestionnaireTunnelLocalCircuitCourt",
               hideTopBar: true,
             },
           },
