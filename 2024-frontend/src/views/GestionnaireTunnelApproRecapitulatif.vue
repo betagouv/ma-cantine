@@ -1,4 +1,4 @@
 <template>
-  <p>On TD ici ou on affiche le récapitulatif de la TD</p>
-  <RouterLink :to="{name: 'GestionnaireTunnelConvives'}">Aller aux convives</RouterLink>
+  <h2 class="fr-h6">Votre télédéclaration vous semble t’elle cohérente ?</h2>
+  <p>Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
 </template>

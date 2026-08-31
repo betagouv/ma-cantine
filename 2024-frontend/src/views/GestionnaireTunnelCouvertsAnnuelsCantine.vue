@@ -14,8 +14,8 @@ const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
 <template>
   <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-md-7">
-      <h2>Estimer mon nombre de couverts annuel</h2>
       <p>Ce chiffre doit refléter la réalité des approvisionnements déclarés sur l’année, en tenant compte des repas complets et des repas partiels (petit-déjeuner, collation…).</p>
+      <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" size="full"/>
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="Bien estimer son nombre de couverts" content="Pour toute question sur le calcul du nombre de couverts : ">
@@ -23,5 +23,4 @@ const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
       </AppHelpCard>
     </div>
   </div>
-  <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" size="half"/>
 </template>
