@@ -38,7 +38,7 @@ import GestionnaireTunnelConvives from "@/views/GestionnaireTunnelConvives.vue"
 import GestionnaireTunnelGaspillage from "@/views/GestionnaireTunnelGaspillage.vue"
 import GestionnaireTunnelVegetarien from "@/views/GestionnaireTunnelVegetarien.vue"
 import GestionnaireTunnelPlastique from "@/views/GestionnaireTunnelPlastique.vue"
-import GestionnaireTunnelRecapitulatif from "@/views/GestionnaireTunnelRecapitulatif.vue"
+import GestionnaireTunnelApproRecapitulatif from "@/views/GestionnaireTunnelApproRecapitulatif.vue"
 
 import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import LayoutTunnelTeledeclaration from "@/layouts/LayoutTunnelTeledeclaration.vue"
@@ -391,6 +391,7 @@ const routes = [
               { to: { name: "GestionnaireTunnelEgalim" }, title: "EGalim" },
               { to: { name: "GestionnaireTunnelOrigine" }, title: "Origine France et UE" },
               { to: { name: "GestionnaireTunnelLocalCircuitCourt" }, title: "« Local » et circuit court" },
+              { to: { name: "GestionnaireTunnelApproRecapitulatif" }, title: "Récapitulatif", icon: "fr-icon-flag-fill" },
             ],
             thematiques: [
               { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
@@ -465,21 +466,21 @@ const routes = [
                 meta: {
                   title: "« Local » et circuit court",
                   previous: "GestionnaireTunnelOrigine",
-                  next: "GestionnaireTunnelRecapitulatif",
+                  next: "GestionnaireTunnelApproRecapitulatif",
+                  stepper: "approvisionnements",
+                },
+              },
+              {
+                path: "recapitulatif",
+                name: "GestionnaireTunnelApproRecapitulatif",
+                component: GestionnaireTunnelApproRecapitulatif,
+                meta: {
+                  title: "Recapitulatif des approvisionnements",
+                  previous: "GestionnaireTunnelLocalCircuitCourt",
                   stepper: "approvisionnements",
                 },
               },
             ]
-          },
-          {
-            path: "recapitulatif",
-            name: "GestionnaireTunnelRecapitulatif",
-            component: GestionnaireTunnelRecapitulatif,
-            meta: {
-              title: "Recapitulatif",
-              previous: "GestionnaireTunnelLocalCircuitCourt",
-              hideTopBar: true,
-            },
           },
           {
             path: "volets-thematiques",
@@ -519,8 +520,7 @@ const routes = [
                 component: GestionnaireTunnelPlastique,
                 meta: {
                   title: "Substitutions plastiques",
-                  previous: "GestionnaireTunnelVegetarien",
-                  next: "GestionnaireTunnelRecapitulatif",
+                  previous: "GestionnaireTunnelVegetarien"
                 },
               },
             ]
