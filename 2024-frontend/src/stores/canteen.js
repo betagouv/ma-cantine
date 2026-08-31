@@ -20,6 +20,7 @@ const useStoreCanteen = defineStore("canteen", () => {
   /* Empty store */
   function deleteStore() {
     canteenInformations.value = null
+    canteenSavedId.value = null
   }
 
   return {
