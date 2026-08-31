@@ -6,15 +6,10 @@ const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
   const purchaseSummary = ref({})
 
   /* Init store with purchases summary */
-  async function initStore(canteenId, year) {
-    const summary = await purchaseService.fetchPurchasesSummary(canteenId, year)
-    if (year) purchaseSummary.value[year] = summary
-    else {
-      for (let i = 0; i < summary["results"].length; i++) {
-        const resultYear = summary["results"][i].year
-        purchaseSummary.value[resultYear] = summary["results"][i]
-      }
-    }
+  async function initStore(canteenId) {
+    const lastYear = new Date().getFullYear() - 1  // Last year only for now
+    const summary = await purchaseService.fetchPurchasesSummary(canteenId, lastYear)
+    purchaseSummary.value[lastYear] = summary
   }
 
   /* Empty store */

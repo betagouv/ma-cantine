@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onUnmounted, watch } from "vue"
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -22,12 +22,6 @@ const { canteenInformations } = storeToRefs(canteenStore)
 /* Diagnostic */
 const diagnosticStore = useStoreDiagnostic()
 const hasDiagnosticCurrentCampaign = computed(() => diagnosticStore.hasDiagnosticCurrentCampaign())
-onUnmounted(() => diagnosticStore.deleteStore())
-watch(
-  () => canteenInformations.value.id,
-  (canteenId) => { if (canteenId) diagnosticStore.initStore(canteenInformations.value.id) },
-  { immediate: true }
-)
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
@@ -111,6 +105,6 @@ const showError = (message) => rootStore.notifyServerError(message)
     </ol>
 
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
-    <DiagnosticPurchasesLinked class="fr-mt-4w" :canteen-id="canteenInformations.id" />
+    <DiagnosticPurchasesLinked class="fr-mt-4w" />
   </div>
 </template>
