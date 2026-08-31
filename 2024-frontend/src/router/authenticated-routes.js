@@ -28,17 +28,17 @@ import GestionnaireImportCantinesCreer from "@/views/GestionnaireImportCantinesC
 import GestionnaireImportCantinesModifier from "@/views/GestionnaireImportCantinesModifier.vue"
 import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportCantinesGestionnaires.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
-import GestionnaireTunnelInformations from "@/views/GestionnaireTunnelInformations.vue"
-import GestionnaireTunnelCouvertsAnnuelsCantine from "@/views/GestionnaireTunnelCouvertsAnnuelsCantine.vue"
-import GestionnaireTunnelModeSaisie from "@/views/GestionnaireTunnelModeSaisie.vue"
-import GestionnaireTunnelEgalim from "@/views/GestionnaireTunnelEgalim.vue"
-import GestionnaireTunnelOrigine from "@/views/GestionnaireTunnelOrigine.vue"
-import GestionnaireTunnelLocalCircuitCourt from "@/views/GestionnaireTunnelLocalCircuitCourt.vue"
+import GestionnaireTunnelApproInformations from "@/views/GestionnaireTunnelApproInformations.vue"
+import GestionnaireTunnelApproCouverts from "@/views/GestionnaireTunnelApproCouverts.vue"
+import GestionnaireTunnelApproSaisie from "@/views/GestionnaireTunnelApproSaisie.vue"
+import GestionnaireTunnelApproEgalim from "@/views/GestionnaireTunnelApproEgalim.vue"
+import GestionnaireTunnelApproOrigine from "@/views/GestionnaireTunnelApproOrigine.vue"
+import GestionnaireTunnelApproLocalCircuitCourt from "@/views/GestionnaireTunnelApproLocalCircuitCourt.vue"
 import GestionnaireTunnelConvives from "@/views/GestionnaireTunnelConvives.vue"
 import GestionnaireTunnelGaspillage from "@/views/GestionnaireTunnelGaspillage.vue"
 import GestionnaireTunnelVegetarien from "@/views/GestionnaireTunnelVegetarien.vue"
 import GestionnaireTunnelPlastique from "@/views/GestionnaireTunnelPlastique.vue"
-import GestionnaireTunnelRecapitulatif from "@/views/GestionnaireTunnelRecapitulatif.vue"
+import GestionnaireTunnelApproRecapitulatif from "@/views/GestionnaireTunnelApproRecapitulatif.vue"
 
 import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import LayoutTunnelTeledeclaration from "@/layouts/LayoutTunnelTeledeclaration.vue"
@@ -385,12 +385,13 @@ const routes = [
           isTunnel: true,
           nav: {
             approvisionnements: [
-              { to: { name: "GestionnaireTunnelInformations" }, title: "Informations" },
-              { to: { name: "GestionnaireTunnelCouvertsAnnuelsCantine" }, title: "Couverts annuels" },
-              { to: { name: "GestionnaireTunnelModeSaisie" }, title: "Mode de saisie" },
-              { to: { name: "GestionnaireTunnelEgalim" }, title: "EGalim" },
-              { to: { name: "GestionnaireTunnelOrigine" }, title: "Origine France et UE" },
-              { to: { name: "GestionnaireTunnelLocalCircuitCourt" }, title: "« Local » et circuit court" },
+              { to: { name: "GestionnaireTunnelApproInformations" }, title: "Informations" },
+              { to: { name: "GestionnaireTunnelApproCouverts" }, title: "Couverts annuels" },
+              { to: { name: "GestionnaireTunnelApproSaisie" }, title: "Mode de saisie" },
+              { to: { name: "GestionnaireTunnelApproEgalim" }, title: "EGalim" },
+              { to: { name: "GestionnaireTunnelApproOrigine" }, title: "Origine France et UE" },
+              { to: { name: "GestionnaireTunnelApproLocalCircuitCourt" }, title: "« Local » et circuit court" },
+              { to: { name: "GestionnaireTunnelApproRecapitulatif" }, title: "Récapitulatif", icon: "fr-icon-flag-fill" },
             ],
             thematiques: [
               { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
@@ -406,80 +407,80 @@ const routes = [
             children: [
               {
                 path: "informations",
-                name: "GestionnaireTunnelInformations",
-                component: GestionnaireTunnelInformations,
+                name: "GestionnaireTunnelApproInformations",
+                component: GestionnaireTunnelApproInformations,
                 meta: {
                   title: "Informations",
-                  next: "GestionnaireTunnelCouvertsAnnuelsCantine",
+                  next: "GestionnaireTunnelApproCouverts",
                   stepper: "approvisionnements",
                 },
               },
               {
-                path: "couverts-annuels-cantine",
-                name: "GestionnaireTunnelCouvertsAnnuelsCantine",
-                component: GestionnaireTunnelCouvertsAnnuelsCantine,
+                path: "couverts-annuels",
+                name: "GestionnaireTunnelApproCouverts",
+                component: GestionnaireTunnelApproCouverts,
                 meta: {
                   title: "Couverts annuels",
-                  previous: "GestionnaireTunnelInformations",
-                  next: "GestionnaireTunnelModeSaisie",
+                  previous: "GestionnaireTunnelApproInformations",
+                  next: "GestionnaireTunnelApproSaisie",
                   stepper: "approvisionnements",
                 },
               },
               {
                 path: "mode-saisie",
-                name: "GestionnaireTunnelModeSaisie",
-                component: GestionnaireTunnelModeSaisie,
+                name: "GestionnaireTunnelApproSaisie",
+                component: GestionnaireTunnelApproSaisie,
                 meta: {
                   title: "Mes approvisionnements : mode de saisie",
-                  previous: "GestionnaireTunnelCouvertsAnnuelsCantine",
-                  next: "GestionnaireTunnelEgalim",
+                  previous: "GestionnaireTunnelApproCouverts",
+                  next: "GestionnaireTunnelApproEgalim",
                   stepper: "approvisionnements",
                 },
               },
               {
                 path: "egalim",
-                name: "GestionnaireTunnelEgalim",
-                component: GestionnaireTunnelEgalim,
+                name: "GestionnaireTunnelApproEgalim",
+                component: GestionnaireTunnelApproEgalim,
                 meta: {
                   title: "EGalim",
-                  previous: "GestionnaireTunnelModeSaisie",
-                  next: "GestionnaireTunnelOrigine",
+                  previous: "GestionnaireTunnelApproSaisie",
+                  next: "GestionnaireTunnelApproOrigine",
                   stepper: "approvisionnements",
                 },
               },
               {
-                path: "origine",
-                name: "GestionnaireTunnelOrigine",
-                component: GestionnaireTunnelOrigine,
+                path: "origine-france-union-europeenne",
+                name: "GestionnaireTunnelApproOrigine",
+                component: GestionnaireTunnelApproOrigine,
                 meta: {
                   title: "Origine France et UE",
-                  previous: "GestionnaireTunnelEgalim",
-                  next: "GestionnaireTunnelLocalCircuitCourt",
+                  previous: "GestionnaireTunnelApproEgalim",
+                  next: "GestionnaireTunnelApproLocalCircuitCourt",
                   stepper: "approvisionnements",
                 },
               },
               {
                 path: "local-circuit-court",
-                name: "GestionnaireTunnelLocalCircuitCourt",
-                component: GestionnaireTunnelLocalCircuitCourt,
+                name: "GestionnaireTunnelApproLocalCircuitCourt",
+                component: GestionnaireTunnelApproLocalCircuitCourt,
                 meta: {
                   title: "« Local » et circuit court",
-                  previous: "GestionnaireTunnelOrigine",
-                  next: "GestionnaireTunnelRecapitulatif",
+                  previous: "GestionnaireTunnelApproOrigine",
+                  next: "GestionnaireTunnelApproRecapitulatif",
+                  stepper: "approvisionnements",
+                },
+              },
+              {
+                path: "recapitulatif",
+                name: "GestionnaireTunnelApproRecapitulatif",
+                component: GestionnaireTunnelApproRecapitulatif,
+                meta: {
+                  title: "Recapitulatif des approvisionnements",
+                  previous: "GestionnaireTunnelApproLocalCircuitCourt",
                   stepper: "approvisionnements",
                 },
               },
             ]
-          },
-          {
-            path: "recapitulatif",
-            name: "GestionnaireTunnelRecapitulatif",
-            component: GestionnaireTunnelRecapitulatif,
-            meta: {
-              title: "Recapitulatif",
-              previous: "GestionnaireTunnelLocalCircuitCourt",
-              hideTopBar: true,
-            },
           },
           {
             path: "volets-thematiques",
@@ -519,8 +520,7 @@ const routes = [
                 component: GestionnaireTunnelPlastique,
                 meta: {
                   title: "Substitutions plastiques",
-                  previous: "GestionnaireTunnelVegetarien",
-                  next: "GestionnaireTunnelRecapitulatif",
+                  previous: "GestionnaireTunnelVegetarien"
                 },
               },
             ]

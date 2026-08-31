@@ -17,11 +17,11 @@ const fieldsLocal = ["definitionLocal", "definitionLocalKm", "valeurLocal", "val
       </AppHelpCard>
     </div>
   </div>
-  <h3 class="fr-h6">1. Valeurs totales des achats « Locaux »</h3>
+  <h3 class="fr-h5">1. Valeurs totales des achats « Locaux »</h3>
   <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
     <TunnelTeledeclarationField v-for="field in fieldsLocal" :key="field" :name="field" size="inline" />
   </div>
-  <h3 class="fr-h6">2. Valeurs totales des achats circuits courts ou approvisionnements directs</h3>
+  <h3 class="fr-h5">2. Valeurs totales des achats circuits courts ou approvisionnements directs</h3>
   <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
     <TunnelTeledeclarationField v-for="field in fieldsCircuitCourt" :key="field" :name="field" size="inline" />
   </div>
