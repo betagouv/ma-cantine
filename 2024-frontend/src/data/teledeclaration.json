@@ -327,6 +327,60 @@
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
+    },
+    "valeurLocal": {
+      "label": "Total des achats « locaux » toutes familles de produits confondues",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurViandesVolaillesLocal": {
+      "label": "Total des achats « locaux » pour la famille Viandes et volailles fraîches et surgelées",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMerLocal": {
+      "label": "Total des achats « locaux » pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurCharcuterieLocal": {
+      "label": "Total des achats « locaux » pour la famille Charcuterie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurFruitsEtLegumesLocal": {
+      "label": "Total des achats « locaux » pour la famille Fruits et légumes frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsLaitiersLocal": {
+      "label": "Total des achats « locaux » pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoulangerieLocal": {
+      "label": "Total des achats « locaux » pour la famille Boulangerie/Pâtisseries fraîches",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurAutresLocal": {
+      "label": "Total des achats « locaux » pour la famille Autres produits frais, surgelés et d’épicerie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoissonsLocal": {
+      "label": "Total des achats « locaux » pour la famille Boissons",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
     }
   },
   "pages": {
