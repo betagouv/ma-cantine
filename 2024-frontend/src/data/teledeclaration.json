@@ -381,6 +381,42 @@
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
+    },
+    "definitionLocal": {
+      "label": "Définition du « local » : périmètre administratif",
+      "type": "select",
+      "required": false,
+      "options": [
+        {
+          "text": "--",
+          "value": ""
+        },
+        {
+          "text": "Issu du Projet Alimentaire Territorial (PAT)",
+          "value": "PAT"
+        },
+        {
+          "text": "Commune et/ou intercommunalité",
+          "value": "COMMUNE"
+        },
+        {
+          "text": "Département",
+          "value": "DEPARTEMENT"
+        },
+        {
+          "text": "Région",
+          "value": "REGION"
+        },
+        {
+          "text": "Distance (en km)",
+          "value": "KM"
+        }
+      ]
+    },
+    "definitionLocalKm": {
+      "label": "Définition du « local » : distance (en km)",
+      "type": "number",
+      "required": false
     }
   },
   "pages": {

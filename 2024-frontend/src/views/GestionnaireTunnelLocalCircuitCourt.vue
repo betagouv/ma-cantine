@@ -4,7 +4,7 @@ import AppHelpCard from '@/components/AppHelpCard.vue'
 import documentation from '@/data/documentation.json'
 
 const fieldsCircuitCourt = ["valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurBoissonsCircuitCourt", "valeurAutresCircuitCourt"]
-const fieldsLocal = ["valeurLocal", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurFruitsEtLegumesLocal", "valeurCharcuterieLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurBoissonsLocal", "valeurAutresLocal"]
+const fieldsLocal = ["definitionLocal", "definitionLocalKm", "valeurLocal", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurFruitsEtLegumesLocal", "valeurCharcuterieLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurBoissonsLocal", "valeurAutresLocal"]
 </script>
 <template>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
