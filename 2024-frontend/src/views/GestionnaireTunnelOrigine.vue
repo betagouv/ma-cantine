@@ -3,8 +3,8 @@ import AppHelpCard from '@/components/AppHelpCard.vue'
 import documentation from '@/data/documentation.json'
 import TunnelTeledeclarationField from '@/components/TunnelTeledeclarationField.vue'
 
-const fieldsFR = ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurFruitsEtLegumesFrance", "valeurCharcuterieFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance"]
-const fieldsEU = ["valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurFruitsEtLegumesEurope", "valeurCharcuterieEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"]
+const fieldsFR = ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurFruitsEtLegumesFrance", "valeurCharcuterieFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurBoissonsFrance", "valeurAutresFrance"]
+const fieldsEU = ["valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurFruitsEtLegumesEurope", "valeurCharcuterieEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurBoissonsEurope", "valeurAutresEurope"]
 </script>
 <template>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
