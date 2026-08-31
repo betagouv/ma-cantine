@@ -219,6 +219,60 @@
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
+    },
+    "valeurEurope": {
+      "label": "Total des achats Origine UE (hors France) toutes familles de produits confondues",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurViandesVolaillesEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Viandes et volailles fraîches et surgelées",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMerEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurCharcuterieEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Charcuterie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurFruitsEtLegumesEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Fruits et légumes frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsLaitiersEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoulangerieEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Boulangerie/Pâtisseries fraîches",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurAutresEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Autres produits frais, surgelés et d’épicerie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoissonsEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Boissons",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
     }
   },
   "pages": {
