@@ -10,9 +10,6 @@ import documentation from "@/data/documentation.json"
 const props = defineProps(["canteen", "nav", "active"])
 const router = useRouter()
 
-/* Récapitulatif */
-const disabledRecapitulatif = computed(() => props.active !== 'GestionnaireTunnelRecapitulatif')
-
 /* Navigation */
 const generateNav = (name) => {
   const list = props.nav[name]
@@ -26,6 +23,7 @@ const generateNav = (name) => {
       type: isCurrent ? 'secondary' : 'tertiary',
       label: list[i].title,
       to: list[i].to,
+      icon: list[i].icon,
     })
   }
   return links
@@ -55,7 +53,7 @@ const goTo = (to) => router.push(to)
               v-for="link in approvisementsNav"
               :key="link.to.name"
               :[link.type]="true"
-              icon="fr-icon-checkbox-circle-line"
+              :icon="link.icon || 'fr-icon-checkbox-circle-line'"
               class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
               :label="link.label"
               :disabled="link.disabled"
@@ -81,14 +79,6 @@ const goTo = (to) => router.push(to)
             />
           </nav>
         </div>
-        <AppSeparator class="fr-my-2w" />
-        <DsfrButton
-          secondary
-          icon="fr-icon-flag-fill"
-          label="Récapitulatif"
-          :disabled="disabledRecapitulatif"
-          class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-        />
         <div class="fr-mt-2w ma-cantine--sticky__bottom">
           <AppHelpCard title="Centre d’aide" content="Votre télédéclaration pas à pas" class="tunnel-teledeclaration-sidebar__help-card">
             <a :href="documentation.teledeclaration" target="_blank">Je consulte l’aide</a>
