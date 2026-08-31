@@ -3,7 +3,8 @@ import AppHelpCard from '@/components/AppHelpCard.vue'
 import documentation from '@/data/documentation.json'
 import TunnelTeledeclarationField from '@/components/TunnelTeledeclarationField.vue'
 
-const fields = ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurFruitsEtLegumesFrance", "valeurCharcuterieFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance"]
+const fieldsFR = ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurFruitsEtLegumesFrance", "valeurCharcuterieFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance"]
+const fieldsEU = ["valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurFruitsEtLegumesEurope", "valeurCharcuterieEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"]
 </script>
 <template>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
@@ -17,7 +18,12 @@ const fields = ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsD
       </AppHelpCard>
     </div>
   </div>
+  <div class="fr-mb-4w">
+    <h3 class="fr-h6">1. Origine France</h3>
+    <TunnelTeledeclarationField v-for="field in fieldsFR" :key="field" :name="field" size="big" />
+  </div>
   <div class="fr-mb-8w">
-    <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" size="big" />
+    <h3 class="fr-h6">2. Origine UE (hors France)</h3>
+    <TunnelTeledeclarationField v-for="field in fieldsEU" :key="field" :name="field" size="big" />
   </div>
 </template>
