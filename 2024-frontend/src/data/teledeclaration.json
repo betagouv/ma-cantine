@@ -87,7 +87,7 @@
       "imgAlt": "Label commerce équitable"
     },
     "valeurExternalitesPerformance": {
-      "label": "Critères d'achat : total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
+      "label": "Total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
       "type": "number",
       "placeholder": "Valeur totale € HT",
       "required": false,
@@ -173,49 +173,49 @@
       "enablePurchaseSummary": true
     },
     "valeurViandesVolaillesFrance": {
-      "label": "Origine France pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Total des achats origine France pour la famille Viandes et volailles fraîches et surgelées",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurProduitsDeLaMerFrance": {
-      "label": "Origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Total des achats origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurCharcuterieFrance": {
-      "label": "Origine France pour la famille Charcuterie",
+      "label": "Total des achats origine France pour la famille Charcuterie",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurFruitsEtLegumesFrance": {
-      "label": "Origine France pour la famille Fruits et légumes frais et surgelés",
+      "label": "Total des achats origine France pour la famille Fruits et légumes frais et surgelés",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurProduitsLaitiersFrance": {
-      "label": "Origine France pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "Total des achats origine France pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurBoulangerieFrance": {
-      "label": "Origine France pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Total des achats origine France pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurAutresFrance": {
-      "label": "Origine France pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Total des achats origine France pour la famille Autres produits frais, surgelés et d’épicerie",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurBoissonsFrance": {
-      "label": "Origine France pour la famille Boissons",
+      "label": "Total des achats origine France pour la famille Boissons",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
