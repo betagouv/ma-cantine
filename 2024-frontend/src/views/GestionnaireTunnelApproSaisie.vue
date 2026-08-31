@@ -46,8 +46,8 @@ const selectRadio = () => {
 <template>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
-      <h2>Choisissez votre mode de saisie</h2>
-      <p>Deux formats existent pour les modes de saisie des données d’approvisionnements EGalim, un troisième est disponible uniquement si vous utilisez <AppLinkRouter :to="{ name: 'PurchasesHome' }" title="Outil de Suivi des Achats" /> de <em>ma cantine</em>.</p>
+      <p>Plusieurs modes de saisie existent pour renseigner les données d’approvisionnements EGalim : simplifiée, détaillée et automatique.</p>
+      <p>La saisie automatique est disponible uniquement si vous utilisez <AppLinkRouter :to="{ name: 'PurchasesHome' }" title="Outil de Suivi des Achats" /> de <em>ma cantine</em>.</p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="Télédéclaration simplifiée ou détaillée : laquelle choisir ?">
