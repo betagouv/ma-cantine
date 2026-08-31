@@ -41,8 +41,8 @@ const getPurchaseSummaryHint = (fieldName) => {
 }
 
 /* Style */
-const twoColumns = computed(() => props.size === "medium")
-const oneColumn = computed(() => !props.size || props.size === "big")
+const displayHalf = computed(() => props.size === "half")
+const displayFull = computed(() => !props.size || props.size === "full")
 
 /* Actions */
 const fieldChange = () =>  storeDiagnostic.setDiagnosticCurrentCampaign(props.name, field.value)
@@ -51,13 +51,13 @@ onMounted(prefillField)
 </script>
 <template>
   <div class="fr-grid-row fr-mb-2w">
-    <div class="fr-grid-row" :class="{ 'fr-col-12': oneColumn, 'fr-col-7': twoColumns }">
+    <div class="fr-grid-row" :class="{ 'fr-col-12': displayFull, 'fr-col-7': displayHalf }">
       <div v-if="isRelated" class="tunnel-teledeclaration-field__related fr-col-1"></div>
       <div class="tunnel-teledeclaration-field__input" :class="{ 'fr-col-11': isRelated, 'fr-col-12': !isRelated }">
         <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
       </div>
     </div>
-    <div v-if="twoColumns" class="fr-col-5 fr-pl-1v fr-grid-row fr-grid-row--bottom">
+    <div v-if="displayHalf" class="fr-col-5 fr-pl-1v fr-grid-row fr-grid-row--bottom">
       <div class="fr-col-1 fr-pb-1v">
         <DsfrTooltip v-if="tooltip" :content="tooltip" title="Infobulle" />
         <button v-else-if="modale" class="fr-btn--tooltip" @click="opened = true" title="En savoir plus">

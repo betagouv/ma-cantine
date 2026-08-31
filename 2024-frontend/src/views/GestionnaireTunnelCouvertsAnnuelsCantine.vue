@@ -23,5 +23,5 @@ const fields = computed(() => diagnosticsFieldsService.getPageFields(pageName))
       </AppHelpCard>
     </div>
   </div>
-  <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" size="medium"/>
+  <TunnelTeledeclarationField v-for="field in fields" :key="field" :name="field" size="half"/>
 </template>
