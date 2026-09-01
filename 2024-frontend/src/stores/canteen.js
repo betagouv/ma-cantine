@@ -4,26 +4,35 @@ import canteenService from "@/services/canteens.js"
 
 const useStoreCanteen = defineStore("canteen", () => {
   const canteenInformations = ref(null)
+  const canteenSavedId = ref(null)
 
   /* Init store with canteen informations */
   async function initStore(canteenId) {
+    if (canteenSavedId.value === canteenId) return
     const canteen = await canteenService.fetchCanteen(canteenId)
     canteenInformations.value = {
       ...canteen,
       isGroupe: canteen.productionType === "groupe",
     }
-    return canteen
+    canteenSavedId.value = canteenId
   }
 
   /* Empty store */
   function deleteStore() {
     canteenInformations.value = null
+    canteenSavedId.value = null
+  }
+
+  /* Force refresh store */
+  function refreshStore() {
+    canteenSavedId.value = null
   }
 
   return {
     canteenInformations,
     initStore,
     deleteStore,
+    refreshStore,
   }
 })
 

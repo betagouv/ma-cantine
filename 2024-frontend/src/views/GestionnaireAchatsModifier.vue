@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import documentation from "@/data/documentation.json"
 import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
@@ -14,6 +15,7 @@ import PurchaseInvoice from "@/components/PurchaseInvoice.vue"
 const route = useRoute()
 const router = useRouter()
 const store = useRootStore()
+const storePurchaseSummary = useStorePurchaseSummary()
 const forceRerender = ref(0)
 const purchaseDeleted = ref(false)
 
@@ -48,6 +50,7 @@ const savePurchase = async (form) => {
     return
   }
 
+  storePurchaseSummary.refreshStore()
   purchaseData.value = response
   forceRerender.value++
 
