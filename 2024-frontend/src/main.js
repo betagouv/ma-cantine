@@ -18,18 +18,6 @@ import "@gouvfr/dsfr-chart/css"
 import i18n from "./i18n.js"
 import VueMatomo from "vue-matomo"
 
-/* Icons */
-import FoodAppleIcon from "mdi-icons/FoodApple"
-import OfferIcon from "mdi-icons/Offer"
-import WeatherWindyIcon from "mdi-icons/WeatherWindy"
-import BullhornIcon from "mdi-icons/Bullhorn"
-import LeafIcon from "mdi-icons/Leaf"
-import LoadingIcon from "mdi-icons/Loading"
-import DeleteIcon from "mdi-icons/Loading"
-// "This few lines of CSS will cause the icons to scale with any surrounding text, which can be helpful when you primarily style with CSS."
-// https://www.npmjs.com/package/vue-material-design-icons
-import "mdi-icons/styles.css"
-
 /* Global CSS custom */
 import "./css/reset.css"
 import "./css/global.css"
@@ -55,18 +43,5 @@ if (window.MATOMO_ID) {
     userId: undefined,
   })
 }
-
-/*
-  Icons reusable components
-  deciding to keep same naming convention as previously used with Vue2 and vuetify
-*/
-app.component("mdi-food-apple", FoodAppleIcon)
-app.component("mdi-offer", OfferIcon)
-app.component("mdi-weather-windy", WeatherWindyIcon)
-app.component("mdi-bullhorn", BullhornIcon)
-app.component("mdi-loading", LoadingIcon)
-app.component("mdi-delete", DeleteIcon)
-// TODO: get the remix icon of leaf-fill
-app.component("$leaf-fill", LeafIcon)
 
 app.mount("#app")
