@@ -101,6 +101,8 @@ class UserModelTest(TestCase):
         # Add 2 TOTP devices to the user
         from django_otp.plugins.otp_totp.models import TOTPDevice
 
+        self.user_with_canteens.is_staff = True
+        self.user_with_canteens.save(update_fields=["is_staff"])
         TOTPDevice.objects.create(user=self.user_with_canteens, name="test1", confirmed=True)
         TOTPDevice.objects.create(user=self.user_with_canteens, name="test2", confirmed=False)
 
