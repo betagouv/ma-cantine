@@ -27,7 +27,7 @@ const getPrettyDiagnosticValue = (field) => {
   const hasOptions = teledeclaration.fields[field]?.options?.length > 0
   const diagValue = diagnosticCurrentCampaign.value[field]
   const prettyValue = hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue).labelShort : diagValue
-  return prettyValue || "Non renseigné"
+  return prettyValue !== null ? prettyValue : "Non renseigné"
 }
 
 const getFields = (fields, source) => {
