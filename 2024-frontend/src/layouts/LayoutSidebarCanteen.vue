@@ -1,10 +1,8 @@
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from "vue"
+import { computed } from "vue"
 import { useRoute, RouterView } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
-import urlService from "@/services/urls.js"
-import AppLoader from "@/components/AppLoader.vue"
 import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
@@ -13,22 +11,10 @@ import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
 /* Route */
 const route = useRoute()
 const currentRoute = computed(() => route.name)
-const canteenUrlId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
-const isLoading = ref(false)
 
 /* Store */
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
-const loadStore = async () => {
-  if (!canteenInformations.value || canteenInformations.value.id != canteenUrlId.value) {
-    isLoading.value = true
-    await canteenStore.initStore(canteenUrlId.value)
-    isLoading.value = false
-  }
-}
-onMounted(() => loadStore())
-onUnmounted(() => canteenStore.deleteStore())
-watch(canteenUrlId, () => loadStore())
 
 /* Sidebar links */
 const currentYear = new Date().getFullYear()
@@ -86,8 +72,7 @@ const menuItems = computed(() =>  {
 </script>
 
 <template>
-  <AppLoader v-if="isLoading" />
-  <div v-else-if="canteenInformations" class="layout-sidebar-canteen">
+  <div v-if="canteenInformations" class="layout-sidebar-canteen">
     <DsfrAlert title="La page établissement a évolué" type="info" class="fr-mb-4w">
       <p>
         Cette nouvelle version a été construite à partir de vos retours dans un souci de simplicité, de performance et de sécurité. <br/>

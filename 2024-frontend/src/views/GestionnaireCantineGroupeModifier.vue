@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
+import { useStoreCanteen } from "@/stores/canteen.js"
 import canteenService from "@/services/canteens.js"
 import urlService from "@/services/urls"
 import AppRessources from "@/components/AppRessources.vue"
@@ -13,6 +14,7 @@ import CanteenFormGroupe from "@/components/CanteenFormGroupe.vue"
 const route = useRoute()
 const router = useRouter()
 const store = useRootStore()
+const storeCanteen = useStoreCanteen()
 
 /* Component */
 const forceRerender = ref(0)
@@ -49,6 +51,7 @@ const goToCanteenPage = (canteen) => {
     name: "GestionnaireCantine",
     params: { canteenUrlComponent: urlService.getCanteenUrl(canteen) },
   }
+  storeCanteen.refreshStore()
   const redirectPage = route.query['redirection']
   router.replace(redirectPage || canteenPage)
 }
