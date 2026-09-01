@@ -419,8 +419,8 @@
     }
   },
   "groups": {
-    "informationsCantine": ["nom", "siret", "sirenUniteLegale", "postalCode", "city", "cityInseeCode", "departmentLib", "regionLib", "patListLib", "epciLib", "sectorList", "lineMinisty", "dailyMealCount", "yearlyMealCount", "economicModel", "productionType", "centralProducerSiret", "publicationComments"],
-    "informationsGroupe": ["nom", "sirenUniteLegale", "managementType", "dailyMealCount", "yearlyMealCount", "centralProducerSiret"],
+    "informationsCantine": ["name", "siret", "sirenUniteLegale", "postalCode", "city", "cityInseeCode", "departmentLib", "regionLib", "patListLib", "epciLib", "sectorList", "lineMinisty", "dailyMealCount", "yearlyMealCount", "economicModel", "productionType", "centralProducerSiret", "publicationComments"],
+    "informationsGroupe": ["name", "sirenUniteLegale", "managementType", "dailyMealCount", "yearlyMealCount", "centralProducerSiret"],
     "couverts": ["nombreRepasAn"],
     "saisie": ["diagnosticType"],
     "egalimSimple": ["valeurTotale", "valeurBio", "valeurBioDontCommerceEquitable", "valeurSiqo", "valeurEgalimAutres", "valeurEgalimAutresDontCommerceEquitable", "valeurExternalitesPerformance", "valeurViandesVolailles", "valeurViandesVolaillesEgalim", "valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons"],

@@ -15,6 +15,31 @@ const diagnosticStore = useStoreDiagnostic()
 const { canteenInformations } = storeToRefs(canteenStore)
 const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
 
+/* Data */
+const header = [
+  { key: "name", label: "Champ" },
+  { key: "value", label: "Valeur" },
+]
+const getCanteenLabel = (field) => {
+  return field
+}
+
+const getCanteenValue = (field) => {
+  return field
+}
+
+const getFields = (fields, source) => {
+  return fields.map(field => {
+    const isCanteen = source === "canteen"
+    const name = isCanteen ? getCanteenLabel(field) : teledeclaration.fields[field].label
+    const value = isCanteen ? getCanteenValue(field) : diagnosticCurrentCampaign.value[field]
+    return {
+      name,
+      value,
+    }
+  })
+}
+
 /* Accordions */
 const activeAccordion = ref()
 const accordions = computed(() => {
@@ -23,33 +48,33 @@ const accordions = computed(() => {
   return [
     {
       title: isGroupe ? "Informations du groupe" : "Informations de la cantine",
-      fields: isGroupe ? teledeclaration.groups.informationsGroupe : teledeclaration.groups.informationsCantine,
+      rows: getFields(isGroupe ? teledeclaration.groups.informationsGroupe : teledeclaration.groups.informationsCantine, "canteen"),
       to: { name: 'GestionnaireTunnelApproInformations' },
       isCanteenFields: true
     },
     {
       title: "Couverts annuels",
-      fields: teledeclaration.groups.couverts,
+      rows: getFields(teledeclaration.groups.couverts, "diagnostic"),
       to: { name: 'GestionnaireTunnelApproCouverts' }
     },
     {
       title: "Mode de saisie",
-      fields: teledeclaration.groups.saisie,
+      rows: getFields(teledeclaration.groups.saisie, "diagnostic"),
       to: { name: 'GestionnaireTunnelApproSaisie' }
     },
     {
       title: "EGalim",
-      fields: isSimple ? teledeclaration.groups.egalimSimple : teledeclaration.groups.egalimDetaille,
+      rows: getFields(isSimple ? teledeclaration.groups.egalimSimple : teledeclaration.groups.egalimDetaille, "diagnostic"),
       to: { name: 'GestionnaireTunnelApproEgalim' }
     },
     {
       title: "Origine France et UE",
-      fields: teledeclaration.groups.origine,
+      rows: getFields(teledeclaration.groups.origine, "diagnostic"),
       to: { name: 'GestionnaireTunnelApproOrigine' }
     },
     {
       title: "« Local » et circuit court",
-      fields: teledeclaration.groups.localCircuitCourt,
+      rows: getFields(teledeclaration.groups.localCircuitCourt, "diagnostic"),
       to: { name: 'GestionnaireTunnelApproLocalCircuitCourt' }
     }
   ]
@@ -58,7 +83,7 @@ const goToStep = (page) => router.push(page)
 </script>
 
 <template>
-  <DsfrAccordionsGroup v-model="activeAccordion">
+  <DsfrAccordionsGroup v-model="activeAccordion" class="fr-mb-4w">
     <DsfrAccordion
       v-for="(accordion, index) in accordions"
       :key="accordion.title"
@@ -66,12 +91,16 @@ const goToStep = (page) => router.push(page)
       :title="accordion.title"
     >
       <div class="ma-cantine--flex ma-cantine--flex-between fr-mb-2w">
-        <p class="fr-mb-0 fr-text--bold">Champs enregistrés :</p>
+        <p class="fr-mb-0 fr-text--bold">Données enregistrées :</p>
         <DsfrButton label="Modifier les données" @click="goToStep(accordion.to)" icon="ri-pencil-line" secondary />
       </div>
-      <div v-for="field in accordion.fields" :key="field">
-        <pre>{{ field }}</pre>
-      </div>
+      <DsfrDataTable
+        title="Données enregistrées"
+        no-caption
+        :headersRow="header"
+        :rows="accordion.rows"
+        class="fr-mb-0 fr-table--no-scroll"
+      />
     </DsfrAccordion>
   </DsfrAccordionsGroup>
 </template>
