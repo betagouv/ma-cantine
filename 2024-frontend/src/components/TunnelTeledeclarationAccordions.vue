@@ -20,19 +20,12 @@ const header = [
   { key: "name", label: "Champ" },
   { key: "value", label: "Valeur" },
 ]
-const getCanteenLabel = (field) => {
-  return field
-}
-
-const getCanteenValue = (field) => {
-  return field
-}
 
 const getFields = (fields, source) => {
   return fields.map(field => {
     const isCanteen = source === "canteen"
-    const name = isCanteen ? getCanteenLabel(field) : teledeclaration.fields[field].label
-    const value = isCanteen ? getCanteenValue(field) : diagnosticCurrentCampaign.value[field]
+    const name = isCanteen ? field : teledeclaration.fields[field].label
+    const value = isCanteen ? canteenInformations.value[field] : diagnosticCurrentCampaign.value[field]
     return {
       name,
       value,
