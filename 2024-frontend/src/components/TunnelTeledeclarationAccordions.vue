@@ -1,13 +1,15 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreDiagnostic } from '@/stores/diagnostic'
 import teledeclaration from '@/data/teledeclaration.json'
+import CanteenDisplayInformations from '@/components/CanteenDisplayInformations.vue'
 
 /* Router */
 const router = useRouter()
+const route = useRoute()
 
 /* Stores */
 const canteenStore = useStoreCanteen()
@@ -42,7 +44,7 @@ const accordions = computed(() => {
     {
       title: isGroupe ? "Informations du groupe" : "Informations de la cantine",
       rows: getFields(isGroupe ? teledeclaration.groups.informationsGroupe : teledeclaration.groups.informationsCantine, "canteen"),
-      to: { name: 'GestionnaireTunnelApproInformations' },
+      to: { name: isGroupe ? 'GestionnaireCantineGroupeModifier' : 'GestionnaireCantineRestaurantModifier', query: { redirection: route.fullPath } },
       isCanteenFields: true
     },
     {
@@ -84,10 +86,16 @@ const goToStep = (page) => router.push(page)
       :title="accordion.title"
     >
       <div class="ma-cantine--flex ma-cantine--flex-between fr-mb-2w">
-        <p class="fr-mb-0 fr-text--bold">Données enregistrées :</p>
+        <p class="fr-mb-0 fr-text--bold">Récapitulatif des données saisies :</p>
         <DsfrButton label="Modifier les données" @click="goToStep(accordion.to)" icon="ri-pencil-line" secondary />
       </div>
+      <CanteenDisplayInformations
+        v-if="index === 0"
+        :canteenInformation="canteenInformations"
+        :canteenIsGroupe="canteenInformations.isGroupe"
+      />
       <DsfrDataTable
+        v-else
         title="Données enregistrées"
         no-caption
         :headersRow="header"
