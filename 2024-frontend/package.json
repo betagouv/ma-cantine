@@ -15,10 +15,10 @@
     "@gouvminint/vue-dsfr": "^8.9.0",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
-    "@vueuse/core": "^14.0.0",
+    "@vueuse/core": "^14.4.0",
     "pinia": "^3.0.3",
-    "vue": "^3.5.22",
-    "vue-i18n": "^11.1.12",
+    "vue": "^3.5.42",
+    "vue-i18n": "^11.4.10",
     "vue-matomo": "^4.2.0",
     "vue-router": "^4.6.3"
   },
