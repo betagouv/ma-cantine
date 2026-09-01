@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.utils.safestring import mark_safe
+from disposable_email import is_disposable
 
 
 class RegisterUserForm(UserCreationForm):
@@ -48,6 +49,12 @@ class RegisterUserForm(UserCreationForm):
         self.fields["phone_number"].help_text = "Format attendu : 01 22 33 44 55"
         self.fields["password1"].widget.attrs.update({"placeholder": "Entrez votre mot de passe"})
         self.fields["password2"].widget.attrs.update({"placeholder": "Confirmez votre mot de passe"})
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if is_disposable(email):
+            raise forms.ValidationError("Ce nom de domaine email n'est pas autorisé.")
+        return email
 
     def left_column_fields(self):
         field_names = [

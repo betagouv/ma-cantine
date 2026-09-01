@@ -10,10 +10,7 @@ from web.forms import RegisterUserForm
 
 
 class TestRegistration(APITestCase):
-    def test_register_email_username(self):
-        """
-        Username cant be an email address
-        """
+    def test_cannot_register_with_email_as_username(self):
         payload = {
             "first_name": "Tester",
             "last_name": "Tester",
@@ -32,12 +29,70 @@ class TestRegistration(APITestCase):
             msg_prefix="tester@example.com",
         )
 
+    def test_cannot_register_with_email_yopmail(self):
+        payload = {
+            "first_name": "Tester",
+            "last_name": "Tester",
+            "password1": "testPw1234#!",
+            "password2": "testPw1234#!",
+            "cgu_approved": True,
+            "email": "test@yopmail.com",
+            "username": "test-user",
+            "is_dev": False,
+        }
+        form = RegisterUserForm(data=payload)
+        self.assertFormError(
+            form,
+            "email",
+            "Ce nom de domaine email n'est pas autorisé.",
+            msg_prefix="test@yopmail.com",
+        )
+
+    def test_cannot_register_with_invalid_phone_number(self):
+        payload = {
+            "first_name": "Test",
+            "last_name": "User Phone",
+            "password1": "testPw1234#!",
+            "password2": "testPw1234#!",
+            "cgu_approved": True,
+            "username": "test-user",
+            "phone_number": "123",  # should be 10 digits
+            "email": "test-phone@example.com",
+            "is_dev": False,
+        }
+
+        form = RegisterUserForm(data=payload)
+        self.assertFormError(
+            form,
+            "phone_number",
+            "Dix chiffres numériques attendus",
+            msg_prefix="test-phone",
+        )
+
+    def test_cannot_register_without_accepting_cgu(self):
+        payload = {
+            "first_name": "Test",
+            "last_name": "User",
+            "password1": "testPw1234#!",
+            "password2": "testPw1234#!",
+            "cgu_approved": False,
+            "email": "test-cgu@example.com",
+            "username": "test-user",
+            "is_dev": False,
+        }
+        form = RegisterUserForm(data=payload)
+        self.assertFormError(
+            form,
+            "cgu_approved",
+            "Champ requis.",
+            msg_prefix="test-cgu@example.com",
+        )
+
     @override_settings(HOSTNAME="ma-cantine.example.org")
-    def test_user_only_registration(self):
+    def test_can_register(self):
         """
         Registering a user sends an email to verify their address
         """
-        email = "test-user@example.com"
         payload = {
             "first_name": "Test",
             "last_name": "User",
@@ -46,7 +101,7 @@ class TestRegistration(APITestCase):
             "phone_number": "00-11-22 33 44",
             "cgu_approved": True,
             "username": "test-user",
-            "email": email,
+            "email": "test-user@example.com",
             "is_dev": False,
         }
 
@@ -71,29 +126,4 @@ class TestRegistration(APITestCase):
             status.HTTP_302_FOUND,
             fetch_redirect_response=False,
             msg_prefix=redirect_error_message,
-        )
-
-    def test_phone_number_validation(self):
-        """
-        Phone number should be a ten-digit numeric string when ignoring spaces and dashes
-        """
-        email = "test-phone@example.com"
-        payload = {
-            "first_name": "Test",
-            "last_name": "User Phone",
-            "password1": "testPw1234#!",
-            "password2": "testPw1234#!",
-            "cgu_approved": True,
-            "username": "test-user",
-            "phone_number": "123",
-            "email": email,
-            "is_dev": False,
-        }
-
-        form = RegisterUserForm(data=payload)
-        self.assertFormError(
-            form,
-            "phone_number",
-            "Dix chiffres numériques attendus",
-            msg_prefix="test-phone",
         )
