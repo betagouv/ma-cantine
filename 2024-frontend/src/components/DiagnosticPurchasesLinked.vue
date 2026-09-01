@@ -1,20 +1,16 @@
 <script setup>
-import { computed, onMounted, onUnmounted } from "vue"
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import { formatNumber } from "@/utils.js"
 import AppBlueCard from "@/components/AppBlueCard.vue"
 
-const props = defineProps(["canteenId"])
-const lastYear = new Date().getFullYear() - 1
-
 /* Store */
 const purchaseSummaryStore = useStorePurchaseSummary()
 const { purchaseSummary } = storeToRefs(purchaseSummaryStore)
-onMounted(() => purchaseSummaryStore.initStore(props.canteenId, lastYear))
-onUnmounted(() => purchaseSummaryStore.deleteStore())
 
 /* Content */
+const lastYear = new Date().getFullYear() - 1
 const hasPurchase = computed(() => purchaseSummaryStore.hasPurchaseTotal(lastYear))
 const purchaseAmount = computed(() => `${formatNumber(purchaseSummary.value[lastYear]?.valeurTotale)} €`)
 </script>

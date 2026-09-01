@@ -3,17 +3,11 @@ import { sectionId } from "@/constants/site-map.js"
 /* Components */
 import GestionnaireAchatsAjouter from "@/views/GestionnaireAchatsAjouter.vue"
 import GestionnaireAchatsModifier from "@/views/GestionnaireAchatsModifier.vue"
-import GestionnaireCantine from "@/views/GestionnaireCantine.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
-import GestionnaireCantineGroupe from "@/views/GestionnaireCantineGroupe.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
-import GestionnaireCantineTeledeclarationEnCours from "@/views/GestionnaireCantineTeledeclarationEnCours.vue"
-import GestionnaireCantineTeledeclarations from "@/views/GestionnaireCantineTeledeclarations.vue"
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
-import GestionnaireCantineGestionnaires from "@/views/GestionnaireCantineGestionnaires.vue"
-import GestionnaireCantinePagePublique from "@/views/GestionnaireCantinePagePublique.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImportAchatsID from "@/views/GestionnaireImportAchatsID.vue"
@@ -28,26 +22,15 @@ import GestionnaireImportCantinesCreer from "@/views/GestionnaireImportCantinesC
 import GestionnaireImportCantinesModifier from "@/views/GestionnaireImportCantinesModifier.vue"
 import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportCantinesGestionnaires.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
-import GestionnaireTunnelApproInformations from "@/views/GestionnaireTunnelApproInformations.vue"
-import GestionnaireTunnelApproCouverts from "@/views/GestionnaireTunnelApproCouverts.vue"
-import GestionnaireTunnelApproSaisie from "@/views/GestionnaireTunnelApproSaisie.vue"
-import GestionnaireTunnelApproEgalim from "@/views/GestionnaireTunnelApproEgalim.vue"
-import GestionnaireTunnelApproOrigine from "@/views/GestionnaireTunnelApproOrigine.vue"
-import GestionnaireTunnelApproLocalCircuitCourt from "@/views/GestionnaireTunnelApproLocalCircuitCourt.vue"
-import GestionnaireTunnelConvives from "@/views/GestionnaireTunnelConvives.vue"
-import GestionnaireTunnelGaspillage from "@/views/GestionnaireTunnelGaspillage.vue"
-import GestionnaireTunnelVegetarien from "@/views/GestionnaireTunnelVegetarien.vue"
-import GestionnaireTunnelPlastique from "@/views/GestionnaireTunnelPlastique.vue"
-import GestionnaireTunnelApproRecapitulatif from "@/views/GestionnaireTunnelApproRecapitulatif.vue"
 
-import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
-import LayoutTunnelTeledeclaration from "@/layouts/LayoutTunnelTeledeclaration.vue"
+/* Sub routes */
+import cantineRoutes from "./cantine-routes"
+import tunnelRoutes from "./tunnel-routes"
 
 /* Sitemap section id */
 const { diag, action } = sectionId
 
 /* Routes */
-const currentYear = new Date().getFullYear()
 const routes = [
   // TODO: refactor "GaspillageAlimentaire" path
   {
@@ -239,83 +222,8 @@ const routes = [
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/",
     children: [
-      {
-        path: "",
-        component: LayoutSidebarCanteen,
-        children: [
-          {
-            path: "",
-            name: "GestionnaireCantine",
-            component: GestionnaireCantine,
-            meta: {
-              title: "Informations",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-              ],
-            },
-          },
-          {
-            path: "cantines-groupe",
-            name: "GestionnaireCantineGroupe",
-            component: GestionnaireCantineGroupe,
-            meta: {
-              title: "Cantines du groupe",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-              ],
-            },
-          },
-          {
-            path: "teledeclaration",
-            name: "GestionnaireCantineTeledeclarationEnCours",
-            component: GestionnaireCantineTeledeclarationEnCours,
-            meta: {
-              title: `Ma télédéclaration ${currentYear}`,
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-              ],
-            },
-          },
-          {
-            path: "toutes-teledeclarations",
-            name: "GestionnaireCantineTeledeclarations",
-            component: GestionnaireCantineTeledeclarations,
-            meta: {
-              title: "Toutes les télédéclarations",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-              ],
-            },
-          },
-          {
-            path: "gestionnaires",
-            name: "GestionnaireCantineGestionnaires",
-            component: GestionnaireCantineGestionnaires,
-            meta: {
-              title: "Gestionnaires",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-              ],
-            },
-          },
-          {
-            path: "page-publique",
-            name: "GestionnaireCantinePagePublique",
-            component: GestionnaireCantinePagePublique,
-            meta: {
-              title: "Page publique et affiche à imprimer",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-              ],
-            },
-          },
-        ],
-      },
+      cantineRoutes,
+      tunnelRoutes,
       {
         path: "archiver",
         name: "GestionnaireCantineArchiver",
@@ -377,155 +285,6 @@ const routes = [
             { to: { name: "PurchasesHome" }, title: "Mes achats" },
           ],
         },
-      },
-      {
-        path: "teledeclaration",
-        component: LayoutTunnelTeledeclaration,
-        meta: {
-          isTunnel: true,
-          nav: {
-            approvisionnements: [
-              { to: { name: "GestionnaireTunnelApproInformations" }, title: "Informations" },
-              { to: { name: "GestionnaireTunnelApproCouverts" }, title: "Couverts annuels" },
-              { to: { name: "GestionnaireTunnelApproSaisie" }, title: "Mode de saisie" },
-              { to: { name: "GestionnaireTunnelApproEgalim" }, title: "EGalim" },
-              { to: { name: "GestionnaireTunnelApproOrigine" }, title: "Origine France et UE" },
-              { to: { name: "GestionnaireTunnelApproLocalCircuitCourt" }, title: "« Local » et circuit court" },
-              { to: { name: "GestionnaireTunnelApproRecapitulatif" }, title: "Récapitulatif", icon: "fr-icon-flag-fill" },
-            ],
-            thematiques: [
-              { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
-              { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gaspillage" },
-              { to: { name: "GestionnaireTunnelVegetarien" }, title: "Menus végétariens" },
-              { to: { name: "GestionnaireTunnelPlastique" }, title: "Substitutions plastiques" },
-            ]
-          }
-        },
-        children: [
-          {
-            path: "approvisionnements",
-            children: [
-              {
-                path: "informations",
-                name: "GestionnaireTunnelApproInformations",
-                component: GestionnaireTunnelApproInformations,
-                meta: {
-                  title: "Informations",
-                  next: "GestionnaireTunnelApproCouverts",
-                  stepper: "approvisionnements",
-                },
-              },
-              {
-                path: "couverts-annuels",
-                name: "GestionnaireTunnelApproCouverts",
-                component: GestionnaireTunnelApproCouverts,
-                meta: {
-                  title: "Couverts annuels",
-                  previous: "GestionnaireTunnelApproInformations",
-                  next: "GestionnaireTunnelApproSaisie",
-                  stepper: "approvisionnements",
-                },
-              },
-              {
-                path: "mode-saisie",
-                name: "GestionnaireTunnelApproSaisie",
-                component: GestionnaireTunnelApproSaisie,
-                meta: {
-                  title: "Mes approvisionnements : mode de saisie",
-                  previous: "GestionnaireTunnelApproCouverts",
-                  next: "GestionnaireTunnelApproEgalim",
-                  stepper: "approvisionnements",
-                },
-              },
-              {
-                path: "egalim",
-                name: "GestionnaireTunnelApproEgalim",
-                component: GestionnaireTunnelApproEgalim,
-                meta: {
-                  title: "EGalim",
-                  previous: "GestionnaireTunnelApproSaisie",
-                  next: "GestionnaireTunnelApproOrigine",
-                  stepper: "approvisionnements",
-                },
-              },
-              {
-                path: "origine-france-union-europeenne",
-                name: "GestionnaireTunnelApproOrigine",
-                component: GestionnaireTunnelApproOrigine,
-                meta: {
-                  title: "Origine France et UE",
-                  previous: "GestionnaireTunnelApproEgalim",
-                  next: "GestionnaireTunnelApproLocalCircuitCourt",
-                  stepper: "approvisionnements",
-                },
-              },
-              {
-                path: "local-circuit-court",
-                name: "GestionnaireTunnelApproLocalCircuitCourt",
-                component: GestionnaireTunnelApproLocalCircuitCourt,
-                meta: {
-                  title: "« Local » et circuit court",
-                  previous: "GestionnaireTunnelApproOrigine",
-                  next: "GestionnaireTunnelApproRecapitulatif",
-                  stepper: "approvisionnements",
-                },
-              },
-              {
-                path: "recapitulatif",
-                name: "GestionnaireTunnelApproRecapitulatif",
-                component: GestionnaireTunnelApproRecapitulatif,
-                meta: {
-                  title: "Recapitulatif des approvisionnements",
-                  previous: "GestionnaireTunnelApproLocalCircuitCourt",
-                  stepper: "approvisionnements",
-                },
-              },
-            ]
-          },
-          {
-            path: "volets-thematiques",
-            children: [
-              {
-                path: "informations-convives",
-                name: "GestionnaireTunnelConvives",
-                component: GestionnaireTunnelConvives,
-                meta: {
-                  title: "Infos convives",
-                  next: "GestionnaireTunnelGaspillage",
-                },
-              },
-              {
-                path: "gaspillage",
-                name: "GestionnaireTunnelGaspillage",
-                component: GestionnaireTunnelGaspillage,
-                meta: {
-                  title: "Gaspillage",
-                  previous: "GestionnaireTunnelConvives",
-                  next: "GestionnaireTunnelVegetarien",
-                },
-              },
-              {
-                path: "menus-vegetariens",
-                name: "GestionnaireTunnelVegetarien",
-                component: GestionnaireTunnelVegetarien,
-                meta: {
-                  title: "Menus végétariens",
-                  previous: "GestionnaireTunnelGaspillage",
-                  next: "GestionnaireTunnelPlastique",
-                },
-              },
-              {
-                path: "substitutions-plastiques",
-                name: "GestionnaireTunnelPlastique",
-                component: GestionnaireTunnelPlastique,
-                meta: {
-                  title: "Substitutions plastiques",
-                  previous: "GestionnaireTunnelVegetarien"
-                },
-              },
-            ]
-          },
-        ],
       },
     ],
   },
