@@ -417,5 +417,15 @@
       "type": "number",
       "required": false
     }
+  },
+  "groups": {
+    "informationsCantine": ["nom", "siret", "sirenUniteLegale", "postalCode", "city", "cityInseeCode", "departmentLib", "regionLib", "patListLib", "epciLib", "sectorList", "lineMinisty", "dailyMealCount", "yearlyMealCount", "economicModel", "productionType", "centralProducerSiret", "publicationComments"],
+    "informationsGroupe": ["nom", "sirenUniteLegale", "managementType", "dailyMealCount", "yearlyMealCount", "centralProducerSiret"],
+    "couverts": ["nombreRepasAn"],
+    "saisie": ["diagnosticType"],
+    "egalimSimple": ["valeurTotale", "valeurBio", "valeurBioDontCommerceEquitable", "valeurSiqo", "valeurEgalimAutres", "valeurEgalimAutresDontCommerceEquitable", "valeurExternalitesPerformance", "valeurViandesVolailles", "valeurViandesVolaillesEgalim", "valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons"],
+    "egalimComplete": ["valeurTotale"],
+    "origine": ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurCharcuterieFrance", "valeurFruitsEtLegumesFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance", "valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurCharcuterieEurope", "valeurFruitsEtLegumesEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"],
+    "localCircuitCourt": ["valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurAutresCircuitCourt", "valeurBoissonsCircuitCourt", "valeurLocal", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurCharcuterieLocal", "valeurFruitsEtLegumesLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurAutresLocal", "valeurBoissonsLocal"]
   }
 }
