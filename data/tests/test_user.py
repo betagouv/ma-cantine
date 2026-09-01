@@ -1,6 +1,7 @@
 from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 from freezegun import freeze_time
+from django.core.exceptions import ValidationError
 
 from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
 from data.models import Canteen, User
@@ -218,3 +219,67 @@ class UserModelSaveTest(TransactionTestCase):
 
         self.assertEqual(user.brevo_last_update_date, None)
         self.assertFalse(user.brevo_is_deleted)
+
+
+class UserStaffSuperuserTest(TestCase):
+    def test_cannot_create_superuser_without_staff(self):
+        user = UserFactory.build(is_staff=False, is_superuser=True)
+        self.assertRaises(ValidationError, user.save)
+
+    def test_can_set_user_to_superuser_if_staff(self):
+        user = UserFactory.build(is_staff=True, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_superuser)
+
+        user.is_superuser = True
+        user.save()
+        self.assertTrue(user.is_superuser)
+
+
+class UserTOTPDeviceTest(TestCase):
+    def test_can_create_and_save_non_staff_without_totp_device(self):
+        user = UserFactory.build(is_staff=False, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+
+    def test_cannot_add_totp_device_to_user_non_staff(self):
+        from django_otp.plugins.otp_totp.models import TOTPDevice
+
+        user = UserFactory.build(is_staff=False, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+
+        self.assertRaises(ValidationError, TOTPDevice.objects.create, user=user, name="test-device")
+
+    def test_can_create_and_save_staff_without_totp_device(self):
+        user = UserFactory.build(is_staff=True, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_superuser)
+
+    def test_can_add_totp_device_to_user_staff(self):
+        from django_otp.plugins.otp_totp.models import TOTPDevice
+
+        user = UserFactory.build(is_staff=True, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_superuser)
+
+        device = TOTPDevice.objects.create(user=user, name="test-device")
+        self.assertEqual(device.user, user)
+
+    def test_can_create_and_save_superuser_without_totp_device(self):
+        from django_otp.plugins.otp_totp.models import TOTPDevice
+
+        user = UserFactory.build(is_staff=True, is_superuser=False)
+        user.save()
+        self.assertTrue(user.is_staff)
+        self.assertFalse(user.is_superuser)
+
+        user.is_superuser = True
+        user.save()
+        self.assertTrue(user.is_staff)
+        self.assertTrue(user.is_superuser)
+
+        device = TOTPDevice.objects.create(user=user, name="test-device")
+        self.assertEqual(device.user, user)

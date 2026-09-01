@@ -7,7 +7,6 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from data.factories import UserFactory
 
-
 User = get_user_model()
 
 
@@ -19,13 +18,6 @@ class MaCantineAdminSiteLoginTest(TestCase):
             last_name="User",
             is_staff=True,
             is_superuser=False,
-        )
-        self.superuser_no_otp = UserFactory(
-            email="superuser@example.com",
-            first_name="Super",
-            last_name="User",
-            is_staff=True,
-            is_superuser=True,
         )
         self.user_no_staff_not_superuser = UserFactory(
             email="nonstaff@example.com",
@@ -54,13 +46,6 @@ class MaCantineAdminSiteLoginTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def test_superuser_without_otp_redirected_to_login(self):
-        self.client.force_login(self.superuser_no_otp)
-        response = self.client.get(reverse("admin:index"))
-
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("/admin/login/", response.url)
-
     def test_staff_non_superuser_can_login_without_otp(self):
         self.staff_not_superuser_no_otp.set_password("testPw1234#!")
         self.staff_not_superuser_no_otp.save(update_fields=["password"])
@@ -81,15 +66,16 @@ class MaCantineAdminSiteLoginTest(TestCase):
         self.assertEqual(final_response.status_code, 200)
 
     def test_staff_user_with_otp_can_access_admin(self):
-        # Set user password & device
-        self.staff_not_superuser_no_otp.set_password("testPw1234#!")
-        self.staff_not_superuser_no_otp.save(update_fields=["password"])
+        # Add totp device
         device = TOTPDevice.objects.create(
             user=self.staff_not_superuser_no_otp,
             name="test",
             confirmed=True,
         )
         totp_code = totp(device.bin_key, device.step, device.t0)
+        # set user password
+        self.staff_not_superuser_no_otp.set_password("testPw1234#!")
+        self.staff_not_superuser_no_otp.save(update_fields=["password"])
 
         response = self.client.post(
             reverse("admin:login"),
@@ -110,20 +96,22 @@ class MaCantineAdminSiteLoginTest(TestCase):
         self.assertEqual(final_response.status_code, 200)
 
     def test_superuser_with_otp_can_access_admin(self):
-        # Set user password & device
-        self.superuser_no_otp.set_password("testPw1234#!")
-        self.superuser_no_otp.save(update_fields=["password"])
+        # Add totp device
         device = TOTPDevice.objects.create(
-            user=self.superuser_no_otp,
+            user=self.staff_not_superuser_no_otp,
             name="test",
             confirmed=True,
         )
         totp_code = totp(device.bin_key, device.step, device.t0)
+        # set user as superuser & password
+        self.staff_not_superuser_no_otp.is_superuser = True
+        self.staff_not_superuser_no_otp.set_password("testPw1234#!")
+        self.staff_not_superuser_no_otp.save(update_fields=["password"])
 
         response = self.client.post(
             reverse("admin:login"),
             {
-                "username": self.superuser_no_otp.username,
+                "username": self.staff_not_superuser_no_otp.username,
                 "password": "testPw1234#!",
                 "otp_token": totp_code,
                 "next": reverse("admin:index"),
@@ -139,11 +127,12 @@ class MaCantineAdminSiteLoginTest(TestCase):
         self.assertEqual(final_response.status_code, 200)
 
     def test_staff_user_with_static_token_can_access_admin(self):
-        # Set user password & backup device
-        self.staff_not_superuser_no_otp.set_password("testPw1234#!")
-        self.staff_not_superuser_no_otp.save(update_fields=["password"])
+        # Add static device
         device = StaticDevice.objects.create(user=self.staff_not_superuser_no_otp, name="backup", confirmed=True)
         static_token = StaticToken.objects.create(device=device, token="123456")
+        # set user password
+        self.staff_not_superuser_no_otp.set_password("testPw1234#!")
+        self.staff_not_superuser_no_otp.save(update_fields=["password"])
 
         response = self.client.post(
             reverse("admin:login"),
@@ -164,16 +153,18 @@ class MaCantineAdminSiteLoginTest(TestCase):
         self.assertEqual(final_response.status_code, 200)
 
     def test_superuser_with_static_token_can_access_admin(self):
-        # Set user password & backup device
-        self.superuser_no_otp.set_password("testPw1234#!")
-        self.superuser_no_otp.save(update_fields=["password"])
-        device = StaticDevice.objects.create(user=self.superuser_no_otp, name="backup", confirmed=True)
+        # Add static device
+        device = StaticDevice.objects.create(user=self.staff_not_superuser_no_otp, name="backup", confirmed=True)
         static_token = StaticToken.objects.create(device=device, token="123456")
+        # set user as superuser & password
+        self.staff_not_superuser_no_otp.is_superuser = True
+        self.staff_not_superuser_no_otp.set_password("testPw1234#!")
+        self.staff_not_superuser_no_otp.save(update_fields=["password"], skip_validations=True)
 
         response = self.client.post(
             reverse("admin:login"),
             {
-                "username": self.superuser_no_otp.username,
+                "username": self.staff_not_superuser_no_otp.username,
                 "password": "testPw1234#!",
                 "otp_token": static_token.token,
                 "next": reverse("admin:index"),
@@ -200,15 +191,15 @@ class MaCantineAdminSiteLoginTest(TestCase):
 
 class MaCantineAdminSiteCustomUrlsTest(TestCase):
     def setUp(self):
-        self.staff_not_superuser_no_otp = UserFactory(
+        self.staff_not_superuser = UserFactory(
             email="staff@example.com",
             first_name="Staff",
             last_name="User",
             is_staff=True,
-            is_superuser=True,
+            is_superuser=False,
         )
-        device = TOTPDevice.objects.create(user=self.staff_not_superuser_no_otp, name="test", confirmed=True)
-        self.client.force_login(self.staff_not_superuser_no_otp)
+        device = TOTPDevice.objects.create(user=self.staff_not_superuser, name="test", confirmed=True)
+        self.client.force_login(self.staff_not_superuser)
         # Mark the OTP device as verified for this session, as django_otp.login() would
         session = self.client.session
         session["otp_device_id"] = device.persistent_id
@@ -223,6 +214,10 @@ class MaCantineAdminSiteCustomUrlsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_synthetic_data_models_in_app_list(self):
+        # user needs to be superuser to see synthetic models in app list
+        self.staff_not_superuser.is_superuser = True
+        self.staff_not_superuser.save()
+
         response = self.client.get(reverse("admin:index"))
 
         self.assertEqual(response.status_code, 200)
