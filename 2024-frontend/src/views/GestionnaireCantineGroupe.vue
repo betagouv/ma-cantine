@@ -104,14 +104,14 @@ const clickSearch = () => {
       :open="modalAddSatelliteOpened"
       :groupId="canteenInformations.id"
       @close="modalAddSatelliteOpened = false"
-      @updateSatellites="updateSatellites()" />
+      @updateSatellites="updateSatellites" />
     <CanteenModalSatelliteRemove
       v-if="satelliteToRemove"
       :opened="modalRemoveSatelliteOpened"
       :groupe="canteenInformations"
       :satellite="satelliteToRemove"
       @close="modalRemoveSatelliteOpened = false"
-      @satelliteRemoved="updateSatellites()"
+      @satelliteRemoved="updateSatellites"
     />
   </div>
 </template>

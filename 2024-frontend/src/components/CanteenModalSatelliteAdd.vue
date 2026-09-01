@@ -6,7 +6,7 @@ import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Setup */
 const props = defineProps(["open", "groupId"])
-const emit = defineEmits(["close", "addedSatellite"])
+const emit = defineEmits(["close", "updateSatellites"])
 const store = useRootStore()
 
 /* Close */
