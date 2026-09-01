@@ -20,7 +20,7 @@ const canteenAction = computedAsync(async () => {
 
 /* Bloc TD */
 const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
-const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine." : "Vous devez corriger votre télédéclaration avant de déclarer.")
+const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration avant de déclarer")
 const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill" : "fr-icon-checkbox-line")
 
 const submitDeclaration = () => {
