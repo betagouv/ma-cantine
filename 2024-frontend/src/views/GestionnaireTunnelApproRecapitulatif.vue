@@ -3,24 +3,22 @@ import { computed } from 'vue'
 import { computedAsync } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useStoreCanteen } from '@/stores/canteen'
-import canteenService from '@/services/canteens'
+import { useStoreDiagnostic } from '@/stores/diagnostic'
+import diagnosticServices from '@/services/diagnostics'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationAccordions from '@/components/TunnelTeledeclarationAccordions.vue'
 
 /* Stores */
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
-
-/* Canteen action */
-const lastYear = new Date().getFullYear() - 1
-const canteenAction = computedAsync(async () => {
-  const actions = await canteenService.fetchCanteensActions(lastYear)
-  const currentCanteen = actions.find(canteen => canteen.id === canteenInformations.value.id)
-  return currentCanteen.action
-})
+const diagnosticStore = useStoreDiagnostic()
+const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
 
 /* TD CTA */
-const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
+const canTeledeclare = computedAsync(async () => {
+  const check = await diagnosticServices.checkDiagnostic(canteenInformations.value.id, diagnosticCurrentCampaign.value.id)
+  return check.isFilled
+})
 const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration avant de déclarer")
 const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill" : "fr-icon-checkbox-line")
 
