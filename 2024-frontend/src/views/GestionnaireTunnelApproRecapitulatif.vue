@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useStoreCanteen } from '@/stores/canteen'
 import canteenService from '@/services/canteens'
 import AppHelpCard from '@/components/AppHelpCard.vue'
+import TunnelTeledeclarationAccordions from '@/components/TunnelTeledeclarationAccordions.vue'
 
 /* Stores */
 const canteenStore = useStoreCanteen()
@@ -18,7 +19,7 @@ const canteenAction = computedAsync(async () => {
   return currentCanteen.action
 })
 
-/* Bloc TD */
+/* TD CTA */
 const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
 const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration avant de déclarer")
 const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill" : "fr-icon-checkbox-line")
@@ -28,7 +29,7 @@ const submitDeclaration = () => {
 }
 </script>
 <template>
-  <div class="fr-grid-row fr-grid-row--gutters">
+  <div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <h2 class="fr-h5">Votre télédéclaration vous semble t’elle cohérente ?</h2>
       <p>Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
@@ -47,4 +48,5 @@ const submitDeclaration = () => {
       </AppHelpCard>
     </div>
   </div>
+  <TunnelTeledeclarationAccordions />
 </template>
