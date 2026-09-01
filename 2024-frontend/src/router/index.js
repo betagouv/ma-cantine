@@ -55,12 +55,12 @@ router.beforeEach(async (to) => {
   if (to.meta.storesRequired) {
     const canteenUrl = to.params.canteenUrlComponent
     const canteenId = urlService.getCanteenId(canteenUrl)
-    const canteenStore = useStoreCanteen()
-    const diagnosticStore = useStoreDiagnostic()
-    const purchaseSummaryStore = useStorePurchaseSummary()
-    if (to.meta.storesRequired.includes("canteen")) await canteenStore.initStore(canteenId)
-    if (to.meta.storesRequired.includes("diagnostic")) await diagnosticStore.initStore(canteenId)
-    if (to.meta.storesRequired.includes("purchaseSummary")) await purchaseSummaryStore.initStore(canteenId)
+    const stores = {
+      canteen: useStoreCanteen(),
+      diagnostic: useStoreDiagnostic(),
+      purchaseSummary: useStorePurchaseSummary(),
+    }
+    await Promise.all(to.meta.storesRequired.map((storeName) => stores[storeName].initStore(canteenId)))
   }
 })
 
