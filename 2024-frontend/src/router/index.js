@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router"
 import { useRootStore } from "@/stores/root"
+import { useStoreDiagnostic } from "@/stores/diagnostic"
+import { useStoreCanteen } from "@/stores/canteen"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary"
+import urlService from "@/services/urls"
+
 import vue3routes from "./vue3.js"
 import vue2routes from "./vue2.js"
 
@@ -32,16 +37,30 @@ const router = createRouter({
 
 /* Middleware */
 router.beforeEach(async (to) => {
+  // Redirect to Vue3 if not on Vue3 prefix
   if (!to.path.startsWith(VUE3_PREFIX)) {
     location.href = location.origin + to.fullPath
     return false
   }
+  // Fetch initial data
   const store = useRootStore()
   if (!store.initialDataLoaded) {
     await store.fetchInitialData()
   }
+  // Verify user is logged in if required
   if (!store.loggedUser && to.meta.authenticationRequired) {
     return { name: "Vue2Home", replace: true }
+  }
+  // Load stores if required
+  if (to.meta.storesRequired) {
+    const canteenUrl = to.params.canteenUrlComponent
+    const canteenId = urlService.getCanteenId(canteenUrl)
+    const stores = {
+      canteen: useStoreCanteen(),
+      diagnostic: useStoreDiagnostic(),
+      purchaseSummary: useStorePurchaseSummary(),
+    }
+    await Promise.all(to.meta.storesRequired.map((storeName) => stores[storeName].initStore(canteenId)))
   }
 })
 

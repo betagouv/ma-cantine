@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { useRoute } from "vue-router"
 import { useRootStore } from "@/stores/root"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import documentation from "@/data/documentation.json"
 import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
@@ -12,6 +13,7 @@ import PurchaseFormSuccessModal from "@/components/PurchaseFormSuccessModal.vue"
 /* Props */
 const route = useRoute()
 const store = useRootStore()
+const storePurchaseSummary = useStorePurchaseSummary()
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 const forceRerender = ref(0)
@@ -23,7 +25,12 @@ const savePurchase = async (form) => {
   const payload = { ...form }
   const response = await purchasesService.createPurchase(canteenId, payload)
   if (!response?.id) displayErrors(response)
-  else purchaseCreatedId.value = response.id
+  else displaySuccess(response)
+}
+
+const displaySuccess = (response) => {
+  purchaseCreatedId.value = response.id
+  storePurchaseSummary.refreshStore()
 }
 
 const displayErrors = (response) => {

@@ -1,12 +1,8 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from "vue"
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useRoute } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
-import { useStoreDiagnostic } from "@/stores/diagnostic.js"
-import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
-import urlService from "@/services/urls.js"
-import AppLoader from "@/components/AppLoader.vue"
 import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
 import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
 
@@ -21,36 +17,12 @@ const steps = computed(() => routerSteps.value.map((step) => step.title))
 const stepIndex = computed(() => routerSteps.value.findIndex((step) => step.to.name === currentRoute.value) + 1)
 
 /* Store */
-const canteenUrlId = computed(() => urlService.getCanteenId(route.params.canteenUrlComponent))
-const isLoading = ref(false)
 const canteenStore = useStoreCanteen()
-const diagnosticStore = useStoreDiagnostic()
-const purchaseSummaryStore = useStorePurchaseSummary()
 const { canteenInformations } = storeToRefs(canteenStore)
 
-/* Init and Delete stores */
-const loadStores = async () => {
-  if (!canteenInformations.value || canteenInformations.value.id != canteenUrlId.value) {
-    isLoading.value = true
-    await Promise.all([
-      canteenStore.initStore(canteenUrlId.value),
-      diagnosticStore.initStore(canteenUrlId.value),
-      purchaseSummaryStore.initStore(canteenUrlId.value),
-    ])
-    isLoading.value = false
-  }
-}
-onMounted(() => loadStores())
-onUnmounted(() => {
-  canteenStore.deleteStore()
-  diagnosticStore.deleteStore()
-  purchaseSummaryStore.deleteStore()
-})
-watch(canteenUrlId, () => loadStores())
 </script>
 <template>
-  <AppLoader v-if="isLoading || !canteenInformations" />
-  <div v-else class="ma-cantine--sticky__container ma-cantine--stick-to-footer">
+  <div v-if="canteenInformations" class="ma-cantine--sticky__container ma-cantine--stick-to-footer">
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
         <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" />
