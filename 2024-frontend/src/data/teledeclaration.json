@@ -12,18 +12,21 @@
       "options": [
         {
           "label": "Saisie simplifiée : vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.)",
+          "labelShort": "Saisie simplifiée",
           "value": "SIMPLE",
           "img": "/static/images/picto-dsfr/saisie-simplifiee.svg",
           "hint": "11 champs dont 6 obligatoires"
         },
         {
           "label": "Saisie détaillée : vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Roug, IGP, Commerce équitable, etc.)",
+          "labelShort": "Saisie simplifiée",
           "value": "COMPLETE",
           "img": "/static/images/picto-dsfr/search.svg",
           "hint": "100 champs, dont 75 obligatoires"
         },
         {
           "label": "Saisie automatique : vous utilisez l'Outil de Suivi des Achats",
+          "labelShort": "Saisie automatique",
           "value": "AUTO",
           "img": "/static/images/picto-dsfr/saisie-automatique.svg"
         }

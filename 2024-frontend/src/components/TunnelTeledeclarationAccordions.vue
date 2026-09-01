@@ -23,11 +23,17 @@ const header = [
   { key: "value", label: "Valeur" },
 ]
 
+const getPrettyDiagnosticValue = (field) => {
+  const hasOptions = teledeclaration.fields[field]?.options?.length > 0
+  const diagValue = diagnosticCurrentCampaign.value[field]
+  return hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue).labelShort : diagValue
+}
+
 const getFields = (fields, source) => {
   return fields.map(field => {
     const isCanteen = source === "canteen"
     const name = isCanteen ? field : teledeclaration.fields[field].label
-    const value = isCanteen ? canteenInformations.value[field] : diagnosticCurrentCampaign.value[field]
+    const value = isCanteen ? canteenInformations.value[field] : getPrettyDiagnosticValue(field)
     return {
       name,
       value,
