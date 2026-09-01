@@ -24,16 +24,16 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.14.1",
-    "@vitejs/plugin-vue": "^6.0.1",
+    "@rushstack/eslint-patch": "^1.16.1",
+    "@vitejs/plugin-vue": "^6.0.8",
     "@vue/eslint-config-prettier": "^10.2.0",
     "django-vite-plugin": "^4.1.2",
     "eslint": "^9.39.0",
     "eslint-plugin-vue": "^9.33.0",
-    "eslint-plugin-vuejs-accessibility": "^2.4.1",
-    "prettier": "^3.6.2",
-    "sass-embedded": "^1.93.3",
+    "eslint-plugin-vuejs-accessibility": "^2.6.0",
+    "prettier": "^3.9.6",
+    "sass-embedded": "^1.103.1",
     "vite": "^7.1.12",
-    "vite-plugin-vue-devtools": "^8.0.3"
+    "vite-plugin-vue-devtools": "^8.2.1"
   }
 }
