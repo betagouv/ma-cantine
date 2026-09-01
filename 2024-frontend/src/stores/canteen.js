@@ -23,10 +23,16 @@ const useStoreCanteen = defineStore("canteen", () => {
     canteenSavedId.value = null
   }
 
+  /* Force refresh store */
+  function refreshStore() {
+    canteenSavedId.value = null
+  }
+
   return {
     canteenInformations,
     initStore,
     deleteStore,
+    refreshStore,
   }
 })
 

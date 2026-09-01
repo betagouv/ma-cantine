@@ -15,6 +15,11 @@ const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
     canteenSavedId.value = canteenId
   }
 
+  /* Force refresh store */
+  function refreshStore() {
+    canteenSavedId.value = null
+  }
+
   /* Empty store */
   function deleteStore() {
     purchaseSummary.value = {}
@@ -31,6 +36,7 @@ const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
     initStore,
     deleteStore,
     hasPurchaseTotal,
+    refreshStore,
   }
 })
 
