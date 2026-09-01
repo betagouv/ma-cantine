@@ -2,6 +2,7 @@
 import { ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
+import { useStoreCanteen } from "@/stores/canteen.js"
 import canteenService from "@/services/canteens.js"
 import urlService from "@/services/urls"
 import AppLoader from "@/components/AppLoader.vue"
@@ -12,6 +13,7 @@ import CanteenFormRestaurant from "@/components/CanteenFormRestaurant.vue"
 const route = useRoute()
 const router = useRouter()
 const store = useRootStore()
+const storeCanteen = useStoreCanteen()
 
 /* Get establishemnt infos */
 const canteenData = ref({})
@@ -46,6 +48,7 @@ const goToCanteenPage = (canteen) => {
     name: "GestionnaireCantine",
     params: { canteenUrlComponent: urlService.getCanteenUrl(canteen) },
   }
+  storeCanteen.refreshStore()
   const redirectPage = route.query['redirection']
   router.replace(redirectPage || canteenPage)
 }
