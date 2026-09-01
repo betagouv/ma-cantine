@@ -272,7 +272,7 @@ pillow-heif==0.18.0
     # via willow
 platformdirs==4.3.6
     # via virtualenv
-pluggy==1.5.0
+pluggy==1.6.0
     # via pytest
 polars==1.27.1
     # via datacompy
