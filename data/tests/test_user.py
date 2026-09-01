@@ -90,6 +90,27 @@ class UserModelTest(TestCase):
         User.objects.filter(id=self.user_without_canteens.id).update(brevo_is_deleted=True)
         self.assertEqual(User.objects.brevo_to_update().count(), 0)
 
+    def test_queryset_annotate_with_totp_device(self):
+        user_qs = User.objects.annotate_with_totp_device()
+
+        user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
+
+        self.assertFalse(user_with_canteens.has_totp_device)
+        self.assertEqual(user_with_canteens.totp_device_count, 0)
+
+        # Add 2 TOTP devices to the user
+        from django_otp.plugins.otp_totp.models import TOTPDevice
+
+        self.user_with_canteens.is_staff = True
+        self.user_with_canteens.save(update_fields=["is_staff"])
+        TOTPDevice.objects.create(user=self.user_with_canteens, name="test1", confirmed=True)
+        TOTPDevice.objects.create(user=self.user_with_canteens, name="test2", confirmed=False)
+
+        user_qs = User.objects.annotate_with_totp_device()
+        user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
+        self.assertTrue(user_with_canteens.has_totp_device)
+        self.assertEqual(user_with_canteens.totp_device_count, 2)
+
     def test_queryset_with_canteen_stats(self):
         user_qs = User.objects.with_canteen_stats()
 

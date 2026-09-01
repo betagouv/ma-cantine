@@ -3,7 +3,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import ValidationError
 from django.db import models
-from django.db.models import Count, F, Q
+from django.db.models import Count, F, Q, Value, Case, When, BooleanField
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import pre_save
@@ -29,6 +29,19 @@ class UserQuerySet(models.QuerySet):
     def brevo_to_update(self):
         one_day_ago = timezone.now() - timezone.timedelta(days=brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD_DAYS)
         return self.exclude(brevo_is_deleted=True).filter(brevo_last_update_date__lte=one_day_ago)
+
+    def annotate_with_totp_device(self):
+        return (
+            self.prefetch_related("totpdevice_set")
+            .annotate(totp_device_count=Count("totpdevice", distinct=True))
+            .annotate(
+                has_totp_device=Case(
+                    When(totp_device_count__gt=0, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField(),
+                )
+            )
+        )
 
     def with_canteen_stats(self):
         from data.models import Canteen
