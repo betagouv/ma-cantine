@@ -1177,6 +1177,7 @@ dependencies = [
     { name = "pandas" },
     { name = "pillow" },
     { name = "psycopg2-binary" },
+    { name = "python-disposable" },
     { name = "python-dotenv" },
     { name = "qrcode" },
     { name = "redis" },
@@ -1234,6 +1235,7 @@ requires-dist = [
     { name = "pandas", specifier = "==3.0.0" },
     { name = "pillow", specifier = "==10.4.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
+    { name = "python-disposable", specifier = ">=0.0.106" },
     { name = "python-dotenv", specifier = "==1.0.1" },
     { name = "qrcode", specifier = ">=7.4.2" },
     { name = "redis", specifier = "==5.2.0" },
@@ -2006,6 +2008,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee498c46e004a0eb49bc148f2fd230864601a86dcf6db/python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3", size = 342432, upload-time = "2024-03-01T18:36:20.211Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427", size = 229892, upload-time = "2024-03-01T18:36:18.57Z" },
+]
+
+[[package]]
+name = "python-disposable"
+version = "0.0.106"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/2e/21/1b1302490378bda8b686c90941bb58035401eef3c4b1f519c7d6e7a0a87c/python_disposable-0.0.106.tar.gz", hash = "sha256:eaa277b2d07b53330f9a9855ebf032ac4d60b687cc2107065645fe074c7c2bd7", size = 852296, upload-time = "2026-07-21T10:24:43.701Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/b8/645af209401dd20d759b56f59586aa11f5c11b01e6a0b615a455529ddb69/python_disposable-0.0.106-py3-none-any.whl", hash = "sha256:eaaa3c94ed165aa07d88be6080388512a73ea480da6bc0ce0fc38bb40aaa919a", size = 843036, upload-time = "2026-07-21T10:24:41.931Z" },
 ]
 
 [[package]]
