@@ -355,4 +355,4 @@ class User(DirtyFieldsMixin, AbstractUser):
 @receiver(pre_save, sender=TOTPDevice)
 def validate_totp_device_user_is_staff(sender, instance, **kwargs):
     if instance.user and not instance.user.is_staff:
-        raise ValidationError("Seul les utilisateurs staff sont autorisés à configurer un appareil 2FA (OTP).")
+        raise ValidationError("Seul les utilisateurs staff sont autorisés à configurer un appareil 2FA (TOTP).")

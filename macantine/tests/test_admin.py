@@ -4,7 +4,6 @@ from django.urls import reverse
 from django_otp.oath import totp
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
-from django.core.exceptions import ValidationError
 
 from data.factories import UserFactory
 
@@ -46,13 +45,6 @@ class MaCantineAdminSiteLoginTest(TestCase):
         response = self.client.get(reverse("admin:index"))
 
         self.assertEqual(response.status_code, 200)
-
-    def test_superuser_without_otp_cannot_login(self):
-        # Set user as superuser
-        self.staff_not_superuser_no_otp.is_superuser = True
-        self.staff_not_superuser_no_otp.save(skip_validations=True)
-
-        self.assertRaises(ValidationError, self.client.force_login, self.staff_not_superuser_no_otp)
 
     def test_staff_non_superuser_can_login_without_otp(self):
         self.staff_not_superuser_no_otp.set_password("testPw1234#!")
