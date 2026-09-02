@@ -1,419 +1,434 @@
 {
-  "nombreRepasAn": {
-    "label": "Nombre de couverts par an",
-    "type": "number",
-    "required": true
+  "fields": {
+    "nombreRepasAn": {
+      "label": "Nombre de couverts par an",
+      "type": "number",
+      "required": true
+    },
+    "diagnosticType": {
+      "label": "Quel mode de saisie souhaitez-vous utiliser ?",
+      "type": "radioRiche",
+      "required": true,
+      "options": [
+        {
+          "label": "Saisie simplifiée : vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.)",
+          "labelShort": "Saisie simplifiée",
+          "value": "SIMPLE",
+          "img": "/static/images/picto-dsfr/saisie-simplifiee.svg",
+          "hint": "11 champs dont 6 obligatoires"
+        },
+        {
+          "label": "Saisie détaillée : vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Roug, IGP, Commerce équitable, etc.)",
+          "labelShort": "Saisie simplifiée",
+          "value": "COMPLETE",
+          "img": "/static/images/picto-dsfr/search.svg",
+          "hint": "100 champs, dont 75 obligatoires"
+        },
+        {
+          "label": "Saisie automatique : vous utilisez l'Outil de Suivi des Achats",
+          "labelShort": "Saisie automatique",
+          "value": "AUTO",
+          "img": "/static/images/picto-dsfr/saisie-automatique.svg"
+        }
+      ]
+    },
+    "valeurTotale": {
+      "label": "Total des achats alimentaires toutes familles de produits confondues",
+      "placeholder": "Valeur totale € HT",
+      "type": "number",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurBio": {
+      "label": "Total des achats Bio ou en conversion Bio",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/egalim-bio.jpg",
+      "imgAlt": "Label bio"
+    },
+    "valeurBioDontCommerceEquitable": {
+      "label": "Dont total des achats bio issus du commerce équitable",
+      "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Total des achats Bio ou en conversion Bio",
+      "placeholder": "Valeur totale € HT",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
+      "imgAlt": "Label bio issu du commerce équitable"
+    },
+    "valeurSiqo": {
+      "label": "Total des achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/egalim-siqo.jpg",
+      "imgAlt": "Labels SIQO : lable rouge, AOC, AOP, IGP, STG."
+    },
+    "valeurEgalimAutres": {
+      "label": "Total des autres achats EGalim",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/egalim-autres.jpg",
+      "imgAlt": "Labels HVE, Pêche durable, RUP, Fermier, Commerce équitable."
+    },
+    "valeurEgalimAutresDontCommerceEquitable": {
+      "label": "Dont total des achats issus du commerce équitable non bio",
+      "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Total des autres achats EGalim",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true,
+      "img": "/static/images/quality-labels/commerce-equitable.jpg",
+      "imgAlt": "Label commerce équitable"
+    },
+    "valeurExternalitesPerformance": {
+      "label": "Total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true,
+      "modaleDocLink": "criteresSelection",
+      "img": "/static/images/quality-labels/environnement.jpg",
+      "imgAlt": "Labels coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs"
+    },
+    "valeurViandesVolailles": {
+      "label": "Total des achats en viandes et volailles fraiches ou surgelées",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurViandesVolaillesEgalim": {
+      "label": "Total des achats EGalim en viandes et volailles fraiches ou surgelées",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMer": {
+      "label": "Total des achats en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMerEgalim": {
+      "label": "Total des achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurCharcuterie": {
+      "label": "Total des achats pour la famille Charcuteries",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurFruitsEtLegumes": {
+      "label": "Total des achats pour la famille Fruits et légumes frais et surgelés",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsLaitiers": {
+      "label": "Total des achats pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoulangerie": {
+      "label": "Total des achats pour la famille Boulangerie/Pâtisseries fraîches",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurAutres": {
+      "label": "Total des achats pour la famille Autres produits frais, surgelés et d'épicerie",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoissons": {
+      "label": "Total des achats pour la famille Boissons",
+      "type": "number",
+      "placeholder": "Valeur totale € HT",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurFrance": {
+      "label": "Total des achats origine France toutes familles de produits confondues",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurViandesVolaillesFrance": {
+      "label": "Total des achats origine France pour la famille Viandes et volailles fraîches et surgelées",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMerFrance": {
+      "label": "Total des achats origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurCharcuterieFrance": {
+      "label": "Total des achats origine France pour la famille Charcuterie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurFruitsEtLegumesFrance": {
+      "label": "Total des achats origine France pour la famille Fruits et légumes frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsLaitiersFrance": {
+      "label": "Total des achats origine France pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoulangerieFrance": {
+      "label": "Total des achats origine France pour la famille Boulangerie/Pâtisseries fraîches",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurAutresFrance": {
+      "label": "Total des achats origine France pour la famille Autres produits frais, surgelés et d’épicerie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoissonsFrance": {
+      "label": "Total des achats origine France pour la famille Boissons",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurEurope": {
+      "label": "Total des achats Origine UE (hors France) toutes familles de produits confondues",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurViandesVolaillesEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Viandes et volailles fraîches et surgelées",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMerEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurCharcuterieEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Charcuterie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurFruitsEtLegumesEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Fruits et légumes frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsLaitiersEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoulangerieEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Boulangerie/Pâtisseries fraîches",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurAutresEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Autres produits frais, surgelés et d’épicerie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoissonsEurope": {
+      "label": "Total des achats origine Union européenne hors France pour la famille Boissons",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurCircuitCourt": {
+      "label": "Total des achats circuits courts ou approvisionnements directs toutes familles de produits confondues",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurViandesVolaillesCircuitCourt": {
+      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Viandes et volailles fraîches et surgelées",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMerCircuitCourt": {
+      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurCharcuterieCircuitCourt": {
+      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Charcuterie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurFruitsEtLegumesCircuitCourt": {
+      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Fruits et légumes frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsLaitiersCircuitCourt": {
+      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoulangerieCircuitCourt": {
+      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Boulangerie/Pâtisseries fraîches",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurAutresCircuitCourt": {
+      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Autres produits frais, surgelés et d’épicerie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoissonsCircuitCourt": {
+      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Boissons",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurLocal": {
+      "label": "Total des achats « locaux » toutes familles de produits confondues",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurViandesVolaillesLocal": {
+      "label": "Total des achats « locaux » pour la famille Viandes et volailles fraîches et surgelées",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsDeLaMerLocal": {
+      "label": "Total des achats « locaux » pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurCharcuterieLocal": {
+      "label": "Total des achats « locaux » pour la famille Charcuterie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurFruitsEtLegumesLocal": {
+      "label": "Total des achats « locaux » pour la famille Fruits et légumes frais et surgelés",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurProduitsLaitiersLocal": {
+      "label": "Total des achats « locaux » pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoulangerieLocal": {
+      "label": "Total des achats « locaux » pour la famille Boulangerie/Pâtisseries fraîches",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurAutresLocal": {
+      "label": "Total des achats « locaux » pour la famille Autres produits frais, surgelés et d’épicerie",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoissonsLocal": {
+      "label": "Total des achats « locaux » pour la famille Boissons",
+      "type": "number",
+      "required": false,
+      "enablePurchaseSummary": true
+    },
+    "definitionLocal": {
+      "label": "Définition du « local » : périmètre administratif",
+      "type": "select",
+      "required": false,
+      "options": [
+        {
+          "text": "--",
+          "value": ""
+        },
+        {
+          "text": "Issu du Projet Alimentaire Territorial (PAT)",
+          "value": "PAT"
+        },
+        {
+          "text": "Commune et/ou intercommunalité",
+          "value": "COMMUNE"
+        },
+        {
+          "text": "Département",
+          "value": "DEPARTEMENT"
+        },
+        {
+          "text": "Région",
+          "value": "REGION"
+        },
+        {
+          "text": "Distance (en km)",
+          "value": "KM"
+        }
+      ]
+    },
+    "definitionLocalKm": {
+      "label": "Définition du « local » : distance (en km)",
+      "type": "number",
+      "required": false
+    }
   },
-  "diagnosticType": {
-    "label": "Quel mode de saisie souhaitez-vous utiliser ?",
-    "type": "radioRiche",
-    "required": true,
-    "options": [
-      {
-        "label": "Saisie simplifiée : vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.)",
-        "value": "SIMPLE",
-        "img": "/static/images/picto-dsfr/saisie-simplifiee.svg",
-        "hint": "11 champs dont 6 obligatoires"
-      },
-      {
-        "label": "Saisie détaillée : vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Roug, IGP, Commerce équitable, etc.)",
-        "value": "COMPLETE",
-        "img": "/static/images/picto-dsfr/search.svg",
-        "hint": "100 champs, dont 75 obligatoires"
-      },
-      {
-        "label": "Saisie automatique : vous utilisez l'Outil de Suivi des Achats",
-        "value": "AUTO",
-        "img": "/static/images/picto-dsfr/saisie-automatique.svg"
-      }
-    ]
-  },
-  "valeurTotale": {
-    "label": "Total des achats alimentaires toutes familles de produits confondues",
-    "placeholder": "Valeur totale € HT",
-    "type": "number",
-    "required": true,
-    "enablePurchaseSummary": true
-  },
-  "valeurBio": {
-    "label": "Total des achats Bio ou en conversion Bio",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": true,
-    "enablePurchaseSummary": true,
-    "img": "/static/images/quality-labels/egalim-bio.jpg",
-    "imgAlt": "Label bio"
-  },
-  "valeurBioDontCommerceEquitable": {
-    "label": "Dont total des achats bio issus du commerce équitable",
-    "isRelatedField": true,
-    "tooltip": "Achats à comptabiliser également dans le champ Total des achats Bio ou en conversion Bio",
-    "placeholder": "Valeur totale € HT",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true,
-    "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-    "imgAlt": "Label bio issu du commerce équitable"
-  },
-  "valeurSiqo": {
-    "label": "Total des achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": true,
-    "enablePurchaseSummary": true,
-    "img": "/static/images/quality-labels/egalim-siqo.jpg",
-    "imgAlt": "Labels SIQO : lable rouge, AOC, AOP, IGP, STG."
-  },
-  "valeurEgalimAutres": {
-    "label": "Total des autres achats EGalim",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": true,
-    "enablePurchaseSummary": true,
-    "img": "/static/images/quality-labels/egalim-autres.jpg",
-    "imgAlt": "Labels HVE, Pêche durable, RUP, Fermier, Commerce équitable."
-  },
-  "valeurEgalimAutresDontCommerceEquitable": {
-    "label": "Dont total des achats issus du commerce équitable non bio",
-    "isRelatedField": true,
-    "tooltip": "Achats à comptabiliser également dans le champ Total des autres achats EGalim",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true,
-    "img": "/static/images/quality-labels/commerce-equitable.jpg",
-    "imgAlt": "Label commerce équitable"
-  },
-  "valeurExternalitesPerformance": {
-    "label": "Total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true,
-    "modaleDocLink": "criteresSelection",
-    "img": "/static/images/quality-labels/environnement.jpg",
-    "imgAlt": "Labels coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs"
-  },
-  "valeurViandesVolailles": {
-    "label": "Total des achats en viandes et volailles fraiches ou surgelées",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": true,
-    "enablePurchaseSummary": true
-  },
-  "valeurViandesVolaillesEgalim": {
-    "label": "Total des achats EGalim en viandes et volailles fraiches ou surgelées",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": true,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsDeLaMer": {
-    "label": "Total des achats en poissons, produits de la mer et de l’aquaculture frais et surgelés",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsDeLaMerEgalim": {
-    "label": "Total des achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurCharcuterie": {
-    "label": "Total des achats pour la famille Charcuteries",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurFruitsEtLegumes": {
-    "label": "Total des achats pour la famille Fruits et légumes frais et surgelés",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsLaitiers": {
-    "label": "Total des achats pour la famille BOF (Produits laitiers, beurre et œufs)",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoulangerie": {
-    "label": "Total des achats pour la famille Boulangerie/Pâtisseries fraîches",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurAutres": {
-    "label": "Total des achats pour la famille Autres produits frais, surgelés et d'épicerie",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoissons": {
-    "label": "Total des achats pour la famille Boissons",
-    "type": "number",
-    "placeholder": "Valeur totale € HT",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurFrance": {
-    "label": "Total des achats origine France toutes familles de produits confondues",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurViandesVolaillesFrance": {
-    "label": "Total des achats origine France pour la famille Viandes et volailles fraîches et surgelées",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsDeLaMerFrance": {
-    "label": "Total des achats origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurCharcuterieFrance": {
-    "label": "Total des achats origine France pour la famille Charcuterie",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurFruitsEtLegumesFrance": {
-    "label": "Total des achats origine France pour la famille Fruits et légumes frais et surgelés",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsLaitiersFrance": {
-    "label": "Total des achats origine France pour la famille BOF (Produits laitiers, beurre et œufs)",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoulangerieFrance": {
-    "label": "Total des achats origine France pour la famille Boulangerie/Pâtisseries fraîches",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurAutresFrance": {
-    "label": "Total des achats origine France pour la famille Autres produits frais, surgelés et d’épicerie",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoissonsFrance": {
-    "label": "Total des achats origine France pour la famille Boissons",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurEurope": {
-    "label": "Total des achats Origine UE (hors France) toutes familles de produits confondues",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurViandesVolaillesEurope": {
-    "label": "Total des achats origine Union européenne hors France pour la famille Viandes et volailles fraîches et surgelées",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsDeLaMerEurope": {
-    "label": "Total des achats origine Union européenne hors France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurCharcuterieEurope": {
-    "label": "Total des achats origine Union européenne hors France pour la famille Charcuterie",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurFruitsEtLegumesEurope": {
-    "label": "Total des achats origine Union européenne hors France pour la famille Fruits et légumes frais et surgelés",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsLaitiersEurope": {
-    "label": "Total des achats origine Union européenne hors France pour la famille BOF (Produits laitiers, beurre et œufs)",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoulangerieEurope": {
-    "label": "Total des achats origine Union européenne hors France pour la famille Boulangerie/Pâtisseries fraîches",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurAutresEurope": {
-    "label": "Total des achats origine Union européenne hors France pour la famille Autres produits frais, surgelés et d’épicerie",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoissonsEurope": {
-    "label": "Total des achats origine Union européenne hors France pour la famille Boissons",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurCircuitCourt": {
-    "label": "Total des achats circuits courts ou approvisionnements directs toutes familles de produits confondues",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurViandesVolaillesCircuitCourt": {
-    "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Viandes et volailles fraîches et surgelées",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsDeLaMerCircuitCourt": {
-    "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurCharcuterieCircuitCourt": {
-    "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Charcuterie",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurFruitsEtLegumesCircuitCourt": {
-    "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Fruits et légumes frais et surgelés",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsLaitiersCircuitCourt": {
-    "label": "Total des achats circuits courts ou approvisionnements directs pour la famille BOF (Produits laitiers, beurre et œufs)",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoulangerieCircuitCourt": {
-    "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Boulangerie/Pâtisseries fraîches",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurAutresCircuitCourt": {
-    "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Autres produits frais, surgelés et d’épicerie",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoissonsCircuitCourt": {
-    "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Boissons",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurLocal": {
-    "label": "Total des achats « locaux » toutes familles de produits confondues",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurViandesVolaillesLocal": {
-    "label": "Total des achats « locaux » pour la famille Viandes et volailles fraîches et surgelées",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsDeLaMerLocal": {
-    "label": "Total des achats « locaux » pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurCharcuterieLocal": {
-    "label": "Total des achats « locaux » pour la famille Charcuterie",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurFruitsEtLegumesLocal": {
-    "label": "Total des achats « locaux » pour la famille Fruits et légumes frais et surgelés",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurProduitsLaitiersLocal": {
-    "label": "Total des achats « locaux » pour la famille BOF (Produits laitiers, beurre et œufs)",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoulangerieLocal": {
-    "label": "Total des achats « locaux » pour la famille Boulangerie/Pâtisseries fraîches",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurAutresLocal": {
-    "label": "Total des achats « locaux » pour la famille Autres produits frais, surgelés et d’épicerie",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "valeurBoissonsLocal": {
-    "label": "Total des achats « locaux » pour la famille Boissons",
-    "type": "number",
-    "required": false,
-    "enablePurchaseSummary": true
-  },
-  "definitionLocal": {
-    "label": "Définition du « local » : périmètre administratif",
-    "type": "select",
-    "required": false,
-    "options": [
-      {
-        "text": "--",
-        "value": ""
-      },
-      {
-        "text": "Issu du Projet Alimentaire Territorial (PAT)",
-        "value": "PAT"
-      },
-      {
-        "text": "Commune et/ou intercommunalité",
-        "value": "COMMUNE"
-      },
-      {
-        "text": "Département",
-        "value": "DEPARTEMENT"
-      },
-      {
-        "text": "Région",
-        "value": "REGION"
-      },
-      {
-        "text": "Distance (en km)",
-        "value": "KM"
-      }
-    ]
-  },
-  "definitionLocalKm": {
-    "label": "Définition du « local » : distance (en km)",
-    "type": "number",
-    "required": false
+  "groups": {
+    "informationsCantine": ["name", "siret", "sirenUniteLegale", "postalCode", "city", "cityInseeCode", "departmentLib", "regionLib", "patListLib", "epciLib", "sectorList", "lineMinisty", "dailyMealCount", "yearlyMealCount", "economicModel", "productionType", "centralProducerSiret", "publicationComments"],
+    "informationsGroupe": ["name", "sirenUniteLegale", "managementType", "dailyMealCount", "yearlyMealCount", "centralProducerSiret"],
+    "couverts": ["nombreRepasAn"],
+    "saisie": ["diagnosticType"],
+    "egalimSimple": ["valeurTotale", "valeurBio", "valeurBioDontCommerceEquitable", "valeurSiqo", "valeurEgalimAutres", "valeurEgalimAutresDontCommerceEquitable", "valeurExternalitesPerformance", "valeurViandesVolailles", "valeurViandesVolaillesEgalim", "valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons"],
+    "egalimComplete": ["valeurTotale"],
+    "origine": ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurCharcuterieFrance", "valeurFruitsEtLegumesFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance", "valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurCharcuterieEurope", "valeurFruitsEtLegumesEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"],
+    "localCircuitCourt": ["valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurAutresCircuitCourt", "valeurBoissonsCircuitCourt", "valeurLocal", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurCharcuterieLocal", "valeurFruitsEtLegumesLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurAutresLocal", "valeurBoissonsLocal"]
   }
 }

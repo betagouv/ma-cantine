@@ -1,7 +1,7 @@
 import teledeclaration from "@/data/teledeclaration.json"
 
 const getField = (fieldName) => {
-  return teledeclaration[fieldName]
+  return teledeclaration.fields[fieldName]
 }
 
 const getFieldError = (fieldName, errors) => {

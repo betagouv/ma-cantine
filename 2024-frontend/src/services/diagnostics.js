@@ -54,4 +54,22 @@ const fetchDiagnosticsRecap = (canteenId) => {
     .catch((e) => e)
 }
 
-export default { createDiagnostic, updateDiagnostic, fetchDiagnostics, fetchDiagnosticsRecap }
+const checkDiagnostic = (canteenId, diagnosticId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/check`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+export default {
+  createDiagnostic,
+  updateDiagnostic,
+  checkDiagnostic,
+  fetchDiagnostics,
+  fetchDiagnosticsRecap
+}
