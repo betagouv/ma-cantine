@@ -1,11 +1,14 @@
 <script setup>
-defineProps(["title", "content"])
+import { computed } from 'vue'
+
+const props = defineProps(["title", "content", "icon"])
+const iconDisplay = computed(() => props.icon || "fr-icon-question-fill")
 </script>
 
 <template>
   <div class="app-help-card fr-card fr-p-7v">
     <div class="app-help-card__content">
-      <span class="fr-icon-question-fill fr-text-title--blue-france" aria-hidden="true"></span>
+      <span class="fr-text-title--blue-france" :class="iconDisplay" aria-hidden="true"></span>
       <div>
         <p class="ma-cantine--bold fr-mb-1w fr-text--lg">
           {{ title }}
