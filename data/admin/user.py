@@ -54,6 +54,7 @@ class MaCanteenUserAdmin(UserAdmin):
         "is_elected_official",
         "is_dev",
         "is_staff",
+        "groups",
         "is_superuser",
         HasTOTPDeviceFilter,
     )
