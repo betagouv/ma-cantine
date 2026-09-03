@@ -274,15 +274,6 @@ Tips :
 - lancer les tests plus rapidement : `python manage.py test --keepdb --parallel 2`
 - lancer les tests qui ne nécessitent pas internet : `SKIP_TESTS_THAT_REQUIRE_INTERNET=True python manage.py test`
 
-### Vue2
-
-Il faut d'abord se placer sur `/frontend`, ensuite la commande pour lancer les tests VueJS est :
-
-```
-cd frontend
-npm run test
-```
-
 ## Creation d'un superuser
 
 Afin de pouvoir s'identifier dans le backoffice (sous `/admin`), il est nécessaire de créer un utilisateur admin avec tous les droits. Pour ce faire, vous pouvez lancer :

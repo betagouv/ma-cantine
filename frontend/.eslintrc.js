@@ -17,13 +17,4 @@ module.exports = {
     "vue/no-v-text-v-html-on-component": "off",
   },
   plugins: ["prettier"],
-
-  overrides: [
-    {
-      files: ["**/__tests__/*.{j,t}s?(x)", "**/tests/unit/**/*.spec.{j,t}s?(x)"],
-      env: {
-        jest: true,
-      },
-    },
-  ],
 }
