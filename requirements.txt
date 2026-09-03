@@ -206,7 +206,7 @@ inflection==0.5.1
     # via drf-spectacular
 iniconfig==2.0.0
     # via pytest
-ipython==9.5.0
+ipython==9.17.0
 ipython-pygments-lexers==1.1.1
     # via ipython
 jedi==0.19.2
