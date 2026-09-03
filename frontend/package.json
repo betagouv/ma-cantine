@@ -23,7 +23,6 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-service": "~4.5.15",
-    "prettier": "^1.19.1",
     "sass": "^1.103.1",
     "sass-loader": "^10.0.0",
     "vue-cli-plugin-vuetify": "~2.5.8",
