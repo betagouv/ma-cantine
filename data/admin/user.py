@@ -46,14 +46,18 @@ class MaCanteenUserAdmin(UserAdmin):
         "first_name",
         "last_name",
         "email",
-        "is_staff",
-        "email_confirmed",
         "date_joined",
+        "email_confirmed",
+        "is_staff",
+        "is_superuser",
     )
     list_filter = (
+        "email_confirmed",
         "is_elected_official",
         "is_dev",
         "is_staff",
+        "groups",
+        "is_superuser",
         HasTOTPDeviceFilter,
     )
     search_fields = (
