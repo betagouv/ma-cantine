@@ -21,7 +21,15 @@ module.exports = {
     loaderOptions: {
       sass: {
         sassOptions: {
-          silenceDeprecations: ["slash-div", "legacy-js-api", "global-builtin", "import"],
+          quietDeps: true,
+          silenceDeprecations: [
+            "slash-div",
+            "legacy-js-api",
+            "global-builtin",
+            "import",
+            "color-functions",
+            "if-function",
+          ],
         },
       },
     },
