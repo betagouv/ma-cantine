@@ -147,7 +147,7 @@ repos:
       - id: eslint
         name: vue3-eslint
         additional_dependencies:
-          - eslint@8.55.0
+          - eslint@9.39.3
           - vue-eslint-parser@latest
           - eslint-plugin-vue@latest
           - eslint-plugin-jquery@latest
@@ -156,7 +156,7 @@ repos:
           - eslint-config-prettier@latest
           - eslint-plugin-prettier@latest
           - babel-eslint
-        args: [-c=2024-frontend/.eslintrc.cjs, --fix]
+        args: [-c=2024-frontend/eslint.config.js, --fix]
         types:
           - vue
         files: ^2024-frontend/
@@ -166,7 +166,7 @@ repos:
       - id: eslint
         name: js-eslint-v3
         additional_dependencies:
-          - eslint@8.55.0
+          - eslint@9.39.3
           - vue-eslint-parser@latest
           - eslint-plugin-vue@latest
           - eslint-plugin-jquery@latest
@@ -175,5 +175,5 @@ repos:
           - eslint-config-prettier@latest
           - eslint-plugin-prettier@latest
           - babel-eslint
-        args: [-c=2024-frontend/.eslintrc.cjs, --fix]
+        args: [-c=2024-frontend/eslint.config.js, --fix]
         files: ^2024-frontend/

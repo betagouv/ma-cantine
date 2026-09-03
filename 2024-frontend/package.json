@@ -7,34 +7,33 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
-    "@gouvfr/dsfr": "^1.13.2",
-    "@gouvfr/dsfr-chart": "^2.0.4",
-    "@gouvminint/vue-dsfr": "^8.9.0",
+    "@gouvfr/dsfr": "^1.14.4",
+    "@gouvfr/dsfr-chart": "^2.1.1",
+    "@gouvminint/vue-dsfr": "^8.19.0",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
-    "@vueuse/core": "^14.0.0",
-    "django-vite-plugin": "^4.1.2",
-    "eslint-plugin-vuejs-accessibility": "^2.4.1",
-    "pinia": "^3.0.3",
-    "vue": "^3.5.22",
-    "vue-i18n": "^11.1.12",
-    "vue-material-design-icons": "^5.3.1",
+    "@vueuse/core": "^14.4.0",
+    "pinia": "^4.0.3",
+    "vue": "^3.5.42",
+    "vue-i18n": "^11.4.10",
     "vue-matomo": "^4.2.0",
-    "vue-router": "^4.6.3"
+    "vue-router": "^5.3.0"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.14.1",
-    "@vitejs/plugin-vue": "^6.0.1",
+    "@eslint/js": "^9.39.3",
     "@vue/eslint-config-prettier": "^10.2.0",
-    "eslint": "^9.39.0",
-    "eslint-plugin-vue": "^9.33.0",
-    "prettier": "^3.6.2",
-    "sass-embedded": "^1.93.3",
-    "vite": "^7.1.12",
-    "vite-plugin-vue-devtools": "^8.0.3"
+    "eslint": "^9.39.3",
+    "eslint-plugin-vue": "^10.10.0",
+    "eslint-plugin-vuejs-accessibility": "^2.6.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "django-vite-plugin": "^4.1.2",
+    "prettier": "^3.9.6",
+    "sass-embedded": "^1.103.1",
+    "vite": "^7.3.6",
+    "vite-plugin-vue-devtools": "^8.2.1"
   }
 }

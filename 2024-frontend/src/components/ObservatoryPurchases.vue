@@ -19,7 +19,7 @@ const approBadge = "/static/images/badges/badge-appro.svg"
       {{ stringsService.prettyPercent(60) }} de produits durables et de qualité dans la famille de denrées "viandes et
       poissons".
       <AppLinkRouter
-        :to="{ name: 'ComprendreMesObligations', params: { id: keyMeasureId } }"
+        :to="{ name: 'ComprendreMesObligations' }"
         title="En savoir plus sur la loi"
       />
     </ObservatoryBadgeTitle>
