@@ -103,43 +103,6 @@ repos:
     hooks:
       - id: gitlab-ci-linter
 
-  # JS (Vue 2 app)
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.38.0
-    hooks:
-      - id: eslint
-        name: vue2-eslint
-        additional_dependencies:
-          - eslint@7.32.0
-          - vue-eslint-parser@latest
-          - eslint-plugin-vue@latest
-          - eslint-plugin-jquery@latest
-          - eslint-plugin-eslint-plugin@latest
-          - prettier@latest
-          - eslint-config-prettier@latest
-          - eslint-plugin-prettier@latest
-          - babel-eslint
-        args: [-c=frontend/.eslintrc.js, --fix]
-        types:
-          - vue
-        files: ^frontend/
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.38.0
-    hooks:
-      - id: eslint
-        name: js-eslint-v2
-        additional_dependencies:
-          - eslint@7.32.0
-          - vue-eslint-parser@latest
-          - eslint-plugin-vue@latest
-          - eslint-plugin-jquery@latest
-          - eslint-plugin-eslint-plugin@latest
-          - prettier@latest
-          - eslint-config-prettier@latest
-          - eslint-plugin-prettier@latest
-          - babel-eslint
-        args: [-c=frontend/.eslintrc.js, --fix]
-        files: ^frontend/
   # JS (Vue 3 app)
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v9.38.0

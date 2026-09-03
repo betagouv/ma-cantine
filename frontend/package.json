@@ -5,8 +5,7 @@
   "scripts": {
     "serve:ossl-legacy": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "build": "vue-cli-service build"
   },
   "dependencies": {
     "apexcharts": "^3.54.1",
@@ -23,13 +22,7 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.8",
-    "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-service": "~4.5.15",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-vue": "^9.32.0",
     "prettier": "^1.19.1",
     "sass": "^1.103.1",
     "sass-loader": "^10.0.0",
@@ -37,10 +30,5 @@
     "vue-template-compiler": "^2.7.16",
     "vuetify-loader": "^1.9.2",
     "webpack-bundle-tracker": "3.2.4"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  }
 }
