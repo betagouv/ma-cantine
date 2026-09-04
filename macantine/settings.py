@@ -84,7 +84,6 @@ WAGTAIL_INSTALLED_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "django_vite",
-    "webpack_loader",
     "rest_framework",
     "oauth2_provider",
     "ckeditor",
@@ -355,21 +354,14 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-# Frontend: Vue 2 (Vite + webpack_loader) & Vue 3 (django-vite)
+# Frontend: Vue 2 & Vue 3 with django-vite
+# https://github.com/MrBin99/django-vite
 # ------------------------------------------------------------------------------
 
-FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/"),
     os.path.join(BASE_DIR, "build/"),
 ]
-WEBPACK_LOADER = {
-    "DEFAULT": {
-        "CACHE": DEBUG,
-        "BUNDLE_DIR_NAME": "/bundles/",
-        "STATS_FILE": os.path.join(FRONTEND_DIR, "dist/webpack-stats.json"),
-    }
-}
 
 DJANGO_VITE = {
     "default": {
@@ -378,7 +370,14 @@ DJANGO_VITE = {
         "dev_server_host": "localhost",
         "dev_server_port": 5173,
         "manifest_path": BASE_DIR / "build" / "manifest.json",
-    }
+    },
+    "vue2": {
+        "dev_mode": DEBUG_FRONT,
+        "dev_server_protocol": "http",
+        "dev_server_host": "localhost",
+        "dev_server_port": 8080,
+        "manifest_path": BASE_DIR / "frontend" / "dist" / "manifest.json",
+    },
 }
 
 

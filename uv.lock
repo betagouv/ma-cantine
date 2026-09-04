@@ -699,15 +699,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-webpack-loader"
-version = "3.1.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/bd/1e/af06b611841d3a3b850eb8cef62471905d1f1a541f10a19660e901434065/django-webpack-loader-3.1.0.tar.gz", hash = "sha256:b06b83ca819ed4bbb858ab57b8d8cb67a25c4a57ed822dedd4e9fee4c097afd5", size = 18342, upload-time = "2024-04-04T12:58:57.78Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/29/2f/42c986a48ba31c123f5f456edb2aebe31cef468e220e86fdfe92d9880d03/django_webpack_loader-3.1.0-py2.py3-none-any.whl", hash = "sha256:5c35f8ad9ce0d0360b120abd9a6da6f043a6ff97a4ae7d0fa246d64af012983f", size = 19001, upload-time = "2024-04-04T12:58:54.633Z" },
-]
-
-[[package]]
 name = "djangorestframework"
 version = "3.17.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1172,7 +1163,6 @@ dependencies = [
     { name = "django-simple-history" },
     { name = "django-storages", extra = ["s3"] },
     { name = "django-vite" },
-    { name = "django-webpack-loader" },
     { name = "djangorestframework" },
     { name = "djangorestframework-camel-case" },
     { name = "drf-base64" },
@@ -1229,7 +1219,6 @@ requires-dist = [
     { name = "django-simple-history", specifier = "==3.7.0" },
     { name = "django-storages", extras = ["s3"], specifier = "==1.14.4" },
     { name = "django-vite", specifier = "==3.1.0" },
-    { name = "django-webpack-loader", specifier = "==3.1.0" },
     { name = "djangorestframework", specifier = "==3.17.2" },
     { name = "djangorestframework-camel-case", specifier = "==1.4.2" },
     { name = "drf-base64", specifier = "==2.0" },

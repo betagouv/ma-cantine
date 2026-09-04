@@ -2,7 +2,7 @@
 {% load analytics %}
 {% load environment %}
 {% load featureflags %}
-{% load render_bundle from webpack_loader %}
+{% load django_vite %}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -70,8 +70,8 @@
   </noscript>
   <div id="app">
   </div>
-  {% render_bundle 'app' 'css' %}
-  {% render_bundle 'app' 'js' attrs=' type="module" crossorigin' %}
+  {% vite_hmr_client app='vue2' %}
+  {% vite_asset 'src/main.js' app='vue2' %}
   <!-- built files will be auto injected -->
 </body>
 

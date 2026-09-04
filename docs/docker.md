@@ -30,9 +30,14 @@ make docker-up
 
 Voir le [Makefile](../Makefile) pour des commandes utiles.
 
-## Frontend Vue 3 (Vite + django-vite)
+## Frontends Vite + django-vite
 
-Le service `2024-frontend` monte uniquement le dossier de l'app Vue 3.
-Django charge les assets via [`django-vite`](https://github.com/MrBin99/django-vite) (`DJANGO_VITE` dans `settings.py`) :
-en développement, les balises pointent vers le serveur Vite (`localhost:5173`) ;
-en production, elles lisent `build/manifest.json`.
+Les deux apps frontend utilisent Vite et sont branchées sur Django via [`django-vite`](https://github.com/MrBin99/django-vite) (`DJANGO_VITE` dans `settings.py`) :
+
+| App | Dossier | Port Vite | Clé django-vite |
+|---|---|---|---|
+| Vue 3 | `2024-frontend` | 5173 | `default` |
+| Vue 2 | `frontend` | 8080 | `vue2` |
+
+En développement, les balises pointent vers le serveur Vite correspondant ;
+en production, elles lisent le `manifest.json` de chaque build (`build/` et `frontend/dist/`).

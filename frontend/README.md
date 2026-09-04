@@ -1,6 +1,6 @@
 # frontend (Vue 2)
 
-Legacy Vue 2 + Vuetify app, built with **Vite**. Django still loads assets via `django-webpack-loader` (`{% render_bundle 'app' %}`), using a Vite plugin that writes `dist/webpack-stats.json`.
+Legacy Vue 2 + Vuetify app, built with **Vite** and loaded by Django via [`django-vite`](https://github.com/MrBin99/django-vite) (`app="vue2"`).
 
 ## Setup
 
@@ -22,4 +22,4 @@ Serve the app through Django on port 8000 (not Vite’s port).
 npm run build
 ```
 
-Outputs hashed assets + `dist/webpack-stats.json` for Django.
+Outputs hashed assets + `dist/manifest.json` for Django.
