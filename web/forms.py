@@ -1,5 +1,3 @@
-import re
-
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -100,9 +98,8 @@ def _clean_cgu_approved(form):
 def _clean_username(form):
     # username can't be an email
     username = form.cleaned_data.get("username", "")
-    regex = r"(.*)@(.*)\.(.*)"
-    match = re.match(regex, username)
-    if match is not None:
+    at_index = username.find("@")
+    if at_index != -1 and "." in username[at_index + 1 :]:
         raise forms.ValidationError("Vous ne pouvez pas utiliser une adresse email comme nom d'utilisateur.")
 
     return username
