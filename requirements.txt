@@ -71,7 +71,7 @@ colorama==0.4.6 ; sys_platform == 'win32'
     #   ipython
     #   pytest
     #   qrcode
-cryptography==43.0.1
+cryptography==50.0.0
     # via
     #   authlib
     #   jwcrypto
