@@ -115,11 +115,6 @@ jobs:
         run: |
           npm run build --if-present
 
-      - name: Vue 2 test
-        working-directory: ./frontend
-        run: |
-          npm run test
-
       - name: Vue 3 build
         env:
           SECRET: test

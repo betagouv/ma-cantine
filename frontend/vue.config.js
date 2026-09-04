@@ -7,7 +7,7 @@ const FRONTEND_URL = "http://localhost:8080"
 const publicPath = debug ? FRONTEND_URL : "/static/"
 
 module.exports = {
-  transpileDependencies: ["vuetify"],
+  transpileDependencies: ["vuetify", "apexcharts", "html2pdf.js"],
   runtimeCompiler: true,
   publicPath: publicPath,
   outputDir: "./dist/",
@@ -21,7 +21,15 @@ module.exports = {
     loaderOptions: {
       sass: {
         sassOptions: {
-          silenceDeprecations: ["slash-div", "legacy-js-api", "global-builtin", "import"],
+          quietDeps: true,
+          silenceDeprecations: [
+            "slash-div",
+            "legacy-js-api",
+            "global-builtin",
+            "import",
+            "color-functions",
+            "if-function",
+          ],
         },
       },
     },
