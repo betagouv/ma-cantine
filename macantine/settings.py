@@ -83,7 +83,7 @@ WAGTAIL_INSTALLED_APPS = [
     "cms",
 ]
 THIRD_PARTY_APPS = [
-    "django_vite_plugin",
+    "django_vite",
     "webpack_loader",
     "rest_framework",
     "oauth2_provider",
@@ -355,8 +355,8 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-# Frontend: Vue 2 & Vue 3 with django-vite-plugin
-# https://github.com/protibimbok/django-vite-plugin
+# Frontend: Vue 2 (webpack) & Vue 3 (django-vite)
+# https://github.com/MrBin99/django-vite
 # ------------------------------------------------------------------------------
 
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
@@ -372,9 +372,14 @@ WEBPACK_LOADER = {
     }
 }
 
-DJANGO_VITE_PLUGIN = {
-    "DEV_MODE": DEBUG_FRONT,
-    "BUILD_DIR": "build",
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": DEBUG_FRONT,
+        "dev_server_protocol": "http",
+        "dev_server_host": "localhost",
+        "dev_server_port": 5173,
+        "manifest_path": BASE_DIR / "build" / "manifest.json",
+    }
 }
 
 

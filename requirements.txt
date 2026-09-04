@@ -108,6 +108,7 @@ django==5.2.16
     #   django-taggit
     #   django-tasks
     #   django-treebeard
+    #   django-vite
     #   djangorestframework
     #   drf-base64
     #   drf-spectacular
@@ -157,7 +158,7 @@ django-tasks==0.7.0
     # via wagtail
 django-treebeard==4.7.1
     # via wagtail
-django-vite-plugin==4.1.2
+django-vite==3.1.0
     # via ma-cantine
 django-webpack-loader==3.1.0
     # via ma-cantine
