@@ -83,8 +83,7 @@ WAGTAIL_INSTALLED_APPS = [
     "cms",
 ]
 THIRD_PARTY_APPS = [
-    "django_vite_plugin",
-    "webpack_loader",
+    "django_vite",
     "rest_framework",
     "oauth2_provider",
     "ckeditor",
@@ -355,26 +354,30 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-# Frontend: Vue 2 & Vue 3 with django-vite-plugin
-# https://github.com/protibimbok/django-vite-plugin
+# Frontend: Vue 2 & Vue 3 with django-vite
+# https://github.com/MrBin99/django-vite
 # ------------------------------------------------------------------------------
 
-FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/"),
     os.path.join(BASE_DIR, "build/"),
 ]
-WEBPACK_LOADER = {
-    "DEFAULT": {
-        "CACHE": DEBUG,
-        "BUNDLE_DIR_NAME": "/bundles/",
-        "STATS_FILE": os.path.join(FRONTEND_DIR, "dist/webpack-stats.json"),
-    }
-}
 
-DJANGO_VITE_PLUGIN = {
-    "DEV_MODE": DEBUG_FRONT,
-    "BUILD_DIR": "build",
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": DEBUG_FRONT,
+        "dev_server_protocol": "http",
+        "dev_server_host": "localhost",
+        "dev_server_port": 5173,
+        "manifest_path": BASE_DIR / "build" / "manifest.json",
+    },
+    "vue2": {
+        "dev_mode": DEBUG_FRONT,
+        "dev_server_protocol": "http",
+        "dev_server_host": "localhost",
+        "dev_server_port": 8080,
+        "manifest_path": BASE_DIR / "frontend" / "dist" / "manifest.json",
+    },
 }
 
 

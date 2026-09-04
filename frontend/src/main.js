@@ -1,3 +1,6 @@
+/* Vite / django-vite */
+import "vite/modulepreload-polyfill"
+
 import Vue from "vue"
 import VueMatomo from "vue-matomo"
 import App from "./App.vue"

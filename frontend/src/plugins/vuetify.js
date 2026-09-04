@@ -1,9 +1,14 @@
 import Vue from "vue"
 import Vuetify from "vuetify/lib/framework"
+import "vuetify/src/styles/styles.sass"
 import theme from "@/theme"
 import { VBtn, VCard, VRadio, VCheckbox } from "vuetify/lib"
 import remixJson from "./remix.json"
 import { Resize, ClickOutside, Scroll } from "vuetify/lib/directives"
+
+// Vuetify styles + DSFR variable overrides are injected via vite.config.js
+// (sass additionalData). Keep a-la-carte imports; components are auto-resolved
+// by unplugin-vue-components (VuetifyResolver).
 
 // Necessary for now as a workaround for a Vuetify bug: Check again
 // after next Vuetify update : https://github.com/vuetifyjs/vuetify/issues/4871

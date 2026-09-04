@@ -152,9 +152,6 @@ frontend/*.sw?
 # Frontend cache
 frontend/.eslintcache
 
-# Build output stats
-frontend/webpack-stats.json
-
 # Celery
 celerybeat-schedule.db
 
@@ -174,8 +171,6 @@ celerybeat-schedule.db
 
 # 2024 Frontend
 .vite/
-.hotfile
-
 # postgres
 .postgres
 *.dump
