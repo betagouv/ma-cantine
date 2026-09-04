@@ -23,12 +23,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-  frontend:
+  frontend-vue2:
     build:
-      context: frontend
+      context: frontend-vue2
     image: ma-cantine-front
     volumes:
-      - "./frontend/:/app"
+      - "./frontend-vue2/:/app"
       - "/app/node_modules"
     ports:
       - 8080:8080

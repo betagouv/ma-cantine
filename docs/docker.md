@@ -37,7 +37,7 @@ Les deux apps frontend utilisent Vite et sont branchées sur Django via [`django
 | App | Dossier | Port Vite | Clé django-vite |
 |---|---|---|---|
 | Vue 3 | `2024-frontend` | 5173 | `default` |
-| Vue 2 | `frontend` | 8080 | `vue2` |
+| Vue 2 | `frontend-vue2` | 8080 | `vue2` |
 
 En développement, les balises pointent vers le serveur Vite correspondant ;
-en production, elles lisent le `manifest.json` de chaque build (`build/` et `frontend/dist/`).
+en production, elles lisent le `manifest.json` de chaque build (`build/` et `frontend-vue2/dist/`).

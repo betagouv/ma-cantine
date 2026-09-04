@@ -1,4 +1,4 @@
-cd frontend/
+cd frontend-vue2/
 npm run dev &
 cd ..
 cd 2024-frontend/

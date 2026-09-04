@@ -68,10 +68,10 @@ On utilise les dernières versions LTS de `node` et `npm`.
 
 /!\ Il y a actuellement 2 applications frontend côte à côte.
 
-L'application frontend Vue2 se trouve sous `/frontend`. Pour installer les dépendances :
+L'application frontend Vue2 se trouve sous `/frontend-vue2`. Pour installer les dépendances :
 
 ```
-cd frontend
+cd frontend-vue2
 npm ci --ignore-scripts
 ```
 
@@ -223,10 +223,10 @@ python manage.py runserver
 
 ### Terminal Vue2
 
-Pour faire l'équivalent côté frontend, allez sur `./frontend` et lancez le serveur npm :
+Pour faire l'équivalent côté frontend, allez sur `./frontend-vue2` et lancez le serveur npm :
 
 ```
-cd frontend
+cd frontend-vue2
 npm run dev
 ```
 

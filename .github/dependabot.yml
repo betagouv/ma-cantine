@@ -9,7 +9,7 @@ updates:
       interval: "monthly"
   - package-ecosystem: "npm"
     target-branch: "staging"
-    directory: "/frontend"
+    directory: "/frontend-vue2"
     schedule:
       interval: "monthly"
     cooldown:

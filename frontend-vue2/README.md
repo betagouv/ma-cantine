@@ -1,4 +1,4 @@
-# frontend (Vue 2)
+# frontend-vue2 (Vue 2)
 
 Legacy Vue 2 + Vuetify app, built with **Vite** and loaded by Django via [`django-vite`](https://github.com/MrBin99/django-vite) (`app="vue2"`).
 

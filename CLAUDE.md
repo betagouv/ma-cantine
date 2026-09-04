@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Sentry for error tracking, Brevo for email, S3-compatible storage
 
 **Frontend:**
-- Vue 2 (legacy, in `/frontend` with Vuetify) + Vue 3 (migration in `/2024-frontend` with Vite)
+- Vue 2 (legacy, in `/frontend-vue2` with Vuetify) + Vue 3 (migration in `/2024-frontend` with Vite)
 - Responsive design using DSFR (French design system)
 
 **Dev Stack:**
@@ -32,13 +32,13 @@ ma-cantine/
 ├── api/                 # REST API (serializers, viewsets, permissions)
 ├── data/               # Core models, admin interface, factories
 ├── cms/                # Wagtail CMS integration
-├── frontend/           # Legacy Vue 2 app (with Vuetify)
+├── frontend-vue2/           # Legacy Vue 2 app (with Vuetify)
 ├── 2024-frontend/      # New Vue 3 app (with Vite) - prefer this for new work
 ├── macantine/          # Django settings, URLs, utils, ETL
 ├── opendata/           # CSV exports for data.gouv.fr
 ├── docs/               # Full ONBOARDING.md, celery.md, docker.md
 ├── Dockerfile          # Multi-stage Docker build
-├── compose.yaml        # 4 services: server, db, frontend, 2024-frontend, worker
+├── compose.yaml        # 4 services: server, db, frontend-vue2, 2024-frontend, worker
 └── pyproject.toml      # Single source of truth for Python deps via uv
 ```
 
@@ -69,7 +69,7 @@ ma-cantine/
 python manage.py runserver  # Django on port 8000
 
 # Terminal 2: Vue 2 frontend (optional if not working on Vue 2)
-cd frontend && npm run dev  # Port 8080
+cd frontend-vue2 && npm run dev  # Port 8080
 
 # Terminal 3: Vue 3 frontend
 cd 2024-frontend && npm run dev  # Port 5173
@@ -85,7 +85,7 @@ cd 2024-frontend && npm run dev  # Port 5173
 - Models in `data/models/`, serializers in `api/serializers/`, views in `api/views/`
 
 **JavaScript/Vue:**
-- Vue 2 in `frontend/` uses Vuetify
+- Vue 2 in `frontend-vue2/` uses Vuetify
 - Vue 3 in `2024-frontend/` uses `@gouvminint/vue-dsfr` (French design system)
 - Prettier + ESLint configured in package.json
 
@@ -109,7 +109,7 @@ uv run pytest data/tests/
 pre-commit run --all-files
 
 # Frontend linting
-npm run lint  # (in frontend/ or 2024-frontend/)
+npm run lint  # (in frontend-vue2/ or 2024-frontend/)
 ```
 
 ## Key Files & Resources

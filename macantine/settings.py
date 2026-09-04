@@ -359,7 +359,7 @@ SPECTACULAR_SETTINGS = {
 # ------------------------------------------------------------------------------
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "frontend/dist/"),
+    os.path.join(BASE_DIR, "frontend-vue2/dist/"),
     os.path.join(BASE_DIR, "build/"),
 ]
 
@@ -376,7 +376,7 @@ DJANGO_VITE = {
         "dev_server_protocol": "http",
         "dev_server_host": "localhost",
         "dev_server_port": 8080,
-        "manifest_path": BASE_DIR / "frontend" / "dist" / "manifest.json",
+        "manifest_path": BASE_DIR / "frontend-vue2" / "dist" / "manifest.json",
     },
 }
 

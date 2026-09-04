@@ -15,7 +15,7 @@ On utilise [Python Django](https://www.djangoproject.com) pour le backend et l'A
 
 Le produit est découpé en applications. Les applications les plus modifiées :
 
-- `frontend` & `2024-frontend` : le côté visible aux utilisateur.ice.s
+- `frontend-vue2` & `2024-frontend` : le côté visible aux utilisateur.ice.s
 - `data` : contient la plupart de nos modèles et l'interface admin
 - `api` : fournit l'API
 - `web` : l'application d'authentification du site et le source de quelques fichiers statiques

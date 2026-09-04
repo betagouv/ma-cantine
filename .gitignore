@@ -131,26 +131,26 @@ venv.bak/
 *.pem
 
 .DS_Store
-frontend/node_modules
-frontend/dist
+frontend-vue2/node_modules
+frontend-vue2/dist
 
 # Log files
-frontend/npm-debug.log*
-frontend/yarn-debug.log*
-frontend/yarn-error.log*
+frontend-vue2/npm-debug.log*
+frontend-vue2/yarn-debug.log*
+frontend-vue2/yarn-error.log*
 
 # Editor directories and files
-frontend/.idea
-frontend/.vscode
-frontend/*.suo
-frontend/*.ntvs*
-frontend/*.njsproj
-frontend/*.sln
-frontend/*.sw?
+frontend-vue2/.idea
+frontend-vue2/.vscode
+frontend-vue2/*.suo
+frontend-vue2/*.ntvs*
+frontend-vue2/*.njsproj
+frontend-vue2/*.sln
+frontend-vue2/*.sw?
 2024-frontend/jsconfig.json
 
 # Frontend cache
-frontend/.eslintcache
+frontend-vue2/.eslintcache
 
 # Celery
 celerybeat-schedule.db
