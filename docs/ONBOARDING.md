@@ -114,7 +114,6 @@ Pour tester ces tâches en local, vous pouvez renseigner ces variables d'environ
 SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
 DEBUG= `True` pour le développement local ou `False` autrement
 DEBUG_FRONT= `True` pour le développement local du 2024-front ou `False` autrement
-DEBUG_WEBPACK_PROGRESS= (obsolète) anciennement utilisé pour le build webpack du frontend Vue 2
 DB_USER= L'utilisateur de la base de données. Doit avoir les droits de creation de db pour les tests (par ex. 'macantine_egalim_team')
 DB_PASSWORD= Le mot de passe pour accéder à la base de données
 DB_HOST= Le host de la base de données (par ex. '127.0.0.1')

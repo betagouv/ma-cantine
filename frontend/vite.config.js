@@ -24,7 +24,7 @@ export default defineConfig({
         },
       },
     }),
-    // Replaces vuetify-loader: auto-import Vuetify 2 components used in templates
+    // Auto-import Vuetify 2 components used in templates
     Components({
       dirs: [],
       resolvers: [VuetifyResolver()],
@@ -37,7 +37,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-      // Keep runtime compiler available (was runtimeCompiler: true in vue-cli)
       vue: "vue/dist/vue.esm.js",
     },
     extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
