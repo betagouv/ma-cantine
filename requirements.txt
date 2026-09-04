@@ -318,6 +318,8 @@ python-dateutil==2.9.0.post0
     #   freezegun
     #   pandas
     #   sib-api-v3-sdk
+python-disposable==0.0.106
+    # via ma-cantine
 python-dotenv==1.0.1
     # via ma-cantine
 pyyaml==6.0.2
