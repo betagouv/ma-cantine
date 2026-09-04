@@ -355,8 +355,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-# Frontend: Vue 2 (webpack) & Vue 3 (django-vite)
-# https://github.com/MrBin99/django-vite
+# Frontend: Vue 2 (Vite + webpack_loader) & Vue 3 (django-vite)
 # ------------------------------------------------------------------------------
 
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")

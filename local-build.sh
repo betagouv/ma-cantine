@@ -1,5 +1,5 @@
 cd frontend/
-npm run serve:ossl-legacy &
+npm run dev &
 cd ..
 cd 2024-frontend/
 npm run dev &

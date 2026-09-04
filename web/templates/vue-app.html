@@ -70,7 +70,8 @@
   </noscript>
   <div id="app">
   </div>
-  {% render_bundle 'app' %}
+  {% render_bundle 'app' 'css' %}
+  {% render_bundle 'app' 'js' attrs=' type="module" crossorigin' %}
   <!-- built files will be auto injected -->
 </body>
 
