@@ -118,3 +118,13 @@ class LoginUserForm(AuthenticationForm):
         self.error_messages["invalid_login"] = (
             "Saisissez un nom d'utilisateur ou adresse électronique et un mot de passe valides. Remarquez que chacun de ces champs est sensible à la casse (différenciation des majuscules/minuscules)."
         )
+
+    def confirm_login_allowed(self, user):
+        """Prevent login if email is not confirmed"""
+        if not user.email_confirmed:
+            raise forms.ValidationError(
+                [
+                    "Votre adresse email n'a pas encore été confirmée. "
+                    "Vérifiez votre boîte mail pour trouver le lien de confirmation."
+                ]
+            )
