@@ -1,6 +1,6 @@
 FROM ma-cantine-server
 
-WORKDIR /app/2024-frontend
+WORKDIR /app/frontend-vue3
 
 USER root
 

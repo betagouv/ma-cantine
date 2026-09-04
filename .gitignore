@@ -147,7 +147,7 @@ frontend-vue2/*.ntvs*
 frontend-vue2/*.njsproj
 frontend-vue2/*.sln
 frontend-vue2/*.sw?
-2024-frontend/jsconfig.json
+frontend-vue3/jsconfig.json
 
 # Frontend cache
 frontend-vue2/.eslintcache

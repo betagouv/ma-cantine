@@ -198,7 +198,7 @@
 <script>
 import LogoutButton from "./LogoutButton"
 import SkipLinks from "./SkipLinks"
-import documentation from "../../../../2024-frontend/src/data/documentation.json"
+import documentation from "../../../../frontend-vue3/src/data/documentation.json"
 
 export default {
   name: "AppHeader",

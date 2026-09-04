@@ -122,6 +122,6 @@ jobs:
           uv run python manage.py buildnpmvue3
 
       - name: Vue 3 lint
-        working-directory: ./2024-frontend
+        working-directory: ./frontend-vue3
         run: |
           npm run lint

@@ -36,13 +36,13 @@ services:
       - ".env.docker"
       - path: ".env"
         required: false
-  2024-frontend:
+  frontend-vue3:
     build:
-      context: 2024-frontend
-    image: ma-cantine-2024-front
+      context: frontend-vue3
+    image: ma-cantine-vue3-front
     volumes:
-      - "./2024-frontend:/app/2024-frontend"
-      - "/app/2024-frontend/node_modules"
+      - "./frontend-vue3:/app/frontend-vue3"
+      - "/app/frontend-vue3/node_modules"
     ports:
       - 5173:5173
     env_file:

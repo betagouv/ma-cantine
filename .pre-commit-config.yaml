@@ -33,7 +33,7 @@ repos:
       - id: check-json
       - id: pretty-format-json
         args: [--autofix, --no-ensure-ascii]
-        exclude: ^2024-frontend/src/data/.*\.json$
+        exclude: ^frontend-vue3/src/data/.*\.json$
 
   # UV
   - repo: https://github.com/astral-sh/uv-pre-commit
@@ -119,10 +119,10 @@ repos:
           - eslint-config-prettier@latest
           - eslint-plugin-prettier@latest
           - babel-eslint
-        args: [-c=2024-frontend/eslint.config.js, --fix]
+        args: [-c=frontend-vue3/eslint.config.js, --fix]
         types:
           - vue
-        files: ^2024-frontend/
+        files: ^frontend-vue3/
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v9.38.0
     hooks:
@@ -138,5 +138,5 @@ repos:
           - eslint-config-prettier@latest
           - eslint-plugin-prettier@latest
           - babel-eslint
-        args: [-c=2024-frontend/eslint.config.js, --fix]
-        files: ^2024-frontend/
+        args: [-c=frontend-vue3/eslint.config.js, --fix]
+        files: ^frontend-vue3/

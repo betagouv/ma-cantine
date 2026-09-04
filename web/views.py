@@ -52,7 +52,7 @@ class VueAppDisplayView(TemplateView):
 
 class Vue3AppDisplayView(TemplateView):
     """
-    This template contains the VueJS app in /2024-frontend
+    This template contains the VueJS app in /frontend-vue3
     """
 
     template_name = "vue3-app.html"

@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print(BASE_DIR)
 
-        os.chdir(os.path.join(BASE_DIR, "2024-frontend"))
+        os.chdir(os.path.join(BASE_DIR, "frontend-vue3"))
         subprocess.run(["npm", "ci", "--ignore-scripts"])
         subprocess.run(["npm", "run", "build"])
         os.chdir(os.path.join(BASE_DIR))

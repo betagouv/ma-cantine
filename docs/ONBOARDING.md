@@ -75,10 +75,10 @@ cd frontend-vue2
 npm ci --ignore-scripts
 ```
 
-L'application frontend Vue3 se trouve sous `/2024-frontend`. Pour installer les dépendances :
+L'application frontend Vue3 se trouve sous `/frontend-vue3`. Pour installer les dépendances :
 
 ```
-cd 2024-frontend
+cd frontend-vue3
 npm ci --ignore-scripts
 ```
 
@@ -233,7 +233,7 @@ npm run dev
 ### Terminal Vue3
 
 ```
-cd 2024-frontend
+cd frontend-vue3
 npm run dev
 ```
 

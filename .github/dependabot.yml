@@ -16,7 +16,7 @@ updates:
       default-days: 7
   - package-ecosystem: "npm"
     target-branch: "staging"
-    directory: "/2024-frontend"
+    directory: "/frontend-vue3"
     schedule:
       interval: "monthly"
     cooldown:

@@ -83,7 +83,7 @@ import DsfrCallout from "@/components/DsfrCallout"
 import { toCurrency } from "@/utils"
 import validators from "@/validators"
 import Constants from "@/constants"
-import documentation from "../../../../../2024-frontend/src/data/documentation.json"
+import documentation from "../../../../../frontend-vue3/src/data/documentation.json"
 
 const DEFAULT_TOTAL_ERROR = "Le total doit être plus que la somme des valeurs par label"
 

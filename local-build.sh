@@ -1,7 +1,7 @@
 cd frontend-vue2/
 npm run dev &
 cd ..
-cd 2024-frontend/
+cd frontend-vue3/
 npm run dev &
 cd ..
 uv run python manage.py runserver

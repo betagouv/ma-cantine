@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import documentation from "../../../../2024-frontend/src/data/documentation.json"
+import documentation from "../../../../frontend-vue3/src/data/documentation.json"
 
 export default {
   data() {
