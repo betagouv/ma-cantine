@@ -1,5 +1,47 @@
 import { verifyResponse } from "@/services/api.js"
 
+const createDiagnostic = (canteenId, payload) => {
+  payload["creationSource"] = "APP"
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const updateDiagnostic = (canteenId, diagnosticId, payload) => {
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}`, {
+    method: "PATCH",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+const fetchDiagnostics = (canteenId, limit) => {
+  const query = limit ? `?limit=${limit}` : ""
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${query}`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 const fetchDiagnosticsRecap = (canteenId) => {
   return fetch(`/api/v1/canteens/${canteenId}/diagnostics/recap`, {
     method: "GET",
@@ -12,4 +54,22 @@ const fetchDiagnosticsRecap = (canteenId) => {
     .catch((e) => e)
 }
 
-export default { fetchDiagnosticsRecap }
+const checkDiagnostic = (canteenId, diagnosticId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/check`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
+export default {
+  createDiagnostic,
+  updateDiagnostic,
+  checkDiagnostic,
+  fetchDiagnostics,
+  fetchDiagnosticsRecap
+}

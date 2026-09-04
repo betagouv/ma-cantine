@@ -15,11 +15,6 @@ def enable_xp_vege():
 
 
 @register.simple_tag
-def enable_teledeclaration():
-    return getattr(settings, "ENABLE_TELEDECLARATION", "")
-
-
-@register.simple_tag
 def enable_dashboard():
     return getattr(settings, "ENABLE_DASHBOARD", "")
 

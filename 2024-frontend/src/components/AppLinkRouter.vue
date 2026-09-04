@@ -6,6 +6,6 @@ defineProps(["to", "title", "icon"])
   <router-link :to="to">
     <span v-if="icon" :class="`${icon} ma-cantine--icon-xs`" aria-hidden="true"></span>
     {{ title }}
-    <span class="fr-icon-arrow-right-line ma-cantine--icon-xs" aria-hidden="true"></span>
+    <span v-if="!icon" class="fr-icon-arrow-right-line ma-cantine--icon-xs" aria-hidden="true"></span>
   </router-link>
 </template>

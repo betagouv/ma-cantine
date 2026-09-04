@@ -611,9 +611,7 @@ export const missingCanteenData = (canteen, sectors) => {
 }
 
 export const inTeledeclarationCampaign = (year) => {
-  const tdYear = lastYear()
-  const inTdCampaign = window.ENABLE_TELEDECLARATION && year === tdYear
-  return inTdCampaign
+  return year === lastYear()
 }
 
 export const diagnosticCanBeTeledeclared = (canteen, diagnostic) => {

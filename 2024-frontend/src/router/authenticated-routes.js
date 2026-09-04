@@ -3,17 +3,11 @@ import { sectionId } from "@/constants/site-map.js"
 /* Components */
 import GestionnaireAchatsAjouter from "@/views/GestionnaireAchatsAjouter.vue"
 import GestionnaireAchatsModifier from "@/views/GestionnaireAchatsModifier.vue"
-import GestionnaireCantine from "@/views/GestionnaireCantine.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
-import GestionnaireCantineGroupe from "@/views/GestionnaireCantineGroupe.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
-import GestionnaireCantineTeledeclarations from "@/views/GestionnaireCantineTeledeclarations.vue"
 import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
-import GestionnaireCantineGestionnaires from "@/views/GestionnaireCantineGestionnaires.vue"
-import GestionnaireCantinePagePublique from "@/views/GestionnaireCantinePagePublique.vue"
-import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
 import GestionnaireImportAchatsID from "@/views/GestionnaireImportAchatsID.vue"
@@ -28,6 +22,10 @@ import GestionnaireImportCantinesCreer from "@/views/GestionnaireImportCantinesC
 import GestionnaireImportCantinesModifier from "@/views/GestionnaireImportCantinesModifier.vue"
 import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportCantinesGestionnaires.vue"
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
+
+/* Sub routes */
+import cantineRoutes from "./cantine-routes"
+import tunnelRoutes from "./tunnel-routes"
 
 /* Sitemap section id */
 const { diag, action } = sectionId
@@ -224,70 +222,8 @@ const routes = [
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/",
     children: [
-      {
-        path: "",
-        component: LayoutSidebarCanteen,
-        children: [
-          {
-            path: "",
-            name: "GestionnaireCantine",
-            component: GestionnaireCantine,
-            meta: {
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-              ],
-            },
-          },
-          {
-            path: "cantines-groupe",
-            name: "GestionnaireCantineGroupe",
-            component: GestionnaireCantineGroupe,
-            meta: {
-              title: "Cantines du groupe",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-              ],
-            },
-          },
-          {
-            path: "teledeclarations",
-            name: "GestionnaireCantineTeledeclarations",
-            component: GestionnaireCantineTeledeclarations,
-            meta: {
-              title: "Toutes les télédéclarations",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-              ],
-            },
-          },
-          {
-            path: "gestionnaires",
-            name: "GestionnaireCantineGestionnaires",
-            component: GestionnaireCantineGestionnaires,
-            meta: {
-              title: "Gestionnaires",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-              ],
-            },
-          },
-          {
-            path: "page-publique",
-            name: "GestionnaireCantinePagePublique",
-            component: GestionnaireCantinePagePublique,
-            meta: {
-              title: "Page publique et affiche à imprimer",
-              breadcrumbs: [
-                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-              ],
-            },
-          },
-        ],
-      },
+      cantineRoutes,
+      tunnelRoutes,
       {
         path: "archiver",
         name: "GestionnaireCantineArchiver",
