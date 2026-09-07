@@ -230,14 +230,14 @@ wheels = [
 
 [[package]]
 name = "authlib"
-version = "1.3.2"
+version = "1.6.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cryptography" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f3/75/47dbab150ef6f9298e227a40c93c7fed5f3ffb67c9fb62cd49f66285e46e/authlib-1.3.2.tar.gz", hash = "sha256:4b16130117f9eb82aa6eec97f6dd4673c3f960ac0283ccdae2897ee4bc030ba2", size = 147313, upload-time = "2024-08-26T07:10:04.908Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/aa/e2/2cd626412bfc3c78b17ca5e5ea8d489f8cae31d40b061f4da0a89068d8a3/authlib-1.6.10.tar.gz", hash = "sha256:856a4f54d6ef3361ca6bb6d14a27e8b88f8097cca795fb428ffe13720e2ecde6", size = 165333, upload-time = "2026-04-13T13:30:34.718Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/df/4c/9aa0416a403d5cc80292cb030bcd2c918cce2755e314d8c1aa18656e1e12/Authlib-1.3.2-py2.py3-none-any.whl", hash = "sha256:ede026a95e9f5cdc2d4364a52103f5405e75aa156357e831ef2bfd0bc5094dfc", size = 225111, upload-time = "2024-08-26T07:10:02.811Z" },
+    { url = "https://files.pythonhosted.org/packages/7d/f6/9093f1ed17b6e2f4ac50d214543d4ec5268902a70e2158a752a06423b5ef/authlib-1.6.10-py2.py3-none-any.whl", hash = "sha256:aa639b43292554539924a3b4aaa9e81cd67ab64d3e28b22428c61f1200240287", size = 244351, upload-time = "2026-04-13T13:30:33.34Z" },
 ]
 
 [[package]]
@@ -785,16 +785,16 @@ wheels = [
 
 [[package]]
 name = "django"
-version = "5.2.16"
+version = "5.2.17"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "sqlparse" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a9/26/889449d521ae508b26de715954faecd8bcf3f740affb81b2d146a83b42a5/django-5.2.16.tar.gz", hash = "sha256:59ea02020c3136fce14bef0bbece21a10a4febef5eed1c51c22ae468efa22200", size = 10890894, upload-time = "2026-07-07T13:52:17.005Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/d8/43e9d000519adceb189620b6869ff88031e046df91c2e9da72f8f6918399/django-5.2.17.tar.gz", hash = "sha256:9d4d93be539a18ab80d058eb515900e10951e04c537c5a6b394fc49528d3251f", size = 10889740, upload-time = "2026-08-04T15:04:03.173Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/13/1e5e3e4c15dcecb04281b3cb2a46a4670e1cef131068e202f6040df19224/django-5.2.16-py3-none-any.whl", hash = "sha256:04f354bf9d807a86ad1a8392fe3808d362358a8eafc322848e0e43e59b24371d", size = 8311943, upload-time = "2026-07-07T13:52:11.223Z" },
+    { url = "https://files.pythonhosted.org/packages/df/f8/ce120525ca78f12b07daf65786679c5d0b54a75285a8958d3ae55e39da35/django-5.2.17-py3-none-any.whl", hash = "sha256:f04fb3b36ee119e1af4fa1d397d5fd6cf12700f49321e84d4f4c642c5b1973db", size = 8315563, upload-time = "2026-08-04T15:03:59.1Z" },
 ]
 
 [[package]]
@@ -1772,11 +1772,11 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "authlib", specifier = "==1.3.2" },
+    { name = "authlib", specifier = "==1.6.10" },
     { name = "celery", specifier = "==5.4.0" },
     { name = "chardet", specifier = "==5.2.0" },
     { name = "datacompy", specifier = "==1.0.0a5" },
-    { name = "django", specifier = "==5.2.16" },
+    { name = "django", specifier = "==5.2.17" },
     { name = "django-anymail", specifier = "==12.0" },
     { name = "django-celery-results", specifier = "==2.5.1" },
     { name = "django-ckeditor", specifier = "==6.7.1" },
@@ -1802,14 +1802,14 @@ requires-dist = [
     { name = "pandas", specifier = "==3.0.0" },
     { name = "pillow", specifier = "==10.4.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
-    { name = "python-dotenv", specifier = "==1.0.1" },
+    { name = "python-dotenv", specifier = "==1.2.2" },
     { name = "qrcode", specifier = ">=7.4.2" },
     { name = "redis", specifier = "==5.2.0" },
     { name = "requests", specifier = "==2.32.4" },
     { name = "sentry-sdk", specifier = "==2.10.0" },
     { name = "sib-api-v3-sdk", specifier = "==7.6.0" },
     { name = "sqlalchemy", specifier = "==2.0.36" },
-    { name = "wagtail", specifier = "==7.0.7" },
+    { name = "wagtail", specifier = "==7.0.9" },
     { name = "xhtml2pdf", specifier = "==0.2.17" },
 ]
 
@@ -3050,11 +3050,11 @@ wheels = [
 
 [[package]]
 name = "python-dotenv"
-version = "1.0.1"
+version = "1.2.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/bc/57/e84d88dfe0aec03b7a2d4327012c1627ab5f03652216c63d49846d7a6c58/python-dotenv-1.0.1.tar.gz", hash = "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca", size = 39115, upload-time = "2024-01-23T06:33:00.505Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/82/ed/0301aeeac3e5353ef3d94b6ec08bbcabd04a72018415dcb29e588514bba8/python_dotenv-1.2.2.tar.gz", hash = "sha256:2c371a91fbd7ba082c2c1dc1f8bf89ca22564a087c2c287cd9b662adde799cf3", size = 50135, upload-time = "2026-03-01T16:00:26.196Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6a/3e/b68c118422ec867fa7ab88444e1274aa40681c606d59ac27de5a5588f082/python_dotenv-1.0.1-py3-none-any.whl", hash = "sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a", size = 19863, upload-time = "2024-01-23T06:32:58.246Z" },
+    { url = "https://files.pythonhosted.org/packages/0b/d7/1959b9648791274998a9c3526f6d0ec8fd2233e4d4acce81bbae76b44b2a/python_dotenv-1.2.2-py3-none-any.whl", hash = "sha256:1d8214789a24de455a8b8bd8ae6fe3c6b69a5e3d64aa8a8e5d68e694bbcb285a", size = 22101, upload-time = "2026-03-01T16:00:25.09Z" },
 ]
 
 [[package]]
@@ -3667,7 +3667,7 @@ wheels = [
 
 [[package]]
 name = "wagtail"
-version = "7.0.7"
+version = "7.0.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyascii" },
@@ -3688,9 +3688,9 @@ dependencies = [
     { name = "telepath" },
     { name = "willow", extra = ["heif"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/28/2f/ccc30da7f8d229f33dd819394bcdb85d4f59cbf37e0b8c213dd941d3d24a/wagtail-7.0.7.tar.gz", hash = "sha256:11bda16fc6bc532daa341a9c9f55f5e06990483c6f592b73a0b1bf202d255065", size = 6680030, upload-time = "2026-05-05T14:16:51.466Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8f/ab/f90655e0388c7929bfb88cf3b862ad45e4671adc64e7bfd8d06dfa66f28e/wagtail-7.0.9.tar.gz", hash = "sha256:1f72a023c2aa47c2995188955e3bd3134dfeb019b3abbdacdd9d6c96be7d3d49", size = 6707807, upload-time = "2026-08-20T15:27:27.342Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bc/5a/404d8164619b2654e2eb19840c61770702ca85504c20bb66fee53c9314a1/wagtail-7.0.7-py3-none-any.whl", hash = "sha256:3131c7e991a12a5266d26853b26b3e3958d7ea634dd1b3da71632cbe14b7e912", size = 9153804, upload-time = "2026-05-05T14:16:45.127Z" },
+    { url = "https://files.pythonhosted.org/packages/9d/72/c02458f495fa6a3146a315aaede526befbdf19348db3810f51fdce934301/wagtail-7.0.9-py3-none-any.whl", hash = "sha256:93c41a52f4f440de5016a53af857a42f05e742608692087e39363a4da9b36c36", size = 9157867, upload-time = "2026-08-20T15:27:21.873Z" },
 ]
 
 [[package]]

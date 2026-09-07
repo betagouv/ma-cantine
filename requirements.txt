@@ -30,7 +30,7 @@ attrs==26.1.0
     #   aiohttp
     #   jsonschema
     #   referencing
-authlib==1.3.2
+authlib==1.6.10
     # via ma-cantine
 beautifulsoup4==4.15.0
     # via wagtail
@@ -101,7 +101,7 @@ defusedxml==0.7.1
     #   willow
 distlib==0.4.3
     # via virtualenv
-django==5.2.16
+django==5.2.17
     # via
     #   django-anymail
     #   django-celery-results
@@ -383,7 +383,7 @@ python-dateutil==2.9.0.post0
     #   sib-api-v3-sdk
 python-discovery==1.6.0
     # via virtualenv
-python-dotenv==1.0.1
+python-dotenv==1.2.2
     # via ma-cantine
 pyyaml==6.0.3
     # via
@@ -496,7 +496,7 @@ vine==5.1.0
     #   kombu
 virtualenv==21.7.8
     # via pre-commit
-wagtail==7.0.7
+wagtail==7.0.9
     # via ma-cantine
 wcwidth==0.8.3
     # via prompt-toolkit
