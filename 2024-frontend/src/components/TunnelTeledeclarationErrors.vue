@@ -14,16 +14,7 @@ const check = computedAsync(async () => await diagnosticServices.checkDiagnostic
 const hasErrors = computed(() => !check.value.isFilled )
 const errors = computed(() => {
   if (!hasErrors.value || !check.value ) return []
-  const keys = Object.keys(check.value.errors)
-  const values = Object.values(check.value.errors)
-  const errors = []
-  for (let i = 0; i < keys.length; i++) {
-    errors.push({
-      field: keys[i],
-      messages: values[i].join('. ')
-    })
-  }
-  return errors
+  return Object.keys(check.value.errors)
 })
 const badge = computed(() => {
   if (!hasErrors.value || !check.value) return false
@@ -36,10 +27,9 @@ const badge = computed(() => {
   <div v-if="hasErrors" class="fr-mb-4w">
     <DsfrBadge :label="badge" type="error" />
     <ul>
-      <li v-for="error in errors" :key="error.field" class="fr-text-default--error">
+      <li v-for="field in errors" :key="field" class="fr-text-default--error">
         <p class="fr-mb-0">
-          <span class="ma-cantine--bold">{{ error.field }} :</span>
-          {{ error.messages }}
+          erreur sur le champ <span class="ma-cantine--bold">« {{ field }} »</span>
         </p>
       </li>
     </ul>
