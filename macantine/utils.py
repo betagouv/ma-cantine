@@ -150,33 +150,27 @@ CAMPAIGN_DATES = {
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2025.pdf",
     },
     2025: {
-        "teledeclaration_start_date": (
-            convert_date_string_to_datetime(settings.TELEDECLARATION_START_DATE_OVERRIDE)
-            or datetime(2026, 1, 12, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+        "teledeclaration_start_date": datetime(2026, 1, 12, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_end_date": datetime(
+            2026, 4, 15, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
         ),
-        "teledeclaration_end_date": (
-            convert_date_string_to_datetime(settings.TELEDECLARATION_END_DATE_OVERRIDE, "end")
-            or datetime(2026, 4, 15, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
-        ),
-        "correction_start_date": (
-            convert_date_string_to_datetime(settings.CORRECTION_START_DATE_OVERRIDE)
-            or datetime(2026, 4, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
-        ),
-        "correction_end_date": (
-            convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end")
-            or datetime(2026, 4, 29, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
-        ),
+        "correction_start_date": datetime(2026, 4, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "correction_end_date": datetime(2026, 4, 29, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2025-12-04",
         "rapport_parlement_url": None,
     },
     # NOTE: dates approximates ! on en a besoin pour les tests.
     2026: {
-        "teledeclaration_start_date": datetime(2027, 1, 1, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
-        "teledeclaration_end_date": datetime(
-            2027, 3, 31, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
+        "teledeclaration_start_date": (
+            convert_date_string_to_datetime(settings.TELEDECLARATION_START_DATE_OVERRIDE)
+            or datetime(2027, 1, 1, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
-        "correction_start_date": None,
-        "correction_end_date": None,
+        "teledeclaration_end_date": (
+            convert_date_string_to_datetime(settings.TELEDECLARATION_END_DATE_OVERRIDE, "end")
+            or datetime(2027, 3, 31, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+        ),
+        "correction_start_date": convert_date_string_to_datetime(settings.CORRECTION_START_DATE_OVERRIDE) or None,
+        "correction_end_date": convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end") or None,
         "legifrance_url": None,
         "rapport_parlement_url": None,
     },
