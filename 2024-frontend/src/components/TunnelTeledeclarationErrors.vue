@@ -10,11 +10,11 @@ const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
 const canteenId = computed(() => diagnosticCurrentCampaign.value.canteenId)
 
 /* Errors */
-const check = computedAsync(async () => await diagnosticServices.checkDiagnostic(canteenId.value, diagnosticCurrentCampaign.value.id), false)
-const hasErrors = computed(() => check.value && !check.value?.isFilled)
+const checkDiag = computedAsync(async () => await diagnosticServices.checkDiagnostic(canteenId.value, diagnosticCurrentCampaign.value.id), false)
+const hasErrors = computed(() => checkDiag.value && !checkDiag.value?.isFilled)
 const errors = computed(() => {
   if (!hasErrors.value) return []
-  return Object.keys(check.value.errors)
+  return Object.keys(checkDiag.value.errors)
 })
 const badge = computed(() => {
   if (!hasErrors.value) return false
