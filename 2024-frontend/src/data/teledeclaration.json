@@ -471,6 +471,7 @@
     "valeurViandesVolaillesBioDontCommerceEquitable": {
       "label": "dont total des achats Bio issus du commerce équitable pour la famille Viandes et volailles fraiches ou surgelées",
       "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Viandes et volailles fraiches ou surgelées",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
@@ -484,6 +485,7 @@
     "valeurProduitsDeLaMerBioDontCommerceEquitable": {
       "label": "dont total des achats Bio issus du commerce équitable pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
@@ -497,6 +499,7 @@
     "valeurCharcuterieBioDontCommerceEquitable": {
       "label": "dont total des achats Bio issus du commerce équitable pour la famille Charcuteries",
       "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Charcuteries",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
@@ -510,6 +513,7 @@
     "valeurFruitsEtLegumesBioDontCommerceEquitable": {
       "label": "dont total des achats Bio issus du commerce équitable pour la famille Fruits et légumes frais et surgelés",
       "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Fruits et légumes frais et surgelés",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
@@ -523,6 +527,7 @@
     "valeurProduitsLaitiersBioDontCommerceEquitable": {
       "label": "dont total des achats Bio issus du commerce équitable pour la famille BOF (Produits laitiers, beurre et œufs)",
       "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
@@ -536,6 +541,7 @@
     "valeurBoulangerieBioDontCommerceEquitable": {
       "label": "dont total des achats Bio issus du commerce équitable pour la famille Boulangerie/Pâtisseries fraîches",
       "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
@@ -549,6 +555,7 @@
     "valeurAutresBioDontCommerceEquitable": {
       "label": "dont total des achats Bio issus du commerce équitable pour la famille Autres produits frais, surgelés et d'épicerie",
       "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
@@ -562,6 +569,7 @@
     "valeurBioBoissonsDontCommerceEquitable": {
       "label": "dont total des achats Bio issus du commerce équitable pour la famille Boissons",
       "isRelatedField": true,
+      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Boissons",
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
