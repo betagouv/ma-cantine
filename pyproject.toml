@@ -33,7 +33,7 @@ dependencies = [
     "html2text==2024.2.26",
     "numpy==2.4.1",
     "pandas==3.0.0",
-    "pillow==10.4.0",
+    "pillow==12.3.0",
     "psycopg2-binary>=2.9.10",
     "python-dotenv==1.2.2",
     "qrcode>=7.4.2",
