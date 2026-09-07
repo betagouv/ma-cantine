@@ -531,11 +531,28 @@ class Diagnostic(models.Model):
         "autres",
     ]
 
-    APPRO_LABELS_EGALIM = [
+    APPRO_LABELS_EGALIM_BEFORE_2026 = [
         "bio",
         # "bio_dont_commerce_equitable",
         "label_rouge",
         "aocaop_igp_stg",  # before 2026
+        "aocaop",
+        "igp",
+        "stg",
+        "hve",
+        "peche_durable",
+        "rup",
+        "commerce_equitable",
+        "fermier",
+        "externalites",
+        "performance",
+    ]
+
+    APPRO_LABELS_EGALIM = [
+        "bio",
+        # "bio_dont_commerce_equitable",
+        "label_rouge",
+        # new in 2026: aocaop_igp_stg split into 3
         "aocaop",
         "igp",
         "stg",
@@ -555,9 +572,15 @@ class Diagnostic(models.Model):
     APPRO_LABELS_ALL = (
         APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_ORIGINE + ["circuit_court", "local"]
     )
-    APPRO_LABELS_GROUPS_MAPPING = {
+    APPRO_LABELS_GROUPS_MAPPING_BEFORE_2026 = {
         "bio": ["bio"],
         "siqo": ["label_rouge", "aocaop_igp_stg", "aocaop", "igp", "stg"],
+        "externalites_performance": ["externalites", "performance"],
+        "egalim_autres": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
+    }
+    APPRO_LABELS_GROUPS_MAPPING = {
+        "bio": ["bio"],
+        "siqo": ["label_rouge", "aocaop", "igp", "stg"],
         "externalites_performance": ["externalites", "performance"],
         "egalim_autres": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
     }
@@ -2033,9 +2056,17 @@ class Diagnostic(models.Model):
 
     def label_group_sum(self, label_group: str):
         if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            return sum_int_with_potential_null(
-                [self.label_sum(label) for label in Diagnostic.APPRO_LABELS_GROUPS_MAPPING[label_group]]
-            )
+            if self.year < 2026:
+                return sum_int_with_potential_null(
+                    [
+                        self.label_sum(label)
+                        for label in Diagnostic.APPRO_LABELS_GROUPS_MAPPING_BEFORE_2026[label_group]
+                    ]
+                )
+            else:
+                return sum_int_with_potential_null(
+                    [self.label_sum(label) for label in Diagnostic.APPRO_LABELS_GROUPS_MAPPING[label_group]]
+                )
         return getattr(self, f"valeur_{label_group}")
 
     def label_group_group_sum(self, label_group_group: str):
