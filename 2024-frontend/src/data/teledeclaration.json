@@ -384,7 +384,7 @@
       "required": false,
       "enablePurchaseSummary": true
     },
-    "definitionLocal": {
+    "valeurLocalDefinition": {
       "label": "Définition du « local » : périmètre administratif",
       "type": "select",
       "required": false,
@@ -415,7 +415,7 @@
         }
       ]
     },
-    "definitionLocalKm": {
+    "valeurLocalDefinitionKm": {
       "label": "Définition du « local » : distance (en km)",
       "type": "number",
       "required": false
