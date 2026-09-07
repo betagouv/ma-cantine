@@ -106,7 +106,8 @@ const goToStep = (page) => router.push(page)
         no-caption
         :headersRow="header"
         :rows="accordion.rows"
-        class="fr-table--no-scroll fr-mb-2w fr-mt-0"
+        :no-scroll="true"
+        class="fr-mb-2w fr-mt-0"
       />
       <DsfrButton label="Modifier ces données" @click="goToStep(accordion.to)" icon="ri-pencil-line" secondary size="sm" />
     </DsfrAccordion>
