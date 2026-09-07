@@ -14,8 +14,8 @@ class TeledeclarationCampaignDatesListApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 5)
-        self.assertEqual(body[-1]["year"], 2025)
+        self.assertEqual(len(body), 6)
+        self.assertEqual(body[-1]["year"], 2026)
 
 
 class TeledeclarationCampaignDatesRetrieveApiTest(APITestCase):

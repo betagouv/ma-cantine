@@ -5,7 +5,6 @@ from django.core.exceptions import BadRequest
 from django.db import transaction
 from django.urls import reverse
 from freezegun import freeze_time
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -905,7 +904,8 @@ class DiagnosticListRecapApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
+        with freeze_time("2025-01-01"):  # before the 2024 campaign
+            cls.canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
         cls.url = reverse("diagnostic_list_recap", kwargs={"canteen_pk": cls.canteen.id})
 
     def test_cannot_list_recap_diagnostics_if_unauthenticated(self):
@@ -945,23 +945,29 @@ class DiagnosticListRecapApiTest(APITestCase):
     @authenticate
     def test_list_recap_diagnostics_only_return_years_after_canteen_creation(self):
         self.canteen.managers.add(authenticate.user)
-        with freeze_time("2026-03-15"):  # during the 2025 campaign
-            self.canteen.creation_date = timezone.now()
-            self.canteen.save(skip_validations=True)
 
+        # the canteen was created before the 2024 campaign
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
+        self.assertEqual(body[0]["year"], 2024)
+
+        # create another canteen later
+        with freeze_time("2026-03-15"):  # during the 2025 campaign
+            canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
+
+        url = reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen.id})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
         self.assertEqual(body[0]["year"], 2025)
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_list_recap_diagnostics_site(self):
         self.canteen.managers.add(authenticate.user)
-        self.canteen.creation_date = timezone.now()
-        self.canteen.save(skip_validations=True)
         diagnostic = DiagnosticFactory(
             canteen=self.canteen, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
@@ -971,13 +977,12 @@ class DiagnosticListRecapApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
-        self.assertEqual(body[0]["year"], 2025)
-        self.assertEqual(body[0]["isTeledeclared"], True)
-        self.assertEqual(body[0]["declarationDonnees"], True)
-        self.assertEqual(body[0]["canteenDiagnosticId"], diagnostic.id)
-        self.assertEqual(body[0]["generatedFromGroupeDiagnosticId"], None)
-        self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], None)
+        self.assertEqual(body[1]["year"], 2025)
+        self.assertEqual(body[1]["isTeledeclared"], True)
+        self.assertEqual(body[1]["declarationDonnees"], True)
+        self.assertEqual(body[1]["canteenDiagnosticId"], diagnostic.id)
+        self.assertEqual(body[1]["generatedFromGroupeDiagnosticId"], None)
+        self.assertEqual(body[1]["generatedFromGroupeDiagnosticMode"], None)
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
@@ -1015,7 +1020,6 @@ class DiagnosticListRecapApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
         self.assertEqual(body[0]["year"], 2025)
         self.assertEqual(body[0]["isTeledeclared"], True)
         self.assertEqual(body[0]["declarationDonnees"], True)
@@ -1032,7 +1036,6 @@ class DiagnosticListRecapApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
         self.assertEqual(body[0]["year"], 2025)
         self.assertEqual(body[0]["isTeledeclared"], True)
         self.assertEqual(body[0]["declarationDonnees"], True)
@@ -1051,7 +1054,6 @@ class DiagnosticListRecapApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
         self.assertEqual(body[0]["year"], 2025)
         self.assertEqual(body[0]["isTeledeclared"], True)
         self.assertEqual(body[0]["declarationDonnees"], True)
@@ -1091,7 +1093,6 @@ class DiagnosticListRecapApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
         self.assertEqual(body[0]["year"], 2025)
         self.assertEqual(body[0]["isTeledeclared"], True)
         self.assertEqual(body[0]["declarationDonnees"], True)
@@ -1108,7 +1109,6 @@ class DiagnosticListRecapApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
         self.assertEqual(body[0]["year"], 2025)
         self.assertEqual(body[0]["isTeledeclared"], True)
         self.assertEqual(body[0]["declarationDonnees"], True)
@@ -1121,7 +1121,6 @@ class DiagnosticListRecapApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(len(body), 1)  # only the 2025 campaign remains
         self.assertEqual(body[0]["year"], 2025)
         self.assertEqual(body[0]["isTeledeclared"], True)
         self.assertEqual(body[0]["declarationDonnees"], True)
