@@ -6,6 +6,30 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.47.1](https://github.com/betagouv/ma-cantine/compare/v2026.47.0...v2026.47.1) (2026-09-07)
+
+
+### Améliorations
+
+* **Accueil:** supprime les redirections automatiques ([#7087](https://github.com/betagouv/ma-cantine/issues/7087)) ([6808d1c](https://github.com/betagouv/ma-cantine/commit/6808d1c4d8a7d55c7d98f277d3cbb200823ec440))
+* **Diagnostics:** Règles métiers: s'assurer que les nouveaux valeur_label sont toujours supérieur à chaque valeur_famille_label & à la somme des valeur_famille_label ([#7030](https://github.com/betagouv/ma-cantine/issues/7030)) ([7d3e9c6](https://github.com/betagouv/ma-cantine/commit/7d3e9c6d0eb6c2f49d4fc2bbbc406a58507e3af0))
+* **Télédéclaration:** CAMPAIGN_DATES: rajouter les dates APPROXIMATIVES de 2026 (on en a besoin pour nos tests) ([#7011](https://github.com/betagouv/ma-cantine/issues/7011)) ([ee3c79a](https://github.com/betagouv/ma-cantine/commit/ee3c79a823dcd12d378564c25b60e801e0c614d7))
+
+
+### Corrections (bugs, typos...)
+
+* **Gaspillage Alimentaire:** corrige la redirection ([#7086](https://github.com/betagouv/ma-cantine/issues/7086)) ([5435325](https://github.com/betagouv/ma-cantine/commit/5435325b36033f1c3b875a822e46c17f56c5c19d))
+* **Utilisateurs:** Admin: corrige l'erreur 500 (suite à [#7058](https://github.com/betagouv/ma-cantine/issues/7058)) ([#7091](https://github.com/betagouv/ma-cantine/issues/7091)) ([74c246f](https://github.com/betagouv/ma-cantine/commit/74c246fca05c67f20c683ec69ea8dbbcf35f1c05))
+
+
+### Technique
+
+* **Backend:** bouger la logique camelize dans un fichier dédié (et gérer des strings) (et ajouter des tests) ([#7097](https://github.com/betagouv/ma-cantine/issues/7097)) ([30070c7](https://github.com/betagouv/ma-cantine/commit/30070c7ea723539c1cb454502e496f361e6b1b38))
+* **Backend:** bouger la logique pillow/images dans un fichier dédié (et ajouter des tests) ([#7095](https://github.com/betagouv/ma-cantine/issues/7095)) ([1356f5d](https://github.com/betagouv/ma-cantine/commit/1356f5d80af6bad04c0fa088b3f6d2f83443abba))
+* **deps:** Backend: ajouter pip-audit pour voir les packets à mettre à jour en priorité ([#7092](https://github.com/betagouv/ma-cantine/issues/7092)) ([d1b9312](https://github.com/betagouv/ma-cantine/commit/d1b931220a05e5fffe42cfc7e7fb33e62a2a88de))
+* **deps:** Backend: mise à jour des dépendances ([#7093](https://github.com/betagouv/ma-cantine/issues/7093)) ([7a40088](https://github.com/betagouv/ma-cantine/commit/7a40088190a11523a9c67f87267323638ecf2f39))
+* **deps:** migre les frontend sur django-vite (enlève django-vite-plugin & webpack) ([#7084](https://github.com/betagouv/ma-cantine/issues/7084)) ([aa2cb7a](https://github.com/betagouv/ma-cantine/commit/aa2cb7aaf7c663b2fb43bd79ddeba1c5171d0537))
+
 ## [2026.47.0](https://github.com/betagouv/ma-cantine/compare/v2026.46.0...v2026.47.0) (2026-09-04)
 
 
