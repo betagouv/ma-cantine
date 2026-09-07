@@ -25,11 +25,6 @@ const useStoreDiagnostic = defineStore("diagnostic", () => {
     const diagnostic = diagnosticCurrentCampaign.value
     if (!diagnostic) return
     const response = await diagnosticService.updateDiagnostic(diagnostic.canteenId, diagnostic.id, diagnostic)
-    const errors = response?.list || []
-    const hasErrors = errors.length > 0
-    const isFieldError = errors.every(error => error.field !== null)
-    if (response.status !== "error") updateDiagnosticCurrentCampaign(response)
-    else if (hasErrors && isFieldError) saveDiagnosticCurrentCampaignErrors(response.list)
     return response
   }
 
