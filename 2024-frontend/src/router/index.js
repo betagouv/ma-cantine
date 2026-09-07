@@ -41,7 +41,7 @@ router.beforeEach(async (to) => {
     await store.fetchInitialData()
   }
   if (!store.loggedUser && to.meta.authenticationRequired) {
-    return { name: "Vue2Home", replace: true }
+    return { name: "LandingPage", replace: true }
   }
 })
 
