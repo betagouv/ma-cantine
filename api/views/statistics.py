@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.serializers import CanteenStatisticsSerializer
-from api.views.utils import camelize
+from common.utils.camelize import camelize
 from data.models import Canteen, Diagnostic
 from data.models.sector import Sector
 from data.models.geo import Department, Region

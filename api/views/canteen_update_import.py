@@ -14,7 +14,7 @@ from data.models import Canteen, ImportType, Sector
 from macantine.utils import is_in_teledeclaration_or_correction
 
 from .canteen_managers import AddManagerView
-from .utils import camelize
+from common.utils.camelize import camelize
 
 
 CANTEEN_UPDATE_SCHEMA_FILE_NAME = "cantines_modifier.json"
