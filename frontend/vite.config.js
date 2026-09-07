@@ -77,7 +77,6 @@ export default defineConfig({
     outDir: OUT_DIR,
     emptyOutDir: true,
     manifest: "manifest.json",
-    sourcemap: true,
     rollupOptions: {
       input: path.resolve(rootDir, "src/main.js"),
       output: {

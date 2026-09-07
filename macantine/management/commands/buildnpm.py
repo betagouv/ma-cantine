@@ -10,9 +10,7 @@ class Command(BaseCommand):
     help = "Fetches npm dependencies and makes a prod build of the frontend application"
 
     def handle(self, *args, **options):
-        print(BASE_DIR)
-
         os.chdir(os.path.join(BASE_DIR, "frontend"))
-        subprocess.run(["npm", "ci", "--ignore-scripts"])
-        subprocess.run(["npm", "run", "build"])
+        subprocess.run(["npm", "ci", "--ignore-scripts"], check=True)
+        subprocess.run(["npm", "run", "build"], check=True)
         os.chdir(os.path.join(BASE_DIR))
