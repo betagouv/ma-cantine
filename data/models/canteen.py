@@ -17,6 +17,7 @@ from simple_history.utils import update_change_reason
 
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
+from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
 from data.models import AuthenticationMethodHistoricalRecords
 from data.models.creation_source import CreationSource
@@ -32,7 +33,6 @@ from data.utils import (
     get_diagnostic_lowest_limit_year,
     get_diagnostic_upper_limit_year,
     has_charfield_missing_query,
-    optimize_image,
 )
 from data.validators import canteen as canteen_validators
 from macantine.utils import (
