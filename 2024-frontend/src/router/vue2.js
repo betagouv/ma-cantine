@@ -4,10 +4,6 @@ const { law, diag, action } = sectionId
 const vue2routes = [
   {
     path: "/",
-    name: "Vue2Home",
-  },
-  {
-    path: "/accueil",
     name: "LandingPage",
   },
   {
