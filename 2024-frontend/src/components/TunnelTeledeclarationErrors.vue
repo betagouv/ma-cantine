@@ -4,17 +4,25 @@ import { computedAsync } from '@vueuse/core'
 import { useStoreDiagnostic } from '@/stores/diagnostic'
 import { storeToRefs } from 'pinia'
 import diagnosticServices from '@/services/diagnostics'
+import canteenServices from '@/services/canteens'
 
 const diagnosticStore = useStoreDiagnostic()
 const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
 const canteenId = computed(() => diagnosticCurrentCampaign.value.canteenId)
 
+/* Checks */
+const checkCanteen = computedAsync(async () => await canteenServices.checkCanteen(canteenId.value), false)
+const checkDiagnostic = computedAsync(async () => await diagnosticServices.checkDiagnostic(canteenId.value, diagnosticCurrentCampaign.value.id), false)
+
 /* Errors */
-const checkDiag = computedAsync(async () => await diagnosticServices.checkDiagnostic(canteenId.value, diagnosticCurrentCampaign.value.id), false)
-const hasErrors = computed(() => checkDiag.value && !checkDiag.value?.isFilled)
+const hasCanteenErrors = computed(() => checkCanteen.value && !checkCanteen.value?.isFilled)
+const hasDiagnosticErrors = computed(() => checkDiagnostic.value && !checkDiagnostic.value?.isFilled)
+const hasErrors = computed(() => hasCanteenErrors.value || hasDiagnosticErrors.value)
+
 const errors = computed(() => {
-  if (!hasErrors.value) return []
-  return Object.keys(checkDiag.value.errors)
+  const canteenErrors = hasCanteenErrors.value ? Object.keys(checkCanteen.value.errors) : []
+  const diagnosticErrors = hasDiagnosticErrors.value ? Object.keys(checkDiagnostic.value.errors) : []
+  return [...canteenErrors, ...diagnosticErrors]
 })
 const badge = computed(() => {
   if (!hasErrors.value) return false
