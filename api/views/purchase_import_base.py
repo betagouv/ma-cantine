@@ -14,7 +14,7 @@ from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType, Purchase
 from data.models.creation_source import CreationSource
 
-from .utils import camelize
+from common.utils.camelize import camelize
 
 
 class BasePurchasesImportView(BaseImportView):

@@ -12,7 +12,7 @@ from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType
 
 from .canteen_managers import AddManagerView
-from .utils import camelize
+from common.utils.camelize import camelize
 
 
 CANTEEN_MANAGERS_SCHEMA_FILE_NAME = "cantines_gestionnaires.json"
