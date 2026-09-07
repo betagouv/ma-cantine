@@ -36,12 +36,16 @@ beautifulsoup4==4.15.0
     # via wagtail
 billiard==4.2.4
     # via celery
+boolean-py==5.0
+    # via license-expression
 boto3==1.43.88
     # via django-storages
 botocore==1.43.88
     # via
     #   boto3
     #   s3transfer
+cachecontrol==0.14.4
+    # via pip-audit
 celery==5.4.0
     # via
     #   django-celery-results
@@ -87,10 +91,14 @@ cryptography==50.0.1
     #   pyhanko-certvalidator
 cssselect2==0.10.1
     # via svglib
+cyclonedx-python-lib==11.12.0
+    # via pip-audit
 datacompy==1.0.0a5
     # via ma-cantine
 defusedxml==0.7.1
-    # via willow
+    # via
+    #   py-serializable
+    #   willow
 distlib==0.4.3
     # via virtualenv
 django==5.2.16
@@ -194,6 +202,7 @@ faker==27.0.0
     # via factory-boy
 filelock==3.32.5
     # via
+    #   cachecontrol
     #   python-discovery
     #   virtualenv
 filetype==1.2.0
@@ -240,14 +249,22 @@ kombu==5.6.2
     # via celery
 laces==0.1.2
     # via wagtail
+license-expression==30.4.4
+    # via cyclonedx-python-lib
 lxml==6.1.3
     # via
     #   pyhanko
     #   svglib
+markdown-it-py==4.2.0
+    # via rich
 markupsafe==3.0.3
     # via jinja2
 matplotlib-inline==0.2.2
     # via ipython
+mdurl==0.1.2
+    # via markdown-it-py
+msgpack==1.2.2
+    # via cachecontrol
 multidict==6.7.1
     # via
     #   aiohttp
@@ -269,9 +286,13 @@ ordered-set==4.1.0
     # via datacompy
 oscrypto==1.3.0
     # via pyhanko-certvalidator
+packageurl-python==0.17.6
+    # via cyclonedx-python-lib
 packaging==26.3
     # via
     #   kombu
+    #   pip-audit
+    #   pip-requirements-parser
     #   pytest
 pandas==3.0.0
     # via
@@ -292,8 +313,17 @@ pillow==10.4.0
     #   xhtml2pdf
 pillow-heif==0.22.0
     # via willow
+pip==26.2.1
+    # via pip-api
+pip-api==0.0.34
+    # via pip-audit
+pip-audit==2.10.1
+pip-requirements-parser==32.0.1
+    # via pip-audit
 platformdirs==4.11.7
-    # via virtualenv
+    # via
+    #   pip-audit
+    #   virtualenv
 pluggy==1.6.0
     # via pytest
 polars==1.37.1
@@ -317,6 +347,8 @@ ptyprocess==0.7.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
     # via pexpect
 pure-eval==0.2.3
     # via stack-data
+py-serializable==2.1.0
+    # via cyclonedx-python-lib
 pyarrow==25.0.1
     # via polars
 pycparser==3.0 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy'
@@ -325,12 +357,15 @@ pygments==2.21.0
     # via
     #   ipython
     #   ipython-pygments-lexers
+    #   rich
 pyhanko==0.37.0
     # via xhtml2pdf
 pyhanko-certvalidator==0.32.0
     # via
     #   pyhanko
     #   xhtml2pdf
+pyparsing==3.3.2
+    # via pip-requirements-parser
 pypdf==6.17.0
     # via xhtml2pdf
 pytest==8.0.0
@@ -368,12 +403,16 @@ reportlab==4.5.1
     #   xhtml2pdf
 requests==2.32.4
     # via
+    #   cachecontrol
     #   django-anymail
     #   django-oauth-toolkit
     #   ma-cantine
+    #   pip-audit
     #   requests-mock
     #   wagtail
 requests-mock==1.12.1
+rich==15.0.0
+    # via pip-audit
 rpds-py==2026.6.3
     # via
     #   jsonschema
@@ -390,6 +429,8 @@ six==1.17.0
     #   html5lib
     #   python-dateutil
     #   sib-api-v3-sdk
+sortedcontainers==2.4.0
+    # via cyclonedx-python-lib
 soupsieve==2.9.2
     # via beautifulsoup4
 sqlalchemy==2.0.36
@@ -408,6 +449,10 @@ tinycss2==1.5.1
     # via
     #   cssselect2
     #   svglib
+tomli==2.4.1
+    # via pip-audit
+tomli-w==1.2.0
+    # via pip-audit
 traitlets==5.16.1
     # via
     #   ipython
@@ -417,6 +462,7 @@ typing-extensions==4.16.0
     #   aiohttp
     #   aiosignal
     #   beautifulsoup4
+    #   cyclonedx-python-lib
     #   django-stubs-ext
     #   django-tasks
     #   ipython
