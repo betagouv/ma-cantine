@@ -6,6 +6,7 @@ import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreDiagnostic } from '@/stores/diagnostic'
 import teledeclaration from '@/data/teledeclaration.json'
 import CanteenDisplayInformations from '@/components/CanteenDisplayInformations.vue'
+import AppSeparator from '@/components/AppSeparator.vue'
 
 /* Router */
 const router = useRouter()
@@ -85,6 +86,8 @@ const goToStep = (page) => router.push(page)
 </script>
 
 <template>
+  <AppSeparator class="fr-mb-3w" />
+  <p class="fr-text--bold fr-text--sm ma-cantine--text-uppercase">Récapitulatif des données saisies :</p>
   <DsfrAccordionsGroup v-model="activeAccordion" class="fr-mb-4w">
     <DsfrAccordion
       v-for="(accordion, index) in accordions"
@@ -92,10 +95,6 @@ const goToStep = (page) => router.push(page)
       :id="`accordion-${index}`"
       :title="accordion.title"
     >
-      <div class="ma-cantine--flex ma-cantine--flex-between fr-mb-2w">
-        <p class="fr-mb-0 fr-text--bold">Récapitulatif des données saisies :</p>
-        <DsfrButton label="Modifier les données" @click="goToStep(accordion.to)" icon="ri-pencil-line" secondary />
-      </div>
       <CanteenDisplayInformations
         v-if="index === 0"
         :canteenInformation="canteenInformations"
@@ -107,8 +106,9 @@ const goToStep = (page) => router.push(page)
         no-caption
         :headersRow="header"
         :rows="accordion.rows"
-        class="fr-mb-0 fr-table--no-scroll"
+        class="fr-table--no-scroll fr-mb-2w fr-mt-0"
       />
+      <DsfrButton label="Modifier ces données" @click="goToStep(accordion.to)" icon="ri-pencil-line" secondary size="sm" />
     </DsfrAccordion>
   </DsfrAccordionsGroup>
 </template>
