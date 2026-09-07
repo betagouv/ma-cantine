@@ -6,6 +6,7 @@ import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 import DiagnosticEgalimSimple from "@/components/DiagnosticEgalimSimple.vue"
+import DiagnosticEgalimComplete from "@/components/DiagnosticEgalimComplete.vue"
 
 const storeTeledeclaration = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(storeTeledeclaration)
@@ -24,4 +25,5 @@ const diagIsSimple = computed(() => diagnostic.value.diagnosticType === "SIMPLE"
     </div>
   </div>
   <DiagnosticEgalimSimple v-if="diagIsSimple" />
+  <DiagnosticEgalimComplete v-else />
 </template>
