@@ -7,6 +7,7 @@ import { useStoreDiagnostic } from '@/stores/diagnostic'
 import diagnosticServices from '@/services/diagnostics'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationAccordions from '@/components/TunnelTeledeclarationAccordions.vue'
+import TunnelTeledeclarationErrors from '@/components/TunnelTeledeclarationErrors.vue'
 
 /* Stores */
 const canteenStore = useStoreCanteen()
@@ -46,5 +47,6 @@ const submitDeclaration = () => {
       </AppHelpCard>
     </div>
   </div>
+  <TunnelTeledeclarationErrors />
   <TunnelTeledeclarationAccordions />
 </template>
