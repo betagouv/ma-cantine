@@ -39,12 +39,6 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: "/",
-    meta: {
-      home: true,
-    },
-  },
-  {
-    path: "/accueil",
     name: "LandingPage",
     component: LandingPage,
   },
@@ -497,11 +491,7 @@ function chooseAuthorisedRoute(to, from, next) {
         next({ name: "LandingPage" })
       })
   } else {
-    if (to.meta.home && store.state.loggedUser && !store.state.loggedUser.isDev)
-      next({ name: "GestionnaireTableauDeBord" })
-    else if (to.meta.home && store.state.loggedUser && store.state.loggedUser.isDev) next({ name: "Developpeurs" })
-    else if (to.meta.home) next({ name: "LandingPage" })
-    else if (!to.meta.authenticationRequired || store.state.loggedUser) next()
+    if (!to.meta.authenticationRequired || store.state.loggedUser) next()
     else window.location.href = `/s-identifier?next=${to.path}`
   }
 }
