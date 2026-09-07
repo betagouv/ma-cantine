@@ -28,7 +28,7 @@ const { canteenInformations } = storeToRefs(canteenStore)
         <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" />
       </div>
       <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-4w">
-        <TunnelTeledeclarationTopNav class="ma-cantine--sticky__top" />
+        <TunnelTeledeclarationTopNav />
         <div class="fr-mt-2w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
           <h1 v-else>{{ routeTitle }}</h1>
