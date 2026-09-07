@@ -2,14 +2,15 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "serve:ossl-legacy": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "serve": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "apexcharts": "^4.0.0",
-    "core-js": "^3.50.0",
     "html2pdf.js": "^0.14.0",
     "qrcode.vue": "^1.7.0",
     "vue": "^2.7.16",
@@ -21,13 +22,10 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~5.0.9",
-    "@vue/cli-service": "~4.5.15",
+    "@vitejs/plugin-vue2": "^2.3.4",
     "sass": "^1.103.1",
-    "sass-loader": "^10.0.0",
-    "vue-cli-plugin-vuetify": "~2.5.8",
-    "vue-template-compiler": "^2.7.16",
-    "vuetify-loader": "^1.9.2",
-    "webpack-bundle-tracker": "3.2.4"
+    "unplugin-vue-components": "^0.27.5",
+    "vite": "^5.4.21",
+    "vue-template-compiler": "^2.7.16"
   }
 }

@@ -75,7 +75,7 @@ repos:
 
   # BASH
   - repo: https://github.com/bemeurer/beautysh.git
-    rev: v6.2.1
+    rev: v6.4.3
     hooks:
       - id: beautysh
   - repo: https://github.com/jumanjihouse/pre-commit-hooks

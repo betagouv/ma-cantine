@@ -1,24 +1,25 @@
-# frontend
+# frontend (Vue 2)
 
-## Project setup
+Legacy Vue 2 + Vuetify app, built with **Vite** and loaded by Django via [`django-vite`](https://github.com/MrBin99/django-vite) (`app="vue2"`).
+
+## Setup
+
 ```
 npm ci --ignore-scripts
 ```
 
-### Compiles and hot-reloads for development
+### Dev (HMR on port 8080)
+
 ```
-npm run serve
+npm run dev
 ```
 
-### Compiles and minifies for production
+Serve the app through Django on port 8000 (not Vite’s port).
+
+### Production build
+
 ```
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Outputs hashed assets + `dist/manifest.json` for Django.

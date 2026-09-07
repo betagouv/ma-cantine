@@ -103,15 +103,11 @@ jobs:
 
       - name: Vue 2 install
         working-directory: ./frontend
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm ci --ignore-scripts
 
       - name: Vue 2 build
         working-directory: ./frontend
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm run build --if-present
 

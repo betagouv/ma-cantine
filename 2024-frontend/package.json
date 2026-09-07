@@ -25,12 +25,11 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.3",
+    "@vitejs/plugin-vue": "^6.0.8",
     "@vue/eslint-config-prettier": "^10.2.0",
     "eslint": "^9.39.3",
     "eslint-plugin-vue": "^10.10.0",
     "eslint-plugin-vuejs-accessibility": "^2.6.0",
-    "@vitejs/plugin-vue": "^6.0.8",
-    "django-vite-plugin": "^4.1.2",
     "prettier": "^3.9.6",
     "sass-embedded": "^1.103.1",
     "vite": "^7.3.6",

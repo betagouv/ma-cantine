@@ -30,10 +30,14 @@ make docker-up
 
 Voir le [Makefile](../Makefile) pour des commandes utiles.
 
-## .hotfile et DjangoVite
+## Frontends Vite + django-vite
 
-Dans notre `compose.yaml` pour le volume du service `2024-frontend`, c'est l'app entière qui doit être mappée `"./:/app"` et non juste `"./2024-frontend:/app/2024-frontend"`, notre frontend vue3 utilise le plugin "django-vite" qui demande la création d'un fichier '.hotfile' partagé entre notre front et notre serveur.
+Les deux apps frontend utilisent Vite et sont branchées sur Django via [`django-vite`](https://github.com/MrBin99/django-vite) (`DJANGO_VITE` dans `settings.py`) :
 
-[Voir commit](https://github.com/betagouv/ma-cantine/pull/4774/commits/31f94517df989a8ad7e74ba9395d3e93bef4b188)
+| App | Dossier | Port Vite | Clé django-vite |
+|---|---|---|---|
+| Vue 3 | `2024-frontend` | 5173 | `default` |
+| Vue 2 | `frontend` | 8080 | `vue2` |
 
-> Si nous décidons de ne plus utiliser ce plugin, nous pourrons simplifier la configuration
+En développement, les balises pointent vers le serveur Vite correspondant ;
+en production, elles lisent le `manifest.json` de chaque build (`build/` et `frontend/dist/`).

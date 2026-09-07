@@ -2,7 +2,7 @@
 {% load analytics %}
 {% load environment %}
 {% load featureflags %}
-{% load vite %}
+{% load django_vite %}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -218,8 +218,8 @@
   <script src="{% static 'dsfr/charts/PieChart/pie-chart.umd.js' %}"></script>
   <link rel="stylesheet" href="{% static 'dsfr/charts/PieChart/pie-chart.css' %}">
 
-  {% vite %}
-  {% vite '2024-frontend/src/main.js' %}
+  {% vite_hmr_client %}
+  {% vite_asset 'src/main.js' %}
 </head>
 
 <body>
