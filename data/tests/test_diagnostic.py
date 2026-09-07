@@ -63,9 +63,11 @@ VALID_DIAGNOSTIC_SIMPLE_2026 = {
     "valeur_externalites_performance": 100,
     "valeur_egalim_autres": 100,
     "valeur_viandes_volailles": 100,
+    "valeur_viandes_volailles_bio": 30,
     "valeur_viandes_volailles_egalim": 50,
     "valeur_viandes_volailles_france": 20,
     "valeur_produits_de_la_mer": 80,
+    "valeur_produits_de_la_mer_bio": 30,
     "valeur_produits_de_la_mer_egalim": 40,
 }
 
@@ -327,9 +329,30 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_label(self):
+        VALID_DIAGNOSTIC_COMPLETE_2026 = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
+        # default: ok
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2026)
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.label_sum("bio"), 60)
+        # 1 valeur_famille_label cannot be > valeur_label
+        diagnostic.valeur_viandes_volailles_bio = 200
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # sum of valeur_famille_label cannot be > valeur_label
+        diagnostic.valeur_viandes_volailles_bio = 30
+        diagnostic.valeur_fruits_et_legumes = 150
+        diagnostic.valeur_fruits_et_legumes_bio = 150
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.label_sum("bio"), 210)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
-        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok
         self.assertEqual(diagnostic.valeur_bio, 200)
         self.assertEqual(diagnostic.valeur_bio_dont_commerce_equitable, None)
@@ -344,9 +367,9 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_egalim_autres_dont_commerce_equitable(self):
-        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok
         self.assertEqual(diagnostic.valeur_egalim_autres, 100)
         self.assertEqual(diagnostic.valeur_egalim_autres_dont_commerce_equitable, None)
