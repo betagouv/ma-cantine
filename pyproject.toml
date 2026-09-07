@@ -52,6 +52,7 @@ dev = [
     "faker==27.0.0",
     "freezegun==1.5.2",
     "ipython>=9.5.0",
+    "pip-audit>=2.10.1",
     "pre-commit==4.0.1",
     "pytest==8.0.0",
     "pytest-django==4.8.0",
