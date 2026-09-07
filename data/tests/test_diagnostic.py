@@ -358,12 +358,11 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_bio_dont_commerce_equitable, None)
         diagnostic.full_clean()  # should not raise
         # filled: ok
-        diagnostic.valeur_bio = 50
         diagnostic.valeur_bio_dont_commerce_equitable = 10
         diagnostic.save()
         diagnostic.full_clean()  # should not raise
         # bio_dont_commerce_equitable cannot be > bio
-        diagnostic.valeur_bio_dont_commerce_equitable = 60
+        diagnostic.valeur_bio_dont_commerce_equitable = 210
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
@@ -375,12 +374,11 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_egalim_autres_dont_commerce_equitable, None)
         diagnostic.full_clean()  # should not raise
         # filled: ok
-        diagnostic.valeur_egalim_autres = 50
         diagnostic.valeur_egalim_autres_dont_commerce_equitable = 10
         diagnostic.save()
         diagnostic.full_clean()  # should not raise
         # egalim_autres_dont_commerce_equitable cannot be > egalim_autres
-        diagnostic.valeur_egalim_autres_dont_commerce_equitable = 60
+        diagnostic.valeur_egalim_autres_dont_commerce_equitable = 110
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
