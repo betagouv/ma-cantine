@@ -11,9 +11,9 @@ from django.dispatch import receiver
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from common.utils import utils as utils_utils
+from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
 from data.models.geo import Department
-from data.utils import optimize_image
 from data.validators import user as user_validators
 from macantine import brevo
 
