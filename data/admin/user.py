@@ -138,6 +138,7 @@ class MaCanteenUserAdmin(UserAdmin):
         "brevo_last_update_date",
         *User.MATOMO_FIELDS,
         "data_pretty",
+        "has_totp_device",
         "last_login",
         "date_joined",
     )
