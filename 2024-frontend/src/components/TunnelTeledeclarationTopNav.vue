@@ -8,6 +8,7 @@ import canteenServices from "@/services/canteens"
 import diagnosticServices from "@/services/diagnostics"
 import diagnosticsFields from "@/services/diagnosticsFields"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import AppErrorList from "@/components/AppErrorList.vue"
 
 const router = useRouter()
 const route = useRoute()
@@ -106,13 +107,9 @@ const goTo = (page) => {
     :title="modalTitle"
     @close="showModal = false"
   >
-    <p>Lors de l'enregistrement de vos données, nous avons détecté une ou plusieurs erreurs : </p>
-    <ul>
-      <li v-for="error in modalErrors" :key="error">
-        erreur sur le champ <span class="ma-cantine--bold">« {{ error.field }} »</span>
-      </li>
-    </ul>
-    <p>Vous pouvez les corriger maintenant, ou plus tard, avant de télédéclarer.</p>
+    <p>Après l'enregistrement de vos données, nous avons détecté une ou plusieurs erreurs : </p>
+    <AppErrorList :errors="modalErrors.map((error) => error.field)" />
+    <p>Vous n'êtes pas obligé de faire la correction maintenant mais vous devrez la faire avant de télédéclarer.</p>
     <div class="ma-cantine--flex-end">
       <DsfrButton
         secondary

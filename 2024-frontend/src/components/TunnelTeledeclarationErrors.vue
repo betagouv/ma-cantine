@@ -5,6 +5,7 @@ import { useStoreDiagnostic } from '@/stores/diagnostic'
 import { storeToRefs } from 'pinia'
 import diagnosticServices from '@/services/diagnostics'
 import canteenServices from '@/services/canteens'
+import AppErrorList from '@/components/AppErrorList.vue'
 
 const diagnosticStore = useStoreDiagnostic()
 const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
@@ -24,22 +25,7 @@ const errors = computed(() => {
   const diagnosticErrors = hasDiagnosticErrors.value ? Object.keys(checkDiagnostic.value.errors) : []
   return [...canteenErrors, ...diagnosticErrors]
 })
-const badge = computed(() => {
-  if (!hasErrors.value) return false
-  const count = errors.value.length
-  const sentence = count > 1 ? 'erreurs détectées' : 'erreur détectée'
-  return `${count} ${sentence}`
-})
 </script>
 <template>
-  <div v-if="hasErrors">
-    <DsfrBadge :label="badge" type="error" />
-    <ul>
-      <li v-for="field in errors" :key="field" class="fr-text-default--error">
-        <p class="fr-mb-0">
-          erreur sur le champ <span class="ma-cantine--bold">« {{ field }} »</span>
-        </p>
-      </li>
-    </ul>
-  </div>
+  <AppErrorList v-if="hasErrors" :errors="errors" />
 </template>
