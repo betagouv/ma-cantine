@@ -11,20 +11,20 @@ const canteenId = computed(() => diagnosticCurrentCampaign.value.canteenId)
 
 /* Errors */
 const check = computedAsync(async () => await diagnosticServices.checkDiagnostic(canteenId.value, diagnosticCurrentCampaign.value.id), false)
-const hasErrors = computed(() => !check.value.isFilled )
+const hasErrors = computed(() => check.value && !check.value?.isFilled)
 const errors = computed(() => {
-  if (!hasErrors.value || !check.value ) return []
+  if (!hasErrors.value) return []
   return Object.keys(check.value.errors)
 })
 const badge = computed(() => {
-  if (!hasErrors.value || !check.value) return false
+  if (!hasErrors.value) return false
   const count = errors.value.length
   const sentence = count > 1 ? 'erreurs détectées' : 'erreur détectée'
   return `${count} ${sentence}`
 })
 </script>
 <template>
-  <div v-if="hasErrors" class="fr-mb-4w">
+  <div v-if="hasErrors">
     <DsfrBadge :label="badge" type="error" />
     <ul>
       <li v-for="field in errors" :key="field" class="fr-text-default--error">
