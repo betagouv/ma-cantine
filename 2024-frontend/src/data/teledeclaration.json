@@ -633,13 +633,13 @@
       "enablePurchaseSummary": true
     },
     "valeurCharcuterieIgp": {
-      "label": "IGP pour la famille Fruits et légumes frais et surgelés",
+      "label": "IGP pour la famille Charcuteries",
       "type": "number",
       "required": true,
       "enablePurchaseSummary": true
     },
     "valeurFruitsEtLegumesIgp": {
-      "label": "IGP pour la famille Charcuteries",
+      "label": "IGP pour la famille Fruits et légumes frais et surgelés",
       "type": "number",
       "required": true,
       "enablePurchaseSummary": true
@@ -700,6 +700,18 @@
     },
     "valeurBoulangerieStg": {
       "label": "STG pour la famille Boulangerie/Pâtisseries fraîches",
+      "type": "number",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurAutresStg": {
+      "label": "STG pour la famille Autres produits frais, surgelés et d'épicerie",
+      "type": "number",
+      "required": true,
+      "enablePurchaseSummary": true
+    },
+    "valeurBoissonsStg": {
+      "label": "STG pour la famille Boissons",
       "type": "number",
       "required": true,
       "enablePurchaseSummary": true
