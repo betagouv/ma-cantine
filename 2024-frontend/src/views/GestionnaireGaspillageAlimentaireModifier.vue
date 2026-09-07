@@ -3,11 +3,9 @@ import { computed, ref, watch, onMounted, provide, reactive } from "vue"
 import { useRouter } from "vue-router"
 import WasteMeasurementSteps from "@/components/WasteMeasurementSteps/index.vue"
 import WasteSummary from "@/components/WasteSummary.vue"
-import { useRoute } from "vue-router"
 
 import { useRootStore } from "@/stores/root"
 const store = useRootStore()
-const route = useRoute()
 
 const props = defineProps(["canteenUrlComponent", "id", "étape"])
 
@@ -132,11 +130,8 @@ const saveAndQuit = () => {
     .catch(store.notifyServerError)
 }
 
-const returnHref = ref(route.query?.return)
-
 const quit = () => {
-  if (returnHref.value) document.location.href = returnHref.value
-  else router.push({ name: "GestionnaireGaspillageAlimentaire" })
+  router.push({ name: "GestionnaireGaspillageAlimentaire" })
 }
 
 let v$
