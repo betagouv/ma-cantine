@@ -1017,54 +1017,6 @@
       "type": "number",
       "required": false,
       "enablePurchaseSummary": true
-    },
-    "valeurViandesVolaillesNonEgalim": {
-      "label": "Non-EGalim pour la famille Viandes et volailles fraîches et surgelées",
-      "type": "number",
-      "required": false,
-      "enablePurchaseSummary": true
-    },
-    "valeurProduitsDeLaMerNonEgalim": {
-      "label": "Non-EGalim pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "type": "number",
-      "required": false,
-      "enablePurchaseSummary": true
-    },
-    "valeurFruitsEtLegumesNonEgalim": {
-      "label": "Non-EGalim pour la famille Fruits et légumes frais et surgelés",
-      "type": "number",
-      "required": false,
-      "enablePurchaseSummary": true
-    },
-    "valeurCharcuterieNonEgalim": {
-      "label": "Non-EGalim pour la famille Charcuterie",
-      "type": "number",
-      "required": false,
-      "enablePurchaseSummary": true
-    },
-    "valeurProduitsLaitiersNonEgalim": {
-      "label": "Non-EGalim pour la famille BOF (Produits laitiers, beurre et œufs)",
-      "type": "number",
-      "required": false,
-      "enablePurchaseSummary": true
-    },
-    "valeurBoulangerieNonEgalim": {
-      "label": "Non-EGalim pour la famille Boulangerie/Pâtisseries fraîches",
-      "type": "number",
-      "required": false,
-      "enablePurchaseSummary": true
-    },
-    "valeurBoissonsNonEgalim": {
-      "label": "Non-EGalim pour la famille Boissons",
-      "type": "number",
-      "required": false,
-      "enablePurchaseSummary": true
-    },
-    "valeurAutresNonEgalim": {
-      "label": "Non-EGalim pour la famille Autres produits frais, surgelés et d’épicerie",
-      "type": "number",
-      "required": false,
-      "enablePurchaseSummary": true
     }
   },
   "groups": {
@@ -1073,7 +1025,7 @@
     "couverts": ["nombreRepasAn"],
     "saisie": ["diagnosticType"],
     "egalimSimple": ["valeurTotale", "valeurBio", "valeurBioDontCommerceEquitable", "valeurSiqo", "valeurEgalimAutres", "valeurEgalimAutresDontCommerceEquitable", "valeurExternalitesPerformance", "valeurViandesVolailles", "valeurViandesVolaillesEgalim", "valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons"],
-    "egalimComplete": ["valeurTotale", "valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons", "valeurViandesVolaillesBio", "valeurViandesVolaillesBioDontCommerceEquitable", "valeurProduitsDeLaMerBio", "valeurProduitsDeLaMerBioDontCommerceEquitable", "valeurCharcuterieBio", "valeurCharcuterieBioDontCommerceEquitable", "valeurFruitsEtLegumesBio", "valeurFruitsEtLegumesBioDontCommerceEquitable", "valeurProduitsLaitiersBio", "valeurProduitsLaitiersBioDontCommerceEquitable", "valeurBoulangerieBio", "valeurBoulangerieBioDontCommerceEquitable", "valeurAutresBio", "valeurAutresBioDontCommerceEquitable", "valeurBoissonsBio", "valeurBioBoissonsDontCommerceEquitable", "valeurViandesVolaillesLabelRouge", "valeurProduitsDeLaMerLabelRouge", "valeurCharcuterieLabelRouge", "valeurFruitsEtLegumesLabelRouge", "valeurProduitsLaitiersLabelRouge", "valeurBoulangerieLabelRouge", "valeurAutresLabelRouge", "valeurViandesVolaillesAocaop", "valeurProduitsDeLaMerAocaop", "valeurCharcuterieAocaop", "valeurFruitsEtLegumesAocaop", "valeurProduitsLaitiersAocaop", "valeurBoulangerieAocaop", "valeurAutresAocaop", "valeurBoissonsAocaop", "valeurViandesVolaillesIgp", "valeurProduitsDeLaMerIgp", "valeurCharcuterieIgp", "valeurFruitsEtLegumesIgp", "valeurProduitsLaitiersIgp", "valeurBoulangerieIgp", "valeurAutresIgp", "valeurBoissonsIgp", "valeurViandesVolaillesStg", "valeurProduitsDeLaMerStg", "valeurCharcuterieStg", "valeurFruitsEtLegumesStg", "valeurProduitsLaitiersStg", "valeurBoulangerieStg", "valeurAutresStg", "valeurBoissonsStg", "valeurViandesVolaillesHve", "valeurProduitsDeLaMerHve", "valeurCharcuterieHve", "valeurFruitsEtLegumesHve", "valeurProduitsLaitiersHve", "valeurBoulangerieHve", "valeurAutresHve", "valeurBoissonsHve", "valeurProduitsDeLaMerPecheDurable", "valeurViandesVolaillesRup", "valeurProduitsDeLaMerRup", "valeurCharcuterieRup", "valeurFruitsEtLegumesRup", "valeurProduitsLaitiersRup", "valeurBoulangerieRup", "valeurAutresRup", "valeurBoissonsRup", "valeurViandesVolaillesCommerceEquitable", "valeurProduitsDeLaMerCommerceEquitable", "valeurCharcuterieCommerceEquitable", "valeurFruitsEtLegumesCommerceEquitable", "valeurProduitsLaitiersCommerceEquitable", "valeurBoulangerieCommerceEquitable", "valeurAutresCommerceEquitable", "valeurBoissonsCommerceEquitable", "valeurViandesVolaillesFermier", "valeurProduitsDeLaMerFermier", "valeurCharcuterieFermier", "valeurFruitsEtLegumesFermier", "valeurProduitsLaitiersFermier", "valeurBoulangerieFermier", "valeurAutresFermier", "valeurBoissonsFermier", "valeurViandesVolaillesExternalites", "valeurProduitsDeLaMerExternalites", "valeurCharcuterieExternalites", "valeurFruitsEtLegumesExternalites", "valeurProduitsLaitiersExternalites", "valeurBoulangerieExternalites", "valeurAutresExternalites", "valeurCoutsExternalitesBoissons", "valeurViandesVolaillesPerformance", "valeurProduitsDeLaMerPerformance", "valeurCharcuteriePerformance", "valeurFruitsEtLegumesPerformance", "valeurProduitsLaitiersPerformance", "valeurBoulangeriePerformance", "valeurAutresPerformance", "valeurBoissonsPerformance", "valeurViandesVolaillesNonEgalim", "valeurProduitsDeLaMerNonEgalim", "valeurFruitsEtLegumesNonEgalim", "valeurCharcuterieNonEgalim", "valeurProduitsLaitiersNonEgalim", "valeurBoulangerieNonEgalim", "valeurBoissonsNonEgalim", "valeurAutresNonEgalim"],
+    "egalimComplete": ["valeurTotale", "valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons", "valeurViandesVolaillesBio", "valeurViandesVolaillesBioDontCommerceEquitable", "valeurProduitsDeLaMerBio", "valeurProduitsDeLaMerBioDontCommerceEquitable", "valeurCharcuterieBio", "valeurCharcuterieBioDontCommerceEquitable", "valeurFruitsEtLegumesBio", "valeurFruitsEtLegumesBioDontCommerceEquitable", "valeurProduitsLaitiersBio", "valeurProduitsLaitiersBioDontCommerceEquitable", "valeurBoulangerieBio", "valeurBoulangerieBioDontCommerceEquitable", "valeurAutresBio", "valeurAutresBioDontCommerceEquitable", "valeurBoissonsBio", "valeurBioBoissonsDontCommerceEquitable", "valeurViandesVolaillesLabelRouge", "valeurProduitsDeLaMerLabelRouge", "valeurCharcuterieLabelRouge", "valeurFruitsEtLegumesLabelRouge", "valeurProduitsLaitiersLabelRouge", "valeurBoulangerieLabelRouge", "valeurAutresLabelRouge", "valeurViandesVolaillesAocaop", "valeurProduitsDeLaMerAocaop", "valeurCharcuterieAocaop", "valeurFruitsEtLegumesAocaop", "valeurProduitsLaitiersAocaop", "valeurBoulangerieAocaop", "valeurAutresAocaop", "valeurBoissonsAocaop", "valeurViandesVolaillesIgp", "valeurProduitsDeLaMerIgp", "valeurCharcuterieIgp", "valeurFruitsEtLegumesIgp", "valeurProduitsLaitiersIgp", "valeurBoulangerieIgp", "valeurAutresIgp", "valeurBoissonsIgp", "valeurViandesVolaillesStg", "valeurProduitsDeLaMerStg", "valeurCharcuterieStg", "valeurFruitsEtLegumesStg", "valeurProduitsLaitiersStg", "valeurBoulangerieStg", "valeurAutresStg", "valeurBoissonsStg", "valeurViandesVolaillesHve", "valeurProduitsDeLaMerHve", "valeurCharcuterieHve", "valeurFruitsEtLegumesHve", "valeurProduitsLaitiersHve", "valeurBoulangerieHve", "valeurAutresHve", "valeurBoissonsHve", "valeurProduitsDeLaMerPecheDurable", "valeurViandesVolaillesRup", "valeurProduitsDeLaMerRup", "valeurCharcuterieRup", "valeurFruitsEtLegumesRup", "valeurProduitsLaitiersRup", "valeurBoulangerieRup", "valeurAutresRup", "valeurBoissonsRup", "valeurViandesVolaillesCommerceEquitable", "valeurProduitsDeLaMerCommerceEquitable", "valeurCharcuterieCommerceEquitable", "valeurFruitsEtLegumesCommerceEquitable", "valeurProduitsLaitiersCommerceEquitable", "valeurBoulangerieCommerceEquitable", "valeurAutresCommerceEquitable", "valeurBoissonsCommerceEquitable", "valeurViandesVolaillesFermier", "valeurProduitsDeLaMerFermier", "valeurCharcuterieFermier", "valeurFruitsEtLegumesFermier", "valeurProduitsLaitiersFermier", "valeurBoulangerieFermier", "valeurAutresFermier", "valeurBoissonsFermier", "valeurViandesVolaillesExternalites", "valeurProduitsDeLaMerExternalites", "valeurCharcuterieExternalites", "valeurFruitsEtLegumesExternalites", "valeurProduitsLaitiersExternalites", "valeurBoulangerieExternalites", "valeurAutresExternalites", "valeurCoutsExternalitesBoissons", "valeurViandesVolaillesPerformance", "valeurProduitsDeLaMerPerformance", "valeurCharcuteriePerformance", "valeurFruitsEtLegumesPerformance", "valeurProduitsLaitiersPerformance", "valeurBoulangeriePerformance", "valeurAutresPerformance", "valeurBoissonsPerformance"],
     "origine": ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurCharcuterieFrance", "valeurFruitsEtLegumesFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance", "valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurCharcuterieEurope", "valeurFruitsEtLegumesEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"],
     "localCircuitCourt": ["valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurAutresCircuitCourt", "valeurBoissonsCircuitCourt", "valeurLocal", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurCharcuterieLocal", "valeurFruitsEtLegumesLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurAutresLocal", "valeurBoissonsLocal"]
   }
