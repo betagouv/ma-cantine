@@ -61,7 +61,6 @@ const displaySuccess = () => {
     status: 'success',
   })
   closeModal()
-  console.log('GOTO WHERE ???')
 }
 </script>
 
