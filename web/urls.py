@@ -18,6 +18,7 @@ from web.views import (
     RegisterInvalidTokenView,
     RegisterSendMailFailedView,
     RegisterUserView,
+    RobotsTxtView,
     VueAppDisplayView,
     WidgetView,
 )
@@ -131,6 +132,7 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="sitemap",
     ),
+    path("robots.txt", RobotsTxtView.as_view(), name="robots_txt"),
     path(
         "googlefbd6f06a151f47ee.html",
         TemplateView.as_view(template_name="googlefbd6f06a151f47ee.html"),

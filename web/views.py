@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, login, tokens
 from django.contrib.auth import views as auth_views
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
@@ -48,6 +48,27 @@ class VueAppDisplayView(TemplateView):
     """
 
     template_name = "vue-app.html"
+
+
+class RobotsTxtView(View):
+    """
+    Only allow indexing on the production environment. Other environments
+    (dev, staging, demo, ...) should stay out of search engines.
+    """
+
+    def get(self, request, *args, **kwargs):
+        if getattr(settings, "ENVIRONMENT", None) == "prod":
+            lines = [
+                "User-agent: *",
+                "Allow: /",
+                f"Sitemap: {settings.PROTOCOL}://{settings.HOSTNAME}/sitemap.xml",
+            ]
+        else:
+            lines = [
+                "User-agent: *",
+                "Disallow: /",
+            ]
+        return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
 class Vue3AppDisplayView(TemplateView):
