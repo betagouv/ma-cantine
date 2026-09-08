@@ -7,7 +7,6 @@ import { storeToRefs } from "pinia"
 import canteenServices from "@/services/canteens"
 import diagnosticServices from "@/services/diagnostics"
 import diagnosticsFields from "@/services/diagnosticsFields"
-import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppErrorList from "@/components/AppErrorList.vue"
 
 const router = useRouter()
@@ -29,6 +28,11 @@ const save = async (page) => {
   const pageErrors = filterErrorsOnPage()
   if (pageErrors.length > 0) displayModal(pageErrors, page)
   else goTo(page)
+}
+
+const saveAndQuit = async () => {
+  await diagnosticStore.saveDiagnosticCurrentCampaign()
+  router.push({ name: 'GestionnaireCantineTeledeclarationEnCours' })
 }
 
 /* Errors */
@@ -80,11 +84,12 @@ const goTo = (page) => {
 
 <template>
   <nav class="tunnel-teledeclaration-top-nav ma-cantine--sticky__top fr-background-default--grey fr-py-2w">
-    <AppLinkRouter
-      :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }"
-      title="Enregistrer et finir plus tard"
-      :hide-arrow-icon="true"
+    <DsfrButton
+      tertiary
       icon="fr-icon-save-line"
+      label="Enregistrer et finir plus tard"
+      no-outline
+      @click="saveAndQuit()"
     />
     <DsfrButton
       secondary
