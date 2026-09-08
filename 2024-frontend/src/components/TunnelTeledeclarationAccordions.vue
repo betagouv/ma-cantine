@@ -67,7 +67,7 @@ const accordions = computed(() => {
     },
     {
       title: "EGalim",
-      rows: getFields(isSimple ? teledeclaration.groups.egalimSimple : teledeclaration.groups.egalimDetaille, "diagnostic"),
+      rows: getFields(isSimple ? teledeclaration.groups.egalimSimple : teledeclaration.groups.egalimComplete, "diagnostic"),
       to: { name: 'GestionnaireTunnelApproEgalim' }
     },
     {
