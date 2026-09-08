@@ -16,6 +16,7 @@ def validate_year_and_can_edit(instance):
         - year must be filled
         - year must be an integer
         - year must be in CAMPAIGN_DATES
+        - year must be in the current campaign year (now.year - 1 & now.year)
         - if year is valid:
             - after teledeclaration end date, DRAFT diagnostic cannot be edited anymore
             - after correction end date, any diagnostic cannot be edited anymore
@@ -29,7 +30,17 @@ def validate_year_and_can_edit(instance):
         utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")
     else:
         if not isinstance(value, int) or value not in CAMPAIGN_DATES:
-            utils_utils.add_validation_error(errors, "year", f"L'année doit être parmi {list(CAMPAIGN_DATES.keys())}.")
+            utils_utils.add_validation_error(
+                errors, "year", f"L'année doit être parmi {', '.join(map(str, CAMPAIGN_DATES.keys()))}."
+            )
+        now = timezone.now()
+        current_campaign_years = [now.year - 1, now.year]
+        if int(value) not in current_campaign_years:
+            utils_utils.add_validation_error(
+                errors,
+                "year",
+                f"L'année doit être dans l'année de campagne en cours ({', '.join(map(str, current_campaign_years))}).",
+            )
         else:  # valid year, check can_edit validation
             if instance.pk:
                 now = timezone.now()

@@ -78,7 +78,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
         VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
         # on save
-        for VALUE_OK_ON_SAVE in [None, -2000, 0, 1991, 2024, "2023"]:
+        for VALUE_OK_ON_SAVE in [None, -2000, 0, 1991, "2023", 2024]:
             with self.subTest(year=VALUE_OK_ON_SAVE):
                 diagnostic = DiagnosticFactory(year=VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertEqual(diagnostic.year, VALUE_OK_ON_SAVE)
@@ -88,24 +88,12 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                     ValueError, Diagnostic.objects.create, year=VALUE_NOT_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR
                 )
         # on full_clean
-        this_year = datetime.now().date().year
-        last_year = datetime.now().date().year - 1
-        next_year = datetime.now().date().year + 1
-        last_two_years = datetime.now().date().year - 2
-        next_two_years = datetime.now().date().year + 2
-        for TUPLE_OK_ON_FULL_CLEAN in [
-            (this_year, this_year),
-            (f"{this_year}", this_year),
-            (last_year, last_year),
-            (f"{last_year}", last_year),
-            (next_year, next_year),
-            (f"{next_year}", next_year),
-        ]:
+        for TUPLE_OK_ON_FULL_CLEAN in [(2025, 2025), ("2026", 2026)]:
             with self.subTest(year=TUPLE_OK_ON_FULL_CLEAN[0]):
                 diagnostic = DiagnosticFactory(year=TUPLE_OK_ON_FULL_CLEAN[0], **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 diagnostic.full_clean()
                 self.assertEqual(diagnostic.year, TUPLE_OK_ON_FULL_CLEAN[1])
-        for VALUE_NOT_OK_ON_FULL_CLEAN in [None, 1991, last_two_years, next_two_years, 2222]:
+        for VALUE_NOT_OK_ON_FULL_CLEAN in [None, 1991, 2024, 2027, 2222]:
             with self.subTest(year=VALUE_NOT_OK_ON_FULL_CLEAN):
                 diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
