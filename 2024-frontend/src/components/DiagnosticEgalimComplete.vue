@@ -131,16 +131,6 @@ const performanceFields = [
   "valeurAutresPerformance",
   "valeurBoissonsPerformance",
 ]
-const nonEgalimFields = [
-  "valeurViandesVolaillesNonEgalim",
-  "valeurProduitsDeLaMerNonEgalim",
-  "valeurFruitsEtLegumesNonEgalim",
-  "valeurCharcuterieNonEgalim",
-  "valeurProduitsLaitiersNonEgalim",
-  "valeurBoulangerieNonEgalim",
-  "valeurBoissonsNonEgalim",
-  "valeurAutresNonEgalim",
-]
 </script>
 <template>
   <div class="fr-mb-4w">
@@ -261,12 +251,6 @@ const nonEgalimFields = [
           <a :href="documentation.performance" target="_blank">Consultez la documentation</a>
         </AppHelpCard>
       </div>
-    </div>
-  </div>
-  <div class="fr-mb-4w">
-    <h2 class="fr-h5">15. Non-EGalim</h2>
-    <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in nonEgalimFields" :key="field" :name="field" size="inline" />
     </div>
   </div>
 </template>
