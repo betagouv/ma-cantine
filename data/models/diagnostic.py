@@ -576,6 +576,10 @@ class Diagnostic(models.Model):
         "valeur_externalites_performance",
         "valeur_egalim_autres",
         "valeur_egalim_autres_dont_commerce_equitable",
+        "valeur_europe",
+        "valeur_france",
+        "valeur_circuit_court",
+        "valeur_local",
         "valeur_viandes_volailles",
         "valeur_viandes_volailles_egalim",
         "valeur_viandes_volailles_france",
@@ -614,7 +618,6 @@ class Diagnostic(models.Model):
     APPRO_FAMILY_FIELDS = [
         "valeur_viandes_volailles",
         "valeur_produits_de_la_mer",
-        # new in 2026
         "valeur_fruits_et_legumes",
         "valeur_charcuterie",
         "valeur_produits_laitiers",
@@ -640,6 +643,31 @@ class Diagnostic(models.Model):
     ]
 
     APPRO_FIELDS = [
+        "valeur_totale",
+        # valeur_label
+        "valeur_bio",
+        "valeur_bio_dont_commerce_equitable",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
+        "valeur_egalim_autres_dont_commerce_equitable",
+        "valeur_europe",
+        "valeur_france",
+        "valeur_circuit_court",
+        "valeur_local",
+        # valeur_famille
+        "valeur_viandes_volailles",
+        "valeur_produits_de_la_mer",
+        "valeur_fruits_et_legumes",
+        "valeur_charcuterie",
+        "valeur_produits_laitiers",
+        "valeur_boulangerie",
+        "valeur_boissons",
+        "valeur_autres",
+        # valeur_famille_egalim
+        "valeur_viandes_volailles_egalim",
+        "valeur_produits_de_la_mer_egalim",
+        # valeur_famille_label
         "valeur_viandes_volailles_bio",
         "valeur_viandes_volailles_bio_dont_commerce_equitable",
         "valeur_produits_de_la_mer_bio",
@@ -672,6 +700,30 @@ class Diagnostic(models.Model):
         "valeur_boulangerie_aocaop_igp_stg",
         "valeur_boissons_aocaop_igp_stg",
         "valeur_autres_aocaop_igp_stg",
+        "valeur_viandes_volailles_aocaop",
+        "valeur_produits_de_la_mer_aocaop",
+        "valeur_fruits_et_legumes_aocaop",
+        "valeur_charcuterie_aocaop",
+        "valeur_produits_laitiers_aocaop",
+        "valeur_boulangerie_aocaop",
+        "valeur_boissons_aocaop",
+        "valeur_autres_aocaop",
+        "valeur_viandes_volailles_igp",
+        "valeur_produits_de_la_mer_igp",
+        "valeur_fruits_et_legumes_igp",
+        "valeur_charcuterie_igp",
+        "valeur_produits_laitiers_igp",
+        "valeur_boulangerie_igp",
+        "valeur_boissons_igp",
+        "valeur_autres_igp",
+        "valeur_viandes_volailles_stg",
+        "valeur_produits_de_la_mer_stg",
+        "valeur_fruits_et_legumes_stg",
+        "valeur_charcuterie_stg",
+        "valeur_produits_laitiers_stg",
+        "valeur_boulangerie_stg",
+        "valeur_boissons_stg",
+        "valeur_autres_stg",
         "valeur_viandes_volailles_hve",
         "valeur_produits_de_la_mer_hve",
         "valeur_fruits_et_legumes_hve",
@@ -736,15 +788,14 @@ class Diagnostic(models.Model):
         "valeur_boulangerie_non_egalim",
         "valeur_boissons_non_egalim",
         "valeur_autres_non_egalim",
-        # new in 2026
-        # "valeur_viandes_volailles_europe",
-        # "valeur_produits_de_la_mer_europe",
-        # "valeur_fruits_et_legumes_europe",
-        # "valeur_charcuterie_europe",
-        # "valeur_produits_laitiers_europe",
-        # "valeur_boulangerie_europe",
-        # "valeur_boissons_europe",
-        # "valeur_autres_europe",
+        "valeur_viandes_volailles_europe",
+        "valeur_produits_de_la_mer_europe",
+        "valeur_fruits_et_legumes_europe",
+        "valeur_charcuterie_europe",
+        "valeur_produits_laitiers_europe",
+        "valeur_boulangerie_europe",
+        "valeur_boissons_europe",
+        "valeur_autres_europe",
         "valeur_viandes_volailles_france",
         "valeur_produits_de_la_mer_france",
         "valeur_fruits_et_legumes_france",
@@ -791,9 +842,7 @@ class Diagnostic(models.Model):
         "valeur_autres_fermier",
     ]
 
-    COMPLETE_APPRO_FIELDS = (
-        ["valeur_totale"] + ["valeur_viandes_volailles", "valeur_produits_de_la_mer"] + APPRO_FIELDS
-    )
+    COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS
     # COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS  # TODO when updating the imports
 
     COMPLETE_APPRO_FIELDS_REQUIRED_2025 = [

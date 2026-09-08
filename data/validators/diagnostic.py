@@ -8,6 +8,7 @@ from data.models.diagnostic_teledeclaration_dates import (
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
 from common.utils import utils as utils_utils
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_required_fields
 
 
 def validate_year_and_can_edit(instance):
@@ -103,18 +104,11 @@ def validate_appro_fields_required(instance):
     - clean_fields() (called by full_clean()) already does some checks
       BUT most of the model fields are optional...
     - extra validation: depending on the year & diagnostic_type of the diagnostic
-        - before 2025, only valeur_totale is required
+        - e.g. before 2025, only valeur_totale is required
     """
     errors = {}
     if instance.year:
-        if int(instance.year) >= 2025:
-            required_fields = (
-                instance.SIMPLE_APPRO_FIELDS_REQUIRED_2025
-                if instance.diagnostic_type == instance.DiagnosticType.SIMPLE
-                else instance.COMPLETE_APPRO_FIELDS_REQUIRED_2025
-            )
-        else:
-            required_fields = ["valeur_totale"]
+        required_fields = get_teledeclaration_required_fields(instance.year, instance.diagnostic_type)
         for field in required_fields:
             if getattr(instance, field) is None:
                 utils_utils.add_validation_error(
